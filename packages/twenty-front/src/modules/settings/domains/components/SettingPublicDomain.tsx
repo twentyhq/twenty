@@ -16,7 +16,8 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconReload, IconTrash } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -73,9 +74,7 @@ export const SettingPublicDomain = () => {
 
   const isEditingPublicDomain = isDefined(publicDomainId);
 
-  // Scoped to the application in the URL: the query is workspace-wide, so a
-  // domain id from another application would otherwise be editable and
-  // deletable from this page.
+  // The query is workspace-wide, so scope to the URL application or other apps' domains become editable here
   const selectedPublicDomain = isEditingPublicDomain
     ? publicDomainsData?.findManyPublicDomains?.find(
         (publicDomain) =>
@@ -112,8 +111,7 @@ export const SettingPublicDomain = () => {
   const { isLoading, publicDomainRecords, checkPublicDomainRecords } =
     useCheckPublicDomainValidRecords();
 
-  // Also used once the create and delete mutations resolve, so it cannot be
-  // replaced by a Link.
+  // Also navigates after the create and delete mutations resolve, so it cannot be a Link
   // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToApplication = () =>
     navigate(SettingsPath.ApplicationDetail, { applicationId });

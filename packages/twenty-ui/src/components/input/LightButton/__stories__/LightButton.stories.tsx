@@ -14,7 +14,8 @@ import { LightButton } from '../LightButton';
 import { type LightButtonProps } from '../types/LightButtonProps';
 
 const meta: Meta<typeof LightButton> = {
-  title: 'UI/Components/LightButton',
+  id: 'ui-components-lightbutton',
+  title: 'UI/Components/Input/LightButton',
   component: LightButton,
   args: { children: 'Add filter' },
 };
@@ -78,7 +79,13 @@ export const SemanticAndGroupAppearance: Story = {
         <LightButton emphasis="subtle" color="danger">
           Group action
         </LightButton>
-        <Button>Group reference</Button>
+        <Button color="danger">Group reference</Button>
+        <LightButton emphasis="subtle" color="danger" variant="ghost" size="sm">
+          Explicit group action
+        </LightButton>
+        <Button color="danger" variant="ghost" size="sm">
+          Explicit group reference
+        </Button>
       </ButtonGroup>
     </>
   ),
@@ -88,6 +95,7 @@ export const SemanticAndGroupAppearance: Story = {
       ['Delete record', 'Danger reference'],
       ['Solid action', 'Solid reference'],
       ['Group action', 'Group reference'],
+      ['Explicit group action', 'Explicit group reference'],
     ]) {
       const action = canvas.getByRole('button', { name: actionName });
       const reference = canvas.getByRole('button', { name: referenceName });
@@ -98,11 +106,17 @@ export const SemanticAndGroupAppearance: Story = {
         getComputedStyle(reference).backgroundColor,
       );
     }
-    await expect(
-      canvas
-        .getByRole('button', { name: 'Group action' })
-        .getBoundingClientRect().height,
-    ).toBe(32);
+    const grouped = canvas.getByRole('button', { name: 'Group action' });
+    const explicit = canvas.getByRole('button', {
+      name: 'Explicit group action',
+    });
+
+    await expect(grouped).toHaveAttribute('data-color', 'danger');
+    await expect(grouped).toHaveAttribute('data-variant', 'outline');
+    await expect(grouped.getBoundingClientRect().height).toBe(32);
+    await expect(explicit).toHaveAttribute('data-color', 'danger');
+    await expect(explicit).toHaveAttribute('data-variant', 'ghost');
+    await expect(explicit.getBoundingClientRect().height).toBe(24);
   },
 };
 
@@ -122,7 +136,7 @@ export const Catalog: CatalogStory<Story, typeof LightButton> = {
         {
           name: 'state',
           values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state],
+          props: (state: string) => CATALOG_STATES[state] ?? {},
         },
         {
           name: 'emphasis',

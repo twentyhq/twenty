@@ -1,10 +1,16 @@
 import { useState } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/components/feedback';
 
-import { useRenameChatThread } from '@/ai/hooks/useRenameChatThread';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
-export const useAiChatThreadRename = (thread: AgentChatThread) => {
-  const { renameChatThread } = useRenameChatThread();
+export const useAiChatThreadRename = (thread: {
+  id: string;
+  title?: string | null;
+}) => {
+  const { updateOneRecord } = useUpdateOneRecord();
+  const { enqueueToast } = useToast();
 
   const [isRenaming, setIsRenaming] = useState(false);
   const [draftTitle, setDraftTitle] = useState(thread.title ?? '');
@@ -27,10 +33,15 @@ export const useAiChatThreadRename = (thread: AgentChatThread) => {
       return;
     }
 
-    const succeeded = await renameChatThread(thread.id, trimmed);
-
-    if (succeeded) {
+    try {
+      await updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+        idToUpdate: thread.id,
+        updateOneRecordInput: { title: trimmed },
+      });
       setIsRenaming(false);
+    } catch (error) {
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 

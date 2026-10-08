@@ -20,8 +20,7 @@ export const getTimelineActivityAction = (
     return timelineActivityType.action;
   }
 
-  // A 2.33 pod can create a name-only row after the one-time 2.34 backfill
-  // while both versions overlap. This fallback disappears with the 2.35 drop.
+  // TODO: remove this legacy name fallback, the name field was dropped in 2.35.
   return isDefined(timelineActivity.name)
     ? parseTimelineActivityAction(timelineActivity.name)
     : null;

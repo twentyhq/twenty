@@ -1,9 +1,7 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-// Matches the [[skill:<uuid>:<label>]] references the composer inserts when a
-// user picks a skill from the / menu. Only the id prefix is matched so a label
-// containing brackets cannot break the lookup.
+// matches only the id prefix of [[skill:<uuid>:<label>]] so brackets in a label cannot break it
 const SKILL_REFERENCE_REGEX =
   /\[\[skill:([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}):/g;
 

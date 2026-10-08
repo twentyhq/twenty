@@ -1,5 +1,10 @@
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import { qrCodeState } from '@/auth/states/qrCode';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -8,8 +13,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const TwoFactorAuthenticationSetupEffect = () => {
   const { initiateCurrentUserWorkspaceOtpProvisioning } =
@@ -21,6 +27,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
   const loginToken = useAtomStateValue(loginTokenState);
   const qrCode = useAtomStateValue(qrCodeState);
   const setQrCode = useSetAtomState(qrCodeState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
 
   const { t } = useLingui();
 
@@ -54,12 +61,19 @@ export const TwoFactorAuthenticationSetupEffect = () => {
         setQrCode(
           initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri,
         );
-      } catch {
-        enqueueToast({
-          variant: 'error',
-          children: t`Two factor authentication provisioning failed.`,
-          dedupeKey: 'two-factor-authentication-provisioning-initiation-failed',
-        });
+      } catch (error) {
+        if (isGraphqlErrorOfType(error, 'RECOVERY_ENROLLMENT_RESTRICTED')) {
+          setSignInUpStep(SignInUpStep.TwoFactorAuthenticationRecovery);
+        }
+
+        enqueueToast(
+          getTwoFactorAuthenticationErrorToastOptions({
+            error,
+            fallbackMessage: t`Two factor authentication provisioning failed.`,
+            dedupeKey:
+              'two-factor-authentication-provisioning-initiation-failed',
+          }),
+        );
       }
     };
 

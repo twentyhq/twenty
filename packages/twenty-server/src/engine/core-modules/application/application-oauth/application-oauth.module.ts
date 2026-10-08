@@ -14,12 +14,8 @@ import { OAuthTokenController } from 'src/engine/core-modules/application/applic
 import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
@@ -37,11 +33,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationInstallModule,
     TokenModule,
     DomainServerConfigModule,
-    FeatureFlagModule,
-    PermissionsModule,
     ThrottlerModule,
-    TwentyConfigModule,
-    WorkspaceCacheStorageModule,
   ],
   controllers: [
     OAuthTokenController,
@@ -53,6 +45,5 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationOAuthResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
-  exports: [OAuthService],
 })
 export class ApplicationOAuthModule {}

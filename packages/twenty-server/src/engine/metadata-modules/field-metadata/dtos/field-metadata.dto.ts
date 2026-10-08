@@ -97,8 +97,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field(() => MetadataWritability, { nullable: true })
   writability?: MetadataWritability;
 
-  // Deprecated alias kept for one release: stays exposed (and filterable via
-  // FieldFilter) so external API consumers are not broken.
+  // deprecated alias kept for one release so external API consumers do not break
   @IsBoolean()
   @IsOptional()
   @Field({

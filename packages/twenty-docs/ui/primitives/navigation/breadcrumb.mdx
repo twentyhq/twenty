@@ -1,0 +1,160 @@
+---
+title: Breadcrumb
+description: Show a page's location with a trail of ancestor links.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BreadcrumbReference from '/snippets/ui/generated/navigation/breadcrumb.mdx';
+
+`Breadcrumb` renders an ordered navigation trail. It includes decorative separators, link focus styles, and truncation of the final item's label. Items preserve native anchor behavior and support custom routing through `render`.
+
+<StoryEmbed
+  storyId="primitives-navigation-breadcrumb--default"
+  title="Breadcrumb example"
+  height={160}
+/>
+
+## Usage
+
+Pass items in ancestor-to-current order. The navigation landmark defaults to the accessible name `Breadcrumb`; use `aria-label` to localize it or distinguish multiple trails. The final item defaults to `aria-current="page"`, whether it has a destination or displays plain text.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Breadcrumb"
+    links={[
+      { children: 'Home', href: '/' },
+      { children: 'Companies', href: '/companies' },
+      { children: 'Acme' },
+    ]}
+  />
+);
+```
+
+Items with `href` use native anchors. Items without a destination default to text. The `/` separators are decorative, hidden from assistive technology, and outside the links' accessible names. Links follow the browser's normal Tab and Enter behavior, including modifier clicks and opening in a new tab.
+
+## Native item props
+
+Each item accepts native anchor attributes, event handlers, `className`, `style`, and `ref`. For example, pass `target` and `rel` for a new tab, `download` for a file, or `referrerPolicy` to control the request. The item's ref reaches the rendered DOM element.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const ReferenceBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Reference location"
+    links={[
+      {
+        children: 'Documentation',
+        href: 'https://docs.twenty.com',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        referrerPolicy: 'no-referrer',
+      },
+      { children: 'Companies' },
+    ]}
+  />
+);
+```
+
+## Current page
+
+An explicit `aria-current` value on an item takes precedence over its position. Use `aria-current="page"` on another item and `aria-current={false}` on the final item when the current page is earlier in the trail. Other native current-item values, such as `step`, are also preserved. Ensure only the intended item is current.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyContextBreadcrumb = () => (
+  <Breadcrumb
+    links={[
+      { children: 'Home', href: '/' },
+      {
+        children: 'Companies',
+        href: '/companies',
+        'aria-current': 'page',
+      },
+      { children: 'Acme', 'aria-current': false },
+    ]}
+  />
+);
+```
+
+## Router links
+
+Use an item's `render` prop to supply your router's link component, alongside `href`. Pass router-specific destinations, state, and history options directly to that component. `render` accepts either an element or a function receiving the supplied props, including native anchor attributes and its ref.
+
+The rendered link must forward the supplied props and ref to its anchor. Preserve native link behavior when handling navigation, including modifier clicks and new tabs. See [custom components](/ui/primitives/overview#custom-components) for composition requirements.
+
+The application chooses destinations and decides when to show a mobile back action. `Breadcrumb` does not infer routes or collapse ancestors into a menu.
+
+## Long labels
+
+The final item shrinks and truncates with an ellipsis when the container has limited space. Ancestor items retain their width. Plain string labels become the native browser tooltip automatically. Use `title` to override that text or provide a tooltip for rich content. Set `title=""` to suppress the automatic tooltip.
+
+<StoryEmbed
+  storyId="primitives-navigation-breadcrumb--truncation"
+  title="Breadcrumb with a long current page label"
+  height={160}
+/>
+
+## Rich content
+
+An item's `children` can include text and supporting visual content. Keep the label readable and avoid nesting interactive controls inside a link.
+
+<StoryEmbed
+  storyId="primitives-navigation-breadcrumb--rich-content"
+  title="Breadcrumb with supporting content"
+  height={160}
+/>
+
+## Text direction
+
+The trail follows the surrounding text direction. Set `dir="rtl"` on `Breadcrumb` or an ancestor for right-to-left content. When other controls need matching directional keyboard or pointer behavior, also set [DirectionProvider](/ui/primitives/layout/direction-provider) to the same direction.
+
+<StoryEmbed
+  storyId="primitives-navigation-breadcrumb--rtl"
+  title="Breadcrumb in right-to-left content"
+  height={160}
+/>
+
+## Root customization
+
+Native navigation attributes, including accessible names, `className`, `style`, and event handlers, reach the root landmark. The root ref reaches its `nav` element. Root `render` also accepts an element or function; keep the navigation landmark and forward its supplied props and ref.
+
+```tsx
+import { useRef } from 'react';
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const HeaderBreadcrumb = () => {
+  const navigationRef = useRef<HTMLElement>(null);
+  const companiesRef = useRef<HTMLAnchorElement>(null);
+
+  return (
+    <Breadcrumb
+      aria-label="Company location"
+      ref={navigationRef}
+      render={<nav data-location="header" />}
+      links={[
+        {
+          children: 'Companies',
+          href: '/companies',
+          ref: companiesRef,
+          render: (props) => (
+            <a {...props} data-route={props.href}>
+              {props.children}
+            </a>
+          ),
+        },
+        { children: 'Acme' },
+      ]}
+    />
+  );
+};
+```
+
+## Props
+
+<BreadcrumbReference />

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type MouseEvent } from 'react';
+import { type MouseEvent, type RefObject } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { EMAIL_RECIPIENT_DND_TYPE } from '@/activities/emails/recipients/constants/EmailRecipientDndType';
@@ -10,14 +10,13 @@ import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailR
 import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/types/EmailRecipientsFieldId';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 
-export type EmailRecipientChipDropEdge = 'before' | 'after' | null;
+import { type EmailRecipientChipDropEdge } from '@/activities/emails/recipients/types/EmailRecipientChipDropEdge';
 
 const DROP_INDICATOR_WIDTH = '2px';
 // Centers the bar in the 4px chip gap: half the gap plus half the bar.
 const DROP_INDICATOR_OFFSET = '-3px';
 
-// The insertion bar is absolutely positioned so showing it never reflows the
-// wrapping chip row mid-drag.
+// Absolute so showing the bar never reflows the wrapping chip row mid-drag.
 const StyledChipDropZone = styled.div`
   position: relative;
 
@@ -53,6 +52,7 @@ type EmailRecipientsFieldChipCellProps = {
   chipId: string;
   chipIndex: number;
   dropdownId: string;
+  inputRef: RefObject<HTMLInputElement | null>;
   dropEdge: EmailRecipientChipDropEdge;
   fieldId: EmailRecipientsFieldId;
   isFlashing: boolean;
@@ -72,6 +72,7 @@ export const EmailRecipientsFieldChipCell = ({
   chipId,
   chipIndex,
   dropdownId,
+  inputRef,
   dropEdge,
   fieldId,
   isFlashing,
@@ -92,8 +93,7 @@ export const EmailRecipientsFieldChipCell = ({
     selectedIndices,
   };
 
-  // Intercepting in the capture phase keeps a modified click from reaching the
-  // chip's dropdown, so shift/cmd click selects instead of opening the menu.
+  // Capture phase keeps a shift/cmd click from opening the chip's dropdown.
   const handleClickCapture = (event: MouseEvent<HTMLDivElement>) => {
     if (event.shiftKey) {
       event.preventDefault();
@@ -122,13 +122,13 @@ export const EmailRecipientsFieldChipCell = ({
       <StyledChipDropZone
         data-drop-edge={dropEdge ?? undefined}
         onClickCapture={handleClickCapture}
-        // Keeps focus in the text input so chip keyboard navigation survives a
-        // click on a chip.
+        // Keeps focus in the input so chip keyboard navigation survives a click.
         onMouseDown={(event) => event.preventDefault()}
       >
         <EmailRecipientsFieldChip
           chipId={chipId}
           dropdownId={dropdownId}
+          inputRef={inputRef}
           recipient={recipient}
           resolution={resolution}
           isInvalid={isInvalid}

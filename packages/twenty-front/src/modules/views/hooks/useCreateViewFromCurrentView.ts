@@ -23,7 +23,6 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { performViewApiCreate } = usePerformViewApiPersist();
@@ -161,7 +160,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
       const newViewId = result.response.data?.createView.id;
 
-      if (isUndefinedOrNull(newViewId)) {
+      if (!isDefined(newViewId)) {
         throw new Error('Failed to create view');
       }
 

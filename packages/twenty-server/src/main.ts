@@ -71,7 +71,6 @@ const bootstrap = async () => {
 
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 
-  // Apply class-validator container so that we can use injection in validators
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   app.useLogger(logger);

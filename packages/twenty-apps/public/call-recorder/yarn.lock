@@ -1401,8 +1401,8 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     sharp: "npm:^0.35.3"
-    twenty-client-sdk: "npm:2.38.0"
-    twenty-sdk: "npm:2.38.0"
+    twenty-client-sdk: "npm:2.42.0"
+    twenty-sdk: "npm:2.42.0"
     twenty-ui: "npm:^1.0.0-alpha.1"
     typescript: "npm:^5.9.3"
     use-debounce: "npm:^10.0.0"
@@ -1739,14 +1739,14 @@ __metadata:
   linkType: hard
 
 "axios@npm:^1.16.0":
-  version: 1.18.1
-  resolution: "axios@npm:1.18.1"
+  version: 1.20.0
+  resolution: "axios@npm:1.20.0"
   dependencies:
     follow-redirects: "npm:^1.16.0"
-    form-data: "npm:^4.0.5"
+    form-data: "npm:^4.0.6"
     https-proxy-agent: "npm:^5.0.1"
     proxy-from-env: "npm:^2.1.0"
-  checksum: 10c0/9d9378a3af0d0ad730a52ad9d15ec7201f3926ad6e7e8bbffc5ae21ca2835ad11d1d9598698f5dd9718917486039f55ea1d7dc23d8e44fa827a55cc3262c02fc
+  checksum: 10c0/976088acf532286356f4c2e65df1ef47ba7da3936d83e928d0d64357bbf5370456abd3eb5826c15df322335fcb1fe200d4a84b4fcf20ffccdd63b40d80fa495c
   languageName: node
   linkType: hard
 
@@ -2245,7 +2245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.5":
+"form-data@npm:^4.0.6":
   version: 4.0.6
   resolution: "form-data@npm:4.0.6"
   dependencies:
@@ -3620,22 +3620,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.38.0":
-  version: 2.38.0
-  resolution: "twenty-client-sdk@npm:2.38.0"
+"twenty-client-sdk@npm:2.42.0":
+  version: 2.42.0
+  resolution: "twenty-client-sdk@npm:2.42.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/2ab1c0371a5b48187211477740d833c8454e624d45b4ea1b964864077745d85e6921f5e8452eacb1eceab44e698507a4854686e225e467dd4f5fc481553b047b
+  checksum: 10c0/38f77595ffc2bb365cef23a30d7ab7096fcf129d407921bb97497327da27526e9721ba6a1a16d299bd9b3a2e3f0eeac3fb41ec360c0547e7a2c0f0c044cc570b
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:2.38.0":
-  version: 2.38.0
-  resolution: "twenty-sdk@npm:2.38.0"
+"twenty-sdk@npm:2.42.0":
+  version: 2.42.0
+  resolution: "twenty-sdk@npm:2.42.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -3654,12 +3654,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.35.3"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.38.0"
+    twenty-client-sdk: "npm:2.42.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/9946e0018f6233bbd8bd3ab0ca9dcc96276b25126b9c14328b90b15b8f2948d550ebb9395354ec87066bd8ab74372d242d94c4e5629b4cd16421bf21beb8a62e
+  checksum: 10c0/1e43d0c2af55ab8705506f55fe693688575325e506b6cfb16ba4d486d0bfdc0c0f257fc8963ee86f218c10d09b87bacdc769803b6b59283f9e24c7a88346fb84
   languageName: node
   linkType: hard
 
@@ -3736,9 +3736,9 @@ __metadata:
   linkType: hard
 
 "undici@npm:^6.25.0":
-  version: 6.28.0
-  resolution: "undici@npm:6.28.0"
-  checksum: 10c0/3029a70df06b38b5b2f30732932a1e92544c753cd82c8abdf0d35afad48e0ba91612e79fe3a442dbbb9434d6a9eba2b714d5ea28984c903dda2b5d5444f38354
+  version: 6.29.0
+  resolution: "undici@npm:6.29.0"
+  checksum: 10c0/3fb2117985be977ba8b6bd6a242fec915e1b1d0f9681f5adb3f508fb1717352452d65bcfd3bed09e7c776cfda403a4e8edb24a318492f8b2d793439af2b8699b
   languageName: node
   linkType: hard
 

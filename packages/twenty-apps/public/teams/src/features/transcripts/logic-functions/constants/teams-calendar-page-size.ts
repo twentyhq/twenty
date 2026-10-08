@@ -1,0 +1,1 @@
+export const TEAMS_CALENDAR_PAGE_SIZE = 50;

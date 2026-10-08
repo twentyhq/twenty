@@ -13,7 +13,7 @@ import {
   getFieldWidgetDefaultDisplayMode,
   isDisplayModeValidForFieldType,
 } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { FieldWidgetNestedFieldDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetNestedFieldDropdownContent';
@@ -44,8 +44,8 @@ export const FieldWidgetFieldDropdownContent = () => {
   const [drillInFieldMetadataItem, setDrillInFieldMetadataItem] =
     useState<FieldMetadataItem | null>(null);
 
-  const { pageLayoutId, objectNameSingular } =
-    usePageLayoutIdFromContextStore();
+  const { pageLayoutId, targetRecordIdentifier } =
+    usePageLayoutSidePanelTarget();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
@@ -57,8 +57,9 @@ export const FieldWidgetFieldDropdownContent = () => {
   const currentNestedRelationFieldMetadataId =
     fieldConfiguration?.nestedRelationFieldMetadataId;
 
-  const allFieldWidgetFieldMetadataItems =
-    useFieldWidgetEligibleFields(objectNameSingular);
+  const allFieldWidgetFieldMetadataItems = useFieldWidgetEligibleFields(
+    targetRecordIdentifier.targetObjectNameSingular,
+  );
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -158,10 +159,7 @@ export const FieldWidgetFieldDropdownContent = () => {
     return candidatesByFieldId;
   }, [allFieldWidgetFieldMetadataItems, objectMetadataItems]);
 
-  // Keyboard focus carries over between the browse list and the drill-in
-  // submenu since both share the dropdown's selectable list instance. Align
-  // it on the checked option when entering the submenu, and back on the
-  // parent row when leaving, so Enter never activates a stale row.
+  // The browse list and submenu share one selectable list, so realign focus on enter and leave or Enter hits a stale row
   const handleDrillIn = (fieldMetadataItem: FieldMetadataItem) => {
     setDrillInFieldMetadataItem(fieldMetadataItem);
 
@@ -244,8 +242,7 @@ export const FieldWidgetFieldDropdownContent = () => {
     parentFieldMetadataItem: FieldMetadataItem,
     nestedFieldMetadataItem: FieldMetadataItem,
   ) => {
-    // A nested relation widget always renders as an embedded view, so the
-    // effective display mode is TABLE regardless of the current one.
+    // A nested relation widget always renders as an embedded view, so TABLE is the effective display mode
     const relationTableViewIdChange =
       resolveFieldWidgetRelationTableViewIdChange({
         selectedField: parentFieldMetadataItem,

@@ -8,7 +8,8 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Info, Section } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Avatar, Status } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
@@ -65,7 +66,7 @@ export const SettingsApplicationConnectionsSection = ({
             <Section.Header
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
-              adornment={
+              actions={
                 isNonEmptyString(provider.logoUrl) ? (
                   <Avatar
                     shape="square"
@@ -77,10 +78,10 @@ export const SettingsApplicationConnectionsSection = ({
               }
             />
             {isOAuth && !isClientCredentialsConfigured && (
-              <Info
-                accent="danger"
-                text={t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}
-              />
+              <InlineBanner
+                layout="compact"
+                status="error"
+              >{t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}</InlineBanner>
             )}
             {providerConnections.length > 0 && (
               <Table>

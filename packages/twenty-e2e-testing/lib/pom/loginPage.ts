@@ -19,6 +19,7 @@ export class LoginPage {
   private readonly subdomainField: Locator;
   private readonly createWorkspaceButton: Locator;
   private readonly skipOnboardingStepButton: Locator;
+  private readonly skipOnboardingStepAnywayButton: Locator;
   private readonly firstNameField: Locator;
   private readonly lastNameField: Locator;
   private readonly syncEverythingWithGoogleRadio: Locator;
@@ -46,8 +47,7 @@ export class LoginPage {
     this.privacyPolicyLink = page.getByRole('link', { name: 'Privacy Policy' });
     this.emailField = page.getByPlaceholder('Email');
     this.continueButton = page.getByRole('button', {
-      name: 'Continue',
-      exact: true,
+      name: /^Continue(,|$)/,
     });
     this.forgotPasswordButton = page.getByText('Forgot your password?');
     this.passwordField = page.getByPlaceholder('Password');
@@ -66,6 +66,9 @@ export class LoginPage {
       name: 'Skip',
       exact: true,
     });
+    this.skipOnboardingStepAnywayButton = page.getByTestId(
+      'onboarding-skip-dialog-skip-anyway',
+    );
     this.firstNameField = page.getByLabel('First Name', { exact: true });
     this.lastNameField = page.getByLabel('Last name', { exact: true });
     this.syncEverythingWithGoogleRadio = page.locator(
@@ -166,6 +169,12 @@ export class LoginPage {
 
   async clickSkipOnboardingStep() {
     await this.skipOnboardingStepButton.click();
+
+    try {
+      await this.skipOnboardingStepAnywayButton.click({ timeout: 3000 });
+    } catch {
+      // No skip dialog on this step - clicking Skip already moved on
+    }
   }
 
   async typeFirstName(firstName: string) {

@@ -31,6 +31,8 @@ import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { type CampaignDeliverySettlement } from 'src/modules/emailing/types/campaign-delivery-settlement.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build-campaign-batch-replacements.util';
 import { buildCampaignThreadExternalId } from 'src/modules/emailing/utils/build-campaign-thread-external-id.util';
 import { getCampaignDeliveryTableName } from 'src/modules/emailing/utils/get-campaign-delivery-table-name.util';
@@ -60,6 +62,8 @@ export class MessageCampaignBatchDeliveryService {
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly emailBillingService: EmailBillingService,
     private readonly campaignVariableService: CampaignVariableService,
+    private readonly campaignTrackingContentService: CampaignTrackingContentService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly campaignSendSlotService: CampaignSendSlotService,
@@ -305,10 +309,11 @@ export class MessageCampaignBatchDeliveryService {
   }): Promise<void> {
     const { workspaceId, campaignId, emailingDomainId } = data;
 
-    const { template, variableNames } = await compileCampaignBatchTemplate({
-      subjectTemplate: campaign.subject ?? '',
-      bodyTemplate: campaign.bodyTemplate ?? '',
-    });
+    const { template, plainTextSourceHtml, variableNames } =
+      await compileCampaignBatchTemplate({
+        subjectTemplate: campaign.subject ?? '',
+        bodyTemplate: campaign.bodyTemplate ?? '',
+      });
 
     const personRepository = this.workspaceOrmManager.getRepository(
       PersonWorkspaceEntity,
@@ -337,6 +342,30 @@ export class MessageCampaignBatchDeliveryService {
       );
     }
 
+    const trackedBatch = await this.campaignTrackingContentService
+      .prepareBatch({
+        workspaceId,
+        emailingDomainId,
+        template,
+        plainTextSourceHtml,
+        variableNames,
+        recipients: claimedRecipients.map((recipient) => ({
+          deliveryId: recipient.messageId,
+          email: recipient.email,
+          replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
+        })),
+      })
+      .catch((error) => {
+        this.exceptionHandlerService.captureExceptions([error], {
+          additionalData: { workspaceId, campaignId },
+        });
+        this.logger.warn(
+          `Campaign ${campaignId} of workspace ${workspaceId} is sending a batch without tracking: ${error}`,
+        );
+
+        return { template, replacementsByDeliveryId };
+      });
+
     const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
 
     const providerOutcome = await this.emailingDomainSenderService
@@ -345,10 +374,12 @@ export class MessageCampaignBatchDeliveryService {
         emailingDomainId,
         sendKind: 'MARKETING',
         from: fromAddress,
-        template,
+        template: trackedBatch.template,
         recipients: claimedRecipients.map((recipient) => ({
           email: recipient.email,
-          replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
+          replacements:
+            trackedBatch.replacementsByDeliveryId.get(recipient.messageId) ??
+            {},
           headers: buildOutboundThreadingHeaders({
             threadExternalId: buildCampaignThreadExternalId({
               messageId: recipient.messageId,
@@ -559,19 +590,14 @@ export class MessageCampaignBatchDeliveryService {
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({
-        id: In(deliveryIds),
-        state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
-      })
-      .update()
-      .set({
-        state: CAMPAIGN_DELIVERY_STATE.SENDING,
-        claimToken,
-        claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
-      })
-      .returning(['id'])
-      .execute();
+      .update(
+        { id: In(deliveryIds), state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES) },
+        {
+          state: CAMPAIGN_DELIVERY_STATE.SENDING,
+          claimToken,
+          claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
+        },
+      );
 
     return claimedDeliveries.map((delivery) => delivery.id);
   }
@@ -599,20 +625,19 @@ export class MessageCampaignBatchDeliveryService {
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({
-        id: In(recipients.map((recipient) => recipient.messageId)),
-        claimToken,
-      })
-      .update()
-      .set({
-        state,
-        skipReason,
-        failureReason,
-        claimToken: null,
-        claimExpiresAt: null,
-      })
-      .execute();
+      .update(
+        {
+          id: In(recipients.map((recipient) => recipient.messageId)),
+          claimToken,
+        },
+        {
+          state,
+          skipReason,
+          failureReason,
+          claimToken: null,
+          claimExpiresAt: null,
+        },
+      );
   }
 
   private async settleClaimedBatch({
@@ -656,15 +681,14 @@ export class MessageCampaignBatchDeliveryService {
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({ claimToken })
-      .update()
-      .set({
-        state: CAMPAIGN_DELIVERY_STATE.QUEUED,
-        claimToken: null,
-        claimExpiresAt: null,
-      })
-      .execute();
+      .update(
+        { claimToken },
+        {
+          state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+          claimToken: null,
+          claimExpiresAt: null,
+        },
+      );
   }
 
   // Settling threw after the provider had already taken the batch, so the rows

@@ -52,8 +52,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
         flatEntity: flatAction.flatEntity,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
         metadataName: flatAction.metadataName,
-        // searchFieldMetadata is created before its parent object/fields, which
-        // therefore aren't in the maps yet to back-link to.
+        // searchFieldMetadata is created before its parent object and fields
         skipMissingRelatedEntities: true,
       });
 
@@ -90,7 +89,8 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'workflowVersion':
     case 'connectionProvider':
     case 'timelineActivityType':
-    case 'settingsMenuItem': {
+    case 'settingsMenuItem':
+    case 'validationRule': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatAction.flatEntity,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,

@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconComment, IconHome } from '@ui/icon';
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
 
 import { SegmentedControl } from '../SegmentedControl';
@@ -41,6 +41,8 @@ export const Default: Story = {
     );
   },
 };
+
+export const Documentation: Story = {};
 
 export const Dark: Story = {
   globals: { colorScheme: 'dark' },
@@ -112,9 +114,9 @@ export const EqualWidth: Story = {
 
 export const RightToLeft: Story = {
   render: (args) => (
-    <TextDirectionProvider direction="rtl">
+    <DirectionProvider direction="rtl">
       <SegmentedControl {...args} dir="rtl" />
-    </TextDirectionProvider>
+    </DirectionProvider>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -129,4 +131,8 @@ export const RightToLeft: Story = {
     await userEvent.keyboard('{ArrowRight}');
     await waitFor(() => expect(annual).toBeChecked());
   },
+};
+
+export const RightToLeftDocumentation: Story = {
+  render: RightToLeft.render,
 };

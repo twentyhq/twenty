@@ -7,7 +7,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconCopyPlus, IconTrash } from 'twenty-ui/icon';
 
 export const WidgetSettingsFooter = ({

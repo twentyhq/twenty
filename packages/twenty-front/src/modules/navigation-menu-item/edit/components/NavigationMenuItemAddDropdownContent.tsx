@@ -1,39 +1,36 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { NavigationMenuItemInsertionPreviewEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemInsertionPreviewEffect';
-import {
-  useNavigationMenuItemAddOptions,
-  type NavigationMenuItemAddStep,
-} from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions';
+import { useNavigationMenuItemAddOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions';
+import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
-import {
-  NavigationMenuItemSelectableItem,
-  type NavigationMenuItemOption,
-} from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconX } from 'twenty-ui/icon';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   useNavigationMenuItemEditController,
   type NewNavigationMenuItemInput,
 } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
+
+const VIEW_OBJECT_PAGE = 'view-object';
 
 type Step = NavigationMenuItemAddStep;
+
+const STEP_BY_PAGE: Partial<Record<string, Step>> = {
+  object: 'object',
+  view: 'view',
+  [VIEW_OBJECT_PAGE]: 'view',
+  record: 'record',
+  page: 'page',
+};
+
 type NavigationMenuItemAddDropdownContentProps = {
   dropdownId: string;
   section: NavigationMenuItemSection;
@@ -56,9 +53,11 @@ export const NavigationMenuItemAddDropdownContent = ({
   const setNavigationMenuItemIdToRename = useSetAtomState(
     navigationMenuItemIdToRenameState,
   );
-  const [step, setStep] = useState<Step>('main');
+  const { page = 'root', goToPage } = useDropdownPage();
+  const step = STEP_BY_PAGE[page] ?? 'main';
   const [search, setSearch] = useState('');
-  const isSearchingAllItems = step === 'main' && search.trim().length > 0;
+  const isSearchingAllItems =
+    step === 'main' && isNonEmptyString(search.trim());
   const [objectId, setObjectId] = useState<string | null>(null);
   const { currentItems, createItem } =
     useNavigationMenuItemEditController(section);
@@ -69,17 +68,9 @@ export const NavigationMenuItemAddDropdownContent = ({
     ).length;
 
   const navigate = (next: Step) => {
-    setStep(next);
+    goToPage(next);
     setSearch('');
     setObjectId(null);
-  };
-  const goBack = () => {
-    setSearch('');
-    if (isDefined(objectId)) {
-      setObjectId(null);
-    } else {
-      setStep('main');
-    }
   };
   const addItem = (input: NewNavigationMenuItemInput) => {
     const itemId = createItem(input, {
@@ -110,6 +101,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     selectObject: (nextObjectId) => {
       setObjectId(nextObjectId);
       setSearch('');
+      goToPage(VIEW_OBJECT_PAGE);
     },
   });
 
@@ -175,56 +167,55 @@ export const NavigationMenuItemAddDropdownContent = ({
   const emptyMessage = getEmptyMessage();
 
   return (
-    <LegacyDropdownContent
-      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-    >
+    <>
       <NavigationMenuItemInsertionPreviewEffect
         dropdownId={dropdownId}
         section={section}
         folderId={folderId ?? null}
         index={insertionIndex}
       />
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            Icon={step === 'main' ? IconX : IconChevronLeft}
-            onClick={step === 'main' ? onClose : goBack}
-          />
-        }
-      >
-        {titles[step]}
-      </DropdownMenuHeader>
-      <DropdownMenuSearchInput
-        key={`search-${step}-${objectId}`}
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-        placeholder={step === 'record' ? t`Search records...` : t`Search...`}
-      />
-      <DropdownMenuSeparator />
-      <SelectableList
-        key={`${step}-${objectId}`}
-        selectableListInstanceId={`${dropdownId}-list`}
-        focusId={dropdownId}
-        selectableItemIdArray={items
-          .filter((item) => !item.isDisabled)
-          .map((item) => item.id)}
-      >
-        <DropdownMenuItemsContainer hasMaxHeight>
+      <Dropdown.Page id={page} type="picker">
+        {step === 'main' ? (
+          <Dropdown.Header>
+            <Dropdown.Title>{titles[step]}</Dropdown.Title>
+            <Dropdown.Close aria-label={t`Close`} />
+          </Dropdown.Header>
+        ) : (
+          <Dropdown.Back
+            onClick={() => {
+              setSearch('');
+              setObjectId(null);
+            }}
+          >
+            {titles[step]}
+          </Dropdown.Back>
+        )}
+        <Dropdown.Search
+          key={`search-${page}`}
+          autoFocus
+          value={search}
+          onValueChange={setSearch}
+          placeholder={step === 'record' ? t`Search records...` : t`Search...`}
+        />
+        <Dropdown.Separator />
+        <Dropdown.Section scrollable>
           {groups
-            .filter((group) => group.items.length > 0)
+            .filter((group) => isNonEmptyArray(group.items))
             .map((group) => (
-              <Fragment key={group.label}>
-                {isNonEmptyString(group.label) && (
-                  <DropdownMenuSectionLabel label={group.label} />
-                )}
+              <Dropdown.Section
+                key={group.label}
+                label={isNonEmptyString(group.label) ? group.label : undefined}
+              >
                 {group.items.map((item) => (
                   <NavigationMenuItemSelectableItem key={item.id} item={item} />
                 ))}
-              </Fragment>
+              </Dropdown.Section>
             ))}
-          {items.length === 0 && <ListItem disabled>{emptyMessage}</ListItem>}
-        </DropdownMenuItemsContainer>
-      </SelectableList>
-    </LegacyDropdownContent>
+          {!isNonEmptyArray(items) && (
+            <Dropdown.Empty>{emptyMessage}</Dropdown.Empty>
+          )}
+        </Dropdown.Section>
+      </Dropdown.Page>
+    </>
   );
 };

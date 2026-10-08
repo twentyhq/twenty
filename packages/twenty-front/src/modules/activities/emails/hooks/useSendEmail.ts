@@ -6,7 +6,7 @@ import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { t } from '@lingui/core/macro';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   type SendEmailMutation,
   type SendEmailMutationVariables,

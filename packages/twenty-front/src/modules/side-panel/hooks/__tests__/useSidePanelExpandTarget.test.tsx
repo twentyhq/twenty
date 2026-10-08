@@ -8,7 +8,7 @@ import {
   type SidePanelNavigationStackItem,
   sidePanelNavigationStackState,
 } from '@/side-panel/states/sidePanelNavigationStackState';
-import { type ActiveSidePanelPage } from '@/side-panel/types/SidePanelPage';
+import { type NonPageLayoutPurposeBuiltSidePanelPage } from '@/side-panel/types/SidePanelPage';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { IconDotsVertical } from 'twenty-ui/icon';
@@ -79,7 +79,11 @@ const wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-const renderExpandTarget = (sidePanelPage: ActiveSidePanelPage) => {
+const renderExpandTarget = (
+  sidePanelPage:
+    | NonPageLayoutPurposeBuiltSidePanelPage
+    | SidePanelPages.RoutedPage,
+) => {
   const navigationItem: SidePanelNavigationStackItem =
     sidePanelPage === SidePanelPages.RoutedPage
       ? {

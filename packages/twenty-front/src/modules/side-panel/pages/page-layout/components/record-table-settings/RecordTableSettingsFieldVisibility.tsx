@@ -7,7 +7,8 @@ import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/D
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 

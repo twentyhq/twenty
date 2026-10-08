@@ -5,11 +5,11 @@ import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconUserPlus } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type CalendarChannelVisibility } from '~/generated/graphql';
+import { type CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 const StyledDetailsContainer = styled.div`
   display: flex;

@@ -27,6 +27,10 @@ const createHookRecorder = () => {
     document: polyfillWindow.document as unknown as Document,
     callsNamed: (hookName: keyof Hooks) =>
       calls.filter((call) => call.name === hookName),
+    clearCalls: () => {
+      calls.length = 0;
+    },
+    callNames: () => calls.map((call) => call.name),
   };
 };
 
@@ -105,6 +109,21 @@ describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserv
     expect(callsNamed('removeChild')[0].args[2]).toBe(1);
   });
 
+  it('calls removeChild then insertChild when an attached node moves', () => {
+    const { document, callNames, clearCalls } = createHookRecorder();
+
+    const parent = document.createElement('div');
+    const firstChild = document.createElement('span');
+    const secondChild = document.createElement('span');
+
+    parent.appendChild(firstChild);
+    parent.appendChild(secondChild);
+    clearCalls();
+    parent.insertBefore(secondChild, firstChild);
+
+    expect(callNames()).toEqual(['removeChild', 'insertChild']);
+  });
+
   it('skips insertChild and removeChild when the parent is not an element node', () => {
     const { document, callsNamed } = createHookRecorder();
 
@@ -130,6 +149,46 @@ describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserv
     expect(callsNamed('setText')).toHaveLength(1);
     expect(callsNamed('setText')[0].args[0]).toBe(comment);
     expect(callsNamed('setText')[0].args[1]).toBe('second');
+  });
+
+  it.each([
+    ['Node', 'compareDocumentPosition'],
+    ['Node', 'getRootNode'],
+    ['Element', 'closest'],
+    ['Element', 'matches'],
+    ['Element', 'focus'],
+    ['Element', 'blur'],
+  ])(
+    'still ships %s without %s, which the worker polyfills install itself',
+    (className, methodName) => {
+      const polyfillWindow = new Window() as unknown as Record<
+        string,
+        { prototype: Record<string, unknown> }
+      >;
+
+      expect(polyfillWindow[className].prototype).not.toHaveProperty(
+        methodName,
+      );
+    },
+  );
+
+  it('still ships the Node.contains walk that re-reads the argument parent, which the worker replaces', () => {
+    const polyfillWindow = new Window();
+
+    expect(String(polyfillWindow.Node.prototype.contains)).toContain(
+      'node.parentNode',
+    );
+  });
+
+  it('still throws on pseudo-class selectors, which the worker selector engine replaces', () => {
+    const polyfillWindow = new Window();
+    const { document } = polyfillWindow;
+
+    document.body.append(document.createElement('button'));
+
+    expect(() => document.body.querySelectorAll(':disabled')).toThrow(
+      'not implemented',
+    );
   });
 
   it('exposes childNodes as a list whose item returns undefined out of range', () => {

@@ -4,7 +4,7 @@ import { ExpandedFieldDisplay } from '@/ui/layout/expandable-list/components/Exp
 import { t } from '@lingui/core/macro';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { JsonTree } from 'twenty-ui/components';
+import { JsonTree } from 'twenty-ui/components/data-display';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const JsonFieldDisplay = () => {

@@ -8,8 +8,7 @@ export const useFieldWidgetEligibleFields = (objectNameSingular: string) => {
     inlineFieldMetadataItems,
   } = useFieldListFieldMetadataItems({
     objectNameSingular,
-    // Allow advanced relation fields targeting system objects (e.g. calendarEventParticipants)
-    // to appear in the FieldWidget selector — the widget can render them as boxed relations.
+    // The widget renders relations to system objects (e.g. calendarEventParticipants) as boxed relations.
     includeSystemObjectRelations: true,
   });
 

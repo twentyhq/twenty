@@ -21,8 +21,7 @@
 </ParamField>
 
 <ParamField body="Root.children" type="ReactNode | PayloadChildRenderFunction&lt;Payload&gt;">
-  The content of the dialog.
-  This can be a regular React node or a render function that receives the `payload` of the active trigger.
+  Parts or a render function receiving the active trigger payload. Root renders no DOM node.
 </ParamField>
 
 <ParamField body="Root.defaultOpen" type="boolean" default="false">
@@ -42,9 +41,7 @@
 </ParamField>
 
 <ParamField body="Root.handle" type="DialogHandle&lt;Payload&gt;">
-  A handle to associate the dialog with a trigger.
-  If specified, allows external triggers to control the dialog's open state.
-  Can be created with the Dialog.createHandle() method.
+  Connects detached triggers and imperative dialog actions.
 </ParamField>
 
 <ParamField body="Root.modal" type="boolean | &quot;trap-focus&quot;" default="true">
@@ -58,7 +55,7 @@
 </ParamField>
 
 <ParamField body="Root.onOpenChange" type="((open: boolean, eventDetails: DialogRootChangeEventDetails) =&gt; void)">
-  Event handler called when the dialog is opened or closed.
+  Receives the requested state and Base UI event details, including reason, event, trigger and cancel().
 </ParamField>
 
 <ParamField body="Root.onOpenChangeComplete" type="((open: boolean) =&gt; void)">
@@ -102,6 +99,10 @@
   A payload to pass to the dialog when it is opened.
 </ParamField>
 
+<ParamField body="Trigger.ref" type="((((instance: HTMLButtonElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;HTMLButtonElement | null&gt;) &amp; (RefObject&lt;...&gt; | ((instance: HTMLElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)))) | null">
+  Ref to the trigger button, or the element supplied through render.
+</ParamField>
+
 <ParamField body="Trigger.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogTriggerState&gt;">
   Allows you to replace the component's HTML element
   with a different tag, or compose it with another component.
@@ -114,10 +115,92 @@
   returns a style object based on the component's state.
 </ParamField>
 
+### Dialog.Portal
+
+<ParamField body="Portal.className" type="string | ((state: DialogPortalState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Portal.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
+  Portal destination. Omit to use the nearest theme scope, then the parent portal or document body. Explicit null defers mounting; an element, ShadowRoot or ref keeps Base UI resolution.
+</ParamField>
+
+<ParamField body="Portal.keepMounted" type="boolean" default="false">
+  Keeps the portal and its content mounted while closed.
+</ParamField>
+
+<ParamField body="Portal.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the portal div, or the element supplied through render.
+</ParamField>
+
+<ParamField body="Portal.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogPortalState&gt;">
+  Composes the portal element. Native props and handlers target it.
+</ParamField>
+
+<ParamField body="Portal.style" type="CSSProperties | ((state: DialogPortalState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+### Dialog.Backdrop
+
+<ParamField body="Backdrop.className" type="string | ((state: DialogBackdropState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Backdrop.forceRender" type="boolean" default="false">
+  Renders the backdrop even when this dialog is nested.
+</ParamField>
+
+<ParamField body="Backdrop.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the backdrop div, or the element supplied through render.
+</ParamField>
+
+<ParamField body="Backdrop.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogBackdropState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Backdrop.style" type="CSSProperties | ((state: DialogBackdropState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+### Dialog.Viewport
+
+<ParamField body="Viewport.children" type="ReactNode">
+  Popup and any other content within the positioning viewport.
+</ParamField>
+
+<ParamField body="Viewport.className" type="string | ((state: DialogViewportState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Viewport.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the viewport div, or the element supplied through render.
+</ParamField>
+
+<ParamField body="Viewport.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogViewportState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Viewport.style" type="CSSProperties | ((state: DialogViewportState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
 ### Dialog.Popup
 
-<ParamField body="Popup.backdrop" type="boolean | DialogBackdropProps" default="true">
-
+<ParamField body="Popup.children" type="ReactNode">
+  Dialog content. Compose inside Viewport and Portal; Popup does not create those parts or a Backdrop.
 </ParamField>
 
 <ParamField body="Popup.className" type="string | ((state: DialogPopupState) =&gt; string | undefined)">
@@ -125,54 +208,29 @@
   returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Popup.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
-
-</ParamField>
-
 <ParamField body="Popup.finalFocus" type="boolean | RefObject&lt;HTMLElement | null&gt; | ((closeType: InteractionType) =&gt; boolean | void | HTMLElement | null)">
-  Determines the element to focus when the dialog is closed.
-
-  - `false`: Do not move focus.
-  - `true`: Move focus based on the default behavior (trigger or previously focused element).
-  - `RefObject`: Move focus to the ref element.
-  - `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).
-    Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing.
+  Controls focus restoration on closing. Accepts a boolean, element ref or callback receiving the interaction type.
 </ParamField>
 
 <ParamField body="Popup.initialFocus" type="boolean | RefObject&lt;HTMLElement | null&gt; | ((openType: InteractionType) =&gt; boolean | void | HTMLElement | null)">
-  Determines the element to focus when the dialog is opened.
-  By default, focus moves to the first tabbable element inside the popup, except when the dialog
-  is opened by touch — then the popup itself is focused to avoid opening the virtual keyboard.
-
-  - `false`: Do not move focus.
-  - `true`: Move focus based on the default behavior (first tabbable element or popup).
-  - `RefObject`: Move focus to the ref element.
-  - `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).
-    Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing.
+  Controls focus on opening. Accepts a boolean, element ref or callback receiving the interaction type.
 </ParamField>
 
-<ParamField body="Popup.keepMounted" type="boolean">
-
+<ParamField body="Popup.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the popup div, or the element supplied through render.
 </ParamField>
 
 <ParamField body="Popup.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogPopupState&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
-
-  Accepts a `ReactElement` or a function that returns the element to render.
+  Composes the popup element while retaining native props, handlers, dialog semantics and focus behavior.
 </ParamField>
 
-<ParamField body="Popup.size" type="&quot;fullscreen&quot; | &quot;lg&quot; | &quot;md&quot; | &quot;sm&quot; | &quot;xl&quot;" default="md">
-
+<ParamField body="Popup.size" type="&quot;compact&quot; | &quot;fullscreen&quot; | &quot;lg&quot; | &quot;md&quot; | &quot;sm&quot; | &quot;xl&quot;" default="md">
+  Width of the dialog, or `fullscreen` to fill the viewport.
 </ParamField>
 
 <ParamField body="Popup.style" type="CSSProperties | ((state: DialogPopupState) =&gt; CSSProperties | undefined)">
   Style applied to the element, or a function that
   returns a style object based on the component's state.
-</ParamField>
-
-<ParamField body="Popup.viewportProps" type="DialogViewportProps">
-
 </ParamField>
 
 ### Dialog.Title
@@ -213,6 +271,10 @@
   returns a class based on the component's state.
 </ParamField>
 
+<ParamField body="Description.ref" type="Ref&lt;HTMLParagraphElement&gt;">
+  Ref to the description paragraph, or the element supplied through render.
+</ParamField>
+
 <ParamField body="Description.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogDescriptionState&gt;">
   Allows you to replace the component's HTML element
   with a different tag, or compose it with another component.
@@ -236,6 +298,10 @@
   Whether the component renders a native `<button>` element when replacing it
   via the `render` prop.
   Set to `false` if the rendered element is not a button (for example, `<div>`).
+</ParamField>
+
+<ParamField body="Close.ref" type="Ref&lt;HTMLButtonElement&gt;">
+  Ref to the close button, or the element supplied through render.
 </ParamField>
 
 <ParamField body="Close.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogCloseState&gt;">

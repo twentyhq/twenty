@@ -1,10 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
+import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
+import { pickRestResponseFields } from 'src/engine/api/rest/core/utils/pick-rest-response-fields.util';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
@@ -20,7 +22,8 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
 
   async handle(request: AuthenticatedRequest) {
     try {
-      const { id, data, depth } = this.parseRequestArgs(request);
+      const { id, data, depth, requestedFields } =
+        this.parseRequestArgs(request);
 
       const {
         authContext,
@@ -30,7 +33,8 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
-      const selectedFields = await this.computeSelectedFields({
+      const { selectedFields } = await this.computeRecordSelectedFields({
+        requestedFields,
         depth,
         flatObjectMetadata,
         flatObjectMetadataMaps,
@@ -50,14 +54,33 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
           },
         );
 
-      return this.formatRestResponse(record, flatObjectMetadata.nameSingular);
+      return this.formatRestResponse({
+        record,
+        objectNameSingular: flatObjectMetadata.nameSingular,
+        selectedFields,
+      });
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(record: ObjectRecord, objectNameSingular: string) {
-    return { data: { [`update${capitalize(objectNameSingular)}`]: record } };
+  private formatRestResponse({
+    record,
+    objectNameSingular,
+    selectedFields,
+  }: {
+    record: ObjectRecord;
+    objectNameSingular: string;
+    selectedFields: CommonSelectedFields;
+  }) {
+    return {
+      data: {
+        [`update${capitalize(objectNameSingular)}`]: pickRestResponseFields({
+          record,
+          selectedFields,
+        }),
+      },
+    };
   }
 
   private parseRequestArgs(request: AuthenticatedRequest) {
@@ -68,6 +91,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
     }
 
     return {
+      requestedFields: parseFieldsRestRequest(request),
       id,
       data: request.body,
       depth: parseDepthRestRequest(request),

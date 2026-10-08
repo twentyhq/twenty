@@ -5,9 +5,7 @@ export type MediaSessionTrackDescriptor = {
   kind: MediaSessionMediaType;
 };
 
-// Failures carry the standard DOMException name (NotAllowedError,
-// NotFoundError, NotReadableError, ...) so the worker polyfill can reject
-// with the same error shape native getUserMedia produces.
+// Standard DOMException names, so the polyfill rejects like native getUserMedia.
 export type StartMediaStreamResult =
   | {
       status: 'started';
@@ -34,12 +32,9 @@ export type MediaRecorderCapabilities = {
   supportedMimeTypes: string[];
 };
 
-// Media capture crosses the sandbox boundary like hostFetch and geometry:
-// as dedicated thread functions owned by the renderer, not through the
-// application-facing host communication api.
+// Renderer-owned thread functions, not part of the application-facing host communication api.
 export type MediaSessionHostFunctions = {
-  // The requested kinds are forwarded as booleans so video-only capture
-  // does not silently open the microphone.
+  // Per-kind booleans so video-only capture doesn't silently open the microphone.
   mediaStartStream: (params: {
     audio: boolean;
     video: boolean;
@@ -48,8 +43,7 @@ export type MediaSessionHostFunctions = {
     streamId: string;
     trackId: string;
   }) => Promise<void>;
-  // track.enabled must reach the real track: a worker-local flag would let
-  // an application believe it muted a device that is still being captured.
+  // Applied to the real track: a worker-local flag would let an app believe it muted a device still capturing.
   mediaSetTrackEnabled: (params: {
     streamId: string;
     trackId: string;

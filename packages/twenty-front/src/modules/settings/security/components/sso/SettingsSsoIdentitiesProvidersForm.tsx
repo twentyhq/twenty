@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { type IconComponent, IconKey } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { IdentityProviderType } from '~/generated-metadata/graphql';
