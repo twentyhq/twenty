@@ -47,7 +47,7 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
 
     if (
       !isDefined(subscription) ||
-      !isDefined(subscription.creditAllowanceSchedule)
+      !isDefined(subscription.planAllowanceMicro)
     ) {
       return null;
     }
@@ -55,7 +55,8 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
     return {
       periodStart: new Date(subscription.currentPeriodStart),
       periodEnd: new Date(subscription.currentPeriodEnd),
-      schedule: subscription.creditAllowanceSchedule,
+      planAllowanceMicro: subscription.planAllowanceMicro,
+      grants: subscription.creditGrants,
     };
   }
 

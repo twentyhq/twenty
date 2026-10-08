@@ -611,7 +611,8 @@ export class UsageLimitQuotaService implements OnModuleInit {
         periodStart: allowance.periodStart,
       }),
       limitValue: computeCreditAllowanceMicro({
-        schedule: allowance.schedule,
+        planAllowanceMicro: allowance.planAllowanceMicro,
+        grants: allowance.grants,
         nowMs: Date.now(),
       }),
       unit: UsageUnit.CREDIT,

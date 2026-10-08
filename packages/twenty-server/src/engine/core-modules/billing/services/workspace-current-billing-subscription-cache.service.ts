@@ -15,7 +15,6 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
-import { type CreditAllowanceSchedule } from 'src/engine/core-modules/usage-limit/types/credit-allowance-schedule.type';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -47,6 +46,9 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       return NO_BILLING_SUBSCRIPTION;
     }
 
+    const unexpiredGrants =
+      await this.billingCreditGrantService.findUnexpiredGrants(workspaceId);
+
     return {
       id: subscription.id,
       workspaceId: subscription.workspaceId,
@@ -64,31 +66,14 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       trialStart: subscription.trialStart,
       trialEnd: subscription.trialEnd,
       collectionMethod: subscription.collectionMethod,
-      creditAllowanceSchedule:
-        await this.computeCreditAllowanceSchedule(subscription),
-    };
-  }
-
-  private async computeCreditAllowanceSchedule(
-    subscription: BillingSubscriptionEntity,
-  ): Promise<CreditAllowanceSchedule | null> {
-    const planAllowanceMicro = this.findPlanAllowanceMicro(subscription);
-
-    if (!isDefined(planAllowanceMicro)) {
-      return null;
-    }
-
-    const grants = await this.billingCreditGrantService.findUnexpiredGrants(
-      subscription.workspaceId,
-    );
-
-    return {
-      planAllowanceMicro,
-      grants: grants.map(({ amountMicro, effectiveAt, expiresAt }) => ({
-        amountMicro,
-        effectiveAtMs: effectiveAt.getTime(),
-        expiresAtMs: expiresAt?.getTime() ?? null,
-      })),
+      planAllowanceMicro: this.findPlanAllowanceMicro(subscription),
+      creditGrants: unexpiredGrants.map(
+        ({ amountMicro, effectiveAt, expiresAt }) => ({
+          amountMicro,
+          effectiveAtMs: effectiveAt.getTime(),
+          expiresAtMs: expiresAt?.getTime() ?? null,
+        }),
+      ),
     };
   }
 

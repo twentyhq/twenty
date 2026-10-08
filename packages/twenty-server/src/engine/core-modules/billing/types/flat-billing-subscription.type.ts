@@ -4,7 +4,7 @@ import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constan
 import { type BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { type CreditAllowanceSchedule } from 'src/engine/core-modules/usage-limit/types/credit-allowance-schedule.type';
+import { type CreditAllowanceGrant } from 'src/engine/core-modules/usage-limit/types/credit-allowance-grant.type';
 
 export type FlatBillingSubscription = {
   id: string;
@@ -23,7 +23,8 @@ export type FlatBillingSubscription = {
   trialStart: Date | null;
   trialEnd: Date | null;
   collectionMethod: BillingSubscriptionCollectionMethod;
-  creditAllowanceSchedule: CreditAllowanceSchedule | null;
+  planAllowanceMicro: number | null;
+  creditGrants: CreditAllowanceGrant[];
 };
 
 export type CurrentBillingSubscription =
