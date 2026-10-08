@@ -6,6 +6,7 @@ import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadPar
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { GetAgentChatOpenThreadsSummaryDocument } from '~/generated-metadata/graphql';
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
@@ -21,11 +22,12 @@ const READ_PARTICIPANT = {
 };
 
 const mutate = jest.fn();
+const refetchQueries = jest.fn(() => Promise.resolve([]));
 const enqueueToast = jest.fn();
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
-  useApolloClient: () => ({ mutate }),
+  useApolloClient: () => ({ mutate, refetchQueries }),
 }));
 
 jest.mock('twenty-ui/components/feedback', () => ({
@@ -81,6 +83,9 @@ describe('useAgentChatThreadParticipants', () => {
     expect(
       store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID]?.archivedAt,
     ).toEqual(expect.any(String));
+    expect(refetchQueries).toHaveBeenCalledWith({
+      include: [GetAgentChatOpenThreadsSummaryDocument],
+    });
   });
 
   it('puts the member state back and reports a refused snooze', async () => {
