@@ -8,7 +8,7 @@ export const getAgentChatThreadParticipantFromRecord = (
   id: record.id,
   threadId: record.threadId,
   lastReadAt: record.lastReadAt ?? null,
-  archivedAt: record.archivedAt ?? null,
+  doneAt: record.doneAt ?? null,
   snoozedUntil: record.snoozedUntil ?? null,
   isSubscribed: record.isSubscribed ?? true,
   lastMentionedAt: record.lastMentionedAt ?? null,

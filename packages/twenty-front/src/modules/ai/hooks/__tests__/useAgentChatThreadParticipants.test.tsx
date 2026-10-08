@@ -13,7 +13,7 @@ const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 const READ_PARTICIPANT = {
   threadId: THREAD_ID,
   lastReadAt: LAST_ACTIVITY_AT,
-  archivedAt: null,
+  doneAt: null,
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
@@ -81,7 +81,7 @@ describe('useAgentChatThreadParticipants', () => {
     });
 
     expect(
-      store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID]?.archivedAt,
+      store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID]?.doneAt,
     ).toEqual(expect.any(String));
     expect(refetchQueries).toHaveBeenCalledWith({
       include: [GetAgentChatOpenThreadsSummaryDocument],
@@ -113,7 +113,7 @@ describe('useAgentChatThreadParticipants', () => {
     const { result, store } = renderParticipants();
     const archivedParticipant = {
       ...READ_PARTICIPANT,
-      archivedAt: '2026-10-01T10:05:00.000Z',
+      doneAt: '2026-10-01T10:05:00.000Z',
       updatedAt: '2026-10-01T10:05:00.000Z',
     };
 

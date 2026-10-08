@@ -11,7 +11,7 @@ const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 const ARCHIVED_PARTICIPANT = {
   threadId: THREAD_ID,
   lastReadAt: LAST_ACTIVITY_AT,
-  archivedAt: '2026-10-01T11:00:00.000Z',
+  doneAt: '2026-10-01T11:00:00.000Z',
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
@@ -55,7 +55,7 @@ describe('useOptimisticallyRestoreOnSend', () => {
     ).toEqual({
       threadId: THREAD_ID,
       lastReadAt: sentAt,
-      archivedAt: null,
+      doneAt: null,
       snoozedUntil: null,
       isSubscribed: true,
       lastMentionedAt: null,

@@ -28,12 +28,12 @@ const THREADS: {
     | Omit<AgentChatThreadParticipantFieldsFragment, 'id' | 'threadId'>
     | undefined;
 }[] = [
-  { id: 'read', deletedAt: null, participant: { ...READ, archivedAt: null } },
+  { id: 'read', deletedAt: null, participant: { ...READ, doneAt: null } },
   {
     id: 'archived-then-active',
     deletedAt: null,
     lastActivityAt: ACTIVITY_AFTER_ARCHIVE_AT,
-    participant: { ...READ, archivedAt: '2026-10-01T11:00:00.000Z' },
+    participant: { ...READ, doneAt: '2026-10-01T11:00:00.000Z' },
   },
   {
     id: 'snoozed-then-active',
@@ -41,7 +41,7 @@ const THREADS: {
     lastActivityAt: ACTIVITY_AFTER_ARCHIVE_AT,
     participant: {
       ...READ,
-      archivedAt: '2026-10-01T11:00:00.000Z',
+      doneAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
     },
   },
@@ -51,7 +51,7 @@ const THREADS: {
     deletedAt: null,
     participant: {
       ...READ,
-      archivedAt: '2026-10-01T11:00:00.000Z',
+      doneAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
     },
   },
@@ -60,38 +60,38 @@ const THREADS: {
     deletedAt: null,
     participant: {
       ...READ,
-      archivedAt: null,
+      doneAt: null,
       snoozedUntil: '2026-10-01T11:30:00.000Z',
     },
   },
   {
     id: 'archived',
     deletedAt: null,
-    participant: { ...READ, archivedAt: '2026-10-01T11:00:00.000Z' },
+    participant: { ...READ, doneAt: '2026-10-01T11:00:00.000Z' },
   },
   {
     id: 'deleted',
     deletedAt: '2026-10-01T11:00:00.000Z',
-    participant: { ...READ, archivedAt: null },
+    participant: { ...READ, doneAt: null },
   },
   {
     id: 'needs-input',
     deletedAt: null,
     pendingQuestionMessageId: 'question',
-    participant: { ...READ, archivedAt: null },
+    participant: { ...READ, doneAt: null },
   },
   {
     id: 'done-needs-input',
     deletedAt: null,
     pendingQuestionMessageId: 'question',
-    participant: { ...READ, archivedAt: '2026-10-01T11:00:00.000Z' },
+    participant: { ...READ, doneAt: '2026-10-01T11:00:00.000Z' },
   },
   {
     id: 'mentioned',
     deletedAt: null,
     participant: {
       ...READ,
-      archivedAt: null,
+      doneAt: null,
       lastMentionedAt: '2026-10-01T09:00:00.000Z',
     },
   },
@@ -101,7 +101,7 @@ const THREADS: {
     lastActivityAt: ACTIVITY_AFTER_ARCHIVE_AT,
     participant: {
       ...READ,
-      archivedAt: '2026-10-01T11:00:00.000Z',
+      doneAt: '2026-10-01T11:00:00.000Z',
       isSubscribed: false,
     },
   },

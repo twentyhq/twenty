@@ -23,7 +23,7 @@ export const AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS = {
     threadId: true,
     workspaceMemberId: true,
     lastReadAt: true,
-    archivedAt: true,
+    doneAt: true,
     snoozedUntil: true,
     isSubscribed: true,
     lastMentionedAt: true,

@@ -1139,8 +1139,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const getInboxState = async (threadId: string) => {
       const [state] = await global.testDataSource.query(
         `SELECT thread."workspaceMemberId", thread."lastMessageText",
-           participant."archivedAt" IS NOT NULL AS "isArchived",
-           thread."lastActivityAt" > participant."archivedAt" AS "isBackInInbox"
+           participant."doneAt" IS NOT NULL AS "isArchived",
+           thread."lastActivityAt" > participant."doneAt" AS "isBackInInbox"
          FROM "${schema}"."agentChatThread" thread
          LEFT JOIN "${schema}"."agentChatThreadParticipant" participant
            ON participant."threadId" = thread.id AND participant."workspaceMemberId" = thread."workspaceMemberId"

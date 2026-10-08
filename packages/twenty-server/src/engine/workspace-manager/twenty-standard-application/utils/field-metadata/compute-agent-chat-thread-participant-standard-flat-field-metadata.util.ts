@@ -196,6 +196,9 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  // Replaced by doneAt, which upgrade:2-46:add-agent-chat-thread-participant-done-at
+  // fills from it. Still declared because the 2.46 commands before it create
+  // the participant object from these definitions and backfill this column.
   archivedAt: {
     ...createStandardFieldFlatMetadata({
       ...args,
@@ -208,6 +211,31 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         description: i18nLabel(
           msg({
             message: 'When the member archived or snoozed the thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendar',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  doneAt: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'doneAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: 'Done at', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message:
+              'When the member took the thread out of their inbox: done, snoozed or unsubscribed',
             context: 'fieldMetadata.description',
           }),
         ),

@@ -59,7 +59,7 @@ type AgentChatThread {
 }
 
 type AgentChatThreadParticipant {
-  archivedAt: DateTime
+  doneAt: DateTime
   id: UUID!
   isSubscribed: Boolean!
   lastMentionedAt: DateTime

@@ -981,12 +981,12 @@ describe('core workflow visibility (e2e)', () => {
         threadId,
       );
 
-      const [{ archivedAt }] = await global.testDataSource.query(
-        `SELECT "archivedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
+      const [{ doneAt }] = await global.testDataSource.query(
+        `SELECT "doneAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
         [threadId],
       );
 
-      expect(archivedAt).not.toBeNull();
+      expect(doneAt).not.toBeNull();
     });
 
     it('keeps it private to its owner even when the workflow is visible', async () => {

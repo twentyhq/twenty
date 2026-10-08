@@ -183,14 +183,14 @@ export class AgentInboxService {
     workspaceMemberId,
     threadKey,
     title,
-    isArchivedOnCreate = false,
+    isDoneOnCreate = false,
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
     workspaceMemberId: string | null;
     threadKey: string;
     title: string;
-    isArchivedOnCreate?: boolean;
+    isDoneOnCreate?: boolean;
   }): Promise<{
     thread: AgentChatThreadWorkspaceEntity;
     isCreated: boolean;
@@ -213,7 +213,7 @@ export class AgentInboxService {
             workspaceMemberId,
             id: threadId,
             title,
-            isArchived: isArchivedOnCreate,
+            isDone: isDoneOnCreate,
           })
         : await this.createUnaddressedThread({ workspaceId, threadId, title });
 

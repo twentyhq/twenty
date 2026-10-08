@@ -30,7 +30,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const PARTICIPANT_FIELDS =
-  'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt updatedAt';
+  'id threadId lastReadAt doneAt snoozedUntil isSubscribed lastMentionedAt updatedAt';
 
 const buildThreadMutation = (name: string) =>
   parse(
@@ -87,7 +87,7 @@ type Participant = {
   id: string;
   threadId: string;
   lastReadAt: string | null;
-  archivedAt: string | null;
+  doneAt: string | null;
   snoozedUntil: string | null;
   isSubscribed: boolean;
   lastMentionedAt: string | null;
@@ -333,7 +333,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     const lastActivityAt = await readLastActivityAt(threadId);
 
     expect(participant).toMatchObject({
-      archivedAt: null,
+      doneAt: null,
       snoozedUntil: null,
     });
     expect(new Date(participant!.lastReadAt!).getTime()).toBe(
@@ -373,9 +373,9 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     expect(archived.body.errors).toBeUndefined();
-    expect(archived.body.data.archiveAgentChatThread.archivedAt).not.toBeNull();
+    expect(archived.body.data.archiveAgentChatThread.doneAt).not.toBeNull();
     expect(await findMyParticipant(threadId)).toMatchObject({
-      archivedAt: null,
+      doneAt: null,
     });
   });
 
@@ -432,7 +432,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     });
 
     expect(snoozed.body.errors).toBeUndefined();
-    expect(snoozed.body.data.snoozeAgentChatThread.archivedAt).not.toBeNull();
+    expect(snoozed.body.data.snoozeAgentChatThread.doneAt).not.toBeNull();
     expect(
       new Date(snoozed.body.data.snoozeAgentChatThread.snoozedUntil).getTime(),
     ).toBe(new Date(snoozedUntil).getTime());
@@ -443,7 +443,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     expect(moved.body.data.moveAgentChatThreadToInbox).toMatchObject({
-      archivedAt: null,
+      doneAt: null,
       snoozedUntil: null,
     });
   });
@@ -459,7 +459,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(findParticipantEvents(eventSpy, threadId)).toEqual([
       { action: 'created', updatedFields: [] },
       { action: 'updated', updatedFields: ['lastReadAt', 'updatedAt'] },
-      { action: 'updated', updatedFields: ['archivedAt', 'updatedAt'] },
+      { action: 'updated', updatedFields: ['doneAt', 'updatedAt'] },
     ]);
   });
 
@@ -536,18 +536,18 @@ describe('Chat thread participant state through the authenticated API', () => {
       snoozedUntil: snoozedUntil.toISOString(),
     });
 
-    const [row]: { archivedAt: Date | null; snoozedUntil: Date | null }[] =
+    const [row]: { doneAt: Date | null; snoozedUntil: Date | null }[] =
       await global.testDataSource.query(
-        `SELECT "archivedAt", "snoozedUntil" FROM ${SCHEMA}."agentChatThreadParticipant"
+        `SELECT "doneAt", "snoozedUntil" FROM ${SCHEMA}."agentChatThreadParticipant"
          WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
         [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
       );
 
     // The snooze stays recorded, so the chat shows what brought it back
-    expect(row.archivedAt).toBeNull();
+    expect(row.doneAt).toBeNull();
     expect(row.snoozedUntil?.getTime()).toBe(snoozedUntil.getTime());
     expect(findParticipantEvents(eventSpy, threadId)).toEqual([
-      { action: 'updated', updatedFields: ['archivedAt', 'updatedAt'] },
+      { action: 'updated', updatedFields: ['doneAt', 'updatedAt'] },
     ]);
   });
 
@@ -569,7 +569,7 @@ describe('Chat thread participant state through the authenticated API', () => {
         snoozedUntil,
       );
 
-    expect(participant.archivedAt).toBeNull();
+    expect(participant.doneAt).toBeNull();
     expect(new Date(participant.snoozedUntil!).getTime()).toBe(
       snoozedUntil.getTime(),
     );
@@ -597,7 +597,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(findParticipantEvents(eventSpy, threadId)).toEqual([]);
     expect(await findMyParticipant(threadId)).toMatchObject({
-      archivedAt: expect.any(String),
+      doneAt: expect.any(String),
     });
   });
 
@@ -625,7 +625,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(findParticipantEvents(eventSpy, threadId)).toEqual([]);
     expect(await findMyParticipant(threadId)).toMatchObject({
-      archivedAt: expect.any(String),
+      doneAt: expect.any(String),
     });
   });
 
@@ -659,7 +659,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       lastMessageSenderWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       writerWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
     });
-    expect(owner).toMatchObject({ archivedAt: null, snoozedUntil: null });
+    expect(owner).toMatchObject({ doneAt: null, snoozedUntil: null });
     expect(new Date(owner!.lastReadAt!).getTime()).toBe(
       lastActivityAt!.getTime(),
     );
@@ -671,7 +671,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    expect(new Date(member!.archivedAt!).getTime()).toBeLessThan(
+    expect(new Date(member!.doneAt!).getTime()).toBeLessThan(
       lastActivityAt!.getTime(),
     );
     expect(member!.lastReadAt).toBeNull();
@@ -685,7 +685,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     expect(archived.body.errors).toBeUndefined();
-    expect(archived.body.data.archiveAgentChatThread.archivedAt).not.toBeNull();
+    expect(archived.body.data.archiveAgentChatThread.doneAt).not.toBeNull();
 
     await getAppProviderByClassName<AgentChatThreadService>(
       'AgentChatThreadService',
@@ -704,7 +704,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       lastMessageSenderWorkspaceMemberId: null,
     });
 
-    expect(new Date(owner!.archivedAt!).getTime()).toBeLessThan(
+    expect(new Date(owner!.doneAt!).getTime()).toBeLessThan(
       lastActivityAt.getTime(),
     );
     expect(new Date(owner!.lastReadAt!).getTime()).toBeLessThan(
@@ -777,7 +777,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     ]);
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toMatchObject({ lastReadAt: null, archivedAt: null, snoozedUntil: null });
+    ).toMatchObject({ lastReadAt: null, doneAt: null, snoozedUntil: null });
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
@@ -819,7 +819,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toMatchObject({ lastReadAt: null, archivedAt: null, snoozedUntil: null });
+    ).toMatchObject({ lastReadAt: null, doneAt: null, snoozedUntil: null });
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
@@ -883,7 +883,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       { isSubscribed: false, snoozedUntil: null },
     );
     expect(
-      unsubscribed.body.data.unsubscribeFromAgentChatThread.archivedAt,
+      unsubscribed.body.data.unsubscribeFromAgentChatThread.doneAt,
     ).not.toBeNull();
 
     await getAppProviderByClassName<AgentChatThreadService>(
@@ -907,8 +907,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(subscribed.body.errors).toBeUndefined();
     expect(subscribed.body.data.subscribeToAgentChatThread).toMatchObject({
       isSubscribed: true,
-      archivedAt:
-        unsubscribed.body.data.unsubscribeFromAgentChatThread.archivedAt,
+      doneAt: unsubscribed.body.data.unsubscribeFromAgentChatThread.doneAt,
     });
   });
 
@@ -920,7 +919,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(await findMyParticipant(threadId)).toMatchObject({
       isSubscribed: true,
-      archivedAt: null,
+      doneAt: null,
     });
 
     await runThreadMutation('unsubscribeFromAgentChatThread', threadId);
@@ -948,7 +947,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(await findMyParticipant(threadId)).toMatchObject({
       isSubscribed: true,
-      archivedAt: null,
+      doneAt: null,
     });
   });
 
@@ -979,7 +978,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(secondMention).toMatchObject({
       isSubscribed: true,
-      archivedAt: null,
+      doneAt: null,
       lastReadAt: null,
     });
     expect(new Date(secondMention!.lastMentionedAt!).getTime()).toBeGreaterThan(
@@ -1013,7 +1012,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toMatchObject({
       isSubscribed: true,
-      archivedAt: null,
+      doneAt: null,
       lastReadAt: null,
     });
     expect(
@@ -1035,7 +1034,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     const participant = await findMyParticipant(threadId);
 
-    expect(participant).toMatchObject({ archivedAt: null, isSubscribed: true });
+    expect(participant).toMatchObject({ doneAt: null, isSubscribed: true });
     expect(participant!.lastReadAt).not.toBeNull();
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],

@@ -5,7 +5,7 @@ export const AGENT_CHAT_THREAD_PARTICIPANT_FRAGMENT = gql`
     id
     threadId
     lastReadAt
-    archivedAt
+    doneAt
     snoozedUntil
     isSubscribed
     lastMentionedAt

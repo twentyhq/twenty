@@ -50,10 +50,10 @@ type BuildParticipantWriteQuery = (tables: {
 // before this write, is saved as ended. A snoozed thread is meant to come
 // back, so snoozing follows it again
 const buildArchiveQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
-  `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil")
+  `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "doneAt", "snoozedUntil")
    VALUES ($1, $2, CASE WHEN $3::timestamptz <= clock_timestamp() THEN NULL ELSE clock_timestamp() END, $3)
    ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
-     "archivedAt" = EXCLUDED."archivedAt",
+     "doneAt" = EXCLUDED."doneAt",
      "snoozedUntil" = EXCLUDED."snoozedUntil",
      "isSubscribed" = participant."isSubscribed" OR EXCLUDED."snoozedUntil" IS NOT NULL,
      "updatedAt" = now()
@@ -67,7 +67,7 @@ const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
   hasUnreadAssignedThread: false,
 };
 
-const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "updatedAt"`;
+const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "doneAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "updatedAt"`;
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
@@ -129,7 +129,7 @@ export class AgentChatThreadParticipantService {
          VALUES ($1, $2, clock_timestamp())
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
            "lastReadAt" = NULL,
-           "archivedAt" = NULL,
+           "doneAt" = NULL,
            "snoozedUntil" = NULL,
            "isSubscribed" = true,
            "lastMentionedAt" = EXCLUDED."lastMentionedAt",
@@ -158,7 +158,7 @@ export class AgentChatThreadParticipantService {
          FROM ${threadTable} thread WHERE thread.id = $1
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
            "lastReadAt" = CASE WHEN $3::boolean THEN participant."lastReadAt" END,
-           "archivedAt" = NULL,
+           "doneAt" = NULL,
            "snoozedUntil" = NULL,
            "isSubscribed" = true,
            "updatedAt" = now()
@@ -207,11 +207,11 @@ export class AgentChatThreadParticipantService {
     return this.upsertOne(
       args,
       ({ participantTable }) =>
-        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "isSubscribed", "archivedAt")
+        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "isSubscribed", "doneAt")
          VALUES ($1, $2, false, clock_timestamp())
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
            "isSubscribed" = false,
-           "archivedAt" = EXCLUDED."archivedAt",
+           "doneAt" = EXCLUDED."doneAt",
            "snoozedUntil" = NULL,
            "updatedAt" = now()
          RETURNING *`,
@@ -292,9 +292,9 @@ export class AgentChatThreadParticipantService {
       args,
       ({ participantTable }) =>
         `UPDATE ${participantTable}
-         SET "archivedAt" = NULL, "updatedAt" = now()
+         SET "doneAt" = NULL, "updatedAt" = now()
          WHERE "threadId" = $1 AND "workspaceMemberId" = $2
-           AND "snoozedUntil" = $3 AND "archivedAt" IS NOT NULL
+           AND "snoozedUntil" = $3 AND "doneAt" IS NOT NULL
          RETURNING *`,
       [snoozedUntil],
     );
@@ -331,7 +331,7 @@ export class AgentChatThreadParticipantService {
         `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
          VALUES ($1, $2)
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
-           "archivedAt" = NULL,
+           "doneAt" = NULL,
            "snoozedUntil" = NULL,
            "isSubscribed" = true,
            "updatedAt" = now()
@@ -390,7 +390,7 @@ export class AgentChatThreadParticipantService {
              SELECT thread.id, $2, thread."lastActivityAt" FROM thread
              ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
                "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
-               "archivedAt" = NULL,
+               "doneAt" = NULL,
                "snoozedUntil" = NULL,
                "isSubscribed" = true,
                "updatedAt" = now()
@@ -478,7 +478,7 @@ export class AgentChatThreadParticipantService {
              LEFT JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
                ON participant."threadId" = thread.id AND participant."workspaceMemberId" = :summaryWorkspaceMemberId
              WHERE COALESCE(participant."isSubscribed", true)
-               AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt")
+               AND (participant."doneAt" IS NULL OR thread."lastActivityAt" > participant."doneAt")
            )
            SELECT
              COUNT(*)::int AS "openThreadCount",

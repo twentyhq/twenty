@@ -4,12 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
-// Activity and archiving have different writers and are compared rather than
-// folded into a status, so a message landing right after an archive brings the
-// thread back whichever write committed last. Snooze is an archive with a
-// wake-up time; the server unarchives the thread when it passes and keeps the
-// snooze as what brought it back. A member who unsubscribed keeps the thread
-// under done whatever happens in it.
+// doneAt is when the member took the thread out of their inbox: marked done,
+// snoozed or unsubscribed. Activity after it brings the thread back, unless
+// the member unsubscribed, and is compared rather than folded into a status
+// so a message landing right after doneAt wins whichever write committed
+// last. When a snooze ends the server clears doneAt and keeps snoozedUntil as
+// what brought the thread back.
 export const getAgentChatThreadInboxStatus = ({
   lastActivityAt,
   participant,
@@ -23,7 +23,7 @@ export const getAgentChatThreadInboxStatus = ({
       isAfter(lastActivityAt, participant.lastReadAt));
   const isSubscribed = participant?.isSubscribed ?? true;
   const isMentioned = isDefined(participant?.lastMentionedAt);
-  const archivedAt = participant?.archivedAt;
+  const doneAt = participant?.doneAt;
   const snoozedUntil = participant?.snoozedUntil;
 
   if (!isSubscribed) {
@@ -32,13 +32,11 @@ export const getAgentChatThreadInboxStatus = ({
       isUnread,
       isSubscribed,
       isMentioned,
-      event: isDefined(archivedAt)
-        ? { type: 'UNSUBSCRIBED', at: archivedAt }
-        : null,
+      event: isDefined(doneAt) ? { type: 'UNSUBSCRIBED', at: doneAt } : null,
     };
   }
 
-  if (!isDefined(archivedAt)) {
+  if (!isDefined(doneAt)) {
     return {
       scope: 'INBOX',
       isUnread,
@@ -52,7 +50,7 @@ export const getAgentChatThreadInboxStatus = ({
     };
   }
 
-  if (isDefined(lastActivityAt) && isAfter(lastActivityAt, archivedAt)) {
+  if (isDefined(lastActivityAt) && isAfter(lastActivityAt, doneAt)) {
     return {
       scope: 'INBOX',
       isUnread,
@@ -68,7 +66,7 @@ export const getAgentChatThreadInboxStatus = ({
       isUnread,
       isSubscribed,
       isMentioned,
-      event: { type: 'DONE', at: archivedAt },
+      event: { type: 'DONE', at: doneAt },
     };
   }
 

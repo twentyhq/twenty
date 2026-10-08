@@ -14,7 +14,7 @@ export class AgentChatThreadParticipantDTO {
   lastReadAt: Date | null;
 
   @Field(() => Date, { nullable: true })
-  archivedAt: Date | null;
+  doneAt: Date | null;
 
   @Field(() => Date, { nullable: true })
   snoozedUntil: Date | null;

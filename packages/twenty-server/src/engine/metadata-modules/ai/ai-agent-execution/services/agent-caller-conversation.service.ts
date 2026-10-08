@@ -77,7 +77,7 @@ export class AgentCallerConversationService {
           workspaceMemberId,
           threadKey: key,
           title,
-          isArchivedOnCreate: true,
+          isDoneOnCreate: true,
         });
 
       if (

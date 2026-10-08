@@ -42,7 +42,7 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
       [THREAD_ID]: {
         threadId: THREAD_ID,
         lastReadAt: '2026-10-01T09:00:00.000Z',
-        archivedAt: null,
+        doneAt: null,
         snoozedUntil: null,
         isSubscribed: true,
         lastMentionedAt: null,

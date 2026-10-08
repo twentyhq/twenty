@@ -7,13 +7,16 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 // isSubscribed and assignee are created by the last 2.46 chat commands, so
-// they only exist once the inbox backfill and the agentTurn run fields are in place
+// they only exist once the inbox backfill and the agentTurn run fields are in
+// place. doneAt is created by add-agent-chat-thread-participant-done-at, after
+// them on workspaces that already had the participant object.
 const AGENT_HISTORY_UPGRADED_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentTurn.fields.status.universalIdentifier,
   STANDARD_OBJECTS.agentChatThreadParticipant.fields.isSubscribed
     .universalIdentifier,
   STANDARD_OBJECTS.agentChatThreadParticipant.fields.lastMentionedAt
     .universalIdentifier,
+  STANDARD_OBJECTS.agentChatThreadParticipant.fields.doneAt.universalIdentifier,
   STANDARD_OBJECTS.agentChatThread.fields.assignee.universalIdentifier,
 ];
 

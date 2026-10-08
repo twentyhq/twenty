@@ -1,19 +1,19 @@
 import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
 
 const THREAD_ID = 'thread';
-const ARCHIVED_AT = '2026-10-01T10:00:00.000Z';
+const DONE_AT = '2026-10-01T10:00:00.000Z';
 
 const getStatus = ({
   lastActivityAt = '2026-10-01T09:00:00.000Z',
   lastReadAt = lastActivityAt,
-  archivedAt = null,
+  doneAt = null,
   snoozedUntil = null,
   isSubscribed = true,
   lastMentionedAt = null,
 }: {
   lastActivityAt?: string | null;
   lastReadAt?: string | null;
-  archivedAt?: string | null;
+  doneAt?: string | null;
   snoozedUntil?: string | null;
   isSubscribed?: boolean;
   lastMentionedAt?: string | null;
@@ -24,11 +24,11 @@ const getStatus = ({
       id: 'participant',
       threadId: THREAD_ID,
       lastReadAt,
-      archivedAt,
+      doneAt,
       snoozedUntil,
       isSubscribed,
       lastMentionedAt,
-      updatedAt: ARCHIVED_AT,
+      updatedAt: DONE_AT,
     },
   });
 
@@ -68,29 +68,29 @@ describe('getAgentChatThreadInboxStatus', () => {
     );
   });
 
-  it('marks a thread done until activity follows the archive', () => {
-    expect(getStatus({ archivedAt: ARCHIVED_AT })).toEqual({
+  it('marks a thread done until activity follows it', () => {
+    expect(getStatus({ doneAt: DONE_AT })).toEqual({
       scope: 'ARCHIVED',
       isUnread: false,
       isSubscribed: true,
       isMentioned: false,
-      event: { type: 'DONE', at: ARCHIVED_AT },
+      event: { type: 'DONE', at: DONE_AT },
     });
-    expect(
-      getStatus({ archivedAt: ARCHIVED_AT, lastActivityAt: ARCHIVED_AT }).scope,
-    ).toBe('ARCHIVED');
+    expect(getStatus({ doneAt: DONE_AT, lastActivityAt: DONE_AT }).scope).toBe(
+      'ARCHIVED',
+    );
     expect(
       getStatus({
-        archivedAt: ARCHIVED_AT,
+        doneAt: DONE_AT,
         lastActivityAt: '2026-10-01T11:00:00.000Z',
       }),
     ).toMatchObject({ scope: 'INBOX', event: null });
   });
 
-  it('snoozes a thread until the server unarchives it', () => {
+  it('snoozes a thread until the server ends the snooze', () => {
     const snoozedUntil = '2026-10-02T09:00:00.000Z';
 
-    expect(getStatus({ archivedAt: ARCHIVED_AT, snoozedUntil })).toMatchObject({
+    expect(getStatus({ doneAt: DONE_AT, snoozedUntil })).toMatchObject({
       scope: 'SNOOZED',
       event: { type: 'SNOOZED', at: snoozedUntil },
     });
@@ -112,7 +112,7 @@ describe('getAgentChatThreadInboxStatus', () => {
   it('brings a snoozed thread back early when activity follows the snooze', () => {
     expect(
       getStatus({
-        archivedAt: ARCHIVED_AT,
+        doneAt: DONE_AT,
         snoozedUntil: '2026-10-02T09:00:00.000Z',
         lastActivityAt: '2026-10-01T11:00:00.000Z',
         lastReadAt: '2026-10-01T09:00:00.000Z',
@@ -130,16 +130,16 @@ describe('getAgentChatThreadInboxStatus', () => {
     expect(
       getStatus({
         isSubscribed: false,
-        archivedAt: ARCHIVED_AT,
+        doneAt: DONE_AT,
         lastActivityAt: '2026-10-01T11:00:00.000Z',
-        lastReadAt: ARCHIVED_AT,
+        lastReadAt: DONE_AT,
       }),
     ).toEqual({
       scope: 'ARCHIVED',
       isUnread: true,
       isSubscribed: false,
       isMentioned: false,
-      event: { type: 'UNSUBSCRIBED', at: ARCHIVED_AT },
+      event: { type: 'UNSUBSCRIBED', at: DONE_AT },
     });
   });
 

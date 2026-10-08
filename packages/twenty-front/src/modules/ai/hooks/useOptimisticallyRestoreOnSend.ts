@@ -51,7 +51,7 @@ export const useOptimisticallyRestoreOnSend = () => {
               ...participants[threadId],
               threadId,
               lastReadAt: optimisticUpdatedAt,
-              archivedAt: null,
+              doneAt: null,
               snoozedUntil: null,
               isSubscribed: true,
               updatedAt:

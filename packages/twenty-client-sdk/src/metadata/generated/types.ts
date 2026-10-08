@@ -270,7 +270,7 @@ export default {
         "ID": {},
         "Float": {},
         "AgentChatThreadParticipant": {
-            "archivedAt": [
+            "doneAt": [
                 185
             ],
             "id": [

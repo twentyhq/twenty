@@ -4,7 +4,7 @@ const READ_PARTICIPANT = {
   id: 'participant',
   threadId: 'thread',
   lastReadAt: '2026-10-01T10:00:00.000Z',
-  archivedAt: null,
+  doneAt: null,
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,

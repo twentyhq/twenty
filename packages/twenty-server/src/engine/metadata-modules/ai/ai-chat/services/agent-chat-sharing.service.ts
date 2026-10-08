@@ -210,7 +210,7 @@ export class AgentChatSharingService {
     id?: string;
     title?: string;
     // filed under done for its owner, until activity brings it back to their inbox
-    isArchived?: boolean;
+    isDone?: boolean;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
@@ -268,7 +268,7 @@ export class AgentChatSharingService {
           workspaceMemberId: authContext.workspaceMemberId,
           threadIds: [record.id],
           participantObjectMetadataId,
-          isArchived: args.isArchived,
+          isDone: args.isDone,
         });
         return setUpRecord ?? record;
       },
@@ -285,13 +285,13 @@ export class AgentChatSharingService {
     workspaceMemberId,
     threadIds,
     participantObjectMetadataId,
-    isArchived = false,
+    isDone = false,
   }: AgentHistoryStorageContext & {
     workspaceId: string;
     workspaceMemberId: string;
     threadIds: string[];
     participantObjectMetadataId: string | undefined;
-    isArchived?: boolean;
+    isDone?: boolean;
   }): Promise<AgentChatThreadWorkspaceEntity[]> {
     if (!isDefined(participantObjectMetadataId)) {
       return [];
@@ -304,7 +304,7 @@ export class AgentChatSharingService {
          WHERE id = ANY($1::uuid[]) AND "lastActivityAt" IS NULL
          RETURNING *
        ), participant AS (
-         INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt")
+         INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "doneAt")
          SELECT thread.id, $2, thread."lastActivityAt", CASE WHEN $4::boolean THEN clock_timestamp() END
          FROM thread
          ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
@@ -317,7 +317,7 @@ export class AgentChatSharingService {
          })}
        )
        SELECT * FROM thread`,
-      [threadIds, workspaceMemberId, participantObjectMetadataId, isArchived],
+      [threadIds, workspaceMemberId, participantObjectMetadataId, isDone],
     );
   }
 

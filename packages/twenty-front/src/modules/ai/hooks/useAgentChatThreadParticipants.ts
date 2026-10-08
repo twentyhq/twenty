@@ -146,7 +146,7 @@ export const useAgentChatThreadParticipants = () => {
         mutation: ArchiveAgentChatThreadDocument,
         variables: { threadId },
         optimisticParticipant: {
-          archivedAt: new Date().toISOString(),
+          doneAt: new Date().toISOString(),
           snoozedUntil: null,
         },
       }),
@@ -167,7 +167,7 @@ export const useAgentChatThreadParticipants = () => {
             mutation: SnoozeAgentChatThreadDocument,
             variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
             optimisticParticipant: {
-              archivedAt: new Date().toISOString(),
+              doneAt: new Date().toISOString(),
               snoozedUntil: snoozedUntil.toISOString(),
               isSubscribed: true,
             },
@@ -184,7 +184,7 @@ export const useAgentChatThreadParticipants = () => {
         mutation: MoveAgentChatThreadToInboxDocument,
         variables: { threadId },
         optimisticParticipant: {
-          archivedAt: null,
+          doneAt: null,
           snoozedUntil: null,
           isSubscribed: true,
         },
@@ -209,7 +209,7 @@ export const useAgentChatThreadParticipants = () => {
         variables: { threadId },
         optimisticParticipant: {
           isSubscribed: false,
-          archivedAt: new Date().toISOString(),
+          doneAt: new Date().toISOString(),
           snoozedUntil: null,
         },
       }),

@@ -39,7 +39,7 @@ const READ_PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   id: PARTICIPANT_ID,
   threadId: THREAD_ID,
   lastReadAt: '2026-10-01T10:00:00.000Z',
-  archivedAt: null,
+  doneAt: null,
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
@@ -134,7 +134,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
   it('applies the end of a snooze', () => {
     const snoozedParticipant = {
       ...READ_PARTICIPANT,
-      archivedAt: '2026-10-01T11:00:00.000Z',
+      doneAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
       isSubscribed: true,
       lastMentionedAt: null,
@@ -142,7 +142,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     const { store } = renderEffect({ [THREAD_ID]: snoozedParticipant });
 
     const change = {
-      archivedAt: null,
+      doneAt: null,
       updatedAt: '2026-10-02T09:00:00.000Z',
     };
 
@@ -158,17 +158,17 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     const { store } = renderEffect({
       [THREAD_ID]: {
         ...READ_PARTICIPANT,
-        archivedAt: '2026-10-01T10:01:00.000Z',
+        doneAt: '2026-10-01T10:01:00.000Z',
       },
     });
     const loadedArchivedParticipant = {
       ...READ_PARTICIPANT,
-      archivedAt: '2026-10-01T10:01:00.000Z',
+      doneAt: '2026-10-01T10:01:00.000Z',
       updatedAt: '2026-10-01T10:01:00.000Z',
     };
 
     receiveParticipantUpdate(PARTICIPANT_ID, {
-      archivedAt: null,
+      doneAt: null,
       updatedAt: '2026-10-01T10:02:00.000Z',
     });
 
@@ -180,7 +180,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       )[THREAD_ID],
     ).toEqual({
       ...READ_PARTICIPANT,
-      archivedAt: null,
+      doneAt: null,
       updatedAt: '2026-10-01T10:02:00.000Z',
     });
   });
@@ -189,7 +189,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     const { store } = renderEffect({ [THREAD_ID]: READ_PARTICIPANT });
 
     receiveParticipantUpdate(PARTICIPANT_ID, {
-      archivedAt: '2026-10-01T09:58:00.000Z',
+      doneAt: '2026-10-01T09:58:00.000Z',
       updatedAt: '2026-10-01T09:59:00.000Z',
     });
 

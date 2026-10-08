@@ -64,7 +64,7 @@ describe('AgentCallerConversationService', () => {
         workspaceMemberId: 'recipient-id',
         threadKey: 'run-id:step-id',
         title: 'Draft the quote',
-        isArchivedOnCreate: true,
+        isDoneOnCreate: true,
       });
     });
 

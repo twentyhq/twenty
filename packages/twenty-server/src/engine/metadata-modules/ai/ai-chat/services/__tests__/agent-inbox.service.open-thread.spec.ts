@@ -71,7 +71,7 @@ describe('AgentInboxService.openThread', () => {
     const { thread, isCreated } = await service.openThread({
       ...OPEN_ARGS,
       workspaceMemberId: 'member-id',
-      isArchivedOnCreate: true,
+      isDoneOnCreate: true,
     });
 
     expect(isCreated).toBe(true);
@@ -87,7 +87,7 @@ describe('AgentInboxService.openThread', () => {
       workspaceMemberId: 'member-id',
       id: thread.id,
       title: 'Draft the quote',
-      isArchived: true,
+      isDone: true,
     });
   });
 

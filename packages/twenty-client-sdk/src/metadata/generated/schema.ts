@@ -66,7 +66,7 @@ export interface AgentChatThread {
 }
 
 export interface AgentChatThreadParticipant {
-    archivedAt?: Scalars['DateTime']
+    doneAt?: Scalars['DateTime']
     id: Scalars['UUID']
     isSubscribed: Scalars['Boolean']
     lastMentionedAt?: Scalars['DateTime']
@@ -3966,7 +3966,7 @@ export interface AgentChatThreadGenqlSelection{
 }
 
 export interface AgentChatThreadParticipantGenqlSelection{
-    archivedAt?: boolean | number
+    doneAt?: boolean | number
     id?: boolean | number
     isSubscribed?: boolean | number
     lastMentionedAt?: boolean | number

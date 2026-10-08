@@ -96,7 +96,9 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '4345764d-878b-4a3a-b1c9-822378f868e6',
     },
     lastReadAt: { universalIdentifier: '7e3a8319-c127-4c4f-add4-6feac37ea555' },
+    // Replaced by doneAt, see the participant field definitions
     archivedAt: { universalIdentifier: 'ee092c9d-f27e-4fbc-8dad-9ec950936216' },
+    doneAt: { universalIdentifier: 'ecdb61fd-a3de-43f6-b8fd-d0ebb07f80b4' },
     snoozedUntil: {
       universalIdentifier: '65bc5785-877d-4363-b65c-95175ba20fd0',
     },
