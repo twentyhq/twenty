@@ -612,6 +612,24 @@ describe('useFrontComponentExecutionContext', () => {
       expect(mockNavigateSidePanel).not.toHaveBeenCalled();
     });
 
+    it('rejects page layout pages because they need the layout they edit', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          page: SidePanelPages.DashboardChartSettings,
+          pageTitle: 'Chart',
+          pageIcon: 'IconChartPie',
+        }),
+      ).rejects.toThrow(
+        'dashboard-chart-settings edits the page layout it was opened from and cannot be opened by a front component',
+      );
+
+      expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    });
+
     it('maps legacy Copilot calls to AskAI', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
