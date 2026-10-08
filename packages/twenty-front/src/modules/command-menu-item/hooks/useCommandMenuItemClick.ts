@@ -16,7 +16,10 @@ import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/engine-c
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  EngineComponentKey,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({
   item,
@@ -29,6 +32,9 @@ export const useCommandMenuItemClick = ({
 }) => {
   const isAsyncCsvExportEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
+  );
+  const isRecordCreationFormEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const mountCommand = useMountCommand();
@@ -60,6 +66,11 @@ export const useCommandMenuItemClick = ({
     item.frontComponent?.isHeadless !== true;
 
   const shouldMountCommand = isHeadless || isEngineCommand;
+
+  const isRecordCreationFormCommand =
+    isEngineCommand &&
+    item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
+    isRecordCreationFormEnabled;
 
   const closeBehavior = shouldMountCommand
     ? ({
@@ -136,6 +147,6 @@ export const useCommandMenuItemClick = ({
     handleClick,
     disabled,
     progress: shouldMountCommand ? commandMenuItemProgress : undefined,
-    showDisabledLoader: shouldMountCommand ? isMounted : false,
+    showDisabledLoader: disabled && !isRecordCreationFormCommand,
   };
 };

@@ -1,16 +1,23 @@
 import { act, renderHook } from '@testing-library/react';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { IconApps } from 'twenty-ui/icon';
 
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { headlessCommandContextApisState } from '@/command-menu-item/engine-command/states/headlessCommandContextApisState';
 import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMenuItemClick';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
+import {
+  EngineComponentKey,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 
 const mockOpenFrontComponentInSidePanel = jest.fn();
 const mockMountCommand = jest.fn();
+const mockUseIsFeatureEnabled = jest.fn();
 
 jest.mock(
   '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow',
@@ -20,7 +27,8 @@ jest.mock(
 );
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => false,
+  useIsFeatureEnabled: (featureFlagKey: FeatureFlagKey) =>
+    mockUseIsFeatureEnabled(featureFlagKey),
 }));
 
 jest.mock('@/command-menu-item/engine-command/hooks/useMountCommand', () => ({
@@ -58,25 +66,115 @@ const FRONT_COMPONENT_COMMAND_MENU_ITEM = {
 } as CommandMenuItemDefinition;
 
 const getWrapper =
-  (commandMenuContextApi: CommandMenuContextApi) =>
+  (commandMenuContextApi: CommandMenuContextApi, store = createStore()) =>
   ({ children }: { children: ReactNode }) => (
-    <CommandMenuContext.Provider
-      value={{
-        containerType: CommandMenuItemContainerType.CommandMenuList,
-        displayType: 'listItem',
-        commandMenuItems: [],
-        commandMenuContextApi,
-        isInPreviewMode: false,
-      }}
-    >
-      {children}
-    </CommandMenuContext.Provider>
+    <JotaiProvider store={store}>
+      <CommandMenuContext.Provider
+        value={{
+          containerType: CommandMenuItemContainerType.CommandMenuList,
+          displayType: 'listItem',
+          commandMenuItems: [],
+          commandMenuContextApi,
+          isInPreviewMode: false,
+        }}
+      >
+        {children}
+      </CommandMenuContext.Provider>
+    </JotaiProvider>
   );
 
 describe('useCommandMenuItemClick', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseIsFeatureEnabled.mockReturnValue(false);
   });
+
+  it.each([
+    {
+      description: 'record creation while the form is open',
+      engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+      isRecordCreationFormEnabled: true,
+      expectedLoader: false,
+    },
+    {
+      description: 'record creation without the form',
+      engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+      isRecordCreationFormEnabled: false,
+      expectedLoader: true,
+    },
+    {
+      description: 'an export with creation forms enabled',
+      engineComponentKey: EngineComponentKey.EXPORT_RECORDS,
+      isRecordCreationFormEnabled: true,
+      expectedLoader: true,
+    },
+  ])(
+    'keeps $description disabled with the appropriate loader until completion',
+    async ({
+      engineComponentKey,
+      isRecordCreationFormEnabled,
+      expectedLoader,
+    }) => {
+      const store = createStore();
+      const item = {
+        id: 'engine-command',
+        engineComponentKey,
+      } as CommandMenuItemDefinition;
+
+      mockUseIsFeatureEnabled.mockImplementation(
+        (featureFlagKey: FeatureFlagKey) =>
+          featureFlagKey === FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED
+            ? isRecordCreationFormEnabled
+            : true,
+      );
+
+      store.set(
+        headlessCommandContextApisState.atom,
+        new Map([
+          [
+            item.id,
+            {
+              engineComponentKey,
+              contextStoreInstanceId: 'context-store-instance-id',
+              objectMetadataItem: null,
+              currentViewId: null,
+              recordIndexId: null,
+              targetedRecordsRule: {
+                mode: 'selection',
+                selectedRecordIds: [],
+              },
+              selectedRecords: [],
+              graphqlFilter: null,
+              payload: null,
+              navigationTargetObjectMetadataId: null,
+            },
+          ],
+        ]),
+      );
+
+      const { result } = renderHook(
+        () =>
+          useCommandMenuItemClick({ item, Icon: IconApps, label: 'Create' }),
+        { wrapper: getWrapper(EMPTY_COMMAND_MENU_CONTEXT_API, store) },
+      );
+
+      expect(result.current.disabled).toBe(true);
+      expect(result.current.showDisabledLoader).toBe(expectedLoader);
+
+      await act(async () => {
+        await result.current.handleClick();
+      });
+
+      expect(mockMountCommand).not.toHaveBeenCalled();
+
+      act(() => {
+        store.set(headlessCommandContextApisState.atom, new Map());
+      });
+
+      expect(result.current.disabled).toBe(false);
+      expect(result.current.showDisabledLoader).toBe(false);
+    },
+  );
 
   it.each([
     {
