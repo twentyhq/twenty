@@ -4,6 +4,7 @@ import {
   SystemPermissionFlag,
 } from 'twenty-sdk/define';
 
+import { buildSlackCrmScopeObjectPermissions } from 'src/constants/slack-crm-scope';
 import {
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -48,23 +49,7 @@ export default defineApplicationRole({
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
-    ...(
-      [
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note.universalIdentifier,
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget.universalIdentifier,
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget.universalIdentifier,
-      ] as const
-    ).map((objectUniversalIdentifier) => ({
-      objectUniversalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: true,
-      canDestroyObjectRecords: false,
-    })),
+    ...buildSlackCrmScopeObjectPermissions(),
   ],
   fieldPermissions: [],
   permissionFlagUniversalIdentifiers: [

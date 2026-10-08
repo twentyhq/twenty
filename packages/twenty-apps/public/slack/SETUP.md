@@ -188,11 +188,12 @@ Once both are set, **reconnect** so the token picks up the assistant scopes.
 
 ### Permissions
 
-Only a Slack account linked to a workspace member can use the assistant. The bot
-always runs with that member's own permissions, so it can never do more than the
-person asking. A Slack account with no link gets no answer: the assistant has no
-role of its own to fall back on, and the request is declined rather than served
-with standalone access.
+Only a Slack account linked to a workspace member can use the assistant; an
+account with no link gets no answer. The **Slack Assistant** role is the
+assistant's CRM scope, the most it may ever touch, not an identity it takes on.
+The assistant never acts on that scope alone: every request runs with the linked
+member's own permissions, within that scope, so it can never do more than the
+person asking.
 
 ## Linking Slack accounts to workspace members
 

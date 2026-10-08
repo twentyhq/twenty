@@ -56,6 +56,11 @@ describe('Slack assistant worker', () => {
     });
   };
 
+  // The worker's own posts carry a botId; the seeded request message does not,
+  // so this isolates what the worker actually sent to the channel.
+  const botMessagesIn = (channelId: string) =>
+    slack.messagesIn(channelId).filter((message) => message.botId !== undefined);
+
   const createRequestRecord = async (fields: {
     slackChannelId: string;
     slackMessageTimestamp: string;
@@ -144,6 +149,26 @@ describe('Slack assistant worker', () => {
     }
 
     createdRequestIds.length = 0;
+
+    // A confirmed-member request auto-links the requester to the workspace
+    // member on the live server; that link outlives the fakes' reset, so clear
+    // it here to keep each run testing link creation from a clean slate.
+    const linkQuery = await coreClient.query({
+      slackUserLinks: {
+        __args: { filter: { slackUserId: { eq: REQUESTER_USER_ID } } },
+        edges: { node: { id: true } },
+      },
+    });
+
+    for (const edge of linkQuery.slackUserLinks?.edges ?? []) {
+      const linkId = edge?.node?.id;
+
+      if (isNonEmptyString(linkId)) {
+        await coreClient.mutation({
+          destroySlackUserLink: { __args: { id: linkId }, id: true },
+        });
+      }
+    }
   });
 
   it('should resolve mentions and channel references before the agent sees them', async () => {
@@ -404,7 +429,7 @@ describe('Slack assistant worker', () => {
       failed: true,
       reason: 'Agent is not available',
     });
-    expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+    expect(botMessagesIn(CHANNEL_ID)).toEqual([
       expect.objectContaining({
         text: SLACK_ASSISTANT_FAILURE_TEXT,
         threadTimestamp: slackMessageTimestamp,
@@ -455,7 +480,7 @@ describe('Slack assistant worker', () => {
       failed: true,
       reason: SLACK_ASSISTANT_DEADLINE_ERROR,
     });
-    expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+    expect(botMessagesIn(CHANNEL_ID)).toEqual([
       expect.objectContaining({
         text: SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT,
         threadTimestamp: slackMessageTimestamp,
@@ -506,7 +531,7 @@ describe('Slack assistant worker', () => {
       failed: true,
       reason: SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR,
     });
-    expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+    expect(botMessagesIn(CHANNEL_ID)).toEqual([
       expect.objectContaining({
         text: SLACK_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT,
         threadTimestamp: slackMessageTimestamp,
@@ -649,9 +674,10 @@ describe('Slack assistant worker', () => {
 
     expect(result).toEqual({ done: true, declined: true });
     expect(appRuntime.agentRuns).toHaveLength(0);
-    expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+    // The denial is posted as markdown, so the mock records it as markdownText.
+    expect(botMessagesIn(CHANNEL_ID)).toEqual([
       expect.objectContaining({
-        text: SLACK_ACCESS_DENIED_TEXT,
+        markdownText: SLACK_ACCESS_DENIED_TEXT,
         threadTimestamp: slackMessageTimestamp,
       }),
     ]);
