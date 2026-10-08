@@ -203,7 +203,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
 
     beforeUpgrade = {
       createdThreadLastActivityAt: createdThread.lastActivityAt ?? null,
-      recordedLastActivityAt: lastActivityAt,
+      recordedLastActivityAt: lastActivityAt ?? null,
     };
 
     await insertThread(sharedThreadId);

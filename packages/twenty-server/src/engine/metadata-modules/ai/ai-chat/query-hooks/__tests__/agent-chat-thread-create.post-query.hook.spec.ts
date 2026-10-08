@@ -317,4 +317,18 @@ describe('agentChatThread record API creation', () => {
       'thread created chat-thread',
     ]);
   });
+
+  it('sends a thread an agent opens for no member as created', async () => {
+    const context = buildContext();
+
+    await context.threadService.createThread({
+      workspaceId: WORKSPACE_ID,
+      workspaceMemberId: null,
+      id: 'agent-thread',
+      title: 'Agent run',
+    });
+
+    expect(context.participants).toEqual([]);
+    expect(context.events).toEqual(['thread created agent-thread']);
+  });
 });

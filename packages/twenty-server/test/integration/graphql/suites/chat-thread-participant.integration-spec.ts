@@ -459,6 +459,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(findParticipantEvents(eventSpy, threadId)).toEqual([
       { action: 'created', updatedFields: [] },
       { action: 'updated', updatedFields: ['lastReadAt', 'updatedAt'] },
+      { action: 'updated', updatedFields: ['updatedAt'] },
       { action: 'updated', updatedFields: ['archivedAt', 'updatedAt'] },
     ]);
   });

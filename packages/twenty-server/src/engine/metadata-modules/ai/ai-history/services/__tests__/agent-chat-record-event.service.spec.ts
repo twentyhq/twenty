@@ -64,7 +64,7 @@ const buildService = () => {
       after,
     });
 
-    return emitDatabaseBatchEvent.mock.calls.at(-1)?.[0];
+    return emitDatabaseBatchEvent.mock.lastCall?.[0];
   };
 
   return { emit, emitDatabaseBatchEvent };
