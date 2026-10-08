@@ -11217,11 +11217,11 @@ export default {
             "error": [
                 1
             ],
-            "isWaiting": [
-                4
-            ],
             "result": [
                 286
+            ],
+            "status": [
+                1
             ],
             "success": [
                 4

@@ -4150,10 +4150,10 @@ enum RunAgentMessageRole {
 
 type RunAgentResult {
   error: String
-  isWaiting: Boolean!
   result: JSON
+  status: String!
   success: Boolean!
-  threadId: UUID
+  threadId: UUID!
 }
 
 input RunAgentThreadInput {
