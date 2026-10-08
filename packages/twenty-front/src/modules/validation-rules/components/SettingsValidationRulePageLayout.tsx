@@ -1,7 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { IconSparkles } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -10,6 +12,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { SettingsObjectNewFieldHeaderIcon } from '@/settings/data-model/fields/components/SettingsObjectNewFieldHeaderIcon';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { OBJECT_SETTINGS_TAB_HASH } from '@/validation-rules/constants/ObjectSettingsTabHash';
 import { useNavigateToObjectValidationRules } from '@/validation-rules/hooks/useNavigateToObjectValidationRules';
 
@@ -34,6 +38,8 @@ export const SettingsValidationRulePageLayout = ({
   const navigateToObjectValidationRules = useNavigateToObjectValidationRules({
     objectNamePlural: objectMetadataItem.namePlural,
   });
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   return (
     <SettingsPageLayout
@@ -60,6 +66,16 @@ export const SettingsValidationRulePageLayout = ({
         },
         { children: breadcrumbLabel },
       ]}
+      actionButton={
+        hasAiPermission && (
+          <Button
+            size="sm"
+            variant="ghost"
+            startIcon={<IconSparkles />}
+            onClick={() => openAskAiPage({ resetNavigationStack: true })}
+          >{t`Ask AI`}</Button>
+        )
+      }
       secondaryBar={
         <SettingsWizardStepBar
           label={stepLabel}

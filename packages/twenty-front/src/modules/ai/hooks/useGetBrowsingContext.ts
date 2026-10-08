@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
 import { getAiChatBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
 import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
+import { getValidationRuleBrowsingContext } from '@/ai/utils/getValidationRuleBrowsingContext';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
@@ -26,6 +27,17 @@ export const useGetBrowsingContext = () => {
   const store = useStore();
 
   const getBrowsingContext = useCallback((): BrowsingContext | null => {
+    const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
+
+    const validationRuleBrowsingContext = getValidationRuleBrowsingContext({
+      pathname: window.location.pathname,
+      objectMetadataItems,
+    });
+
+    if (isDefined(validationRuleBrowsingContext)) {
+      return validationRuleBrowsingContext;
+    }
+
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
     const currentSidePanelPage = store
       .get(sidePanelNavigationStackState.atom)
@@ -54,8 +66,6 @@ export const useGetBrowsingContext = () => {
         instanceId,
       }),
     );
-
-    const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
     const objectMetadataItem = objectMetadataItems.find(
       (item) => item.id === objectMetadataItemId,

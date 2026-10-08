@@ -794,6 +794,8 @@ export class ChatExecutionService {
         );
       case 'listView':
         return this.buildListViewContext(browsingContext);
+      case 'validationRule':
+        return this.buildValidationRuleContext(browsingContext);
       default:
         // browsing context comes from unvalidated client JSON
         return '';
@@ -847,5 +849,24 @@ export class ChatExecutionService {
     context += `\nUse get_view_query_parameters tool with this viewId to get the exact filter/sort parameters for querying records.`;
 
     return context;
+  }
+
+  private buildValidationRuleContext({
+    objectMetadataId,
+    objectNameSingular,
+    validationRuleId,
+  }: {
+    type: 'validationRule';
+    objectMetadataId: string;
+    objectNameSingular: string;
+    validationRuleId?: string;
+  }): string {
+    const objectDescription = `the ${objectNameSingular} object (objectMetadataId: ${objectMetadataId})`;
+
+    const pageDescription = isDefined(validationRuleId)
+      ? `editing the validation rule ${validationRuleId} of ${objectDescription}`
+      : `creating a validation rule on ${objectDescription}`;
+
+    return `The user is ${pageDescription} in settings. When they describe or change a rule, fill their form with fill_validation_rule_form instead of creating or updating the rule: they review it and save it.`;
   }
 }

@@ -12,4 +12,10 @@ export type BrowsingContextType =
       viewId: string;
       viewName: string;
       filterDescriptions: string[];
+    }
+  | {
+      type: 'validationRule';
+      objectMetadataId: string;
+      objectNameSingular: string;
+      validationRuleId?: string;
     };
