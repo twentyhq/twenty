@@ -147,10 +147,8 @@ export class AgentRunSuspensionService {
     caller,
   }: {
     workspaceId: string;
-    caller: {
-      type: AgentRunCaller['type'];
-      ref: Partial<AgentRunCaller['ref']>;
-    };
+    // matched by containment, so a partial ref releases every run it covers
+    caller: AgentRunCaller;
   }): Promise<void> {
     const wakeUps = await this.wakeUpRepository.find(workspaceId, {
       where: {
