@@ -17,6 +17,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -38,8 +39,8 @@ import { useCoreAgentFormState } from '@/object-core/agents/hooks/useCoreAgentFo
 import { useCoreAgentSave } from '@/object-core/agents/hooks/useCoreAgentSave';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 import { getCoreAgentInitialFormValues } from '@/object-core/agents/utils/getCoreAgentInitialFormValues';
+import { isCoreAgentRoleDirty } from '@/object-core/agents/utils/isCoreAgentRoleDirty';
 import { isOwnedByInstalledApplication } from '@/applications/utils/isOwnedByInstalledApplication';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -90,9 +91,11 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
     formValues.role || '',
   );
 
-  const isRoleDirty =
-    isDefined(formValues.role) &&
-    !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
+  const isRoleDirty = isCoreAgentRoleDirty({
+    roleId: formValues.role,
+    draftRole: settingsDraftRole,
+    persistedRole: settingsPersistedRole,
+  });
 
   const { scheduleAutoSave } = useCoreAgentSave({
     agent,
@@ -156,6 +159,9 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   return (
     <>
       <SettingsRolesQueryEffect />
+      {isDefined(formValues.role) && (
+        <SettingsRoleDraftSyncEffect roleId={formValues.role} />
+      )}
       <SettingsPageLayout
         title={title}
         icon={

@@ -46,6 +46,17 @@ describe('InlineBanner composition', () => {
     expect(screen.getByRole('link', { name: 'Contact support' })).toHaveFocus();
   });
 
+  it('renders the default icon with valid SVG dimensions', () => {
+    render(<InlineBanner data-testid="feedback">Sync failed</InlineBanner>);
+    const icon = screen.getByTestId('feedback').querySelector('svg');
+
+    // A CSS variable is not a valid SVG length, so browsers ignore it and
+    // stretch the icon to fill the banner
+    expect(icon).toBeInTheDocument();
+    expect(icon?.getAttribute('width')).toMatch(/^\d+$/);
+    expect(icon?.getAttribute('height')).toMatch(/^\d+$/);
+  });
+
   it('preserves caller-owned announcements across both layouts', () => {
     const { rerender } = render(
       <InlineBanner status="error" data-testid="feedback">

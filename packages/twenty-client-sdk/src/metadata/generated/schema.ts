@@ -7317,7 +7317,7 @@ export interface SendEmailViaDomainOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface SendInboxMessageInput {idempotencyKey: Scalars['String'],text: Scalars['String'],threadKey: Scalars['String'],title: Scalars['String'],toolCall?: (Scalars['JSON'] | null),workspaceMemberId: Scalars['UUID']}
+export interface SendInboxMessageInput {idempotencyKey: Scalars['String'],text: Scalars['String'],threadKey: Scalars['String'],title: Scalars['String'],toolCall?: (Scalars['JSON'] | null),workspaceMemberIds: Scalars['UUID'][]}
 
 export interface SendInboxMessageResultGenqlSelection{
     threadId?: boolean | number

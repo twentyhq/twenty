@@ -228,9 +228,12 @@ Objects can also create optional UI definitions:
 - `--create-page-layout`: a record page layout with Fields and Timeline tabs,
   plus the fields view required by its Fields widget.
 
-Combine these flags to select what to generate. Without them, only the object
-is created. These flags are valid only for objects and also work with `--no-input`
-and `--json`. View, navigation and layout files go under `src/views`,
+Combine these flags to select what to generate without a companion prompt.
+Without any creation flags, a human interactive terminal asks whether to create
+all three, defaulting to No. Press Enter or answer No to create only the object.
+With `--no-input`, `--json`, redirected stdin or CI, companions are created only
+when explicitly requested by flags. These flags are valid only for objects.
+View, navigation and layout files go under `src/views`,
 `src/navigation-menu-items` and `src/page-layouts`.
 
 Files are created under `src/objects`, `src/fields`, `src/logic-functions` and

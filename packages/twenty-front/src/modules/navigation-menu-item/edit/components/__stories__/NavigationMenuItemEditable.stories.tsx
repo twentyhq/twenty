@@ -217,11 +217,11 @@ export const EditFolderInPlace: Story = {
     await userEvent.click(await canvas.findByText('Projects'));
     const input = await canvas.findByDisplayValue('Projects');
     await userEvent.clear(input);
-    await userEvent.type(input, 'Work{Enter}');
-    await userEvent.click(await canvas.findByText('Work'));
-    await userEvent.clear(await canvas.findByDisplayValue('Work'));
+    await userEvent.type(input, 'Work Space  {Enter}');
+    await userEvent.click(await canvas.findByText('Work Space'));
+    await userEvent.clear(await canvas.findByDisplayValue('Work Space'));
     await userEvent.type(await canvas.findByRole('textbox'), 'Discard{Escape}');
-    await expect(await canvas.findByText('Work')).toBeVisible();
+    await expect(await canvas.findByText('Work Space')).toBeVisible();
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Choose icon and color' }),
     );

@@ -11,7 +11,9 @@ import {
   CacheStorageExceptionCode,
 } from 'src/engine/core-modules/cache-storage/exceptions/cache-storage.exception';
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { type CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { escapeRedisGlob } from 'src/engine/core-modules/cache-storage/utils/escape-redis-glob.util';
+import { getCacheStorageKey } from 'src/engine/core-modules/cache-storage/utils/get-cache-storage-key.util';
 
 @Injectable()
 export class CacheStorageService {
@@ -19,6 +21,7 @@ export class CacheStorageService {
     @Inject(CACHE_MANAGER)
     private readonly cache: Cache,
     private readonly namespace: CacheStorageNamespace,
+    private readonly keyPrefix: string = '',
   ) {}
 
   async get<T>(key: string): Promise<T | undefined> {
@@ -255,12 +258,12 @@ export class CacheStorageService {
     }
 
     const redisClient = this.cache.store.client;
+    const scanKeyPrefix = escapeRedisGlob(this.getKey(''));
     let cursor = 0;
 
     do {
       const result = await redisClient.scan(cursor, {
-        // Through getKey: under NODE_ENV=test keys carry an extra prefix, so a raw namespace match flushes nothing.
-        MATCH: this.getKey(scanPattern),
+        MATCH: `${scanKeyPrefix}${scanPattern}`,
         COUNT: 100,
       });
 
@@ -511,12 +514,11 @@ end`;
   }
 
   private getKey(key: string) {
-    const formattedKey = `${this.namespace}:${key}`;
-
-    if (process.env.NODE_ENV === 'test') {
-      return `${CacheStorageNamespace.IntegrationTests}:${formattedKey}`;
-    }
-
-    return formattedKey;
+    return getCacheStorageKey({
+      key,
+      namespace: this.namespace,
+      keyPrefix: this.keyPrefix,
+      isTestEnvironment: process.env.NODE_ENV === 'test',
+    });
   }
 }
