@@ -49,25 +49,35 @@ export const writeAppAddFiles = async ({
     }
   }
 
-  const temporaryDirectory = await mkdtemp(join(appPath, '.twenty-add-'));
+  const stagedFiles: {
+    path: string;
+    stagedPath: string;
+    temporaryDirectory: string;
+  }[] = [];
   const createdFiles: { path: string; stagedPath: string }[] = [];
-  let cleanupFailed = false;
+  const cleanupPaths: string[] = [];
 
   try {
-    for (const [index, file] of files.entries()) {
+    for (const file of files) {
       signal.throwIfAborted();
-      await writeFile(join(temporaryDirectory, String(index)), file.content, {
-        flag: 'wx',
-      });
+      const destinationDirectory = dirname(join(appPath, file.path));
+
+      await mkdir(destinationDirectory, { recursive: true });
+      signal.throwIfAborted();
+      const temporaryDirectory = await mkdtemp(
+        join(destinationDirectory, '.twenty-add-'),
+      );
+      const stagedPath = join(temporaryDirectory, 'definition');
+
+      stagedFiles.push({ path: file.path, stagedPath, temporaryDirectory });
+      await writeFile(stagedPath, file.content, { flag: 'wx' });
     }
 
-    for (const [index, file] of files.entries()) {
+    for (const file of stagedFiles) {
       signal.throwIfAborted();
       const destination = join(appPath, file.path);
-      const stagedPath = join(temporaryDirectory, String(index));
+      const stagedPath = file.stagedPath;
 
-      await mkdir(dirname(destination), { recursive: true });
-      signal.throwIfAborted();
       try {
         await link(stagedPath, destination);
       } catch (error) {
@@ -112,10 +122,14 @@ export const writeAppAddFiles = async ({
 
     throw error;
   } finally {
-    await rm(temporaryDirectory, { recursive: true, force: true }).catch(() => {
-      cleanupFailed = true;
-    });
+    for (const { temporaryDirectory } of stagedFiles) {
+      await rm(temporaryDirectory, { recursive: true, force: true }).catch(
+        () => {
+          cleanupPaths.push(temporaryDirectory);
+        },
+      );
+    }
   }
 
-  return cleanupFailed ? temporaryDirectory : undefined;
+  return cleanupPaths;
 };

@@ -34,7 +34,9 @@ the same helper as app init.
   worker; it is not a security sandbox. The command makes no workspace requests
   and does not require authentication.
 - Destination paths reuse pull's containment and symlink checks. All destinations
-  are checked before writing and all files are staged before exclusive linking.
+  are checked before writing and all files are staged beside their destinations
+  before exclusive linking, including when source directories are mounted on
+  different filesystems.
   Existing or concurrently created files are never replaced. Failure or
   cancellation before all links complete rolls back the links already created;
   files replaced by another process are preserved. Incomplete rollback reports
@@ -59,3 +61,9 @@ app. Successful generation does not imply the server will accept the metadata.
 normalizing random UUIDs while preserving their reuse. It covers every field type
 and both runtime templates. Additional tests cover escaped strings, invalid
 identifiers, destination conflicts and cancellation.
+
+View and navigation templates are deliberately limited to object companions:
+fully populated fields and an object-target navigation item, without the SDK
+CLI's placeholder and unrelated view/link/folder variants. Generated identifiers
+and references are checked by the app-add command tests; record page layouts
+also retain SDK source parity.

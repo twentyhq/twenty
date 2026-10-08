@@ -34,13 +34,13 @@ export const runAppAddCommand: CommandRun = async (context) => {
     context,
     applicationUniversalIdentifier: identity.application.universalIdentifier,
   });
-  const cleanupPath = await writeAppAddFiles({
+  const cleanupPaths = await writeAppAddFiles({
     appPath: project.path,
     files,
     signal,
   });
 
-  if (isDefined(cleanupPath)) {
+  for (const cleanupPath of cleanupPaths) {
     output.warn({
       code: 'APP_ADD_CLEANUP_FAILED',
       message: `Created definitions, but could not remove temporary directory ${cleanupPath}.`,
