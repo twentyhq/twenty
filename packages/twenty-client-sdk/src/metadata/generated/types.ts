@@ -11168,11 +11168,11 @@ export default {
             "error": [
                 1
             ],
-            "isWaiting": [
-                4
-            ],
             "result": [
                 287
+            ],
+            "status": [
+                1
             ],
             "success": [
                 4

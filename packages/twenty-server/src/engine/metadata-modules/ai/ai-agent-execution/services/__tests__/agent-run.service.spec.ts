@@ -91,11 +91,11 @@ describe('AgentRunService', () => {
     });
 
     expect(result).toEqual({
+      threadId: expect.any(String),
+      status: 'COMPLETED',
       result: { response: 'Acme is your biggest customer' },
       error: null,
       success: true,
-      isWaiting: false,
-      threadId: expect.any(String),
     });
     expect(secondResult.threadId).not.toBe(result.threadId);
 
@@ -245,6 +245,7 @@ describe('AgentRunService', () => {
     await expect(
       run(service, { input: userInput('Hello') }),
     ).resolves.toMatchObject({
+      status: 'FAILED',
       success: false,
       error: 'Agent stopped: no more available credits.',
     });

@@ -105,11 +105,6 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
           .fn()
           .mockResolvedValue({ message: turnUserMessage }),
       } as never,
-      {
-        findPendingForThread: jest.fn().mockResolvedValue([]),
-        hasPendingForThread: jest.fn().mockResolvedValue(false),
-        cancel: jest.fn().mockResolvedValue(false),
-      } as never,
       turnRecorderService as never,
       {} as never,
       {} as never,

@@ -1,8 +1,10 @@
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
 
 export const buildWaitOutcomeToolOutput = (
-  // a run dropped while it waits cancels its wait
-  outcome: PendingWakeUpOutcome | { type: 'CANCELLED' },
+  // a run dropped, or continued on an answer, while it waits cancels its wait
+  outcome:
+    | Exclude<PendingWakeUpOutcome, { type: 'ANSWERED' }>
+    | { type: 'CANCELLED' },
 ): Record<string, unknown> => {
   switch (outcome.type) {
     case 'TIME_ELAPSED':

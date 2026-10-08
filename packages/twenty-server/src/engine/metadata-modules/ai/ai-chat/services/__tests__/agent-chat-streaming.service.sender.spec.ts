@@ -59,10 +59,6 @@ const build = () => {
       { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
     ),
     actors as never,
-    {
-      findPendingForThread: jest.fn().mockResolvedValue([]),
-      hasPendingForThread: jest.fn().mockResolvedValue(false),
-    } as never,
     {} as never,
     {} as never,
     {} as never,
