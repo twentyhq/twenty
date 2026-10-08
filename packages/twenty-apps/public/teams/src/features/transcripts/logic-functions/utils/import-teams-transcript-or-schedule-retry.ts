@@ -3,6 +3,7 @@ import {
   AppConnectionAuthFailedError,
   enqueueJobs,
   getConnection,
+  RetryableLogicFunctionError,
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -104,24 +105,30 @@ export const importTeamsTranscriptOrScheduleRetry = async ({
 
   const nextAttempt = attempt + 1;
 
-  await enqueueJobs({
-    logicFunctionUniversalIdentifier:
-      TEAMS_IMPORT_TRANSCRIPT_UNIVERSAL_IDENTIFIER,
-    jobs: [
-      {
-        // Graph transcript ids hold characters that job ids reject.
-        jobId: `teams-transcript-import-${computeCallRecordingIdForTeamsTranscript(transcriptId)}-${nextAttempt}`,
-        payload: {
-          connectedAccountId,
-          meetingId,
-          transcriptId,
-          attempt: nextAttempt,
+  try {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier:
+        TEAMS_IMPORT_TRANSCRIPT_UNIVERSAL_IDENTIFIER,
+      jobs: [
+        {
+          // Graph transcript ids hold characters that job ids reject.
+          jobId: `teams-transcript-import-${computeCallRecordingIdForTeamsTranscript(transcriptId)}-${nextAttempt}`,
+          payload: {
+            connectedAccountId,
+            meetingId,
+            transcriptId,
+            attempt: nextAttempt,
+          },
         },
-      },
-    ],
-    retryLimit: TEAMS_TRANSCRIPT_IMPORT_JOB_RETRY_LIMIT,
-    delayMs: retryDelayMilliseconds,
-  });
+      ],
+      retryLimit: TEAMS_TRANSCRIPT_IMPORT_JOB_RETRY_LIMIT,
+      delayMs: retryDelayMilliseconds,
+    });
+  } catch (error) {
+    throw new RetryableLogicFunctionError(
+      `Could not schedule the next import of Teams transcript ${transcriptId}: ${toErrorMessage(error)}`,
+    );
+  }
 
   return { outcome: 'retry-scheduled' };
 };

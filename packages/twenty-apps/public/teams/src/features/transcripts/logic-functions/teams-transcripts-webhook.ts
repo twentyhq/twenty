@@ -1,6 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
-import { getConnection, kv } from 'twenty-sdk/logic-function';
+import {
+  getConnection,
+  kv,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { FEATURE_FLAGS } from 'src/constants/feature-flags';
@@ -47,6 +51,12 @@ const renewStoredTeamsTranscriptSubscription = async ({
 
   return expirationDateTime;
 };
+
+const isRetryableRejection = (
+  settledResult: PromiseSettledResult<unknown>,
+): settledResult is PromiseRejectedResult =>
+  settledResult.status === 'rejected' &&
+  settledResult.reason instanceof RetryableLogicFunctionError;
 
 const importTeamsTranscriptFromResource = async ({
   connectedAccountId,
@@ -149,11 +159,20 @@ export const teamsTranscriptsWebhookHandler = async (
     },
   );
 
+  const retryableTranscriptImport =
+    transcriptImports.find(isRetryableRejection);
+
   if (subscriptionRenewal.status === 'rejected') {
     console.error(
       `[teams] failed to renew transcript subscription ${subscription.subscriptionId} for connected account ${connectedAccountId}: ${toErrorMessage(subscriptionRenewal.reason)}`,
     );
+  }
 
+  if (isDefined(retryableTranscriptImport)) {
+    throw retryableTranscriptImport.reason;
+  }
+
+  if (subscriptionRenewal.status === 'rejected') {
     throw subscriptionRenewal.reason;
   }
 
