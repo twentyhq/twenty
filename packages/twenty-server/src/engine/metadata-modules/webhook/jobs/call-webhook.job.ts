@@ -120,6 +120,7 @@ export class CallWebhookJob {
       );
 
       response.data.destroy();
+      response.request.destroy();
 
       const success = response.status >= 200 && response.status < 300;
 
@@ -139,6 +140,7 @@ export class CallWebhookJob {
       };
     } catch (err) {
       err.response?.data?.destroy();
+      err.request?.destroy();
 
       const isSSRFBlocked =
         err instanceof Error &&
