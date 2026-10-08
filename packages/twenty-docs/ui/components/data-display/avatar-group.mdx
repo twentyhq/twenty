@@ -17,15 +17,27 @@ export const TeamAvatars = () => (
     maxVisible={2}
     overflowCount={1}
     avatars={[
-      <Avatar key="ada" name="Ada Lovelace" />,
-      <Avatar key="grace" name="Grace Hopper" />,
-      <Avatar key="margaret" name="Margaret Hamilton" />,
+      <Avatar
+        key="ada"
+        name="Ada Lovelace"
+        imageProps={{ alt: 'Ada Lovelace' }}
+      />,
+      <Avatar
+        key="grace"
+        name="Grace Hopper"
+        imageProps={{ alt: 'Grace Hopper' }}
+      />,
+      <Avatar
+        key="margaret"
+        name="Margaret Hamilton"
+        imageProps={{ alt: 'Margaret Hamilton' }}
+      />,
     ]}
   />
 );
 ```
 
-Each Avatar's `name` labels its image and default fallback. Pass `imageProps={{ alt: '' }}` when the same name is already visible beside it. Later avatars always render above earlier ones. `overlap` only picks the physical margin, `left` or `right`, that carries the negative offset, and `overlapOffset` sets that offset as a CSS length. An empty group without an overflow element renders nothing.
+Avatars are decorative by default. When the group is the only representation of its members, supply each member's name through `imageProps.alt` to label the image and default fallback. Keep avatars decorative when visible text or an owner label already supplies that identity. Later avatars always render above earlier ones. `overlap` only picks the physical margin, `left` or `right`, that carries the negative offset, and `overlapOffset` sets that offset as a CSS length. An empty group without an overflow element renders nothing.
 
 <StoryEmbed
   storyId="ui-data-display-avatargroup--default"

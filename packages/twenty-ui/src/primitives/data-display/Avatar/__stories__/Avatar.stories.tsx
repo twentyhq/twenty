@@ -1,4 +1,4 @@
-import { type MouseEvent, useState } from 'react';
+import { type MouseEvent, type MouseEventHandler, useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -14,6 +14,7 @@ import {
 
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
+import { type AvatarRootProps } from '@ui/primitives/data-display/Avatar/types/AvatarRootProps';
 import { type AvatarShape } from '@ui/primitives/data-display/Avatar/types/AvatarShape';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { IconUser } from '@ui/icon';
@@ -34,6 +35,13 @@ const meta: Meta<typeof Avatar> = {
 
 export default meta;
 type Story = StoryObj<typeof Avatar>;
+type RootInteractionStory = StoryObj<AvatarRootProps>;
+type ButtonInteractionStory = StoryObj<
+  AvatarProps & { onActivate?: MouseEventHandler<HTMLButtonElement> }
+>;
+type LinkInteractionStory = StoryObj<
+  AvatarProps & { onNavigate?: MouseEventHandler<HTMLAnchorElement> }
+>;
 
 export const Rounded: Story = { decorators: [ComponentDecorator] };
 
@@ -118,7 +126,11 @@ export const PartsInteraction: Story = {
 
 export const ImageFailingToLoadFallsBackToPlaceholder: Story = {
   decorators: [ComponentDecorator],
-  args: { src: INVALID_IMAGE, name: 'Eldritch' },
+  args: {
+    src: INVALID_IMAGE,
+    name: 'Eldritch',
+    imageProps: { alt: 'Eldritch' },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const fallback = await canvas.findByRole('img', { name: 'Eldritch' });
@@ -129,17 +141,27 @@ export const ImageFailingToLoadFallsBackToPlaceholder: Story = {
   },
 };
 
-export const OnClickKeepsPresentationalRoot: Story = {
+export const OnClickKeepsPresentationalRoot: RootInteractionStory = {
   decorators: [ComponentDecorator],
   args: {
-    src: undefined,
     name: 'Jane',
     onClick: fn(),
     ref: fn(),
   },
+  render: ({ name, onClick, ref, size, shape }) => (
+    <Avatar.Root
+      name={name}
+      onClick={onClick}
+      ref={ref}
+      size={size}
+      shape={shape}
+    >
+      <Avatar.Fallback aria-hidden>J</Avatar.Fallback>
+    </Avatar.Root>
+  ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const fallback = canvas.getByRole('img', { name: 'Jane' });
+    const fallback = canvas.getByText('J');
     const root = fallback.parentElement;
 
     await expect(root?.tagName).toBe('SPAN');
@@ -163,9 +185,12 @@ export const ButtonComposition: Story = {
   },
 };
 
-export const ButtonKeyboardInteraction: Story = {
+export const ButtonKeyboardInteraction: ButtonInteractionStory = {
   ...ButtonComposition,
-  args: { ...ButtonComposition.args, onClick: fn(), ref: fn() },
+  args: { ...ButtonComposition.args, onActivate: fn(), ref: fn() },
+  render: ({ onActivate, ...args }) => (
+    <Avatar {...args} render={<button type="button" onClick={onActivate} />} />
+  ),
   play: async ({ canvasElement, args }) => {
     const avatar = within(canvasElement).getByRole('button', {
       name: "Open Jane's profile",
@@ -176,17 +201,23 @@ export const ButtonKeyboardInteraction: Story = {
     avatar.focus();
     await expect(avatar).toHaveFocus();
     await userEvent.keyboard('{Enter} ');
-    await expect(args.onClick).toHaveBeenCalledTimes(2);
+    await expect(args.onActivate).toHaveBeenCalledTimes(2);
   },
 };
 
-export const DisabledButtonInteraction: Story = {
+export const DisabledButtonInteraction: ButtonInteractionStory = {
   ...ButtonComposition,
   args: {
     ...ButtonComposition.args,
     render: <button type="button" disabled />,
-    onClick: fn(),
+    onActivate: fn(),
   },
+  render: ({ onActivate, ...args }) => (
+    <Avatar
+      {...args}
+      render={<button type="button" disabled onClick={onActivate} />}
+    />
+  ),
   play: async ({ canvasElement, args }) => {
     const avatar = within(canvasElement).getByRole('button', {
       name: "Open Jane's profile",
@@ -197,7 +228,7 @@ export const DisabledButtonInteraction: Story = {
     avatar.focus();
     await expect(avatar).not.toHaveFocus();
     await userEvent.keyboard('{Enter} ');
-    await expect(args.onClick).not.toHaveBeenCalled();
+    await expect(args.onActivate).not.toHaveBeenCalled();
   },
 };
 
@@ -209,13 +240,27 @@ export const LinkComposition: Story = {
   },
 };
 
-export const LinkKeyboardInteraction: Story = {
+export const LinkKeyboardInteraction: LinkInteractionStory = {
   ...LinkComposition,
   args: {
     ...LinkComposition.args,
-    onClick: fn((event: MouseEvent<HTMLSpanElement>) => event.preventDefault()),
+    onNavigate: fn((event: MouseEvent<HTMLAnchorElement>) =>
+      event.preventDefault(),
+    ),
     ref: fn(),
   },
+  render: ({ onNavigate, ...args }) => (
+    <Avatar
+      {...args}
+      render={
+        <a
+          href="#avatar-profile"
+          aria-label="Open Jane's profile"
+          onClick={onNavigate}
+        />
+      }
+    />
+  ),
   play: async ({ canvasElement, args }) => {
     const avatar = within(canvasElement).getByRole('link', {
       name: "Open Jane's profile",
@@ -227,15 +272,15 @@ export const LinkKeyboardInteraction: Story = {
     avatar.focus();
     await expect(avatar).toHaveFocus();
     await userEvent.keyboard('{Enter}');
-    await expect(args.onClick).toHaveBeenCalledOnce();
+    await expect(args.onNavigate).toHaveBeenCalledOnce();
     await userEvent.keyboard(' ');
-    await expect(args.onClick).toHaveBeenCalledOnce();
+    await expect(args.onNavigate).toHaveBeenCalledOnce();
   },
 };
 
 export const DecorativeImageInteraction: Story = {
   decorators: [ComponentDecorator],
-  args: { src: VALID_IMAGE, name: 'Jane', imageProps: { alt: '' } },
+  args: { src: VALID_IMAGE, name: 'Jane' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

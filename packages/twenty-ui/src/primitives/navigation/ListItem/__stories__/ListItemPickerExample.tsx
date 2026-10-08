@@ -41,11 +41,7 @@ export const ListItemPickerExample = ({
             selected={selected}
             disabled={disabled}
             indicator={multiple ? 'checkbox' : 'check'}
-            startIcon={
-              multiple ? undefined : (
-                <Avatar name={name} size="md" imageProps={{ alt: '' }} />
-              )
-            }
+            startIcon={multiple ? undefined : <Avatar name={name} size="md" />}
             onClick={() => handleSelect(name)}
           >
             {multiple ? <Tag color="blue">{name}</Tag> : name}

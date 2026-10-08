@@ -25,7 +25,7 @@ export const PersonAvatar = ({ name, imageUrl }: PersonAvatarProps) => (
 
 When the image is absent or fails to load, the fallback shows the first letter of the trimmed name in uppercase. An empty name shows `-`. `colorSeed` chooses stable fallback colors and defaults to `name`; use a record identifier to keep the color stable when the name changes.
 
-For an image or initial avatar, the image alternative text and fallback label default to `name`. Set `imageProps.alt` to supply a different label. When a visible name already provides the same information, pass `imageProps={{ alt: '' }}` to make both the image and default fallback decorative.
+The image and default fallback are decorative. `name` supplies the visual initial and fallback colors without adding an accessible label. When the avatar is the only representation of a person or record, set `imageProps={{ alt: name }}` to label both the image and default fallback. Keep the avatar decorative when a visible name or labeled owner already provides that information.
 
 `imageProps` accepts the complete image contract, including `srcSet`, `sizes`, `crossOrigin`, `referrerPolicy`, native events, refs, and `render`. Its `src` overrides the shorthand `src`. `fallbackProps` accepts the complete fallback contract, including `delay`, children, labeling, refs, and `render`. A custom fallback `render` owns its accessibility semantics; set `aria-hidden` explicitly when it is decorative.
 
@@ -47,7 +47,7 @@ export const RecordAvatar = ({
     name={name}
     src={imageUrl}
     size="lg"
-    imageProps={{ decoding: 'async', referrerPolicy: 'no-referrer' }}
+    imageProps={{ alt: name, decoding: 'async', referrerPolicy: 'no-referrer' }}
     fallbackProps={{ children: initials, delay: 150 }}
   />
 );
@@ -131,10 +131,14 @@ export const ProfileAvatar = ({
     name="Jane"
     shape="circle"
     size="lg"
-    imageProps={{ alt: '' }}
-    render={<button type="button" disabled={disabled} />}
-    aria-label="Open Jane's profile"
-    onClick={onOpenProfile}
+    render={
+      <button
+        type="button"
+        disabled={disabled}
+        aria-label="Open Jane's profile"
+        onClick={onOpenProfile}
+      />
+    }
   />
 );
 ```
@@ -144,7 +148,7 @@ export const ProfileAvatar = ({
   title="Avatar composed as a button"
 />
 
-Compose a native button for actions. It owns focus, Enter and Space activation, and disabled behavior. Supply an action-specific accessible name. Set `disabled` on the rendered button; Avatar has no `disabled` or `nativeButton` prop.
+Compose a native button for actions. It owns focus, Enter and Space activation, and disabled behavior. Supply an action-specific accessible name. Put `onClick` and `disabled` on the rendered button; shorthand Avatar has no `onClick`, `disabled`, or `nativeButton` prop.
 
 For navigation, compose an anchor with an `href` or a router link that preserves anchor semantics. Native links activate with Enter. Keep navigation and disabled behavior with the link or interactive component you compose.
 
@@ -156,21 +160,19 @@ export const ProfileLink = () => (
     name="Jane"
     shape="circle"
     size="lg"
-    render={<a href="/people/jane" />}
-    aria-label="Open Jane's profile"
-    imageProps={{ alt: '' }}
+    render={<a href="/people/jane" aria-label="Open Jane's profile" />}
   />
 );
 ```
 
 ## Migrate clickable avatars
 
-Supplying `onClick` passes the handler to the root and keeps the default `span`. Add `render={<button type="button" />}` to an action avatar, or `render={<a href="..." />}` to a navigation avatar. Move `disabled` onto the composed owner and remove `nativeButton`. Give the owner a useful accessible name and avoid nesting interactive elements.
+Compose a native button through `render` for actions, or an anchor or router link for navigation. Move `onClick` and `disabled` onto that owner and remove `nativeButton`. Give the owner a useful accessible name and avoid nesting interactive elements. `Avatar.Root` and the other explicit parts retain the complete Base UI event contract.
 
-Images now use `name` as alternative text by default. Add `imageProps={{ alt: '' }}` where the avatar sits beside the same visible name. With explicit parts, supply image alternative text and fallback labels or decorative attributes yourself, and keep translated content in your application.
+Shorthand avatars are decorative by default. `name` does not name the image, fallback, or interactive owner. Use a nonempty `imageProps.alt` only when the avatar conveys identity that is not already supplied by visible text or an owner label. With explicit parts, supply image alternative text and fallback labels or decorative attributes yourself, and keep translated content in your application.
 
 ## Props
 
-Types and defaults are generated from the public component types. Native attributes and event handlers are also accepted by every part.
+Types and defaults are generated from the public component types. The explicit parts accept native attributes and event handlers. Shorthand Avatar omits `onClick`; supply it on the owner passed through `render`.
 
 <AvatarReference />

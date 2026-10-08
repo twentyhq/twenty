@@ -1,7 +1,7 @@
 import { getAvatarButtonRender } from '@/ui/field/display/utils/getAvatarButtonRender';
 import { StyledHeaderIdentifierLabel } from '@/ui/layout/page/components/StyledHeaderIdentifierLabel';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type MouseEventHandler, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
@@ -53,8 +53,10 @@ const StyledTitle = styled.h3<{ fontSize: 'md' | 'lg' }>`
 type HeaderIdentifierProps = {
   avatar?: Pick<
     AvatarProps,
-    'src' | 'onClick' | 'name' | 'colorSeed' | 'shape' | 'variant'
-  >;
+    'src' | 'name' | 'colorSeed' | 'shape' | 'variant'
+  > & {
+    onClick?: MouseEventHandler<HTMLButtonElement>;
+  };
   icon?: ReactNode;
   iconColor?: string;
   fontSize?: 'md' | 'lg';
@@ -73,7 +75,6 @@ export const HeaderIdentifier = ({
   const identifierIcon = isDefined(avatar) ? (
     <Avatar
       src={avatar.src}
-      onClick={avatar.onClick}
       render={getAvatarButtonRender(avatar)}
       name={avatar.name}
       colorSeed={avatar.colorSeed}

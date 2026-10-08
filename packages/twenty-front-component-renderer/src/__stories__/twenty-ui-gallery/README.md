@@ -80,6 +80,8 @@ native buttons and an anchor through `render`; the anchor targets a local
 fragment with `target="_self"` and checks pointer and Enter activation without changing navigation
 policy. Callback refs expose the renderer's registered HTML element proxies,
 whose tag names use the `HTML-` prefix.
+Shorthand Avatar content is decorative by default; a nonempty `imageProps.alt`
+labels its image and fallback.
 
 Avatar's default preloaded `src` path decodes visible images and supports image
 labels, custom image/fallback rendering, refs, status/native load callbacks,

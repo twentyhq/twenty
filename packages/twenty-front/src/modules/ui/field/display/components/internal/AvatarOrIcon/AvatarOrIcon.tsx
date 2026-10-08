@@ -69,7 +69,6 @@ export const AvatarOrIcon = ({
         name={name}
         size="sm"
         shape={shape ?? undefined}
-        onClick={onClick}
         render={getAvatarButtonRender({ name, onClick })}
       />
     );

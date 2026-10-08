@@ -10,9 +10,18 @@ export const avatarControlsTest: TwentyUiGalleryPlayFunction = async (
   const canvas = within(context.canvasElement);
   const imageEntry = within(canvas.getByTestId('gallery-item-AvatarImage'));
 
-  await expect(imageEntry.getByText('I')).toBeVisible();
-  await expect(imageEntry.queryByRole('presentation')).not.toBeInTheDocument();
-  await expect(canvas.getByText('A')).toBeVisible();
+  const labelledFallback = imageEntry.getByRole('img', {
+    name: 'Portrait unavailable',
+  });
+  const decorativeFallback = canvas.getByText('A');
+
+  await expect(labelledFallback).toHaveTextContent('I');
+  await expect(labelledFallback).toBeVisible();
+  await expect(decorativeFallback).toBeVisible();
+  await expect(decorativeFallback).toHaveAttribute('aria-hidden', 'true');
+  await expect(
+    canvas.queryByRole('img', { name: 'Acme' }),
+  ).not.toBeInTheDocument();
 
   const button = canvas.getByRole('button', { name: 'Open Jane' });
   const activations = canvas.getByLabelText('Activations');

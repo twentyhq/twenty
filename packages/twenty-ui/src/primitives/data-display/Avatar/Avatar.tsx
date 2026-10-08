@@ -19,7 +19,7 @@ const AvatarAssembly = ({
 }: AvatarProps) => {
   const initial = getAvatarInitial(name);
   const hasIcon = isDefined(icon) && !isBoolean(icon) && icon !== '';
-  const imageLabel = imageProps?.alt ?? name ?? '';
+  const imageLabel = imageProps?.alt ?? '';
   const hasImageLabel = !hasIcon && isNonEmptyString(imageLabel);
   const { children = hasIcon ? icon : initial || '-', ...fallbackAttributes } =
     fallbackProps ?? {};

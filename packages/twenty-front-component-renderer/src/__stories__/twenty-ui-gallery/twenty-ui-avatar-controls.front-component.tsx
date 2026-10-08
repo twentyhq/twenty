@@ -23,6 +23,7 @@ const AvatarControls = () => {
               <Avatar
                 src="data:image/png;base64,invalid"
                 name="Image fallback"
+                imageProps={{ alt: 'Portrait unavailable' }}
               />
             ),
           },
@@ -32,9 +33,8 @@ const AvatarControls = () => {
               <>
                 <Avatar
                   name="Jane"
-                  onClick={handleClick}
                   aria-label="Open Jane"
-                  render={<button type="button" />}
+                  render={<button type="button" onClick={handleClick} />}
                   ref={(element) => {
                     if (isDefined(element)) {
                       element.dataset.refTag = element.tagName;
@@ -46,8 +46,9 @@ const AvatarControls = () => {
                 <Avatar
                   name="Disabled avatar"
                   aria-label="Disabled avatar"
-                  onClick={handleClick}
-                  render={<button type="button" disabled />}
+                  render={
+                    <button type="button" disabled onClick={handleClick} />
+                  }
                 />
                 <Avatar.Root
                   render={<a href="#avatar-profile" target="_self" />}
@@ -70,7 +71,7 @@ const AvatarControls = () => {
                     Profile
                   </Avatar.Fallback>
                 </Avatar.Root>
-                <Avatar
+                <Avatar.Root
                   name="Presentational avatar"
                   data-testid="presentational-avatar"
                   onClick={() =>
@@ -81,7 +82,9 @@ const AvatarControls = () => {
                       element.dataset.refTag = element.tagName;
                     }
                   }}
-                />
+                >
+                  <Avatar.Fallback aria-hidden>P</Avatar.Fallback>
+                </Avatar.Root>
                 <Avatar
                   name="Acme"
                   shape="rounded-square"

@@ -36,7 +36,11 @@ export const MultiWorkspaceDropdownClickableComponent = ({
       disabled={disabled}
     >
       <Avatar
-        imageProps={{ alt: isWorkspaceLabelVisible ? '' : undefined }}
+        imageProps={{
+          alt: isWorkspaceLabelVisible
+            ? ''
+            : (currentWorkspace?.displayName ?? ''),
+        }}
         name={currentWorkspace?.displayName || ''}
         colorSeed={getWorkspaceAvatarColorSeed(currentWorkspace?.displayName)}
         src={getAbsoluteImageUrl(
@@ -45,7 +49,7 @@ export const MultiWorkspaceDropdownClickableComponent = ({
       />
       {!shouldHideLabel && (
         <>
-          <StyledLabelWrapper>
+          <StyledLabelWrapper aria-hidden={!isWorkspaceLabelVisible}>
             <NavigationDrawerAnimatedCollapseWrapper>
               <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
             </NavigationDrawerAnimatedCollapseWrapper>

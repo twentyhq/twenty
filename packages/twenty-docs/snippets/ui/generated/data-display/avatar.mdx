@@ -41,11 +41,11 @@
 </ParamField>
 
 <ParamField body="imageProps" type="AvatarImageProps">
-  Complete `Avatar.Image` props, including native image attributes, refs, `render`, `keepMounted`, and `onLoadingStatusChange`.
+  Complete `Avatar.Image` props, including native image attributes, refs, `render`, `keepMounted`, and `onLoadingStatusChange`. Alternative text defaults to an empty string. Supply a nonempty `alt` to label the image and default fallback.
 </ParamField>
 
 <ParamField body="name" type="string">
-  Name used for the first-letter fallback, image alternative text, and fallback label. Set `imageProps.alt` to override labeling or make the avatar decorative.
+  Name used for the first-letter fallback and fallback colors. Does not add an accessible label.
 </ParamField>
 
 <ParamField body="pulsing" type="boolean" default="false">
@@ -53,7 +53,7 @@
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, AvatarRootState&gt;">
-  Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction.
+  Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction, and put its click handler and disabled state on that owner.
 </ParamField>
 
 <ParamField body="ring" type="boolean" default="false">
@@ -117,7 +117,7 @@
 </ParamField>
 
 <ParamField body="Root.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, AvatarRootState&gt;">
-  Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction.
+  Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction, and put its click handler and disabled state on that owner.
 </ParamField>
 
 <ParamField body="Root.ring" type="boolean" default="false">

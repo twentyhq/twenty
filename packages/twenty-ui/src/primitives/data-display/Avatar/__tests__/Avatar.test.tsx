@@ -8,6 +8,8 @@ import { ThemeProvider } from '@ui/theme';
 
 import { Avatar } from '../Avatar';
 import styles from '../Avatar.module.scss';
+import { type AvatarProps } from '../types/AvatarProps';
+import { type AvatarRootProps } from '../types/AvatarRootProps';
 
 const AvatarRootWrapper = ({ children }: { children: ReactNode }) => (
   <Avatar.Root>{children}</Avatar.Root>
@@ -49,13 +51,18 @@ describe('Avatar composition', () => {
     vi.useRealTimers();
   });
 
-  it('keeps its presentational span when a click handler is supplied', async () => {
+  it('omits shorthand click handlers while retaining the Root contract', () => {
+    expectTypeOf<AvatarProps>().not.toHaveProperty('onClick');
+    expectTypeOf<AvatarRootProps>().toHaveProperty('onClick');
+  });
+
+  it('keeps Root presentational when a click handler is supplied', async () => {
     const handleClick = vi.fn();
     const avatarRef = createRef<HTMLSpanElement>();
 
     render(
       <ThemeProvider colorScheme="light">
-        <Avatar
+        <Avatar.Root
           name="Jane"
           aria-label="Profile avatar"
           ref={avatarRef}
@@ -65,7 +72,9 @@ describe('Avatar composition', () => {
             >();
             handleClick(event.currentTarget);
           }}
-        />
+        >
+          <Avatar.Fallback aria-hidden>J</Avatar.Fallback>
+        </Avatar.Root>
       </ThemeProvider>,
     );
 
@@ -82,10 +91,11 @@ describe('Avatar composition', () => {
     expect(handleClick).toHaveBeenCalledWith(avatar);
   });
 
-  it('uses the native button and link supplied through render as ref targets', async () => {
+  it('preserves native owner callbacks, disabled behavior and ref targets', async () => {
     const buttonRef = createRef<HTMLButtonElement>();
     const linkRef = createRef<HTMLAnchorElement>();
-    const handleClick = vi.fn();
+    const handleButtonClick = vi.fn();
+    const handleLinkClick = vi.fn();
 
     render(
       <ThemeProvider colorScheme="light">
@@ -95,15 +105,42 @@ describe('Avatar composition', () => {
           render={
             <button
               type="button"
-              disabled
               aria-label="Open profile"
-              onClick={handleClick}
+              onClick={(event) => {
+                expectTypeOf(event.currentTarget).toEqualTypeOf<
+                  EventTarget & HTMLButtonElement
+                >();
+                handleButtonClick(event.currentTarget);
+              }}
+            />
+          }
+        />
+        <Avatar
+          name="Jane"
+          render={
+            <button
+              type="button"
+              disabled
+              aria-label="Disabled profile"
+              onClick={handleButtonClick}
             />
           }
         />
         <Avatar.Root
           ref={linkRef}
-          render={<a href="/people/jane" aria-label="View Jane" />}
+          render={
+            <a
+              href="/people/jane"
+              aria-label="View Jane"
+              onClick={(event) => {
+                event.preventDefault();
+                expectTypeOf(event.currentTarget).toEqualTypeOf<
+                  EventTarget & HTMLAnchorElement
+                >();
+                handleLinkClick(event.currentTarget);
+              }}
+            />
+          }
         >
           <Avatar.Fallback>Jane</Avatar.Fallback>
         </Avatar.Root>
@@ -111,19 +148,30 @@ describe('Avatar composition', () => {
     );
 
     const button = screen.getByRole('button', { name: 'Open profile' });
+    const disabledButton = screen.getByRole('button', {
+      name: 'Disabled profile',
+    });
     const link = screen.getByRole('link', { name: 'View Jane' });
 
     expect(buttonRef.current).toBe(button);
     expect(buttonRef.current).toBeInstanceOf(HTMLButtonElement);
     expect(button).toHaveAttribute('type', 'button');
-    expect(button).toBeDisabled();
+    expect(disabledButton).toBeDisabled();
     expect(linkRef.current).toBe(link);
     expect(linkRef.current).toBeInstanceOf(HTMLAnchorElement);
     expect(link).toHaveAttribute('href', '/people/jane');
 
     await userEvent.click(button);
 
-    expect(handleClick).not.toHaveBeenCalled();
+    expect(handleButtonClick).toHaveBeenCalledWith(button);
+
+    await userEvent.click(disabledButton);
+
+    expect(handleButtonClick).toHaveBeenCalledTimes(1);
+
+    await userEvent.click(link);
+
+    expect(handleLinkClick).toHaveBeenCalledWith(link);
   });
 
   it('preserves caller fallback content, native props, handlers and render refs', async () => {
@@ -161,7 +209,11 @@ describe('Avatar composition', () => {
 
     rerender(
       <ThemeProvider colorScheme="light">
-        <Avatar name="Jane" fallbackProps={{ children: null }} />
+        <Avatar
+          name="Jane"
+          imageProps={{ alt: 'Jane' }}
+          fallbackProps={{ children: null }}
+        />
       </ThemeProvider>,
     );
 
@@ -275,7 +327,7 @@ describe('Avatar composition', () => {
     expect(screen.getByText('NA')).toHaveAttribute('aria-hidden', 'true');
   });
 
-  it('uses the image label for its fallback and lets callers make it decorative', () => {
+  it('is decorative by default and uses explicit image alternative text for its fallback', () => {
     const { rerender } = render(
       <ThemeProvider colorScheme="light">
         <Avatar name="Jane" imageProps={{ alt: 'Jane portrait' }} />
@@ -288,10 +340,15 @@ describe('Avatar composition', () => {
 
     rerender(
       <ThemeProvider colorScheme="light">
-        <Avatar name="Jane" imageProps={{ alt: '' }} />
+        <Avatar
+          name="Jane"
+          src="/jane.png"
+          imageProps={{ keepMounted: true }}
+        />
       </ThemeProvider>,
     );
 
+    expect(screen.getByAltText('')).toHaveAttribute('alt', '');
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
     expect(screen.getByText('J')).toHaveAttribute('aria-hidden', 'true');
   });
@@ -301,7 +358,11 @@ describe('Avatar composition', () => {
 
     render(
       <ThemeProvider colorScheme="light">
-        <Avatar name="Jane" fallbackProps={{ delay: 100 }} />
+        <Avatar
+          name="Jane"
+          imageProps={{ alt: 'Jane' }}
+          fallbackProps={{ delay: 100 }}
+        />
       </ThemeProvider>,
     );
 
@@ -318,6 +379,7 @@ describe('Avatar composition', () => {
     const handleLoad = vi.fn();
     const handleError = vi.fn();
     const imageProps = {
+      alt: 'Jane',
       keepMounted: true,
       ref: imageRef,
       onLoadingStatusChange: handleLoadingStatusChange,

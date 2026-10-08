@@ -8733,14 +8733,14 @@
         "type": "AvatarImageProps",
         "required": false,
         "defaultValue": null,
-        "description": "Complete `Avatar.Image` props, including native image attributes, refs, `render`, `keepMounted`, and `onLoadingStatusChange`."
+        "description": "Complete `Avatar.Image` props, including native image attributes, refs, `render`, `keepMounted`, and `onLoadingStatusChange`. Alternative text defaults to an empty string. Supply a nonempty `alt` to label the image and default fallback."
       },
       {
         "name": "name",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Name used for the first-letter fallback, image alternative text, and fallback label. Set `imageProps.alt` to override labeling or make the avatar decorative."
+        "description": "Name used for the first-letter fallback and fallback colors. Does not add an accessible label."
       },
       {
         "name": "pulsing",
@@ -8754,7 +8754,7 @@
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AvatarRootState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction."
+        "description": "Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction, and put its click handler and disabled state on that owner."
       },
       {
         "name": "ring",
@@ -8864,7 +8864,7 @@
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AvatarRootState>",
             "required": false,
             "defaultValue": null,
-            "description": "Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction."
+            "description": "Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction, and put its click handler and disabled state on that owner."
           },
           {
             "name": "ring",
