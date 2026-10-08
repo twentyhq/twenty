@@ -17,6 +17,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -156,6 +157,9 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   return (
     <>
       <SettingsRolesQueryEffect />
+      {isDefined(formValues.role) && (
+        <SettingsRoleDraftSyncEffect roleId={formValues.role} />
+      )}
       <SettingsPageLayout
         title={title}
         icon={
