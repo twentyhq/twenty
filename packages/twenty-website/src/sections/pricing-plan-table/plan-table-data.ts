@@ -211,9 +211,17 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
+      featureLabel: msg`Record change logs`,
+      tiers: {
+        organization: { kind: 'text', text: msg`Up to 3 years` },
+        pro: { kind: 'text', text: msg`90 days` },
+      },
+      type: 'row',
+    },
+    {
       featureLabel: msg`Audit logs`,
       tiers: {
-        organization: { kind: 'yes', label: msg`Yes` },
+        organization: { kind: 'text', text: msg`Up to 3 years` },
         pro: { kind: 'dash' },
       },
       type: 'row',
@@ -349,6 +357,14 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       tiers: {
         organization: { kind: 'yes', label: msg`Yes` },
         pro: { kind: 'yes', label: msg`Yes` },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: msg`App logs`,
+      tiers: {
+        organization: { kind: 'text', text: msg`30 days` },
+        pro: { kind: 'text', text: msg`30 days` },
       },
       type: 'row',
     },
