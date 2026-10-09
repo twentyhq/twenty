@@ -6,6 +6,7 @@ import { recordCalendarCardEditModePositionComponentState } from '@/object-recor
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
 import { getRecordCalendarCardInstanceIdPrefix } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardInstanceIdPrefix';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
+import { useOpenRecordCardFieldEditMode } from '@/object-record/record-card/hooks/useOpenRecordCardFieldEditMode';
 import { getIsOnDemandFieldEnabled } from '@/object-record/record-field/on-demand/utils/getIsOnDemandFieldEnabled';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import {
@@ -13,11 +14,7 @@ import {
   type RecordUpdateHook,
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
-import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -77,31 +74,14 @@ export const RecordCalendarCardBody = ({
     recordCalendarCardHoverPositionComponentState,
   );
 
-  const initDraftValue = useInitDraftValue();
-  const { openFieldInput } = useOpenFieldInputEditMode();
   const setRecordCalendarCardEditModePosition = useSetAtomComponentState(
     recordCalendarCardEditModePositionComponentState,
   );
-
-  const openFieldEditMode = ({
-    fieldDefinition,
-    position,
-  }: {
-    fieldDefinition: FieldDefinition<FieldMetadata>;
-    position: number;
-  }) => {
-    initDraftValue({
-      recordId,
-      fieldDefinition,
-      fieldComponentInstanceId: getRecordFieldInputInstanceId({
-        recordId,
-        fieldName: fieldDefinition.metadata.fieldName,
-        prefix: cardInstanceIdPrefix,
-      }),
-    });
-    setRecordCalendarCardEditModePosition(position);
-    openFieldInput({ fieldDefinition, recordId, prefix: cardInstanceIdPrefix });
-  };
+  const { openRecordCardFieldEditMode } = useOpenRecordCardFieldEditMode({
+    recordId,
+    prefix: cardInstanceIdPrefix,
+    setEditModePosition: setRecordCalendarCardEditModePosition,
+  });
 
   const handleMouseEnter = (index: number) => {
     setRecordCalendarCardHoverPosition(index);
@@ -154,7 +134,7 @@ export const RecordCalendarCardBody = ({
                 }),
                 onOpenEditMode: isOnDemand
                   ? () =>
-                      openFieldEditMode({
+                      openRecordCardFieldEditMode({
                         fieldDefinition: correspondingFieldDefinition,
                         position: index,
                       })

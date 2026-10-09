@@ -1,7 +1,5 @@
-import { getIsOnDemandFieldEnabled } from '@/object-record/record-field/on-demand/utils/getIsOnDemandFieldEnabled';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useIsOnDemandFieldAtRecordTableColumn } from '@/object-record/record-table/hooks/useIsOnDemandFieldAtRecordTableColumn';
 import { RecordTableCellFocusedPortalContent } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFocusedPortalContent';
 import { RecordTableCellPortalRootContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalRootContainer';
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
@@ -23,11 +21,11 @@ const StyledFocusIndicator = styled.div`
 `;
 
 export const RecordTableCellFocusedPortal = () => {
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
-  const { fieldMetadataItemByFieldMetadataItemId, isOnDemandFieldsEnabled } =
-    useRecordIndexContextOrThrow();
   const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
+  );
+  const isOnDemandField = useIsOnDemandFieldAtRecordTableColumn(
+    recordTableFocusPosition?.column,
   );
 
   const recordTableHoverPosition = useAtomComponentStateValue(
@@ -44,17 +42,7 @@ export const RecordTableCellFocusedPortal = () => {
     return null;
   }
 
-  const recordField = visibleRecordFields[recordTableFocusPosition.column];
-  const fieldMetadataItem = isDefined(recordField)
-    ? fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId]
-    : undefined;
-
-  if (
-    getIsOnDemandFieldEnabled({
-      isOnDemandFieldsEnabled,
-      fieldMetadataItem,
-    })
-  ) {
+  if (isOnDemandField) {
     return (
       <RecordTableCellPortalWrapper position={recordTableFocusPosition}>
         <StyledFocusIndicator aria-hidden />

@@ -7,6 +7,7 @@ import { recordBoardCardEditModePositionComponentState } from '@/object-record/r
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
 import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
+import { useOpenRecordCardFieldEditMode } from '@/object-record/record-card/hooks/useOpenRecordCardFieldEditMode';
 import { getIsOnDemandFieldEnabled } from '@/object-record/record-field/on-demand/utils/getIsOnDemandFieldEnabled';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import {
@@ -14,11 +15,7 @@ import {
   type RecordUpdateHook,
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
-import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -68,38 +65,17 @@ export const RecordBoardCardBody = () => {
     recordBoardCardHoverPositionComponentState,
   );
 
-  const initDraftValue = useInitDraftValue();
-  const { openFieldInput } = useOpenFieldInputEditMode();
   const setRecordBoardCardEditModePosition = useSetAtomComponentState(
     recordBoardCardEditModePositionComponentState,
   );
   const isRecordBoardCellsNonEditable = useAtomComponentStateValue(
     isRecordBoardCellsNonEditableComponentState,
   );
-
-  const openFieldEditMode = ({
-    fieldDefinition,
-    position,
-  }: {
-    fieldDefinition: FieldDefinition<FieldMetadata>;
-    position: number;
-  }) => {
-    initDraftValue({
-      recordId,
-      fieldDefinition,
-      fieldComponentInstanceId: getRecordFieldInputInstanceId({
-        recordId,
-        fieldName: fieldDefinition.metadata.fieldName,
-        prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
-      }),
-    });
-    setRecordBoardCardEditModePosition(position);
-    openFieldInput({
-      fieldDefinition,
-      recordId,
-      prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
-    });
-  };
+  const { openRecordCardFieldEditMode } = useOpenRecordCardFieldEditMode({
+    recordId,
+    prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
+    setEditModePosition: setRecordBoardCardEditModePosition,
+  });
 
   const handleMouseEnter = (index: number) => {
     setRecordBoardCardHoverPosition(index);
@@ -152,7 +128,7 @@ export const RecordBoardCardBody = () => {
                   }),
                 onOpenEditMode: isOnDemand
                   ? () =>
-                      openFieldEditMode({
+                      openRecordCardFieldEditMode({
                         fieldDefinition: correspondingFieldDefinition,
                         position: index,
                       })

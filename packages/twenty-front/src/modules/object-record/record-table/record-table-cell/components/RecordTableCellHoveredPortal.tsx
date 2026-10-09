@@ -1,7 +1,5 @@
-import { getIsOnDemandFieldEnabled } from '@/object-record/record-field/on-demand/utils/getIsOnDemandFieldEnabled';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useIsOnDemandFieldAtRecordTableColumn } from '@/object-record/record-table/hooks/useIsOnDemandFieldAtRecordTableColumn';
 import { RecordTableCellHoveredPortalContent } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHoveredPortalContent';
 import { RecordTableCellPortalRootContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalRootContainer';
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
@@ -10,28 +8,14 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellHoveredPortal = () => {
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
-  const { fieldMetadataItemByFieldMetadataItemId, isOnDemandFieldsEnabled } =
-    useRecordIndexContextOrThrow();
   const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
+  const isOnDemandField = useIsOnDemandFieldAtRecordTableColumn(
+    recordTableHoverPosition?.column,
+  );
 
-  if (!isDefined(recordTableHoverPosition)) {
-    return null;
-  }
-
-  const recordField = visibleRecordFields[recordTableHoverPosition.column];
-  const fieldMetadataItem = isDefined(recordField)
-    ? fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId]
-    : undefined;
-
-  if (
-    getIsOnDemandFieldEnabled({
-      isOnDemandFieldsEnabled,
-      fieldMetadataItem,
-    })
-  ) {
+  if (!isDefined(recordTableHoverPosition) || isOnDemandField) {
     return null;
   }
 
