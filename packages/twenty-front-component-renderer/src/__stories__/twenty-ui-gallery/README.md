@@ -7,7 +7,7 @@ Preact stories need Preact 11, which passes `ref` to function components as a
 regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
 The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels and controlled multiline value updates in React and Preact.
-Textarea auto-resize growth and shrinking remain known renderer failures. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. The growth failure also reproduces with main's unchanged Textarea. The fixture pins them with the existing known-failure helper; these assertions do not count as resize acceptance. Standalone Textarea browser checks pass.
+Textarea auto-resize remains a renderer limitation. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. These stale reads can also produce cumulative height growth instead of fitting the current content. The field fixture verifies values, refs, events and accessibility without treating incidental height changes as resize acceptance. Standalone Textarea browser checks pass.
 
 Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused React/Preact cases check controlled trigger requests, native attributes, Button render composition, DOM refs and callback reasons. These checks do not establish popup visibility, geometry or dismissal support. The omitted-container popup still requires C04/C05/C07 renderer acceptance.
 
