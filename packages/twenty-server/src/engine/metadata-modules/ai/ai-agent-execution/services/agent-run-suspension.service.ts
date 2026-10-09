@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type AgentRunSummary } from 'twenty-shared/ai';
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
@@ -22,6 +22,7 @@ import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import {
@@ -38,6 +39,8 @@ const SUSPENDED_RUN_WAKE_UP_KEY = 'RUN';
 // payload what continues it and who gets its outcome
 @Injectable()
 export class AgentRunSuspensionService {
+  private readonly logger = new Logger(AgentRunSuspensionService.name);
+
   constructor(
     @InjectWorkspaceScopedRepository(PendingWakeUpEntity)
     private readonly wakeUpRepository: WorkspaceScopedRepository<PendingWakeUpEntity>,
@@ -46,6 +49,7 @@ export class AgentRunSuspensionService {
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     @InjectMessageQueue(MessageQueue.aiQueue)
@@ -147,10 +151,8 @@ export class AgentRunSuspensionService {
     caller,
   }: {
     workspaceId: string;
-    caller: {
-      type: AgentRunCaller['type'];
-      ref: Partial<AgentRunCaller['ref']>;
-    };
+    // matched by containment, so a partial ref releases every run it covers
+    caller: AgentRunCaller;
   }): Promise<void> {
     const wakeUps = await this.wakeUpRepository.find(workspaceId, {
       where: {
@@ -210,7 +212,8 @@ export class AgentRunSuspensionService {
     }
   }
 
-  // A wait call stays pending in the conversation until its wake-up resolves it, then carries the outcome
+  // A wait call stays pending in the conversation until its wake-up resolves it, then carries the
+  // outcome, and the turn that waited on it ends with it
   async recordWaitOutcome({
     workspaceId,
     threadId,
@@ -220,19 +223,42 @@ export class AgentRunSuspensionService {
     threadId: string;
     outcome: Parameters<typeof buildWaitOutcomeToolOutput>[0];
   }): Promise<void> {
-    await this.messagePartRepository.query(workspaceId, ({ manager, table }) =>
-      manager.query(
-        `UPDATE ${table('agentMessagePart')} part SET "toolOutput" = $2::jsonb, "updatedAt" = now()
-         FROM ${table('agentMessage')} message
-         WHERE message.id = part."messageId" AND message."threadId" = $1
-           AND part."toolName" = ANY($3) AND part."toolOutput"->'result'->>'status' = 'pending'`,
-        [
-          threadId,
-          JSON.stringify(buildWaitOutcomeToolOutput(outcome)),
-          AGENT_WAIT_TOOL_NAMES,
-        ],
-      ),
+    const waitMessages = await this.messagePartRepository.query(
+      workspaceId,
+      ({ manager, table }) =>
+        manager.query<{ messageId: string }[]>(
+          `WITH closed_wait AS (
+             UPDATE ${table('agentMessagePart')} part SET "toolOutput" = $2::jsonb, "updatedAt" = now()
+             FROM ${table('agentMessage')} message
+             WHERE message.id = part."messageId" AND message."threadId" = $1
+               AND part."toolName" = ANY($3) AND part."toolOutput"->'result'->>'status' = 'pending'
+             RETURNING part."messageId"
+           ) SELECT DISTINCT "messageId" FROM closed_wait`,
+          [
+            threadId,
+            JSON.stringify(buildWaitOutcomeToolOutput(outcome)),
+            AGENT_WAIT_TOOL_NAMES,
+          ],
+        ),
     );
+
+    for (const { messageId } of waitMessages) {
+      // the turn only shows what happened, so failing to end it must not fail the run or its release
+      await this.turnRecorderService
+        .endWaitingTurn({
+          workspaceId,
+          messageId,
+          status:
+            outcome.type === 'CANCELLED'
+              ? AgentTurnStatus.CANCELLED
+              : AgentTurnStatus.COMPLETED,
+        })
+        .catch((error: unknown) =>
+          this.logger.warn(
+            `Could not end the turn of wait message ${messageId}: ${error instanceof Error ? error.message : String(error)}`,
+          ),
+        );
+    }
   }
 
   // A call a caller posted stops waiting with the caller's wake-up

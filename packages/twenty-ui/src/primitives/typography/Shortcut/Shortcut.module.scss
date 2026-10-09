@@ -11,11 +11,20 @@
   }
 
   &[data-variant='button'] {
-    border-inline-start: 1px solid currentColor;
+    align-items: center;
     color: inherit;
     font-weight: var(--t-font-weight-medium);
+    gap: var(--t-spacing-1_5);
     margin-inline-start: var(--t-spacing-1);
-    padding-inline-start: var(--t-spacing-2);
+    opacity: 0.5;
+
+    &::before {
+      background-color: currentColor;
+      block-size: var(--t-spacing-2);
+      content: '';
+      inline-size: 1px;
+      opacity: 0.4;
+    }
   }
 }
 

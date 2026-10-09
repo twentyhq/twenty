@@ -25,6 +25,30 @@ const defaultOptions: Required<FormatNumberOptions> = {
   format: NumberFormat.COMMAS_AND_DOT,
 };
 
+const ABBREVIATION_SUFFIX_BY_THRESHOLD: Record<number, string> = {
+  1e9: 'B',
+  1e6: 'M',
+  1e3: 'k',
+  1: '',
+};
+
+const getAbbreviationDivisor = (absoluteValue: number) =>
+  [1e9, 1e6, 1e3].find((divisor) => absoluteValue >= divisor) ?? 1;
+
+const roundToDecimals = (value: number, decimals: number) =>
+  Number(
+    value.toLocaleString('en-US', {
+      maximumFractionDigits: decimals,
+      useGrouping: false,
+    }),
+  );
+
+const roundToDisplayedPrecision = (absoluteValue: number, decimals: number) => {
+  const divisor = getAbbreviationDivisor(absoluteValue);
+
+  return roundToDecimals(absoluteValue / divisor, decimals) * divisor;
+};
+
 const getLocaleForFormat = (format?: NumberFormat): string => {
   if (!format) {
     return defaultOptions.locale;
@@ -58,29 +82,18 @@ export const formatNumber = (
   const locale = getLocaleForFormat(options.format);
 
   if (options.abbreviate) {
-    const abs = Math.abs(value);
-    let suffix = '';
-    let divisor = 1;
+    const roundedAbsoluteValue = roundToDisplayedPrecision(
+      Math.abs(value),
+      options.decimals,
+    );
+    const divisor = getAbbreviationDivisor(roundedAbsoluteValue);
 
-    if (abs >= 1e9) {
-      suffix = 'B';
-      divisor = 1e9;
-    } else if (abs >= 1e6) {
-      suffix = 'M';
-      divisor = 1e6;
-    } else if (abs >= 1e3) {
-      suffix = 'k';
-      divisor = 1e3;
-    }
-
-    if (divisor !== 1) {
-      const base = value / divisor;
-      const formatted = base.toLocaleString(locale, {
+    return (
+      (value / divisor).toLocaleString(locale, {
         minimumFractionDigits: 0,
         maximumFractionDigits: options.decimals,
-      });
-      return formatted + suffix;
-    }
+      }) + ABBREVIATION_SUFFIX_BY_THRESHOLD[divisor]
+    );
   }
 
   return value.toLocaleString(locale, {

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { createElement, useRef, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  Button,
   Field,
   Input,
   InputGroup,
@@ -12,6 +13,10 @@ import {
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
 const FieldControls = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [nativeTarget, setNativeTarget] = useState('');
+  const [controlValues, setControlValues] = useState('');
   const [email, setEmail] = useState('');
   const [notes, setNotes] = useState('');
   const [reportedValues, setReportedValues] = useState('');
@@ -39,8 +44,18 @@ const FieldControls = () => {
       </Field.Root>
       <Field.Root>
         <Field.Label>Email</Field.Label>
-        <InputGroup startElement="@" endElement=".com">
-          <Input value={email} onValueChange={setEmail} />
+        <InputGroup
+          size="sm"
+          startElement="@"
+          endElement=".com"
+          aria-label="Email layout"
+        >
+          <Input
+            ref={inputRef}
+            size="md"
+            value={email}
+            onValueChange={setEmail}
+          />
         </InputGroup>
         <Field.Description>Use your work email</Field.Description>
       </Field.Root>
@@ -49,9 +64,27 @@ const FieldControls = () => {
         <Field.Control defaultValue="" />
         <Field.Error match>Name is required</Field.Error>
       </Field.Root>
-      <Field.Root>
+      <Field.Root invalid>
         <Field.Label>Notes</Field.Label>
-        <Textarea value={notes} onValueChange={setNotes} rows={2} />
+        <p id="notes-help">Additional guidance</p>
+        <Textarea
+          ref={textareaRef}
+          aria-describedby="notes-help"
+          value={notes}
+          onValueChange={setNotes}
+          onChange={(event) => setNativeTarget(event.currentTarget.tagName)}
+          rows={1}
+          autoResize
+          maxRows={6}
+          render={(props, state) =>
+            createElement('textarea', {
+              ...props,
+              'data-filled': state.filled || undefined,
+            })
+          }
+        />
+        <Field.Description>Team context</Field.Description>
+        <Field.Error match>Notes need review</Field.Error>
       </Field.Root>
       <Field.Root invalid>
         <Field.Label>Reference</Field.Label>
@@ -63,11 +96,25 @@ const FieldControls = () => {
       <p role="status">
         Email: {email}; Notes: {notes}
       </p>
-      <button
-        onClick={() => setReportedValues(`Email: ${email}; Notes: ${notes}`)}
+      <Button type="button" onClick={() => setNotes('First\nSecond\nThird')}>
+        Apply notes
+      </Button>
+      <Button type="button" onClick={() => setNotes('')}>
+        Clear notes
+      </Button>
+      <p data-testid="native-target">{nativeTarget}</p>
+      <p data-testid="control-values">{controlValues}</p>
+      <Button
+        type="button"
+        onClick={() => {
+          setReportedValues(`Email: ${email}; Notes: ${notes}`);
+          setControlValues(
+            `${inputRef.current?.value}/${textareaRef.current?.value}`,
+          );
+        }}
       >
         Read values
-      </button>
+      </Button>
       <p data-testid="reported-values">{reportedValues}</p>
     </TwentyUiGalleryCard>
   );

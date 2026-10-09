@@ -283,6 +283,7 @@ describe('agent runs that wait (integration)', () => {
     );
 
     expect(await findWaitCallStatus(threadId)).toBe('pending');
+    expect(await findTurnStatuses(threadId)).toEqual(['waiting_for_input']);
 
     await updateOneAgent({
       expectToFail: false,
@@ -300,6 +301,7 @@ describe('agent runs that wait (integration)', () => {
 
     expect(executeAgent).toHaveBeenCalledTimes(1);
     expect(await findWaitCallStatus(threadId)).toBe('cancelled');
+    expect(await findTurnStatuses(threadId)).toEqual(['cancelled']);
 
     await updateOneAgent({
       expectToFail: false,

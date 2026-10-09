@@ -1,6 +1,7 @@
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
 import { FrontComponentFileInputHostContext } from '@/host/file-input/contexts/FrontComponentFileInputHostContext';
 import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
+import { FrontComponentRemoteRootRenderer } from '@/host/components/FrontComponentRemoteRootRenderer';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 import { FrontComponentHostFocusControllerContext } from '@/host/focus/contexts/FrontComponentHostFocusControllerContext';
@@ -18,10 +19,7 @@ import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentH
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
-import {
-  type RemoteReceiver,
-  RemoteRootRenderer,
-} from '@remote-dom/react/host';
+import { type RemoteReceiver } from '@remote-dom/react/host';
 import { type ReactNode, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
@@ -169,7 +167,7 @@ export const FrontComponentRenderer = ({
                 <FrontComponentFileInputHostContext.Provider
                   value={fileInputHost}
                 >
-                  <RemoteRootRenderer
+                  <FrontComponentRemoteRootRenderer
                     receiver={receiver}
                     components={fallbackComponentRegistry}
                   />

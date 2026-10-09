@@ -10,7 +10,7 @@ import {
   FindUninstallApplicationJobStatusDocument,
   JobState,
   type JobStatus,
-  TriggerUninstallApplicationJobDocument,
+  TriggerUninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
@@ -25,11 +25,11 @@ jest.mock('twenty-ui/components/feedback', () => ({
 
 const triggerUninstallMock = {
   request: {
-    query: TriggerUninstallApplicationJobDocument,
+    query: TriggerUninstallApplicationDocument,
     variables: { input: { universalIdentifier: UNIVERSAL_IDENTIFIER } },
   },
   result: {
-    data: { triggerUninstallApplicationJob: { jobId: JOB_ID } },
+    data: { triggerUninstallApplication: { jobId: JOB_ID } },
   },
 };
 

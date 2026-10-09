@@ -53,7 +53,7 @@ describe('AgentTurnRecorderService.finishExecutedTurn', () => {
     await service.finishExecutedTurn({
       ...turn,
       execution: { turnUsage: TURN_USAGE },
-      isAwaitingAnswer: true,
+      isWaiting: true,
     });
 
     expect(finish).toHaveBeenCalledWith(
@@ -67,7 +67,7 @@ describe('AgentTurnRecorderService.finishExecutedTurn', () => {
     await service.finishExecutedTurn({
       ...turn,
       execution: { turnUsage: TURN_USAGE, hasNoMoreAvailableCredits: true },
-      isAwaitingAnswer: true,
+      isWaiting: true,
     });
 
     expect(finish).toHaveBeenCalledWith(

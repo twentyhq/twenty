@@ -14,7 +14,8 @@ import {
   type RunAgentThread,
 } from 'twenty-shared/application';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
@@ -29,7 +30,7 @@ import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
-import { type AgentRunCallerWaitingState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-waiting-state.type';
+import { type OwnerWaitingState } from 'src/engine/core-modules/pending-wake-up/types/owner-waiting-state.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
@@ -54,14 +55,18 @@ type RunAgentServiceInput = {
   runAsWorkspaceMemberId?: string;
 };
 
-type AgentApiRunCaller = Extract<AgentRunCaller, { type: 'AGENT_API_RUN' }>;
+const agentApiRunCallerRefSchema = z.object({
+  agentId: z.string(),
+  runAsWorkspaceMemberId: z.string().nullable(),
+  requestUserWorkspaceId: z.string().nullable(),
+  // the request's own actor cannot be read back once it is over
+  createdBy: z.custom<ActorMetadata>(isPlainObject),
+});
 
 // Runs an agent for the runAgent API. A run that waits goes on later with the API call as its
 // caller, and its reply lands in its conversation
 @Injectable()
-export class AgentRunService
-  implements AgentRunCallerHandler<AgentApiRunCaller>, OnModuleInit
-{
+export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
   private readonly logger = new Logger(AgentRunService.name);
 
   constructor(
@@ -172,7 +177,7 @@ export class AgentRunService
         })
       : randomUUID();
 
-    const caller: AgentApiRunCaller = {
+    const caller: AgentRunCaller = {
       type: 'AGENT_API_RUN',
       ref: {
         agentId: agent.id,
@@ -250,8 +255,9 @@ export class AgentRunService
   // The member a run acts as is looked up again, so a waiting run goes on with their current role
   async buildExecutionContext({
     workspaceId,
-    caller: { ref },
-  }: AgentRunCallerInput<AgentApiRunCaller>): Promise<AgentRunExecutionContext> {
+    caller,
+  }: AgentRunCallerInput): Promise<AgentRunExecutionContext> {
+    const ref = agentApiRunCallerRefSchema.parse(caller.ref);
     const agent = await this.agentRepository.findOne(workspaceId, {
       where: { id: ref.agentId },
     });
@@ -301,9 +307,11 @@ export class AgentRunService
   async getWaitingState({
     workspaceId,
     caller,
-  }: AgentRunCallerInput<AgentApiRunCaller>): Promise<AgentRunCallerWaitingState> {
+  }: AgentRunCallerInput): Promise<OwnerWaitingState> {
+    const { agentId, runAsWorkspaceMemberId } =
+      agentApiRunCallerRefSchema.parse(caller.ref);
     const agent = await this.agentRepository.findOne(workspaceId, {
-      where: { id: caller.ref.agentId },
+      where: { id: agentId },
       select: ['id'],
     });
 
@@ -311,14 +319,14 @@ export class AgentRunService
       return 'GONE';
     }
 
-    if (!isDefined(caller.ref.runAsWorkspaceMemberId)) {
+    if (!isDefined(runAsWorkspaceMemberId)) {
       return 'WAITING';
     }
 
     // a run acting as a member who left can never continue, so it must release its thread
     try {
       await this.agentActorContextService.buildRunAsWorkspaceMemberContext({
-        workspaceMemberId: caller.ref.runAsWorkspaceMemberId,
+        workspaceMemberId: runAsWorkspaceMemberId,
         workspaceId,
       });
 

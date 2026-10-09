@@ -50,6 +50,7 @@ export const AvailableWorkspaceItem = ({
       selected={isSelected}
       startIcon={
         <Avatar
+          imageProps={{ alt: '' }}
           name={availableWorkspace.displayName || ''}
           colorSeed={getWorkspaceAvatarColorSeed(
             availableWorkspace.displayName,

@@ -12,7 +12,7 @@
  */}
 
 <ParamField body="autoResize" type="boolean" default="false">
-  Grows the textarea with its content instead of showing a scrollbar.
+  Measures committed controlled values or uncontrolled edits, form resets, row and size changes, and width changes. Overrides blockSize while enabled.
 </ParamField>
 
 <ParamField body="className" type="string | ((state: InputState) =&gt; string | undefined)">
@@ -21,19 +21,19 @@
 </ParamField>
 
 <ParamField body="maxRows" type="number">
-  Maximum number of rows the textarea grows to when `autoResize` is set.
-  Longer content scrolls.
+  Caps automatic height growth. Content beyond this row limit scrolls.
 </ParamField>
 
 <ParamField body="onValueChange" type="((value: string, eventDetails: { reason: &quot;none&quot;; event: Event; cancel: () =&gt; void; allowPropagation: () =&gt; void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) =&gt; void)">
-  Called with the new value when the textarea value changes.
+  Receives the next string value and Base UI details, including the native event, reason and cancellation methods.
 </ParamField>
 
-<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;" default="&lt;textarea /&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
+<ParamField body="ref" type="Ref&lt;HTMLTextAreaElement&gt;">
+  Ref to the native textarea element.
+</ParamField>
 
-  Accepts a `ReactElement` or a function that returns the element to render.
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;DetailedHTMLProps&lt;TextareaHTMLAttributes&lt;HTMLTextAreaElement&gt;, HTMLTextAreaElement&gt;, InputState&gt;">
+  Composes the native textarea with a custom element or callback receiving textarea props and Field state. Forward the supplied props and ref to a textarea.
 </ParamField>
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="md">

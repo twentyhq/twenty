@@ -27,6 +27,7 @@ const PAGE_LAYOUT_MANIFEST: Required<Omit<PageLayoutManifest, 'tabs'>> = {
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: OBJECT_UID,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: TAB_UID,
+  isFirstTabPinned: false,
 };
 
 const MINIMAL_PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {

@@ -1,12 +1,12 @@
 ---
 title: AvatarGroup
-description: Overlapping avatars with an optional overflow indicator.
+description: Overlapping avatars with a derived overflow indicator.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import AvatarGroupReference from '/snippets/ui/generated/components/data-display/avatar-group.mdx';
 
-`AvatarGroup` receives rendered avatars. Supply `overflowCount` yourself; slicing the avatars does not calculate the hidden count. `overflowAvatar` replaces the numeric indicator.
+`AvatarGroup` receives rendered avatars and derives the hidden count. `maxVisible` counts actual avatars; the overflow indicator is additional. Eight supplied avatars with `maxVisible={3}` show three avatars and `+5`.
 
 ```tsx
 import { AvatarGroup } from 'twenty-ui/components/data-display';
@@ -14,25 +14,136 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 
 export const TeamAvatars = () => (
   <AvatarGroup
-    maxVisible={2}
-    overflowCount={1}
+    maxVisible={3}
     avatars={[
-      <Avatar key="ada" name="Ada Lovelace" />,
-      <Avatar key="grace" name="Grace Hopper" />,
-      <Avatar key="margaret" name="Margaret Hamilton" />,
-    ]}
+      'Ada',
+      'Grace',
+      'Margaret',
+      'Annie',
+      'Mary',
+      'Dorothy',
+      'Katherine',
+      'Joan',
+    ].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
   />
 );
 ```
 
-Keep the member names available in surrounding content. Later avatars always render above earlier ones. `overlap` only picks the physical margin, `left` or `right`, that carries the negative offset, and `overlapOffset` sets that offset as a CSS length. An empty group without an overflow element renders nothing.
+Supply stable keys to keep surviving avatars mounted when the limit, total, or display order changes. Avatars are decorative by default. When the group is the only representation of its members, supply each member's name through `imageProps.alt` to label the image and default fallback. Keep avatars decorative when visible text or an owner label already supplies that identity.
 
 <StoryEmbed
-  storyId="ui-data-display-avatargroup--default"
-  title="AvatarGroup example"
+  storyId="ui-data-display-avatargroup--with-derived-overflow"
+  title="Eight avatars with three visible"
   height={280}
 />
 
+## Partially loaded collections
+
+Use `total` for the full collection size when only some avatars are loaded. Three supplied and visible avatars with `total={20}` show `+17`. Pass all loaded avatars and let the group apply `maxVisible`.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const LoadedTeamAvatars = () => (
+  <AvatarGroup
+    maxVisible={3}
+    total={20}
+    avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
+  />
+);
+```
+
+`total` is floored and cannot be smaller than the supplied renderable avatar count. Nonfinite totals use the supplied count. The derived hidden count is always nonnegative.
+
+`maxVisible` defaults to `4`. Finite limits are floored and clamped to zero, `Infinity` shows all supplied avatars, and `NaN` shows none. Empty React nodes do not count as avatars. A zero limit can show only the overflow indicator. An empty group with a positive total can show that total in its indicator; an empty group with no hidden avatars renders nothing.
+
+<StoryEmbed
+  storyId="ui-data-display-avatargroup--partially-loaded"
+  title="Three loaded members from a team of twenty"
+  height={280}
+/>
+
+## Custom overflow
+
+`renderOverflow` receives the same derived hidden count as the default `+N` indicator. It runs only when that count is positive. Return `null` to hide the indicator without changing which avatars are visible.
+
+Use an explicit control when the indicator performs an action. Its accessible name should explain the action and the count.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+type TeamAvatarsWithActionProps = { onShowAll: () => void };
+
+export const TeamAvatarsWithAction = ({
+  onShowAll,
+}: TeamAvatarsWithActionProps) => (
+  <AvatarGroup
+    maxVisible={3}
+    total={20}
+    avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
+    renderOverflow={(hiddenCount) => (
+      <Button
+        size="sm"
+        aria-label={`Show ${hiddenCount} more members`}
+        onClick={onShowAll}
+      >
+        +{hiddenCount}
+      </Button>
+    )}
+  />
+);
+```
+
+<StoryEmbed
+  storyId="ui-data-display-avatargroup--custom-overflow"
+  title="Custom overflow button"
+  height={280}
+/>
+
+## Appearance
+
+Later avatars always render above earlier ones. `overlap` picks the physical margin, `left` or `right`, that carries the negative offset. `overlapOffset` sets that offset as a CSS length. `overflowShape` sets the shape of the default numeric indicator.
+
+## Root customization
+
+Native attributes, event handlers, `className`, and `style` reach the root. Its default element is a `div`, including when `onClick` is supplied. Use native interactive elements for actions, such as the overflow button above.
+
+The root accepts a ref and `render`, which can be an element or a function. Custom components must forward the supplied props and ref to their native root. See [custom components](/ui/primitives/overview#custom-components) for composition requirements.
+
+```tsx
+import { useRef } from 'react';
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const NamedTeamAvatars = () => {
+  const groupRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <AvatarGroup
+      ref={groupRef}
+      role="group"
+      aria-label="Project members"
+      style={{ marginBlock: 8 }}
+      render={<div data-location="project-header" />}
+      avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+        <Avatar key={name} name={name} imageProps={{ alt: name }} />
+      ))}
+    />
+  );
+};
+```
+
 ## Props
+
+`AvatarGroupProps` is exported from `twenty-ui/components/data-display`.
 
 <AvatarGroupReference />

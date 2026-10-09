@@ -10,6 +10,7 @@ import { createGeometryWakeSources } from '@/host/geometry/utils/createGeometryW
 import { isGeometrySnapshotEqualWithinEpsilon } from '@/host/geometry/utils/isGeometrySnapshotEqualWithinEpsilon';
 import { measureNodeGeometry } from '@/host/geometry/utils/measureNodeGeometry';
 import { measureViewportGeometry } from '@/host/geometry/utils/measureViewportGeometry';
+import { updateFrontComponentPortalLayer } from '@/host/geometry/utils/updateFrontComponentPortalLayer';
 import { sanitizeRemoteElementIds } from '@/host/geometry/utils/sanitizeRemoteElementIds';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
@@ -22,6 +23,7 @@ export const createGeometryTracker = (): GeometryTracker => {
   const unregisteredObservedFrameCounts = new Map<string, number>();
 
   let rootContainer: Element | null = null;
+  let portalLayer: HTMLElement | null = null;
   let pushGeometryUpdates: PushGeometryUpdates | null = null;
   let lastViewportSnapshot: ViewportGeometrySnapshot | null = null;
   let animationFrameHandle: number | null = null;
@@ -54,6 +56,11 @@ export const createGeometryTracker = (): GeometryTracker => {
     }
 
     const viewport = readViewportGeometry();
+
+    if (isDefined(portalLayer)) {
+      updateFrontComponentPortalLayer({ portalLayer, rootContainer, viewport });
+    }
+
     const rootContainerOrigin = {
       x: viewport.rootContainerX,
       y: viewport.rootContainerY,
@@ -234,6 +241,23 @@ export const createGeometryTracker = (): GeometryTracker => {
     wakeSources.setRoot(node);
   };
 
+  const setPortalLayer = (element: HTMLElement | null): void => {
+    portalLayer = element;
+
+    if (!isDefined(element)) {
+      wakeSources.detachPortalLayerSources();
+      return;
+    }
+
+    updateFrontComponentPortalLayer({
+      portalLayer: element,
+      rootContainer,
+      viewport: readViewportGeometry(),
+    });
+    wakeSources.attachPortalLayerSources();
+    wake();
+  };
+
   const setPushGeometryUpdates = (
     nextPushGeometryUpdates: PushGeometryUpdates | null,
   ): void => {
@@ -245,7 +269,7 @@ export const createGeometryTracker = (): GeometryTracker => {
 
     wakeSources.attachViewportSources();
 
-    if (observedRemoteElementIds.size > 0) {
+    if (observedRemoteElementIds.size > 0 || isDefined(portalLayer)) {
       wake();
     }
   };
@@ -280,6 +304,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     observe,
     unobserve,
     setRoot,
+    setPortalLayer,
     setPushGeometryUpdates,
     getViewportGeometry: readViewportGeometry,
     reset,

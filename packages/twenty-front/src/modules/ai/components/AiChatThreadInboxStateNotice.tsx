@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBellOff, IconClock, IconProgressCheck } from 'twenty-ui/icon';
+import { IconBellOff, IconCheck, IconZzz } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
@@ -42,9 +42,9 @@ export const AiChatThreadInboxStateNotice = () => {
 
   const eventTime = formatAgentChatThreadDateTime(new Date(event.at));
   const notice = {
-    SNOOZED: { Icon: IconClock, text: t`Snoozed until ${eventTime}` },
-    SNOOZE_ENDED: { Icon: IconClock, text: t`Snooze ended ${eventTime}` },
-    DONE: { Icon: IconProgressCheck, text: t`Marked as done ${eventTime}` },
+    SNOOZED: { Icon: IconZzz, text: t`Snoozed until ${eventTime}` },
+    SNOOZE_ENDED: { Icon: IconZzz, text: t`Snooze ended ${eventTime}` },
+    DONE: { Icon: IconCheck, text: t`Marked as done ${eventTime}` },
     UNSUBSCRIBED: {
       Icon: IconBellOff,
       text: t`Unsubscribed ${eventTime}. New messages stay out of your inbox unless you're mentioned.`,
