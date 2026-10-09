@@ -137,6 +137,46 @@ describe('application workflow manifest updates', () => {
     expect(after.flatWorkflowMaps.byUniversalIdentifier).toEqual({});
   });
 
+  it('adds an application command menu item while the trigger declares where to launch it', () => {
+    const [workflow] = MANIFEST.workflows ?? [];
+    const launchable = {
+      ...workflow,
+      version: {
+        ...workflow.version,
+        trigger: {
+          ...workflow.version.trigger,
+          settings: { availability: { type: 'GLOBAL' as const } },
+        },
+      },
+    };
+
+    const withAvailability = compute({ workflows: [launchable] });
+    const commandMenuItems = Object.values(
+      withAvailability.flatCommandMenuItemMaps.byUniversalIdentifier,
+    );
+    const version = (
+      withAvailability.flatWorkflowMaps.byUniversalIdentifier[
+        workflow.universalIdentifier
+      ] as UniversalFlatWorkflow | undefined
+    )?.flatUniversalWorkflowVersion;
+
+    expect(commandMenuItems).toHaveLength(1);
+    expect(commandMenuItems[0]).toMatchObject({
+      applicationUniversalIdentifier: MANIFEST.application.universalIdentifier,
+      label: workflow.name,
+      coreWorkflowVersionId: version?.id,
+    });
+
+    const withoutAvailability = compute({
+      workflows: [workflow],
+      fromAllFlatEntityMaps: withAvailability,
+    });
+
+    expect(
+      withoutAvailability.flatCommandMenuItemMaps.byUniversalIdentifier,
+    ).toEqual({});
+  });
+
   it('rejects unknown record fields and update selections in one error', () => {
     const objectUniversalIdentifier = '88888888-8888-4888-8888-888888888888';
     const existing = createEmptyAllFlatEntityMaps();
