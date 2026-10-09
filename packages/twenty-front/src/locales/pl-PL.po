@@ -17950,7 +17950,7 @@ msgstr "Uprawnienia · {objectLabelSingular}"
 #. js-lingui-id: JFI3iH
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Persian"
-msgstr ""
+msgstr "Perski"
 
 #. js-lingui-id: qrGMTi
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx

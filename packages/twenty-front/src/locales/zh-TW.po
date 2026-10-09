@@ -17927,7 +17927,7 @@ msgstr "權限 · {objectLabelSingular}"
 #. js-lingui-id: JFI3iH
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Persian"
-msgstr ""
+msgstr "波斯語"
 
 #. js-lingui-id: qrGMTi
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
