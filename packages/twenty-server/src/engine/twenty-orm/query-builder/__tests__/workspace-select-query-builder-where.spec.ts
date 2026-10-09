@@ -1,4 +1,4 @@
-import { And, Equal, In, LessThan, Not } from 'typeorm';
+import { And, Equal, ILike, In, LessThan, Not } from 'typeorm';
 
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
@@ -203,5 +203,19 @@ describe('WorkspaceSelectQueryBuilder where', () => {
       .where({ companyId: null });
 
     expect(queryBuilder.getQuery()).toContain('("person"."companyId" IS NULL)');
+  });
+
+  it('should render an object-literal where with ILike using unaccent_immutable for accent-insensitive matching', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.where({ nameFirstName: ILike('%cafe%') });
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain(
+      'public.unaccent_immutable("person"."nameFirstName"::text) ILIKE public.unaccent_immutable($1)',
+    );
+    expect(values).toEqual(['%cafe%']);
   });
 });
