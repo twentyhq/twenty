@@ -55,6 +55,38 @@ describe('buildSlackConversationMessages', () => {
     ]);
   });
 
+  it('should keep a declined request and the messages before it since the agent never saw them', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        { ts: '1', user: 'U123', text: 'Who owns ACME?' },
+        {
+          ts: '2',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Sarah owns it.',
+        },
+        { ts: '3', user: 'U456', text: 'They moved to London' },
+        { ts: '4', user: 'U_GUEST', text: 'Update their address' },
+        {
+          ts: '5',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'I can only act for linked members.',
+        },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+      requestStatusByMessageTimestamp: new Map([
+        ['1', SLACK_ASSISTANT_REQUEST_STATUS.DONE],
+        ['4', SLACK_ASSISTANT_REQUEST_STATUS.DECLINED],
+      ]),
+    });
+
+    expect(messages).toEqual([
+      { role: 'user', content: '<@U456>: They moved to London' },
+      { role: 'user', content: '<@U_GUEST>: Update their address' },
+    ]);
+  });
+
   it('should carry the whole thread when nothing in it was answered yet', () => {
     const messages = buildSlackConversationMessages({
       messages: [

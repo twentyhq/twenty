@@ -662,7 +662,7 @@ describe('Slack assistant worker', () => {
     ]);
     await expect(readRequest(request.id)).resolves.toEqual(
       expect.objectContaining({
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
         responseText: SLACK_ACCESS_DENIED_TEXT,
       }),
     );

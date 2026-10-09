@@ -172,7 +172,7 @@ export const slackAssistantWorkerHandler = async (
 
       await updateSlackAssistantRequest(client, {
         id: record.id,
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
         responseText: denialText,
       });
 

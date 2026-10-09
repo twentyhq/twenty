@@ -68,7 +68,8 @@ export const buildSlackConversationMessages = ({
 
       return (
         !isDefined(requestStatus) ||
-        requestStatus === SLACK_ASSISTANT_REQUEST_STATUS.FAILED
+        requestStatus === SLACK_ASSISTANT_REQUEST_STATUS.FAILED ||
+        requestStatus === SLACK_ASSISTANT_REQUEST_STATUS.DECLINED
       );
     })
     .map((message): SlackAssistantAgentMessage => {

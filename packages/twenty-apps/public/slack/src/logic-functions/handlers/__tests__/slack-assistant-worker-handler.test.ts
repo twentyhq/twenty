@@ -213,7 +213,7 @@ describe('slackAssistantWorkerHandler', () => {
       expect.anything(),
       expect.objectContaining({
         id: REQUEST_RECORD.id,
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
         responseText: SLACK_ACCESS_DENIED_TEXT,
       }),
     );
@@ -241,7 +241,7 @@ describe('slackAssistantWorkerHandler', () => {
       expect.anything(),
       expect.objectContaining({
         id: REQUEST_RECORD.id,
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
         responseText: SLACK_REQUEST_NOT_ATTRIBUTABLE_TEXT,
       }),
     );
@@ -265,7 +265,7 @@ describe('slackAssistantWorkerHandler', () => {
     expect(updateSlackAssistantRequestMock).not.toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
         responseText: SLACK_ACCESS_DENIED_TEXT,
       }),
     );
