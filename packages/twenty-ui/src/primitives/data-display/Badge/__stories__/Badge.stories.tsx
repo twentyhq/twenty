@@ -126,6 +126,11 @@ const NativeCompositionExample = () => {
   const buttonRef = useRef<HTMLElement>(null);
   const linkRef = useRef<HTMLElement>(null);
   const [result, setResult] = useState('Ready');
+  const [pointerEntries, setPointerEntries] = useState(0);
+  const [spanActivations, setSpanActivations] = useState(0);
+  const [buttonActivations, setButtonActivations] = useState(0);
+  const [renderedButtonActivations, setRenderedButtonActivations] = useState(0);
+  const [linkActivations, setLinkActivations] = useState(0);
 
   return (
     <>
@@ -136,9 +141,18 @@ const NativeCompositionExample = () => {
         className="consumer-badge"
         style={{ marginTop: 7 }}
         onMouseEnter={(event) => {
+          setPointerEntries((entries) => entries + 1);
           setResult(
             spanRef.current === event.currentTarget
               ? 'Span ref confirmed'
+              : 'Unexpected span ref',
+          );
+        }}
+        onClick={(event) => {
+          setSpanActivations((activations) => activations + 1);
+          setResult(
+            spanRef.current === event.currentTarget
+              ? 'Span click ref confirmed'
               : 'Unexpected span ref',
           );
         }}
@@ -146,10 +160,20 @@ const NativeCompositionExample = () => {
         <IconCoins aria-hidden="true" size={12} />
         <strong>+2 credits</strong>
       </Badge>
+      <Badge aria-label="Caller supplied zero">{0}</Badge>
+      <Badge aria-label="Caller formatted count">99+</Badge>
       <Badge
         ref={buttonRef}
-        render={<Button size="sm" />}
+        render={
+          <Button
+            size="sm"
+            onClick={() =>
+              setRenderedButtonActivations((activations) => activations + 1)
+            }
+          />
+        }
         onClick={(event) => {
+          setButtonActivations((activations) => activations + 1);
           setResult(
             buttonRef.current === event.currentTarget
               ? 'Button ref confirmed'
@@ -163,6 +187,7 @@ const NativeCompositionExample = () => {
         ref={linkRef}
         onClick={(event) => {
           event.preventDefault();
+          setLinkActivations((activations) => activations + 1);
           setResult(
             linkRef.current === event.currentTarget
               ? 'Link ref confirmed'
@@ -178,6 +203,13 @@ const NativeCompositionExample = () => {
         Credit history
       </Badge>
       <output aria-label="Native composition result">{result}</output>
+      <output aria-label="Span pointer entries">{pointerEntries}</output>
+      <output aria-label="Span activations">{spanActivations}</output>
+      <output aria-label="Badge button activations">{buttonActivations}</output>
+      <output aria-label="Rendered button activations">
+        {renderedButtonActivations}
+      </output>
+      <output aria-label="Link activations">{linkActivations}</output>
     </>
   );
 };
@@ -192,23 +224,59 @@ export const NativeComposition: Story = {
     await expect(badge).toHaveClass('consumer-badge');
     await expect(badge).toHaveAttribute('data-reward', 'credits');
     await expect(badge).toHaveStyle({ marginTop: '7px' });
-    await expect(canvas.getByText('+2 credits')).toBeVisible();
+    const reward = canvas.getByText('+2 credits');
+    await expect(reward.tagName).toBe('STRONG');
+    await expect(reward).toBeVisible();
+    const zero = canvas.getByLabelText('Caller supplied zero');
+    await expect(zero).toBeVisible();
+    await expect(zero).toHaveTextContent('0');
+    const formattedCount = canvas.getByLabelText('Caller formatted count');
+    await expect(formattedCount).toBeVisible();
+    await expect(formattedCount).toHaveTextContent('99+');
     await userEvent.hover(badge);
+    await expect(
+      canvas.getByLabelText('Span pointer entries'),
+    ).toHaveTextContent('1');
     await expect(
       canvas.getByLabelText('Native composition result'),
     ).toHaveTextContent('Span ref confirmed');
+    await userEvent.click(badge);
+    await expect(canvas.getByLabelText('Span activations')).toHaveTextContent(
+      '1',
+    );
+    await expect(
+      canvas.getByLabelText('Native composition result'),
+    ).toHaveTextContent('Span click ref confirmed');
+    await expect(badge.tagName).toBe('SPAN');
+    await expect(badge).not.toHaveAttribute('role');
+    await expect(badge).not.toHaveAttribute('tabindex');
     const button = canvas.getByRole('button', { name: 'Review credits' });
     button.focus();
     await userEvent.keyboard('{Enter}');
+    await expect(button).toHaveFocus();
+    await expect(
+      canvas.getByLabelText('Badge button activations'),
+    ).toHaveTextContent('1');
+    await expect(
+      canvas.getByLabelText('Rendered button activations'),
+    ).toHaveTextContent('1');
     await expect(
       canvas.getByLabelText('Native composition result'),
     ).toHaveTextContent('Button ref confirmed');
     const link = canvas.getByRole('link', { name: 'Credit history' });
-    link.focus();
-    await userEvent.keyboard('{Enter}');
+    await expect(link).toHaveAttribute('href', '#credits');
+    await userEvent.click(link);
+    await expect(canvas.getByLabelText('Link activations')).toHaveTextContent(
+      '1',
+    );
     await expect(
       canvas.getByLabelText('Native composition result'),
     ).toHaveTextContent('Link ref confirmed');
+    await userEvent.keyboard('{Enter}');
+    await expect(link).toHaveFocus();
+    await expect(canvas.getByLabelText('Link activations')).toHaveTextContent(
+      '2',
+    );
   },
 };
 
