@@ -108,6 +108,17 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         }
       }
 
+      const matchingLinkNavigationMenuItemIds = navigationMenuItems
+        .filter(
+          (item) =>
+            item.type === NavigationMenuItemType.LINK &&
+            isLinkNavigationMenuItemActive({
+              computedLink: getLinkNavigationMenuItemComputedLink(item),
+              location: { pathname: currentPath, search: currentSearch },
+            }),
+        )
+        .map((item) => item.id);
+
       if (isOnRecordShowPage) {
         const matchingRecordNavigationMenuItemIds = navigationMenuItems
           .filter((item) => {
@@ -141,6 +152,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
 
         const activeNavigationMenuItemIds = [
           ...matchingRecordNavigationMenuItemIds,
+          ...matchingLinkNavigationMenuItemIds,
           ...matchingObjectNavigationMenuItemIds,
         ];
 
@@ -168,17 +180,6 @@ export const useIdentifyActiveNavigationMenuItems = (): {
           objectMetadataIdForOpenedSection: null,
         };
       }
-
-      const matchingLinkNavigationMenuItemIds = navigationMenuItems
-        .filter(
-          (item) =>
-            item.type === NavigationMenuItemType.LINK &&
-            isLinkNavigationMenuItemActive({
-              computedLink: getLinkNavigationMenuItemComputedLink(item),
-              location: { pathname: currentPath, search: currentSearch },
-            }),
-        )
-        .map((item) => item.id);
 
       if (matchingLinkNavigationMenuItemIds.length > 0) {
         return {
