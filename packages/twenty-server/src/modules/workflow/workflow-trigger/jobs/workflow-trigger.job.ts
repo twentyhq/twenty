@@ -69,9 +69,6 @@ export class WorkflowTriggerJob {
       );
 
     if (!isDefined(coreWorkflowVersion)) {
-      this.captureDroppedDispatch(
-        `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}`,
-      );
       return;
     }
 
@@ -81,10 +78,11 @@ export class WorkflowTriggerJob {
         workflowId,
       );
 
-    if (
-      !isDefined(coreWorkflow) ||
-      coreWorkflowVersion.coreWorkflowId !== coreWorkflow.id
-    ) {
+    if (!isDefined(coreWorkflow)) {
+      return;
+    }
+
+    if (coreWorkflowVersion.coreWorkflowId !== coreWorkflow.id) {
       this.captureDroppedDispatch(
         `Core workflow version ${coreWorkflowVersionId} does not belong to workflow ${workflowId} in workspace ${workspaceId}`,
       );

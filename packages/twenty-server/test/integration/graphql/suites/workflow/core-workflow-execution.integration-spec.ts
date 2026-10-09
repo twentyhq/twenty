@@ -16,6 +16,7 @@ import {
   type WorkflowAiAgentAction,
   type WorkflowEmptyAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
@@ -462,6 +463,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const first = await createFixture();
     const second = await createFixture();
     const job = await global.workflowTestServices.triggerJob();
+    const captureExceptions = jest.spyOn(
+      global.app.get(ExceptionHandlerService),
+      'captureExceptions',
+    );
 
     await job.handle({
       workspaceId,
@@ -481,6 +486,13 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     );
 
     expect(runs).toHaveLength(0);
+    expect(captureExceptions).toHaveBeenCalledWith([
+      expect.objectContaining({
+        message: expect.stringContaining(
+          `${second.coreWorkflowVersionId} does not belong`,
+        ),
+      }),
+    ]);
   });
 
   it('keeps the old webhook URL working without workspace definition reads', async () => {
@@ -2833,6 +2845,46 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         [fixture.coreWorkflowId],
       );
       expect(runs).toHaveLength(0);
+    },
+  );
+
+  it.each(['workflow', 'workflow and its version'])(
+    'drops queued triggers without reporting them once their %s is deleted',
+    async (deleted) => {
+      const fixture = await createFixture({ mirrorless: true });
+      const captureExceptions = jest.spyOn(
+        global.app.get(ExceptionHandlerService),
+        'captureExceptions',
+      );
+
+      if (deleted === 'workflow and its version') {
+        await global.testDataSource.query(
+          'DELETE FROM core."workflowVersion" WHERE id = $1',
+          [fixture.coreWorkflowVersionId],
+        );
+      }
+      await global.testDataSource.query(
+        'DELETE FROM core.workflow WHERE id = $1',
+        [fixture.coreWorkflowId],
+      );
+      await (
+        await global.workflowTestServices.triggerJob()
+      ).handle({
+        workspaceId,
+        workflowId: fixture.coreWorkflowId,
+        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+        payload: {},
+      });
+      const runs = await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
+        [fixture.coreWorkflowId],
+      );
+      expect(runs).toHaveLength(0);
+      expect(captureExceptions).not.toHaveBeenCalledWith([
+        expect.objectContaining({
+          message: expect.stringContaining(fixture.coreWorkflowVersionId),
+        }),
+      ]);
     },
   );
 
