@@ -199,7 +199,49 @@ describe('workflow manifest manual trigger', () => {
     );
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
-      'Unsupported trigger type. Application workflows support: MANUAL',
+      'Unsupported trigger type. Application workflows support: MANUAL, CRON',
     );
+  });
+});
+
+describe('workflow manifest cron trigger', () => {
+  const withCron = (settings: Record<string, unknown>) => ({
+    ...workflow,
+    version: {
+      ...workflow.version,
+      trigger: {
+        universalIdentifier: workflow.version.trigger.universalIdentifier,
+        type: 'CRON',
+        nextStepIds: workflow.version.trigger.nextStepIds,
+        settings,
+      },
+    },
+  });
+
+  it('accepts every schedule type', () => {
+    for (const settings of [
+      { type: 'DAYS', schedule: { day: 1, hour: 9, minute: 0 } },
+      { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
+      { type: 'MINUTES', schedule: { minute: 15 } },
+      { type: 'CUSTOM', pattern: '0 9 * * 1-5' },
+    ]) {
+      expect(workflowManifestSchema.safeParse(withCron(settings)).success).toBe(
+        true,
+      );
+    }
+  });
+
+  it('rejects a schedule outside the clock', () => {
+    const result = workflowManifestSchema.safeParse(
+      withCron({ type: 'DAYS', schedule: { day: 1, hour: 24, minute: 0 } }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'schedule',
+      'hour',
+    ]);
   });
 });

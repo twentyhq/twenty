@@ -40,6 +40,36 @@ const workflowTriggerManifestOptions = [
       })
       .optional(),
   }),
+  z.strictObject({
+    universalIdentifier: z.uuid(),
+    type: z.literal('CRON'),
+    nextStepIds: z.array(z.uuid()).min(1),
+    settings: z.discriminatedUnion('type', [
+      z.strictObject({
+        type: z.literal('DAYS'),
+        schedule: z.strictObject({
+          day: z.int().min(1),
+          hour: z.int().min(0).max(23),
+          minute: z.int().min(0).max(59),
+        }),
+      }),
+      z.strictObject({
+        type: z.literal('HOURS'),
+        schedule: z.strictObject({
+          hour: z.int().min(1),
+          minute: z.int().min(0).max(59),
+        }),
+      }),
+      z.strictObject({
+        type: z.literal('MINUTES'),
+        schedule: z.strictObject({ minute: z.int().min(1).max(60) }),
+      }),
+      z.strictObject({
+        type: z.literal('CUSTOM'),
+        pattern: z.string().min(1),
+      }),
+    ]),
+  }),
 ] as const;
 
 export const APPLICATION_WORKFLOW_TRIGGER_TYPES: readonly string[] =
