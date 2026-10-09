@@ -63,7 +63,10 @@ const COLUMN_BY_SORT_FIELD: Record<
 export class AdminPanelGlobalChatThreadsService {
   constructor(
     @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceRepository: Pick<
+      Repository<WorkspaceEntity>,
+      'find'
+    >,
     @Inject(AgentHistoryWorkspaceStorageService)
     private readonly historyStorage: Pick<
       AgentHistoryWorkspaceStorageService,

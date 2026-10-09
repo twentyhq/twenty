@@ -1,10 +1,9 @@
-import { DataSource, type Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
 import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
 import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
 import { AdminPanelGlobalChatThreadsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-global-chat-threads.service';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -40,8 +39,8 @@ const OPTIONS = {
     const storage = new AgentHistoryWorkspaceStorageService(dataSource);
     const service = new AdminPanelGlobalChatThreadsService(
       {
-        find: async () => WORKSPACE_IDS.map((id) => ({ id })),
-      } as unknown as Repository<WorkspaceEntity>,
+        find: jest.fn().mockResolvedValue(WORKSPACE_IDS.map((id) => ({ id }))),
+      },
       storage,
     );
 
@@ -85,7 +84,9 @@ const OPTIONS = {
 
     afterEach(async () => {
       jest.restoreAllMocks();
-      if (!dataSource.isInitialized) return;
+      if (!dataSource.isInitialized) {
+        return;
+      }
       for (const workspaceId of WORKSPACE_IDS) {
         await dataSource.query(
           `DROP SCHEMA IF EXISTS "${getWorkspaceSchemaName(workspaceId)}" CASCADE`,
@@ -95,7 +96,9 @@ const OPTIONS = {
     });
 
     afterAll(async () => {
-      if (dataSource.isInitialized) await dataSource.destroy();
+      if (dataSource.isInitialized) {
+        await dataSource.destroy();
+      }
     });
 
     it('releases earlier workspace locks while later report queries run and preserves global pagination', async () => {
