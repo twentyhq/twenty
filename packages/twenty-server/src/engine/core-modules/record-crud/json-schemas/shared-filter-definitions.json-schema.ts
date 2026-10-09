@@ -118,6 +118,18 @@ export const SHARED_FILTER_JSON_SCHEMAS = {
     },
   },
   DefaultFilter: textFilter(),
+  RawJsonFilter: {
+    type: 'object',
+    properties: {
+      like: stringOperator({
+        description: 'LIKE on the JSON text (% wildcard)',
+      }),
+      ilike: stringOperator({
+        description: 'ILIKE on the JSON text (% wildcard, case-insensitive)',
+      }),
+      is: NULL_CHECK_REFERENCE,
+    },
+  },
   ArrayFilter: {
     type: 'object',
     properties: {
