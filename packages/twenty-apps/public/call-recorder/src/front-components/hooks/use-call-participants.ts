@@ -8,7 +8,11 @@ type CallParticipantsState =
   | { status: 'loading' }
   | { status: 'error' }
   | { status: 'notLinkedToMeeting' }
-  | { status: 'loaded'; participants: CallParticipantNode[] };
+  | {
+      status: 'loaded';
+      participants: CallParticipantNode[];
+      areRelationsLoaded: boolean;
+    };
 
 export const useCallParticipants = (
   callRecordingId: string,
@@ -30,7 +34,11 @@ export const useCallParticipants = (
 
         switch (result.kind) {
           case 'loaded':
-            setState({ status: 'loaded', participants: result.participants });
+            setState({
+              status: 'loaded',
+              participants: result.participants,
+              areRelationsLoaded: result.areRelationsLoaded,
+            });
             return;
           case 'notLinkedToMeeting':
             setState({ status: 'notLinkedToMeeting' });

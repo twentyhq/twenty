@@ -1,12 +1,13 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type FullNameNode } from 'src/front-components/types/full-name-node.type';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 export const getFullName = (
   name: FullNameNode | null | undefined,
 ): string | undefined => {
   const fullName = [name?.firstName, name?.lastName]
-    .filter(isNonEmptyString)
-    .map((namePart) => namePart.trim())
+    .map((namePart) => namePart?.trim())
+    .filter((namePart): namePart is string => isNonEmptyString(namePart))
     .join(' ');
 
   return isNonEmptyString(fullName) ? fullName : undefined;

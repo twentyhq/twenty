@@ -55,6 +55,7 @@ describe('buildCallParticipantDisplayItems', () => {
   it('renders a matched participant as a person with its record name and avatar', () => {
     const { items } = buildCallParticipantDisplayItems({
       participants: [matchedPerson],
+      areRelationsLoaded: true,
       showUnmatchedAttendees: false,
     });
 
@@ -80,6 +81,7 @@ describe('buildCallParticipantDisplayItems', () => {
           person: { id: 'person-nameless', name: { firstName: ' ' } },
         }),
       ],
+      areRelationsLoaded: true,
       showUnmatchedAttendees: false,
     });
 
@@ -100,6 +102,7 @@ describe('buildCallParticipantDisplayItems', () => {
           },
         },
       ],
+      areRelationsLoaded: true,
       showUnmatchedAttendees: false,
     });
 
@@ -111,6 +114,7 @@ describe('buildCallParticipantDisplayItems', () => {
   it('shows workspace members by name even when unmatched attendees are hidden', () => {
     const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
       participants: [workspaceMember],
+      areRelationsLoaded: true,
       showUnmatchedAttendees: false,
     });
 
@@ -130,6 +134,7 @@ describe('buildCallParticipantDisplayItems', () => {
   it('hides unmatched attendees by default and counts them', () => {
     const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
       participants: [matchedPerson, unmatchedWithName, unmatchedWithHandleOnly],
+      areRelationsLoaded: true,
       showUnmatchedAttendees: false,
     });
 
@@ -140,6 +145,7 @@ describe('buildCallParticipantDisplayItems', () => {
   it('shows unmatched attendees by display name, then handle, when enabled', () => {
     const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
       participants: [unmatchedWithName, unmatchedWithHandleOnly],
+      areRelationsLoaded: true,
       showUnmatchedAttendees: true,
     });
 
@@ -163,6 +169,7 @@ describe('buildCallParticipantDisplayItems', () => {
   it('skips unmatched attendees with neither a name nor a handle', () => {
     const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
       participants: [buildParticipant({ id: 'empty', displayName: '  ' })],
+      areRelationsLoaded: true,
       showUnmatchedAttendees: true,
     });
 
@@ -182,6 +189,7 @@ describe('buildCallParticipantDisplayItems', () => {
           handle: 'MARGARET@example.org',
         },
       ],
+      areRelationsLoaded: true,
       showUnmatchedAttendees: true,
     });
 
@@ -204,6 +212,7 @@ describe('buildCallParticipantDisplayItems', () => {
         matchedPerson,
         { ...unmatchedWithHandleOnly, isOrganizer: true },
       ],
+      areRelationsLoaded: true,
       showUnmatchedAttendees: true,
     });
 
@@ -214,5 +223,102 @@ describe('buildCallParticipantDisplayItems', () => {
       'Grace Hopper',
       'Linus',
     ]);
+  });
+
+  it('does not link a participant whose person is deleted or unreadable', () => {
+    const participantWithMissingPerson = buildParticipant({
+      id: 'participant-missing-person',
+      handle: 'gone@example.com',
+      displayName: 'Gone Person',
+      personId: 'person-deleted',
+      person: null,
+    });
+
+    const hidden = buildCallParticipantDisplayItems({
+      participants: [participantWithMissingPerson],
+      areRelationsLoaded: true,
+      showUnmatchedAttendees: false,
+    });
+
+    expect(hidden).toEqual({ items: [], hiddenUnmatchedCount: 1 });
+
+    const shown = buildCallParticipantDisplayItems({
+      participants: [participantWithMissingPerson],
+      areRelationsLoaded: true,
+      showUnmatchedAttendees: true,
+    });
+
+    expect(shown.items).toEqual([
+      {
+        kind: 'unmatched',
+        key: 'handle:gone@example.com',
+        label: 'Gone Person',
+        isOrganizer: false,
+      },
+    ]);
+  });
+
+  it('falls back to the workspace member when the person is missing', () => {
+    const { items } = buildCallParticipantDisplayItems({
+      participants: [
+        { ...workspaceMember, personId: 'person-deleted', person: null },
+      ],
+      areRelationsLoaded: true,
+      showUnmatchedAttendees: false,
+    });
+
+    expect(items).toMatchObject([
+      { kind: 'workspaceMember', label: 'Grace Hopper' },
+    ]);
+  });
+
+  it('trusts participant ids and attendee names when relations could not be loaded', () => {
+    const { items } = buildCallParticipantDisplayItems({
+      participants: [
+        buildParticipant({
+          id: 'participant-person',
+          handle: 'ada@example.com',
+          displayName: 'Ada',
+          personId: 'person-ada',
+        }),
+        buildParticipant({
+          id: 'participant-member',
+          handle: 'grace@acme.com',
+          workspaceMemberId: 'member-grace',
+        }),
+      ],
+      areRelationsLoaded: false,
+      showUnmatchedAttendees: false,
+    });
+
+    expect(items).toEqual([
+      {
+        kind: 'person',
+        key: 'person:person-ada',
+        personId: 'person-ada',
+        label: 'Ada',
+        avatarUrl: undefined,
+        isOrganizer: false,
+      },
+      {
+        kind: 'workspaceMember',
+        key: 'workspaceMember:member-grace',
+        workspaceMemberId: 'member-grace',
+        label: 'grace@acme.com',
+        avatarUrl: undefined,
+        isOrganizer: false,
+      },
+    ]);
+  });
+
+  it('still lists workspace members when every other attendee is hidden', () => {
+    const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
+      participants: [workspaceMember, unmatchedWithName],
+      areRelationsLoaded: true,
+      showUnmatchedAttendees: false,
+    });
+
+    expect(items.map((item) => item.kind)).toEqual(['workspaceMember']);
+    expect(hiddenUnmatchedCount).toBe(1);
   });
 });

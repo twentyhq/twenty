@@ -41,6 +41,7 @@ const CallParticipantList = ({ callRecordingId }: CallParticipantListProps) => {
     case 'loaded': {
       const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
         participants: callParticipantsState.participants,
+        areRelationsLoaded: callParticipantsState.areRelationsLoaded,
         showUnmatchedAttendees: isShowUnmatchedAttendeesEnabled(),
       });
 
@@ -49,7 +50,7 @@ const CallParticipantList = ({ callRecordingId }: CallParticipantListProps) => {
           <WidgetMessage
             message={
               hiddenUnmatchedCount > 0
-                ? 'No attendees match a person in your workspace.'
+                ? 'No attendees match a person or member of your workspace.'
                 : 'This meeting has no participants to show.'
             }
           />

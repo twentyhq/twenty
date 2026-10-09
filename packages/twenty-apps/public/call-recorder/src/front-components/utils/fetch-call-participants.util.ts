@@ -44,6 +44,75 @@ const fetchCallRecordingCalendarEventNode = async (
   return isDefined(callRecordingNode) ? callRecordingNode : undefined;
 };
 
+const PARTICIPANT_SCALAR_FIELDS = {
+  id: true,
+  handle: true,
+  displayName: true,
+  isOrganizer: true,
+  personId: true,
+  workspaceMemberId: true,
+};
+
+const PARTICIPANT_RELATION_FIELDS = {
+  person: {
+    id: true,
+    name: { firstName: true, lastName: true },
+    avatarUrl: true,
+    avatarFile: { url: true },
+  },
+  workspaceMember: {
+    id: true,
+    name: { firstName: true, lastName: true },
+    avatarUrl: true,
+  },
+};
+
+// The API returns one-to-many relations nested under a many-to-one as empty,
+// so participants are read flat by calendarEventId instead of through
+// callRecording.calendarEvent.
+const fetchParticipantsForCalendarEvent = async (
+  client: CoreApiClient,
+  {
+    calendarEventId,
+    areRelationsLoaded,
+  }: { calendarEventId: string; areRelationsLoaded: boolean },
+): Promise<CallParticipantNode[]> => {
+  let fetchedParticipantCount = 0;
+
+  return fetchAllNodes<CallParticipantNode>(
+    async (afterCursor) => {
+      const queryResult = await client.query({
+        calendarEventParticipants: {
+          __args: {
+            filter: { calendarEventId: { eq: calendarEventId } },
+            first: TWENTY_PAGE_SIZE,
+            ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
+          },
+          pageInfo: {
+            hasNextPage: true,
+            endCursor: true,
+          },
+          edges: {
+            node: {
+              ...PARTICIPANT_SCALAR_FIELDS,
+              ...(areRelationsLoaded ? PARTICIPANT_RELATION_FIELDS : {}),
+            },
+          },
+        },
+      });
+
+      const connection = queryResult.calendarEventParticipants as
+        | ConnectionPage<CallParticipantNode>
+        | undefined;
+
+      fetchedParticipantCount += connection?.edges?.length ?? 0;
+
+      return connection;
+    },
+    () => fetchedParticipantCount < CALL_PARTICIPANTS_WIDGET_MAX_PARTICIPANTS,
+  );
+};
+
 export const fetchCallParticipants = async (
   client: CoreApiClient,
   { callRecordingId }: { callRecordingId: string },
@@ -63,58 +132,25 @@ export const fetchCallParticipants = async (
     return { kind: 'notLinkedToMeeting' };
   }
 
-  let fetchedParticipantCount = 0;
-
-  // The API returns one-to-many relations nested under a many-to-one as empty,
-  // so participants are read flat by calendarEventId instead of through
-  // callRecording.calendarEvent.
-  const participants = await fetchAllNodes<CallParticipantNode>(
-    async (afterCursor) => {
-      const queryResult = await client.query({
-        calendarEventParticipants: {
-          __args: {
-            filter: { calendarEventId: { eq: calendarEventId } },
-            first: TWENTY_PAGE_SIZE,
-            ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
-          },
-          pageInfo: {
-            hasNextPage: true,
-            endCursor: true,
-          },
-          edges: {
-            node: {
-              id: true,
-              handle: true,
-              displayName: true,
-              isOrganizer: true,
-              personId: true,
-              workspaceMemberId: true,
-              person: {
-                id: true,
-                name: { firstName: true, lastName: true },
-                avatarUrl: true,
-                avatarFile: { url: true },
-              },
-              workspaceMember: {
-                id: true,
-                name: { firstName: true, lastName: true },
-                avatarUrl: true,
-              },
-            },
-          },
-        },
-      });
-
-      const connection = queryResult.calendarEventParticipants as
-        | ConnectionPage<CallParticipantNode>
-        | undefined;
-
-      fetchedParticipantCount += connection?.edges?.length ?? 0;
-
-      return connection;
-    },
-    () => fetchedParticipantCount < CALL_PARTICIPANTS_WIDGET_MAX_PARTICIPANTS,
-  );
-
-  return { kind: 'loaded', participants };
+  try {
+    return {
+      kind: 'loaded',
+      participants: await fetchParticipantsForCalendarEvent(client, {
+        calendarEventId,
+        areRelationsLoaded: true,
+      }),
+      areRelationsLoaded: true,
+    };
+  } catch {
+    // A viewer who cannot read people or workspace members fails the whole
+    // query; the participants' own fields still give names and ids.
+    return {
+      kind: 'loaded',
+      participants: await fetchParticipantsForCalendarEvent(client, {
+        calendarEventId,
+        areRelationsLoaded: false,
+      }),
+      areRelationsLoaded: false,
+    };
+  }
 };

@@ -1,41 +1,30 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { type CallRecordingNode } from 'src/front-components/types/call-recording-node.type';
+import { getCallRecordingDisplayDate } from 'src/front-components/utils/get-call-recording-display-date.util';
 import { getTimestamp } from 'src/front-components/utils/get-timestamp.util';
 
-const compareTimestampsDescendingWithMissingLast = (
-  firstTimestamp: number | undefined,
-  secondTimestamp: number | undefined,
-): number => {
-  if (isUndefined(firstTimestamp) && isUndefined(secondTimestamp)) {
-    return 0;
-  }
-
-  if (isUndefined(firstTimestamp)) {
-    return 1;
-  }
-
-  if (isUndefined(secondTimestamp)) {
-    return -1;
-  }
-
-  return secondTimestamp - firstTimestamp;
-};
-
-// Same order as the server query, so merging per-batch results stays exact.
-const compareCallRecordingsByRecency = (
+// Sorted by the date the widget shows, so the list never looks out of order.
+const compareCallRecordingsByDisplayDate = (
   firstCallRecording: CallRecordingNode,
   secondCallRecording: CallRecordingNode,
-): number =>
-  compareTimestampsDescendingWithMissingLast(
-    getTimestamp(firstCallRecording.startedAt),
-    getTimestamp(secondCallRecording.startedAt),
-  ) ||
-  compareTimestampsDescendingWithMissingLast(
-    getTimestamp(firstCallRecording.createdAt),
-    getTimestamp(secondCallRecording.createdAt),
-  ) ||
-  firstCallRecording.id.localeCompare(secondCallRecording.id);
+): number => {
+  const firstTimestamp = getTimestamp(
+    getCallRecordingDisplayDate(firstCallRecording),
+  );
+  const secondTimestamp = getTimestamp(
+    getCallRecordingDisplayDate(secondCallRecording),
+  );
+
+  if (isUndefined(firstTimestamp) !== isUndefined(secondTimestamp)) {
+    return isUndefined(firstTimestamp) ? 1 : -1;
+  }
+
+  return (
+    (secondTimestamp ?? 0) - (firstTimestamp ?? 0) ||
+    firstCallRecording.id.localeCompare(secondCallRecording.id)
+  );
+};
 
 export const getMostRecentCallRecordings = ({
   callRecordings,
@@ -49,6 +38,6 @@ export const getMostRecentCallRecordings = ({
   );
 
   return [...callRecordingsById.values()]
-    .sort(compareCallRecordingsByRecency)
+    .sort(compareCallRecordingsByDisplayDate)
     .slice(0, maxCount);
 };

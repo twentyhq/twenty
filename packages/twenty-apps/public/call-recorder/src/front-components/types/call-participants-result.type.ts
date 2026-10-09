@@ -3,4 +3,8 @@ import { type CallParticipantNode } from 'src/front-components/types/call-partic
 export type CallParticipantsResult =
   | { kind: 'callRecordingNotFound' }
   | { kind: 'notLinkedToMeeting' }
-  | { kind: 'loaded'; participants: CallParticipantNode[] };
+  | {
+      kind: 'loaded';
+      participants: CallParticipantNode[];
+      areRelationsLoaded: boolean;
+    };

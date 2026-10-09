@@ -1,4 +1,5 @@
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type CallParticipantDisplayItem } from 'src/front-components/types/call-participant-display-item.type';
 import { type CallParticipantNode } from 'src/front-components/types/call-participant-node.type';
@@ -21,8 +22,28 @@ type BuildCallParticipantDisplayItemsResult = {
   hiddenUnmatchedCount: number;
 };
 
+// With relations loaded, a null relation next to its id means the record is
+// deleted or unreadable, so the id must not be trusted. Without them (the
+// fallback query), the id is all there is.
+const getMatchedRecordId = ({
+  recordId,
+  relatedRecord,
+  areRelationsLoaded,
+}: {
+  recordId: string | null | undefined;
+  relatedRecord: { id: string } | null | undefined;
+  areRelationsLoaded: boolean;
+}): string | undefined => {
+  if (areRelationsLoaded) {
+    return isDefined(relatedRecord) ? relatedRecord.id : undefined;
+  }
+
+  return isNonEmptyString(recordId) ? recordId : undefined;
+};
+
 const toDisplayItem = (
   participant: CallParticipantNode,
+  areRelationsLoaded: boolean,
 ): CallParticipantDisplayItem | undefined => {
   const isOrganizer = participant.isOrganizer === true;
   const attendeeLabel = getFirstNonEmptyString([
@@ -31,9 +52,13 @@ const toDisplayItem = (
   ]);
 
   // A matched person wins over a workspace member: it has a record page.
-  const personId = participant.personId ?? participant.person?.id;
+  const personId = getMatchedRecordId({
+    recordId: participant.personId,
+    relatedRecord: participant.person,
+    areRelationsLoaded,
+  });
 
-  if (isNonEmptyString(personId)) {
+  if (!isUndefined(personId)) {
     return {
       kind: 'person',
       key: `person:${personId}`,
@@ -50,10 +75,13 @@ const toDisplayItem = (
     };
   }
 
-  const workspaceMemberId =
-    participant.workspaceMemberId ?? participant.workspaceMember?.id;
+  const workspaceMemberId = getMatchedRecordId({
+    recordId: participant.workspaceMemberId,
+    relatedRecord: participant.workspaceMember,
+    areRelationsLoaded,
+  });
 
-  if (isNonEmptyString(workspaceMemberId)) {
+  if (!isUndefined(workspaceMemberId)) {
     return {
       kind: 'workspaceMember',
       key: `workspaceMember:${workspaceMemberId}`,
@@ -106,16 +134,18 @@ const compareDisplayItems = (
 
 export const buildCallParticipantDisplayItems = ({
   participants,
+  areRelationsLoaded,
   showUnmatchedAttendees,
 }: {
   participants: CallParticipantNode[];
+  areRelationsLoaded: boolean;
   showUnmatchedAttendees: boolean;
 }): BuildCallParticipantDisplayItemsResult => {
   const displayItemsByKey = new Map<string, CallParticipantDisplayItem>();
   let hiddenUnmatchedCount = 0;
 
   for (const participant of participants) {
-    const displayItem = toDisplayItem(participant);
+    const displayItem = toDisplayItem(participant, areRelationsLoaded);
 
     if (isUndefined(displayItem)) {
       continue;

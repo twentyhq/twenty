@@ -75,6 +75,7 @@ describe('fetchCallParticipants', () => {
 
     expect(result).toEqual({
       kind: 'loaded',
+      areRelationsLoaded: true,
       participants: [
         { id: 'participant-1', calendarEventId: 'calendar-event' },
         { id: 'participant-2', calendarEventId: 'calendar-event' },
@@ -97,5 +98,58 @@ describe('fetchCallParticipants', () => {
     expect(query.mock.calls[2][0].calendarEventParticipants.__args.after).toBe(
       'next-cursor',
     );
+  });
+
+  it('retries with the participants own fields when the relations cannot be read', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection({
+          id: 'call-recording',
+          calendarEventId: 'calendar-event',
+        }),
+      )
+      .mockRejectedValueOnce(new Error('Forbidden'))
+      .mockResolvedValueOnce(buildParticipantConnection(['participant-1']));
+
+    const result = await fetchCallParticipants({ query } as never, {
+      callRecordingId: 'call-recording',
+    });
+
+    expect(result).toEqual({
+      kind: 'loaded',
+      areRelationsLoaded: false,
+      participants: [
+        { id: 'participant-1', calendarEventId: 'calendar-event' },
+      ],
+    });
+
+    const fallbackNode =
+      query.mock.calls[2][0].calendarEventParticipants.edges.node;
+
+    expect(fallbackNode.person).toBeUndefined();
+    expect(fallbackNode.workspaceMember).toBeUndefined();
+    expect(fallbackNode.personId).toBe(true);
+    expect(fallbackNode.displayName).toBe(true);
+  });
+
+  it('fails when the fallback query fails too', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection({
+          id: 'call-recording',
+          calendarEventId: 'calendar-event',
+        }),
+      )
+      .mockRejectedValueOnce(new Error('Forbidden'))
+      .mockRejectedValueOnce(new Error('Forbidden'));
+
+    await expect(
+      fetchCallParticipants({ query } as never, {
+        callRecordingId: 'call-recording',
+      }),
+    ).rejects.toThrow('Forbidden');
+    expect(query).toHaveBeenCalledTimes(3);
   });
 });

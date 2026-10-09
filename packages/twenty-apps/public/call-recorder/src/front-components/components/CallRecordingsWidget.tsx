@@ -14,6 +14,7 @@ import { StyledWidgetContainer } from 'src/front-components/components/StyledWid
 import { WidgetMessage } from 'src/front-components/components/WidgetMessage';
 import { useCallRecordingsForRecord } from 'src/front-components/hooks/use-call-recordings-for-record';
 import { type CalendarEventTargetFieldName } from 'src/front-components/types/calendar-event-target-field-name.type';
+import { getCallRecordingDisplayDate } from 'src/front-components/utils/get-call-recording-display-date.util';
 import { formatCallRecordingDate } from 'src/front-components/utils/format-call-recording-date.util';
 import { getCalendarEventTargetFieldName } from 'src/front-components/utils/get-calendar-event-target-field-name.util';
 import { resolveCallRecordingDisplayTitle } from 'src/front-components/utils/resolve-call-recording-display-title.util';
@@ -56,10 +57,7 @@ const CallRecordingList = ({
               callRecordingId={callRecording.id}
               title={resolveCallRecordingDisplayTitle(callRecording)}
               formattedDate={formatCallRecordingDate({
-                dateTime:
-                  callRecording.startedAt ??
-                  callRecording.calendarEvent?.startsAt ??
-                  callRecording.createdAt,
+                dateTime: getCallRecordingDisplayDate(callRecording),
                 locale,
               })}
             />

@@ -77,13 +77,20 @@ describe('fetchCallRecordingsForRecord', () => {
     expect(query.mock.calls[0][0].calendarEventTargets.__args.filter).toEqual({
       targetCompanyId: { eq: 'company' },
     });
+    expect(query.mock.calls[0][0].calendarEventTargets.__args.orderBy).toEqual([
+      { calendarEvent: { startsAt: 'DescNullsLast' } },
+    ]);
 
     const callRecordingQueryArguments =
       query.mock.calls[1][0].callRecordings.__args;
 
     expect(callRecordingQueryArguments.filter).toEqual({
       calendarEventId: { in: ['calendar-event-1', 'calendar-event-2'] },
+      status: { in: ['RECORDING', 'PROCESSING', 'COMPLETED'] },
     });
+    expect(
+      query.mock.calls[1][0].callRecordings.edges.node.calendarEvent,
+    ).toBeDefined();
     expect(callRecordingQueryArguments.first).toBe(20);
     expect(callRecordingQueryArguments.orderBy).toEqual([
       { startedAt: 'DescNullsLast' },
@@ -158,5 +165,84 @@ describe('fetchCallRecordingsForRecord', () => {
     expect(calendarEventTargetQueryCount).toBe(
       CALL_RECORDINGS_WIDGET_MAX_CALENDAR_EVENT_TARGETS / TWENTY_PAGE_SIZE,
     );
+  });
+
+  it('falls back to target creation order when meetings cannot be used for ordering', async () => {
+    const query = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Forbidden'))
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection(['calendar-event-1']),
+      )
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection([
+          { id: 'recording', startedAt: '2026-01-01T10:00:00.000Z' },
+        ]),
+      );
+
+    const callRecordings = await fetchCallRecordingsForRecord(
+      { query } as never,
+      {
+        calendarEventTargetFieldName: 'targetPersonId',
+        recordId: 'person',
+        maxCount: 20,
+      },
+    );
+
+    expect(callRecordings.map((callRecording) => callRecording.id)).toEqual([
+      'recording',
+    ]);
+    expect(query.mock.calls[1][0].calendarEventTargets.__args.orderBy).toEqual([
+      { createdAt: 'DescNullsLast' },
+    ]);
+  });
+
+  it('lists recordings without their meeting when meetings cannot be read', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection(['calendar-event-1']),
+      )
+      .mockRejectedValueOnce(new Error('Forbidden'))
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection([
+          { id: 'recording', startedAt: '2026-01-01T10:00:00.000Z' },
+        ]),
+      );
+
+    const callRecordings = await fetchCallRecordingsForRecord(
+      { query } as never,
+      {
+        calendarEventTargetFieldName: 'targetPersonId',
+        recordId: 'person',
+        maxCount: 20,
+      },
+    );
+
+    expect(callRecordings.map((callRecording) => callRecording.id)).toEqual([
+      'recording',
+    ]);
+    expect(
+      query.mock.calls[2][0].callRecordings.edges.node.calendarEvent,
+    ).toBeUndefined();
+  });
+
+  it('fails when the recordings fallback query fails too', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection(['calendar-event-1']),
+      )
+      .mockRejectedValueOnce(new Error('Forbidden'))
+      .mockRejectedValueOnce(new Error('Forbidden'));
+
+    await expect(
+      fetchCallRecordingsForRecord({ query } as never, {
+        calendarEventTargetFieldName: 'targetPersonId',
+        recordId: 'person',
+        maxCount: 20,
+      }),
+    ).rejects.toThrow('Forbidden');
+    expect(query).toHaveBeenCalledTimes(3);
   });
 });

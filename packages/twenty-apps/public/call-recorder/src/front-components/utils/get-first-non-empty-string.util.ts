@@ -1,5 +1,8 @@
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const getFirstNonEmptyString = (
   values: Array<string | null | undefined>,
-): string | undefined => values.find(isNonEmptyString)?.trim();
+): string | undefined =>
+  values
+    .map((value) => value?.trim())
+    .find((value): value is string => isNonEmptyString(value));
