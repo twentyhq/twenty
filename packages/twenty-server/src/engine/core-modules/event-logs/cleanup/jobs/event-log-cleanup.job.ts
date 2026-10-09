@@ -28,7 +28,7 @@ export class EventLogCleanupJob {
     try {
       await this.eventLogCleanupService.cleanupWorkspaceEventLogs({
         workspaceId,
-        retentionDays: eventLogRetentionDays,
+        workspaceRetentionInDays: eventLogRetentionDays,
       });
     } catch (error) {
       this.logger.error(

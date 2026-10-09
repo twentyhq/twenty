@@ -7,21 +7,25 @@ import { EventLogTable } from 'twenty-shared/types';
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { getClickHouseTableName } from 'src/engine/core-modules/event-logs/registry/event-log-registry';
+import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 
 export type EventLogCleanupParams = {
   workspaceId: string;
-  retentionDays: number;
+  workspaceRetentionInDays: number;
 };
 
 @Injectable()
 export class EventLogCleanupService {
   private readonly logger = new Logger(EventLogCleanupService.name);
 
-  constructor(private readonly clickHouseService: ClickHouseService) {}
+  constructor(
+    private readonly clickHouseService: ClickHouseService,
+    private readonly eventLogRetentionService: EventLogRetentionService,
+  ) {}
 
   async cleanupWorkspaceEventLogs({
     workspaceId,
-    retentionDays,
+    workspaceRetentionInDays,
   }: EventLogCleanupParams): Promise<void> {
     if (!this.clickHouseService.getMainClient()) {
       this.logger.debug(
@@ -31,12 +35,22 @@ export class EventLogCleanupService {
       return;
     }
 
-    const cutoffDate = new Date();
+    const retentionInDaysByTable =
+      await this.eventLogRetentionService.getRetentionInDaysByTable({
+        workspaceId,
+        workspaceRetentionInDays,
+      });
 
-    cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+    const tablesToClean = Object.values(EventLogTable).filter(
+      (table) => table !== EventLogTable.USAGE_EVENT,
+    );
 
-    for (const table of Object.values(EventLogTable)) {
+    for (const table of tablesToClean) {
       const tableName = getClickHouseTableName(table);
+      const retentionDays = retentionInDaysByTable[table];
+      const cutoffDate = new Date();
+
+      cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
       try {
         const success = await this.clickHouseService.executeCommand(

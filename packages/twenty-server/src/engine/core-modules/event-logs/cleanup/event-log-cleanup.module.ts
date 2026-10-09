@@ -9,9 +9,14 @@ import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/c
 import { EventLogCleanupCronJob } from 'src/engine/core-modules/event-logs/cleanup/crons/event-log-cleanup.cron.job';
 import { EventLogCleanupJob } from 'src/engine/core-modules/event-logs/cleanup/jobs/event-log-cleanup.job';
 import { EventLogCleanupService } from 'src/engine/core-modules/event-logs/cleanup/services/event-log-cleanup.service';
+import { EventLogRetentionModule } from 'src/engine/core-modules/event-logs/retention/event-log-retention.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkspaceEntity]), ClickHouseModule],
+  imports: [
+    TypeOrmModule.forFeature([WorkspaceEntity]),
+    ClickHouseModule,
+    EventLogRetentionModule,
+  ],
   providers: [
     EventLogCleanupService,
     EventLogCleanupJob,
