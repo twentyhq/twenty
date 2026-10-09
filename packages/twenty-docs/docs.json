@@ -570,7 +570,7 @@
                           "ui/primitives/input/field",
                           "ui/primitives/input/input",
                           "ui/primitives/input/input-group",
-                          "ui/primitives/input/number-stepper",
+                          "ui/primitives/input/number-field",
                           "ui/primitives/input/textarea",
                           "ui/primitives/input/checkbox",
                           "ui/primitives/input/radio",
@@ -654,7 +654,8 @@
                           "ui/components/input/currency-picker",
                           "ui/components/input/phone-country-picker",
                           "ui/components/input/image-input",
-                          "ui/components/input/search-input"
+                          "ui/components/input/search-input",
+                          "ui/components/input/number-stepper"
                         ]
                       },
                       {

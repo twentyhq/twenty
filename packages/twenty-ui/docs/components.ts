@@ -21,6 +21,7 @@ import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
+import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
@@ -330,11 +331,51 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: INPUT_GROUP_PROP_DESCRIPTIONS,
   },
   {
-    name: 'NumberStepper',
-    source: 'primitives/input/NumberStepper/NumberStepper.tsx',
+    name: 'NumberField',
+    source: 'primitives/input/NumberField/NumberField.tsx',
     entryPoint: 'twenty-ui/primitives/input',
-    slug: 'input/number-stepper',
+    slug: 'input/number-field',
+    parts: [
+      'Root',
+      'Group',
+      'Input',
+      'Decrement',
+      'Increment',
+      'ScrubArea',
+      'ScrubAreaCursor',
+    ],
+    partPropDescriptions: NUMBER_FIELD_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Root: {
+        defaultValue: 'empty',
+        step: '1',
+        smallStep: '0.1',
+        largeStep: '10',
+        allowOutOfRange: 'false',
+        allowWheelScrub: 'false',
+        snapOnStep: 'false',
+        required: 'false',
+        disabled: 'false',
+        readOnly: 'false',
+      },
+      Decrement: { nativeButton: 'true' },
+      Increment: { nativeButton: 'true' },
+      ScrubArea: { direction: 'horizontal', pixelSensitivity: '2' },
+    },
+  },
+  {
+    name: 'NumberStepper',
+    source: 'components/input/NumberStepper/NumberStepper.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/number-stepper',
     propDescriptions: NUMBER_STEPPER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      step: '1',
+      allowOutOfRange: 'false',
+      showButtons: 'true',
+      decrementLabel: 'Decrease value',
+      incrementLabel: 'Increase value',
+    },
   },
   {
     name: 'Textarea',

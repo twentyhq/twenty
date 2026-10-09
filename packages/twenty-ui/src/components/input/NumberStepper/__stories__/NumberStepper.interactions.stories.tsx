@@ -380,3 +380,26 @@ export const CanceledChange: Story = {
     );
   },
 };
+
+export const ValueCommit: Story = {
+  args: { onValueCommitted: fn() },
+  play: async ({ canvasElement, args }) => {
+    const input = within(canvasElement).getByRole('textbox', {
+      name: 'Quantity',
+    });
+
+    await userEvent.clear(input);
+    await userEvent.type(input, '2');
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      2,
+      expect.objectContaining({ reason: 'input-change' }),
+    );
+    await expect(args.onValueCommitted).not.toHaveBeenCalled();
+    await userEvent.tab();
+    await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
+    await expect(args.onValueCommitted).toHaveBeenCalledWith(
+      2,
+      expect.objectContaining({ reason: 'input-blur' }),
+    );
+  },
+};

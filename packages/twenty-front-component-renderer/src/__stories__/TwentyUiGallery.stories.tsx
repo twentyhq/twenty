@@ -16,6 +16,7 @@ import { progressTest } from '@/__stories__/twenty-ui-gallery/utils/progressTest
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { numberStepperTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperTest';
 import { numberStepperSelectionTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSelectionTest';
+import { numberFieldTest } from '@/__stories__/twenty-ui-gallery/utils/numberFieldTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { layoutTest } from '@/__stories__/twenty-ui-gallery/utils/layoutTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
@@ -158,6 +159,18 @@ export const NumberStepperSelectionPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-number-stepper',
   runtime: 'preact',
   play: numberStepperSelectionTest,
+});
+
+export const NumberFieldReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-field',
+  runtime: 'react',
+  play: numberFieldTest,
+});
+
+export const NumberFieldPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-field',
+  runtime: 'preact',
+  play: numberFieldTest,
 });
 
 export const JsonVisualizerReact: Story = createGalleryStory({

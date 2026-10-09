@@ -1,0 +1,15 @@
+.group {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--t-spacing-1);
+}
+
+.button {
+  &[data-readonly] {
+    --tw-button-active: var(--tw-button-background);
+    --tw-button-hover: var(--tw-button-background);
+
+    cursor: default;
+    opacity: 0.5;
+  }
+}

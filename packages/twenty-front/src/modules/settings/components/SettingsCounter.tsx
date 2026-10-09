@@ -8,10 +8,7 @@ import { isInteger, isNonEmptyString } from '@sniptt/guards';
 import { useId, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  NumberStepper,
-  type NumberStepperProps,
-} from 'twenty-ui/primitives/input';
+import { NumberStepper, type NumberStepperProps } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const SETTINGS_COUNTER_CARET_NAVIGATION_KEYS: string[] = [Key.Home, Key.End];

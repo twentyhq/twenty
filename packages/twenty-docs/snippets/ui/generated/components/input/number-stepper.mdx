@@ -64,6 +64,10 @@
   Called with the next number or null and event details when the numeric value changes. Clearing reports null; incomplete text does not report a number.
 </ParamField>
 
+<ParamField body="onValueCommitted" type="((value: number | null, eventDetails: NumberFieldRootCommitEventDetails) =&gt; void)">
+  Called with the committed number or null and generic event details after an edit is committed. Details contain the native event and reason, without change cancellation methods.
+</ParamField>
+
 <ParamField body="readOnly" type="boolean" default="false">
   Prevents numeric changes while keeping the input focusable.
 </ParamField>
@@ -73,10 +77,7 @@
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;DetailedHTMLProps&lt;InputHTMLAttributes&lt;HTMLInputElement&gt;, HTMLInputElement&gt;, NumberFieldInputState&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
-
-  Accepts a `ReactElement` or a function that returns the element to render.
+  Composes the visible text input with an element or render callback. Forward the supplied props and ref to an input. Use a separate element to customize the surrounding layout.
 </ParamField>
 
 <ParamField body="required" type="boolean" default="false">
