@@ -5,7 +5,7 @@ import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/g
 import { gql } from '@apollo/client';
 import {
   type ObjectPermissions,
-  type RecordGqlOperationGqlRecordFields,
+  type RecordGqlFields,
 } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
@@ -17,7 +17,7 @@ export const generateCreateOneRecordMutation = ({
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  recordGqlFields?: RecordGqlFields;
   objectPermissionsByObjectMetadataId: Record<
     string,
     ObjectPermissions & { objectMetadataId: string }
