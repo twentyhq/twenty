@@ -12,9 +12,9 @@ export const teamsUninstallHandler = async (): Promise<{
   const connections = await listConnections({
     providerName: TEAMS_PROVIDER_NAME,
   });
-  const results = await Promise.allSettled(
+  const connectionResults = await Promise.all(
     connections.map((connection) =>
-      Promise.all([
+      Promise.allSettled([
         unregisterTeamsTranscriptSubscription({
           connectedAccountId: connection.id,
         }),
@@ -26,8 +26,8 @@ export const teamsUninstallHandler = async (): Promise<{
   );
 
   return {
-    failedConnectionCount: results.filter(
-      (result) => result.status === 'rejected',
+    failedConnectionCount: connectionResults.filter((results) =>
+      results.some((result) => result.status === 'rejected'),
     ).length,
   };
 };
