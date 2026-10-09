@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -60,12 +60,18 @@ const buildSettingsMenuItem = ({
   scope,
 });
 
-const WORKSPACE_VARIABLE = buildApplicationVariable({
-  key: 'WORKSPACE_URL',
-  label: 'Workspace URL',
-  value: 'https://recorder.example.com',
-  scope: 'WORKSPACE',
-});
+const savedValueByKey = new Map<string, string>();
+
+const updateOneApplicationVariable = fn();
+
+const buildWorkspaceVariable = () =>
+  buildApplicationVariable({
+    key: 'WORKSPACE_URL',
+    label: 'Workspace URL',
+    value:
+      savedValueByKey.get('WORKSPACE_URL') ?? 'https://recorder.example.com',
+    scope: 'WORKSPACE',
+  });
 
 const USER_VARIABLE = buildApplicationVariable({
   key: 'RECORD_MY_MEETINGS',
@@ -111,7 +117,7 @@ const buildApplicationHandlers = ({
           settingsCustomTabFrontComponentId: null,
           healthCheckLogicFunctionId: null,
           availablePackages: {},
-          applicationVariables: [USER_VARIABLE, WORKSPACE_VARIABLE],
+          applicationVariables: [USER_VARIABLE, buildWorkspaceVariable()],
           agents: [],
           frontComponents: [],
           commandMenuItems: [],
@@ -130,6 +136,14 @@ const buildApplicationHandlers = ({
   graphql.query('IsApplicationStopped', () =>
     HttpResponse.json({ data: { isApplicationStopped: false } }),
   ),
+  graphql.mutation('UpdateOneApplicationVariable', ({ variables }) => {
+    updateOneApplicationVariable(variables);
+    savedValueByKey.set(variables.key, variables.value);
+
+    return HttpResponse.json({
+      data: { updateOneApplicationVariable: true },
+    });
+  }),
   ...graphqlMocks.handlers,
 ];
 
@@ -142,6 +156,8 @@ const meta: Meta<PageDecoratorArgs> = {
     routeParams: { ':applicationId': APPLICATION_ID },
   },
   beforeEach: async () => {
+    savedValueByKey.clear();
+    updateOneApplicationVariable.mockClear();
     await mockedApolloClient.clearStore();
   },
   parameters: {
@@ -163,7 +179,7 @@ export const VariablesTabIgnoresUserScope: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      await canvas.findByTestId('tab-variables', undefined, { timeout: 3000 }),
+      await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
     );
 
     expect(await canvas.findByText('Workspace URL')).toBeVisible();
@@ -171,9 +187,6 @@ export const VariablesTabIgnoresUserScope: Story = {
       canvas.getByDisplayValue('https://recorder.example.com'),
     ).toBeVisible();
     expect(canvas.queryByText('Record my meetings')).not.toBeInTheDocument();
-    expect(
-      canvas.queryByTestId(`tab-${USER_SETTINGS_MENU_ITEM_ID}`),
-    ).not.toBeInTheDocument();
     expect(canvas.queryByText('My recordings')).not.toBeInTheDocument();
   },
 };
@@ -193,16 +206,54 @@ export const SettingsTabsIgnoreUserScope: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByTestId(
-        `tab-${WORKSPACE_SETTINGS_MENU_ITEM_ID}`,
-        undefined,
+      await canvas.findByRole(
+        'link',
+        { name: 'Recording rules' },
         { timeout: 3000 },
       ),
-    ).toHaveTextContent('Recording rules');
-    expect(
-      canvas.queryByTestId(`tab-${USER_SETTINGS_MENU_ITEM_ID}`),
-    ).not.toBeInTheDocument();
+    ).toBeVisible();
     expect(canvas.queryByText('My recordings')).not.toBeInTheDocument();
-    expect(canvas.queryByTestId('tab-variables')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('link', { name: 'Variables' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const VariablesTabSavesWorkspaceVariable: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
+    );
+
+    const saveButton = await canvas.findByRole('button', {
+      name: 'Save settings',
+    });
+    const workspaceUrlInput = await canvas.findByDisplayValue(
+      'https://recorder.example.com',
+    );
+
+    expect(saveButton).toBeDisabled();
+
+    await userEvent.clear(workspaceUrlInput);
+    await userEvent.type(workspaceUrlInput, 'https://new.example.com');
+
+    await waitFor(() => expect(saveButton).toBeEnabled());
+    await userEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(updateOneApplicationVariable.mock.calls).toEqual([
+        [
+          {
+            applicationId: APPLICATION_ID,
+            key: 'WORKSPACE_URL',
+            value: 'https://new.example.com',
+          },
+        ],
+      ]),
+    );
+    await waitFor(() => expect(saveButton).toBeDisabled());
+    expect(canvas.getByDisplayValue('https://new.example.com')).toBeVisible();
   },
 };

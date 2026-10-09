@@ -17,8 +17,6 @@ import {
 import {
   APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
   GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
-  GRANOLA_USER_SETTINGS_MENU_ITEM_ID,
-  GRANOLA_WORKSPACE_SETTINGS_MENU_ITEM_ID,
   findApplicationsGatedQuery,
   findOneFrontComponent,
   seedApplicationPreferencesStory,
@@ -50,7 +48,7 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByTestId('tab-variables', undefined, { timeout: 3000 }),
+      await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
     ).toBeVisible();
     expect(canvas.getAllByText('Fathom').length).toBeGreaterThan(0);
     expect(canvas.getByText('App preferences')).toBeVisible();
@@ -97,17 +95,12 @@ export const SettingsTabReplacesVariablesTab: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByTestId(
-        `tab-${GRANOLA_USER_SETTINGS_MENU_ITEM_ID}`,
-        undefined,
-        { timeout: 3000 },
-      ),
-    ).toHaveTextContent('My notes');
-    expect(
-      canvas.queryByTestId(`tab-${GRANOLA_WORKSPACE_SETTINGS_MENU_ITEM_ID}`),
-    ).not.toBeInTheDocument();
+      await canvas.findByRole('link', { name: 'My notes' }, { timeout: 3000 }),
+    ).toBeVisible();
     expect(canvas.queryByText('Team notes')).not.toBeInTheDocument();
-    expect(canvas.queryByTestId('tab-variables')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('link', { name: 'Variables' }),
+    ).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('button', { name: 'Save settings' }),
     ).not.toBeInTheDocument();
