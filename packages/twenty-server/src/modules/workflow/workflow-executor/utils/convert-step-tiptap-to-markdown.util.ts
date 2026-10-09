@@ -1,8 +1,5 @@
 import { isString } from '@sniptt/guards';
-import {
-  type RichTextMetadata,
-  richTextValueSchema,
-} from 'twenty-shared/types';
+import { richTextValueSchema } from 'twenty-shared/types';
 import {
   convertTipTapBlocksToMarkdown,
   isDefined,
@@ -37,24 +34,28 @@ export const convertStepTipTapToMarkdown = (
       continue;
     }
 
-    const { blocknote: tipTapJson, markdown: stepMarkdown } =
-      parsedStepValue.data;
+    const { blocknote, markdown } = parsedStepValue.data;
 
-    const resolvedTipTapJson = resolveRichTextVariables(tipTapJson, context);
-    const tipTapMarkdown = isDefined(resolvedTipTapJson)
-      ? convertTipTapBlocksToMarkdown(resolvedTipTapJson)
+    const resolvedBlocknote = resolveRichTextVariables(blocknote, context);
+    const tipTapMarkdown = isDefined(resolvedBlocknote)
+      ? convertTipTapBlocksToMarkdown(resolvedBlocknote)
       : undefined;
 
-    const richTextValue: RichTextMetadata = isDefined(tipTapMarkdown)
-      ? { markdown: resolveStringTemplate(tipTapMarkdown, context) }
-      : {
-          markdown: isString(stepMarkdown)
-            ? resolveStringTemplate(stepMarkdown, context)
-            : stepMarkdown,
-          blocknote: tipTapJson,
-        };
+    // TODO: steps built through the API can hold markdown only, BlockNote or a variable instead of TipTap.
+    // Migrate them to TipTap so they go through the same conversion, then remove this branch.
+    if (!isDefined(tipTapMarkdown)) {
+      objectRecord[fieldName] = {
+        blocknote,
+        markdown: isString(markdown)
+          ? resolveStringTemplate(markdown, context)
+          : markdown,
+      };
+      continue;
+    }
 
-    objectRecord[fieldName] = richTextValue;
+    objectRecord[fieldName] = {
+      markdown: resolveStringTemplate(tipTapMarkdown, context),
+    };
   }
 
   return objectRecord;
