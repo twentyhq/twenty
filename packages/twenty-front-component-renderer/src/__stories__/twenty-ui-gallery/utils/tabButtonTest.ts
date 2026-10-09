@@ -53,7 +53,9 @@ export const tabButtonTest: TwentyUiGalleryPlayFunction = async ({
   );
   await userEvent.click(disabledRoute);
   await expectAssertionToKeepFailing(() =>
-    expect(canvas.getByLabelText('Route activations')).toHaveTextContent('5'),
+    expect(canvas.getByLabelText('Route activations')).not.toHaveTextContent(
+      /^4$/,
+    ),
   );
 
   const action = canvas.getByRole('button', { name: 'Create related panel' });
