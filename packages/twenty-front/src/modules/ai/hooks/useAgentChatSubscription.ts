@@ -27,6 +27,7 @@ import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agen
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatStreamLastEventTimestampState } from '@/ai/states/agentChatStreamLastEventTimestampState';
+import { agentChatStreamRecoveryAttemptsState } from '@/ai/states/agentChatStreamRecoveryAttemptsState';
 import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStreamResubscribeNonceState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
@@ -95,6 +96,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     let disposed = false;
     let accessDenied = false;
     let lastPermissionsRefreshAt: number | undefined;
+    let hasReceivedFirstEvent = false;
 
     store.set(firstLiveSeqAtom, null);
     store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
@@ -352,6 +354,23 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             return;
           }
           store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
+
+          // The server sends the first keepalive on subscribe without going
+          // through pub/sub, so only later events prove broadcasts arrive
+          if (hasReceivedFirstEvent) {
+            store.set(agentChatStreamRecoveryAttemptsState.atom, 0);
+
+            if (
+              isGraphqlErrorOfType(
+                store.get(errorAtom),
+                AiChatErrorCode.CONNECTION_LOST,
+              )
+            ) {
+              store.set(errorAtom, null);
+              dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+            }
+          }
+          hasReceivedFirstEvent = true;
 
           const event: AgentChatSubscriptionEvent | undefined =
             value.data?.onAgentChatEvent?.event;

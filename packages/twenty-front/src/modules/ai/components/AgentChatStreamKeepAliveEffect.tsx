@@ -16,7 +16,6 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -93,21 +92,9 @@ export const AgentChatStreamKeepAliveEffect = () => {
 
       const timeSinceLastEventInMs = Date.now() - lastTimestamp;
 
+      // Recovery attempts reset only when the subscription proves it delivers
+      // again, since each attempt refreshes this timestamp to space retries
       if (timeSinceLastEventInMs <= AGENT_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS) {
-        store.set(agentChatStreamRecoveryAttemptsState.atom, 0);
-
-        const errorAtom = agentChatErrorFamilyState.atomFamily({
-          threadId: currentAiChatThread,
-        });
-        const currentError = store.get(errorAtom);
-
-        if (
-          isDefined(currentError) &&
-          isGraphqlErrorOfType(currentError, AiChatErrorCode.CONNECTION_LOST)
-        ) {
-          store.set(errorAtom, null);
-        }
-
         return;
       }
 
@@ -115,12 +102,7 @@ export const AgentChatStreamKeepAliveEffect = () => {
     }, AGENT_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS);
 
     return () => clearInterval(interval);
-  }, [
-    hasActiveSubscription,
-    store,
-    recoverStreamIfStalled,
-    currentAiChatThread,
-  ]);
+  }, [hasActiveSubscription, store, recoverStreamIfStalled]);
 
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
