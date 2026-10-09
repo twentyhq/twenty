@@ -34,14 +34,6 @@ const CALL_RECORDING_PAGE_TABS = {
             .tabs.home.widgets.fields.universalIdentifier,
         ...WIDGET_PROPS.fields,
       },
-      participants: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage
-            .tabs.home.widgets.participants.universalIdentifier,
-        title: 'Participants',
-        type: WidgetType.CALENDAR_EVENT_PARTICIPANTS,
-        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
-      },
     },
   },
   timeline: {

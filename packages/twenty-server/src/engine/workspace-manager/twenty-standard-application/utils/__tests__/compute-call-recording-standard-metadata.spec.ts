@@ -233,38 +233,4 @@ describe('CallRecording standard metadata build', () => {
           .universalIdentifier,
     });
   });
-
-  it('adds the participants widget to the call recording home tab of new workspaces', () => {
-    const homeTab =
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
-        .home;
-    const participantsWidgetUniversalIdentifier =
-      homeTab.widgets.participants.universalIdentifier;
-
-    const { allFlatEntityMaps: workspaceCreationAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: NOW,
-        workspaceId: WORKSPACE_ID,
-        twentyStandardApplicationId: TWENTY_STANDARD_APPLICATION_ID,
-        isWorkspaceCreation: true,
-      });
-
-    expect(
-      workspaceCreationAllFlatEntityMaps.flatPageLayoutWidgetMaps
-        .byUniversalIdentifier[participantsWidgetUniversalIdentifier],
-    ).toMatchObject({
-      title: 'Participants',
-      type: WidgetType.CALENDAR_EVENT_PARTICIPANTS,
-      pageLayoutTabUniversalIdentifier: homeTab.universalIdentifier,
-      position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
-      universalConfiguration: {
-        configurationType: WidgetConfigurationType.CALENDAR_EVENT_PARTICIPANTS,
-      },
-    });
-    expect(
-      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        participantsWidgetUniversalIdentifier
-      ],
-    ).toBeUndefined();
-  });
 });

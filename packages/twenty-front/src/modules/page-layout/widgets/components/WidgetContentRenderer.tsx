@@ -1,5 +1,4 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { CalendarEventParticipantsWidget } from '@/page-layout/widgets/calendar-event-participants/components/CalendarEventParticipantsWidget';
 import { CalendarWidget } from '@/page-layout/widgets/calendar/components/CalendarWidget';
 import { CallRecordingWidget } from '@/page-layout/widgets/call-recording/components/CallRecordingWidget';
 import { ChatWidget } from '@/page-layout/widgets/chat/components/ChatWidget';
@@ -100,9 +99,6 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.CALL_RECORDING_TRANSCRIPT:
       return <CallRecordingWidget kind="transcript" />;
-
-    case WidgetType.CALENDAR_EVENT_PARTICIPANTS:
-      return <CalendarEventParticipantsWidget />;
 
     default:
       return null;

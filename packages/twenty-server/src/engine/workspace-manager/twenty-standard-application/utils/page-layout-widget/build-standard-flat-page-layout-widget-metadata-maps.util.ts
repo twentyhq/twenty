@@ -47,7 +47,6 @@ const RECORD_PAGE_LAYOUT_WIDGET_TYPES = [
   WidgetType.MESSAGE_CAMPAIGN_DETAILS,
   WidgetType.CHAT_THREADS,
   WidgetType.CHAT,
-  WidgetType.CALENDAR_EVENT_PARTICIPANTS,
 ];
 
 const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
@@ -79,8 +78,6 @@ const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
     WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
   [WidgetType.CHAT_THREADS]: WidgetConfigurationType.CHAT_THREADS,
   [WidgetType.CHAT]: WidgetConfigurationType.CHAT,
-  [WidgetType.CALENDAR_EVENT_PARTICIPANTS]:
-    WidgetConfigurationType.CALENDAR_EVENT_PARTICIPANTS,
 };
 
 const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<

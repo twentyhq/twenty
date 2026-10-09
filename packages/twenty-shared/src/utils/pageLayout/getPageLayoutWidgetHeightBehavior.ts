@@ -32,7 +32,6 @@ export const getPageLayoutWidgetHeightBehavior = ({
     case WidgetType.WORKFLOW_VERSION:
       return PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT;
 
-    case WidgetType.CALENDAR_EVENT_PARTICIPANTS:
     case WidgetType.IFRAME:
     case WidgetType.RECORD_TABLE:
     case WidgetType.MESSAGE_CAMPAIGN_BODY:

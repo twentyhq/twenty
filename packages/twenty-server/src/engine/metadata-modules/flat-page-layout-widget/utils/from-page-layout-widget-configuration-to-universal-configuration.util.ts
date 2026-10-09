@@ -433,7 +433,6 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     case WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT:
     case WidgetConfigurationType.CHAT_THREADS:
     case WidgetConfigurationType.CHAT:
-    case WidgetConfigurationType.CALENDAR_EVENT_PARTICIPANTS:
     case WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY:
     case WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS:
       return configuration;

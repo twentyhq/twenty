@@ -2,7 +2,6 @@ import { isNotEmptyObject, type ValidationError } from 'class-validator';
 
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
-import { CalendarEventParticipantsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/calendar-event-participants-configuration.dto';
 import { CallRecordingSummaryConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-summary-configuration.dto';
 import { CallRecordingTranscriptConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-transcript-configuration.dto';
 import { ChatConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/chat-configuration.dto';
@@ -157,12 +156,6 @@ export const validateWidgetConfigurationInput = ({
     case WidgetConfigurationType.CHAT:
       errors = validateWidgetConfigurationByDto(
         ChatConfigurationDTO,
-        configuration,
-      );
-      break;
-    case WidgetConfigurationType.CALENDAR_EVENT_PARTICIPANTS:
-      errors = validateWidgetConfigurationByDto(
-        CalendarEventParticipantsConfigurationDTO,
         configuration,
       );
       break;
