@@ -1,4 +1,4 @@
-import { createElement, useState } from 'react';
+import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Avatar, ColorSample, Tag } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -23,9 +23,7 @@ const PickerListItemsExample = () => {
             indicator="check"
             startIcon={<Avatar name={name} size="md" />}
             description="Person"
-            render={(props) =>
-              createElement('button', { ...props, type: 'button' })
-            }
+            render={<button type="button" />}
             onClick={() => setAssignee(name)}
           >
             {name}
@@ -38,9 +36,7 @@ const PickerListItemsExample = () => {
           aria-selected={qualified ? 'true' : 'false'}
           selected={qualified}
           indicator="checkbox"
-          render={(props) =>
-            createElement('button', { ...props, type: 'button' })
-          }
+          render={<button type="button" />}
           onClick={() => {
             setQualified(!qualified);
             setChanges((count) => count + 1);
@@ -52,6 +48,8 @@ const PickerListItemsExample = () => {
           role="option"
           aria-selected="false"
           disabled
+          render={<button type="button" disabled />}
+          aria-disabled="true"
           indicator="checkbox"
           startIcon={<ColorSample colorName="red" />}
           onClick={() => setChanges((count) => count + 1)}

@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
@@ -149,7 +149,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER}
       onEnter={handleClick}
     >
-      <ListItem
+      <ListItemButton
         onClick={handleClick}
         startIcon={<IconFilter />}
         focused={isSelectedItemId}
@@ -160,7 +160,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
             </StyledPillContainer>
           ) : undefined
         }
-      >{t`Advanced filter`}</ListItem>
+      >{t`Advanced filter`}</ListItemButton>
     </SelectableListItem>
   );
 };

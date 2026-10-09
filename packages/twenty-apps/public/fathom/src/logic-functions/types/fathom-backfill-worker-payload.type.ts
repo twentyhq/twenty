@@ -4,4 +4,5 @@ export type FathomBackfillWorkerPayload = {
   createdAfter?: string;
   cursor?: string;
   pageIndex?: number;
+  requeueAttempt?: number;
 };

@@ -161,6 +161,8 @@ export const DOCUMENTATION_PATHS = {
     '/ui/components/layout/overflowing-list',
   UI_COMPONENTS_LAYOUT_SECTION: '/ui/components/layout/section',
   UI_COMPONENTS_NAVIGATION_DROPDOWN: '/ui/components/navigation/dropdown',
+  UI_COMPONENTS_NAVIGATION_LIST_ITEM_BUTTON:
+    '/ui/components/navigation/list-item-button',
   UI_COMPONENTS_NAVIGATION_MENU_ITEMS: '/ui/components/navigation/menu-items',
   UI_COMPONENTS_NAVIGATION_MENU_PICKER: '/ui/components/navigation/menu-picker',
   UI_COMPONENTS_NAVIGATION_TAB_BUTTON: '/ui/components/navigation/tab-button',

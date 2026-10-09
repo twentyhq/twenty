@@ -95,8 +95,8 @@ jest.mock('twenty-ui/primitives/data-display', () => ({
     <span>{children}</span>
   ),
 }));
-jest.mock('twenty-ui/primitives/navigation', () => ({
-  ListItem: ({
+jest.mock('twenty-ui/components/navigation', () => ({
+  ListItemButton: ({
     description,
     disabled,
     onClick,

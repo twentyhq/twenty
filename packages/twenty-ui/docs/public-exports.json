@@ -131,6 +131,7 @@
     "values": {
       "DEFAULT_COLOR_LABELS": "components/navigation/MenuItem/constants/DefaultColorLabels",
       "Dropdown": "components/navigation/Dropdown/Dropdown",
+      "ListItemButton": "components/navigation/ListItemButton/ListItemButton",
       "MenuItem": "components/navigation/MenuItem/MenuItem",
       "MenuItemAvatar": "components/navigation/MenuItemAvatar/MenuItemAvatar",
       "MenuItemDraggable": "components/navigation/MenuItemDraggable/MenuItemDraggable",
@@ -156,6 +157,7 @@
       "DropdownTitleProps": "components/navigation/Dropdown/types/DropdownTitleProps",
       "DropdownTriggerProps": "components/navigation/Dropdown/types/DropdownTriggerProps",
       "DropdownType": "components/navigation/Dropdown/types/DropdownType",
+      "ListItemButtonProps": "components/navigation/ListItemButton/types/ListItemButtonProps",
       "MenuItemAccent": "components/navigation/MenuItem/types/MenuItemAccent",
       "MenuItemAvatarProps": "components/navigation/MenuItemAvatar/types/MenuItemAvatarProps",
       "MenuItemDraggableGripMode": "components/navigation/MenuItem/types/MenuItemDraggableGripMode",

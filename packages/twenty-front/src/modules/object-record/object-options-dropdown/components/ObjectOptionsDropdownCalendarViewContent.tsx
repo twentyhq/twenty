@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
@@ -20,7 +21,6 @@ import {
   IconTimelineEvent,
 } from 'twenty-ui/icon';
 import { Badge } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 const RECORD_CALENDAR_TIMELINE_VIEW_ID = 'record-calendar-timeline-view';
@@ -84,7 +84,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
             itemId={ViewCalendarLayout.DAY}
             onEnter={() => handleCalendarViewChange(ViewCalendarLayout.DAY)}
           >
-            <ListItem
+            <ListItemButton
               onClick={() => handleCalendarViewChange(ViewCalendarLayout.DAY)}
               focused={selectedItemId === ViewCalendarLayout.DAY}
               role="option"
@@ -94,13 +94,13 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               selected={recordIndexCalendarLayout === ViewCalendarLayout.DAY}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconCalendarEvent} />}
-            >{t`Day`}</ListItem>
+            >{t`Day`}</ListItemButton>
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.WEEK}
             onEnter={() => handleCalendarViewChange(ViewCalendarLayout.WEEK)}
           >
-            <ListItem
+            <ListItemButton
               onClick={() => handleCalendarViewChange(ViewCalendarLayout.WEEK)}
               focused={selectedItemId === ViewCalendarLayout.WEEK}
               role="option"
@@ -110,13 +110,13 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               selected={recordIndexCalendarLayout === ViewCalendarLayout.WEEK}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconCalendarWeek} />}
-            >{t`Week`}</ListItem>
+            >{t`Week`}</ListItemButton>
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.MONTH}
             onEnter={() => handleCalendarViewChange(ViewCalendarLayout.MONTH)}
           >
-            <ListItem
+            <ListItemButton
               onClick={() => handleCalendarViewChange(ViewCalendarLayout.MONTH)}
               focused={selectedItemId === ViewCalendarLayout.MONTH}
               role="option"
@@ -126,10 +126,10 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               selected={recordIndexCalendarLayout === ViewCalendarLayout.MONTH}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconCalendarMonth} />}
-            >{t`Month`}</ListItem>
+            >{t`Month`}</ListItemButton>
           </SelectableListItem>
           <SelectableListItem itemId={RECORD_CALENDAR_TIMELINE_VIEW_ID}>
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === RECORD_CALENDAR_TIMELINE_VIEW_ID}
               disabled
               role="option"
@@ -139,7 +139,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               description={<Badge>{t`Soon`}</Badge>}
               descriptionPlacement={'end'}
               startIcon={<SelectOptionIcon Icon={IconTimelineEvent} />}
-            >{t`Timeline`}</ListItem>
+            >{t`Timeline`}</ListItemButton>
           </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>
