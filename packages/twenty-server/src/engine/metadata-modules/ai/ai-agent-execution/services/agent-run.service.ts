@@ -22,6 +22,7 @@ import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/uti
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
@@ -76,6 +77,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     private readonly applicationLookupService: ApplicationLookupService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   onModuleInit(): void {
@@ -171,6 +173,8 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
     const threadId = isDefined(thread)
       ? buildAgentRunThreadId({
+          appSecret: this.twentyConfigService.get('APP_SECRET'),
+          workspaceId: workspace.id,
           applicationId: application.id,
           agentId: agent.id,
           threadKey: thread.key,

@@ -1,9 +1,14 @@
 import { Logger } from '@nestjs/common';
 
+import { v5 } from 'uuid';
+
+import { AGENT_RUN_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-thread-id-namespace.const';
+
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
+const APP_SECRET = 'app-secret';
 const WORKSPACE = { id: 'workspace-id' } as never;
 const APPLICATION = { id: 'application-id' };
 const AGENT = {
@@ -48,6 +53,7 @@ const buildService = () => {
     {} as never,
     { findById: jest.fn().mockResolvedValue(APPLICATION) } as never,
     { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
+    { get: () => APP_SECRET } as never,
   );
 
   return { service, agentRunnerService };
@@ -151,6 +157,8 @@ describe('AgentRunService', () => {
   it('continues the thread as the member it runs as', async () => {
     const { service, agentRunnerService } = buildService();
     const threadId = buildAgentRunThreadId({
+      appSecret: APP_SECRET,
+      workspaceId: 'workspace-id',
       applicationId: APPLICATION.id,
       agentId: AGENT.id,
       threadKey: 'C123:1700000000.000100',
@@ -190,6 +198,22 @@ describe('AgentRunService', () => {
         userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
       },
     });
+  });
+
+  it('runs a thread under no id a member can compute from the application, agent and key', async () => {
+    const { service, agentRunnerService } = buildService();
+
+    await run(service, {
+      input: userInput('And the second one?'),
+      thread: { key: 'C123:1700000000.000100' },
+    });
+
+    expect(
+      [
+        `${APPLICATION.id}:${AGENT.id}:C123:1700000000.000100`,
+        `workspace-id:${APPLICATION.id}:${AGENT.id}:C123:1700000000.000100`,
+      ].map((name) => v5(name, AGENT_RUN_THREAD_ID_NAMESPACE)),
+    ).not.toContain(runInput(agentRunnerService).conversation.threadId);
   });
 
   it('keeps the additional instructions with the run rather than in its messages', async () => {

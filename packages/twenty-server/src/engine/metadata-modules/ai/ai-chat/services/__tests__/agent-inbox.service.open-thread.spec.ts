@@ -4,7 +4,7 @@ import { v5 } from 'uuid';
 import { INBOX_MESSAGE_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/inbox-message-id-namespace.constant';
 
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
-import { buildInboxConversationKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-conversation-key.util';
+import { buildConversationKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-conversation-key.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import {
   AiException,
@@ -88,7 +88,7 @@ const buildService = () => {
 };
 
 const THREAD_ID = buildInboxThreadId({
-  conversationKey: buildInboxConversationKey({
+  conversationKey: buildConversationKey({
     appSecret: APP_SECRET,
     workspaceId: 'workspace-id',
     senderKey: 'workflow:workflow-id',

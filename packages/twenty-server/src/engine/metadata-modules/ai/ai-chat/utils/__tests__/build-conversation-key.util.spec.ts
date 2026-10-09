@@ -1,4 +1,4 @@
-import { buildInboxConversationKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-conversation-key.util';
+import { buildConversationKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-conversation-key.util';
 
 const INPUT = {
   appSecret: 'app-secret',
@@ -7,11 +7,9 @@ const INPUT = {
   threadKey: 'daily-digest',
 };
 
-describe('buildInboxConversationKey', () => {
+describe('buildConversationKey', () => {
   it('returns the same key for the same secret, workspace, sender and thread', () => {
-    expect(buildInboxConversationKey(INPUT)).toBe(
-      buildInboxConversationKey(INPUT),
-    );
+    expect(buildConversationKey(INPUT)).toBe(buildConversationKey(INPUT));
   });
 
   it.each([
@@ -20,8 +18,8 @@ describe('buildInboxConversationKey', () => {
     { senderKey: 'application:other-application-id' },
     { threadKey: 'other-thread' },
   ])('returns another key when %o differs', (override) => {
-    expect(buildInboxConversationKey({ ...INPUT, ...override })).not.toBe(
-      buildInboxConversationKey(INPUT),
+    expect(buildConversationKey({ ...INPUT, ...override })).not.toBe(
+      buildConversationKey(INPUT),
     );
   });
 });

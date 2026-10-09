@@ -10,7 +10,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
-import { buildInboxConversationKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-conversation-key.util';
+import { buildConversationKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-conversation-key.util';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
@@ -84,7 +84,7 @@ export class AgentInboxService {
     const senderDetails = getAgentInboxSenderDetails(sender);
     const { threadId, turnId, openingMessageId, messageId, toolCallId } =
       buildInboxMessageIds({
-        conversationKey: buildInboxConversationKey({
+        conversationKey: buildConversationKey({
           appSecret: this.twentyConfigService.get('APP_SECRET'),
           workspaceId,
           senderKey: senderDetails.key,
@@ -220,7 +220,7 @@ export class AgentInboxService {
     isCreated: boolean;
   }> {
     const threadId = buildInboxThreadId({
-      conversationKey: buildInboxConversationKey({
+      conversationKey: buildConversationKey({
         appSecret: this.twentyConfigService.get('APP_SECRET'),
         workspaceId,
         senderKey: getAgentInboxSenderDetails(sender).key,
