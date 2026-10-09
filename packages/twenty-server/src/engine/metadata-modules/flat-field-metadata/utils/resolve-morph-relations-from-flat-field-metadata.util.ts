@@ -1,3 +1,7 @@
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isMorphRelationGroup } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -48,8 +52,9 @@ export const resolveMorphRelationsFromFlatFieldMetadata = ({
       return [];
     }
     if (!isRelationFieldMetadataWithTarget(sourceFlatFieldMetadata)) {
-      throw new Error(
+      throw new FieldMetadataException(
         'Morph relation target is missing its target metadata IDs',
+        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
       );
     }
 
@@ -59,8 +64,9 @@ export const resolveMorphRelationsFromFlatFieldMetadata = ({
     });
 
     if (!isRelationFieldMetadataWithTarget(targetFlatFieldMetadata)) {
-      throw new Error(
+      throw new FieldMetadataException(
         `Inverse relation "${targetFlatFieldMetadata.name}" is missing its target metadata IDs`,
+        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
       );
     }
 

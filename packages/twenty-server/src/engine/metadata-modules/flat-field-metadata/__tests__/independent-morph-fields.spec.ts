@@ -1,3 +1,4 @@
+import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
 import { validateMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util';
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
@@ -173,7 +174,11 @@ describe('independent morph fields', () => {
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
         }),
-      ).toThrow('is missing its target metadata IDs');
+      ).toThrow(
+        expect.objectContaining({
+          code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        }),
+      );
     },
   );
 
