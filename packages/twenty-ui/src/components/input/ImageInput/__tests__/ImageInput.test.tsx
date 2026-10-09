@@ -3,20 +3,9 @@ import userEvent from '@testing-library/user-event';
 import { type ChangeEvent, createRef } from 'react';
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import {
-  type ImageInputFileInputProps,
-  type ImageInputProps,
-} from '@ui/components/input';
-
-import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
+import { type ImageInputProps } from '@ui/components/input';
 
 import { ImageInput } from '../ImageInput';
-
-runComponentConformance({
-  name: 'ImageInput',
-  element: <ImageInput />,
-  refInstanceOf: HTMLDivElement,
-});
 
 const readFileText = (file: File) =>
   new Promise<string | ArrayBuffer | null>((resolve, reject) => {
@@ -30,14 +19,22 @@ const readFileText = (file: File) =>
 describe('ImageInput', () => {
   it('excludes obsolete callbacks and component-owned native input options from its public types', () => {
     expectTypeOf<
-      Extract<keyof ImageInputProps, 'onUpload' | 'accept'>
-    >().toEqualTypeOf<never>();
-    expectTypeOf<
       Extract<
-        keyof ImageInputFileInputProps,
-        'children' | 'type' | 'multiple' | 'value' | 'defaultValue' | 'hidden'
+        keyof ImageInputProps,
+        | 'onUpload'
+        | 'fileInputProps'
+        | 'children'
+        | 'dangerouslySetInnerHTML'
+        | 'type'
+        | 'multiple'
+        | 'value'
+        | 'defaultValue'
+        | 'hidden'
       >
     >().toEqualTypeOf<never>();
+    expectTypeOf<ImageInputProps['accept']>().toEqualTypeOf<
+      string | undefined
+    >();
   });
 
   it('forwards separate native props and refs to the root and file control', async () => {
@@ -56,24 +53,28 @@ describe('ImageInput', () => {
     const { unmount } = render(
       <>
         <form aria-label="Workspace" id="workspace-form" />
+        <label htmlFor="image-file">Workspace image file</label>
         <ImageInput
           ref={rootRef}
-          id="image-root"
-          title="Workspace image"
+          render={
+            <div
+              id="image-root"
+              title="Workspace image"
+              onChange={onRootChange}
+            />
+          }
           className="custom-root"
-          onChange={onRootChange}
+          style={{ padding: '4px' }}
+          dir="rtl"
+          inputRef={fileInputRef}
+          id="image-file"
+          name="workspaceImage"
+          form="workspace-form"
+          accept="image/png"
+          capture="environment"
+          required
+          onChange={onFileChange}
           onFileSelect={vi.fn()}
-          fileInputProps={{
-            ref: fileInputRef,
-            id: 'image-file',
-            name: 'workspaceImage',
-            form: 'workspace-form',
-            accept: 'image/png',
-            capture: 'environment',
-            required: true,
-            className: 'custom-file',
-            onChange: onFileChange,
-          }}
         />
       </>,
     );
@@ -86,6 +87,8 @@ describe('ImageInput', () => {
     expect(rootRef.current).toHaveAttribute('id', 'image-root');
     expect(rootRef.current).toHaveAttribute('title', 'Workspace image');
     expect(rootRef.current).toHaveClass('custom-root');
+    expect(rootRef.current).toHaveStyle({ padding: '4px' });
+    expect(rootRef.current).toHaveAttribute('dir', 'rtl');
     expect(fileInputRef).toHaveBeenCalledWith(fileInput);
     expect(fileInput).toHaveAttribute('id', 'image-file');
     expect(fileInput).toHaveAttribute('name', 'workspaceImage');
@@ -96,7 +99,12 @@ describe('ImageInput', () => {
     expect(fileInput).toHaveAttribute('accept', 'image/png');
     expect(fileInput).toHaveAttribute('capture', 'environment');
     expect(fileInput).toBeRequired();
-    expect(fileInput).toHaveClass('custom-file');
+    expect(fileInput).toHaveAttribute('dir', 'rtl');
+    expect(fileInput).not.toHaveClass('custom-root');
+    expect(fileInput).not.toHaveStyle({ padding: '4px' });
+    expect(
+      screen.getByLabelText('Workspace image file', { selector: 'input' }),
+    ).toBe(fileInput);
     expect(fileInput).not.toHaveAttribute('multiple');
     expect(fileInput).not.toBeVisible();
 
@@ -111,6 +119,30 @@ describe('ImageInput', () => {
     expect(cleanupFileInputRef).toHaveBeenCalledOnce();
   });
 
+  it('composes root props and refs through a render function', () => {
+    const rootRef = createRef<HTMLDivElement>();
+
+    render(
+      <ImageInput
+        ref={rootRef}
+        id="workspace-file"
+        className="custom-root"
+        style={{ padding: '4px' }}
+        render={(rootProps) => <div {...rootProps} data-testid="image-root" />}
+      />,
+    );
+
+    const root = screen.getByTestId('image-root');
+
+    expect(rootRef.current).toBe(root);
+    expect(root).toHaveClass('custom-root');
+    expect(root).toHaveStyle({ padding: '4px' });
+    expect(root).not.toHaveAttribute('id');
+    expect(
+      screen.getByLabelText('Upload', { selector: 'input' }),
+    ).toHaveAttribute('id', 'workspace-file');
+  });
+
   it('exposes the selected file to the native event before reset and supports repeated selection', async () => {
     const user = userEvent.setup();
     const onFileChange = vi.fn((event: ChangeEvent<HTMLInputElement>) => ({
@@ -119,12 +151,7 @@ describe('ImageInput', () => {
     }));
     const onFileSelect = vi.fn(readFileText);
 
-    render(
-      <ImageInput
-        onFileSelect={onFileSelect}
-        fileInputProps={{ onChange: onFileChange }}
-      />,
-    );
+    render(<ImageInput onFileSelect={onFileSelect} onChange={onFileChange} />);
 
     const fileInput = screen.getByLabelText<HTMLInputElement>('Upload', {
       selector: 'input',
@@ -170,12 +197,7 @@ describe('ImageInput', () => {
       onChange: onFileChange,
     };
 
-    render(
-      <ImageInput
-        onFileSelect={onFileSelect}
-        fileInputProps={broaderInputProps}
-      />,
-    );
+    render(<ImageInput {...broaderInputProps} onFileSelect={onFileSelect} />);
 
     const fileInput = screen.getByLabelText<HTMLInputElement>('Upload', {
       selector: 'input',
@@ -201,18 +223,14 @@ describe('ImageInput', () => {
     const broaderInputProps = {
       accept: 'image/png',
       children: <span>Unexpected input content</span>,
+      dangerouslySetInnerHTML: { __html: 'Unexpected input markup' },
       type: 'text',
       hidden: false,
       value: 'controlled-file.png',
       defaultValue: 'initial-file.png',
     };
 
-    render(
-      <ImageInput
-        onFileSelect={onFileSelect}
-        fileInputProps={broaderInputProps}
-      />,
-    );
+    render(<ImageInput {...broaderInputProps} onFileSelect={onFileSelect} />);
 
     const fileInput = screen.getByLabelText<HTMLInputElement>('Upload', {
       selector: 'input',
@@ -236,12 +254,7 @@ describe('ImageInput', () => {
     const onFileSelect = vi.fn();
     const onFileChange = vi.fn();
 
-    render(
-      <ImageInput
-        onFileSelect={onFileSelect}
-        fileInputProps={{ onChange: onFileChange }}
-      />,
-    );
+    render(<ImageInput onFileSelect={onFileSelect} onChange={onFileChange} />);
 
     const fileInput = screen.getByLabelText('Upload', { selector: 'input' });
 
@@ -274,19 +287,11 @@ describe('ImageInput', () => {
     expect(fileInput).toHaveValue('');
   });
 
-  it('disables file selection without disabling keyboard removal when the file control is disabled', async () => {
+  it('keeps keyboard removal usable when no file selection handler is provided', async () => {
     const user = userEvent.setup();
-    const onFileSelect = vi.fn();
     const onRemove = vi.fn();
 
-    render(
-      <ImageInput
-        src="workspace.png"
-        onFileSelect={onFileSelect}
-        onRemove={onRemove}
-        fileInputProps={{ disabled: true }}
-      />,
-    );
+    render(<ImageInput src="workspace.png" onRemove={onRemove} />);
 
     for (const button of screen.getAllByRole('button', { name: 'Upload' })) {
       expect(button).toBeDisabled();
@@ -303,7 +308,6 @@ describe('ImageInput', () => {
     await user.keyboard('{Enter}');
 
     expect(onRemove).toHaveBeenCalledOnce();
-    expect(onFileSelect).not.toHaveBeenCalled();
   });
 
   it('provides a default file label and merges native descriptions with helper text and errors', () => {
@@ -315,7 +319,7 @@ describe('ImageInput', () => {
           helperText="Choose a square image."
           errorMessage="The image could not be saved."
           onFileSelect={vi.fn()}
-          fileInputProps={{ 'aria-describedby': 'image-format' }}
+          aria-describedby="image-format"
         />
       </>,
     );
@@ -339,10 +343,8 @@ describe('ImageInput', () => {
           helperText="Choose a square image."
           errorMessage="The image could not be saved."
           onFileSelect={vi.fn()}
-          fileInputProps={{
-            'aria-label': 'Workspace image file',
-            'aria-describedby': 'image-format',
-          }}
+          aria-label="Workspace image file"
+          aria-describedby="image-format"
         />
       </>,
     );
@@ -357,7 +359,7 @@ describe('ImageInput', () => {
       name: 'Choose workspace image',
     })) {
       expect(button).toHaveAccessibleDescription(
-        'Choose a square image. The image could not be saved.',
+        'PNG images only. Choose a square image. The image could not be saved.',
       );
     }
   });

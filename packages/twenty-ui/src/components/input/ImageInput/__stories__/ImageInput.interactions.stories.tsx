@@ -87,7 +87,7 @@ export const NativeButtonsInForm: Story = {
 };
 
 export const FileSelectionAndRetry: Story = {
-  args: { fileInputProps: { accept: 'image/png' } },
+  args: { accept: 'image/png' },
   play: async ({ canvasElement, args }) => {
     const fileInput = getFileInput(canvasElement);
     const file = new File(['image'], 'workspace.png', { type: 'image/png' });

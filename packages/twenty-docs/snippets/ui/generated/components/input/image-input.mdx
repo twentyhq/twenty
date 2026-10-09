@@ -15,8 +15,32 @@
   Label for the Abort action.
 </ParamField>
 
+<ParamField body="accept" type="string" default="image/*">
+  Native file picker filter. Defaults to image/*. The caller validates allowed formats.
+</ParamField>
+
+<ParamField body="aria-describedby" type="string">
+  Accessible description references for the hidden file input and selection buttons, combined with helperText and errorMessage.
+</ParamField>
+
+<ParamField body="aria-label" type="string">
+  Accessible name of the hidden file input. Defaults to uploadLabel.
+</ParamField>
+
+<ParamField body="aria-labelledby" type="string">
+  Accessible name reference for the hidden file input.
+</ParamField>
+
+<ParamField body="capture" type="boolean | &quot;user&quot; | &quot;environment&quot;">
+  Native device capture hint for the file picker.
+</ParamField>
+
 <ParamField body="className" type="string">
   Class applied to the root element.
+</ParamField>
+
+<ParamField body="dir" type="string">
+  Text direction applied to both the root and hidden file input.
 </ParamField>
 
 <ParamField body="disabled" type="boolean" default="false">
@@ -27,20 +51,36 @@
   Application error, displayed as an alert and associated with the selection controls.
 </ParamField>
 
-<ParamField body="fileInputProps" type="ImageInputFileInputProps" default="{}">
-  Native props and HTMLInputElement ref for the hidden single-file input. accept defaults to image/*. Native onChange runs before the input resets. disabled blocks selection only. The input does not retain a file for form submission.
+<ParamField body="form" type="string">
+  Native form identifier associated with the hidden file input.
 </ParamField>
 
 <ParamField body="helperText" type="string">
   Application instructions, associated with the selection controls.
 </ParamField>
 
+<ParamField body="id" type="string">
+  Native identifier of the hidden file input.
+</ParamField>
+
+<ParamField body="inputRef" type="Ref&lt;HTMLInputElement&gt;">
+  Ref to the hidden single-file HTMLInputElement.
+</ParamField>
+
 <ParamField body="isUploading" type="boolean" default="false">
   Marks the module busy. Selection and removal controls that would otherwise be enabled stay focusable but unavailable. Shows Abort when onAbort is supplied.
 </ParamField>
 
+<ParamField body="name" type="string">
+  Native name of the hidden file input.
+</ParamField>
+
 <ParamField body="onAbort" type="(() =&gt; void)">
   Shows an abort action while uploading. It can cancel the first upload before a src exists.
+</ParamField>
+
+<ParamField body="onChange" type="ChangeEventHandler&lt;HTMLInputElement, HTMLInputElement&gt;">
+  Native file input change event, fired while the selected file is present and before the input resets. The input does not retain a file for form submission.
 </ParamField>
 
 <ParamField body="onFileSelect" type="((file: File) =&gt; void)">
@@ -60,7 +100,11 @@
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
-  Custom root element or render function. Keep a non-interactive root.
+  Custom root element or render function. Supply root native attributes here and keep a non-interactive root.
+</ParamField>
+
+<ParamField body="required" type="boolean">
+  Native file input requirement. The input resets after selection, so the caller validates completed uploads.
 </ParamField>
 
 <ParamField body="src" type="string | null">
@@ -69,6 +113,10 @@
 
 <ParamField body="style" type="CSSProperties">
   Inline style applied to the root element.
+</ParamField>
+
+<ParamField body="title" type="string">
+  Native title of the hidden file input.
 </ParamField>
 
 <ParamField body="uploadLabel" type="string" default="Upload">

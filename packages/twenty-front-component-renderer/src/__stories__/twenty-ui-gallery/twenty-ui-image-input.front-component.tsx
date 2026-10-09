@@ -22,8 +22,8 @@ const ImageInputExample = () => {
   return (
     <TwentyUiGalleryCard title="ImageInput">
       <ImageInput
-        role="group"
-        aria-label="Profile image"
+        accept="image/png, image/jpeg"
+        render={<div role="group" aria-label="Profile image" />}
         src={src}
         isUploading={isUploading}
         disabled={disabled}

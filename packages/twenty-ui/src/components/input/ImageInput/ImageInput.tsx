@@ -26,28 +26,36 @@ export const ImageInput = ({
   uploadLabel = 'Upload',
   removeLabel = 'Remove',
   abortLabel = 'Abort',
-  fileInputProps = {},
+  accept = DEFAULT_IMAGE_ACCEPT,
+  inputRef,
+  onChange,
+  'aria-describedby': ariaDescribedBy,
   className,
+  style,
+  dir,
   render,
   ref,
-  ...props
+  ...inputProps
 }: ImageInputProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const mergedFileInputRef = useMergedRefs(fileInputRef, fileInputProps.ref);
+  const mergedFileInputRef = useMergedRefs(fileInputRef, inputRef);
   const descriptionId = useId();
   const helperTextId = `${descriptionId}-helper`;
   const errorMessageId = `${descriptionId}-error`;
   const hasPicture = isNonEmptyString(src);
   const hasHelperText = isNonEmptyString(helperText);
   const hasErrorMessage = isNonEmptyString(errorMessage);
-  const isSelectionUnavailable =
-    disabled || fileInputProps.disabled || !isDefined(onFileSelect);
+  const isSelectionUnavailable = disabled || !isDefined(onFileSelect);
   const isRemovalUnavailable = disabled || !hasPicture || !isDefined(onRemove);
   const isUploadDisabled = isSelectionUnavailable || isUploading;
   const isRemoveDisabled = isRemovalUnavailable || isUploading;
   const showAbort = isUploading && isDefined(onAbort);
   const describedBy =
-    [hasHelperText && helperTextId, hasErrorMessage && errorMessageId]
+    [
+      ariaDescribedBy,
+      hasHelperText && helperTextId,
+      hasErrorMessage && errorMessageId,
+    ]
       .filter(isNonEmptyString)
       .join(' ') || undefined;
 
@@ -63,7 +71,7 @@ export const ImageInput = ({
     const file = event.currentTarget.files?.[0];
 
     try {
-      fileInputProps.onChange?.(event);
+      onChange?.(event);
     } finally {
       event.currentTarget.value = '';
     }
@@ -79,9 +87,10 @@ export const ImageInput = ({
     render,
     ref,
     props: {
-      ...props,
       className: clsx(styles.root, className),
-      'aria-busy': isUploading || props['aria-busy'],
+      style,
+      dir,
+      'aria-busy': isUploading || inputProps['aria-busy'],
       children: (
         <>
           <button
@@ -99,21 +108,19 @@ export const ImageInput = ({
             <div className={styles.actions}>
               <input
                 aria-label={uploadLabel}
-                {...fileInputProps}
+                {...inputProps}
                 ref={mergedFileInputRef}
-                className={clsx(styles.fileInput, fileInputProps.className)}
+                className={styles.fileInput}
+                dir={dir}
                 children={undefined}
+                dangerouslySetInnerHTML={undefined}
                 type="file"
                 multiple={false}
                 value={undefined}
                 defaultValue={undefined}
-                accept={fileInputProps.accept ?? DEFAULT_IMAGE_ACCEPT}
+                accept={accept}
                 disabled={isUploadDisabled}
-                aria-describedby={
-                  [fileInputProps['aria-describedby'], describedBy]
-                    .filter(isNonEmptyString)
-                    .join(' ') || undefined
-                }
+                aria-describedby={describedBy}
                 hidden
                 onChange={handleFileChange}
               />

@@ -26,7 +26,7 @@ export const WorkspaceImage = ({
     src={src}
     onFileSelect={onFileSelect}
     onRemove={onRemove}
-    fileInputProps={{ accept: 'image/png, image/jpeg' }}
+    accept="image/png, image/jpeg"
     helperText="Choose a square image for your workspace."
   />
 );
@@ -38,19 +38,19 @@ The preview and Upload button open the same native file picker. `onFileSelect` r
 
 Native file selection and readable `File` contents require the pending [renderer file selection update](https://github.com/twentyhq/twenty/pull/27588) in the front-component sandbox. Current React and Preact renderer coverage includes previews, action callbacks, and state. Use an ordinary React host for the complete native selection flow until that update is available.
 
-`fileInputProps.accept` defaults to `image/*` and filters the file picker. Validate allowed formats, dimensions, and size in your application. This callback-driven selector does not retain a file for native form submission. Its action buttons use `type="button"`, so they do not submit a surrounding form.
+`accept` defaults to `image/*` and filters the file picker. Validate allowed formats, dimensions, and size in your application. This callback-driven selector does not retain a file for native form submission. Its action buttons use `type="button"`, so they do not submit a surrounding form.
 
 An empty or failed image shows a placeholder. Changing `src` retries the preview, including after an earlier image failed to load. Removal calls `onRemove`; update `src` after your application removes the image. The application owns local preview URLs and revokes worker-created object URLs when they are no longer needed. The renderer owns cleanup of its host preview URLs.
 
 ## Root and file input props
 
-Native div attributes, `className`, `style`, and `ref` apply to the root div. The default root ref receives an `HTMLDivElement`; use `fileInputProps.ref` for the file input. Use `render` for root composition and keep that root non-interactive, since the module already contains buttons. Use `dir="rtl"` for right-to-left layout.
+`className`, `style`, and `ref` apply to the root div. The default root ref receives an `HTMLDivElement`; use `inputRef` for the hidden file input. Use `render={<div ... />}` to supply native root attributes or event handlers. Keep that root non-interactive, since the module already contains buttons. `dir` applies to both the root and file input; use `dir="rtl"` for right-to-left layout.
 
-Use `fileInputProps` for native file input attributes such as `accept`, `capture`, `name`, `id`, `form`, `required`, accessible labels, `className`, and `style`. Its `ref` receives the hidden `HTMLInputElement`. The control always uses `type="file"`, accepts one file, and resets its value after every selection. `children`, `type`, `multiple`, `value`, `defaultValue`, and `hidden` cannot be customized.
+Native file input attributes are top-level props, including `accept`, `capture`, `name`, `id`, `title`, `form`, `required`, accessible attributes, data attributes, and event handlers. They apply to the hidden input. `inputRef` receives its `HTMLInputElement`. The control always uses `type="file"`, accepts one file, and resets its value after every selection. `children`, `dangerouslySetInnerHTML`, `type`, `multiple`, `value`, `defaultValue`, and `hidden` cannot be customized.
 
 Native `required` validation still sees an empty input after selection because the input resets. Validate completed uploads in your application.
 
-`fileInputProps.onChange` receives the native change event while the input still contains the selected file. The input then resets before `onFileSelect` fires. Native event props follow React's input contract. `fileInputProps.disabled` disables file selection while leaving removal and abort available.
+`onChange` receives the native change event while the input still contains the selected file. The input then resets before `onFileSelect` fires. Native event props follow React's input contract. `onAbort` is the upload abort action.
 
 ## Uploading and disabled states
 
@@ -66,7 +66,7 @@ Native `required` validation still sees an empty input after selection because t
 
 ## Labels, instructions, and errors
 
-Supply localized `uploadLabel`, `removeLabel`, and `abortLabel` strings. They default to `Upload`, `Remove`, and `Abort`. The upload label also names the preview button and the hidden file input. Native accessible attributes in `fileInputProps` can provide a different file input name.
+Supply localized `uploadLabel`, `removeLabel`, and `abortLabel` strings. They default to `Upload`, `Remove`, and `Abort`. The upload label also names the preview button and the hidden file input. Native accessible attributes can provide a different file input name. `aria-describedby` also describes the selection buttons and combines with the application's helper and error text.
 
 `helperText` and `errorMessage` belong to the application. Both describe the selection controls, and errors are announced as alerts. There are no built-in file limits or product instructions.
 
@@ -78,7 +78,7 @@ Supply localized `uploadLabel`, `removeLabel`, and `abortLabel` strings. They de
 
 ## Migration
 
-Replace `onUpload` with `onFileSelect` and move `accept` into `fileInputProps.accept`. The callback still receives a `File`; keep existing validation and upload code in your application.
+Replace `onUpload` with `onFileSelect`. Keep `accept` as a top-level prop. The callback still receives a `File`; keep existing validation and upload code in your application.
 
 ```tsx
 import { ImageInput } from 'twenty-ui/components/input';
@@ -90,7 +90,7 @@ export const WorkspaceImageSelector = ({
 }) => (
   <ImageInput
     onFileSelect={uploadImage}
-    fileInputProps={{ accept: 'image/png, image/jpeg' }}
+    accept="image/png, image/jpeg"
   />
 );
 ```
