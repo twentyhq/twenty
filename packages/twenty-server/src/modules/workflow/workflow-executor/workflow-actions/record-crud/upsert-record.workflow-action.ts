@@ -16,7 +16,7 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
 import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import { convertStepTipTapToMarkdown } from 'src/modules/workflow/workflow-executor/utils/convert-step-tiptap-to-markdown.util';
+import { convertStepObjectRecordTipTapToMarkdown } from 'src/modules/workflow/workflow-executor/utils/convert-step-object-record-tiptap-to-markdown.util';
 import { resolveRichTextMarkdownVariables } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-markdown-variables.util';
 import { isWorkflowUpsertRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-upsert-record-action.guard';
 import { type WorkflowUpsertRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
@@ -60,7 +60,10 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
     const inputWithRichText = {
       ...rawInput,
       objectRecord: resolveRichTextMarkdownVariables(
-        convertStepTipTapToMarkdown(rawInput.objectRecord, objectMetadataInfo),
+        convertStepObjectRecordTipTapToMarkdown(
+          rawInput.objectRecord,
+          objectMetadataInfo,
+        ),
         objectMetadataInfo,
         context,
       ),

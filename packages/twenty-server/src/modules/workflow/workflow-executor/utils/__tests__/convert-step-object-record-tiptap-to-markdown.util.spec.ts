@@ -4,7 +4,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { convertStepTipTapToMarkdown } from 'src/modules/workflow/workflow-executor/utils/convert-step-tiptap-to-markdown.util';
+import { convertStepObjectRecordTipTapToMarkdown } from 'src/modules/workflow/workflow-executor/utils/convert-step-object-record-tiptap-to-markdown.util';
 
 const bodyField = getFlatFieldMetadataMock({
   id: 'body-field',
@@ -48,7 +48,7 @@ const objectMetadataInfo = {
 const paragraph = (content: unknown[]) =>
   JSON.stringify([{ type: 'paragraph', content }]);
 
-describe('convertStepTipTapToMarkdown', () => {
+describe('convertStepObjectRecordTipTapToMarkdown', () => {
   it('converts a TipTap body into markdown, keeping its variables', () => {
     const tipTapBody = paragraph([
       { type: 'text', text: 'Amount', marks: [{ type: 'bold' }] },
@@ -56,7 +56,7 @@ describe('convertStepTipTapToMarkdown', () => {
       { type: 'variableTag', attrs: { variable: '{{trigger.body.amount}}' } },
     ]);
 
-    const converted = convertStepTipTapToMarkdown(
+    const converted = convertStepObjectRecordTipTapToMarkdown(
       { body: { blocknote: tipTapBody, markdown: null } },
       objectMetadataInfo,
     );
@@ -75,7 +75,7 @@ describe('convertStepTipTapToMarkdown', () => {
       },
     ]);
 
-    const converted = convertStepTipTapToMarkdown(
+    const converted = convertStepObjectRecordTipTapToMarkdown(
       { body: { blocknote: tipTapBody, markdown: null } },
       objectMetadataInfo,
     );
@@ -112,7 +112,7 @@ describe('convertStepTipTapToMarkdown', () => {
     },
     { name: 'a value that is not a rich text object', value: 'legacy' },
   ])('leaves $name untouched', ({ value }) => {
-    const converted = convertStepTipTapToMarkdown(
+    const converted = convertStepObjectRecordTipTapToMarkdown(
       { body: value },
       objectMetadataInfo,
     );
@@ -123,7 +123,7 @@ describe('convertStepTipTapToMarkdown', () => {
   it('does not touch fields that are not rich text', () => {
     const tipTapBody = paragraph([{ type: 'text', text: 'Hello' }]);
 
-    const converted = convertStepTipTapToMarkdown(
+    const converted = convertStepObjectRecordTipTapToMarkdown(
       { title: tipTapBody },
       objectMetadataInfo,
     );

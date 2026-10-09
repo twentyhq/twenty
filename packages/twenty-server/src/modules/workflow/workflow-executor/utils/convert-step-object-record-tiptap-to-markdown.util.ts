@@ -7,7 +7,7 @@ import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/u
 // The step editor is TipTap but saves its JSON under a key named blocknote
 const workflowStepTipTapValueSchema = richTextValueSchema;
 
-export const convertStepTipTapToMarkdown = (
+export const convertStepObjectRecordTipTapToMarkdown = (
   stepObjectRecord: Record<string, unknown>,
   objectMetadataInfo: Pick<
     ObjectMetadataInfo,
