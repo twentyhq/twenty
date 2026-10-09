@@ -8,7 +8,7 @@ const StyledPillContainer = styled.span`
   right: -14px;
   top: -10px;
 
-  > span {
+  > span[data-badge-size] {
     background: ${themeCssVariables.accent.accent3};
     border: 1px solid ${themeCssVariables.accent.accent5};
     border-radius: ${themeCssVariables.border.radius.pill};
