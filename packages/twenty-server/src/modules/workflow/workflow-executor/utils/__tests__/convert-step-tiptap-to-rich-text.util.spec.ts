@@ -45,6 +45,18 @@ const objectMetadataInfo = {
   flatFieldMetadataMaps,
 };
 
+const expectRichTextParagraph = (value: unknown, text: string) => {
+  const { blocknote, markdown } = value as {
+    blocknote: string;
+    markdown: string;
+  };
+
+  expect(markdown).toBe(text);
+  expect(JSON.parse(blocknote)).toMatchObject([
+    { type: 'paragraph', content: [{ type: 'text', text }] },
+  ]);
+};
+
 const context = {
   trigger: { body: { amount: 42, currency: 'EUR', meta: { source: 'form' } } },
 };
@@ -57,7 +69,7 @@ describe('convertStepTipTapToRichText', () => {
       context,
     );
 
-    expect(resolved.body).toEqual({ markdown: '42', blocknote: null });
+    expectRichTextParagraph(resolved.body, '42');
   });
 
   it('interpolates variables inside a markdown', () => {
@@ -73,10 +85,7 @@ describe('convertStepTipTapToRichText', () => {
       context,
     );
 
-    expect(resolved.body).toEqual({
-      markdown: 'Latest donation: 42 EUR',
-      blocknote: null,
-    });
+    expectRichTextParagraph(resolved.body, 'Latest donation: 42 EUR');
   });
 
   it('serializes an object resolved from a whole-string variable', () => {
@@ -86,10 +95,7 @@ describe('convertStepTipTapToRichText', () => {
       context,
     );
 
-    expect(resolved.body).toEqual({
-      markdown: '{"source":"form"}',
-      blocknote: null,
-    });
+    expectRichTextParagraph(resolved.body, '{"source":"form"}');
   });
 
   it('converts a TipTap body into BlockNote after resolving its variables', () => {

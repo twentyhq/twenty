@@ -34,7 +34,7 @@ const getServerBlockNoteEditor = (): Promise<ServerBlockNoteEditor> => {
   return serverBlockNoteEditorPromise;
 };
 
-const convertMarkdownToBlocknote = (markdown: string): string =>
+export const convertMarkdownToBlocknote = (markdown: string): string =>
   JSON.stringify(convertMarkdownToBlocknoteBlocks(markdown));
 
 // Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)

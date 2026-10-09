@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type RichTextMetadata } from 'twenty-shared/types';
 import {
   convertTipTapBlocksToMarkdown,
@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { convertMarkdownToBlocknoteBlocks } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-to-blocknote-blocks.util';
+import { convertMarkdownToBlocknote } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
 
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
@@ -40,26 +40,26 @@ export const convertStepTipTapToRichText = (
       continue;
     }
 
-    const { blocknote: tipTapJson, markdown } = parsedStepValue.data;
+    const { blocknote: tipTapJson, markdown: stepMarkdown } =
+      parsedStepValue.data;
 
     const resolvedTipTapJson = resolveRichTextVariables(tipTapJson, context);
     const tipTapMarkdown = isDefined(resolvedTipTapJson)
       ? convertTipTapBlocksToMarkdown(resolvedTipTapJson)
       : undefined;
 
-    const richTextValue: RichTextMetadata = isDefined(tipTapMarkdown)
-      ? {
-          blocknote: JSON.stringify(
-            convertMarkdownToBlocknoteBlocks(tipTapMarkdown),
-          ),
-          markdown: tipTapMarkdown,
-        }
-      : {
-          blocknote: null,
-          markdown: isString(markdown)
-            ? resolveStringTemplate(markdown, context)
-            : markdown,
-        };
+    const markdown =
+      tipTapMarkdown ??
+      (isString(stepMarkdown)
+        ? resolveStringTemplate(stepMarkdown, context)
+        : null);
+
+    const richTextValue: RichTextMetadata = {
+      markdown,
+      blocknote: isNonEmptyString(markdown)
+        ? convertMarkdownToBlocknote(markdown)
+        : null,
+    };
 
     objectRecord[fieldName] = richTextValue;
   }
