@@ -8,8 +8,7 @@ import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
-import { capitalize } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useCreateManyRecordsMutation = ({
   objectNameSingular,
@@ -26,7 +25,7 @@ export const useCreateManyRecordsMutation = ({
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  if (isUndefinedOrNull(objectMetadataItem)) {
+  if (!isDefined(objectMetadataItem)) {
     return { createManyRecordsMutation: EMPTY_MUTATION };
   }
 

@@ -1,6 +1,7 @@
 import {
   type UsageOperationType,
   type UsageResourceType,
+  type UsageUnit,
 } from '~/generated-admin/graphql';
 
 export type AdminUsageLimitRow = {
@@ -11,7 +12,7 @@ export type AdminUsageLimitRow = {
   limitKind: string;
   periodCount: number;
   periodUnit: string;
-  meter: string;
+  unit: UsageUnit;
   defaultValue: number;
   limitValue: number;
   burstValue: number | null;

@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.9.0
+
+- Drop the `on-person-created` and `on-company-created` triggers. Last contact only comes from a synced email or meeting linked to a person, so a newly created person or company never has one, and recomputing the company on creation could not change anything. A mailbox sync that creates contacts spent 6 API calls per batch of 100 contacts on them.
+- Pace the backfill. Its API calls are now at least 600 ms apart, about 100 calls per minute or a fifth of the limit every install shares. It used to send them back to back, so a large workspace could use the whole limit on its own for 15 minutes. The meeting scheduling that every install and upgrade runs is paced the same way.
+- Let the backfill resume instead of starting over. A run stops taking new batches after 8 minutes and enqueues itself to continue from its cursor, so a large workspace is backfilled over several runs instead of being cut off by the 900-second timeout. When the rate limit makes it give up, it continues 2 minutes later from the batch that failed, where it used to restart from the first person. After 5 runs in a row fail before finishing a batch, the backfill stops instead of retrying that batch forever. This also applies to the "Trigger backfill" button.
+- Compute opportunities and companies in the backfill from the last contact it just wrote on people, instead of reading every email and meeting of their people again, which more than doubled its cost. Opportunities without a contacted point of contact and companies without a contacted person are now reset to empty, as they already are when an opportunity or person changes. Since those phases now trust the people's stored values, the people phase writes every field of every person and clears the ones no remaining email or meeting supports, so the last contact of an email deleted with its account or a meeting canceled after it started no longer lingers.
+- Read only the sender and team members of each email when an email is linked to a person. The other recipients never change the result, but they were read too, so a batch of emails sent to many people cost one extra call per 200 recipients. An email with neither a sender nor a team member among its participants is still counted as an inbound contact, with its date read from the message.
+
+## 1.8.0
+
+All installs of the app share one API rate limit, 500 calls per minute across every workspace. This version is about spending far fewer of those calls.
+
+- **No more calendar cron.** The 5-minute cron ran in every workspace in the same minute and made at least one API call each time, even with nothing to do. With about 1500 installs, that alone used more than the limit. Meetings are now scheduled instead:
+  - When a participant is linked to a meeting that has not started yet, or when a meeting's start time changes or it is un-canceled, the app enqueues one delayed job for the meeting's 5-minute slot. A meeting that has already started is applied right away instead. The job runs just after the slot ends and updates last contact for that slot's meetings. Enqueuing a job costs no API call, all meetings in a slot share one job, and a slot with no meeting linked to a person costs one call.
+  - Enqueued jobs can be delayed by at most 7 days, so meetings more than 6 days out are reached through a horizon job. It runs every 3 days, schedules the meetings that came within reach, and enqueues the next run only while meetings remain further out. A workspace with no upcoming meetings runs nothing.
+  - Every install and upgrade schedules the upcoming meetings and applies meetings from the last hour, so meetings linked before this version are not missed.
+  - A meeting's last contact still updates within about 6 minutes of its start: the job runs 1 minute after the end of its 5-minute slot.
+- **Fewer calls per email or meeting batch: at most 5 instead of 8.** A person's company and opportunities are read nested in the same query as the person, which costs no extra call. Recomputing an opportunity's last contact also reads its point of contact nested: 2 calls instead of 3.
+- **Retries that respect the rate limit.** A rate-limited call now waits for the server's `retryAfterMs`, capped at 60 seconds, when it is longer than the backoff. Once a function has waited 2 minutes in total, it hands the job back to the queue to retry later, instead of failing it or holding a worker.
+
 ## 1.7.0
 
 - Keep the app's fields off the record timeline. The app's fields are frequently rewritten during email and meeting syncs, and each write used to add an `updated Last contact` entry to the person, company or opportunity timeline, burying everything else. All 23 fields now declare `isAuditLogged: false`, so their values still update but no timeline activity is recorded for them. Entries written before this version stay on the timeline.

@@ -27,16 +27,12 @@ export const SettingsObjectValidationRuleEdit = () => {
     return <NotFound />;
   }
 
-  if (loading) {
-    return null;
-  }
-
   const validationRule = validationRules.find(
     (candidate) => candidate.id === validationRuleId,
   );
 
   if (!isDefined(validationRule)) {
-    return <NotFound />;
+    return loading ? null : <NotFound />;
   }
 
   return (

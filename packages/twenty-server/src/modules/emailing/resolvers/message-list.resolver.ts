@@ -10,10 +10,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
+import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { DuplicatedMessageListDTO } from 'src/modules/emailing/dtos/duplicated-message-list.dto';
@@ -39,7 +36,7 @@ import { MessageListGraphqlApiExceptionFilter } from 'src/modules/emailing/utils
     oauthClient: true,
     application: true,
   }),
-  FeatureFlagGuard,
+  FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED),
 )
 @UsePipes(ResolverValidationPipe)
 export class MessageListResolver {
@@ -49,7 +46,6 @@ export class MessageListResolver {
 
   @Mutation(() => DuplicatedMessageListDTO)
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async duplicateMessageList(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,

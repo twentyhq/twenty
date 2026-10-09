@@ -20,16 +20,16 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordTableCellCheckboxPlaceholder = () => {
-  const { hasUserSelectedAllRows } = useRecordTableBodyContextOrThrow();
+  const { hasUserSelectedAllRecords } = useRecordTableBodyContextOrThrow();
 
   return (
     <RecordTableCellStyleWrapper
-      isSelected={hasUserSelectedAllRows}
+      isSelected={hasUserSelectedAllRecords}
       hasRightBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
     >
       <StyledContainer data-select-disable>
-        <Checkbox hoverable checked={hasUserSelectedAllRows === true} />
+        <Checkbox hoverable checked={hasUserSelectedAllRecords === true} />
       </StyledContainer>
     </RecordTableCellStyleWrapper>
   );

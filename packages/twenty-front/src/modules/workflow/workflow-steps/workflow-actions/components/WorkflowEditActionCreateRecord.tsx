@@ -21,7 +21,7 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
@@ -217,7 +217,7 @@ export const WorkflowEditActionCreateRecord = ({
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
-        <HorizontalSeparator noMargin />
+        <Separator />
 
         {inlineFieldDefinitions?.map((fieldDefinition) => {
           const currentValue = isFieldRelationManyToOne(fieldDefinition)

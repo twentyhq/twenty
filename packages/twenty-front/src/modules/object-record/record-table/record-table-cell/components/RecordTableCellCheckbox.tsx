@@ -8,9 +8,8 @@ import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/r
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
+import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
-import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
-import { isDefined } from 'twenty-shared/utils';
 import { Checkbox } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
@@ -27,19 +26,19 @@ const StyledContainer = styled.div`
 export const RecordTableCellCheckbox = () => {
   const { t } = useLingui();
 
-  const { isSelected } = useRecordTableRowContextOrThrow();
+  const { isSelected, recordId } = useRecordTableRowContextOrThrow();
   const { isDragging } = useRecordTableRowDraggableContextOrThrow();
 
-  const { setCurrentRowSelected } = useSetCurrentRowSelected();
+  const { toggleRecordSelection } = useToggleRecordSelection();
 
   const handleClick = useCallback(
-    (event?: React.MouseEvent<HTMLDivElement>) => {
-      setCurrentRowSelected({
-        newSelectedState: !isSelected,
-        shouldSelectRange: isDefined(event?.shiftKey) && event.shiftKey,
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      toggleRecordSelection({
+        recordId,
+        shouldSelectRange: event.shiftKey,
       });
     },
-    [isSelected, setCurrentRowSelected],
+    [recordId, toggleRecordSelection],
   );
 
   return (

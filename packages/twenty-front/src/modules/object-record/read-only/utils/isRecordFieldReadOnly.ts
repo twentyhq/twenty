@@ -1,54 +1,59 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
+import { type ObjectPermissionsByObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsByObjectMetadataId';
+import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isMetadataWritabilityRestricted } from '@/object-record/read-only/utils/internal/isMetadataWritabilityRestricted';
 import { isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission } from '@/object-record/read-only/utils/isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type ObjectPermission } from '~/generated-metadata/graphql';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-type ObjectPermissionsByObjectMetadataId = Record<
-  string,
-  ObjectPermissions & { objectMetadataId: string }
->;
 
 type IsRecordFieldReadOnlyParams = {
   isRecordReadOnly: boolean;
+  objectMetadataId: string;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
     'id' | 'isUIEditable' | 'writability'
   >;
-  objectPermissions: ObjectPermission;
+  objectPermissionsByObjectMetadataId: ObjectPermissionsByObjectMetadataId;
   fieldDefinition?: FieldDefinition<FieldMetadata>;
-  objectPermissionsByObjectMetadataId?: ObjectPermissionsByObjectMetadataId;
 };
 
 export const isRecordFieldReadOnly = ({
-  objectPermissions,
   isRecordReadOnly,
+  objectMetadataId,
   fieldMetadataItem,
-  fieldDefinition,
   objectPermissionsByObjectMetadataId,
+  fieldDefinition,
 }: IsRecordFieldReadOnlyParams) => {
-  const fieldReadOnlyByPermissions = isFieldMetadataReadOnlyByPermissions({
-    objectPermissions,
-    fieldMetadataId: fieldMetadataItem.id,
-  });
+  if (
+    isRecordReadOnly ||
+    !(fieldMetadataItem.isUIEditable ?? true) ||
+    isMetadataWritabilityRestricted(fieldMetadataItem.writability)
+  ) {
+    return true;
+  }
 
-  const oneToManyTargetReadOnly =
+  const objectPermissions = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    objectMetadataId,
+  );
+
+  if (
+    !objectPermissions.canUpdateObjectRecords ||
+    !getFieldPermissions({
+      objectPermissions,
+      fieldMetadataId: fieldMetadataItem.id,
+    }).canUpdateField
+  ) {
+    return true;
+  }
+
+  return (
     isDefined(fieldDefinition) &&
-    isDefined(objectPermissionsByObjectMetadataId) &&
     isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission({
       fieldDefinition,
       objectPermissionsByObjectMetadataId,
-    });
-
-  return (
-    isRecordReadOnly ||
-    !(fieldMetadataItem.isUIEditable ?? true) ||
-    isMetadataWritabilityRestricted(fieldMetadataItem.writability) ||
-    fieldReadOnlyByPermissions ||
-    oneToManyTargetReadOnly
+    })
   );
 };

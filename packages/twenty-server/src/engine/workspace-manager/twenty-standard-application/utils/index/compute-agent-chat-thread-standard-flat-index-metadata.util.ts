@@ -25,11 +25,11 @@ export const buildAgentChatThreadStandardFlatIndexMetadatas = (
       indexWhereClause: null,
     },
   }),
-  workflowRunIndex: createStandardIndexFlatMetadata({
+  assigneeIndex: createStandardIndexFlatMetadata({
     ...args,
     context: {
-      indexName: 'workflowRunIndex',
-      relatedFieldNames: ['workflowRun'],
+      indexName: 'assigneeIndex',
+      relatedFieldNames: ['assignee'],
       isUnique: false,
       indexWhereClause: null,
     },

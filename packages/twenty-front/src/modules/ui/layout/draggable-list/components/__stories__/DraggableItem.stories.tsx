@@ -3,7 +3,7 @@ import { fn } from 'storybook/test';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { MenuItemDraggable } from 'twenty-ui/components';
+import { MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconBell } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 

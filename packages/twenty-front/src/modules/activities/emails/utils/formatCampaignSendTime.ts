@@ -4,7 +4,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { type DateFormat } from '@/localization/constants/DateFormat';
 import { type TimeFormat } from '@/localization/constants/TimeFormat';
-import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
+import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 
 const TIME_ZONE_ABBREVIATION_FORMAT = 'zzz';
 

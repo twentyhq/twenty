@@ -5,6 +5,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { type FullNameMetadata } from 'twenty-shared/types';
 import { type Relation } from 'typeorm';
 
+import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -80,6 +81,10 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   agentMessages: Relation<AgentMessageWorkspaceEntity[]>;
 
   agentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
+  assignedAgentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
+  agentChatThreadParticipants: Relation<
+    AgentChatThreadParticipantWorkspaceEntity[]
+  >;
   ownedOpportunities: Relation<OpportunityWorkspaceEntity[]>;
   searchVector: string;
   numberFormat: string;

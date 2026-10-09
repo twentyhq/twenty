@@ -1,11 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { SettingsBillingLimitForm } from '@/settings/billing/components/SettingsBillingLimitForm';
 import { EMPTY_USAGE_LIMIT_FORM_VALUES } from '@/settings/billing/constants/EmptyUsageLimitFormValues';
 import {
   UsageOperationType,
   UsageResourceType,
+  UsageUnit,
 } from '~/generated-metadata/graphql';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
@@ -15,13 +16,77 @@ const DEFINITIONS = {
     {
       __typename: 'UsageQuotaDefinition' as const,
       resourceType: UsageResourceType.AI,
-      allowedOperationTypes: [
-        UsageOperationType.AI_CHAT_TOKEN,
-        UsageOperationType.AI_WORKFLOW_TOKEN,
-        UsageOperationType.WEB_SEARCH,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.ALL,
+          allowedUnits: [UsageUnit.CREDIT],
+        },
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.TOKEN],
+        },
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.TOKEN],
+        },
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.WEB_SEARCH,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
       ],
       allowedSpenderTypes: ['workspace', 'userWorkspace', 'apiKey'],
-      allowedMeters: ['creditsUsedMicro', 'quantity'],
+      operatorOnlyScopes: [],
+    },
+    {
+      __typename: 'UsageQuotaDefinition' as const,
+      resourceType: UsageResourceType.WORKFLOW,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.WORKFLOW_EXECUTION,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
+      ],
+      allowedSpenderTypes: ['workspace'],
+      operatorOnlyScopes: [],
+    },
+    {
+      __typename: 'UsageQuotaDefinition' as const,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.CODE_EXECUTION,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
+      ],
+      allowedSpenderTypes: ['workspace'],
+      operatorOnlyScopes: [],
+    },
+    {
+      __typename: 'UsageQuotaDefinition' as const,
+      resourceType: UsageResourceType.EMAIL,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.EMAIL_SEND,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
+      ],
+      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      operatorOnlyScopes: [
+        {
+          __typename: 'UsageQuotaOperatorOnlyScope' as const,
+          operationType: UsageOperationType.EMAIL_SEND,
+          spenderType: 'workspace',
+          unit: UsageUnit.INVOCATION,
+          periodUnit: 'day',
+        },
+      ],
     },
   ],
   isIntraWorkspaceLimitEntitled: true,
@@ -33,9 +98,19 @@ const FILLED_VALUES = {
   operationType: UsageOperationType.AI_CHAT_TOKEN,
   spenderType: 'workspace' as const,
   spenderId: '',
-  meter: 'creditsUsedMicro' as const,
+  unit: UsageUnit.CREDIT,
   periodUnit: 'month' as const,
   limitValue: '100',
+};
+
+const EMAIL_SEND_VALUES = {
+  resourceType: UsageResourceType.EMAIL,
+  operationType: UsageOperationType.EMAIL_SEND,
+  spenderType: 'workspace' as const,
+  spenderId: '',
+  unit: UsageUnit.INVOCATION,
+  periodUnit: 'month' as const,
+  limitValue: '30000',
 };
 
 const meta: Meta<typeof SettingsBillingLimitForm> = {
@@ -90,5 +165,49 @@ export const AllOperations: Story = {
       periodUnit: 'allowancePeriod',
       limitValue: '1000',
     },
+  },
+};
+
+export const EmailsHideTheInstanceDefaultPeriod: Story = {
+  args: { values: EMAIL_SEND_VALUES },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: /Month/ }),
+    );
+    const popup = await body.findByRole('dialog');
+
+    expect(within(popup).getByRole('button', { name: 'Week' })).toBeVisible();
+    expect(
+      within(popup).queryByRole('button', { name: 'Day' }),
+    ).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const SwitchingToEmailsLeavesTheInstanceDefaultPeriod: Story = {
+  args: {
+    values: { ...EMAIL_SEND_VALUES, unit: UsageUnit.CREDIT, periodUnit: 'day' },
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: /Credits/ }),
+    );
+    const popup = await body.findByRole('dialog');
+
+    await userEvent.click(
+      within(popup).getByRole('button', { name: 'Emails' }),
+    );
+    expect(args.onChange).toHaveBeenCalledTimes(1);
+    expect(args.onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        unit: UsageUnit.INVOCATION,
+        periodUnit: 'week',
+      }),
+    );
   },
 };

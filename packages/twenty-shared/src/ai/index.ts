@@ -17,6 +17,7 @@ export { AI_MODEL_TIERS } from './constants/ai-model-tier.const';
 export { AI_SDK_PACKAGE_LABELS } from './constants/ai-sdk-package-labels.const';
 export type { AiSdkPackage } from './constants/ai-sdk-packages.const';
 export { AI_SDK_PACKAGES } from './constants/ai-sdk-packages.const';
+export { ASK_QUESTION_TOOL_NAME } from './constants/ask-question-tool-name.const';
 export { ASK_QUESTIONS_TOOL_NAME } from './constants/ask-questions-tool-name.const';
 export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from './constants/attach-conversation-to-record-tool-name.const';
 export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier.const';
@@ -30,9 +31,14 @@ export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.co
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
-export { PROPOSE_EMAIL_TOOL_NAME } from './constants/propose-email-tool-name.const';
+export { PROPOSE_TOOL_CALL_TOOL_NAME } from './constants/propose-tool-call-tool-name.const';
+export { PROPOSE_TOOL_CALL_TOOL_STATUSES } from './constants/propose-tool-call-tool-statuses.const';
+export { PROPOSED_TOOL_CALL_TEMPLATES } from './constants/proposed-tool-call-templates.const';
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
+export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
+export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
+export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export type {
   AgentResponseFormatType,
@@ -44,12 +50,17 @@ export type {
   AgentResponseFieldType,
   AgentResponseSchema,
 } from './types/AgentResponseSchema';
+export type { AgentRunSummary } from './types/AgentRunSummary';
+export type { AgentRunToolCallLog } from './types/AgentRunToolCallLog';
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
+export type { AskQuestionResponse } from './types/AskQuestionResponse';
 export type { AskQuestionsToolInput } from './types/AskQuestionsToolInput';
 export type { AskQuestionsToolResult } from './types/AskQuestionsToolResult';
-export type { AskQuestionsToolStatus } from './types/AskQuestionsToolStatus';
+export type { AskQuestionToolInput } from './types/AskQuestionToolInput';
+export type { AskQuestionToolResult } from './types/AskQuestionToolResult';
+export type { AskQuestionToolStatus } from './types/AskQuestionToolStatus';
 export type {
   CodeExecutionFile,
   ExtendedFileUIPart,
@@ -58,8 +69,6 @@ export type {
   DataMessagePart,
 } from './types/DataMessagePart';
 export { isExtendedFileUIPart } from './types/DataMessagePart';
-export type { EmailApprovalDecision } from './types/EmailApprovalDecision';
-export type { EmailApprovalResponse } from './types/EmailApprovalResponse';
 export type {
   AiChatUsageMetadata,
   AiChatModelMetadata,
@@ -67,12 +76,11 @@ export type {
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/ModelConfiguration';
-export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
-export type { ProposedEmail } from './types/ProposedEmail';
-export type {
-  ProposeEmailToolStatus,
-  ProposeEmailToolResult,
-} from './types/ProposeEmailToolResult';
+export type { ProposedToolCall } from './types/ProposedToolCall';
+export type { ProposedToolCallTemplate } from './types/ProposedToolCallTemplate';
+export type { ProposeToolCallToolInput } from './types/ProposeToolCallToolInput';
+export type { ProposeToolCallToolResult } from './types/ProposeToolCallToolResult';
+export type { ProposeToolCallToolStatus } from './types/ProposeToolCallToolStatus';
 export type {
   RequestFormField,
   RequestFormToolInput,
@@ -81,12 +89,16 @@ export type {
   RequestFormToolStatus,
   RequestFormToolResult,
 } from './types/RequestFormToolResult';
+export type { ToolApproval } from './types/ToolApproval';
+export type { ToolCallApprovalResponse } from './types/ToolCallApprovalResponse';
 export type { ToolWidgetName, ToolRecordReference } from './types/ToolWidget';
 export {
   RECORDS_TOOL_WIDGET_NAME,
   TOOL_WIDGET_NAMES,
   isToolWidgetName,
 } from './types/ToolWidget';
+export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
+export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';

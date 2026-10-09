@@ -23,7 +23,7 @@ import { returnToPathState } from '@/auth/states/returnToPathState';
 import { renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 
 const redirectSpy = jest.fn();
 

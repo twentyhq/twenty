@@ -12,7 +12,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
@@ -74,7 +73,7 @@ export const NameField = ({
 
         if (
           isDefined(result.error) ||
-          isUndefinedOrNull(result.data?.updateWorkspace)
+          !isDefined(result.data?.updateWorkspace)
         ) {
           throw result.error;
         }

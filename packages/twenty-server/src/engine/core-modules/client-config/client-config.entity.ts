@@ -284,8 +284,6 @@ export class OnboardingConfig {
 
   inviteTeamCreditsRewardPerUser: number;
 
-  installAppsCreditsReward: number;
-
   createProfileCreditsReward: number;
 
   upgradeCreditsReward: number;
@@ -363,6 +361,9 @@ export class ClientConfig {
 
   @Field(() => String)
   frontDomain: string;
+
+  @Field(() => String)
+  serverUrl: string;
 
   @Field(() => String, { nullable: true })
   publicFunctionDomain: string | null;

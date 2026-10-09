@@ -125,8 +125,8 @@ jest.mock(
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
@@ -253,11 +253,31 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: 'record-456',
         selectedRecordIds: ['record-456'],
+        selectedRecordsFilter: null,
         selectedObjectMetadata: null,
         timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
       });
+    });
+
+    it('should pass the selected records filter through', () => {
+      const selectedRecordsFilter = {
+        and: [
+          { name: { ilike: '%acme%' } },
+          { not: { id: { in: ['record-3'] } } },
+        ],
+      };
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        selectedRecordIds: [],
+        selectedRecordsFilter,
+      });
+
+      expect(result.current.executionContext.selectedRecordsFilter).toEqual(
+        selectedRecordsFilter,
+      );
     });
 
     it('should return null recordId when multiple selectedRecordIds provided', () => {
@@ -271,6 +291,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: null,
         selectedRecordIds: ['record-1', 'record-2', 'record-3'],
+        selectedRecordsFilter: null,
         selectedObjectMetadata: null,
         timelineActivityId: null,
         colorScheme: 'light',
@@ -586,6 +607,24 @@ describe('useFrontComponentExecutionContext', () => {
         } as never),
       ).rejects.toThrow(
         'ViewRecords is no longer supported. Open AppPath.RecordIndexPage with typed params instead.',
+      );
+
+      expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    });
+
+    it('rejects page layout pages because they need the layout they edit', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          page: SidePanelPages.DashboardChartSettings,
+          pageTitle: 'Chart',
+          pageIcon: 'IconChartPie',
+        }),
+      ).rejects.toThrow(
+        'dashboard-chart-settings edits the page layout it was opened from and cannot be opened by a front component',
       );
 
       expect(mockNavigateSidePanel).not.toHaveBeenCalled();

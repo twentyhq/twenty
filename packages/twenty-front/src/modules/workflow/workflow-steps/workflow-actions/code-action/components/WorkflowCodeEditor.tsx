@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { IconMaximize } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';

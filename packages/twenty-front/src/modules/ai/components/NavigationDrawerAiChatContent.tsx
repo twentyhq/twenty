@@ -1,21 +1,20 @@
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
+import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
-import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
+import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -38,29 +37,25 @@ const StyledSectionsContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledEmptyState = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.light};
-  display: flex;
-  flex: 1;
-  font-size: ${themeCssVariables.font.size.md};
-  justify-content: center;
-`;
-
 const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 const AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
+// Triage opens the inbox page; the drawer itself only lists recent chats
 export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { handleThreadClick } = useAiChatThreadClick({
-    resetNavigationStack: true,
-  });
-  const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
+  const { handleThreadClick } = useAiChatThreadClick(
+    isAiChatInboxEnabled
+      ? { shouldOpenInFullPage: true }
+      : { resetNavigationStack: true },
+  );
 
-  const { threads, loading } = useChatThreads();
+  const { threads, loading } = useChatThreads(agentChatRecentThreadsSelector);
   const agentChatFavoriteThreads = useAtomStateValue(
     agentChatFavoriteThreadsSelector,
   );
@@ -80,21 +75,11 @@ export const NavigationDrawerAiChatContent = () => {
     ({ id }) => !agentChatFavoriteThreadIds.has(id),
   );
 
-  const isGroupedByDate =
-    agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
-  const dateGroups = isGroupedByDate ? groupThreadsByDate(recentThreads) : [];
-  const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
-
-  const filterDropdown = (
-    <AiChatThreadFilterDropdown
-      surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-    />
-  );
-
   return (
     <StyledContainer>
       <StyledThreadList>
         <StyledSectionsContainer>
+          {isAiChatInboxEnabled && <NavigationDrawerAiChatTriageSection />}
           {agentChatFavoriteThreads.length > 0 && (
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
@@ -104,34 +89,16 @@ export const NavigationDrawerAiChatContent = () => {
               onThreadClick={handleThreadClick}
             />
           )}
-          {shouldRenderDateGroups ? (
-            dateGroups.map((dateGroup, index) => (
-              <NavigationDrawerAiChatThreadSection
-                key={dateGroup.id}
-                sectionId={`AiChatDateGroup:${dateGroup.id}`}
-                title={dateGroup.title}
-                threads={dateGroup.threads}
-                currentThreadId={currentAiChatThread}
-                onThreadClick={handleThreadClick}
-                rightIcon={index === 0 ? filterDropdown : undefined}
-              />
-            ))
-          ) : (
+          {recentThreads.length > 0 && (
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
-              title={t`Recents`}
+              title={t`Recent`}
               threads={recentThreads}
               currentThreadId={currentAiChatThread}
               onThreadClick={handleThreadClick}
-              rightIcon={filterDropdown}
             />
           )}
         </StyledSectionsContainer>
-        {threads.length === 0 &&
-        agentChatFavoriteThreads.length === 0 &&
-        isExpanded ? (
-          <StyledEmptyState>{t`No chat`}</StyledEmptyState>
-        ) : null}
         <AgentChatThreadsFetchMoreTrigger />
       </StyledThreadList>
     </StyledContainer>

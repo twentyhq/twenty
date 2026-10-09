@@ -11,4 +11,5 @@ export const CREDIT_GRANT_TYPE_LABELS: Record<
   [BillingCreditGrantType.SALES]: msg`Sales`,
   [BillingCreditGrantType.ONBOARDING_REWARD]: msg`Onboarding reward`,
   [BillingCreditGrantType.ROLLOVER]: msg`Rollover`,
+  [BillingCreditGrantType.PURCHASE]: msg`Purchase`,
 };

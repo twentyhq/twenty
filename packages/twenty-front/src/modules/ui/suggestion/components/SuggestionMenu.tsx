@@ -16,11 +16,13 @@ import {
 } from 'react';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { SuggestionItemPreviewTooltip } from '@/ui/suggestion/components/SuggestionItemPreviewTooltip';
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
 import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
+import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 type SuggestionMenuInnerProps<TItem> = SuggestionMenuProps<TItem>;
@@ -38,6 +40,7 @@ const SuggestionMenuInner = <TItem,>(
     getItemKey,
     renderItem,
     selectedItemPreview,
+    getItemSection,
     onKeyDown,
   } = props;
 
@@ -204,6 +207,11 @@ const SuggestionMenuInner = <TItem,>(
         <OverlayMenuList ref={listContainerRef}>
           {items.map((item, index) => {
             const isSelected = index === clampedSelectedIndex;
+            const section = getItemSection?.(item);
+            const isFirstOfSection =
+              isDefined(section) &&
+              (index === 0 ||
+                getItemSection?.(items[index - 1])?.key !== section.key);
 
             return (
               <div
@@ -214,6 +222,9 @@ const SuggestionMenuInner = <TItem,>(
                   event.preventDefault();
                 }}
               >
+                {isFirstOfSection && (
+                  <DropdownMenuSectionLabel label={section.label} />
+                )}
                 {renderItem(item, isSelected)}
               </div>
             );

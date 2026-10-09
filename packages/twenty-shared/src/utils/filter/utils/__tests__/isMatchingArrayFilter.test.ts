@@ -40,32 +40,21 @@ describe('isMatchingArrayFilter', () => {
   });
 
   describe('isEmptyArray filter', () => {
-    it('should return true when array is empty and checking for empty array', () => {
-      expect(
-        isMatchingArrayFilter({
-          arrayFilter: { isEmptyArray: true },
-          value: [],
-        }),
-      ).toBe(true);
-    });
-
-    it('should return false when array is not empty and checking for empty array', () => {
-      expect(
-        isMatchingArrayFilter({
-          arrayFilter: { isEmptyArray: true },
-          value: ['test'],
-        }),
-      ).toBe(false);
-    });
-
-    it('should return false when value is null and checking for empty array', () => {
-      expect(
-        isMatchingArrayFilter({
-          arrayFilter: { isEmptyArray: true },
-          value: null,
-        }),
-      ).toBe(false);
-    });
+    it.each([
+      { isEmptyArray: true, value: [], expected: true },
+      { isEmptyArray: true, value: null, expected: true },
+      { isEmptyArray: true, value: ['test'], expected: false },
+      { isEmptyArray: false, value: [], expected: false },
+      { isEmptyArray: false, value: null, expected: false },
+      { isEmptyArray: false, value: ['test'], expected: true },
+    ])(
+      'should return $expected for isEmptyArray $isEmptyArray on $value',
+      ({ isEmptyArray, value, expected }) => {
+        expect(
+          isMatchingArrayFilter({ arrayFilter: { isEmptyArray }, value }),
+        ).toBe(expected);
+      },
+    );
   });
 
   describe('containsIlike filter', () => {

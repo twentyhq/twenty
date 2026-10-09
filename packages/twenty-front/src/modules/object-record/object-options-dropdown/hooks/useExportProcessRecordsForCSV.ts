@@ -1,9 +1,11 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  convertCurrencyMicrosToCurrencyAmount,
+  isDefined,
+} from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
 
 export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -23,9 +25,11 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
               return {
                 ...processedRecord,
                 [field.name]: {
-                  amountMicros: convertCurrencyMicrosToCurrencyAmount(
-                    record[field.name].amountMicros,
-                  ),
+                  amountMicros: isDefined(record[field.name].amountMicros)
+                    ? convertCurrencyMicrosToCurrencyAmount(
+                        record[field.name].amountMicros,
+                      )
+                    : null,
                   currencyCode: record[field.name].currencyCode,
                 } satisfies FieldCurrencyValue,
               };

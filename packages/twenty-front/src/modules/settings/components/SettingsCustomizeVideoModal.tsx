@@ -10,7 +10,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { styled } from '@linaria/react';
 import { IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 type SettingsCustomizeVideoModalProps = {
@@ -123,10 +123,10 @@ export const SettingsCustomizeVideoModal = ({
       onClose={handleClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={activeTab.title}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="lg"
           style={{ padding: 0 }}
         >
