@@ -343,6 +343,56 @@ export { compileApplicationTranslations } from './cli/utilities/translations/com
     });
   }, 60000);
 
+  it('matches a workflow definition and its validation errors', async () => {
+    const appPath = await copyFixture('minimal-app');
+    const writeWorkflow = (stepType: string) =>
+      writeFile(
+        join(appPath, 'my.workflow.ts'),
+        `import { defineWorkflow } from 'twenty-sdk/define';
+
+export default defineWorkflow({
+  universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000060',
+  name: 'My workflow',
+  version: {
+    trigger: {
+      universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000061',
+      type: 'MANUAL',
+      nextStepIds: ['e1e2e3e4-e5e6-4000-8000-000000000062'],
+    },
+    steps: [
+      {
+        universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000062',
+        name: 'Run my function',
+        type: '${stepType}',
+        logicFunctionUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000010',
+        input: {},
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+`,
+      );
+
+    await writeWorkflow('LOGIC_FUNCTION');
+    const result = await compareManifest(appPath);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.manifest.workflows).toHaveLength(1);
+      expect(result.filePaths.workflows).toEqual(['my.workflow.ts']);
+    }
+
+    await writeWorkflow('CODE');
+    const invalidResult = await compareManifest(appPath);
+
+    expect(invalidResult.success).toBe(false);
+    if (!invalidResult.success)
+      expect(invalidResult.errors.join('\n')).toContain(
+        'Unsupported step type',
+      );
+  }, 60000);
+
   it('keeps evaluated source output and workspace credentials outside the manifest result', async () => {
     const appPath = await copyFixture('minimal-app');
     const applicationFiles = (await buildManifest(appPath)).filePaths
