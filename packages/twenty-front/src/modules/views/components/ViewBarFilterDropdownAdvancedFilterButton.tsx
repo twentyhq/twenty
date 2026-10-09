@@ -150,6 +150,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       onEnter={handleClick}
     >
       <ListItem
+        render={<button type="button" />}
         onClick={handleClick}
         startIcon={<IconFilter />}
         focused={isSelectedItemId}

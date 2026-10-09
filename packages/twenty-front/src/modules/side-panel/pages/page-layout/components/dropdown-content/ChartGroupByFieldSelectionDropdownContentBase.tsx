@@ -343,6 +343,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
           {isSecondaryAxisGroupBy && (
             <SelectableListItem itemId="none" onEnter={handleSelectNone}>
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === 'none'}
                 onClick={handleSelectNone}
                 role="option"
@@ -362,6 +363,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === fieldMetadataItem.id}
                 onClick={() => {
                   handleSelectField(fieldMetadataItem);

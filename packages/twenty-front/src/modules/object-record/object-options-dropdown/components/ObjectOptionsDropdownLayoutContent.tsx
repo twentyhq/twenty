@@ -158,6 +158,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === ViewType.TABLE}
                 onClick={async () => {
                   if (currentView?.type !== ViewType.TABLE) {
@@ -180,6 +181,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === ViewType.LIST}
                 onClick={async () => {
                   if (currentView?.type !== ViewType.LIST) {
@@ -204,6 +206,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === ViewType.CALENDAR}
                 onClick={handleSelectCalendarViewType}
                 role="option"
@@ -226,6 +229,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               }}
             >
               <ListItem
+                render={<button type="button" disabled={isDefaultView} />}
                 disabled={isDefaultView}
                 focused={selectedItemId === ViewType.KANBAN}
                 onClick={handleSelectKanbanViewType}
@@ -265,6 +269,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   onEnter={() => onContentChange('calendarFields')}
                 >
                   <ListItem
+                    render={<button type="button" />}
                     focused={selectedItemId === 'CalendarDateField'}
                     onClick={() => onContentChange('calendarFields')}
                     startIcon={<IconCalendar />}
@@ -278,6 +283,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   onEnter={() => onContentChange('calendarView')}
                 >
                   <ListItem
+                    render={<button type="button" />}
                     focused={selectedItemId === 'CalendarView'}
                     onClick={() => onContentChange('calendarView')}
                     startIcon={<IconCalendarWeek />}
@@ -304,6 +310,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 }}
               >
                 <ListItem
+                  render={<button type="button" />}
                   focused={selectedItemId === 'Group'}
                   onClick={() =>
                     isDefined(recordIndexGroupFieldMetadataItem)

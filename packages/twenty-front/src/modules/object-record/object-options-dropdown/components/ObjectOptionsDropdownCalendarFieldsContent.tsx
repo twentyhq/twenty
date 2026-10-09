@@ -82,6 +82,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
       <DropdownMenuItemsContainer>
         {filteredCalendarFields.map((fieldMetadataItem) => (
           <ListItem
+            render={<button type="button" />}
             key={fieldMetadataItem.id}
             onClick={() => handleCalendarFieldChange(fieldMetadataItem)}
             role="option"
@@ -99,6 +100,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
         <ListItem
+          render={<button type="button" />}
           startIcon={<IconSettings />}
           onClick={() => {
             navigateToDateFieldSettings();

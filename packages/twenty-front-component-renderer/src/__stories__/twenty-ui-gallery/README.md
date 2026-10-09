@@ -13,6 +13,8 @@ Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused Reac
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
 
+ListItem keeps its default div presentational, including visual disabled, selected and focused state and caller-owned content. Its React/Preact cases check native button/link owners, actual root refs, pointer and keyboard activation, focus handlers, disabled native buttons, event bubbling and explicit propagation boundaries. URL text stays plain unless the caller supplies a link. Menu.Item checks visible pointer activation, disabled behavior and click-to-close. Popup keyboard navigation, outside dismissal and focus restoration remain outside this fixture. The retained overflow-tooltip check re-enters after renderer measurements arrive, so it does not establish first-hover geometry acceptance.
+
 AvatarGroup checks derived counts, partially loaded totals, custom overflow and surviving keyed child state. Its native button and link (`target="_blank"`) verify refs, focus and pointer/keyboard activation in React and Preact.
 
 Scenarios share their checks between runtimes where behavior matches. The story
@@ -39,7 +41,7 @@ effect within the interaction timeout.
 | `twenty-ui-avatar-group`         | AvatarGroup (derived and partial totals, custom overflow, keyed child state, native refs and explicit button/link composition)          |
 | `twenty-ui-avatar-image`         | Avatar Root/Image/Fallback (image labels/attributes/refs, loading callbacks, decoded images, fallback, replacement and unmount/remount) |
 | `twenty-ui-image-input`          | ImageInput                                                                                                                              |
-| `twenty-ui-list-item`            | ListItem                                                                                                                                |
+| `twenty-ui-list-item`            | ListItem (visual rows, explicit button/link/Menu.Item owners, native refs/events/focus/keyboard and owner disabled behavior)            |
 | `twenty-ui-settings-row`         | SettingsRow                                                                                                                             |
 | `twenty-ui-tabs`                 | Tabs                                                                                                                                    |
 | `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                         |

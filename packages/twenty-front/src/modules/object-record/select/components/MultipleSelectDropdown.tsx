@@ -98,6 +98,7 @@ export const MultipleSelectDropdown = ({
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 key={item.id}
                 focused={item.id === selectedItemId}
                 role="option"

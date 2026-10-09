@@ -102,6 +102,12 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
             >
               <div id="workspace-visibility-option">
                 <ListItem
+                  render={
+                    <button
+                      type="button"
+                      disabled={!hasViewsPermission || !canPersistChanges}
+                    />
+                  }
                   focused={selectedItemId === ViewVisibility.WORKSPACE}
                   onClick={() =>
                     handleVisibilityChange(ViewVisibility.WORKSPACE)
@@ -125,6 +131,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
             }
           >
             <ListItem
+              render={<button type="button" disabled={!canPersistChanges} />}
               focused={selectedItemId === ViewVisibility.UNLISTED}
               onClick={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
               disabled={!canPersistChanges}
@@ -144,6 +151,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                 onEnter={handleCopyLink}
               >
                 <ListItem
+                  render={<button type="button" />}
                   focused={selectedItemId === 'Copy view link'}
                   onClick={handleCopyLink}
                   startIcon={<IconCopy />}

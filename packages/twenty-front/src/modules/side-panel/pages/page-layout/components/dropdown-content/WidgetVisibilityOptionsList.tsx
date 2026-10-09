@@ -45,6 +45,7 @@ export const WidgetVisibilityOptionsList = ({
             }}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === option.id}
               onClick={() => {
                 onSelectVisibility(option.id);

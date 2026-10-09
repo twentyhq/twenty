@@ -29,9 +29,10 @@ export const RecordTableWidgetLayoutMenuItems = ({
           <SelectableListItem
             key={viewType}
             itemId={viewType}
-            onEnter={() => onSelect(viewType)}
+            onEnter={isDisabled ? undefined : () => onSelect(viewType)}
           >
             <ListItem
+              render={<button type="button" disabled={isDisabled} />}
               disabled={isDisabled}
               focused={focusedItemId === viewType}
               onClick={() => onSelect(viewType)}

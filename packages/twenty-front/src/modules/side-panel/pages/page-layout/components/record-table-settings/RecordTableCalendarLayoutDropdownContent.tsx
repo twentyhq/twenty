@@ -73,6 +73,7 @@ export const RecordTableCalendarLayoutDropdownContent = ({
             onEnter={() => handleSelect(value)}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === value}
               onClick={() => handleSelect(value)}
               role="option"

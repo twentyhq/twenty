@@ -91,6 +91,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
             <>
               <DropdownMenuItemsContainer scrollable={false}>
                 <ListItem
+                  render={<button type="button" />}
                   onClick={handleCreateNew}
                   startIcon={<IconPlus />}
                 >{t`Add New`}</ListItem>
@@ -139,6 +140,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>
                 <ListItem
+                  render={<button type="button" />}
                   onClick={handleCreateNew}
                   startIcon={<IconPlus />}
                 >{t`Add New`}</ListItem>

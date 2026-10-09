@@ -225,6 +225,7 @@ export const MultipleRecordPicker = ({
     creatableObjectMetadataItems.length > 0 ? (
       <DropdownMenuItemsContainer scrollable={false}>
         <ListItem
+          render={<button type="button" disabled={isCreatePending} />}
           onClick={handleCreateNewButtonClick}
           disabled={isCreatePending}
           startIcon={<IconPlus />}

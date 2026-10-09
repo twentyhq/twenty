@@ -110,6 +110,7 @@ export const SingleRecordPickerMenuItems = ({
           }}
         >
           <ListItem
+            render={<button type="button" />}
             onClick={() => {
               setSingleRecordPickerSelectedId(undefined);
               onMorphItemSelected();

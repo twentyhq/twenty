@@ -150,6 +150,7 @@ export const ObjectOptionsDropdownCustomView = ({
             onEnter={() => onContentChange('layout')}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === 'Layout'}
               onClick={() => onContentChange('layout')}
               startIcon={
@@ -169,6 +170,7 @@ export const ObjectOptionsDropdownCustomView = ({
             onEnter={() => onContentChange('visibility')}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === 'Visibility'}
               onClick={() => onContentChange('visibility')}
               startIcon={<IconShare />}
@@ -189,9 +191,14 @@ export const ObjectOptionsDropdownCustomView = ({
               <div id="calendar-date-field-picker-menu-item">
                 <SelectableListItem
                   itemId="CalendarDateField"
-                  onEnter={() => onContentChange('calendarFields')}
+                  onEnter={
+                    isDefaultView
+                      ? undefined
+                      : () => onContentChange('calendarFields')
+                  }
                 >
                   <ListItem
+                    render={<button type="button" disabled={isDefaultView} />}
                     focused={selectedItemId === 'CalendarDateField'}
                     onClick={() => onContentChange('calendarFields')}
                     startIcon={<IconCalendar />}
@@ -211,6 +218,7 @@ export const ObjectOptionsDropdownCustomView = ({
                 onEnter={() => onContentChange('calendarView')}
               >
                 <ListItem
+                  render={<button type="button" />}
                   focused={selectedItemId === 'CalendarView'}
                   onClick={() => onContentChange('calendarView')}
                   startIcon={<IconCalendarWeek />}
@@ -231,6 +239,7 @@ export const ObjectOptionsDropdownCustomView = ({
             onEnter={() => onContentChange('fields')}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === 'Fields'}
               onClick={() => onContentChange('fields')}
               startIcon={<IconListDetails />}
@@ -250,13 +259,17 @@ export const ObjectOptionsDropdownCustomView = ({
               <div id="group-by-menu-item">
                 <SelectableListItem
                   itemId="Group"
-                  onEnter={() =>
-                    isDefined(recordIndexGroupFieldMetadataItem)
-                      ? onContentChange('recordGroups')
-                      : onContentChange('recordGroupFields')
+                  onEnter={
+                    isDefaultView
+                      ? undefined
+                      : () =>
+                          isDefined(recordIndexGroupFieldMetadataItem)
+                            ? onContentChange('recordGroups')
+                            : onContentChange('recordGroupFields')
                   }
                 >
                   <ListItem
+                    render={<button type="button" disabled={isDefaultView} />}
                     focused={selectedItemId === 'Group'}
                     onClick={() =>
                       isDefined(recordIndexGroupFieldMetadataItem)
@@ -294,9 +307,15 @@ export const ObjectOptionsDropdownCustomView = ({
             <div id="delete-view-menu-item">
               <SelectableListItem
                 itemId="Delete view"
-                onEnter={() => handleDelete()}
+                onEnter={isDefaultView || isLastView ? undefined : handleDelete}
               >
                 <ListItem
+                  render={
+                    <button
+                      type="button"
+                      disabled={isDefaultView || isLastView}
+                    />
+                  }
                   focused={selectedItemId === 'Delete view'}
                   onClick={() => handleDelete()}
                   startIcon={<IconTrash />}

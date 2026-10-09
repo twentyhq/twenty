@@ -84,6 +84,7 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === subFieldName}
                 onClick={() => {
                   onSelectSubField(subFieldName);

@@ -99,6 +99,7 @@ export const RecordTableGroupByDropdownContent = ({
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === NO_GROUP_BY_ITEM_ID}
                 onClick={() => {
                   handleGroupByFieldChange(null);
@@ -121,6 +122,7 @@ export const RecordTableGroupByDropdownContent = ({
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === fieldMetadataItem.id}
                 onClick={() => {
                   handleGroupByFieldChange(fieldMetadataItem);

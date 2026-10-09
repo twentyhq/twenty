@@ -161,6 +161,7 @@ export const ChartDateGranularitySelectionDropdownContent = ({
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === option}
                 onClick={() => {
                   handleSelectDateGranularityOption(option);

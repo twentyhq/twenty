@@ -64,6 +64,7 @@ export const ChartColorGradientOption = ({
       }}
     >
       <ListItem
+        render={<button type="button" />}
         focused={
           selectedItemId === colorOption.id || currentColor === colorOption.id
         }

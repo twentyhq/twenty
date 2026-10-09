@@ -375,7 +375,11 @@ export const MultiItemFieldInput = <T,>({
             />
           ) : !isLimitReached ? (
             <StyledAddItemContainer>
-              <ListItem onClick={handleAddButtonClick} startIcon={<IconPlus />}>
+              <ListItem
+                render={<button type="button" />}
+                onClick={handleAddButtonClick}
+                startIcon={<IconPlus />}
+              >
                 <OverflowingTextWithTooltip
                   text={newItemLabel || `Add ${placeholder}`}
                 />

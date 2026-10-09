@@ -83,6 +83,7 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
             }}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === option}
               onClick={() => {
                 handleSelectNumberFormatOption(option);

@@ -83,6 +83,7 @@ export const ObjectOptionsDropdownDefaultView = () => {
             onEnter={() => onContentChange('fields')}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === 'Fields'}
               onClick={() => onContentChange('fields')}
               startIcon={<IconListDetails />}
@@ -102,6 +103,7 @@ export const ObjectOptionsDropdownDefaultView = () => {
             }}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === 'Copy link to view'}
               onClick={() => {
                 const currentUrl = window.location.href;
@@ -115,6 +117,7 @@ export const ObjectOptionsDropdownDefaultView = () => {
             onEnter={handleCreateCustomView}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === 'Create custom view'}
               onClick={handleCreateCustomView}
               startIcon={<IconLayout />}

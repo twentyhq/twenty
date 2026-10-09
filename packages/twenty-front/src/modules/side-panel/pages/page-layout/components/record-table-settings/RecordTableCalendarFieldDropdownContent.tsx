@@ -73,6 +73,7 @@ export const RecordTableCalendarFieldDropdownContent = ({
             }}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === fieldMetadataItem.id}
               onClick={() => {
                 handleCalendarFieldChange(fieldMetadataItem);

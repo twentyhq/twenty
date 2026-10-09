@@ -67,6 +67,7 @@ export const MultipleRecordPickerCreateTargetSelect = ({
               onEnter={() => handleSelect(objectMetadataItem.id)}
             >
               <ListItem
+                render={<button type="button" disabled={disabled} />}
                 startIcon={
                   <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
                 }

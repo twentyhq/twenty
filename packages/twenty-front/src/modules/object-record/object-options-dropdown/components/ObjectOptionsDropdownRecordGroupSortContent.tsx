@@ -94,6 +94,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
             onEnter={() => handleRecordGroupSortChange(RecordGroupSort.Manual)}
           >
             <ListItem
+              render={<button type="button" />}
               onClick={() =>
                 handleRecordGroupSortChange(RecordGroupSort.Manual)
               }
@@ -118,6 +119,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                 }
               >
                 <ListItem
+                  render={<button type="button" />}
                   onClick={() =>
                     handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
                   }
@@ -144,6 +146,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                 }
               >
                 <ListItem
+                  render={<button type="button" />}
                   onClick={() =>
                     handleRecordGroupSortChange(
                       RecordGroupSort.ReverseAlphabetical,

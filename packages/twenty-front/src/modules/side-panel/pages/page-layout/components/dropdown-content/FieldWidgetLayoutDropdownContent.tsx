@@ -257,6 +257,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
             }}
           >
             <ListItem
+              render={<button type="button" />}
               focused={selectedItemId === displayMode}
               onClick={() => {
                 handleSelectDisplayMode(displayMode);

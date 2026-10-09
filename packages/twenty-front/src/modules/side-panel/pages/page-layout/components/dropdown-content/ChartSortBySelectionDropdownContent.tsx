@@ -185,6 +185,7 @@ export const ChartSortBySelectionDropdownContent = () => {
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === sortOption.value}
                 onClick={() => {
                   handleSelect(sortOption.value);

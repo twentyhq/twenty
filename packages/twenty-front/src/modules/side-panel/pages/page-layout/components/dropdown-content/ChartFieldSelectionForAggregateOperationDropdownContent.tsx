@@ -112,6 +112,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === fieldMetadataItem.id}
                 onClick={() => {
                   setIsSubMenuOpen(true);

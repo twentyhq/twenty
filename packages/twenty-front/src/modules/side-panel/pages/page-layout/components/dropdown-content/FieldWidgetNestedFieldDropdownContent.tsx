@@ -57,6 +57,7 @@ export const FieldWidgetNestedFieldDropdownContent = ({
       onEnter={onSelect}
     >
       <ListItem
+        render={<button type="button" />}
         focused={selectedItemId === fieldMetadataItem.id}
         onClick={onSelect}
         role="option"

@@ -72,10 +72,12 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
         y={workflowDiagramRightClickMenuPosition.y}
       >
         <ListItem
+          render={<button type="button" />}
           startIcon={<IconPlus />}
           onClick={addNode}
         >{t`Add node`}</ListItem>
         <ListItem
+          render={<button type="button" />}
           startIcon={<IconReorder />}
           onClick={handleReorderWorkflowDiagram}
         >{t`Tidy up workflow`}</ListItem>

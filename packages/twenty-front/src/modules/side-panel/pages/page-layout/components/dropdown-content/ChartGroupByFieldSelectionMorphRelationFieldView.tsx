@@ -147,6 +147,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
                 }}
               >
                 <ListItem
+                  render={<button type="button" />}
                   focused={selectedItemId === target.perTargetFieldId}
                   startIcon={
                     <SelectOptionIcon

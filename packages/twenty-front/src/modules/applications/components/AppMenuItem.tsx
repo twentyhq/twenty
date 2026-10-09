@@ -26,6 +26,7 @@ export const AppMenuItem = ({
 
   return (
     <ListItem
+      render={<button type="button" disabled={disabled} />}
       startIcon={<AppMenuItemIcon applicationId={applicationId} />}
       description={applicationChipData.name}
       onClick={onClick}

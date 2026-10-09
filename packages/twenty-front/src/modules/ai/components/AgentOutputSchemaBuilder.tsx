@@ -213,6 +213,7 @@ export const AgentOutputSchemaBuilder = ({
       {!readonly && (
         <StyledAddFieldButtonContainer>
           <ListItem
+            render={<button type="button" />}
             startIcon={<IconPlus />}
             onClick={addField}
           >{t`Add Output Field`}</ListItem>

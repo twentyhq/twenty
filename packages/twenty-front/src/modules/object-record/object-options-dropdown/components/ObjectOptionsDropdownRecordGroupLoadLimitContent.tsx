@@ -56,6 +56,7 @@ export const ObjectOptionsDropdownRecordGroupLoadLimitContent = () => {
               onEnter={() => handleGroupLoadLimitChange(loadLimitOption)}
             >
               <ListItem
+                render={<button type="button" />}
                 onClick={() => handleGroupLoadLimitChange(loadLimitOption)}
                 focused={selectedItemId === String(loadLimitOption)}
                 role="option"

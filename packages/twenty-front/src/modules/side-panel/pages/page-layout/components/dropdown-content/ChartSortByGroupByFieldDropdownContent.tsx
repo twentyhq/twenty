@@ -138,6 +138,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === sortOption.value}
                 onClick={() => {
                   handleSelectSortOption(sortOption.value);

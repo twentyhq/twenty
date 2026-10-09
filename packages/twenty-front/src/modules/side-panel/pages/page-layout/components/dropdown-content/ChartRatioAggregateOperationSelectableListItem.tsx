@@ -43,6 +43,7 @@ export const ChartRatioAggregateOperationSelectableListItem = ({
       onEnter={onSelect}
     >
       <ListItem
+        render={<button type="button" />}
         focused={isFocused}
         onClick={onSelect}
         role="option"

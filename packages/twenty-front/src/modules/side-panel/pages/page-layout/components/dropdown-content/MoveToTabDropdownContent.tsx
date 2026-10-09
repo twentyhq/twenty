@@ -65,6 +65,7 @@ export const MoveToTabDropdownContent = () => {
     <DropdownMenuItemsContainer>
       {eligibleTabs.map((tab) => (
         <ListItem
+          render={<button type="button" />}
           key={tab.id}
           onClick={() => {
             moveWidgetToTab(pageLayoutEditingWidgetId, tab.id);

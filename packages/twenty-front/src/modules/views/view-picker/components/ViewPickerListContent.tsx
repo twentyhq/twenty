@@ -220,6 +220,7 @@ export const ViewPickerListContent = () => {
       <StyledBoldDropdownMenuItemsContainerWrapper>
         <DropdownMenuItemsContainer scrollable={false}>
           <ListItem
+            render={<button type="button" />}
             onClick={handleAddViewButtonClick}
             startIcon={<IconPlus />}
           >{t`Add view`}</ListItem>

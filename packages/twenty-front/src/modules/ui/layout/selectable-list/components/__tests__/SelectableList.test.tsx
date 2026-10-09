@@ -25,7 +25,9 @@ const TestItem = ({
   );
   return (
     <SelectableListItem itemId={label} onEnter={onEnter}>
-      <button aria-pressed={isSelectedItemId}>{label}</button>
+      <button type="button" aria-pressed={isSelectedItemId} onClick={onEnter}>
+        {label}
+      </button>
     </SelectableListItem>
   );
 };
@@ -96,6 +98,20 @@ describe('SelectableList preselection', () => {
     await user.keyboard('{Enter}');
     expect(onEnter).toHaveBeenCalledWith('Alpha');
     await user.keyboard('{ArrowDown}{Enter}');
+    expect(onEnter).toHaveBeenLastCalledWith('Beta');
+  });
+
+  it('lets the focused native button handle Enter and Space while another item is selected', async () => {
+    const { user, onEnter } = renderMenu();
+    const secondButton = screen.getByRole('button', { name: 'Beta' });
+
+    secondButton.focus();
+    await user.keyboard('{Enter}');
+    expect(onEnter).toHaveBeenCalledTimes(1);
+    expect(onEnter).toHaveBeenLastCalledWith('Beta');
+
+    await user.keyboard(' ');
+    expect(onEnter).toHaveBeenCalledTimes(2);
     expect(onEnter).toHaveBeenLastCalledWith('Beta');
   });
 

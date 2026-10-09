@@ -66,6 +66,7 @@ export const ChartRatioOptionSelectSelectableListItem = ({
   return (
     <SelectableListItem itemId={optionValue} onEnter={handleClick}>
       <ListItem
+        render={<button type="button" />}
         focused={isFocused}
         onClick={handleClick}
         role="option"

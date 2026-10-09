@@ -98,6 +98,7 @@ export const LogConsoleTimeRangeDropdown = ({
         side="right"
       >
         <ListItem
+          render={<button type="button" disabled={!isWithinRetention} />}
           role="option"
           aria-selected={itemTimeRange === timeRange}
           selected={itemTimeRange === timeRange}
@@ -140,6 +141,7 @@ export const LogConsoleTimeRangeDropdown = ({
             <DropdownMenuItemsContainer scrollable={false}>
               {timeZoneOptions.map((timeZoneOption) => (
                 <ListItem
+                  render={<button type="button" />}
                   key={timeZoneOption.value}
                   role="option"
                   aria-selected={timeZoneOption.value === logConsoleTimeZone}
@@ -167,6 +169,9 @@ export const LogConsoleTimeRangeDropdown = ({
             <DropdownMenuSeparator />
             <DropdownMenuItemsContainer scrollable={false}>
               <ListItem
+                render={
+                  <button type="button" disabled={!source.requiresAuditLogs} />
+                }
                 description={plural(retentionInDays, {
                   one: '# day',
                   other: '# days',
@@ -178,6 +183,7 @@ export const LogConsoleTimeRangeDropdown = ({
                 {t`Retention`}
               </ListItem>
               <ListItem
+                render={<button type="button" />}
                 description={selectedTimeZoneLabel}
                 descriptionPlacement="end"
                 hasSubmenu

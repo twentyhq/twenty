@@ -81,6 +81,7 @@ export const SingleRecordPickerMenuItem = ({
       }}
     >
       <ListItem
+        render={<button type="button" />}
         onClick={() => onMorphItemSelected(morphItem)}
         focused={isSelectedItemId}
         role="option"

@@ -43,6 +43,7 @@ export const ViewBarFilterDropdownFieldSelectMenuItem = ({
       onEnter={handleClick}
     >
       <ListItem
+        render={<button type="button" />}
         focused={isSelectedItemId}
         onClick={handleClick}
         startIcon={<SelectOptionIcon Icon={Icon} />}

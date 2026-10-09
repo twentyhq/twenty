@@ -281,6 +281,16 @@ export const LogConsoleToolbar = ({
 
               return (
                 <ListItem
+                  render={
+                    <button
+                      type="button"
+                      disabled={
+                        !isSelected &&
+                        filter.values.length + option.values.length >
+                          MAX_VALUES_PER_FILTER
+                      }
+                    />
+                  }
                   key={option.values.join()}
                   role="option"
                   aria-selected={isSelected}
@@ -335,6 +345,7 @@ export const LogConsoleToolbar = ({
           {isNonEmptyArray(matchingFilterFields) ? (
             matchingFilterFields.map((filterField) => (
               <ListItem
+                render={<button type="button" />}
                 key={filterField.id}
                 role="option"
                 startIcon={<filterField.Icon />}
@@ -416,6 +427,7 @@ export const LogConsoleToolbar = ({
         <DropdownMenuItemsContainer>
           {isNonEmptyArray(filterFields) && (
             <ListItem
+              render={<button type="button" />}
               startIcon={<IconFilter />}
               hasSubmenu
               onClick={() => setIsFilterSubmenuOpen(true)}
@@ -423,7 +435,11 @@ export const LogConsoleToolbar = ({
               {t`Filter`}
             </ListItem>
           )}
-          <ListItem startIcon={<logsAction.Icon />} onClick={runLogsAction}>
+          <ListItem
+            render={<button type="button" />}
+            startIcon={<logsAction.Icon />}
+            onClick={runLogsAction}
+          >
             {logsAction.label}
           </ListItem>
         </DropdownMenuItemsContainer>

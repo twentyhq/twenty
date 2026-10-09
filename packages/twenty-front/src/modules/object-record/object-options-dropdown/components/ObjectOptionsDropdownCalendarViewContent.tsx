@@ -85,6 +85,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
             onEnter={() => handleCalendarViewChange(ViewCalendarLayout.DAY)}
           >
             <ListItem
+              render={<button type="button" />}
               onClick={() => handleCalendarViewChange(ViewCalendarLayout.DAY)}
               focused={selectedItemId === ViewCalendarLayout.DAY}
               role="option"
@@ -101,6 +102,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
             onEnter={() => handleCalendarViewChange(ViewCalendarLayout.WEEK)}
           >
             <ListItem
+              render={<button type="button" />}
               onClick={() => handleCalendarViewChange(ViewCalendarLayout.WEEK)}
               focused={selectedItemId === ViewCalendarLayout.WEEK}
               role="option"
@@ -117,6 +119,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
             onEnter={() => handleCalendarViewChange(ViewCalendarLayout.MONTH)}
           >
             <ListItem
+              render={<button type="button" />}
               onClick={() => handleCalendarViewChange(ViewCalendarLayout.MONTH)}
               focused={selectedItemId === ViewCalendarLayout.MONTH}
               role="option"
@@ -130,6 +133,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
           </SelectableListItem>
           <SelectableListItem itemId={RECORD_CALENDAR_TIMELINE_VIEW_ID}>
             <ListItem
+              render={<button type="button" disabled />}
               focused={selectedItemId === RECORD_CALENDAR_TIMELINE_VIEW_ID}
               disabled
               role="option"

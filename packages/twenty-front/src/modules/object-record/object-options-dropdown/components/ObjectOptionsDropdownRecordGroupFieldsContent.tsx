@@ -125,6 +125,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <DropdownMenuItemsContainer>
         {isRecordGroupingOptionalForViewType(viewType) && (
           <ListItem
+            render={<button type="button" />}
             onClick={handleResetRecordGroupField}
             role="option"
             aria-selected={!isDefined(recordIndexGroupFieldMetadataItem)}
@@ -134,6 +135,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <ListItem
+            render={<button type="button" />}
             key={fieldMetadataItem.id}
             onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
             role="option"

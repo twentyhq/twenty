@@ -326,6 +326,7 @@ export const FieldWidgetFieldDropdownContent = () => {
                 onEnter={handleClick}
               >
                 <ListItem
+                  render={<button type="button" />}
                   focused={selectedItemId === fieldMetadataItem.id}
                   onClick={handleClick}
                   role="option"

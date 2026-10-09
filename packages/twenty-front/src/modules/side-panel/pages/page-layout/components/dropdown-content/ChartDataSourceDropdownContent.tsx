@@ -131,6 +131,7 @@ export const ChartDataSourceDropdownContent = () => {
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === objectMetadataItem.id}
                 onClick={() => {
                   handleSelectSource(objectMetadataItem.id);

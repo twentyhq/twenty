@@ -77,6 +77,7 @@ export const ChartAxisNameSelectionDropdownContent = () => {
               }}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === option}
                 onClick={() => {
                   handleSelectAxisNameOption(option);

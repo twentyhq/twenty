@@ -77,6 +77,7 @@ export const MultipleRecordPickerMenuItemContent = ({
       onEnter={() => handleSelectChange(!isRecordSelectedWithObjectItem)}
     >
       <ListItem
+        render={<button type="button" />}
         focused={isSelectedItemId}
         role="option"
         aria-selected={isRecordSelectedWithObjectItem}

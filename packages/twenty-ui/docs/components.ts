@@ -424,6 +424,15 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
     propDescriptions: {
+      ref: 'Ref to the actual DOM root, including a composed native button or link.',
+      selected:
+        'Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner.',
+      focused:
+        'Applies highlighted styling without moving DOM focus or handling keyboard navigation.',
+      disabled:
+        'Applies disabled styling only. Set native disabled behavior and accessible semantics on the button, link, or popup item owner.',
+      render:
+        'Composes the row with an element or render callback. The owner supplies interaction semantics, native attributes, and behavior.',
       shortcutJoinLabel:
         'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:

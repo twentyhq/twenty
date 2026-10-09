@@ -64,6 +64,7 @@ export const ChartColorPaletteOption = ({
       }}
     >
       <ListItem
+        render={<button type="button" />}
         focused={selectedItemId === 'auto' || currentColor === 'auto'}
         onClick={() => {
           onSelectColor('auto');

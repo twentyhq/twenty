@@ -158,6 +158,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
               onEnter={onSelectRecord}
             >
               <ListItem
+                render={<button type="button" />}
                 focused={selectedItemId === RECORD_ITEM_ID}
                 onClick={onSelectRecord}
                 role="option"
@@ -190,6 +191,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                 }}
               >
                 <ListItem
+                  render={<button type="button" />}
                   focused={selectedItemId === fieldMetadataItem.id}
                   onClick={() => {
                     handleSelectField(fieldMetadataItem);

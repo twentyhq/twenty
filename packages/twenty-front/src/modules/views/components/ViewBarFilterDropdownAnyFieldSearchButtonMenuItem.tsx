@@ -34,6 +34,7 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
       onEnter={onClick}
     >
       <ListItem
+        render={<button type="button" />}
         focused={isSelectedItemId}
         onClick={onClick}
         startIcon={<IconSearch />}

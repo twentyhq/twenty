@@ -154,6 +154,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 }
               >
                 <ListItem
+                  render={
+                    <button
+                      type="button"
+                      disabled={isGroupByFieldPickerDisabled}
+                    />
+                  }
                   focused={selectedItemId === 'GroupBy'}
                   disabled={isGroupByFieldPickerDisabled}
                   onClick={() => onContentChange('recordGroupFields')}
@@ -168,6 +174,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 onEnter={() => onContentChange('recordGroupSort')}
               >
                 <ListItem
+                  render={<button type="button" />}
                   focused={selectedItemId === 'Sort'}
                   onClick={() => onContentChange('recordGroupSort')}
                   startIcon={<IconArrowsSort />}
@@ -186,6 +193,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               }
             >
               <ListItem
+                render={<button type="button" disabled={!canPersistChanges} />}
                 focused={selectedItemId === 'LoadLimit'}
                 disabled={!canPersistChanges}
                 onClick={() => onContentChange('recordGroupLoadLimit')}
@@ -230,6 +238,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
             <ListItem
+              render={<button type="button" />}
               onClick={() => onContentChange('addRecordGroup')}
               startIcon={<IconPlus />}
             >{t`New group`}</ListItem>
