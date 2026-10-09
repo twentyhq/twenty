@@ -44,11 +44,38 @@ jobs:
         with:
           tag: scope:website
           tasks: ${{ matrix.task }}
+  # Lint, typecheck and `next build` cannot tell whether the OpenNext adapter
+  # can serve the build, so serve it in local workerd and request real pages.
+  website-worker-smoke-test:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: '--max-old-space-size=6144'
+      NEXT_TELEMETRY_DISABLED: '1'
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - name: Fetch custom Github Actions
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build workspace dependencies (twenty-shared, twenty-ui)
+        run: npx nx run-many -t build -p twenty-shared twenty-ui
+      - name: Build Worker
+        working-directory: packages/twenty-website
+        env:
+          # Skew protection (open-next.config.ts) bakes a deployment id into the build.
+          DEPLOYMENT_ID: dpl-ci-${{ github.run_id }}-${{ github.run_attempt }}
+        run: npx opennextjs-cloudflare build
+      - name: Smoke test Worker
+        working-directory: packages/twenty-website
+        run: node scripts/smoke-test-worker.mjs
   ci-website-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check, website-task]
+    needs: [changed-files-check, website-task, website-worker-smoke-test]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
