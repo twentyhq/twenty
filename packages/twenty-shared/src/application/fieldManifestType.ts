@@ -54,19 +54,24 @@ export type RelationFieldManifest<
   type: T;
   isNullable?: boolean;
   defaultValue?: FieldMetadataDefaultValue<T>;
-  relationTargetFieldMetadataUniversalIdentifier: T extends FieldMetadataType.MORPH_RELATION
-    ? string | null
-    : string;
-  relationTargetObjectMetadataUniversalIdentifier: T extends FieldMetadataType.MORPH_RELATION
-    ? string | null
-    : string;
   universalSettings: FieldMetadataUniversalSettings<T>;
 } & ([T] extends [FieldMetadataType.MORPH_RELATION]
     ? {
         morphId: string;
-      }
+      } & (
+        | {
+            relationTargetFieldMetadataUniversalIdentifier: null;
+            relationTargetObjectMetadataUniversalIdentifier: null;
+          }
+        | {
+            relationTargetFieldMetadataUniversalIdentifier: string;
+            relationTargetObjectMetadataUniversalIdentifier: string;
+          }
+      )
     : {
         morphId?: undefined;
+        relationTargetFieldMetadataUniversalIdentifier: string;
+        relationTargetObjectMetadataUniversalIdentifier: string;
       });
 
 export type FieldManifest<T extends FieldMetadataType = FieldMetadataType> =

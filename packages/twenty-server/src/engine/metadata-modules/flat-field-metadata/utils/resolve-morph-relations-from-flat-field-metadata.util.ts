@@ -1,3 +1,4 @@
+import { isMorphRelationGroup } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { findMorphRelationGroupOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-morph-relation-group-or-throw.util';
@@ -43,8 +44,13 @@ export const resolveMorphRelationsFromFlatFieldMetadata = ({
   ];
 
   return allMorphFlatFieldMetadatas.flatMap((sourceFlatFieldMetadata) => {
-    if (!isRelationFieldMetadataWithTarget(sourceFlatFieldMetadata)) {
+    if (isMorphRelationGroup(sourceFlatFieldMetadata)) {
       return [];
+    }
+    if (!isRelationFieldMetadataWithTarget(sourceFlatFieldMetadata)) {
+      throw new Error(
+        'Morph relation target is missing its target metadata IDs',
+      );
     }
 
     const targetFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -53,7 +59,9 @@ export const resolveMorphRelationsFromFlatFieldMetadata = ({
     });
 
     if (!isRelationFieldMetadataWithTarget(targetFlatFieldMetadata)) {
-      return [];
+      throw new Error(
+        `Inverse relation "${targetFlatFieldMetadata.name}" is missing its target metadata IDs`,
+      );
     }
 
     const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({

@@ -147,6 +147,36 @@ describe('independent morph fields', () => {
     },
   );
 
+  it.each(['source', 'inverse'] as const)(
+    'rejects a malformed %s relation instead of hiding it',
+    (side) => {
+      const {
+        group,
+        targets,
+        fields,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      } = fixture();
+      const invalidField =
+        side === 'source'
+          ? targets[0]
+          : fields.find(
+              (field) => field.id === targets[0].relationTargetFieldMetadataId,
+            );
+      if (!isDefined(invalidField)) throw new Error('Expected relation field');
+      invalidField.relationTargetFieldMetadataId = null;
+      if (!isFlatFieldMetadataOfType(group, FieldMetadataType.MORPH_RELATION))
+        throw new Error('Expected morph field');
+      expect(() =>
+        resolveMorphRelationsFromFlatFieldMetadata({
+          morphFlatFieldMetadata: group,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+        }),
+      ).toThrow('is missing its target metadata IDs');
+    },
+  );
+
   it.each([0, 1, 2, 3])(
     'resolves the same group with %i targets remaining',
     (count) => {
