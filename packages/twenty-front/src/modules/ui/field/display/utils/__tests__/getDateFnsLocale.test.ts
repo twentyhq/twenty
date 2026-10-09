@@ -18,6 +18,7 @@ describe('getDateFnsLocale', () => {
 
   // The switch defaults to en-US, so a wrong module path fails as silently as a missing case
   it.each([
+    ['fa-IR', 'fa-IR'],
     ['hy-AM', 'hy'],
     ['sr-Latn', 'sr-Latn'],
     ['uz-UZ', 'uz'],
