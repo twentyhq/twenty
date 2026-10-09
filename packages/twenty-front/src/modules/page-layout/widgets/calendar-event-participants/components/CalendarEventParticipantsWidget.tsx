@@ -11,7 +11,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 // Participants stay owned by the calendar event; a call recording reads them
-// through its calendarEvent relation instead of keeping its own copy
+// through its calendar event instead of keeping its own copy
 export const CalendarEventParticipantsWidget = () => {
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
@@ -38,48 +38,47 @@ export const CalendarEventParticipantsWidget = () => {
     ? junctionConfig
     : undefined;
 
-  const participantsRecordGqlFields = isDefined(usableJunctionConfig)
-    ? generateJunctionRelationGqlFields({
-        junctionConfig: usableJunctionConfig,
-        objectMetadataItems,
-      })
-    : {};
-
   const isCallRecordingTarget =
     targetRecord.targetObjectNameSingular ===
     CoreObjectNameSingular.CallRecording;
-  const isCalendarEventTarget =
-    targetRecord.targetObjectNameSingular ===
-    CoreObjectNameSingular.CalendarEvent;
 
-  const { record } = useFindOneRecord({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
+  const { record: callRecording } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.CallRecording,
     objectRecordId: targetRecord.id,
-    recordGqlFields: isCallRecordingTarget
-      ? {
-          id: true,
-          calendarEvent: {
-            id: true,
-            calendarEventParticipants: participantsRecordGqlFields,
-          },
-        }
-      : { id: true, calendarEventParticipants: participantsRecordGqlFields },
-    skip:
-      !isDefined(usableJunctionConfig) ||
-      (!isCallRecordingTarget && !isCalendarEventTarget),
+    recordGqlFields: { id: true, calendarEventId: true },
+    skip: !isCallRecordingTarget,
   });
 
-  if (!isDefined(usableJunctionConfig) || !isDefined(record)) {
+  const calendarEventId =
+    targetRecord.targetObjectNameSingular ===
+    CoreObjectNameSingular.CalendarEvent
+      ? targetRecord.id
+      : (callRecording?.calendarEventId ?? undefined);
+
+  // Fetched from the calendar event itself: one-to-many relations nested under
+  // a many-to-one come back empty from the API
+  const { record: calendarEvent } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+    objectRecordId: calendarEventId,
+    recordGqlFields: {
+      id: true,
+      calendarEventParticipants: isDefined(usableJunctionConfig)
+        ? generateJunctionRelationGqlFields({
+            junctionConfig: usableJunctionConfig,
+            objectMetadataItems,
+          })
+        : {},
+    },
+    skip: !isDefined(usableJunctionConfig),
+  });
+
+  if (!isDefined(usableJunctionConfig) || !isDefined(calendarEvent)) {
     return null;
   }
 
-  const participants = isCallRecordingTarget
-    ? record.calendarEvent?.calendarEventParticipants
-    : record.calendarEventParticipants;
-
   return (
     <FieldWidgetJunctionRelationField
-      relationValue={participants}
+      relationValue={calendarEvent.calendarEventParticipants}
       isInSidePanel={isInSidePanel}
       junctionConfig={usableJunctionConfig}
     />

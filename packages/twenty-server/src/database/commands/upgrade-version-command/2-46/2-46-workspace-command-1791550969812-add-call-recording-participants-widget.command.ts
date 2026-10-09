@@ -1,6 +1,9 @@
 import { Command } from 'nest-commander';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  type PageLayoutWidgetVerticalListPosition,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -114,7 +117,7 @@ export class AddCallRecordingParticipantsWidgetCommand extends ProvisionedWorksp
         position: {
           layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
           index: lastWidgetIndex + 1,
-        },
+        } satisfies PageLayoutWidgetVerticalListPosition,
       }),
     );
 

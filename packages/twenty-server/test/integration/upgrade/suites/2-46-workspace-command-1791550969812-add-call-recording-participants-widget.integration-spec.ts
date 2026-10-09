@@ -52,9 +52,10 @@ describe('2-46 workspace command 1791550969812 - AddCallRecordingParticipantsWid
   };
 
   beforeAll(() => {
-    command = getAppProviderByClassName<AddCallRecordingParticipantsWidgetCommand>(
-      'AddCallRecordingParticipantsWidgetCommand',
-    );
+    command =
+      getAppProviderByClassName<AddCallRecordingParticipantsWidgetCommand>(
+        'AddCallRecordingParticipantsWidgetCommand',
+      );
     workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
     );

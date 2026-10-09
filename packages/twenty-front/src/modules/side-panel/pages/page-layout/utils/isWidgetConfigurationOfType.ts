@@ -3,6 +3,7 @@ import {
   type AggregateChartConfiguration,
   type BarChartConfiguration,
   type CalendarConfiguration,
+  type CalendarEventParticipantsConfiguration,
   type CallRecordingSummaryConfiguration,
   type CallRecordingTranscriptConfiguration,
   type ChatConfiguration,
@@ -44,6 +45,12 @@ type WidgetConfigurationTypenameMap = {
   };
   CalendarConfiguration: Omit<CalendarConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.CALENDAR;
+  };
+  CalendarEventParticipantsConfiguration: Omit<
+    CalendarEventParticipantsConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.CALENDAR_EVENT_PARTICIPANTS;
   };
   FrontComponentConfiguration: Omit<
     FrontComponentConfiguration,

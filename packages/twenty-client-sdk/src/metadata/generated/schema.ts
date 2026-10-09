@@ -857,6 +857,11 @@ export interface CalendarConfiguration {
     __typename: 'CalendarConfiguration'
 }
 
+export interface CalendarEventParticipantsConfiguration {
+    configurationType: WidgetConfigurationType
+    __typename: 'CalendarEventParticipantsConfiguration'
+}
+
 export interface CallRecordingSummaryConfiguration {
     configurationType: WidgetConfigurationType
     __typename: 'CallRecordingSummaryConfiguration'
@@ -3732,11 +3737,11 @@ export interface Webhook {
     __typename: 'Webhook'
 }
 
-export type WidgetConfiguration = (AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
+export type WidgetConfiguration = (AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CalendarEventParticipantsConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
 
-export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'BAR_CHART' | 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'IFRAME' | 'LINE_CHART' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'PIE_CHART' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
+export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'BAR_CHART' | 'CALENDAR' | 'CALENDAR_EVENT_PARTICIPANTS' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'IFRAME' | 'LINE_CHART' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'PIE_CHART' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
 
-export type WidgetType = 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'GRAPH' | 'IFRAME' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
+export type WidgetType = 'CALENDAR' | 'CALENDAR_EVENT_PARTICIPANTS' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'GRAPH' | 'IFRAME' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
 
 export interface WorkflowConfiguration {
     configurationType: WidgetConfigurationType
@@ -4810,6 +4815,12 @@ export interface CalendarChannelGenqlSelection{
 }
 
 export interface CalendarConfigurationGenqlSelection{
+    configurationType?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface CalendarEventParticipantsConfigurationGenqlSelection{
     configurationType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -8278,6 +8289,7 @@ export interface WidgetConfigurationGenqlSelection{
     on_AggregateChartConfiguration?:AggregateChartConfigurationGenqlSelection,
     on_BarChartConfiguration?:BarChartConfigurationGenqlSelection,
     on_CalendarConfiguration?:CalendarConfigurationGenqlSelection,
+    on_CalendarEventParticipantsConfiguration?:CalendarEventParticipantsConfigurationGenqlSelection,
     on_CallRecordingSummaryConfiguration?:CallRecordingSummaryConfigurationGenqlSelection,
     on_CallRecordingTranscriptConfiguration?:CallRecordingTranscriptConfigurationGenqlSelection,
     on_ChatConfiguration?:ChatConfigurationGenqlSelection,
@@ -9105,6 +9117,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isCalendarConfiguration = (obj?: { __typename?: any } | null): obj is CalendarConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarConfiguration"')
       return CalendarConfiguration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CalendarEventParticipantsConfiguration_possibleTypes: string[] = ['CalendarEventParticipantsConfiguration']
+    export const isCalendarEventParticipantsConfiguration = (obj?: { __typename?: any } | null): obj is CalendarEventParticipantsConfiguration => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarEventParticipantsConfiguration"')
+      return CalendarEventParticipantsConfiguration_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10973,7 +10993,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
-    const WidgetConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration','BarChartConfiguration','CalendarConfiguration','CallRecordingSummaryConfiguration','CallRecordingTranscriptConfiguration','ChatConfiguration','ChatThreadsConfiguration','EmailThreadConfiguration','EmailsConfiguration','FieldConfiguration','FieldRichTextConfiguration','FieldsConfiguration','FilesConfiguration','FormFieldConfiguration','FrontComponentConfiguration','IframeConfiguration','LineChartConfiguration','MessageCampaignBodyConfiguration','MessageCampaignDetailsConfiguration','NotesConfiguration','PieChartConfiguration','RecordTableConfiguration','StandaloneRichTextConfiguration','TasksConfiguration','TimelineConfiguration','ViewConfiguration','WorkflowConfiguration','WorkflowRunConfiguration','WorkflowVersionConfiguration']
+    const WidgetConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration','BarChartConfiguration','CalendarConfiguration','CalendarEventParticipantsConfiguration','CallRecordingSummaryConfiguration','CallRecordingTranscriptConfiguration','ChatConfiguration','ChatThreadsConfiguration','EmailThreadConfiguration','EmailsConfiguration','FieldConfiguration','FieldRichTextConfiguration','FieldsConfiguration','FilesConfiguration','FormFieldConfiguration','FrontComponentConfiguration','IframeConfiguration','LineChartConfiguration','MessageCampaignBodyConfiguration','MessageCampaignDetailsConfiguration','NotesConfiguration','PieChartConfiguration','RecordTableConfiguration','StandaloneRichTextConfiguration','TasksConfiguration','TimelineConfiguration','ViewConfiguration','WorkflowConfiguration','WorkflowRunConfiguration','WorkflowVersionConfiguration']
     export const isWidgetConfiguration = (obj?: { __typename?: any } | null): obj is WidgetConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWidgetConfiguration"')
       return WidgetConfiguration_possibleTypes.includes(obj.__typename)
@@ -11972,6 +11992,7 @@ export const enumWidgetConfigurationType = {
    AGGREGATE_CHART: 'AGGREGATE_CHART' as const,
    BAR_CHART: 'BAR_CHART' as const,
    CALENDAR: 'CALENDAR' as const,
+   CALENDAR_EVENT_PARTICIPANTS: 'CALENDAR_EVENT_PARTICIPANTS' as const,
    CALL_RECORDING_SUMMARY: 'CALL_RECORDING_SUMMARY' as const,
    CALL_RECORDING_TRANSCRIPT: 'CALL_RECORDING_TRANSCRIPT' as const,
    CHAT: 'CHAT' as const,
@@ -12002,6 +12023,7 @@ export const enumWidgetConfigurationType = {
 
 export const enumWidgetType = {
    CALENDAR: 'CALENDAR' as const,
+   CALENDAR_EVENT_PARTICIPANTS: 'CALENDAR_EVENT_PARTICIPANTS' as const,
    CALL_RECORDING_SUMMARY: 'CALL_RECORDING_SUMMARY' as const,
    CALL_RECORDING_TRANSCRIPT: 'CALL_RECORDING_TRANSCRIPT' as const,
    CHAT: 'CHAT' as const,
