@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
 import { IconPlus } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { AgentOutputFieldTypeSelector } from '@/ai/components/AgentOutputFieldTypeSelector';
 import { AgentOutputSchemaFieldHeader } from '@/ai/components/AgentOutputSchemaFieldHeader';
@@ -212,11 +212,10 @@ export const AgentOutputSchemaBuilder = ({
 
       {!readonly && (
         <StyledAddFieldButtonContainer>
-          <ListItem
-            render={<button type="button" />}
+          <ListItemButton
             startIcon={<IconPlus />}
             onClick={addField}
-          >{t`Add Output Field`}</ListItem>
+          >{t`Add Output Field`}</ListItemButton>
         </StyledAddFieldButtonContainer>
       )}
     </StyledOutputSchemaContainer>

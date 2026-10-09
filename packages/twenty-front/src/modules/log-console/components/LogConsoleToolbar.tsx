@@ -12,6 +12,7 @@ import {
   IconFilter,
   IconX,
 } from 'twenty-ui/icon';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -280,17 +281,7 @@ export const LogConsoleToolbar = ({
               const isSelected = isOptionSelected(filter, option);
 
               return (
-                <ListItem
-                  render={
-                    <button
-                      type="button"
-                      disabled={
-                        !isSelected &&
-                        filter.values.length + option.values.length >
-                          MAX_VALUES_PER_FILTER
-                      }
-                    />
-                  }
+                <ListItemButton
                   key={option.values.join()}
                   role="option"
                   aria-selected={isSelected}
@@ -305,7 +296,7 @@ export const LogConsoleToolbar = ({
                   onClick={() => toggleOption(filter, option)}
                 >
                   {option.tag ?? option.label}
-                </ListItem>
+                </ListItemButton>
               );
             })
           ) : (
@@ -344,8 +335,7 @@ export const LogConsoleToolbar = ({
         <DropdownMenuItemsContainer>
           {isNonEmptyArray(matchingFilterFields) ? (
             matchingFilterFields.map((filterField) => (
-              <ListItem
-                render={<button type="button" />}
+              <ListItemButton
                 key={filterField.id}
                 role="option"
                 startIcon={<filterField.Icon />}
@@ -355,7 +345,7 @@ export const LogConsoleToolbar = ({
                 }}
               >
                 {t(filterField.label)}
-              </ListItem>
+              </ListItemButton>
             ))
           ) : (
             <ListItem disabled>{t`No results`}</ListItem>
@@ -426,22 +416,20 @@ export const LogConsoleToolbar = ({
       <LegacyDropdownContent>
         <DropdownMenuItemsContainer>
           {isNonEmptyArray(filterFields) && (
-            <ListItem
-              render={<button type="button" />}
+            <ListItemButton
               startIcon={<IconFilter />}
               hasSubmenu
               onClick={() => setIsFilterSubmenuOpen(true)}
             >
               {t`Filter`}
-            </ListItem>
+            </ListItemButton>
           )}
-          <ListItem
-            render={<button type="button" />}
+          <ListItemButton
             startIcon={<logsAction.Icon />}
             onClick={runLogsAction}
           >
             {logsAction.label}
-          </ListItem>
+          </ListItemButton>
         </DropdownMenuItemsContainer>
       </LegacyDropdownContent>
     );

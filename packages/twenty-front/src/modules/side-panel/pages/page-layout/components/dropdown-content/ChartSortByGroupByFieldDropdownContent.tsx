@@ -22,7 +22,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   GraphOrderBy,
   type GraphOrderBy as GraphOrderByType,
@@ -137,8 +137,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
                 handleSelectSortOption(sortOption.value);
               }}
             >
-              <ListItem
-                render={<button type="button" />}
+              <ListItemButton
                 focused={selectedItemId === sortOption.value}
                 onClick={() => {
                   handleSelectSortOption(sortOption.value);
@@ -171,7 +170,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
                       configuration.secondaryAxisGroupByFieldMetadataId ?? '',
                   })}
                 />
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           );
         })}

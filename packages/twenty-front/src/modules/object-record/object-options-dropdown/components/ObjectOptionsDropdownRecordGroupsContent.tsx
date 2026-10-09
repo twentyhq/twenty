@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useEffect } from 'react';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
@@ -153,13 +153,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   onContentChange('recordGroupFields')
                 }
               >
-                <ListItem
-                  render={
-                    <button
-                      type="button"
-                      disabled={isGroupByFieldPickerDisabled}
-                    />
-                  }
+                <ListItemButton
                   focused={selectedItemId === 'GroupBy'}
                   disabled={isGroupByFieldPickerDisabled}
                   onClick={() => onContentChange('recordGroupFields')}
@@ -167,21 +161,20 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   description={recordIndexGroupFieldMetadataItem?.label}
                   descriptionPlacement="end"
                   hasSubmenu
-                >{t`Group by`}</ListItem>
+                >{t`Group by`}</ListItemButton>
               </SelectableListItem>
               <SelectableListItem
                 itemId="Sort"
                 onEnter={() => onContentChange('recordGroupSort')}
               >
-                <ListItem
-                  render={<button type="button" />}
+                <ListItemButton
                   focused={selectedItemId === 'Sort'}
                   onClick={() => onContentChange('recordGroupSort')}
                   startIcon={<IconArrowsSort />}
                   description={recordIndexRecordGroupSort}
                   descriptionPlacement="end"
                   hasSubmenu
-                >{t`Sort`}</ListItem>
+                >{t`Sort`}</ListItemButton>
               </SelectableListItem>
             </>
           )}
@@ -192,8 +185,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 canPersistChanges && onContentChange('recordGroupLoadLimit')
               }
             >
-              <ListItem
-                render={<button type="button" disabled={!canPersistChanges} />}
+              <ListItemButton
                 focused={selectedItemId === 'LoadLimit'}
                 disabled={!canPersistChanges}
                 onClick={() => onContentChange('recordGroupLoadLimit')}
@@ -201,7 +193,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 description={String(recordIndexGroupLoadLimit)}
                 descriptionPlacement="end"
                 hasSubmenu
-              >{t`Load limit`}</ListItem>
+              >{t`Load limit`}</ListItemButton>
             </SelectableListItem>
           )}
           <SelectableListItem
@@ -237,11 +229,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
-            <ListItem
-              render={<button type="button" />}
+            <ListItemButton
               onClick={() => onContentChange('addRecordGroup')}
               startIcon={<IconPlus />}
-            >{t`New group`}</ListItem>
+            >{t`New group`}</ListItemButton>
           </DropdownMenuItemsContainer>
         </>
       )}
@@ -258,12 +249,11 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 itemId="HiddenGroups"
                 onEnter={() => onContentChange('hiddenRecordGroups')}
               >
-                <ListItem
+                <ListItemButton
                   onClick={() => onContentChange('hiddenRecordGroups')}
                   startIcon={<IconEyeOff />}
-                  render={<button type="button" />}
                   hasSubmenu
-                >{`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}</ListItem>
+                >{`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}</ListItemButton>
               </SelectableListItem>
             </SelectableList>
           </DropdownMenuItemsContainer>

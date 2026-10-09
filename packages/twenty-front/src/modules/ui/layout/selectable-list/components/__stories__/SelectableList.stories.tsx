@@ -7,7 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const ITEM_LABELS = [
@@ -37,13 +37,9 @@ const NativeSelectableItem = ({
 
   return (
     <SelectableListItem itemId={itemLabel} onEnter={onEnter}>
-      <ListItem
-        render={<button type="button" />}
-        ref={nativeItemRef}
-        onClick={onEnter}
-      >
+      <ListItemButton ref={nativeItemRef} onClick={onEnter}>
         {itemLabel}
-      </ListItem>
+      </ListItemButton>
     </SelectableListItem>
   );
 };

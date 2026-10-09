@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
 import { type MultiItemBaseInputProps } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemBaseInputProps';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
@@ -22,7 +23,6 @@ import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -375,15 +375,14 @@ export const MultiItemFieldInput = <T,>({
             />
           ) : !isLimitReached ? (
             <StyledAddItemContainer>
-              <ListItem
-                render={<button type="button" />}
+              <ListItemButton
                 onClick={handleAddButtonClick}
                 startIcon={<IconPlus />}
               >
                 <OverflowingTextWithTooltip
                   text={newItemLabel || `Add ${placeholder}`}
                 />
-              </ListItem>
+              </ListItemButton>
             </StyledAddItemContainer>
           ) : null}
         </>

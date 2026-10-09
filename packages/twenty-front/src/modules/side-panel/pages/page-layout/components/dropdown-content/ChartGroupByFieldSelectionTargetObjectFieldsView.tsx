@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -157,8 +158,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
               itemId={RECORD_ITEM_ID}
               onEnter={onSelectRecord}
             >
-              <ListItem
-                render={<button type="button" />}
+              <ListItemButton
                 focused={selectedItemId === RECORD_ITEM_ID}
                 onClick={onSelectRecord}
                 role="option"
@@ -176,7 +176,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                 }
               >
                 {recordOptionLabel}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           )}
           {availableFields.length === 0 && !isRecordOptionVisible ? (
@@ -190,8 +190,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                   handleSelectField(fieldMetadataItem);
                 }}
               >
-                <ListItem
-                  render={<button type="button" />}
+                <ListItemButton
                   focused={selectedItemId === fieldMetadataItem.id}
                   onClick={() => {
                     handleSelectField(fieldMetadataItem);
@@ -212,7 +211,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                   }
                 >
                   {fieldMetadataItem.label}
-                </ListItem>
+                </ListItemButton>
               </SelectableListItem>
             ))
           )}

@@ -9,7 +9,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { AggregateOperations } from '~/generated-metadata/graphql';
 
@@ -65,8 +65,7 @@ export const ChartRatioOptionSelectSelectableListItem = ({
 
   return (
     <SelectableListItem itemId={optionValue} onEnter={handleClick}>
-      <ListItem
-        render={<button type="button" />}
+      <ListItemButton
         focused={isFocused}
         onClick={handleClick}
         role="option"
@@ -81,7 +80,7 @@ export const ChartRatioOptionSelectSelectableListItem = ({
         >
           {label}
         </Tag>
-      </ListItem>
+      </ListItemButton>
     </SelectableListItem>
   );
 };

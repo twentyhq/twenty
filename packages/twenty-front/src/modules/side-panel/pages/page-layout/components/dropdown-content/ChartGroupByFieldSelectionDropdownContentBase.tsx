@@ -30,7 +30,7 @@ import {
   isFieldMetadataSupportedInGroupBy,
 } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -342,15 +342,14 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         >
           {isSecondaryAxisGroupBy && (
             <SelectableListItem itemId="none" onEnter={handleSelectNone}>
-              <ListItem
-                render={<button type="button" />}
+              <ListItemButton
                 focused={selectedItemId === 'none'}
                 onClick={handleSelectNone}
                 role="option"
                 aria-selected={!isDefined(currentGroupByFieldMetadataId)}
                 selected={!isDefined(currentGroupByFieldMetadataId)}
                 indicator="check"
-              >{t`None`}</ListItem>
+              >{t`None`}</ListItemButton>
             </SelectableListItem>
           )}
 
@@ -362,8 +361,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
                 handleSelectField(fieldMetadataItem);
               }}
             >
-              <ListItem
-                render={<button type="button" />}
+              <ListItemButton
                 focused={selectedItemId === fieldMetadataItem.id}
                 onClick={() => {
                   handleSelectField(fieldMetadataItem);
@@ -392,7 +390,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
                 }
               >
                 {fieldMetadataItem.label}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           ))}
         </SelectableList>

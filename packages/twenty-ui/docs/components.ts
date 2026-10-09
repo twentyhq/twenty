@@ -745,6 +745,27 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: CODE_EDITOR_HEADER_PROP_DESCRIPTIONS,
   },
   {
+    name: 'ListItemButton',
+    source: 'components/navigation/ListItemButton/ListItemButton.tsx',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/list-item-button',
+    propDescriptions: {
+      ref: 'Ref to the native HTMLButtonElement.',
+      disabled: 'Disables activation and applies the matching row appearance.',
+      focusableWhenDisabled:
+        'Keeps a disabled button focusable with aria-disabled while preventing activation.',
+      selected:
+        'Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics.',
+      focused: 'Highlights the row without moving DOM focus.',
+      shortcut:
+        'Displays decorative shortcut hints. The caller registers the shortcuts.',
+      shortcutJoinLabel:
+        'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
+      hasSubmenu: 'Displays a decorative submenu indicator.',
+    },
+    propDefaults: { type: 'button', disabled: 'false' },
+  },
+  {
     name: 'TabButton',
     source: 'components/navigation/TabButton/TabButton.tsx',
     entryPoint: 'twenty-ui/components/navigation',

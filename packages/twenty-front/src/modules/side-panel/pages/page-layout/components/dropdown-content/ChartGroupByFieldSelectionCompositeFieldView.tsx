@@ -14,7 +14,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isCompositePropertySupportedInGroupBy } from 'twenty-shared/utils';
 
@@ -83,8 +83,7 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
                 onSelectSubField(subFieldName);
               }}
             >
-              <ListItem
-                render={<button type="button" />}
+              <ListItemButton
                 focused={selectedItemId === subFieldName}
                 onClick={() => {
                   onSelectSubField(subFieldName);
@@ -103,7 +102,7 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
                 }
               >
                 {getCompositeSubFieldLabel(compositeFieldType, subFieldName)}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           ))}
         </SelectableList>

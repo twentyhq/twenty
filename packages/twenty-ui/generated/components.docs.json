@@ -11288,6 +11288,111 @@
     ]
   },
   {
+    "name": "ListItemButton",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/list-item-button",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"danger\" | \"neutral\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Color of the text and icons. `danger` marks a destructive action."
+      },
+      {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Supporting text, placed according to `descriptionPlacement`."
+      },
+      {
+        "name": "descriptionPlacement",
+        "type": "\"end\" | \"inline\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Where the description renders: inline after the content or at the end of\nthe row."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables activation and applies the matching row appearance."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered after the content."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Keeps a disabled button focusable with aria-disabled while preventing activation."
+      },
+      {
+        "name": "focused",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Highlights the row without moving DOM focus."
+      },
+      {
+        "name": "hasSubmenu",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays a decorative submenu indicator."
+      },
+      {
+        "name": "indicator",
+        "type": "\"check\" | \"checkbox\" | \"none\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native HTMLButtonElement."
+      },
+      {
+        "name": "selected",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays decorative shortcut hints. The caller registers the shortcuts."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered before the content."
+      }
+    ]
+  },
+  {
     "name": "TabButton",
     "entryPoint": "twenty-ui/components/navigation",
     "slug": "components/navigation/tab-button",

@@ -4,7 +4,7 @@ import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGr
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useTheme, themeCssVariables, type ThemeColor } from 'twenty-ui/theme';
 
 type ChartColorGradientOptionProps = {
@@ -63,8 +63,7 @@ export const ChartColorGradientOption = ({
         onSelectColor(colorOption.colorName);
       }}
     >
-      <ListItem
-        render={<button type="button" />}
+      <ListItemButton
         focused={
           selectedItemId === colorOption.id || currentColor === colorOption.id
         }
@@ -79,7 +78,7 @@ export const ChartColorGradientOption = ({
         descriptionPlacement={'end'}
       >
         {colorOption.name}
-      </ListItem>
+      </ListItemButton>
     </SelectableListItem>
   );
 };

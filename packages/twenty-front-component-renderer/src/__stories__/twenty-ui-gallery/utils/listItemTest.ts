@@ -4,6 +4,7 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { listItemButtonTest } from '@/__stories__/twenty-ui-gallery/utils/listItemButtonTest';
 import { listItemOwnerTest } from '@/__stories__/twenty-ui-gallery/utils/listItemOwnerTest';
 import { listItemPopupOwnerTest } from '@/__stories__/twenty-ui-gallery/utils/listItemPopupOwnerTest';
 import { listItemPresentationTest } from '@/__stories__/twenty-ui-gallery/utils/listItemPresentationTest';
@@ -16,6 +17,7 @@ export const listItemTest: TwentyUiGalleryPlayFunction = async (context) => {
   const canvas = within(canvasElement);
   const page = within(canvasElement.ownerDocument.body);
   await expectFrontComponentMounted(canvas);
+  await listItemButtonTest(context);
   await listItemOwnerTest(context);
   await listItemPresentationTest(context);
   await listItemPopupOwnerTest(context);

@@ -16,7 +16,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 const NO_GROUP_BY_ITEM_ID = 'no-group-by';
@@ -98,8 +98,7 @@ export const RecordTableGroupByDropdownContent = ({
                 closeDropdown();
               }}
             >
-              <ListItem
-                render={<button type="button" />}
+              <ListItemButton
                 focused={selectedItemId === NO_GROUP_BY_ITEM_ID}
                 onClick={() => {
                   handleGroupByFieldChange(null);
@@ -109,7 +108,7 @@ export const RecordTableGroupByDropdownContent = ({
                 aria-selected={!isDefined(currentMainGroupByFieldMetadataId)}
                 selected={!isDefined(currentMainGroupByFieldMetadataId)}
                 indicator="check"
-              >{t`None`}</ListItem>
+              >{t`None`}</ListItemButton>
             </SelectableListItem>
           )}
           {filteredFields.map((fieldMetadataItem) => (
@@ -121,8 +120,7 @@ export const RecordTableGroupByDropdownContent = ({
                 closeDropdown();
               }}
             >
-              <ListItem
-                render={<button type="button" />}
+              <ListItemButton
                 focused={selectedItemId === fieldMetadataItem.id}
                 onClick={() => {
                   handleGroupByFieldChange(fieldMetadataItem);
@@ -141,7 +139,7 @@ export const RecordTableGroupByDropdownContent = ({
                 }
               >
                 {fieldMetadataItem.label}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           ))}
         </SelectableList>

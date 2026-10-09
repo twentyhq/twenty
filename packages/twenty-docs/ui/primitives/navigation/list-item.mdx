@@ -7,7 +7,7 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
 
-`ListItem` supplies the visual layout shared by list and menu rows. It renders a `div` by default. Compose it with a real button or link for an action or navigation row. Use [Menu](/ui/primitives/surfaces/menu), [Dropdown](/ui/components/navigation/dropdown), or [Select](/ui/primitives/input/select) when you need a complete popup or selection owner.
+`ListItem` supplies the visual layout shared by list and menu rows. It renders a `div` by default for passive content. Use [ListItemButton](/ui/components/navigation/list-item-button) for ordinary action rows. Compose `ListItem` with an anchor for navigation or with a custom semantic owner when needed. Use [Menu](/ui/primitives/surfaces/menu), [Dropdown](/ui/components/navigation/dropdown), or [Select](/ui/primitives/input/select) when you need a complete popup or selection owner.
 
 <StoryEmbed
   storyId="ui-navigation-listitem--default"
@@ -40,9 +40,11 @@ The row supplies layout. `render` accepts an element or a callback that receives
 
 ## Action row
 
+Use [ListItemButton](/ui/components/navigation/list-item-button) to pair row styling with native button interaction. Pass `disabled` once to control both appearance and activation.
+
 ```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { IconCopy } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type DuplicateActionProps = {
   onDuplicate: () => void;
@@ -53,23 +55,22 @@ export const DuplicateAction = ({
   onDuplicate,
   disabled = false,
 }: DuplicateActionProps) => (
-  <ListItem
-    render={<button type="button" disabled={disabled} />}
+  <ListItemButton
     disabled={disabled}
-    startIcon={<IconCopy aria-hidden />}
+    startIcon={<IconCopy />}
     description="Create a copy"
     onClick={onDuplicate}
   >
     Duplicate
-  </ListItem>
+  </ListItemButton>
 );
 ```
 
-The native button owns focus, Enter and Space activation, and disabled behavior. `ListItem.disabled` only supplies the matching visual style. `shortcut` displays shortcut hints; your application must register the shortcuts.
+A custom button owner can still compose `ListItem` through `render`. That owner supplies native focus, Enter and Space activation, and disabled behavior. `ListItem.disabled` supplies only the matching visual style. `shortcut` displays hints; your application registers the shortcuts.
 
 <StoryEmbed
   storyId="ui-navigation-listitem--button-owner"
-  title="Button row"
+  title="Custom button composition"
   height={160}
 />
 

@@ -1,5 +1,5 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -22,8 +22,7 @@ export const MultipleSelectDropdownItem = ({
 
   return (
     <SelectableListItem itemId={item.id} onEnter={handleSelect}>
-      <ListItem
-        render={<button type="button" />}
+      <ListItemButton
         ref={nativeItemRef}
         focused={focused}
         role="option"
@@ -42,7 +41,7 @@ export const MultipleSelectDropdownItem = ({
         }
       >
         {item.name}
-      </ListItem>
+      </ListItemButton>
     </SelectableListItem>
   );
 };

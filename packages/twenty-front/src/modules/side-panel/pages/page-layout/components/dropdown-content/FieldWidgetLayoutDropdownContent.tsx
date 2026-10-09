@@ -40,7 +40,7 @@ import {
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
@@ -256,8 +256,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
               handleSelectDisplayMode(displayMode);
             }}
           >
-            <ListItem
-              render={<button type="button" />}
+            <ListItemButton
               focused={selectedItemId === displayMode}
               onClick={() => {
                 handleSelectDisplayMode(displayMode);
@@ -271,7 +270,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
               }
             >
               {displayModeLabels[displayMode]}
-            </ListItem>
+            </ListItemButton>
           </SelectableListItem>
         ))}
         {hasEmbeddedViewLayouts && (
