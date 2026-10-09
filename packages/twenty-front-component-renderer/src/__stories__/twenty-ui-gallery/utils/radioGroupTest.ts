@@ -34,9 +34,9 @@ export const radioGroupTest: TwentyUiGalleryPlayFunction = async ({
   expect(daily).toBeChecked();
   expect(
     new FormData(
-      canvas.getByRole('form', {
+      canvas.getByRole<HTMLFormElement>('form', {
         name: 'Digest preferences',
-      }) as HTMLFormElement,
+      }),
     ).get('digest'),
   ).toBe('daily');
   expect(daily).toHaveAttribute('data-selected', 'true');
@@ -62,9 +62,9 @@ export const radioGroupTest: TwentyUiGalleryPlayFunction = async ({
   });
   expect(
     new FormData(
-      canvas.getByRole('form', {
+      canvas.getByRole<HTMLFormElement>('form', {
         name: 'Digest preferences',
-      }) as HTMLFormElement,
+      }),
     ).get('digest'),
   ).toBe('quarterly');
   expect(monthly).not.toBeChecked();
@@ -89,9 +89,9 @@ export const radioGroupTest: TwentyUiGalleryPlayFunction = async ({
   const enableSummaries = canvas.getByRole('radio', {
     name: 'Enable summaries',
   });
-  const requiredForm = canvas.getByRole('form', {
+  const requiredForm = canvas.getByRole<HTMLFormElement>('form', {
     name: 'Required preferences',
-  }) as HTMLFormElement;
+  });
   expect(requiredForm.checkValidity()).toBe(false);
   enableSummaries.focus();
   await userEvent.keyboard('{Enter}');
