@@ -4,6 +4,7 @@ import { enqueueJobs } from 'twenty-sdk/logic-function';
 import { compare } from 'semver'
 
 import {
+  BACKFILL_MAX_STALLED_RUNS,
   BACKFILL_MIN_CALL_INTERVAL_MS,
   BACKFILL_RATE_LIMITED_RESUME_DELAY_MS,
   BACKFILL_RUN_BUDGET_MS,
@@ -24,7 +25,10 @@ import { isDefined } from 'twenty-sdk/utils';
 
 // A run that stops before the end enqueues this function again with the
 // cursor to resume from.
-type BackfillPayload = InstallPayload & { resumeFrom?: BackfillCursor };
+type BackfillPayload = InstallPayload & {
+  resumeFrom?: BackfillCursor;
+  stalledRunCount?: number;
+};
 
 const shouldRunPostInstall = ({
   previousVersion,
@@ -62,7 +66,7 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
     if(!shouldRunPostInstall(payload)) {
       console.log('Post install skipped');
 
-      return {}
+      return {};
     }
 
     console.log(
@@ -80,6 +84,16 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
     return { outcome: 'completed', phases };
   }
 
+  const hasStalled =
+    pause.reason === 'rate-limited' && phases.every(({ count }) => count === 0);
+  const stalledRunCount = hasStalled ? (payload.stalledRunCount ?? 0) + 1 : 0;
+
+  if (stalledRunCount >= BACKFILL_MAX_STALLED_RUNS) {
+    throw new Error(
+      `Backfill stopped: ${stalledRunCount} runs in a row failed before finishing a batch at ${JSON.stringify(pause.resumeFrom)}`,
+    );
+  }
+
   console.log(
     'Backfill paused',
     JSON.stringify({ reason: pause.reason, resumeFrom: pause.resumeFrom }),
@@ -89,7 +103,7 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
     enqueueJobs({
       logicFunctionUniversalIdentifier:
         BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      jobs: [{ payload: { resumeFrom: pause.resumeFrom } }],
+      jobs: [{ payload: { resumeFrom: pause.resumeFrom, stalledRunCount } }],
       ...(pause.reason === 'rate-limited'
         ? { delayMs: BACKFILL_RATE_LIMITED_RESUME_DELAY_MS }
         : {}),
@@ -103,7 +117,7 @@ export default definePostInstallLogicFunction({
   universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-last-contact',
   description:
-    'Schedules upcoming meetings, then backfills last-contact fields on people, then opportunities, then companies after installation, one batch of records at a time at a paced call rate. A run that reaches its time budget or keeps getting rate limited enqueues itself to resume from where it stopped.',
+    'Schedules upcoming meetings, then backfills last-contact fields on people, then opportunities, then companies after installation, one batch of records at a time at a paced call rate. A run that reaches its time budget or keeps getting rate limited enqueues itself to resume from where it stopped, and the backfill stops after 5 runs in a row fail before finishing a batch.',
   timeoutSeconds: 900,
   shouldRunOnVersionUpgrade: true,
   handler,

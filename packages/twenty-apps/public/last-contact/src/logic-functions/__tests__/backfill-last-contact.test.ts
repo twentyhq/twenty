@@ -66,6 +66,7 @@ vi.mock('src/utils/recompute-company-last-contact', () => ({
 }));
 
 import {
+  BACKFILL_MAX_STALLED_RUNS,
   BACKFILL_RATE_LIMITED_RESUME_DELAY_MS,
   BACKFILL_RUN_BUDGET_MS,
 } from 'src/constants/backfill';
@@ -217,7 +218,14 @@ describe('backfill-last-contact', () => {
     expect(enqueueJobsMock).toHaveBeenCalledWith({
       logicFunctionUniversalIdentifier:
         BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      jobs: [{ payload: { resumeFrom: { phase: 'people', after: '2' } } }],
+      jobs: [
+        {
+          payload: {
+            resumeFrom: { phase: 'people', after: '2' },
+            stalledRunCount: 0,
+          },
+        },
+      ],
     });
   });
 
@@ -261,9 +269,56 @@ describe('backfill-last-contact', () => {
     expect(enqueueJobsMock).toHaveBeenCalledWith({
       logicFunctionUniversalIdentifier:
         BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      jobs: [{ payload: { resumeFrom: { phase: 'people', after: '2' } } }],
+      jobs: [
+        {
+          payload: {
+            resumeFrom: { phase: 'people', after: '2' },
+            stalledRunCount: 0,
+          },
+        },
+      ],
       delayMs: BACKFILL_RATE_LIMITED_RESUME_DELAY_MS,
     });
+  });
+
+  it('should count the runs in a row that fail before finishing a batch', async () => {
+    backfillPeopleMock.mockRejectedValueOnce(
+      new RetryableLogicFunctionError('Gateway time-out'),
+    );
+
+    await expect(
+      handler({
+        resumeFrom: { phase: 'people', after: '2' },
+        stalledRunCount: BACKFILL_MAX_STALLED_RUNS - 2,
+      }),
+    ).resolves.toMatchObject({ outcome: 'paused' });
+
+    expect(enqueueJobsMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        jobs: [
+          {
+            payload: {
+              resumeFrom: { phase: 'people', after: '2' },
+              stalledRunCount: BACKFILL_MAX_STALLED_RUNS - 1,
+            },
+          },
+        ],
+      }),
+    );
+  });
+
+  it('should stop the backfill once too many runs in a row fail before finishing a batch', async () => {
+    backfillPeopleMock.mockRejectedValueOnce(
+      new RetryableLogicFunctionError('Gateway time-out'),
+    );
+
+    await expect(
+      handler({
+        resumeFrom: { phase: 'people', after: '2' },
+        stalledRunCount: BACKFILL_MAX_STALLED_RUNS - 1,
+      }),
+    ).rejects.toThrow('Backfill stopped');
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
   it('should fail the run on errors that are not rate limits', async () => {
