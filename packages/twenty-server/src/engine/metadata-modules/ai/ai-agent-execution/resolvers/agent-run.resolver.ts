@@ -4,10 +4,12 @@ import { Args, Mutation } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
@@ -55,6 +57,7 @@ export class AgentRunResolver {
     userWorkspaceId: string | undefined,
     @AuthApplication({ allowUndefined: true })
     callerApplication: FlatApplication | undefined,
+    @AuthApiKey() callerApiKey: FlatApiKey | undefined,
     @AuthWorkspaceMemberId()
     workspaceMemberId: string | undefined,
   ): Promise<RunAgentResultDTO> {
@@ -63,6 +66,7 @@ export class AgentRunResolver {
       requestUserWorkspaceId: userWorkspaceId ?? null,
       requestWorkspaceMemberId: workspaceMemberId ?? null,
       callerApplication,
+      callerApiKey,
       input,
     });
   }

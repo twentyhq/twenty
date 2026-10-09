@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/calendar-tool/create-calendar-event-tool';
@@ -37,7 +37,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationModule,
     FeatureFlagModule,
     FileModule,
-    JwtModule,
+    TokenModule,
     RecordShareModule,
     SecureHttpClientModule,
     WorkspaceCacheModule,
