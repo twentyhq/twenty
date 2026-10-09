@@ -153,6 +153,22 @@ describe('backfillPeopleLastContact', () => {
     ]);
   });
 
+  it('writes a person whose last contact date matches but whose last email differs', async () => {
+    mockCurrentPeople([
+      {
+        id: CONTACTED_PERSON_ID,
+        ...CONTACTED_PERSON_DATA,
+        lastEmailId: STALE_MESSAGE_ID,
+      },
+    ]);
+
+    await backfillPeopleLastContact(client as never, [CONTACTED_PERSON_ID]);
+
+    expect(upsertedPeople()).toEqual([
+      { id: CONTACTED_PERSON_ID, ...CONTACTED_PERSON_DATA },
+    ]);
+  });
+
   it('skips the write when no person changes', async () => {
     mockCurrentPeople([{ id: UNCONTACTED_PERSON_ID, ...EMPTY_PERSON_DATA }]);
 

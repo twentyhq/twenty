@@ -133,8 +133,8 @@ export const recomputeCompaniesLastContact = async (
     return;
   }
 
-  // Read companies before their people: a live job writes a person before
-  // their company, so this order never lowers a company a live job just raised.
+  // Read companies before their people: a company already up to date is then
+  // skipped rather than lowered if a live job raises it during the recompute.
   const currentCompanyById = await collectRecordsById(
     client,
     'companies',

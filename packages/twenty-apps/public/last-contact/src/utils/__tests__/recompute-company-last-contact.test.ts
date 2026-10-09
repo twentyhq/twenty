@@ -283,6 +283,22 @@ describe('recomputeCompaniesLastContact', () => {
     expect(client.mutation).not.toHaveBeenCalled();
   });
 
+  it('only scans and writes the companies that still exist', async () => {
+    client = buildClient({
+      currentCompanies: [{ id: COMPANY_ID, ...STALE_LAST_CONTACT }],
+    });
+
+    await recomputeCompaniesLastContact(client as never, [
+      COMPANY_ID,
+      OTHER_COMPANY_ID,
+    ]);
+
+    expect(peopleQueries()[0][0].people.__args.filter.companyId).toEqual({
+      in: [COMPANY_ID],
+    });
+    expect(upsertData()).toEqual([{ id: COMPANY_ID, ...EMPTY_LAST_CONTACT }]);
+  });
+
   it('leaves out a company whose last contact already matches', async () => {
     client = buildClient({
       peoplePages: [

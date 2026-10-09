@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-sdk/utils';
+
 const TIMESTAMP_FIELD_NAMES = new Set([
   'lastContactAt',
   'lastOutboundAt',
@@ -5,7 +7,7 @@ const TIMESTAMP_FIELD_NAMES = new Set([
 ]);
 
 const normalizeValue = (fieldName: string, value: unknown): unknown => {
-  if (value === undefined || value === null) {
+  if (!isDefined(value)) {
     return null;
   }
 
