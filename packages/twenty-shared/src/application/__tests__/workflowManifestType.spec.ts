@@ -199,7 +199,7 @@ describe('workflow manifest manual trigger', () => {
     );
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
-      'Unsupported trigger type. Application workflows support: MANUAL, CRON',
+      'Unsupported trigger type. Application workflows support: MANUAL, CRON, DATABASE_EVENT',
     );
   });
 });
@@ -256,5 +256,62 @@ describe('workflow manifest cron trigger', () => {
       'settings',
       'schedule',
     ]);
+  });
+});
+
+describe('workflow manifest database event trigger', () => {
+  const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+  const FIELD_ID = '88888888-8888-4888-8888-888888888888';
+
+  const withDatabaseEvent = (settings: Record<string, unknown>) => ({
+    ...workflow,
+    version: {
+      ...workflow.version,
+      trigger: {
+        universalIdentifier: workflow.version.trigger.universalIdentifier,
+        type: 'DATABASE_EVENT',
+        nextStepIds: workflow.version.trigger.nextStepIds,
+        settings,
+      },
+    },
+  });
+
+  it('accepts the watched object, fields and a record filter', () => {
+    const result = workflowManifestSchema.safeParse(
+      withDatabaseEvent({
+        objectUniversalIdentifier: OBJECT_ID,
+        action: 'updated',
+        fieldUniversalIdentifiers: [FIELD_ID],
+        filter: {
+          stepFilterGroups: [{ id: 'group', logicalOperator: 'AND' }],
+          stepFilters: [
+            {
+              id: 'filter',
+              type: 'TEXT',
+              stepOutputKey: '{{trigger.properties.after.status}}',
+              operand: 'IS',
+              value: 'open',
+              stepFilterGroupId: 'group',
+              fieldMetadataUniversalIdentifier: FIELD_ID,
+            },
+          ],
+        },
+      }),
+    );
+    expect(result.success).toBe(true);
+  });
+
+  it('only watches fields on update events', () => {
+    const result = workflowManifestSchema.safeParse(
+      withDatabaseEvent({
+        objectUniversalIdentifier: OBJECT_ID,
+        action: 'created',
+        fieldUniversalIdentifiers: [FIELD_ID],
+      }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toBe(
+      'Watched fields only apply to updated and upserted events',
+    );
   });
 });

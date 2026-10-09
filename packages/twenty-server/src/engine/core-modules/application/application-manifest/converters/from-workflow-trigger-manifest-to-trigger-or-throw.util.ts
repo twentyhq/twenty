@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util';
@@ -8,8 +8,10 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { type UpdateEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
   type WorkflowCronTrigger,
+  type WorkflowDatabaseEventTrigger,
   type WorkflowManualTrigger,
   type WorkflowTrigger,
   WorkflowTriggerType,
@@ -27,6 +29,21 @@ type ManualTriggerManifest = Extract<
 >;
 
 type CronTriggerManifest = Extract<WorkflowTriggerManifest, { type: 'CRON' }>;
+
+type DatabaseEventTriggerManifest = Extract<
+  WorkflowTriggerManifest,
+  { type: 'DATABASE_EVENT' }
+>;
+
+const DATABASE_EVENT_TRIGGER_NAME_BY_ACTION: Record<
+  DatabaseEventTriggerManifest['settings']['action'],
+  string
+> = {
+  created: 'Record is created',
+  updated: 'Record is updated',
+  deleted: 'Record is deleted',
+  upserted: 'Record is created or updated',
+};
 
 const fromManualTriggerManifest = ({
   trigger,
@@ -93,6 +110,51 @@ const fromCronTriggerManifestOrThrow = (
   return cronTrigger;
 };
 
+const fromDatabaseEventTriggerManifest = ({
+  trigger,
+  resolvers,
+}: {
+  trigger: DatabaseEventTriggerManifest;
+  resolvers: WorkflowManifestReferenceResolvers;
+}): WorkflowDatabaseEventTrigger => {
+  const { settings, ...identity } = trigger;
+
+  const databaseEventSettings: WorkflowDatabaseEventTrigger['settings'] &
+    Partial<UpdateEventTriggerSettings> = {
+    eventName: `${resolvers.objectName(settings.objectUniversalIdentifier)}.${settings.action}`,
+    outputSchema: {},
+    ...(isNonEmptyArray(settings.fieldUniversalIdentifiers)
+      ? {
+          fields: settings.fieldUniversalIdentifiers.map(
+            (fieldUniversalIdentifier) =>
+              resolvers.field(
+                fieldUniversalIdentifier,
+                settings.objectUniversalIdentifier,
+              ).name,
+          ),
+        }
+      : {}),
+    ...(isDefined(settings.filter)
+      ? {
+          filter: {
+            stepFilterGroups: settings.filter.stepFilterGroups,
+            stepFilters: settings.filter.stepFilters.map((stepFilter) =>
+              resolvers.fieldReference(stepFilter),
+            ),
+          },
+        }
+      : {}),
+  };
+
+  return {
+    ...identity,
+    name: DATABASE_EVENT_TRIGGER_NAME_BY_ACTION[settings.action],
+    type: WorkflowTriggerType.DATABASE_EVENT,
+    position: { x: 0, y: 0 },
+    settings: databaseEventSettings,
+  } satisfies WorkflowDatabaseEventTrigger;
+};
+
 export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
   trigger,
   references,
@@ -110,6 +172,8 @@ export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
       return fromManualTriggerManifest({ trigger, resolvers });
     case 'CRON':
       return fromCronTriggerManifestOrThrow(trigger);
+    case 'DATABASE_EVENT':
+      return fromDatabaseEventTriggerManifest({ trigger, resolvers });
     default:
       return assertNever(trigger);
   }

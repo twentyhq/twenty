@@ -1,7 +1,12 @@
 import { z } from 'zod';
 
+import { workflowStepFilterManifestSchema } from '@/application/workflowStepManifestType';
+import { ViewFilterOperand } from '@/types/ViewFilterOperand';
 import { isDefined } from '@/utils/validation/isDefined';
 import { workflowCronTriggerSchema } from '@/workflow/schemas/cron-trigger-schema';
+import { stepFilterGroupSchema } from '@/workflow/schemas/step-filter-group-schema';
+
+const DATABASE_EVENT_ACTIONS_WITH_WATCHED_FIELDS = ['updated', 'upserted'];
 
 const manualTriggerAvailabilityManifestSchema = z.discriminatedUnion('type', [
   z.strictObject({ type: z.literal('GLOBAL') }),
@@ -69,6 +74,39 @@ const workflowTriggerManifestOptions = [
     type: z.literal('CRON'),
     nextStepIds: z.array(z.uuid()).min(1),
     settings: cronTriggerSettingsManifestSchema,
+  }),
+  z.strictObject({
+    universalIdentifier: z.uuid(),
+    type: z.literal('DATABASE_EVENT'),
+    nextStepIds: z.array(z.uuid()).min(1),
+    settings: z
+      .strictObject({
+        objectUniversalIdentifier: z.uuid(),
+        action: z.enum(['created', 'updated', 'deleted', 'upserted']),
+        fieldUniversalIdentifiers: z.array(z.uuid()).optional(),
+        filter: z
+          .strictObject({
+            stepFilterGroups: z.array(stepFilterGroupSchema),
+            stepFilters: z.array(
+              workflowStepFilterManifestSchema.extend({
+                operand: z.enum(ViewFilterOperand),
+              }),
+            ),
+          })
+          .optional(),
+      })
+      .superRefine((settings, context) => {
+        if (
+          (settings.fieldUniversalIdentifiers?.length ?? 0) > 0 &&
+          !DATABASE_EVENT_ACTIONS_WITH_WATCHED_FIELDS.includes(settings.action)
+        ) {
+          context.addIssue({
+            code: 'custom',
+            path: ['fieldUniversalIdentifiers'],
+            message: `Watched fields only apply to ${DATABASE_EVENT_ACTIONS_WITH_WATCHED_FIELDS.join(' and ')} events`,
+          });
+        }
+      }),
   }),
 ] as const;
 

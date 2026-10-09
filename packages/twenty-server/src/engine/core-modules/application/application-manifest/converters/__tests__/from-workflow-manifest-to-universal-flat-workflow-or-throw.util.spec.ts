@@ -1,4 +1,9 @@
 import {
+  FieldMetadataType,
+  StepLogicalOperator,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
+import {
   getWorkflowVersionUniversalIdentifier,
   type WorkflowManifest,
 } from 'twenty-shared/application';
@@ -249,6 +254,117 @@ describe('application workflow definitions', () => {
         },
       }),
     ).toThrow("Workflow trigger: Cron pattern 'every monday' is invalid");
+  });
+
+  it('listens to the database event of the referenced object and fields', () => {
+    const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+    const FIELD_ID = '88888888-8888-4888-8888-888888888888';
+    const { version } = convert({
+      ...options,
+      manifest: {
+        ...manifest,
+        version: {
+          ...manifest.version,
+          trigger: {
+            universalIdentifier: TRIGGER_ID,
+            type: 'DATABASE_EVENT',
+            nextStepIds: [STEP_ID],
+            settings: {
+              objectUniversalIdentifier: OBJECT_ID,
+              action: 'updated',
+              fieldUniversalIdentifiers: [FIELD_ID],
+              filter: {
+                stepFilterGroups: [
+                  { id: 'group', logicalOperator: StepLogicalOperator.AND },
+                ],
+                stepFilters: [
+                  {
+                    id: 'filter',
+                    type: 'TEXT',
+                    stepOutputKey: '{{trigger.properties.after.status}}',
+                    operand: ViewFilterOperand.IS,
+                    value: 'open',
+                    stepFilterGroupId: 'group',
+                    fieldMetadataUniversalIdentifier: FIELD_ID,
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      objectByUniversalIdentifier: new Map([
+        [OBJECT_ID, { nameSingular: 'ticket' }],
+      ]),
+      fieldByUniversalIdentifier: new Map([
+        [
+          FIELD_ID,
+          {
+            id: 'status-field-id',
+            name: 'status',
+            objectUniversalIdentifier: OBJECT_ID,
+            type: FieldMetadataType.TEXT,
+            settings: null,
+            relationTargetObjectMetadataUniversalIdentifier: null,
+          },
+        ],
+      ]),
+    });
+
+    expect(version.triggers?.[0]).toMatchObject({
+      type: 'DATABASE_EVENT',
+      settings: {
+        eventName: 'ticket.updated',
+        fields: ['status'],
+        filter: {
+          stepFilters: [
+            { id: 'filter', fieldMetadataId: 'status-field-id', value: 'open' },
+          ],
+        },
+      },
+    });
+  });
+
+  it('refuses a watched field from another object', () => {
+    const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+    const FIELD_ID = '88888888-8888-4888-8888-888888888888';
+    expect(() =>
+      convert({
+        ...options,
+        manifest: {
+          ...manifest,
+          version: {
+            ...manifest.version,
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'DATABASE_EVENT',
+              nextStepIds: [STEP_ID],
+              settings: {
+                objectUniversalIdentifier: OBJECT_ID,
+                action: 'updated',
+                fieldUniversalIdentifiers: [FIELD_ID],
+              },
+            },
+          },
+        },
+        objectByUniversalIdentifier: new Map([
+          [OBJECT_ID, { nameSingular: 'ticket' }],
+        ]),
+        fieldByUniversalIdentifier: new Map([
+          [
+            FIELD_ID,
+            {
+              id: 'name-field-id',
+              name: 'name',
+              objectUniversalIdentifier: '77777777-7777-4777-8777-777777777777',
+              type: FieldMetadataType.TEXT,
+              settings: null,
+              relationTargetObjectMetadataUniversalIdentifier: null,
+            },
+          ],
+        ]),
+      }),
+    ).toThrow('Workflow field does not belong to the referenced object');
   });
 
   it('rejects an unsupported trigger on the server too', () => {

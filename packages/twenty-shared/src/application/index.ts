@@ -287,7 +287,10 @@ export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSetti
 export type { WorkflowManifest } from './workflowManifestType';
 export { workflowManifestSchema } from './workflowManifestType';
 export type { WorkflowStepManifest } from './workflowStepManifestType';
-export { workflowStepManifestSchema } from './workflowStepManifestType';
+export {
+  workflowStepFilterManifestSchema,
+  workflowStepManifestSchema,
+} from './workflowStepManifestType';
 export type { WorkflowTriggerManifest } from './workflowTriggerManifestType';
 export {
   APPLICATION_WORKFLOW_TRIGGER_TYPES,
