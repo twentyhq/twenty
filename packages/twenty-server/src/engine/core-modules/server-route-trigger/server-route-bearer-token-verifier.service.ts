@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { decode, verify } from 'jsonwebtoken';
 import { type ServerRouteBearerTokenVerification } from 'twenty-shared/application';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
@@ -38,6 +38,14 @@ const throwInvalidBearerToken = (reason: string): never => {
 @Injectable()
 export class ServerRouteBearerTokenVerifierService {
   private readonly signingKeysByJwksUrl = new Map<string, FetchedSigningKeys>();
+  private readonly signingKeysFetchByJwksUrl = new Map<
+    string,
+    Promise<ServerRouteSigningKey[]>
+  >();
+  private readonly lastSigningKeysFetchAttemptAtMsByJwksUrl = new Map<
+    string,
+    number
+  >();
 
   constructor(
     @InjectRepository(ApplicationRegistrationVariableEntity)
@@ -154,41 +162,68 @@ export class ServerRouteBearerTokenVerifierService {
   }): Promise<ServerRouteSigningKey> {
     const cachedSigningKeys = this.signingKeysByJwksUrl.get(jwksUrl);
 
-    const signingKeys =
+    const cachedSigningKey =
       isDefined(cachedSigningKeys) &&
       Date.now() - cachedSigningKeys.fetchedAtMs < SERVER_ROUTE_JWKS_MAX_AGE_MS
-        ? cachedSigningKeys
-        : await this.fetchSigningKeys(jwksUrl);
+        ? cachedSigningKeys.keys.find((key) => key.kid === keyId)
+        : undefined;
 
-    const signingKey = signingKeys.keys.find((key) => key.kid === keyId);
-
-    if (isDefined(signingKey)) {
-      return signingKey;
+    if (isDefined(cachedSigningKey)) {
+      return cachedSigningKey;
     }
 
-    if (
-      Date.now() - signingKeys.fetchedAtMs <
-      SERVER_ROUTE_JWKS_MIN_REFRESH_INTERVAL_MS
-    ) {
+    const signingKey = (await this.loadSigningKeysOrThrow(jwksUrl)).find(
+      (key) => key.kid === keyId,
+    );
+
+    if (!isDefined(signingKey)) {
       return throwInvalidBearerToken(
         'Bearer token is signed with a key the issuer does not publish',
       );
     }
 
-    const refreshedSigningKey = (
-      await this.fetchSigningKeys(jwksUrl)
-    ).keys.find((key) => key.kid === keyId);
-
-    if (!isDefined(refreshedSigningKey)) {
-      return throwInvalidBearerToken(
-        'Bearer token is signed with a key the issuer does not publish',
-      );
-    }
-
-    return refreshedSigningKey;
+    return signingKey;
   }
 
-  private async fetchSigningKeys(jwksUrl: string): Promise<FetchedSigningKeys> {
+  // Forged tokens naming unknown keys must not turn every request into a
+  // fetch, so fetches are shared while in flight and paced across attempts.
+  private async loadSigningKeysOrThrow(
+    jwksUrl: string,
+  ): Promise<ServerRouteSigningKey[]> {
+    const inFlightFetch = this.signingKeysFetchByJwksUrl.get(jwksUrl);
+
+    if (isDefined(inFlightFetch)) {
+      return await inFlightFetch;
+    }
+
+    const lastFetchAttemptAtMs =
+      this.lastSigningKeysFetchAttemptAtMsByJwksUrl.get(jwksUrl);
+
+    if (
+      isDefined(lastFetchAttemptAtMs) &&
+      Date.now() - lastFetchAttemptAtMs <
+        SERVER_ROUTE_JWKS_MIN_REFRESH_INTERVAL_MS
+    ) {
+      return this.getCachedSigningKeysOrThrow({
+        jwksUrl,
+        reason: 'the last fetch attempt failed moments ago',
+      });
+    }
+
+    this.lastSigningKeysFetchAttemptAtMsByJwksUrl.set(jwksUrl, Date.now());
+
+    const signingKeysFetch = this.fetchSigningKeysOrThrow(jwksUrl).finally(() =>
+      this.signingKeysFetchByJwksUrl.delete(jwksUrl),
+    );
+
+    this.signingKeysFetchByJwksUrl.set(jwksUrl, signingKeysFetch);
+
+    return await signingKeysFetch;
+  }
+
+  private async fetchSigningKeysOrThrow(
+    jwksUrl: string,
+  ): Promise<ServerRouteSigningKey[]> {
     let jwksResponseBody: unknown;
 
     try {
@@ -198,19 +233,42 @@ export class ServerRouteBearerTokenVerifierService {
 
       jwksResponseBody = response.data;
     } catch (error) {
+      return this.getCachedSigningKeysOrThrow({
+        jwksUrl,
+        reason: error instanceof Error ? error.message : 'unknown error',
+      });
+    }
+
+    const keys = parseServerRouteSigningKeys(jwksResponseBody);
+
+    if (!isNonEmptyArray(keys)) {
+      return this.getCachedSigningKeysOrThrow({
+        jwksUrl,
+        reason: 'the response carried no usable RSA signing key',
+      });
+    }
+
+    this.signingKeysByJwksUrl.set(jwksUrl, { keys, fetchedAtMs: Date.now() });
+
+    return keys;
+  }
+
+  private getCachedSigningKeysOrThrow({
+    jwksUrl,
+    reason,
+  }: {
+    jwksUrl: string;
+    reason: string;
+  }): ServerRouteSigningKey[] {
+    const cachedSigningKeys = this.signingKeysByJwksUrl.get(jwksUrl);
+
+    if (!isDefined(cachedSigningKeys)) {
       throw new ServerRouteTriggerException(
-        `Could not fetch signing keys from ${jwksUrl}: ${error instanceof Error ? error.message : 'unknown error'}`,
+        `Could not load signing keys from ${jwksUrl}: ${reason}`,
         ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
       );
     }
 
-    const fetchedSigningKeys = {
-      keys: parseServerRouteSigningKeys(jwksResponseBody),
-      fetchedAtMs: Date.now(),
-    };
-
-    this.signingKeysByJwksUrl.set(jwksUrl, fetchedSigningKeys);
-
-    return fetchedSigningKeys;
+    return cachedSigningKeys.keys;
   }
 }

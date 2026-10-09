@@ -59,6 +59,10 @@ describe('ServerRouteBearerTokenVerifierService', () => {
   let fetchJwks: jest.Mock;
   let findVariable: jest.Mock;
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   beforeEach(async () => {
     fetchJwks = jest
       .fn()
@@ -160,6 +164,42 @@ describe('ServerRouteBearerTokenVerifierService', () => {
       code: ServerRouteTriggerExceptionCode.INVALID_BEARER_TOKEN,
     });
     expect(fetchJwks).toHaveBeenCalledTimes(1);
+  });
+
+  it('should share one signing keys fetch across concurrent requests', async () => {
+    await Promise.all([
+      verify(`Bearer ${signToken()}`),
+      verify(`Bearer ${signToken()}`),
+      verify(`Bearer ${signToken()}`),
+    ]);
+
+    expect(fetchJwks).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not retry a failed signing keys fetch right away', async () => {
+    fetchJwks.mockRejectedValue(new Error('ECONNREFUSED'));
+
+    await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
+    });
+    await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
+    });
+    expect(fetchJwks).toHaveBeenCalledTimes(1);
+  });
+
+  it('should keep the cached signing keys when a refresh returns no usable key', async () => {
+    await verify(`Bearer ${signToken()}`);
+
+    const nowMs = Date.now();
+
+    jest.spyOn(Date, 'now').mockReturnValue(nowMs + 25 * 60 * 60 * 1000);
+    fetchJwks.mockResolvedValue({ data: { keys: [] } });
+
+    await expect(verify(`Bearer ${signToken()}`)).resolves.toMatchObject({
+      aud: AUDIENCE,
+    });
+    expect(fetchJwks).toHaveBeenCalledTimes(2);
   });
 
   it('should be unavailable when the audience server variable is not set', async () => {
