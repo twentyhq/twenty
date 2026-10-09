@@ -13,6 +13,8 @@ Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused Reac
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
 
+Card composition checks native part props and DOM refs, customized anatomy, ordinary display semantics, independent nested controls, button keyboard activation and disabled state, and explicit link ownership in both runtimes.
+
 AvatarGroup checks derived counts, partially loaded totals, custom overflow and surviving keyed child state. Its native button and link (`target="_blank"`) verify refs, focus and pointer/keyboard activation in React and Preact.
 
 Scenarios share their checks between runtimes where behavior matches. The story
@@ -46,6 +48,7 @@ effect within the interaction timeout.
 | `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                      |
 | `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                          |
 | `twenty-ui-popover`              | Popover                                                                                                                                 |
+| `twenty-ui-card-composition`     | Card (native parts and refs, render composition, display semantics, button/link ownership and nested controls)                          |
 | `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                                 |
 | `twenty-ui-menu`                 | Menu                                                                                                                                    |
 | `twenty-ui-select`               | Select                                                                                                                                  |
