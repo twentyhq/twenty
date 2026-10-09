@@ -55,23 +55,6 @@ export const tagControlsTest = createDisplayControlTest({
   staticContent: 'Static tag',
 });
 
-const avatarGalleryTest: TwentyUiGalleryPlayFunction = async (context) => {
-  await galleryRenderTest(context);
-  const imageEntry = within(
-    within(context.canvasElement).getByTestId('gallery-item-AvatarImage'),
-  );
-
-  await expect(imageEntry.getByText('I')).toBeVisible();
-  await expect(imageEntry.queryByRole('presentation')).not.toBeInTheDocument();
-};
-
-export const avatarControlsTest = createDisplayControlTest({
-  buttonName: 'Jane',
-  disabledButtonName: 'Disabled avatar',
-  staticContent: 'A',
-  checkGallery: avatarGalleryTest,
-});
-
 export const chipControlsTest = createDisplayControlTest({
   buttonName: 'Open chip',
   disabledButtonName: 'Disabled chip',

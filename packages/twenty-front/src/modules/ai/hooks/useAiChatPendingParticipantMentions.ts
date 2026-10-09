@@ -1,10 +1,8 @@
 import { useMemo } from 'react';
 
-import {
-  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-  agentChatDraftsByThreadIdState,
-} from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { filterNewParticipantMentions } from '@/ai/utils/filterNewParticipantMentions';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
@@ -14,7 +12,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useAiChatPendingParticipantMentions = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const draftKey = currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
+  const draftKey = currentAiChatThread ?? newAiChatThreadId;
   const serializedDraft =
     useAtomStateValue(agentChatDraftsByThreadIdState)[draftKey] ?? '';
   const thread = useAtomFamilySelectorValue(

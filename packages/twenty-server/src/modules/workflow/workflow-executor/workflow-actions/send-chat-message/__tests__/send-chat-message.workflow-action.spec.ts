@@ -89,14 +89,45 @@ describe('SendChatMessageWorkflowAction', () => {
         workflowName: 'New deals',
       },
       message: {
-        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        workspaceMemberIds: [WORKSPACE_MEMBER_ID],
         threadKey: WORKFLOW_RUN_ID,
         idempotencyKey: 'step-1',
         title: 'New deal: Acme',
         text: '**Acme** just signed.',
       },
+      fallbackThreadKey: `${WORKFLOW_RUN_ID}:${WORKFLOW_RUN_ID}:step-1`,
       awaitedToolCall: undefined,
     });
+  });
+
+  it('waits on the answer to the call it posted', async () => {
+    sendMessage.mockResolvedValue({
+      status: 'AWAITING',
+      threadId: 'thread-id',
+      toolCallId: 'call-id',
+    });
+
+    const output = await execute({
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+      text: 'Approve the update?',
+      toolCall: { toolName: 'update_one_company', arguments: { id: 'id' } },
+    });
+
+    expect(output).toEqual({
+      wait: { type: 'ANSWER', threadId: 'thread-id', toolCallId: 'call-id' },
+    });
+    expect(sendMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        awaitedToolCall: {
+          toolName: 'update_one_company',
+          arguments: { id: 'id' },
+          caller: {
+            type: 'WORKFLOW_STEP',
+            ref: { workflowRunId: WORKFLOW_RUN_ID, stepId: 'step-1' },
+          },
+        },
+      }),
+    );
   });
 
   it('sends each iteration once, even when two iterations say the same thing', async () => {
@@ -160,6 +191,19 @@ describe('SendChatMessageWorkflowAction', () => {
       threadKey: 'key:deal-Acme',
       idempotencyKey: `${WORKFLOW_RUN_ID}:step-1`,
     });
+  });
+
+  it("falls back to the run's own conversation when the recipient cannot join the shared one", async () => {
+    await execute({
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+      title: 'Hello',
+      text: 'Hello',
+      conversation: { scope: 'KEY', key: 'deal-{{trigger.name}}' },
+    });
+
+    expect(sendMessage.mock.calls[0][0].fallbackThreadKey).toBe(
+      `key:deal-Acme:${WORKFLOW_RUN_ID}:step-1`,
+    );
   });
 
   it('refuses a shared conversation without a key', async () => {

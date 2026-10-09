@@ -1,6 +1,5 @@
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { getRelationIdFieldNames } from '@/object-metadata/utils/getRelationIdFieldNames';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -26,14 +25,14 @@ export const shouldFieldBeQueried = ({
     getRelationIdFieldNames(fieldMetadata).includes(gqlField);
 
   if (
-    isUndefinedOrNull(recordGqlFields) &&
+    !isDefined(recordGqlFields) &&
     !isFieldRelation(fieldMetadata) &&
     !isFieldMorphRelation(fieldMetadata)
   ) {
     return true;
   }
 
-  if (isUndefinedOrNull(recordGqlFields) && isJoinColumn) {
+  if (!isDefined(recordGqlFields) && isJoinColumn) {
     return true;
   }
 

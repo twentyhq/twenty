@@ -64,6 +64,8 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
     '/developers/extend/apps/logic/connections',
   DEVELOPERS_EXTEND_APPS_LOGIC_CREDITS: '/developers/extend/apps/logic/credits',
+  DEVELOPERS_EXTEND_APPS_LOGIC_GOOD_PRACTICES:
+    '/developers/extend/apps/logic/good-practices',
   DEVELOPERS_EXTEND_APPS_LOGIC_KEY_VALUE_STORE:
     '/developers/extend/apps/logic/key-value-store',
   DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
@@ -182,6 +184,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_FEEDBACK_LOADER: '/ui/primitives/feedback/loader',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_BAR: '/ui/primitives/feedback/progress-bar',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_RING: '/ui/primitives/feedback/progress-ring',
+  UI_PRIMITIVES_FEEDBACK_SKELETON: '/ui/primitives/feedback/skeleton',
   UI_PRIMITIVES_INPUT_BUTTON: '/ui/primitives/input/button',
   UI_PRIMITIVES_INPUT_BUTTON_GROUP: '/ui/primitives/input/button-group',
   UI_PRIMITIVES_INPUT_CHECKBOX: '/ui/primitives/input/checkbox',

@@ -1,7 +1,7 @@
 import { type NavigationDrawerItemProps } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemProps';
 import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { isObject } from '@sniptt/guards';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
@@ -25,6 +25,7 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/primitives/typography';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 const DEFAULT_INDENTATION_LEVEL = 1;
 
 type StyledItemProps = Pick<
@@ -253,7 +254,7 @@ export const NavigationDrawerItem = ({
   const handleExternalLinkClick = () => {
     handleMobileNavigation();
     if (isDefined(to)) {
-      window.open(to, '_blank', 'noopener,noreferrer');
+      openUrlInNewTab(to);
     }
   };
 

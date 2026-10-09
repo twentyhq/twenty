@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
+import { RecordShowPageShell } from '~/pages/object-record/RecordShowPageShell';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 import { type RecordShowPageHeaderTitleMode } from '@/object-record/record-show/types/RecordShowPageHeaderTitleMode';

@@ -1,3 +1,4 @@
+import { type InputSelectionDirection } from '@/types/InputSelectionDirection';
 import { type SerializedFileData } from '@/types/SerializedFileData';
 
 export type SerializedEventData = {
@@ -36,11 +37,17 @@ export type SerializedEventData = {
   isPrimary?: boolean;
   key?: string;
   code?: string;
+  which?: number;
+  keyCode?: number;
+  isComposing?: boolean;
   repeat?: boolean;
   inputType?: string;
   data?: string;
   clipboardText?: string;
   value?: string;
+  selectionStart?: number;
+  selectionEnd?: number;
+  selectionDirection?: InputSelectionDirection;
   checked?: boolean;
   selectedOptionIndexes?: number[];
   scrollTop?: number;

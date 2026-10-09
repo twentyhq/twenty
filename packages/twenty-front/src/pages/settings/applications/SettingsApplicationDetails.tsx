@@ -358,10 +358,9 @@ export const SettingsApplicationDetails = () => {
           )}
           {isApplicationStopped && (
             <InlineBanner
-              color="danger"
-              LeftIcon={IconAlertTriangle}
-              message={t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}
-            />
+              status="warning"
+              icon={<IconAlertTriangle aria-hidden="true" />}
+            >{t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}</InlineBanner>
           )}
           {renderActiveTabContent()}
         </SettingsPageContainer>

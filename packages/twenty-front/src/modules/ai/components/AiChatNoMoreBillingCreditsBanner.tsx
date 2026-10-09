@@ -1,3 +1,4 @@
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatEndTrialPeriod } from '@/ai/hooks/useAiChatEndTrialPeriod';
 import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
@@ -49,9 +50,7 @@ export const AiChatNoMoreBillingCreditsBanner = () => {
 
   if (!hasPermissionToManageBilling) {
     return (
-      <AiChatInlineBanner
-        message={t`AI usage limit reached. Ask an admin to upgrade the plan.`}
-      />
+      <AiChatInlineBanner>{t`AI usage limit reached. Ask an admin to upgrade the plan.`}</AiChatInlineBanner>
     );
   }
 
@@ -72,23 +71,24 @@ export const AiChatNoMoreBillingCreditsBanner = () => {
   return (
     <>
       <AiChatInlineBanner
-        message={
-          isTrialing || isDefined(nextPrice)
-            ? t`You’ve reached your AI usage limit.`
-            : t`AI usage limit reached. Contact support to upgrade.`
-        }
-        button={
-          isDefined(buttonTitle) && isDefined(handleButtonClick)
-            ? {
-                title: buttonTitle,
-                onClick: handleButtonClick,
-                disabled:
-                  (isTrialing && isEndTrialLoading) ||
-                  (!isTrialing && isUpgrading),
+        action={
+          isDefined(buttonTitle) && isDefined(handleButtonClick) ? (
+            <InlineBanner.Action
+              onClick={handleButtonClick}
+              disabled={
+                (isTrialing && isEndTrialLoading) ||
+                (!isTrialing && isUpgrading)
               }
-            : undefined
+            >
+              {buttonTitle}
+            </InlineBanner.Action>
+          ) : undefined
         }
-      />
+      >
+        {isTrialing || isDefined(nextPrice)
+          ? t`You’ve reached your AI usage limit.`
+          : t`AI usage limit reached. Contact support to upgrade.`}
+      </AiChatInlineBanner>
       {isTrialing &&
         (hasPaymentMethod === false ? (
           <AddCreditCardModal

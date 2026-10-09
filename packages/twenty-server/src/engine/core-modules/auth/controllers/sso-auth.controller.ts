@@ -12,6 +12,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateServiceProviderMetadata } from '@node-saml/node-saml';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Response } from 'express';
 import {
   ApiPath,
@@ -232,7 +233,7 @@ export class SsoAuthController {
     const existingUser = await this.userService.findUserByEmail(payload.email);
 
     const { userData } = this.authService.formatUserDataPayload(
-      payload,
+      { ...payload, isEmailAlreadyVerified: true },
       existingUser,
     );
 
@@ -251,6 +252,10 @@ export class SsoAuthController {
         provider: AuthProviderEnum.SSO,
       },
     });
+
+    if (!user.isEmailVerified && !isNonEmptyString(user.passwordHash)) {
+      await this.userService.markEmailAsVerified(user.id);
+    }
 
     if (ssoContext) {
       await this.authService.createSsoConnectedAccountIfFeatureFlagIsOn({

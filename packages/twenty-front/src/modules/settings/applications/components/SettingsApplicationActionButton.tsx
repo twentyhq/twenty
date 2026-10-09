@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconSettings } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsApplicationActionButtonProps = {
@@ -29,6 +28,8 @@ export const SettingsApplicationActionButton = ({
         variant="solid"
         color="accent"
         size="sm"
+        nativeButton={false}
+        role="link"
         render={
           <Link
             to={getSettingsPath(SettingsPath.ApplicationDetail, {
@@ -51,12 +52,12 @@ export const SettingsApplicationActionButton = ({
   return (
     <Button
       startIcon={<IconDownload />}
-      endIcon={isInstalling ? <Loader /> : undefined}
       variant="solid"
       color="accent"
       size="sm"
       onClick={onInstall}
-      disabled={isInstalling}
+      loading={isInstalling}
+      loadingPosition="end"
     >
       {isInstalling ? t`Installing ${displayedInstallProgress}` : t`Install`}
     </Button>

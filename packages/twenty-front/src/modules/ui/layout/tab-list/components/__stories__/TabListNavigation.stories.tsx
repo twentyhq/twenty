@@ -224,7 +224,15 @@ export const RouteLinks: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const activity = await canvas.findByRole('link', { name: 'activity' });
+    const overview = canvas.getByRole('link', { name: 'overview' });
     const disabled = canvas.getByRole('link', { name: 'disabled' });
+
+    expect(disabled).toHaveAttribute('aria-disabled', 'true');
+    expect(disabled).toHaveAttribute('tabindex', '-1');
+    expect(activity).not.toHaveAttribute('type');
+    overview.focus();
+    await userEvent.tab();
+    expect(activity).toHaveFocus();
 
     expect(canvas.queryByRole('tablist')).not.toBeInTheDocument();
     expect(canvas.queryByRole('tabpanel')).not.toBeInTheDocument();

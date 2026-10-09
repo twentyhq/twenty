@@ -212,6 +212,7 @@ export class EntityAddCommand {
 
         const file = getViewBaseFile({
           name,
+          objectUniversalIdentifier: entityData.objectUniversalIdentifier,
           applicationUniversalIdentifier,
         });
 

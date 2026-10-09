@@ -89,7 +89,7 @@ export const SettingsTableListSection = <
       <Section.Header
         title={title}
         description={description}
-        adornment={headerAdornment}
+        actions={headerAdornment}
       />
       {isDefined(toolbar) && toolbar}
       {items.length > 0 && (

@@ -16,6 +16,7 @@ import { referenceJsonSchemaDefinition } from 'src/engine/core-modules/record-cr
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isFlatFieldMetadataRequiredOnCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-required-on-create.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isManyToOneFlatFieldMetadata } from 'src/engine/twenty-orm/utils/is-many-to-one-flat-field-metadata.util';
@@ -178,7 +179,7 @@ export const generateRecordPropertiesJsonSchema = ({
       continue;
     }
 
-    const isRequired = !field.isNullable && !isPartial;
+    const isRequired = !isPartial && isFlatFieldMetadataRequiredOnCreate(field);
 
     if (isMorphOrRelationFlatFieldMetadata(field)) {
       if (!isManyToOneFlatFieldMetadata(field)) {

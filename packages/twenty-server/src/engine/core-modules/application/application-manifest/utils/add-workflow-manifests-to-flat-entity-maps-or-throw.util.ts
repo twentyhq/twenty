@@ -4,7 +4,6 @@ import {
   getWorkflowVersionUniversalIdentifier,
   type WorkflowManifest,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
@@ -26,7 +25,6 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   existingAllFlatEntityMaps,
   idByUniversalIdentifierByMetadataName,
   isApplicationWorkflowsEnabled,
-  inferDeletionFromMissingEntities,
   now,
 }: {
   workflows: WorkflowManifest[];
@@ -36,7 +34,6 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
   isApplicationWorkflowsEnabled: boolean | undefined;
-  inferDeletionFromMissingEntities: boolean;
   now: string;
 }): void => {
   if (workflows.length > 0 && !isApplicationWorkflowsEnabled) {
@@ -51,28 +48,6 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
 
   const applicationUniversalIdentifier =
     ownerFlatApplication.universalIdentifier;
-
-  const declaredWorkflowIds = new Set(
-    workflows.map((workflow) => workflow.universalIdentifier),
-  );
-  for (const existing of Object.values(
-    fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier,
-  )) {
-    if (
-      inferDeletionFromMissingEntities &&
-      isDefined(existing) &&
-      !isDefined(existing.workspaceWorkflowId) &&
-      !declaredWorkflowIds.has(existing.universalIdentifier)
-    ) {
-      throw new ApplicationException(
-        'Removing application workflows is not supported by the defineWorkflow POC; existing runs may still reference them',
-        ApplicationExceptionCode.INVALID_INPUT,
-        {
-          userFriendlyMessage: msg`Removing application workflows is not supported yet.`,
-        },
-      );
-    }
-  }
 
   if (workflows.length > 0) {
     const references = prepareWorkflowManifestReferences({

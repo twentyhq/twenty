@@ -1,12 +1,13 @@
 import { isArray } from '@sniptt/guards';
 import React from 'react';
 
+import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { useCaretPreservingElementRef } from '@/host/caret/hooks/useCaretPreservingElementRef';
 import { useHtmlHostElementProps } from '@/host/elements/hooks/useHtmlHostElementProps';
 import { createCaretPreservingElement } from '@/host/caret/utils/createCaretPreservingElement';
 import { createPlainHostElement } from '@/host/elements/utils/createPlainHostElement';
 import { isFileInputType } from '@/host/elements/utils/isFileInputType';
-import { isTextLikeInputType } from '@/host/caret/utils/isTextLikeInputType';
+import { isTextLikeInputType } from '@/utils/isTextLikeInputType';
 
 const VOID_ELEMENTS = new Set([
   'area',
@@ -58,7 +59,12 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
   const caretPreservingTag = htmlTag as 'input' | 'textarea';
 
-  return ({ children, ...props }: WrapperProps) => {
+  return ({
+    children,
+    [INPUT_SELECTION_BRIDGE_PROPERTIES.request]: selectionCommands,
+    [INPUT_SELECTION_BRIDGE_PROPERTIES.update]: onSelectionUpdate,
+    ...props
+  }: WrapperProps) => {
     const {
       setEditableFocused,
       reactBindableProps,
@@ -72,10 +78,12 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
     const shouldClearFileInputSelection = isFileInput && value === '';
 
-    const caretPreservingElementRef = useCaretPreservingElementRef(
+    const caretPreservingElementRef = useCaretPreservingElementRef({
       composedElementRef,
-      isFileInput && !shouldClearFileInputSelection ? undefined : value,
-    );
+      value: isFileInput && !shouldClearFileInputSelection ? undefined : value,
+      selectionCommands,
+      onSelectionUpdate,
+    });
 
     if (
       caretPreservingTag === 'textarea' ||
