@@ -5910,7 +5910,7 @@ msgid "Connection successfully updated"
 msgstr "החיבור עודכן בהצלחה"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/components/AgentChatStreamKeepAliveEffect.tsx
+#: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "החיבור לעוזר אבד. טענו מחדש כדי לראות את התגובה."
 
