@@ -8,16 +8,21 @@ import { type MockEntityStore } from 'test/integration/utils/mock-entity-store.u
 
 const BATCH_SUB_REQUEST_PATH_REGEX = /(messages|threads)\/([\w-]+)/g;
 
+const buildThread = (
+  inbox: gmail_v1.Schema$Message[],
+  threadId: string,
+): gmail_v1.Schema$Thread => ({
+  id: threadId,
+  messages: inbox.filter((message) => message.threadId === threadId),
+});
+
 const resolveBatchSubRequest = (
   inbox: gmail_v1.Schema$Message[],
   resource: string,
   id: string,
 ): gmail_v1.Schema$Message | gmail_v1.Schema$Thread | undefined => {
   if (resource === 'threads') {
-    return {
-      id,
-      messages: inbox.filter((message) => message.threadId === id),
-    };
+    return buildThread(inbox, id);
   }
 
   return inbox.find((message) => message.id === id);
@@ -77,6 +82,11 @@ export const gmailMailboxHandlers = (
 
     return HttpResponse.json<gmail_v1.Schema$Message>(message);
   }),
+  http.get('*/gmail/v1/users/me/threads/:threadId', ({ params }) =>
+    HttpResponse.json<gmail_v1.Schema$Thread>(
+      buildThread(inbox, params.threadId as string),
+    ),
+  ),
   http.post('*/batch', async ({ request }) => {
     const requestedResources = [
       ...(await request.text()).matchAll(BATCH_SUB_REQUEST_PATH_REGEX),

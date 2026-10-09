@@ -340,7 +340,10 @@ export class MessagingMessageService {
     messages: MessageWithParticipants[],
     messageAccumulatorMap: Map<string, MessageAccumulator>,
     existingMessagesInDB: MessageWorkspaceEntity[],
-    messageChannelMessageAssociationsReferencingMessageThread: MessageChannelMessageAssociationWorkspaceEntity[],
+    messageChannelMessageAssociationsReferencingMessageThread: Pick<
+      MessageChannelMessageAssociationWorkspaceEntity,
+      'messageExternalId' | 'message'
+    >[],
   ) {
     for (const message of messages) {
       const messageWithSameExternalIdInChannel =

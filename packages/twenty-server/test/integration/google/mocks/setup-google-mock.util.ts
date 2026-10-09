@@ -227,13 +227,17 @@ export const setupGoogleMock = ({
       ),
     failSentMessageHeaderRead: () =>
       httpMock.use(
-        http.get('*/gmail/v1/users/me/messages/:messageId', () =>
-          googleApiErrorResponse({
+        http.get('*/gmail/v1/users/me/messages/:messageId', ({ request }) => {
+          if (new URL(request.url).searchParams.get('format') !== 'metadata') {
+            return;
+          }
+
+          return googleApiErrorResponse({
             status: 500,
             reason: 'backendError',
             message: 'Backend Error',
-          }),
-        ),
+          });
+        }),
       ),
     declineTokenRefresh: () =>
       httpMock.use(
