@@ -71,6 +71,7 @@ const convert = (
   return { workflow, version };
 };
 
+const WORKSPACE_APPLICATION_ID = '77777777-7777-4777-8777-777777777777';
 const COMMAND_MENU_ITEM_ID = getWorkflowCommandMenuItemUniversalIdentifier({
   applicationUniversalIdentifier: APPLICATION_ID,
   workflowUniversalIdentifier: WORKFLOW_ID,
@@ -263,7 +264,9 @@ describe('application workflow command menu item side effects', () => {
         COMMAND_MENU_ITEM_ID
       ]!;
     storedCommandMenuItem.position = 7;
-    storedCommandMenuItem.universalOverrides = { isPinned: false };
+    storedCommandMenuItem.universalOverrides = {
+      [WORKSPACE_APPLICATION_ID]: { isPinned: false },
+    };
     const { workflow } = convert(withAvailability('IconRocket'), existing);
     expect(
       expand(workflow, existing).commandMenuItem?.flatEntityToUpdate?.[
@@ -272,7 +275,7 @@ describe('application workflow command menu item side effects', () => {
     ).toMatchObject({
       icon: 'IconRocket',
       position: 7,
-      universalOverrides: { isPinned: false },
+      universalOverrides: { [WORKSPACE_APPLICATION_ID]: { isPinned: false } },
     });
   });
 
