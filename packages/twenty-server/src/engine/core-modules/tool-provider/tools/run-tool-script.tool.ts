@@ -205,6 +205,7 @@ export const createRunToolScriptTool = (
         },
         typeCheck: true,
         typeCheckStubs: CALL_TOOL_TYPE_STUBS,
+        typeCheckFormat: 'concise',
       },
       externalFunctions: { call_tool: callTool },
       onPrint: outputCollector.onPrint,
