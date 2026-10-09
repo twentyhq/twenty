@@ -10737,7 +10737,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUnchangedApplicationFile"')
       return UnchangedApplicationFile_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import bytes from 'bytes';
-import { createHash } from 'node:crypto';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { ALLOWED_APPLICATION_FILE_FOLDERS } from 'src/engine/core-modules/application/application-development/constants/application-development.constants';
 import { CompleteApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads-result.dto';
 import { CreateApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads-result.dto';
+import { doesFileStreamMatchHash } from 'src/engine/core-modules/application/application-development/utils/does-file-stream-match-hash.util';
 import { type ApplicationFileUploadRequestInput } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads.input';
 import {
   ApplicationException,
@@ -236,20 +236,12 @@ export class ApplicationFileUploadService {
       }
 
       const stream = await this.fileStorageService.readFile(location);
-      const hash = createHash('sha256');
-      let size = 0;
-
-      for await (const chunk of stream) {
-        size += chunk.length;
-        if (size > file.size) {
-          return false;
-        }
-        hash.update(chunk);
-      }
-
       if (
-        size !== file.size ||
-        hash.digest('hex') !== file.sha256.toLowerCase()
+        !(await doesFileStreamMatchHash({
+          stream,
+          size: file.size,
+          sha256: file.sha256,
+        }))
       ) {
         return false;
       }

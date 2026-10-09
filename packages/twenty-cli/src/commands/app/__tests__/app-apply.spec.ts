@@ -18,6 +18,7 @@ import { readGraphqlRequest } from '@/__tests__/utils/read-graphql-request';
 import { isArray, isString } from '@sniptt/guards';
 import { type ServerResponse } from 'node:http';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from 'twenty-shared/application';
 import {
   afterAll,
   beforeAll,
@@ -448,9 +449,11 @@ describe('app apply', () => {
     generateClientBody,
     editDuringBuild,
     recordRelease = true,
+    files = FILES,
   }: {
     corruptPath?: string;
     recordRelease?: boolean;
+    files?: typeof FILES;
     application?: typeof APPLICATION;
     generateClientBody?: string;
     editDuringBuild?: { relativePath: string; content: string };
@@ -461,7 +464,7 @@ describe('app apply', () => {
       const fs = require('node:fs');
       const path = require('node:path');
       const { createHash } = require('node:crypto');
-      const FILES = ${JSON.stringify(FILES)};
+      const FILES = ${JSON.stringify(files)};
       const CORRUPT_PATH = ${JSON.stringify(corruptPath ?? null)};
       const EDIT_DURING_BUILD = ${JSON.stringify(editDuringBuild ?? null)};
       const sha256 = (content) => createHash('sha256').update(content).digest('hex');
@@ -646,6 +649,34 @@ describe('app apply', () => {
     ).toEqual([FILES[1].content]);
     expect(stderr).toContain('Uploading 1 file…');
     expect(stderr).not.toContain('Uploading 2 files…');
+  });
+
+  it('finishes each upload batch before reserving URLs for the next batch', async () => {
+    const files = Array.from(
+      { length: APPLICATION_FILE_UPLOAD_BATCH_SIZE + 1 },
+      (_, index) => ({ ...FILES[0], path: `built/file-${index}.mjs` }),
+    );
+    await writeTooling({ files });
+    state.heldUploadFileId = 'file-0';
+
+    const { envelope, exitCode } = await runJson();
+
+    expect(exitCode).toBe(0);
+    expect(envelope.data.upload.fileCount).toBe(files.length);
+    const uploads = operations().filter((operation) =>
+      ['upload-targets', 'put', 'upload-complete'].includes(operation),
+    );
+    expect(uploads).toEqual([
+      'upload-targets',
+      ...Array.from(
+        { length: APPLICATION_FILE_UPLOAD_BATCH_SIZE },
+        () => 'put',
+      ),
+      'upload-complete',
+      'upload-targets',
+      'put',
+      'upload-complete',
+    ]);
   });
 
   it('reports up-to-date files without claiming another upload', async () => {

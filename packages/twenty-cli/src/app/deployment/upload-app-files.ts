@@ -442,7 +442,7 @@ export const uploadAppFiles = async ({
     build.files.map((artifact) => [artifact.path, artifact]),
   );
   const failures: UploadFailure[] = [];
-  const requestedTargets: UploadTarget[] = [];
+  let filesToUploadCount = 0;
 
   for (
     let batchStart = 0;
@@ -458,22 +458,12 @@ export const uploadAppFiles = async ({
     });
 
     failures.push(...refusals);
-    requestedTargets.push(...uploadTargets);
-  }
+    filesToUploadCount += uploadTargets.length;
 
-  if (requestedTargets.length > 0 || failures.length === 0) {
-    onFilesToUpload?.(requestedTargets.length);
-  }
+    if (uploadTargets.length > 0) {
+      onFilesToUpload?.(uploadTargets.length);
+    }
 
-  for (
-    let batchStart = 0;
-    batchStart < requestedTargets.length;
-    batchStart += APPLICATION_FILE_UPLOAD_BATCH_SIZE
-  ) {
-    const uploadTargets = requestedTargets.slice(
-      batchStart,
-      batchStart + APPLICATION_FILE_UPLOAD_BATCH_SIZE,
-    );
     const sentTargets = await sendUploadedBytes({
       uploadTargets,
       artifactByPath,
@@ -482,6 +472,10 @@ export const uploadAppFiles = async ({
     });
 
     await completeUploads({ sentTargets, artifactByPath, context, failures });
+  }
+
+  if (filesToUploadCount === 0 && failures.length === 0) {
+    onFilesToUpload?.(0);
   }
 
   if (isNonEmptyArray(failures)) {

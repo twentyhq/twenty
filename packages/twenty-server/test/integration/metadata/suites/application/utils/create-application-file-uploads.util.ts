@@ -21,6 +21,7 @@ export type ApplicationFileUploadError = {
 
 export type CreateApplicationFileUploadsResult = {
   targets: ApplicationFileUploadTarget[];
+  unchangedFiles: { fileFolder: string; filePath: string }[];
   errors: ApplicationFileUploadError[];
 };
 
@@ -31,7 +32,12 @@ export const createApplicationFileUploads = async ({
   token,
 }: {
   applicationUniversalIdentifier: string;
-  files: { fileFolder: string; filePath: string; size: number }[];
+  files: {
+    fileFolder: string;
+    filePath: string;
+    size: number;
+    sha256?: string;
+  }[];
   expectToFail?: boolean;
   token?: string;
 }): CommonResponseBody<{
