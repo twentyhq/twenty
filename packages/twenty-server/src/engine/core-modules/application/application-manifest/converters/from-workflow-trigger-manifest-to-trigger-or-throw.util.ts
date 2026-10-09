@@ -8,7 +8,6 @@ import {
   type WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { assertNever } from 'src/utils/assert';
 
 type WorkflowManifestReferenceResolvers = ReturnType<
   typeof buildWorkflowManifestReferenceResolvers
@@ -69,10 +68,5 @@ export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
     subject: 'Workflow trigger',
   });
 
-  switch (trigger.type) {
-    case 'MANUAL':
-      return fromManualTriggerManifest({ trigger, resolvers });
-    default:
-      return assertNever(trigger);
-  }
+  return fromManualTriggerManifest({ trigger, resolvers });
 };
