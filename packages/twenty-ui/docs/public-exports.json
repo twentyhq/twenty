@@ -1,6 +1,12 @@
 {
   ".": {
-    "reExports": ["components", "icon", "primitives", "theme", "utilities"],
+    "reExports": [
+      "components",
+      "icon",
+      "primitives",
+      "theme",
+      "utilities"
+    ],
     "values": {},
     "types": {}
   },
@@ -889,11 +895,26 @@
       "ListItemIndicator": "primitives/navigation/ListItem/types/ListItemIndicator",
       "ListItemProps": "primitives/navigation/ListItem/types/ListItemProps",
       "ListItemState": "primitives/navigation/ListItem/types/ListItemState",
+      "TabsIndicatorProps": "primitives/navigation/Tabs/types/TabsIndicatorProps",
+      "TabsIndicatorState": "primitives/navigation/Tabs/types/TabsIndicatorState",
       "TabsListProps": "primitives/navigation/Tabs/types/TabsListProps",
+      "TabsListState": "primitives/navigation/Tabs/types/TabsListState",
+      "TabsPanelMetadata": "primitives/navigation/Tabs/types/TabsPanelMetadata",
       "TabsPanelProps": "primitives/navigation/Tabs/types/TabsPanelProps",
+      "TabsPanelState": "primitives/navigation/Tabs/types/TabsPanelState",
+      "TabsRootChangeEventDetails": "primitives/navigation/Tabs/types/TabsRootChangeEventDetails",
+      "TabsRootChangeEventReason": "primitives/navigation/Tabs/types/TabsRootChangeEventReason",
+      "TabsRootOrientation": "primitives/navigation/Tabs/types/TabsRootOrientation",
       "TabsRootProps": "primitives/navigation/Tabs/types/TabsRootProps",
+      "TabsRootState": "primitives/navigation/Tabs/types/TabsRootState",
       "TabsSize": "primitives/navigation/Tabs/types/TabsSize",
-      "TabsTabProps": "primitives/navigation/Tabs/types/TabsTabProps"
+      "TabsTabActivationDirection": "primitives/navigation/Tabs/types/TabsTabActivationDirection",
+      "TabsTabMetadata": "primitives/navigation/Tabs/types/TabsTabMetadata",
+      "TabsTabPosition": "primitives/navigation/Tabs/types/TabsTabPosition",
+      "TabsTabProps": "primitives/navigation/Tabs/types/TabsTabProps",
+      "TabsTabSize": "primitives/navigation/Tabs/types/TabsTabSize",
+      "TabsTabState": "primitives/navigation/Tabs/types/TabsTabState",
+      "TabsTabValue": "primitives/navigation/Tabs/types/TabsTabValue"
     }
   },
   "primitives/surfaces": {

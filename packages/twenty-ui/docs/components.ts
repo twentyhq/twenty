@@ -746,8 +746,9 @@ export const DOCUMENTED_COMPONENTS = [
       active:
         'Highlights the current destination or an action associated with the active tab. Does not change the control role.',
       badge: 'Content following the label and trailing icon, such as a count.',
-      size: 'Padding of the tab content: sm or md.',
+      size: 'Padding of the tab content: sm or md. Explicit size takes precedence over the ButtonGroup size, then sm applies.',
     },
+    propDefaults: { size: 'sm' },
   },
   {
     name: 'AvatarGroup',

@@ -47,7 +47,7 @@ effect within the interaction timeout.
 | `twenty-ui-image-input`          | ImageInput                                                                                                                              |
 | `twenty-ui-list-item`            | ListItem                                                                                                                                |
 | `twenty-ui-settings-row`         | SettingsRow                                                                                                                             |
-| `twenty-ui-tabs`                 | Tabs                                                                                                                                    |
+| `twenty-ui-tabs`                 | Tabs and TabButton                                                                                                                      |
 | `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                         |
 | `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                      |
 | `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                          |
@@ -137,6 +137,27 @@ Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popov
 
 An invisible popup is not a compatibility pass.
 
+Tabs still depends on C05 geometry acceptance for Indicator measurements and
+physical activation direction. The worker lazily requests host snapshots on
+first geometry reads and has no ResizeObserver to remeasure the initial
+Indicator. Its first inactive-tab read returns a zero rectangle while the
+active tab already has a snapshot, so a forward selection initially reports
+`left` instead of `right`. The fixture pins both the zero-width Indicator and
+incorrect initial direction with known-failure assertions while checking
+selection, callback values/reasons, focus, panel relationships and native
+composition. Passing these stories does not establish Indicator visibility or
+physical-direction accuracy in the renderer.
+
+Native anchor Enter activation also remains a separate renderer limitation.
+Base UI recognizes native links by `tagName === 'A'`, while worker refs retain
+the remote element name `HTML-A`. It therefore synthesizes a click in addition
+to the host anchor's native click. The route fixture preserves exact pointer
+counts, pins the observed duplicate Enter callback, and keeps the expected
+single Enter callback as a known-failure assertion. Pointer activation, native
+link attributes, refs, `aria-current`, and disabled callback suppression pass;
+single keyboard activation remains pending renderer integration. Local
+fragment links use `target="_self"` to keep navigation inside the story iframe.
+
 SettingsRow's flat Switch props target the control. Its controlled composition
 uses `nativeButton` and an actual button through `render`, preserving one change
 callback for label and control activation. `labelRender` supplies native label
@@ -208,7 +229,15 @@ worker. `HTMLElement.click()` dispatches a local click, and a click dispatched
 inside the worker on a checkbox or radio input toggles it and fires `input` and
 `change`, which is how Base UI's Switch, Checkbox and Radio variants
 activate. Tabs, SettingsRow, Switch, Checkbox and RadioGroup therefore cover
-activation and disabled items in both runtimes. Events that happen outside the
+activation and disabled items in both runtimes. The Tabs fixture also verifies
+manual focus versus activation, uncontrolled automatic activation, canceled
+changes, disabled skipping, vertical and RTL navigation, looping boundaries,
+panel labeling and mounted-panel hiding, native/render composition and actual
+refs. Default panel IDs preserve automatic tab/panel relationships. Base UI 1.8
+registers a generated panel ID even when an explicit `id` is supplied, so the
+controlled fixture pairs its explicit panel IDs with matching native
+`aria-controls` on each tab. Its TabButton controls retain route links with
+`aria-current` and adjacent button actions without tab-panel semantics. Events that happen outside the
 component never reach the worker, so dismissal on a press elsewhere on the page
 is not covered.
 

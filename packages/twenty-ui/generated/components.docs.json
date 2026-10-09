@@ -5513,6 +5513,39 @@
         ]
       },
       {
+        "name": "Indicator",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: TabsIndicatorState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TabsIndicatorState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "renderBeforeHydration",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to render itself before React hydrates.\nThis minimizes the time that the indicator isn't visible after server-side rendering."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TabsIndicatorState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
         "name": "Panel",
         "props": [
           {
@@ -11402,7 +11435,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Padding of the tab content: sm or md."
+        "description": "Padding of the tab content: sm or md. Explicit size takes precedence over the ButtonGroup size, then sm applies."
       },
       {
         "name": "startIcon",
