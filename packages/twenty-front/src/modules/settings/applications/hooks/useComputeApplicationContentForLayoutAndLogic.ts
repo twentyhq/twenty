@@ -1,3 +1,4 @@
+import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getViewTypeLabel } from '@/views/types/ViewType';
@@ -7,7 +8,7 @@ import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
-import { type ApplicationContentRow } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
+import { type ApplicationContentRow } from '@/settings/applications/types/ApplicationContentRow';
 
 type InstalledApplicationForContent = Pick<Application, 'agents' | 'id'>;
 
@@ -146,9 +147,7 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
         name: agent.label,
         icon: agent.icon ?? undefined,
         secondary: agent.description ?? undefined,
-        link: getSettingsPath(SettingsPath.AiAgentDetail, {
-          agentId: agent.id,
-        }),
+        link: getCoreAgentLink(agent.id),
       }))
     : (manifestContent?.agents ?? []).map((agent) => ({
         key: agent.universalIdentifier,

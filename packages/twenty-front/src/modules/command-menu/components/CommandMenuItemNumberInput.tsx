@@ -1,5 +1,5 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';

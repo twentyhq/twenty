@@ -1,3 +1,6 @@
+import { mergeProps } from '@base-ui/react/merge-props';
+import { type TextInputComponentProps } from '@/ui/input/types/TextInputComponentProps';
+import { type TextInputSize } from '@/ui/input/types/TextInputSize';
 import { AutogrowWrapper } from '@/ui/input/components/internal/AutogrowWrapper/AutogrowWrapper';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -5,17 +8,16 @@ import { isNonEmptyString } from '@sniptt/guards';
 import React, {
   type ChangeEvent,
   type FocusEventHandler,
-  type InputHTMLAttributes,
   forwardRef,
   useId,
   useRef,
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui/icon';
+import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { Field } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { useCombinedRefs } from '~/hooks/useCombinedRefs';
+import { combineRefs } from '~/utils/combineRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { PASSWORD_MANAGER_IGNORE_ATTRIBUTES } from '@/ui/input/constants/PasswordManagerIgnoreAttributes';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
@@ -236,33 +238,6 @@ const StyledTrailingIcon = styled.div<{
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-export type TextInputSize = 'xs' | 'sm' | 'md' | 'lg';
-
-export type TextInputComponentProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'onChange' | 'onKeyDown'
-> & {
-  className?: string;
-  label?: string;
-  onChange?: (text: string) => void;
-  fullWidth?: boolean;
-  error?: string;
-  noErrorHelper?: boolean;
-  RightIcon?: IconComponent;
-  onRightIconClick?: () => void;
-  LeftIcon?: IconComponent;
-  autoGrow?: boolean;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  onBlur?: FocusEventHandler<HTMLInputElement>;
-  dataTestId?: string;
-  sizeVariant?: TextInputSize;
-  inheritFontStyles?: boolean;
-  rightAdornment?: string;
-  leftAdornment?: string;
-  textClickOutsideId?: string;
-  ignorePasswordManagers?: boolean;
-};
-
 type TextInputWithAutoGrowWrapperProps = TextInputComponentProps;
 
 const TextInputComponent = forwardRef<
@@ -303,12 +278,13 @@ const TextInputComponent = forwardRef<
       leftAdornment,
       textClickOutsideId,
       ignorePasswordManagers = false,
+      inputProps,
     },
     ref,
   ) => {
     const theme = useTheme();
     const inputRef = useRef<HTMLInputElement>(null);
-    const combinedRef = useCombinedRefs(ref, inputRef);
+    const combinedRef = combineRefs(ref, inputRef, inputProps?.ref);
 
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -327,7 +303,19 @@ const TextInputComponent = forwardRef<
       onBlur?.(event);
     };
 
-    const instanceId = useId();
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+      onChange?.(turnIntoEmptyStringIfWhitespacesOnly(event.target.value));
+    };
+
+    const mergedInputProps = mergeProps<'input'>(inputProps, {
+      onFocus: handleFocus,
+      onBlur: handleBlur,
+      onKeyDown,
+      onChange: handleChange,
+    });
+
+    const generatedId = useId();
+    const instanceId = inputProps?.id ?? generatedId;
 
     return (
       <Field.Root className={fieldRootClassName}>
@@ -368,34 +356,26 @@ const TextInputComponent = forwardRef<
               // oxlint-disable-next-line react/jsx-props-no-spreading
               {...(ignorePasswordManagers &&
                 PASSWORD_MANAGER_IGNORE_ATTRIBUTES)}
-              ref={combinedRef}
               tabIndex={tabIndex ?? 0}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
               type={passwordVisible ? 'text' : type}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                onChange?.(
-                  turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-                );
-              }}
-              onKeyDown={onKeyDown}
-              {...{
-                autoFocus,
-                disabled,
-                readOnly,
-                placeholder,
-                required,
-                value,
-                LeftIcon,
-                RightIcon,
-                maxLength,
-                error,
-                sizeVariant,
-                inheritFontStyles,
-                autoGrow,
-                leftAdornment,
-                rightAdornment,
-              }}
+              autoFocus={autoFocus}
+              disabled={disabled}
+              readOnly={readOnly}
+              placeholder={placeholder}
+              required={required}
+              value={value}
+              LeftIcon={LeftIcon}
+              RightIcon={RightIcon}
+              maxLength={maxLength}
+              error={error}
+              sizeVariant={sizeVariant}
+              inheritFontStyles={inheritFontStyles}
+              autoGrow={autoGrow}
+              leftAdornment={leftAdornment}
+              rightAdornment={rightAdornment}
+              // oxlint-disable-next-line react/jsx-props-no-spreading
+              {...mergedInputProps}
+              ref={combinedRef}
             />
             {rightAdornment && (
               <StyledAdornmentContainer

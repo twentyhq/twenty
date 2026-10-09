@@ -14,52 +14,69 @@ export class AgentHistoryTransactionService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  run<TResult>(
+  async run<TResult>(
     workspaceId: string,
     work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
   ): Promise<TResult> {
-    return this.storageService.run(workspaceId, (context) =>
-      this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager.runInWorkspaceTransaction(
-            (transactionScope) => {
-              const getRepository = (name: AgentHistoryObjectName) =>
-                transactionScope.getRepository(
-                  name,
-                  { shouldBypassPermissionChecks: true },
-                  { shouldSkipEventEmission: true },
+    const context = this.storageService.getContext(workspaceId);
+
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction(
+          (transactionScope) => {
+            const getRepository = (name: AgentHistoryObjectName) =>
+              transactionScope.getRepository(
+                name,
+                { shouldBypassPermissionChecks: true },
+                { shouldSkipEventEmission: true },
+              );
+
+            return work({
+              insert: async (name, values) => {
+                await getRepository(name).insert(
+                  await addAgentMessageSenderWorkspaceMember({
+                    name,
+                    values,
+                    workspaceId,
+                    context,
+                  }),
                 );
+              },
+              update: async (name, where, values) => {
+                const result = await getRepository(name).update(where, values);
 
-              return work({
-                insert: async (name, values) => {
-                  await getRepository(name).insert(
-                    name === 'agentMessage'
-                      ? await addAgentMessageSenderWorkspaceMember(
-                          values,
-                          workspaceId,
-                          context,
-                        )
-                      : values,
-                  );
-                },
-                update: async (name, where, values) => {
-                  const result = await getRepository(name)
-                    .createQueryBuilder()
-                    .withDeleted()
-                    .where(where)
-                    .update()
-                    .set(values)
-                    .returning(['id'])
-                    .execute();
+                return result.generatedMaps.length;
+              },
+              upsert: async (name, values, conflictPaths) => {
+                // workspace upsert selects before inserting, so concurrent writers of one identity take turns
+                const identity = [...conflictPaths]
+                  .sort()
+                  .map((field) => [field, values[field]]);
 
-                  return result.generatedMaps.length;
-                },
-              });
-            },
-          ),
-        buildSystemAuthContext(workspaceId),
-        { lite: true },
-      ),
+                await transactionScope.executeRawQuery(
+                  'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+                  [
+                    `agent-history-upsert:${workspaceId}:${name}:${JSON.stringify(identity)}`,
+                  ],
+                );
+                await getRepository(name).upsert(
+                  await addAgentMessageSenderWorkspaceMember({
+                    name,
+                    values,
+                    workspaceId,
+                    context,
+                  }),
+                  conflictPaths,
+                );
+              },
+              delete: async (name, where) => {
+                await getRepository(name).delete(where);
+              },
+            });
+          },
+        ),
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
     );
   }
 }

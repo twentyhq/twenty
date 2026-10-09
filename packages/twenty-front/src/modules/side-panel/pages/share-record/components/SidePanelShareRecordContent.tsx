@@ -1,10 +1,6 @@
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 import { useLingui } from '@lingui/react/macro';
-import {
-  RecordSharePrincipalType,
-  RecordShareRowCause,
-} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconLock, IconRefresh, IconUsers } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -28,7 +24,9 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   ObjectSharingReach,
-  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+  RecordSharingMode,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -67,58 +65,60 @@ const StyledRoleAccessNote = styled.div`
 type SidePanelShareRecordContentProps = {
   recordUrl: string;
   objectLabelPlural: string;
+  sharingReach: ObjectSharingReach;
   sharingState: ReturnType<typeof useRecordSharing>;
 };
 
 export const SidePanelShareRecordContent = ({
   recordUrl,
   objectLabelPlural,
+  sharingReach,
   sharingState,
 }: SidePanelShareRecordContentProps) => {
   const { t } = useLingui();
-  const { sharing, loading, error, saving, setShare, refetch } = sharingState;
+  const {
+    sharing,
+    loading,
+    error,
+    saving,
+    setGeneralAccess,
+    setShare,
+    removeShare,
+    refetch,
+  } = sharingState;
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { copyToClipboard } = useCopyToClipboard();
-  const shares = sharing?.shares ?? [];
-  const hasManagedWorkspaceAccess = shares.some(
-    (share) =>
-      share.principalType === RecordSharePrincipalType.EVERYONE &&
-      share.rowCause !== RecordShareRowCause.MANUAL,
-  );
-  const canChangeSharing =
-    sharing?.viewerAccessLevel === RecordShareAccessLevel.FULL &&
-    sharing.permissions.canUpdate;
-  const recipients = shares
-    .filter(
-      (share) => share.principalType !== RecordSharePrincipalType.EVERYONE,
-    )
-    .map((share) => {
-      const isRole = share.principalType === RecordSharePrincipalType.ROLE;
+  const canManageSharing = sharing?.canManageSharing ?? false;
+  const roles = sharing?.roles ?? [];
+  const recipients = (sharing?.shares ?? []).map((share) => {
+    const isRole = share.principalType === RecordSharePrincipalType.ROLE;
+    const principalRoleId = isRole ? share.principalId : share.principalRoleId;
 
-      return {
+    return {
+      share,
+      label: getRecordShareLabel({
         share,
-        label: getRecordShareLabel({
-          share,
-          member: currentWorkspaceMembers.find(
-            (member) => member.id === share.principalId,
-          ),
-          role: sharing?.roles.find((role) => role.id === share.principalId),
-          currentWorkspaceMember,
-        }),
-        Icon: isRole ? IconLock : IconUsers,
-        principal: isRole
-          ? { roleId: share.principalId }
-          : { workspaceMemberId: share.principalId },
-        isEditable: share.rowCause === RecordShareRowCause.MANUAL,
-      };
-    });
+        member: currentWorkspaceMembers.find(
+          (member) => member.id === share.principalId,
+        ),
+        role: roles.find((role) => role.id === share.principalId),
+        currentWorkspaceMember,
+      }),
+      Icon: isRole ? IconLock : IconUsers,
+      principal: isRole
+        ? { roleId: share.principalId }
+        : { workspaceMemberId: share.principalId },
+      principalRole: roles.find((role) => role.id === principalRoleId),
+      isEditable: share.rowCause === RecordShareRowCause.MANUAL,
+    };
+  });
 
   const selectableItemIds = isDefined(error)
     ? [RETRY_ITEM_ID]
-    : canChangeSharing
+    : canManageSharing
       ? [
           ADD_PEOPLE_ITEM_ID,
           GENERAL_ACCESS_ITEM_ID,
@@ -153,7 +153,7 @@ export const SidePanelShareRecordContent = ({
             </>
           ) : (
             isDefined(sharing) &&
-            (canChangeSharing ? (
+            (canManageSharing ? (
               <>
                 <SidePanelShareRecordAddPeopleItem
                   itemId={ADD_PEOPLE_ITEM_ID}
@@ -165,19 +165,29 @@ export const SidePanelShareRecordContent = ({
                   <SidePanelShareRecordGeneralAccessItem
                     itemId={GENERAL_ACCESS_ITEM_ID}
                     generalAccessLevel={sharing.generalAccessLevel}
-                    isOpenByDefault={sharing.isOpenByDefault}
-                    hasManagedWorkspaceAccess={hasManagedWorkspaceAccess}
+                    defaultGeneralAccessLevel={
+                      sharing.defaultGeneralAccessLevel
+                    }
+                    hasManagedGeneralAccess={sharing.hasManagedGeneralAccess}
                     objectLabelPlural={objectLabelPlural}
                     saving={saving}
-                    setShare={setShare}
+                    setGeneralAccess={setGeneralAccess}
                   />
                 </SidePanelGroup>
                 <SidePanelGroup heading={t`People and roles with access`}>
                   {recipients.map(
-                    ({ share, label, Icon, principal, isEditable }) => {
+                    ({
+                      share,
+                      label,
+                      Icon,
+                      principal,
+                      principalRole,
+                      isEditable,
+                    }) => {
                       const roleAccessNote = getRecordShareRoleAccessNote({
-                        share,
-                        sharingReach: sharing.sharingReach,
+                        accessLevel: share.accessLevel,
+                        principalRole,
+                        sharingReach,
                         objectLabelPlural,
                       });
 
@@ -196,14 +206,10 @@ export const SidePanelShareRecordContent = ({
                               <RecordSharingAccessLevelOptions
                                 value={share.accessLevel}
                                 onChange={(accessLevel) => {
-                                  void setShare({
-                                    principal,
-                                    enabled: true,
-                                    accessLevel,
-                                  });
+                                  void setShare({ principal, accessLevel });
                                 }}
                                 onRemove={() => {
-                                  void setShare({ principal, enabled: false });
+                                  void removeShare({ principal });
                                 }}
                               />
                             </SidePanelShareRecordDropdownItem>
@@ -232,20 +238,22 @@ export const SidePanelShareRecordContent = ({
                   )}
                 </SidePanelGroup>
                 <StyledDescription>
-                  {hasManagedWorkspaceAccess
+                  {sharing.hasManagedGeneralAccess
                     ? t`Workspace access is also managed by an application.`
-                    : sharing.hasInheritedAccess
+                    : sharing.sharingMode === RecordSharingMode.INHERITED
                       ? t`Access is also inherited from related records.`
-                      : sharing.sharingReach === ObjectSharingReach.WORKSPACE
+                      : sharingReach === ObjectSharingReach.WORKSPACE
                         ? t`People you add get this record even if their role can't access ${objectLabelPlural}. Field permissions still apply.`
                         : t`Role and field permissions still apply.`}
                 </StyledDescription>
               </>
             ) : (
               <StyledDescription>
-                {sharing.isOpenByDefault
-                  ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
-                  : t`Only the creator of this record and people with full access to it can change who has access.`}
+                {sharing.sharingMode === RecordSharingMode.ROLE_ONLY
+                  ? t`Access to ${objectLabelPlural} is set by roles, not record by record.`
+                  : sharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT
+                    ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
+                    : t`Only the creator of this record and people with full access to it can change who has access.`}
               </StyledDescription>
             ))
           )}

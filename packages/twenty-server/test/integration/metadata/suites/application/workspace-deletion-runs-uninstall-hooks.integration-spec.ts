@@ -1,3 +1,4 @@
+import { HTTPMethod } from 'twenty-shared/types';
 import { randomUUID } from 'crypto';
 
 import { activateWorkspace } from 'test/integration/graphql/utils/activate-workspace.util';
@@ -51,7 +52,7 @@ const buildManifestWithUninstallHook = ({
         builtHandlerChecksum: 'checksum-cleanup',
         httpRouteTriggerSettings: {
           path: '/cleanup',
-          httpMethod: 'POST',
+          httpMethod: HTTPMethod.POST,
           isAuthRequired: true,
         },
       },

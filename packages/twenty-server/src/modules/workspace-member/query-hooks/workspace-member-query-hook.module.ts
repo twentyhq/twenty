@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
@@ -18,6 +16,7 @@ import { WorkspaceMemberDestroyOnePreQueryHook } from 'src/modules/workspace-mem
 import { WorkspaceMemberRestoreManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-restore-many.pre-query.hook';
 import { WorkspaceMemberRestoreOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-restore-one.pre-query.hook';
 import { WorkspaceMemberUpdateManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-update-many.pre-query.hook';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   providers: [
@@ -33,12 +32,11 @@ import { WorkspaceMemberUpdateManyPreQueryHook } from 'src/modules/workspace-mem
     WorkspaceMemberUpdateManyPreQueryHook,
   ],
   imports: [
-    CoreEntityCacheModule,
-    FeatureFlagModule,
     UserWorkspaceModule,
     ConnectedAccountMetadataModule,
     RecordShareOwnershipTransferModule,
     AgentHistoryModule,
+    WorkspaceCacheModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
 })

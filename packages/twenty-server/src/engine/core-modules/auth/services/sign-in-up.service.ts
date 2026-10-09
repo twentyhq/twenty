@@ -33,7 +33,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
   PASSWORD_REGEX,
-  compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-organization-key.constants';
@@ -179,26 +178,6 @@ export class SignInUpService {
     return await hashPassword(password);
   }
 
-  async validatePassword({
-    password,
-    passwordHash,
-  }: {
-    password: string;
-    passwordHash: string;
-  }) {
-    const isValid = await compareHash(password, passwordHash);
-
-    if (!isValid) {
-      throw new AuthException(
-        'Wrong password',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        {
-          userFriendlyMessage: msg`Wrong password`,
-        },
-      );
-    }
-  }
-
   private async signInUpWithPersonalInvitation(
     params: {
       invitation: AppTokenEntity;
@@ -328,7 +307,6 @@ export class SignInUpService {
         user,
         workspace: params.workspace,
         shouldShowConnectAccountStep: true,
-        shouldShowInstallAppsStep: false,
       });
 
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
@@ -361,12 +339,10 @@ export class SignInUpService {
       user,
       workspace,
       shouldShowConnectAccountStep,
-      shouldShowInstallAppsStep,
     }: {
       user: Pick<UserEntity, 'id' | 'firstName' | 'lastName'>;
       workspace: WorkspaceEntity;
       shouldShowConnectAccountStep: boolean;
-      shouldShowInstallAppsStep: boolean;
     },
     queryRunner?: QueryRunner,
   ) {
@@ -389,17 +365,6 @@ export class SignInUpService {
       },
       queryRunner,
     );
-
-    if (shouldShowInstallAppsStep) {
-      await this.onboardingService.setOnboardingInstallAppsPending(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          value: true,
-        },
-        queryRunner,
-      );
-    }
   }
 
   private async saveNewUser(
@@ -784,7 +749,6 @@ export class SignInUpService {
               user,
               workspace,
               shouldShowConnectAccountStep: true,
-              shouldShowInstallAppsStep: true,
             },
             queryRunner,
           );

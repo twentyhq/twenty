@@ -36,21 +36,17 @@ describe('sendInboxMessage', () => {
     );
 
     const input = {
-      workspaceMemberId: 'member-1',
+      workspaceMemberIds: ['member-1'],
       threadKey: 'first-call-recording',
       idempotencyKey: 'first-call-recording',
       title: 'Your first recording is ready',
       text: 'Your call was recorded.',
       toolCall: {
-        toolName: 'ask_questions' as const,
+        toolName: 'ask_question' as const,
         input: {
-          questions: [
-            {
-              header: 'Share',
-              question: 'Share the recording with the attendees?',
-              options: [{ label: 'Draft an email' }, { label: 'Not now' }],
-            },
-          ],
+          header: 'Share',
+          question: 'Share the recording with the attendees?',
+          options: [{ label: 'Draft an email' }, { label: 'Not now' }],
         },
       },
     };
@@ -87,7 +83,7 @@ describe('sendInboxMessage', () => {
 
     await expect(
       sendInboxMessage({
-        workspaceMemberId: 'member-1',
+        workspaceMemberIds: ['member-1'],
         threadKey: 'thread',
         idempotencyKey: 'key',
         title: 'Title',

@@ -115,6 +115,7 @@ export const useRecordGroupActions = ({
         !isCurrentRecordGroupNotFound &&
         currentIndex < visibleRecordGroupIds.length - 1,
       position: 1,
+      closeOnClick: false,
       callback: () =>
         reorderRecordGroups({
           fromIndex: currentIndex,
@@ -127,6 +128,7 @@ export const useRecordGroupActions = ({
       icon: IconArrowLeft,
       condition: !isCurrentRecordGroupNotFound && currentIndex > 0,
       position: 2,
+      closeOnClick: false,
       callback: () =>
         reorderRecordGroups({
           fromIndex: currentIndex,

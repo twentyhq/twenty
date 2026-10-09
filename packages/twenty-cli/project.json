@@ -1,0 +1,39 @@
+{
+  "name": "twenty-cli",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-cli/src",
+  "projectType": "application",
+  "tags": ["scope:cli"],
+  "implicitDependencies": ["twenty-sdk"],
+  "targets": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-cli",
+        "command": "node dist/cli.cjs"
+      }
+    },
+    "typecheck": {},
+    "lint": {},
+    "test:package": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "cache": false,
+      "options": {
+        "command": "node --test packages/twenty-cli/scripts/test-check-publish.mjs packages/twenty-cli/scripts/test-template-lock.mjs packages/twenty-cli/scripts/test-package.mjs"
+      }
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "config": "{projectRoot}/vitest.config.ts"
+      }
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { randomUUID } from 'node:crypto';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -12,6 +13,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import {
   type WorkflowAction,
+  type WorkflowAiAgentAction,
   type WorkflowEmptyAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -20,15 +22,19 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import { type DeleteWorkflowRunsDeferredActionHandlerWorkspaceService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/delete-workflow-runs-deferred-action-handler.workspace-service';
 
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
+import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 
 import { type AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
@@ -365,10 +371,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     'bills the core-owned spender mapping (mirrorless=%s)',
     async (mirrorless) => {
       const fixture = await createFixture({ mirrorless });
-      const consume = jest.spyOn(
-        global.workflowTestServices.quota,
-        'consumeQuota',
-      );
+      const charge = jest.spyOn(global.workflowTestServices.quota, 'charge');
 
       await waitForRun(await runFixture(fixture), 'COMPLETED');
 
@@ -377,15 +380,17 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         [workspaceId],
       );
 
-      expect(consume).toHaveBeenCalledWith(
-        expect.objectContaining({
-          workspaceId,
-          spenders: {
-            workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
-            applicationId: workspace.workspaceCustomApplicationId,
-          },
-        }),
-      );
+      expect(charge).toHaveBeenCalledWith({
+        workspaceId,
+        events: [
+          expect.objectContaining({
+            spenders: {
+              workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
+              applicationId: workspace.workspaceCustomApplicationId,
+            },
+          }),
+        ],
+      });
     },
   );
 
@@ -740,8 +745,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       await waitForStep(runId, form.id, 'PENDING');
       await migratePendingRun(fixture, runId);
       await clearDefinitions(fixture);
-      const response = await answerToolCall({
-        toolCall: { workflowRunId: runId, stepId: form.id },
+      const response = await submitFormStep({
+        workflowRunId: runId,
+        stepId: form.id,
         response: { answer: 'From the stored form' },
       });
 
@@ -779,43 +785,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     runId: string;
     stepId: string;
     answer: string;
-  }) =>
-    answerToolCall({
-      toolCall: { workflowRunId: runId, stepId },
-      response: { answer },
-    });
+  }) => submitFormStep({ workflowRunId: runId, stepId, response: { answer } });
 
-  describe('the conversation a form step records', () => {
-    const approvalForm = (nextStepIds: string[]): WorkflowAction => ({
-      ...formStep(nextStepIds),
-      name: 'Approve the discount',
-    });
-
-    const getFormConversation = async (runId: string, stepId: string) => {
-      const threadId = (await getRun(runId)).state.stepInfos[stepId].threadId;
-      const [thread] = await global.testDataSource.query(
-        `SELECT title, "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
-        [threadId],
-      );
-      const [part] = await global.testDataSource.query(
-        `SELECT part."toolName", part."toolInput", part."toolOutput" FROM "${schema}"."agentMessagePart" part JOIN "${schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1 AND part."toolCallId" = $2`,
-        [threadId, stepId],
-      );
-
-      return {
-        threadId,
-        title: thread?.title,
-        isWaiting: isDefined(thread?.pendingQuestionMessageId),
-        toolName: part?.toolName,
-        toolInput: part?.toolInput,
-        status: part?.toolOutput?.result?.status,
-        values: part?.toolOutput?.result?.values,
-      };
-    };
-
-    it('asks for the fields in a request_form call while the form waits, and records the answer on submit', async () => {
+  describe('submitting a form step', () => {
+    it('waits without a conversation and completes with the submitted values', async () => {
       const finalStep = emptyStep();
-      const form = approvalForm([finalStep.id]);
+      const form = formStep([finalStep.id]);
       const fixture = await createFixture({
         mirrorless: true,
         steps: [form, finalStep],
@@ -824,13 +799,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       await waitForStep(runId, form.id, 'PENDING');
 
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        title: 'Approve the discount',
-        isWaiting: true,
-        toolName: 'request_form',
-        toolInput: { fields: form.settings.input },
-        status: 'pending',
-      });
+      expect((await getRun(runId)).state.stepInfos[form.id].threadId).toBe(
+        undefined,
+      );
 
       const response = await submitForm({
         runId,
@@ -839,18 +810,17 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
 
       expect(response.body.errors).toBeUndefined();
-      await waitForRun(runId, 'COMPLETED');
 
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        isWaiting: false,
-        status: 'answered',
-        values: { answer: 'Approved' },
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[form.id].result).toEqual({
+        answer: 'Approved',
       });
     });
 
-    it('refuses a submission whose answer cannot be recorded, leaving the form waiting', async () => {
+    it('refuses values for fields the form does not have', async () => {
       const finalStep = emptyStep();
-      const form = approvalForm([finalStep.id]);
+      const form = formStep([finalStep.id]);
       const fixture = await createFixture({
         mirrorless: true,
         steps: [form, finalStep],
@@ -859,40 +829,21 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       await waitForStep(runId, form.id, 'PENDING');
 
-      const recordToolCallAnswer = jest
-        .spyOn(
-          getAppProviderByClassName<AgentChatService>('AgentChatService'),
-          'recordToolCallAnswer',
-        )
-        .mockRejectedValueOnce(new Error('Answer write failed'));
-
-      const refused = await submitForm({
-        runId,
+      const refused = await submitFormStep({
+        workflowRunId: runId,
         stepId: form.id,
-        answer: 'Approved',
+        response: { unknownField: 'Approved' },
       });
-
-      recordToolCallAnswer.mockRestore();
 
       expect(refused.body.errors).toBeDefined();
       expect((await getRun(runId)).state.stepInfos[form.id].status).toBe(
         'PENDING',
       );
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        isWaiting: true,
-        status: 'pending',
-      });
-
-      expect(
-        (await submitForm({ runId, stepId: form.id, answer: 'Approved' })).body
-          .errors,
-      ).toBeUndefined();
-      await waitForRun(runId, 'COMPLETED');
     });
 
     it('refuses a second submission and keeps the first answer', async () => {
       const finalStep = emptyStep();
-      const form = approvalForm([finalStep.id]);
+      const form = formStep([finalStep.id]);
       const fixture = await createFixture({
         mirrorless: true,
         steps: [form, finalStep],
@@ -917,19 +868,16 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
 
       expect(JSON.stringify(second.body.errors)).toContain(
-        'TOOL_CALL_NOT_PENDING',
+        'no longer waiting for an answer',
       );
       expect((await getRun(runId)).state.stepInfos[form.id].result).toEqual({
         answer: 'Approved',
       });
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        values: { answer: 'Approved' },
-      });
     });
 
-    it('records a conversation for each iteration of a form inside a loop', async () => {
+    it('takes a submission for each iteration of a form inside a loop', async () => {
       const afterLoop = emptyStep();
-      const form = approvalForm([]);
+      const form = formStep([]);
       const iterator: WorkflowAction = {
         ...emptyStep(),
         type: WorkflowActionType.ITERATOR,
@@ -953,11 +901,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       await waitForStep(runId, form.id, 'PENDING');
 
-      const { threadId: firstThreadId } = await getFormConversation(
-        runId,
-        form.id,
-      );
-
       const first = await submitForm({
         runId,
         stepId: form.id,
@@ -967,14 +910,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(first.body.errors).toBeUndefined();
       await waitForStep(runId, form.id, 'PENDING');
 
-      const secondConversation = await getFormConversation(runId, form.id);
-
-      expect(secondConversation.threadId).not.toBe(firstThreadId);
-      expect(secondConversation).toMatchObject({
-        isWaiting: true,
-        status: 'pending',
-      });
-
       const second = await submitForm({
         runId,
         stepId: form.id,
@@ -982,15 +917,17 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
 
       expect(second.body.errors).toBeUndefined();
-      await waitForRun(runId, 'COMPLETED');
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        values: { answer: 'Second item' },
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[form.id].result).toEqual({
+        answer: 'Second item',
       });
     });
 
-    it('closes the call when its run ends before anyone answers', async () => {
+    it('refuses a submission once its run ended', async () => {
       const finalStep = emptyStep();
-      const form = approvalForm([finalStep.id]);
+      const form = formStep([finalStep.id]);
       const fixture = await createFixture({
         mirrorless: true,
         steps: [form, finalStep],
@@ -1006,10 +943,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       expect(response.body.errors).toBeUndefined();
       await waitForRun(runId, 'STOPPED');
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        isWaiting: false,
-        status: 'skipped',
-      });
 
       const late = await submitForm({
         runId,
@@ -1018,7 +951,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
 
       expect(JSON.stringify(late.body.errors)).toContain(
-        'TOOL_CALL_NOT_PENDING',
+        'no longer waiting for an answer',
       );
 
       const run = await getRun(runId);
@@ -1052,7 +985,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
 
     expect(JSON.stringify(response.body.errors)).toContain(
-      'TOOL_CALL_NOT_PENDING',
+      'no longer waiting for an answer',
     );
     expect((await getRun(runId)).state.stepInfos[form.id].status).toBe(
       'PENDING',
@@ -1060,15 +993,13 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   });
 
   describe('an agent step that asks a question', () => {
-    const QUESTIONS = [
-      {
-        header: 'Quote',
-        question: 'Send the quote to the customer?',
-        options: [{ label: 'Send it' }, { label: 'Hold it' }],
-      },
-    ];
+    const QUESTION = {
+      header: 'Quote',
+      question: 'Send the quote to the customer?',
+      options: [{ label: 'Send it' }, { label: 'Hold it' }],
+    };
 
-    const agentStep = (nextStepIds: string[]): WorkflowAction =>
+    const agentStep = (nextStepIds: string[]): WorkflowAiAgentAction =>
       ({
         ...emptyStep(),
         name: 'Draft the quote',
@@ -1076,9 +1007,13 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         nextStepIds,
         settings: {
           ...settings,
-          input: { prompt: 'Draft the quote', canAskQuestions: true },
+          input: {
+            prompt: 'Draft the quote',
+            humanInputInstructions: 'Ask before choosing a plan.',
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          },
         },
-      }) as WorkflowAction;
+      }) as WorkflowAiAgentAction;
 
     const agentResult = (
       overrides: Partial<AgentExecutionResult>,
@@ -1101,19 +1036,19 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
             {
               type: 'tool-call',
               toolCallId: 'ask-1',
-              toolName: 'ask_questions',
-              input: { questions: QUESTIONS },
+              toolName: 'ask_question',
+              input: QUESTION,
             },
             {
               type: 'tool-result',
               toolCallId: 'ask-1',
-              toolName: 'ask_questions',
-              input: { questions: QUESTIONS },
+              toolName: 'ask_question',
+              input: QUESTION,
               output: {
                 success: true,
                 message:
-                  'Questions presented to the user; awaiting their answer.',
-                result: { questions: QUESTIONS, status: 'pending' },
+                  'Question presented to the user; awaiting their answer.',
+                result: { question: QUESTION, status: 'pending' },
               },
             },
           ],
@@ -1145,7 +1080,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         [threadId],
       );
       const parts = await global.testDataSource.query(
-        `SELECT part."toolCallId", part."toolOutput" FROM "${schema}"."agentMessagePart" part JOIN "${schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1 AND part."toolName" = 'ask_questions' ORDER BY part."toolCallId"`,
+        `SELECT part."toolCallId", part."toolOutput" FROM "${schema}"."agentMessagePart" part JOIN "${schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1 AND part."toolName" = 'ask_question' ORDER BY part."toolCallId"`,
         [threadId],
       );
 
@@ -1158,7 +1093,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           }) => ({
             toolCallId: part.toolCallId,
             status: part.toolOutput.result.status,
-            answers: part.toolOutput.result.answers,
+            answer: part.toolOutput.result.answer,
           }),
         ),
       };
@@ -1184,7 +1119,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const fixture = await createFixture({ steps: [agent, finalStep] });
       const runId = await runFixture(fixture);
       const run = await waitForStep(runId, agent.id, 'PENDING');
-      const threadId: string = run.state.stepInfos[agent.id].threadId;
+      const threadId: string = run.stepLogs[agent.id].details.threadId;
 
       return { runId, agent, finalStep, threadId };
     };
@@ -1198,12 +1133,25 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }) =>
       answerToolCall({
         toolCall: { threadId, toolCallId },
-        response: {
-          answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
-        },
+        response: { selectedOptionIndices: [0] },
       });
 
-    it('records no conversation for an agent that answers without asking', async () => {
+    const getInboxState = async (threadId: string) => {
+      const [state] = await global.testDataSource.query(
+        `SELECT thread."workspaceMemberId", thread."lastMessageText",
+           participant."archivedAt" IS NOT NULL AS "isArchived",
+           thread."lastActivityAt" > participant."archivedAt" AS "isBackInInbox"
+         FROM "${schema}"."agentChatThread" thread
+         LEFT JOIN "${schema}"."agentChatThreadParticipant" participant
+           ON participant."threadId" = thread.id AND participant."workspaceMemberId" = thread."workspaceMemberId"
+         WHERE thread.id = $1`,
+        [threadId],
+      );
+
+      return state;
+    };
+
+    it('records the conversation of an agent that answers without asking, filed under done', async () => {
       jest
         .spyOn(
           getAppProviderByClassName<AgentAsyncExecutorService>(
@@ -1218,22 +1166,290 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const runId = await runFixture(fixture);
 
       const run = await waitForRun(runId, 'COMPLETED');
+      const threadId: string = run.stepLogs[agent.id].details.threadId;
 
       expect(run.state.stepInfos[agent.id]).toMatchObject({
         status: 'SUCCESS',
         result: { response: 'Quote sent' },
       });
-      expect(run.state.stepInfos[agent.id].threadId).toBeUndefined();
-
-      const threads = await global.testDataSource.query(
-        `SELECT id FROM "${schema}"."agentChatThread" WHERE "workflowRunId" = $1`,
-        [runId],
-      );
-
-      expect(threads).toEqual([]);
+      expect(await getInboxState(threadId)).toMatchObject({
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        isArchived: true,
+        isBackInInbox: false,
+      });
+      expect(
+        (await getConversation(threadId)).messages.map(
+          ({ role }: { role: string }) => role,
+        ),
+      ).toEqual(['user', 'assistant']);
     });
 
-    it('pauses the run on the question and resumes the same conversation with the answer', async () => {
+    it('keeps the usage and the conversation in the step log when its tool calls outgrow it', async () => {
+      const largeOutput = 'x'.repeat(64_000);
+      const toolCallIds = ['find-1', 'find-2', 'find-3', 'find-4', 'find-5'];
+
+      jest
+        .spyOn(
+          getAppProviderByClassName<AgentAsyncExecutorService>(
+            'AgentAsyncExecutorService',
+          ),
+          'executeAgent',
+        )
+        .mockResolvedValueOnce(
+          agentResult({
+            result: { response: 'Quote sent' },
+            steps: [
+              {
+                content: toolCallIds.flatMap((toolCallId) => [
+                  {
+                    type: 'tool-call',
+                    toolCallId,
+                    toolName: 'find_companies',
+                    input: {},
+                  },
+                  {
+                    type: 'tool-result',
+                    toolCallId,
+                    toolName: 'find_companies',
+                    input: {},
+                    output: { success: true, result: largeOutput },
+                  },
+                ]),
+              },
+            ] as AgentExecutionResult['steps'],
+          }),
+        );
+      const finalStep = emptyStep();
+      const agent = agentStep([finalStep.id]);
+      const fixture = await createFixture({ steps: [agent, finalStep] });
+      const runId = await runFixture(fixture);
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.stepLogs[agent.id]).toMatchObject({
+        details: {
+          type: 'AI_AGENT',
+          usage: { totalTokens: 2 },
+          toolCalls: [],
+          threadId: expect.any(String),
+        },
+        truncated: { droppedEntries: toolCallIds.length },
+      });
+    });
+
+    it('continues the conversation its key names across runs', async () => {
+      const executeAgent = jest
+        .spyOn(
+          getAppProviderByClassName<AgentAsyncExecutorService>(
+            'AgentAsyncExecutorService',
+          ),
+          'executeAgent',
+        )
+        .mockResolvedValueOnce(replyingResult)
+        .mockResolvedValueOnce(replyingResult);
+      const agent = {
+        ...agentStep([]),
+        settings: {
+          ...agentStep([]).settings,
+          input: {
+            ...agentStep([]).settings.input,
+            conversation: { scope: 'KEY', key: 'quotes' },
+          },
+        },
+      } as WorkflowAction;
+      const fixture = await createFixture({ steps: [agent] });
+
+      const firstRun = await waitForRun(await runFixture(fixture), 'COMPLETED');
+      const secondRun = await waitForRun(
+        await runFixture(fixture),
+        'COMPLETED',
+      );
+      const threadId: string = firstRun.stepLogs[agent.id].details.threadId;
+
+      expect(secondRun.stepLogs[agent.id].details.threadId).toBe(threadId);
+      expect(executeAgent.mock.calls[0][0].priorMessages).toEqual([]);
+      expect(
+        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
+      ).toContain('Quote sent');
+    });
+
+    it("routes the waiting conversation to the workflow creator's inbox when the step names no recipient", async () => {
+      mockAgent();
+      const [creator] = await global.testDataSource.query(
+        `SELECT membership.id AS "userWorkspaceId", member.id AS "workspaceMemberId"
+         FROM core."userWorkspace" membership
+         JOIN "${schema}"."workspaceMember" member ON member."userId" = membership."userId"
+         WHERE membership."workspaceId" = $1 AND membership."deletedAt" IS NULL AND member.id = $2`,
+        [workspaceId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      );
+      const agent = {
+        ...agentStep([]),
+        settings: {
+          ...agentStep([]).settings,
+          input: {
+            ...agentStep([]).settings.input,
+            workspaceMemberId: undefined,
+          },
+        },
+      } as WorkflowAction;
+      const fixture = await createFixture({ steps: [agent] });
+
+      await global.testDataSource.query(
+        `UPDATE core.workflow SET "createdByUserWorkspaceId" = $1 WHERE id = $2`,
+        [creator.userWorkspaceId, fixture.coreWorkflowId],
+      );
+
+      const runId = await runFixture(fixture);
+      const run = await waitForStep(runId, agent.id, 'PENDING');
+      const threadId: string = run.stepLogs[agent.id].details.threadId;
+
+      expect(await getInboxState(threadId)).toMatchObject({
+        workspaceMemberId: creator.workspaceMemberId,
+        lastMessageText: agent.name,
+        isArchived: true,
+        isBackInInbox: true,
+      });
+
+      const readByAnotherMember = await request(`http://localhost:${APP_PORT}`)
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `query ReadRunConversation($threadId: UUID!) { chatMessages(threadId: $threadId) { role } }`,
+          variables: { threadId },
+        });
+
+      expect(readByAnotherMember.body.errors).toBeDefined();
+    });
+
+    it('keeps the conversation of a workflow without a member creator off every inbox', async () => {
+      mockAgent();
+      const agent = {
+        ...agentStep([]),
+        settings: {
+          ...agentStep([]).settings,
+          input: {
+            ...agentStep([]).settings.input,
+            workspaceMemberId: undefined,
+          },
+        },
+      } as WorkflowAction;
+      const fixture = await createFixture({ steps: [agent] });
+
+      await global.testDataSource.query(
+        `UPDATE core.workflow SET "createdByUserWorkspaceId" = NULL WHERE id = $1`,
+        [fixture.coreWorkflowId],
+      );
+
+      const runId = await runFixture(fixture);
+      const run = await waitForStep(runId, agent.id, 'PENDING');
+      const threadId: string = run.stepLogs[agent.id].details.threadId;
+      const [conversation] = await global.testDataSource.query(
+        `SELECT "workspaceMemberId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        [threadId],
+      );
+
+      expect(conversation.workspaceMemberId).toBeNull();
+    });
+
+    it('keeps a question waiting when it is answered before its step is marked as waiting', async () => {
+      mockAgent();
+      const { runId, agent, threadId } = await startAskingRun();
+      const setStepStatus = (status: string) =>
+        global.testDataSource.query(
+          `UPDATE "${schema}"."workflowRun" SET state = jsonb_set(state, ARRAY['stepInfos', $2::text, 'status'], to_jsonb($3::text)) WHERE id = $1`,
+          [runId, agent.id, status],
+        );
+
+      await setStepStatus('RUNNING');
+
+      const earlyAnswer = await answer({ threadId });
+
+      expect(JSON.stringify(earlyAnswer.body.errors)).toContain(
+        'TOOL_CALL_NOT_PENDING',
+      );
+      expect(await getToolCalls(threadId)).toEqual({
+        isWaiting: true,
+        calls: [{ toolCallId: 'ask-1', status: 'pending' }],
+      });
+
+      await setStepStatus('PENDING');
+
+      expect((await answer({ threadId })).body.errors).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+    });
+
+    it('retries a step whose agent failed after its answer in the same conversation, which holds the answer', async () => {
+      const executeAgent = jest
+        .spyOn(
+          getAppProviderByClassName<AgentAsyncExecutorService>(
+            'AgentAsyncExecutorService',
+          ),
+          'executeAgent',
+        )
+        .mockResolvedValueOnce(askingResult)
+        .mockRejectedValueOnce(new Error('The model is overloaded'))
+        .mockResolvedValueOnce(replyingResult);
+      const agent = {
+        ...agentStep([]),
+        settings: {
+          ...agentStep([]).settings,
+          errorHandlingOptions: {
+            retryOnFailure: { value: 1 },
+            continueOnFailure: { value: false },
+          },
+        },
+      } as WorkflowAction;
+      const fixture = await createFixture({ steps: [agent] });
+      const runId = await runFixture(fixture);
+      const pausedRun = await waitForStep(runId, agent.id, 'PENDING');
+      const threadId: string = pausedRun.stepLogs[agent.id].details.threadId;
+
+      expect((await answer({ threadId })).body.errors).toBeUndefined();
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+      });
+      expect(run.stepLogs[agent.id].details.threadId).toBe(threadId);
+      expect(executeAgent).toHaveBeenCalledTimes(3);
+      expect(executeAgent.mock.calls[2][0].messages).toEqual([
+        { role: 'user', content: 'Draft the quote' },
+      ]);
+      expect(
+        JSON.stringify(executeAgent.mock.calls[2][0].priorMessages),
+      ).toContain('Send it');
+      expect(await getToolCalls(threadId)).toMatchObject({
+        isWaiting: false,
+        calls: [{ toolCallId: 'ask-1', status: 'answered' }],
+      });
+    });
+
+    it('still waits on the question when its conversation cannot be surfaced in the inbox', async () => {
+      mockAgent();
+      const recordThreadActivity = jest
+        .spyOn(
+          getAppProviderByClassName<AgentChatThreadService>(
+            'AgentChatThreadService',
+          ),
+          'recordThreadActivity',
+        )
+        .mockRejectedValueOnce(new Error('Database unavailable'));
+
+      try {
+        const { runId, threadId } = await startAskingRun();
+
+        expect(await getToolCalls(threadId)).toMatchObject({
+          isWaiting: true,
+        });
+        expect((await answer({ threadId })).body.errors).toBeUndefined();
+        await waitForRun(runId, 'COMPLETED');
+      } finally {
+        recordThreadActivity.mockRestore();
+      }
+    });
+
+    it('pauses the run on the question and lets the engine continue the agent, without running the step again', async () => {
       const executeAgent = mockAgent();
       const { runId, agent, finalStep, threadId } = await startAskingRun();
 
@@ -1255,16 +1471,17 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(run.state.stepInfos[agent.id]).toMatchObject({
         status: 'SUCCESS',
         result: { response: 'Quote sent' },
+      });
+      expect(run.stepLogs[agent.id].details).toMatchObject({
         threadId,
+        usage: { totalTokens: 4 },
       });
       expect(run.state.stepInfos[finalStep.id].status).toBe('SUCCESS');
 
       const resumedWith = executeAgent.mock.calls[1][0];
 
       expect(resumedWith.messages).toEqual([]);
-      expect(JSON.stringify(resumedWith.priorModelMessages)).toContain(
-        'Send it',
-      );
+      expect(JSON.stringify(resumedWith.priorMessages)).toContain('Send it');
 
       const { messages, questionPart } = await getConversation(threadId);
 
@@ -1275,7 +1492,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           {
             toolCallId: 'ask-1',
             status: 'answered',
-            answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+            answer: { selectedOptionIndices: [0] },
           },
         ],
       });
@@ -1304,23 +1521,144 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ]);
     });
 
+    it('continues an agent that paused on a wait once its wake-up resolves, without running the step again', async () => {
+      const resumeAt = new Date(Date.now() + 1_000).toISOString();
+      const executeAgent = jest
+        .spyOn(
+          getAppProviderByClassName<AgentAsyncExecutorService>(
+            'AgentAsyncExecutorService',
+          ),
+          'executeAgent',
+        )
+        .mockResolvedValueOnce(
+          agentResult({
+            isPaused: true,
+            steps: [
+              {
+                content: [
+                  {
+                    type: 'tool-call',
+                    toolCallId: 'wait-1',
+                    toolName: 'wait_for_duration',
+                    input: { durationInMinutes: 1 },
+                  },
+                  {
+                    type: 'tool-result',
+                    toolCallId: 'wait-1',
+                    toolName: 'wait_for_duration',
+                    input: { durationInMinutes: 1 },
+                    output: {
+                      success: true,
+                      message: `Waiting until ${resumeAt}.`,
+                      result: {
+                        status: 'pending',
+                        wait: { type: 'TIME', resumeAt },
+                      },
+                    },
+                  },
+                ],
+                toolResults: [
+                  {
+                    toolCallId: 'wait-1',
+                    toolName: 'wait_for_duration',
+                    output: {
+                      success: true,
+                      result: {
+                        status: 'pending',
+                        wait: { type: 'TIME', resumeAt },
+                      },
+                    },
+                  },
+                ],
+              },
+            ] as unknown as AgentExecutionResult['steps'],
+          }),
+        )
+        .mockResolvedValueOnce(replyingResult);
+      const finalStep = emptyStep();
+      const agent = agentStep([finalStep.id]);
+      const fixture = await createFixture({ steps: [agent, finalStep] });
+      const runId = await runFixture(fixture);
+      const pausedRun = await waitForStep(runId, agent.id, 'PENDING');
+      const threadId: string = pausedRun.stepLogs[agent.id].details.threadId;
+
+      expect(pausedRun.state.stepInfos[agent.id].wait).toEqual({
+        type: 'CALLBACK',
+      });
+      expect(
+        await global.testDataSource.query(
+          `SELECT "ownerType", condition->>'type' AS "conditionType" FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
+          [threadId],
+        ),
+      ).toEqual([{ ownerType: 'AGENT_RUN', conditionType: 'TIME' }]);
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+      expect(executeAgent).toHaveBeenCalledTimes(2);
+      expect(executeAgent.mock.calls[1][0].messages).toEqual([]);
+      expect(
+        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
+      ).toContain('The wait is over.');
+      expect(
+        await global.testDataSource.query(
+          `SELECT id FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
+          [threadId],
+        ),
+      ).toEqual([]);
+    });
+
+    it('continues an agent step paused on a question by 2.45 once the upgrade suspends it', async () => {
+      const executeAgent = mockAgent();
+      const { runId, agent, threadId } = await startAskingRun();
+
+      // the shape a step paused by 2.45 left behind
+      await global.testDataSource.query(
+        `DELETE FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
+        [threadId],
+      );
+      await global.testDataSource.query(
+        `UPDATE "${schema}"."workflowRun" SET state = jsonb_set(state, ARRAY['stepInfos', $2::text], (state->'stepInfos'->$2::text) - 'wait' || jsonb_build_object('threadId', $3::text)) WHERE id = $1`,
+        [runId, agent.id, threadId],
+      );
+
+      await getAppProviderByClassName<ProvisionedWorkspaceCommandRunner>(
+        'SuspendPausedAgentStepsCommand',
+      ).runOnWorkspace({ workspaceId, options: {}, index: 0, total: 1 });
+
+      expect((await answer({ threadId })).body.errors).toBeUndefined();
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+      expect(executeAgent).toHaveBeenCalledTimes(2);
+      expect(executeAgent.mock.calls[1][0].messages).toEqual([]);
+      expect(run.stepLogs[agent.id].details.usage.totalTokens).toBe(4);
+    });
+
     it('waits for every question asked at once and resumes once all are answered', async () => {
       const askCall = (toolCallId: string) => [
         {
           type: 'tool-call',
           toolCallId,
-          toolName: 'ask_questions',
-          input: { questions: QUESTIONS },
+          toolName: 'ask_question',
+          input: QUESTION,
         },
         {
           type: 'tool-result',
           toolCallId,
-          toolName: 'ask_questions',
-          input: { questions: QUESTIONS },
+          toolName: 'ask_question',
+          input: QUESTION,
           output: {
             success: true,
-            message: 'Questions presented to the user; awaiting their answer.',
-            result: { questions: QUESTIONS, status: 'pending' },
+            message: 'Question presented to the user; awaiting their answer.',
+            result: { question: QUESTION, status: 'pending' },
           },
         },
       ];
@@ -1371,7 +1709,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
       expect(executeAgent).toHaveBeenCalledTimes(2);
       expect(
-        JSON.stringify(executeAgent.mock.calls[1][0].priorModelMessages),
+        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
       ).not.toContain('"pending"');
     });
 
@@ -1401,7 +1739,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
     });
 
-    it('keeps the run alive while the resume is queued, even once a parallel branch has finished', async () => {
+    it('keeps the run alive while the agent continuation is queued, even once a parallel branch has finished', async () => {
       const executeAgent = mockAgent();
       const agent = agentStep([]);
       const parallelBranch = emptyStep();
@@ -1414,23 +1752,31 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       await waitForStep(runId, parallelBranch.id, 'SUCCESS');
 
-      const threadId: string = pausedRun.state.stepInfos[agent.id].threadId;
+      const threadId: string = pausedRun.stepLogs[agent.id].details.threadId;
       const queue = global.app.get<MessageQueueService>(
         getQueueToken(MessageQueue.workflowQueue),
       );
+      const aiQueue = global.app.get<MessageQueueService>(
+        getQueueToken(MessageQueue.aiQueue),
+      );
 
-      // Holds the resume back so the run's fate is decided while it is still queued.
-      const enqueue = jest.spyOn(queue, 'add').mockResolvedValueOnce(undefined);
+      // Holds the continuation back so the run's fate is decided while it is still queued.
+      const enqueue = jest
+        .spyOn(aiQueue, 'add')
+        .mockResolvedValueOnce(undefined);
 
       const response = await answer({ threadId });
-      const [[resumeJobName, resumeJobData, resumeJobOptions]] =
+      const [[continueJobName, continueJobData, continueJobOptions]] =
         enqueue.mock.calls;
 
       enqueue.mockRestore();
 
       expect(response.body.errors).toBeUndefined();
-      expect(resumeJobData).toMatchObject({
-        stepToResume: { stepId: agent.id, threadId },
+      expect(continueJobData).toMatchObject({
+        workspaceId,
+        threadId,
+        wakeUpId: expect.any(String),
+        outcome: { type: 'ANSWERED' },
       });
 
       // The decision a parallel branch finishing in that window takes.
@@ -1450,16 +1796,15 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(queuedRun.status).toBe('RUNNING');
       expect(queuedRun.state.stepInfos[agent.id].status).toBe('PENDING');
 
-      // Delivered twice: the second finds the step already claimed.
-      await queue.add(resumeJobName, resumeJobData, resumeJobOptions);
-      await queue.add(resumeJobName, resumeJobData, resumeJobOptions);
+      // Delivered twice: the second finds the run already continued.
+      await aiQueue.add(continueJobName, continueJobData, continueJobOptions);
+      await aiQueue.add(continueJobName, continueJobData, continueJobOptions);
 
       const run = await waitForRun(runId, 'COMPLETED');
 
       expect(run.state.stepInfos[agent.id]).toMatchObject({
         status: 'SUCCESS',
         result: { response: 'Quote sent' },
-        threadId,
       });
       expect(executeAgent).toHaveBeenCalledTimes(2);
     });
@@ -1482,7 +1827,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(refused.body.errors).toBeDefined();
       expect((await getRun(runId)).state.stepInfos[agent.id]).toMatchObject({
         status: 'PENDING',
-        threadId,
       });
       expect((await getConversation(threadId)).messages).toHaveLength(2);
       expect(await getToolCalls(threadId)).toEqual({
@@ -1494,14 +1838,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       await waitForRun(runId, 'COMPLETED');
     });
 
-    it('keeps the answer and fails the run, so it can be retried, when the resume cannot be scheduled', async () => {
+    it('keeps the answer and fails the run, so it can be retried, when the agent continuation cannot be scheduled', async () => {
       mockAgent();
       const { runId, threadId } = await startAskingRun();
 
       const enqueue = jest
         .spyOn(
           global.app.get<MessageQueueService>(
-            getQueueToken(MessageQueue.workflowQueue),
+            getQueueToken(MessageQueue.aiQueue),
           ),
           'add',
         )
@@ -1586,7 +1930,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(retried.state.stepInfos[failedStep.id].status).toBe('FAILED');
   });
 
-  it('relinks restored runs before retrying their captured snapshots', async () => {
+  it('restores and relinks runs soft-deleted by a trash from before run cleanup, before retrying their captured snapshots', async () => {
     const failedStep: WorkflowAction = {
       ...emptyStep(),
       type: WorkflowActionType.DELAY,
@@ -1604,16 +1948,41 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
     await waitForRun(runId, 'FAILED');
 
-    const deleteResponse = await workflowGraphqlRequest(
-      'mutation Delete($id: UUID!) { deleteWorkflow(id: $id) { id } }',
-      { id: fixture.workflowId },
-    );
+    const runCleanupSpy = jest
+      .spyOn(
+        getAppProviderByClassName<DeleteWorkflowRunsDeferredActionHandlerWorkspaceService>(
+          'DeleteWorkflowRunsDeferredActionHandlerWorkspaceService',
+        ),
+        'execute',
+      )
+      .mockResolvedValue(undefined);
 
-    expect(deleteResponse.body.errors).toBeUndefined();
+    try {
+      const deleteResponse = await workflowGraphqlRequest(
+        'mutation Delete($id: UUID!) { deleteWorkflow(id: $id) { id } }',
+        { id: fixture.workflowId },
+      );
+
+      expect(deleteResponse.body.errors).toBeUndefined();
+
+      await expectEventually(() => {
+        expect(runCleanupSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            payload: { coreWorkflowId: originalCoreWorkflowId },
+          }),
+        );
+      });
+    } finally {
+      runCleanupSpy.mockRestore();
+    }
 
     await global.testDataSource.query(
       'DELETE FROM core.workflow WHERE id = $1',
       [originalCoreWorkflowId],
+    );
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."workflowRun" SET "deletedAt" = NOW() WHERE id = $1`,
+      [runId],
     );
 
     const restoreResponse = await workflowGraphqlRequest(
@@ -1633,6 +2002,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const restoredRun = await getRun(runId);
 
     expect(restoredMapping.coreWorkflowId).not.toBe(originalCoreWorkflowId);
+    expect(restoredRun.deletedAt).toBeNull();
     expect(restoredRun.coreWorkflowId).toBe(restoredMapping.coreWorkflowId);
     expect(restoredRun.coreWorkflowVersionId).toBe(
       restoredMapping.coreWorkflowVersionId,
@@ -1710,7 +2080,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const capacity = jest
       .spyOn(
         global.workflowTestServices.throttling,
-        'getRemainingRunsToEnqueueCount',
+        'consumeRemainingRunsToEnqueueCount',
       )
       .mockResolvedValue(0);
     const runId = await runFixture(fixture);

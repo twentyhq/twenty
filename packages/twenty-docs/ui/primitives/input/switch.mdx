@@ -56,13 +56,41 @@ export const NotificationsPreference = () => {
 
 `onCheckedChange` receives the next boolean and event details. The `size` prop accepts `sm` or `md` and defaults to `md`.
 
-For a consistent full-width row with an icon, description, and switch, use [SettingsRow](/ui/components/settings-row).
+For a consistent full-width row with an icon, description, and switch, use [SettingsRow](/ui/components/settings/settings-row).
 
 ## Keyboard and forms
 
 Tab moves focus to the switch; Space toggles it. Clicking its associated label also toggles it. Use `disabled` to prevent interaction or `readOnly` to retain a focusable control whose value cannot be changed.
 
 A named switch submits its value when checked. Use `value` to customize that value, and `uncheckedValue` if the form should also submit a value when it is off.
+
+## Parts and custom content
+
+`Switch` assembles the styled root and its default thumb. Use `Switch.Root` with `Switch.Thumb` to own the thumb content. Root owns state and track appearance; Thumb renders the content you supply.
+
+```tsx
+import { Switch } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Switch.Root aria-label="Updates" defaultChecked>
+    <Switch.Thumb></Switch.Thumb>
+  </Switch.Root>
+);
+```
+
+`SwitchRootProps` and `SwitchThumbProps` are public types exported from `twenty-ui/primitives/input`. Both parts accept native attributes, handlers, refs, `render`, and state-based `className` and `style` callbacks. Root's `ref` targets the visible control; `inputRef` targets the native input. The part ref targets its rendered element. Pass `nativeButton` with `render={<button />}` when replacing Root with a button. Appearance props belong on Root; explicit classes and styles are merged with the defaults.
+
+Thumb receives the current checked, disabled, readOnly, required, and Field state. Its position follows the reading direction.
+
+<StoryEmbed
+  storyId="ui-input-switch-parts--composition"
+  title="Switch part composition"
+  height={240}
+/>
+
+The callable assembly and its `SwitchProps` type remain supported. Replace the assembly with Root and its part when supplying custom thumb content instead of appending another part to the assembly's children.
+
+For controlled form reset, handle the form's `onReset` and restore `checked` to your initial value. Base UI 1.8 does not restore uncontrolled component state on native form reset. `required`, `form`, `value`, and `uncheckedValue` keep the upstream native input behavior.
 
 ## Props
 

@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "2.45.0",
+  "version": "2.46.0",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
   "repository": {
@@ -121,6 +121,36 @@
       "import": "./dist/components/code-editor.mjs",
       "require": "./dist/components/code-editor.cjs"
     },
+    "./components/data-display": {
+      "types": "./dist/components/data-display/index.d.ts",
+      "import": "./dist/components/data-display.mjs",
+      "require": "./dist/components/data-display.cjs"
+    },
+    "./components/feedback": {
+      "types": "./dist/components/feedback/index.d.ts",
+      "import": "./dist/components/feedback.mjs",
+      "require": "./dist/components/feedback.cjs"
+    },
+    "./components/input": {
+      "types": "./dist/components/input/index.d.ts",
+      "import": "./dist/components/input.mjs",
+      "require": "./dist/components/input.cjs"
+    },
+    "./components/layout": {
+      "types": "./dist/components/layout/index.d.ts",
+      "import": "./dist/components/layout.mjs",
+      "require": "./dist/components/layout.cjs"
+    },
+    "./components/navigation": {
+      "types": "./dist/components/navigation/index.d.ts",
+      "import": "./dist/components/navigation.mjs",
+      "require": "./dist/components/navigation.cjs"
+    },
+    "./components/settings": {
+      "types": "./dist/components/settings/index.d.ts",
+      "import": "./dist/components/settings.mjs",
+      "require": "./dist/components/settings.cjs"
+    },
     "./icon": {
       "types": "./dist/icon/index.d.ts",
       "import": "./dist/icon.mjs",
@@ -202,6 +232,24 @@
       ],
       "components/code-editor": [
         "dist/components/code-editor/index.d.ts"
+      ],
+      "components/data-display": [
+        "dist/components/data-display/index.d.ts"
+      ],
+      "components/feedback": [
+        "dist/components/feedback/index.d.ts"
+      ],
+      "components/input": [
+        "dist/components/input/index.d.ts"
+      ],
+      "components/layout": [
+        "dist/components/layout/index.d.ts"
+      ],
+      "components/navigation": [
+        "dist/components/navigation/index.d.ts"
+      ],
+      "components/settings": [
+        "dist/components/settings/index.d.ts"
       ],
       "icon": [
         "dist/icon/index.d.ts"

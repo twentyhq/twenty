@@ -20,7 +20,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -29,7 +30,7 @@ import {
   BillingEntitlementKey,
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 
@@ -159,7 +160,7 @@ export const SettingsSecuritySettings = () => {
             <Section.Header
               title={t`SSO`}
               description={t`Configure an SSO connection`}
-              adornment={<OrganizationAdornment />}
+              actions={<OrganizationAdornment />}
             />
             {hasSsoEntitlement ? (
               <SettingsSsoIdentitiesProvidersListCard />
@@ -217,7 +218,7 @@ export const SettingsSecuritySettings = () => {
           <Section.Header
             title={t`Audit Logs`}
             description={t`Configure how long audit logs are retained`}
-            adornment={<OrganizationAdornment />}
+            actions={<OrganizationAdornment />}
           />
           {hasEnterpriseAccess ? (
             <Card.Root rounded>

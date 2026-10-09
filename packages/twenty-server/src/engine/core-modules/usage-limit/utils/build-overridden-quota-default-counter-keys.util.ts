@@ -37,7 +37,7 @@ export const buildOverriddenQuotaDefaultCounterKeys = ({
           operationType: quotaLimitDefault.operationType,
           spenderType: quotaLimitDefault.spenderType,
           spenderId: quotaLimitDefault.spenderId,
-          meter: quotaLimitDefault.meter,
+          unit: quotaLimitDefault.unit,
           periodUnit: quotaLimitDefault.periodUnit,
           periodStart: period.periodStart,
           limitValue: quotaLimitDefault.limitValue,

@@ -53,9 +53,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: true,
         isUICreatable: false,
-        // Read by whoever reads its workflow run; with no run it reads only through its own grants, like a PRIVATE record
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['workflowRun'],
+        readability: MetadataReadability.PRIVATE,
         writability: MetadataWritability.OPEN,
         labelIdentifierFieldMetadataName: 'title',
       },
@@ -226,45 +224,47 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
-  agentTurnEvaluation: (
+  agentChatThreadParticipant: (
     args: Omit<
-      CreateStandardObjectArgs<'agentTurnEvaluation'>,
+      CreateStandardObjectArgs<'agentChatThreadParticipant'>,
       'context' | 'objectName'
     >,
   ) =>
     createStandardObjectFlatMetadata({
       ...args,
-      objectName: 'agentTurnEvaluation',
+      objectName: 'agentChatThreadParticipant',
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
-        nameSingular: 'agentTurnEvaluation',
-        namePlural: 'agentTurnEvaluations',
+          STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
+        nameSingular: 'agentChatThreadParticipant',
+        namePlural: 'agentChatThreadParticipants',
         labelSingular: i18nLabel(
           msg({
-            message: 'Agent turn evaluation',
+            message: 'Chat thread participant',
             context: 'objectMetadata.labelSingular',
           }),
         ),
         labelPlural: i18nLabel(
           msg({
-            message: 'Agent turn evaluations',
+            message: 'Chat thread participants',
             context: 'objectMetadata.labelPlural',
           }),
         ),
         description: i18nLabel(
           msg({
-            message: 'Agent turn evaluation',
+            message: 'Read and inbox state of a member in a chat thread',
             context: 'objectMetadata.description',
           }),
         ),
-        icon: 'IconLego',
+        icon: 'IconMessage',
         isSystem: true,
         isSearchable: false,
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        readability: MetadataReadability.SYSTEM,
+        // Each row is one member's private inbox state, readable through its
+        // owner grant and written only through the chat resolvers
+        readability: MetadataReadability.PRIVATE,
         writability: MetadataWritability.SYSTEM,
         labelIdentifierFieldMetadataName: 'id',
       },

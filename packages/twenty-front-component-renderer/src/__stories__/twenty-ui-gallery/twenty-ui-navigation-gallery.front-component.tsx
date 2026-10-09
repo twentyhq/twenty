@@ -6,7 +6,7 @@ import {
   MenuItemDraggable,
   MenuItemSuggestion,
   MenuPicker,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconHome, IconUser } from 'twenty-ui/icon';
 import { ColorSample, Tag } from 'twenty-ui/primitives/data-display';

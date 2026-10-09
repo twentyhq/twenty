@@ -22,6 +22,11 @@ describe('getChartValueFormatOptions', () => {
     type: FieldMetadataType.CURRENCY,
   } as FieldMetadataItem;
 
+  const aggregateRatingFieldMetadataItem = {
+    id: 'rating-field-id',
+    type: FieldMetadataType.RATING,
+  } as FieldMetadataItem;
+
   it.each([
     AggregateOperations.AVG,
     AggregateOperations.MAX,
@@ -57,6 +62,24 @@ describe('getChartValueFormatOptions', () => {
       });
 
       expect(formatGraphValue(123.4567, formatOptions)).toBe('123.46');
+    },
+  );
+
+  it.each([
+    AggregateOperations.AVG,
+    AggregateOperations.MAX,
+    AggregateOperations.MIN,
+  ])(
+    'should format aggregate rating fields with one decimal for %s',
+    (aggregateOperation) => {
+      const formatOptions = getChartValueFormatOptions({
+        aggregateOperation,
+        aggregateFieldMetadataId: aggregateRatingFieldMetadataItem.id,
+        fieldMetadataItems: [aggregateRatingFieldMetadataItem],
+        numberFormat: ChartNumberFormat.FULL,
+      });
+
+      expect(formatGraphValue(3.6667, formatOptions)).toBe('3.7');
     },
   );
 

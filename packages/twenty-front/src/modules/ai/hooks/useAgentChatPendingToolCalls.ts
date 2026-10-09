@@ -2,23 +2,22 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { agentChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
 import { type AgentChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
 import { parsePendingToolCall } from '@/ai/utils/parsePendingToolCall';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const useAgentChatPendingToolCalls = (): AgentChatPendingToolCall[] => {
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
-  const agentChatMessages = useAtomComponentFamilyStateValue(
-    agentChatMessagesComponentFamilyState,
-    { threadId: agentChatDisplayedThread },
+  const agentChatDisplayedThreadMessages = useAtomStateValue(
+    agentChatDisplayedThreadMessagesSelector,
   );
-  const agentChatIsStreaming = useAtomComponentFamilyStateValue(
-    agentChatIsStreamingComponentFamilyState,
+  const agentChatIsStreaming = useAtomFamilyStateValue(
+    agentChatIsStreamingFamilyState,
     { threadId: agentChatDisplayedThread },
   );
 
@@ -26,11 +25,11 @@ export const useAgentChatPendingToolCalls = (): AgentChatPendingToolCall[] => {
     () =>
       agentChatIsStreaming
         ? []
-        : agentChatMessages.flatMap((message) =>
+        : agentChatDisplayedThreadMessages.flatMap((message) =>
             message.parts
               .map(parsePendingToolCall)
               .filter((pendingToolCall) => isDefined(pendingToolCall)),
           ),
-    [agentChatMessages, agentChatIsStreaming],
+    [agentChatDisplayedThreadMessages, agentChatIsStreaming],
   );
 };

@@ -1,4 +1,3 @@
-import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -9,6 +8,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { IconApps, IconLock, useIcons } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
 
 import { CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND } from '@/ai/constants/ChatReferencePermissionFlagByKind';
@@ -18,7 +18,7 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
@@ -48,9 +48,12 @@ export const useChatReferenceTarget = (
   const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
-  const hasPermission = useHasPermissionFlag(
-    CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND[reference.kind],
-  );
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const requiredPermissionFlag =
+    CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND[reference.kind];
+  const hasPermission =
+    !isDefined(requiredPermissionFlag) ||
+    permissionFlagMap[requiredPermissionFlag];
   const objectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -89,11 +92,13 @@ export const useChatReferenceTarget = (
         return {
           path: isNonEmptyString(recordPath) ? recordPath : undefined,
           leftComponent: (
-            <AvatarOrIcon
+            <Avatar
               name={reference.displayName}
               colorSeed={reference.recordId}
               shape="circle"
               src=""
+              size="sm"
+              imageProps={{ alt: '' }}
             />
           ),
         };

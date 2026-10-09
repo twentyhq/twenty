@@ -4,7 +4,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordSeededDraft } from '@/object-record/record-seeded-draft/hooks/useRecordSeededDraft';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 type UsePersistedCampaignDraftArgs<TDraft extends object> = {
   campaignId: string;

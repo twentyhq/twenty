@@ -22,10 +22,6 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     CookieSessionCsrfMiddleware,
     ApiAccessLogMiddleware,
   ],
-  exports: [
-    MiddlewareService,
-    CookieSessionCsrfMiddleware,
-    ApiAccessLogMiddleware,
-  ],
+  exports: [MiddlewareService],
 })
 export class MiddlewareModule {}

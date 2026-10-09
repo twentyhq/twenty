@@ -1,6 +1,6 @@
 import { type LinkType } from '@/ui/field/display/components/SocialLink/LinkType';
 import { SOCIAL_LINK_PROVIDERS } from '@/ui/field/display/components/SocialLink/socialLinkProviders';
-import { isDefined } from 'twenty-ui/utilities';
+import { isDefined } from 'twenty-shared/utils';
 
 type GetDisplayValueByUrlTypeProps = {
   type: LinkType;

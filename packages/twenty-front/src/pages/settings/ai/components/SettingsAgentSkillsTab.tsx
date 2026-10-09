@@ -10,13 +10,11 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  Dropdown,
-  SearchInput,
-  Section,
-  SettingsRow,
-  useToast,
-} from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconArchive, IconSettings } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
@@ -26,8 +24,8 @@ import {
 } from '~/generated-metadata/graphql';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
 import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};

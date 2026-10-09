@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,9 +10,10 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
@@ -86,6 +87,8 @@ export const useCoreWorkflows = ({
     coreWorkflowsFilterSettingsState,
   );
 
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+
   const { userTimezone } = useUserTimezone();
   const filter = buildCoreWorkflowFilterInput({
     filterSettings: coreWorkflowsFilterSettings,
@@ -105,10 +108,16 @@ export const useCoreWorkflows = ({
         orderBy,
         orderByDirection,
         filter,
+        includeSystem: isAdvancedModeEnabled,
       },
     },
   );
   const connection = (data ?? previousData)?.coreWorkflows;
+
+  const coreWorkflows = useMemo(
+    () => connection?.edges.map((edge) => edge.node) ?? [],
+    [connection],
+  );
 
   const { enqueueToast } = useToast();
 
@@ -162,7 +171,7 @@ export const useCoreWorkflows = ({
   }, [fetchMore, loadedCount, refetch]);
 
   return {
-    coreWorkflows: connection?.edges.map((edge) => edge.node) ?? [],
+    coreWorkflows,
     totalCount: connection?.totalCount ?? 0,
     hasNextPage: connection?.pageInfo.hasNextPage ?? false,
     fetchNextPage,

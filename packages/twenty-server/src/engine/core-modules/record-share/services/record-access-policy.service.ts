@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThanOrEqual } from 'typeorm';
 
@@ -176,10 +176,7 @@ export class RecordAccessPolicyService {
             environment: {
               flatObjectMetadataMaps,
               flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
-              isRecordSharingEnabled:
-                featureFlagsMap[
-                  FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
-                ] ?? false,
+              featureFlagsMap,
             },
             tableAlias: objectMetadata.nameSingular,
             flatObjectMetadata: objectMetadata,

@@ -5,8 +5,6 @@ import { atom, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
-import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
-import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import {
@@ -48,12 +46,21 @@ jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({
   useAiChatThreadClick: () => ({ handleThreadClick: jest.fn() }),
 }));
 
-jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded', () => ({
-  useIsNavigationDrawerContentExpanded: () => true,
+jest.mock(
+  '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded',
+  () => ({
+    useIsNavigationDrawerContentExpanded: () => true,
+  }),
+);
+
+jest.mock('@/ai/components/NavigationDrawerAiChatTriageSection', () => ({
+  NavigationDrawerAiChatTriageSection: () => <nav aria-label="Triage" />,
 }));
 
-jest.mock('@/ai/components/AiChatThreadFilterDropdown', () => ({
-  AiChatThreadFilterDropdown: () => null,
+let mockIsAiChatInboxEnabled = true;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
 }));
 
 jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
@@ -88,17 +95,14 @@ const renderContent = () =>
 describe('NavigationDrawerAiChatContent', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(
-      agentChatThreadGroupByState.atom,
-      AGENT_CHAT_THREAD_GROUP_BY.NONE,
-    );
+    mockIsAiChatInboxEnabled = true;
     mockThreads = [
       buildThread('chat-1', 'Pipeline review'),
       buildThread('chat-2', 'Quarterly plan'),
     ];
   });
 
-  it('lists favorite chats in their own section and keeps them out of Recents', () => {
+  it('lists favorite chats in their own section and keeps them out of Recent', () => {
     jotaiStore.set(mockFavoriteThreadsAtom, [
       { id: 'chat-2', title: 'Quarterly plan', deletedAt: null },
     ]);
@@ -106,11 +110,26 @@ describe('NavigationDrawerAiChatContent', () => {
     const { getByRole } = renderContent();
 
     const favorites = getByRole('region', { name: 'Favorites' });
-    const recents = getByRole('region', { name: 'Recents' });
+    const recents = getByRole('region', { name: 'Recent' });
 
     expect(within(favorites).getByText('Quarterly plan')).toBeInTheDocument();
     expect(within(recents).getByText('Pipeline review')).toBeInTheDocument();
     expect(within(recents).queryByText('Quarterly plan')).toBeNull();
+  });
+
+  it('shows the triage section with the inbox feature flag on', () => {
+    const { getByRole } = renderContent();
+
+    expect(getByRole('navigation', { name: 'Triage' })).toBeInTheDocument();
+  });
+
+  it('hides the triage section while the inbox feature flag is off', () => {
+    mockIsAiChatInboxEnabled = false;
+
+    const { queryByRole } = renderContent();
+
+    expect(queryByRole('navigation', { name: 'Triage' })).toBeNull();
+    expect(queryByRole('region', { name: 'Recent' })).toBeInTheDocument();
   });
 
   it('shows no Favorites section without favorite chats', () => {

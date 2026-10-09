@@ -22,7 +22,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isBaseOutputSchemaV2, TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { ComputeStepOutputSchemaDocument } from '~/generated/graphql';
 
 export const useStepsOutputSchema = () => {

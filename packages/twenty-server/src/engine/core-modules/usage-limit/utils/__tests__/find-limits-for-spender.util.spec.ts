@@ -1,5 +1,6 @@
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
 
@@ -12,7 +13,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   limitKind: 'speed',
   periodCount: 60,
   periodUnit: 'second',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.REQUEST,
   limitValue: 100,
   burstValue: null,
   isInstanceOverride: false,

@@ -33,8 +33,6 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
   exports: [
     UpgradeStatusModule,
     InstanceCommandRunnerService,
-    WorkspaceCommandRunnerService,
-    UpgradeAwareEntityMetadataAdapter,
     UpgradeSequenceRunnerService,
   ],
 })

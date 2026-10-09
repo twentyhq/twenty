@@ -39,7 +39,7 @@ export class RelationNestedQueries {
 
   constructor(repository: WorkspaceRepository) {
     this.repository = repository;
-    this.internalContext = repository.getInternalContext();
+    this.internalContext = repository.internalContext;
   }
 
   prepareNestedRelationQueries<Entity extends ObjectLiteral>(

@@ -10,6 +10,7 @@ import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/core-modules/record-share/record-share.exception';
+import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
 
@@ -21,10 +22,10 @@ export const validateShareWithPrincipalsOrThrow = ({
   shareWith: ShareWithInput[];
   flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
   flatRoleMaps: FlatRoleMaps;
-}): void => {
-  for (const shareWithEntry of shareWith) {
-    const { principalId, principalType } =
-      resolveShareWithPrincipalOrThrow(shareWithEntry);
+}): Pick<RecordShareInput, 'principalId' | 'principalType' | 'accessLevel'>[] =>
+  shareWith.map((shareWithEntry) => {
+    const resolvedPrincipal = resolveShareWithPrincipalOrThrow(shareWithEntry);
+    const { principalId, principalType } = resolvedPrincipal;
 
     const flatWorkspaceMember = flatWorkspaceMemberMaps.byId[principalId];
 
@@ -54,5 +55,6 @@ export const validateShareWithPrincipalsOrThrow = ({
         },
       );
     }
-  }
-};
+
+    return resolvedPrincipal;
+  });

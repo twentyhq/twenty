@@ -9,7 +9,6 @@ import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {
   const currentViewIdCallbackState = useAtomComponentStateCallbackState(
@@ -65,7 +64,7 @@ export const useHandleRecordGroupField = () => {
 
       const view = getViewFromState(currentViewId);
 
-      if (isUndefinedOrNull(view)) {
+      if (!isDefined(view)) {
         return;
       }
 
@@ -73,7 +72,7 @@ export const useHandleRecordGroupField = () => {
 
       if (
         !isRelationGroupBy &&
-        (isUndefinedOrNull(fieldMetadataItem.options) ||
+        (!isDefined(fieldMetadataItem.options) ||
           fieldMetadataItem.options.length === 0)
       ) {
         return;
@@ -101,7 +100,7 @@ export const useHandleRecordGroupField = () => {
 
     const view = getViewFromState(currentViewId);
 
-    if (isUndefinedOrNull(view)) {
+    if (!isDefined(view)) {
       return;
     }
 

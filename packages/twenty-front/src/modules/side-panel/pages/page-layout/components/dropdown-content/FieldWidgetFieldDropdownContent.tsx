@@ -13,7 +13,7 @@ import {
   getFieldWidgetDefaultDisplayMode,
   isDisplayModeValidForFieldType,
 } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { FieldWidgetNestedFieldDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetNestedFieldDropdownContent';
@@ -44,8 +44,8 @@ export const FieldWidgetFieldDropdownContent = () => {
   const [drillInFieldMetadataItem, setDrillInFieldMetadataItem] =
     useState<FieldMetadataItem | null>(null);
 
-  const { pageLayoutId, objectNameSingular } =
-    usePageLayoutIdFromContextStore();
+  const { pageLayoutId, targetRecordIdentifier } =
+    usePageLayoutSidePanelTarget();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
@@ -57,8 +57,9 @@ export const FieldWidgetFieldDropdownContent = () => {
   const currentNestedRelationFieldMetadataId =
     fieldConfiguration?.nestedRelationFieldMetadataId;
 
-  const allFieldWidgetFieldMetadataItems =
-    useFieldWidgetEligibleFields(objectNameSingular);
+  const allFieldWidgetFieldMetadataItems = useFieldWidgetEligibleFields(
+    targetRecordIdentifier.targetObjectNameSingular,
+  );
 
   const { objectMetadataItems } = useObjectMetadataItems();
 

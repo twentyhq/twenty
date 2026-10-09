@@ -47,7 +47,7 @@ export const buildStockCounters = ({
               counter.resourceType === resourceType &&
               counter.spenderType === stockLimitDefault.spenderType &&
               counter.spenderId === null &&
-              counter.meter === stockLimitDefault.meter,
+              counter.unit === stockLimitDefault.unit,
           )
         ),
     )

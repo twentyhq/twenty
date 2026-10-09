@@ -1,0 +1,26 @@
+.root {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.label {
+  color: var(--t-font-color-light);
+  display: block;
+  font-size: var(--t-font-size-xs);
+  font-weight: var(--t-font-weight-semi-bold);
+  margin-block-end: var(--t-spacing-1);
+}
+
+.flag {
+  align-items: center;
+  display: inline-flex;
+  flex: none;
+  justify-content: center;
+  inline-size: calc(var(--t-icon-size-md) * 1px);
+  block-size: calc(var(--t-icon-size-md) * 1px);
+
+  > svg {
+    max-inline-size: 100%;
+    max-block-size: 100%;
+  }
+}

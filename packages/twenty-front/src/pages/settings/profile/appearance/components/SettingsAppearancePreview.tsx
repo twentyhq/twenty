@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { type CSSProperties } from 'react';
 
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import {
   GRAY_SCALE_DARK,
   GRAY_SCALE_LIGHT,
   themeCssVariables,
 } from 'twenty-ui/theme';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
 const StyledPreview = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
