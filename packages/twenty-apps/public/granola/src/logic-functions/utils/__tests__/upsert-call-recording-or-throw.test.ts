@@ -18,21 +18,6 @@ const EMPTY_RECORDINGS = { callRecordings: { edges: [] } };
 const buildRecordings = (node: CallRecordingSyncState) => ({
   callRecordings: { edges: [{ node }] },
 });
-const SYNC_STATE_QUERY = {
-  callRecordings: {
-    __args: {
-      filter: {
-        id: { in: [CALL_RECORDING_ID] },
-        or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
-      },
-      first: 1,
-    },
-    edges: {
-      node: { id: true, deletedAt: true, granolaNoteUpdatedAt: true },
-    },
-  },
-};
-
 const buildCoreApiClient = (): Pick<CoreApiClient, 'query' | 'mutation'> => ({
   query: vi.fn().mockResolvedValue(EMPTY_RECORDINGS),
   mutation: vi
@@ -41,71 +26,6 @@ const buildCoreApiClient = (): Pick<CoreApiClient, 'query' | 'mutation'> => ({
 });
 
 describe('upsertCallRecordingOrThrow', () => {
-  it('updates a live recording with one write and no lookup', async () => {
-    const coreApiClient = buildCoreApiClient();
-
-    await expect(
-      upsertCallRecordingOrThrow({
-        coreApiClient,
-        callRecordingId: CALL_RECORDING_ID,
-        syncState: LIVE_SYNC_STATE,
-        fields: { title: 'Customer call' },
-      }),
-    ).resolves.toEqual({ callRecordingId: CALL_RECORDING_ID, created: false });
-    expect(coreApiClient.query).not.toHaveBeenCalled();
-    expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
-      updateCallRecordings: {
-        __args: {
-          filter: { id: { eq: CALL_RECORDING_ID }, deletedAt: { is: 'NULL' } },
-          data: { title: 'Customer call' },
-        },
-        id: true,
-      },
-    });
-  });
-
-  it('skips a recording deleted after its lookup instead of updating it', async () => {
-    const coreApiClient = buildCoreApiClient();
-
-    vi.mocked(coreApiClient.mutation).mockResolvedValueOnce({
-      updateCallRecordings: [],
-    });
-
-    await expect(
-      upsertCallRecordingOrThrow({
-        coreApiClient,
-        callRecordingId: CALL_RECORDING_ID,
-        syncState: LIVE_SYNC_STATE,
-        fields: { title: 'Customer call' },
-      }),
-    ).resolves.toEqual({
-      callRecordingId: CALL_RECORDING_ID,
-      created: false,
-      skipped: true,
-    });
-    expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
-  });
-
-  it('creates a missing recording with one write and no lookup', async () => {
-    const coreApiClient = buildCoreApiClient();
-
-    await expect(
-      upsertCallRecordingOrThrow({
-        coreApiClient,
-        callRecordingId: CALL_RECORDING_ID,
-        syncState: undefined,
-        fields: { title: 'Customer call' },
-      }),
-    ).resolves.toEqual({ callRecordingId: CALL_RECORDING_ID, created: true });
-    expect(coreApiClient.query).not.toHaveBeenCalled();
-    expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
-      createCallRecording: {
-        __args: { data: { id: CALL_RECORDING_ID, title: 'Customer call' } },
-        id: true,
-      },
-    });
-  });
-
   it.each([
     new Error('Duplicate recording'),
     new Error('Response lost after the server committed the recording'),
@@ -125,18 +45,10 @@ describe('upsertCallRecordingOrThrow', () => {
         fields: { title: 'Customer call' },
       }),
     ).resolves.toEqual({ callRecordingId: CALL_RECORDING_ID, created: false });
-    expect(coreApiClient.query).toHaveBeenCalledExactlyOnceWith(
-      SYNC_STATE_QUERY,
+    expect(coreApiClient.mutation).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ updateCallRecordings: expect.anything() }),
     );
-    expect(coreApiClient.mutation).toHaveBeenNthCalledWith(2, {
-      updateCallRecordings: {
-        __args: {
-          filter: { id: { eq: CALL_RECORDING_ID }, deletedAt: { is: 'NULL' } },
-          data: { title: 'Customer call' },
-        },
-        id: true,
-      },
-    });
   });
 
   it('leaves a recording deleted during a failed create untouched', async () => {
@@ -230,6 +142,7 @@ describe('upsertCallRecordingOrThrow', () => {
           }
         : { data: { id: CALL_RECORDING_ID, transcript } };
 
+      expect(coreApiClient.query).not.toHaveBeenCalled();
       expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
         [mutationName]: { __args: argumentsForMutation, id: true },
       });

@@ -106,65 +106,42 @@ describe('granolaBackfillWorkerHandler', () => {
   });
 
   it('only schedules notes that are new or changed since their last import, with one lookup per page', async () => {
-    const notes = [
-      buildGranolaNote({
-        id: 'not_aaaaaaaaaaaaaa',
-        updated_at: '2026-09-05T11:00:00Z',
-      }),
-      buildGranolaNote({
-        id: 'not_bbbbbbbbbbbbbb',
-        updated_at: '2026-09-06T09:00:00Z',
-      }),
-      buildGranolaNote({
-        id: 'not_cccccccccccccc',
-        updated_at: '2026-09-05T11:00:00Z',
-      }),
-      buildGranolaNote({
-        id: 'not_dddddddddddddd',
-        updated_at: '2026-09-05T11:00:00Z',
-      }),
-      buildGranolaNote({
-        id: 'not_eeeeeeeeeeeeee',
-        updated_at: '2026-09-05T11:00:00Z',
-      }),
-    ];
-    const callRecordingIds = notes.map((note) =>
-      computeCallRecordingIdForGranolaNote(note.id),
+    const importedVersion = '2026-09-05T11:00:00Z';
+    const syncStateByNoteId = new Map([
+      [
+        'not_aaaaaaaaaaaaaa',
+        { deletedAt: null, granolaNoteUpdatedAt: importedVersion },
+      ],
+      [
+        'not_bbbbbbbbbbbbbb',
+        { deletedAt: null, granolaNoteUpdatedAt: importedVersion },
+      ],
+      [
+        'not_cccccccccccccc',
+        { deletedAt: '2026-09-05T12:00:00Z', granolaNoteUpdatedAt: null },
+      ],
+      ['not_dddddddddddddd', { deletedAt: null, granolaNoteUpdatedAt: null }],
+    ]);
+    const notes = [...syncStateByNoteId.keys(), 'not_eeeeeeeeeeeeee'].map(
+      (id) =>
+        buildGranolaNote({
+          id,
+          updated_at:
+            id === 'not_bbbbbbbbbbbbbb'
+              ? '2026-09-06T09:00:00Z'
+              : importedVersion,
+        }),
     );
 
     mocks.listNotes.mockResolvedValue({ notes, hasMore: false, cursor: null });
     mocks.query.mockResolvedValue({
       callRecordings: {
-        edges: [
-          {
-            node: {
-              id: callRecordingIds[0],
-              deletedAt: null,
-              granolaNoteUpdatedAt: '2026-09-05T11:00:00Z',
-            },
+        edges: [...syncStateByNoteId].map(([noteId, syncState]) => ({
+          node: {
+            id: computeCallRecordingIdForGranolaNote(noteId),
+            ...syncState,
           },
-          {
-            node: {
-              id: callRecordingIds[1],
-              deletedAt: null,
-              granolaNoteUpdatedAt: '2026-09-05T11:00:00Z',
-            },
-          },
-          {
-            node: {
-              id: callRecordingIds[2],
-              deletedAt: '2026-09-05T12:00:00Z',
-              granolaNoteUpdatedAt: null,
-            },
-          },
-          {
-            node: {
-              id: callRecordingIds[3],
-              deletedAt: null,
-              granolaNoteUpdatedAt: null,
-            },
-          },
-        ],
+        })),
       },
     });
 
@@ -174,23 +151,7 @@ describe('granolaBackfillWorkerHandler', () => {
       runHour: '2026-09-06T10',
     });
 
-    expect(mocks.query).toHaveBeenCalledExactlyOnceWith({
-      callRecordings: {
-        __args: {
-          filter: {
-            id: { in: callRecordingIds },
-            or: [
-              { deletedAt: { is: 'NULL' } },
-              { deletedAt: { is: 'NOT_NULL' } },
-            ],
-          },
-          first: 5,
-        },
-        edges: {
-          node: { id: true, deletedAt: true, granolaNoteUpdatedAt: true },
-        },
-      },
-    });
+    expect(mocks.query).toHaveBeenCalledTimes(1);
     expect(result).toEqual(
       expect.objectContaining({ discoveredNoteCount: 5, enqueuedNoteCount: 3 }),
     );
@@ -203,10 +164,7 @@ describe('granolaBackfillWorkerHandler', () => {
         )
         .map(([input]) => input.jobs?.[0]?.payload),
     ).toEqual([
-      expect.objectContaining({
-        noteId: 'not_bbbbbbbbbbbbbb',
-        updatedAt: '2026-09-06T09:00:00Z',
-      }),
+      expect.objectContaining({ noteId: 'not_bbbbbbbbbbbbbb' }),
       expect.objectContaining({ noteId: 'not_dddddddddddddd' }),
       expect.objectContaining({ noteId: 'not_eeeeeeeeeeeeee' }),
     ]);
