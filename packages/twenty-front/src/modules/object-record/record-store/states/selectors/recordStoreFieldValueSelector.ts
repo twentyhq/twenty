@@ -46,7 +46,8 @@ const getMorphRelationFieldValueAtom = (
     (fieldDefinition.metadata as FieldMorphRelationMetadata).morphRelations ??
     [];
 
-  const relationType = morphRelations[0]?.type;
+  const relationType = (fieldDefinition.metadata as FieldMorphRelationMetadata)
+    .relationType;
 
   const derivedAtom = atom((get) => {
     const recordStore = get(recordStoreFamilyState.atomFamily(recordId));

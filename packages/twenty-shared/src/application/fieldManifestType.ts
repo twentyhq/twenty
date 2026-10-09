@@ -54,8 +54,12 @@ export type RelationFieldManifest<
   type: T;
   isNullable?: boolean;
   defaultValue?: FieldMetadataDefaultValue<T>;
-  relationTargetFieldMetadataUniversalIdentifier: string;
-  relationTargetObjectMetadataUniversalIdentifier: string;
+  relationTargetFieldMetadataUniversalIdentifier: T extends FieldMetadataType.MORPH_RELATION
+    ? string | null
+    : string;
+  relationTargetObjectMetadataUniversalIdentifier: T extends FieldMetadataType.MORPH_RELATION
+    ? string | null
+    : string;
   universalSettings: FieldMetadataUniversalSettings<T>;
 } & ([T] extends [FieldMetadataType.MORPH_RELATION]
     ? {

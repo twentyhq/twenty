@@ -4,7 +4,6 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -131,8 +130,14 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           input.createFieldInput.morphRelationsCreationPayload,
         );
         expect(result.result.flatFieldMetadatas.length).toBe(
-          input.createFieldInput.morphRelationsCreationPayload.length * 2,
+          input.createFieldInput.morphRelationsCreationPayload.length * 2 + 1,
         );
+        expect(result.result.flatFieldMetadatas[0]).toMatchObject({
+          name: input.createFieldInput.name,
+          universalIdentifier: result.result.flatFieldMetadatas[0].morphId,
+          relationTargetFieldMetadataUniversalIdentifier: null,
+          relationTargetObjectMetadataUniversalIdentifier: null,
+        });
         expect(result).toMatchSnapshot(
           extractRecordIdsAndDatesAsExpectAny(result),
         );

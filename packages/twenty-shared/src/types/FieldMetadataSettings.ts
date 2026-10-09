@@ -50,6 +50,9 @@ type FieldMetadataDateTimeSettings = {
 };
 
 type FieldMetadataRelationSettings = {
+  targetFieldLabel?: string;
+  targetFieldIcon?: string;
+  targetFieldName?: string;
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;

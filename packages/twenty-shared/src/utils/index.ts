@@ -358,3 +358,4 @@ export {
 } from './variable-resolver';
 export { getViewLayoutFromViewType } from './views/getViewLayoutFromViewType';
 export { isWidgetViewType } from './views/isWidgetViewType';
+export * from './isMorphRelationGroup';

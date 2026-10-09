@@ -5,4 +5,4 @@ export const {
   storage: metadataStoreStorage,
   hydrate: hydrateMetadataStore,
   clear: clearMetadataStoreStorage,
-} = createIndexedDbBackedJotaiStorage<MetadataStoreItem>('metadata-store');
+} = createIndexedDbBackedJotaiStorage<MetadataStoreItem>('metadata-store-v2');

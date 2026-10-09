@@ -1,9 +1,9 @@
+import { isMorphRelationGroup } from 'twenty-shared/utils';
 import {
   type CompositeProperty,
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-
 import { type ColumnType } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -185,6 +185,10 @@ export const generateColumnDefinitions = ({
   workspaceId: string;
   searchVectorAsExpression?: string;
 }): WorkspaceSchemaColumnDefinition[] => {
+  if (isMorphRelationGroup(flatFieldMetadata)) {
+    return [];
+  }
+
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
     workspaceId,
     objectMetadata: flatObjectMetadata,

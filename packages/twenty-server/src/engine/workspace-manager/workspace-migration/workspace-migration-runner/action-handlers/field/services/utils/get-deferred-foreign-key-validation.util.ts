@@ -1,5 +1,5 @@
 import { FeatureFlagKey, RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -33,6 +33,7 @@ export const getDeferredForeignKeyValidation = ({
     .filter(isDefined)
     .find(
       (createdFlatFieldMetadata) =>
+        !isMorphRelationGroup(createdFlatFieldMetadata) &&
         isMorphOrRelationFlatFieldMetadata(createdFlatFieldMetadata) &&
         createdFlatFieldMetadata.settings?.relationType ===
           RelationType.MANY_TO_ONE,

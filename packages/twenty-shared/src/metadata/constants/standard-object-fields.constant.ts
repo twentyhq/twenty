@@ -108,6 +108,7 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   agentChatThreadTarget: {
+    target: { universalIdentifier: '2c4cc537-39a2-4df9-81a1-dda26eb19658' },
     ...buildStandardObjectBaseFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
     ),
@@ -306,6 +307,7 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   timelineActivity: {
+    target: { universalIdentifier: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1' },
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
     ),
@@ -445,6 +447,7 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   attachment: {
+    target: { universalIdentifier: '20202020-f634-435d-ab8d-e1168b375c69' },
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
     ),
@@ -640,6 +643,7 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   calendarEventTarget: {
+    target: { universalIdentifier: '676e9f68-7b5c-41e6-b46d-2fb9527b7051' },
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
     ),
@@ -1018,6 +1022,7 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   messageThreadTarget: {
+    target: { universalIdentifier: 'e85e853d-c26e-41b3-bec0-7afc4bdbc2f7' },
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
     ),
@@ -1118,6 +1123,7 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   noteTarget: {
+    target: { universalIdentifier: '20202020-f635-435d-ab8d-e1168b375c70' },
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
     ),
@@ -1405,6 +1411,7 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   taskTarget: {
+    target: { universalIdentifier: '20202020-f636-435d-ab8d-e1168b375c71' },
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget,
     ),

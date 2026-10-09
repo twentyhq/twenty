@@ -18,7 +18,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, useMemo } from 'react';
-import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type RelationType,
+  SettingsPath,
+} from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
@@ -116,8 +120,8 @@ export const SettingsObjectRelationItemTableRow = ({
   const morphRelationTargetLabel =
     morphRelationCount === 1 ? t`1 Object` : t`${morphRelationCount} Objects`;
   const morphRelationFieldLabel = fieldMetadataItem.label;
-  const displayRelationType = isMorphRelation
-    ? fieldMetadataItem.morphRelations?.[0]?.type
+  const displayRelationType: RelationType | undefined = isMorphRelation
+    ? fieldMetadataItem.settings?.relationType
     : relationType;
 
   const relationTypeLabel = (() => {

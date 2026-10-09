@@ -57,6 +57,27 @@ const validManifest: Manifest = {
 };
 
 describe('manifestValidate', () => {
+  it('accepts a morph field owner without a join column or physical target', () => {
+    const universalIdentifier = '550e8400-e29b-41d4-a716-446655440002';
+    const result = manifestValidate({
+      ...validManifest,
+      fields: [
+        {
+          ...validField,
+          type: FieldMetadataType.MORPH_RELATION,
+          universalIdentifier,
+          morphId: universalIdentifier,
+          name: 'relatedTo',
+          label: 'Related to',
+          relationTargetFieldMetadataUniversalIdentifier: null,
+          relationTargetObjectMetadataUniversalIdentifier: null,
+          universalSettings: { relationType: RelationType.MANY_TO_ONE },
+        },
+      ],
+    });
+    expect(result).toMatchObject({ isValid: true, errors: [] });
+  });
+
   describe('valid object extensions', () => {
     it('should pass validation with valid object extension by nameSingular', () => {
       const result = manifestValidate({
@@ -764,7 +785,8 @@ describe('manifestValidate', () => {
               universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000013',
               title: 'App',
               type: WidgetType.FRONT_COMPONENT,
-              heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+              heightBehavior:
+                PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
               configuration: {
                 configurationType: 'FRONT_COMPONENT',
                 frontComponentUniversalIdentifier:

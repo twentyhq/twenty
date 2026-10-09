@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-
 import DataLoader from 'dataloader';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import {
@@ -14,14 +12,12 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
 import { type CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
 import { applyMetadataFilterToItems } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-items.util';
 import { findManyItemsWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-items-with-cursor-pagination.util';
-import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
+import { filterMorphRelationTargetFields } from 'src/engine/dataloaders/utils/filter-morph-relation-target-fields.util';
 import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-translated-flat-entity.util';
 
 export type FieldMetadataConnectionLoaderPayload = {
@@ -69,7 +65,7 @@ export class FieldMetadataConnectionLoaderFactory {
               flatEntityMaps: flatFieldMetadataMaps,
             });
           const filteredFlatFieldMetadatas = applyMetadataFilterToItems({
-            items: filterMorphRelationDuplicateFields(flatFieldMetadatas),
+            items: filterMorphRelationTargetFields(flatFieldMetadatas),
             filter,
             columnByFilterField: FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
           });
@@ -104,35 +100,10 @@ export class FieldMetadataConnectionLoaderFactory {
               flatEntity: flatFieldMetadata,
               i18nContext: getI18nContext(flatFieldMetadata.applicationId),
             });
-          let renamedFlatFieldMetadata = overriddenFlatFieldMetadata;
-
-          if (
-            isFlatFieldMetadataOfType(
-              overriddenFlatFieldMetadata,
-              FieldMetadataType.MORPH_RELATION,
-            )
-          ) {
-            const relationTargetObjectMetadata =
-              findFlatEntityByIdInFlatEntityMapsOrThrow({
-                flatEntityId:
-                  overriddenFlatFieldMetadata.relationTargetObjectMetadataId,
-                flatEntityMaps: flatObjectMetadataMaps,
-              });
-
-            renamedFlatFieldMetadata = {
-              ...overriddenFlatFieldMetadata,
-              name: getMorphNameFromMorphFieldMetadataName({
-                morphRelationFlatFieldMetadata: overriddenFlatFieldMetadata,
-                nameSingular: relationTargetObjectMetadata.nameSingular,
-                namePlural: relationTargetObjectMetadata.namePlural,
-              }),
-            };
-          }
-
           return {
             ...edge,
             node: fromFlatFieldMetadataToFieldMetadataDto(
-              renamedFlatFieldMetadata,
+              overriddenFlatFieldMetadata,
             ),
           };
         }),

@@ -72,6 +72,29 @@ export const buildAgentChatThreadTargetStandardFlatFieldMetadatas = (
     }),
     isAuditLogged: false,
   },
+  target: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'target',
+        type: FieldMetadataType.MORPH_RELATION,
+        label: i18nLabel(
+          msg({ message: 'Related to', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Related record',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconRelationManyToOne',
+        isUIEditable: false,
+        settings: { relationType: RelationType.MANY_TO_ONE },
+      },
+    }),
+    morphId:
+      STANDARD_OBJECTS.agentChatThreadTarget.morphIds.targetMorphId.morphId,
+  },
   targetPerson: {
     ...createStandardRelationFieldFlatMetadata({
       ...args,

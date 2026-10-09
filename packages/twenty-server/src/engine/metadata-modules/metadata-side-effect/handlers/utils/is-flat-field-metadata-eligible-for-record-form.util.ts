@@ -1,5 +1,7 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
+  isMorphRelationGroup,
   isFieldMetadataEligibleForRecordForm,
 } from 'twenty-shared/utils';
 
@@ -18,12 +20,16 @@ export type RecordFormCandidateFlatFieldMetadata = Pick<
   | 'universalSettings'
   | 'applicationUniversalIdentifier'
   | 'overrides'
->;
+> & { morphId?: string | null };
 
 export const isFlatFieldMetadataEligibleForRecordForm = (
   flatFieldMetadata: RecordFormCandidateFlatFieldMetadata,
 ): boolean => {
-  if (flatFieldMetadata.isSystemSideEffect) {
+  if (
+    flatFieldMetadata.isSystemSideEffect ||
+    (flatFieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
+      !isMorphRelationGroup(flatFieldMetadata))
+  ) {
     return false;
   }
 

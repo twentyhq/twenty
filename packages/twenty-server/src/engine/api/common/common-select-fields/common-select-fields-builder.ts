@@ -14,7 +14,7 @@ import { buildRelationSelectionFromDepth } from 'src/engine/api/common/common-se
 import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -46,10 +46,10 @@ export class CommonSelectFieldsBuilder {
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id].restrictedFields;
 
-    const readableFlatFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityIds: flatObjectMetadata.fieldIds,
-      flatEntityMaps: flatFieldMetadataMaps,
-    }).filter((flatField) => restrictedFields[flatField.id]?.canRead !== false);
+    const readableFlatFields = getFlatFieldsFromFlatObjectMetadata(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    ).filter((flatField) => restrictedFields[flatField.id]?.canRead !== false);
 
     const fieldsFromDepth = readableFlatFields.filter(
       (field) =>

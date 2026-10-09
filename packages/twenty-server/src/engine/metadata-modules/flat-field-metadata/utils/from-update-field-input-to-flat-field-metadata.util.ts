@@ -100,6 +100,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   const { flatFieldMetadataFromTo, relatedFlatFieldMetadatasFromTo } =
     computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate({
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatObjectMetadata,
       fromFlatFieldMetadata: existingFlatFieldMetadataToUpdate,
       rawUpdateFieldInput,

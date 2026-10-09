@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
-
 import { isNonEmptyString } from '@sniptt/guards';
-import { WorkflowVisibility } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { FieldMetadataType, WorkflowVisibility } from 'twenty-shared/types';
+import {
+  isDefined,
+  isNonEmptyArray,
+  isMorphRelationGroup,
+} from 'twenty-shared/utils';
 
+import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
@@ -180,7 +185,45 @@ export class MetadataEventPublisher {
         },
       );
 
-    const enrichedEvents = metadataEventBatch.events.map((event) => {
+    const events = metadataEventBatch.events.flatMap((event) => {
+      const record = (
+        event.type === 'deleted'
+          ? event.properties.before
+          : event.properties.after
+      ) as FlatFieldMetadata;
+      if (
+        record.type !== FieldMetadataType.MORPH_RELATION ||
+        isMorphRelationGroup(record)
+      ) {
+        return [event];
+      }
+
+      const group = isDefined(record.morphId)
+        ? flatFieldMetadataMaps.byUniversalIdentifier[record.morphId]
+        : undefined;
+      if (!isDefined(group)) {
+        return [];
+      }
+
+      return [
+        {
+          metadataName: 'fieldMetadata',
+          recordId: group.id,
+          type: 'updated',
+          properties: {
+            before: group,
+            after: {
+              ...group,
+              isActive: fromFlatFieldMetadataToFieldMetadataDto(group).isActive,
+            },
+            updatedFields: [],
+            diff: {},
+          },
+        } as typeof event,
+      ];
+    });
+
+    const enrichedEvents = events.map((event) => {
       const enrichedProperties = { ...event.properties };
 
       if (

@@ -32,39 +32,14 @@ export const computeStandardTaskTargetViewFields = (
         size: 150,
       },
     }),
-    // All morph targets are included so the surviving field after dedup always has a viewField
-    allTaskTargetsTargetPerson: createStandardViewFieldFlatMetadata({
+    allTaskTargetsTarget: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'taskTarget',
       context: {
         viewName: 'allTaskTargets',
-        viewFieldName: 'targetPerson',
-        fieldName: 'targetPerson',
+        viewFieldName: 'target',
+        fieldName: 'target',
         position: 2,
-        isVisible: true,
-        size: 150,
-      },
-    }),
-    allTaskTargetsTargetCompany: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'taskTarget',
-      context: {
-        viewName: 'allTaskTargets',
-        viewFieldName: 'targetCompany',
-        fieldName: 'targetCompany',
-        position: 3,
-        isVisible: true,
-        size: 150,
-      },
-    }),
-    allTaskTargetsTargetOpportunity: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'taskTarget',
-      context: {
-        viewName: 'allTaskTargets',
-        viewFieldName: 'targetOpportunity',
-        fieldName: 'targetOpportunity',
-        position: 4,
         isVisible: true,
         size: 150,
       },

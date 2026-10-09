@@ -1,3 +1,4 @@
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
@@ -261,6 +262,69 @@ describe('deleteOne FieldMetadataService morph relation fields', () => {
       });
 
       expect(errors).toBeUndefined();
+
+      const readGroup = () =>
+        findManyFieldsMetadata({
+          input: {
+            filter: { id: { eq: createdField.id } },
+            paging: { first: 1 },
+          },
+          gqlFields: 'id name morphRelations { sourceFieldMetadata { id } }',
+          expectToFail: false,
+        });
+      const afterFirstRemoval = await readGroup();
+      expect(afterFirstRemoval.fields[0].node.id).toBe(createdField.id);
+      expect(afterFirstRemoval.fields[0].node.morphRelations).toHaveLength(1);
+
+      const lastTarget = createdField.morphRelations[1].targetFieldMetadata;
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: lastTarget.id,
+          updatePayload: { isActive: false },
+        },
+        expectToFail: false,
+      });
+      await deleteOneFieldMetadata({
+        input: { idToDelete: lastTarget.id },
+        expectToFail: false,
+      });
+      const afterLastRemoval = await readGroup();
+      expect(afterLastRemoval.fields[0].node).toMatchObject({
+        id: createdField.id,
+        name: afterFirstRemoval.fields[0].node.name,
+        morphRelations: [],
+      });
+
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: createdField.id,
+          updatePayload: {
+            name: 'renamedMorphField',
+            isLabelSyncedWithName: false,
+          },
+        },
+        expectToFail: false,
+      });
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: createdField.id,
+          updatePayload: {
+            morphRelationsUpdatePayload: [
+              {
+                targetObjectMetadataId:
+                  contextPayload.firstTargetObjectMetadataId,
+              },
+            ],
+          },
+        },
+        expectToFail: false,
+      });
+      const afterAddingTarget = await readGroup();
+      expect(afterAddingTarget.fields[0].node).toMatchObject({
+        id: createdField.id,
+        name: 'renamedMorphField',
+      });
+      expect(afterAddingTarget.fields[0].node.morphRelations).toHaveLength(1);
     },
   );
 });

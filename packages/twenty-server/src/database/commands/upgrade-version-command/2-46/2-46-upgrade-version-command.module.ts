@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { PersistIndependentMorphFieldsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791546573975-persist-independent-morph-fields.command';
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019631-add-agent-chat-thread-participant-object.command';
@@ -30,6 +31,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    PersistIndependentMorphFieldsCommand,
     AddAgentChatThreadParticipantObjectCommand,
     BackfillAgentChatThreadInboxStateCommand,
     AddAiChatInboxCommandMenuItemsCommand,

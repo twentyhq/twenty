@@ -16,6 +16,7 @@ const compute = ({
   return service.computeForCache({
     workspaceId: 'workspace',
     rows: {
+      fieldMetadata: [],
       role: [{ id: 'role', canAccessAllTools, canUpdateAllSettings }],
       objectMetadata: [
         {

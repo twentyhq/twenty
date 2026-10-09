@@ -2,7 +2,6 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -13,7 +12,7 @@ export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
 }: {
   fieldMetadataItem?: Pick<
     FieldMetadataItem,
-    'type' | 'morphRelations' | 'relation'
+    'type' | 'morphRelations' | 'relation' | 'settings'
   >;
   objectMetadataItem?: Pick<
     EnrichedObjectMetadataItem,
@@ -33,25 +32,14 @@ export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
     };
   }
 
-  if (
-    fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION &&
-    fieldMetadataItemHasMorphRelations(fieldMetadataItem)
-  ) {
-    const firstMorphRelation = fieldMetadataItem.morphRelations?.[0];
-
-    if (isDefined(firstMorphRelation)) {
-      const targetObjectMetadata = activeObjectMetadataItems.find(
-        (item) => item.id === firstMorphRelation.targetObjectMetadata.id,
-      );
-      const targetFieldMetadata = targetObjectMetadata?.fields.find(
-        (field) => field.id === firstMorphRelation.targetFieldMetadata.id,
-      );
-
-      return {
-        icon: targetFieldMetadata?.icon ?? 'IconUsers',
-        label: capitalize(targetFieldMetadata?.label ?? ''),
-      };
-    }
+  if (fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION) {
+    return {
+      icon:
+        fieldMetadataItem.settings?.targetFieldIcon ??
+        objectMetadataItem?.icon ??
+        'IconUsers',
+      label: capitalize(fieldMetadataItem.settings?.targetFieldLabel ?? ''),
+    };
   }
 
   if (

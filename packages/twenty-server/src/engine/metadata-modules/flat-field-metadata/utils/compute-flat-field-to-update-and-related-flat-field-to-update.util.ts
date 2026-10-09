@@ -1,6 +1,13 @@
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isMorphRelationGroup,
+  assertIsDefinedOrThrow,
+} from 'twenty-shared/utils';
 
+import { computeMorphRelationFlatFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-flat-field-name.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import {
@@ -36,12 +43,13 @@ type ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateArgs = {
   flatObjectMetadata: FlatObjectMetadata;
   isSystemBuild: boolean;
   workspaceCustomApplicationUniversalIdentifier: string;
-} & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;
+} & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps' | 'flatObjectMetadataMaps'>;
 // TODO: simplify once standard overrides are standardized across flat entities
 export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
   fromFlatFieldMetadata,
   rawUpdateFieldInput,
   flatFieldMetadataMaps,
+  flatObjectMetadataMaps,
   flatObjectMetadata,
   isSystemBuild,
   workspaceCustomApplicationUniversalIdentifier,
@@ -122,7 +130,15 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
   }
 
   if (
-    isFlatFieldMetadataOfType(fromFlatFieldMetadata, FieldMetadataType.RELATION)
+    isFlatFieldMetadataOfType(
+      fromFlatFieldMetadata,
+      FieldMetadataType.RELATION,
+    ) ||
+    (isFlatFieldMetadataOfType(
+      fromFlatFieldMetadata,
+      FieldMetadataType.MORPH_RELATION,
+    ) &&
+      !isMorphRelationGroup(fromFlatFieldMetadata))
   ) {
     const relatedFlatFieldMetadataFrom =
       findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
@@ -158,6 +174,10 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
     isFlatFieldMetadataOfType(
       fromFlatFieldMetadata,
       FieldMetadataType.MORPH_RELATION,
+    ) &&
+    isFlatFieldMetadataOfType(
+      toFlatFieldMetadata,
+      FieldMetadataType.MORPH_RELATION,
     )
   ) {
     const { morphRelationFlatFieldMetadatas, relationFlatFieldMetadatas } =
@@ -184,6 +204,53 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
             }),
             overrides,
           });
+
+        if (isDefined(updatedEditableFieldProperties.settings)) {
+          relatedFlatFieldMetadataTo.settings = {
+            ...relatedFlatFieldMetadataFrom.settings,
+            onDelete: toFlatFieldMetadata.settings?.onDelete,
+          };
+          relatedFlatFieldMetadataTo.universalSettings = {
+            ...relatedFlatFieldMetadataFrom.universalSettings,
+            onDelete: toFlatFieldMetadata.universalSettings?.onDelete,
+          };
+        }
+
+        if (isDefined(updatedEditableFieldProperties.name)) {
+          assertIsDefinedOrThrow(
+            relatedFlatFieldMetadataFrom.relationTargetObjectMetadataId,
+          );
+          const targetObject = findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityId:
+              relatedFlatFieldMetadataFrom.relationTargetObjectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          });
+          relatedFlatFieldMetadataTo.name = computeMorphRelationFlatFieldName({
+            fieldName: toFlatFieldMetadata.name,
+            relationType: relatedFlatFieldMetadataFrom.settings.relationType,
+            targetObjectMetadataNameSingular: targetObject.nameSingular,
+            targetObjectMetadataNamePlural: targetObject.namePlural,
+          });
+          if (isDefined(relatedFlatFieldMetadataFrom.settings.joinColumnName)) {
+            const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+              name: relatedFlatFieldMetadataTo.name,
+            });
+            relatedFlatFieldMetadataTo.settings = {
+              ...relatedFlatFieldMetadataFrom.settings,
+              ...(isDefined(updatedEditableFieldProperties.settings) && {
+                onDelete: toFlatFieldMetadata.settings.onDelete,
+              }),
+              joinColumnName,
+            };
+            relatedFlatFieldMetadataTo.universalSettings = {
+              ...relatedFlatFieldMetadataFrom.universalSettings,
+              ...(isDefined(updatedEditableFieldProperties.settings) && {
+                onDelete: toFlatFieldMetadata.universalSettings.onDelete,
+              }),
+              joinColumnName,
+            };
+          }
+        }
 
         return {
           fromFlatFieldMetadata: relatedFlatFieldMetadataFrom,

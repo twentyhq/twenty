@@ -46,7 +46,7 @@ export const computeRecordFormCreateRecordInput = ({
     }
 
     const draftValue = draftRecord[gqlFieldName];
-    const morphRelationType = fieldMetadataItem.morphRelations?.[0]?.type;
+    const morphRelationType = fieldMetadataItem.settings?.relationType;
 
     if (!isDefined(morphRelationType)) {
       continue;

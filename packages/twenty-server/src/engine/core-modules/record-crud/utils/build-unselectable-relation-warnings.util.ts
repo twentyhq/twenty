@@ -62,6 +62,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
 
     if (
       !isFlatFieldMetadataOfTypes(field, [...MORPH_OR_RELATION_FIELD_TYPES]) ||
+      !isDefined(field.relationTargetObjectMetadataId) ||
       isDefined(selectableRelationFields[field.name])
     ) {
       continue;

@@ -42,6 +42,7 @@ const createField = ({
   workspaceId: WORKSPACE_ID,
   type,
   name,
+  morphId: null,
   settings: relationType ? { relationType } : null,
   relationTargetObjectMetadataId,
 });

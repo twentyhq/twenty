@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
 import { IsNull } from 'typeorm';
-
 import {
   PermissionFlagType,
   SystemPermissionFlag,
@@ -12,10 +10,9 @@ import {
   type ObjectsPermissionsByRoleId,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
-
 import { hasRoleWideAccessToPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/has-role-wide-access-to-permission-flag.util';
 import { type RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -32,6 +29,13 @@ const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
 
 const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
   role: true,
+  fieldMetadata: [
+    'id',
+    'type',
+    'universalIdentifier',
+    'morphId',
+    'objectMetadataId',
+  ],
   objectPermission: { columns: true, groupBy: ['roleId'] },
   rolePermissionFlag: { columns: true, groupBy: ['roleId'] },
   permissionFlag: true,
@@ -74,6 +78,23 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
       objectMetadata: workspaceObjectMetadataCollection,
     } = rows;
+
+    const morphTargetIdsByGroupId = new Map<string, string[]>();
+    for (const fieldMetadata of rows.fieldMetadata) {
+      if (isMorphRelationGroup(fieldMetadata)) {
+        morphTargetIdsByGroupId.set(
+          fieldMetadata.id,
+          rows.fieldMetadata
+            .filter(
+              (target) =>
+                target.objectMetadataId === fieldMetadata.objectMetadataId &&
+                target.morphId === fieldMetadata.morphId &&
+                target.id !== fieldMetadata.id,
+            )
+            .map((target) => target.id),
+        );
+      }
+    }
 
     const permissionFlagById = new Map(
       permissionFlags.map((permissionFlag) => [
@@ -196,12 +217,25 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
               isDefined(fieldPermission.canReadFieldValue) ||
               isDefined(fieldPermission.canUpdateFieldValue)
             ) {
-              restrictedFields[fieldPermission.fieldMetadataId] = {
-                canRead: isFieldLabelIdentifier
-                  ? true
-                  : fieldPermission.canReadFieldValue,
-                canUpdate: fieldPermission.canUpdateFieldValue,
-              };
+              for (const fieldMetadataId of [
+                fieldPermission.fieldMetadataId,
+                ...(morphTargetIdsByGroupId.get(
+                  fieldPermission.fieldMetadataId,
+                ) ?? []),
+              ]) {
+                const existingRestriction = restrictedFields[fieldMetadataId];
+                restrictedFields[fieldMetadataId] = {
+                  canRead: isFieldLabelIdentifier
+                    ? true
+                    : existingRestriction?.canRead === false
+                      ? false
+                      : fieldPermission.canReadFieldValue,
+                  canUpdate:
+                    existingRestriction?.canUpdate === false
+                      ? false
+                      : fieldPermission.canUpdateFieldValue,
+                };
+              }
             }
           }
         }

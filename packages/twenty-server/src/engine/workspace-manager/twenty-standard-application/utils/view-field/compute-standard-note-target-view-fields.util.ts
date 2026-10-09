@@ -32,39 +32,14 @@ export const computeStandardNoteTargetViewFields = (
         size: 150,
       },
     }),
-    // All morph targets are included so the surviving field after dedup always has a viewField
-    allNoteTargetsTargetPerson: createStandardViewFieldFlatMetadata({
+    allNoteTargetsTarget: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'noteTarget',
       context: {
         viewName: 'allNoteTargets',
-        viewFieldName: 'targetPerson',
-        fieldName: 'targetPerson',
+        viewFieldName: 'target',
+        fieldName: 'target',
         position: 2,
-        isVisible: true,
-        size: 150,
-      },
-    }),
-    allNoteTargetsTargetCompany: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'noteTarget',
-      context: {
-        viewName: 'allNoteTargets',
-        viewFieldName: 'targetCompany',
-        fieldName: 'targetCompany',
-        position: 3,
-        isVisible: true,
-        size: 150,
-      },
-    }),
-    allNoteTargetsTargetOpportunity: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'noteTarget',
-      context: {
-        viewName: 'allNoteTargets',
-        viewFieldName: 'targetOpportunity',
-        fieldName: 'targetOpportunity',
-        position: 4,
         isVisible: true,
         size: 150,
       },

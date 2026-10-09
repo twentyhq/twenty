@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
@@ -8,6 +7,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
@@ -485,6 +485,33 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  target: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+      context: {
+        fieldName: 'target',
+        type: FieldMetadataType.MORPH_RELATION,
+        label: i18nLabel(
+          msg({ message: 'Related to', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Related record',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconRelationManyToOne',
+        isUIEditable: false,
+        settings: { relationType: RelationType.MANY_TO_ONE },
+      },
+    }),
+    morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+  },
   targetPerson: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

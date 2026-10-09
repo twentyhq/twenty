@@ -57,6 +57,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
 
     const { flatFieldMetadataFromTo, relatedFlatFieldMetadatasFromTo } =
       computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate({
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
         rawUpdateFieldInput: {
           id: sourceFlatFieldMetadata.id,
           workspaceId: 'workspace-id',
@@ -92,6 +93,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
 
     const { flatFieldMetadataFromTo, relatedFlatFieldMetadatasFromTo } =
       computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate({
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
         rawUpdateFieldInput: {
           id: sourceFlatFieldMetadata.id,
           workspaceId: 'workspace-id',
@@ -122,6 +124,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
 
     const { flatFieldMetadataFromTo, relatedFlatFieldMetadatasFromTo } =
       computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate({
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
         rawUpdateFieldInput: {
           id: sourceFlatFieldMetadata.id,
           workspaceId: 'workspace-id',
@@ -152,6 +155,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
 
     const { relatedFlatFieldMetadatasFromTo } =
       computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate({
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
         rawUpdateFieldInput: {
           id: sourceFlatFieldMetadata.id,
           workspaceId: 'workspace-id',
