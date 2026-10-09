@@ -27,6 +27,45 @@ const buildCoreApiClient = (): Pick<CoreApiClient, 'query' | 'mutation'> => ({
 
 describe('upsertCallRecordingOrThrow', () => {
   it.each([
+    ['an update of a live recording', LIVE_SYNC_STATE],
+    ['an update after a failed create', undefined],
+  ])(
+    'skips a recording deleted before %s',
+    async (_, syncState: CallRecordingSyncState | undefined) => {
+      const coreApiClient = buildCoreApiClient();
+
+      vi.mocked(coreApiClient.query).mockResolvedValueOnce(
+        buildRecordings(LIVE_SYNC_STATE),
+      );
+      vi.mocked(coreApiClient.mutation).mockImplementation(
+        async (request: object) => {
+          if ('createCallRecording' in request) {
+            throw new Error('Duplicate recording');
+          }
+
+          return { updateCallRecordings: [] };
+        },
+      );
+
+      await expect(
+        upsertCallRecordingOrThrow({
+          coreApiClient,
+          callRecordingId: CALL_RECORDING_ID,
+          syncState,
+          fields: { title: 'Customer call' },
+        }),
+      ).resolves.toEqual({
+        callRecordingId: CALL_RECORDING_ID,
+        created: false,
+        skipped: true,
+      });
+      expect(coreApiClient.mutation).toHaveBeenLastCalledWith(
+        expect.objectContaining({ updateCallRecordings: expect.anything() }),
+      );
+    },
+  );
+
+  it.each([
     new Error('Duplicate recording'),
     new Error('Response lost after the server committed the recording'),
   ])('recovers a newly visible record after $message', async (error) => {

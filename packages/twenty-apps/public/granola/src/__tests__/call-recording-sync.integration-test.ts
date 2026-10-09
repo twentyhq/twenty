@@ -1,19 +1,24 @@
 import { randomUUID } from 'node:crypto';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { buildGranolaNote } from 'src/__tests__/utils/build-granola-note.util';
 import { buildGranolaTranscriptItem } from 'src/__tests__/utils/build-granola-transcript-item.util';
+import { createGranolaApplicationAccessToken } from 'src/__tests__/utils/create-granola-application-access-token.util';
 import { type GranolaNote } from 'src/logic-functions/types/granola-api.type';
 import { computeCallRecordingIdForGranolaNote } from 'src/logic-functions/utils/compute-call-recording-id-for-granola-note.util';
+import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
 import { findCallRecordingSyncStatesOrThrow } from 'src/logic-functions/utils/find-call-recording-sync-states-or-throw.util';
 import { selectGranolaNotesToSyncOrThrow } from 'src/logic-functions/utils/select-granola-notes-to-sync-or-throw.util';
 import { syncGranolaNoteToCallRecordingOrThrow } from 'src/logic-functions/utils/sync-granola-note-to-call-recording-or-throw.util';
 import { updateCallRecordingOrThrow } from 'src/logic-functions/utils/update-call-recording-or-throw.util';
 
+const APPLICATION_ACCESS_TOKEN_ENV_VAR_NAME =
+  'TWENTY_APP_APPLICATION_ACCESS_TOKEN';
 const EDITED_NOTE_UPDATED_AT = '2026-09-06T09:00:00Z';
 const coreApiClient = new CoreApiClient();
-const createdCallRecordingIds: string[] = [];
+const trackedCallRecordingIds: string[] = [];
+let syncClient: CoreApiClient;
 
 const buildCompleteNote = (overrides: Partial<GranolaNote> = {}) =>
   buildGranolaNote({
@@ -22,9 +27,11 @@ const buildCompleteNote = (overrides: Partial<GranolaNote> = {}) =>
     ...overrides,
   });
 
-const syncNote = async (note: GranolaNote) => {
-  const result = await syncGranolaNoteToCallRecordingOrThrow({
-    coreApiClient,
+const syncNote = (note: GranolaNote) => {
+  trackedCallRecordingIds.push(computeCallRecordingIdForGranolaNote(note.id));
+
+  return syncGranolaNoteToCallRecordingOrThrow({
+    coreApiClient: syncClient,
     client: {
       getNote: vi.fn().mockResolvedValue(note),
       listTranscriptPage: vi.fn(),
@@ -32,18 +39,12 @@ const syncNote = async (note: GranolaNote) => {
     noteId: note.id,
     shouldSkipUnchangedNote: true,
   });
-
-  if (result.created) {
-    createdCallRecordingIds.push(result.callRecordingId);
-  }
-
-  return result;
 };
 
 const findSyncState = async (callRecordingId: string) =>
   (
     await findCallRecordingSyncStatesOrThrow({
-      coreApiClient,
+      coreApiClient: syncClient,
       callRecordingIds: [callRecordingId],
     })
   ).get(callRecordingId);
@@ -64,10 +65,22 @@ const softDelete = (callRecordingId: string) =>
     deleteCallRecording: { __args: { id: callRecordingId }, id: true },
   });
 
+beforeAll(async () => {
+  process.env[APPLICATION_ACCESS_TOKEN_ENV_VAR_NAME] =
+    await createGranolaApplicationAccessToken();
+  syncClient = createApplicationCoreApiClient();
+  delete process.env[APPLICATION_ACCESS_TOKEN_ENV_VAR_NAME];
+});
+
 afterEach(async () => {
   vi.restoreAllMocks();
 
-  for (const callRecordingId of createdCallRecordingIds.splice(0)) {
+  const existingSyncStates = await findCallRecordingSyncStatesOrThrow({
+    coreApiClient,
+    callRecordingIds: trackedCallRecordingIds.splice(0),
+  });
+
+  for (const callRecordingId of existingSyncStates.keys()) {
     await coreApiClient.mutation({
       destroyCallRecording: { __args: { id: callRecordingId }, id: true },
     });
@@ -88,7 +101,7 @@ describe('Granola call recording sync', () => {
       granolaNoteUpdatedAt: note.updated_at,
     });
 
-    const mutationSpy = vi.spyOn(coreApiClient, 'mutation');
+    const mutationSpy = vi.spyOn(syncClient, 'mutation');
 
     expect(await syncNote(note)).toEqual({
       callRecordingId,
@@ -133,7 +146,7 @@ describe('Granola call recording sync', () => {
     await softDelete(deletedCallRecordingId);
 
     const syncStates = await findCallRecordingSyncStatesOrThrow({
-      coreApiClient,
+      coreApiClient: syncClient,
       callRecordingIds: [liveCallRecordingId, deletedCallRecordingId],
     });
 
@@ -145,11 +158,19 @@ describe('Granola call recording sync', () => {
 
   it('neither updates nor resurrects a soft-deleted recording', async () => {
     const note = buildCompleteNote();
-    const editedNote = {
-      ...note,
+    const editedNote = buildCompleteNote({
+      id: note.id,
       title: 'Renamed meeting',
       updated_at: EDITED_NOTE_UPDATED_AT,
-    };
+      calendar_event: {
+        event_title: 'Renamed meeting',
+        invitees: [{ email: 'bob@example.com' }],
+        organiser: 'alice@example.com',
+        calendar_event_id: 'google-event-1',
+        scheduled_start_time: '2026-09-05T10:00:00Z',
+        scheduled_end_time: '2026-09-05T11:00:00Z',
+      },
+    });
     const newNote = buildCompleteNote();
     const callRecordingId = computeCallRecordingIdForGranolaNote(note.id);
 
@@ -158,19 +179,27 @@ describe('Granola call recording sync', () => {
 
     expect(
       await updateCallRecordingOrThrow({
-        coreApiClient,
+        coreApiClient: syncClient,
         callRecordingId,
         fields: { title: 'Renamed meeting' },
       }),
     ).toBe(false);
+
+    const querySpy = vi.spyOn(syncClient, 'query');
+    const mutationSpy = vi.spyOn(syncClient, 'mutation');
+
     expect(await syncNote(editedNote)).toEqual({
       callRecordingId,
       created: false,
       skipped: true,
     });
+    expect(querySpy).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ callRecordings: expect.anything() }),
+    );
+    expect(mutationSpy).not.toHaveBeenCalled();
     expect(
       await selectGranolaNotesToSyncOrThrow({
-        coreApiClient,
+        coreApiClient: syncClient,
         notes: [editedNote, newNote],
       }),
     ).toEqual([newNote.id]);
