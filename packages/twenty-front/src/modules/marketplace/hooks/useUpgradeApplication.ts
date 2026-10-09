@@ -1,36 +1,93 @@
-import { useMutation } from '@apollo/client/react';
+import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
+import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
+import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { UpgradeApplicationDocument } from '~/generated-metadata/graphql';
+import {
+  FindUpgradeApplicationJobStatusDocument,
+  JobState,
+  TriggerUpgradeApplicationDocument,
+} from '~/generated-metadata/graphql';
 
-export const useUpgradeApplication = () => {
+type UseUpgradeApplicationArgs = {
+  universalIdentifier?: string;
+  onCompleted?: () => void;
+};
+
+export const useUpgradeApplication = ({
+  universalIdentifier,
+  onCompleted,
+}: UseUpgradeApplicationArgs = {}) => {
   const { enqueueToast } = useToast();
-  const [upgradeApplicationMutation] = useMutation(UpgradeApplicationDocument);
-  const [isUpgrading, setIsUpgrading] = useState(false);
+  const [triggerUpgradeApplication, { loading: isTriggeringUpgrade }] =
+    useMutation(TriggerUpgradeApplicationDocument);
 
-  const upgrade = async (params: {
-    appRegistrationId: string;
-    targetVersion: string;
-  }) => {
-    setIsUpgrading(true);
+  const { data: jobStatusData } = useQuery(
+    FindUpgradeApplicationJobStatusDocument,
+    {
+      variables: { universalIdentifier: universalIdentifier ?? '' },
+      skip: !isDefined(universalIdentifier),
+      fetchPolicy: 'network-only',
+    },
+  );
 
-    try {
-      const result = await upgradeApplicationMutation({
-        variables: params,
-      });
+  const runningJobStatus = jobStatusData?.findUpgradeApplicationJobStatus;
+  const runningJob =
+    isDefined(runningJobStatus) &&
+    !isTerminalJobState(runningJobStatus.state) &&
+    isDefined(universalIdentifier)
+      ? {
+          jobId: runningJobStatus.jobId,
+          context: universalIdentifier,
+          progress: runningJobStatus.progress ?? undefined,
+        }
+      : undefined;
 
-      if (isDefined(result.data)) {
+  const handleUpgradeJobSettled = useCallback(
+    (jobStatus: TrackedJobStatus) => {
+      if (jobStatus.state === JobState.FAILED) {
         enqueueToast({
-          variant: 'success',
-          children: t`Application upgraded successfully.`,
+          variant: 'error',
+          children: isNonEmptyString(jobStatus.failedReason)
+            ? jobStatus.failedReason
+            : t`Failed to upgrade the application.`,
         });
-
-        return true;
+        return;
       }
 
-      return false;
+      enqueueToast({
+        variant: 'success',
+        children: t`Application upgraded successfully.`,
+      });
+      onCompleted?.();
+    },
+    [enqueueToast, onCompleted],
+  );
+
+  const { activeJobId, activeJobProgress, trackJob } = useTrackedQueueJob({
+    runningJob,
+    onQueueJobSettled: handleUpgradeJobSettled,
+  });
+
+  const upgrade = async (targetVersion: string): Promise<void> => {
+    if (!isDefined(universalIdentifier)) {
+      return;
+    }
+
+    try {
+      const { data } = await triggerUpgradeApplication({
+        variables: { input: { universalIdentifier, targetVersion } },
+      });
+
+      const jobId = data?.triggerUpgradeApplication.jobId;
+
+      if (isDefined(jobId)) {
+        trackJob({ jobId, context: universalIdentifier });
+      }
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
@@ -38,12 +95,12 @@ export const useUpgradeApplication = () => {
         variant: 'error',
         children: graphqlMessage ?? t`Failed to upgrade the application.`,
       });
-
-      return false;
-    } finally {
-      setIsUpgrading(false);
     }
   };
 
-  return { upgrade, isUpgrading };
+  return {
+    upgrade,
+    isUpgrading: isTriggeringUpgrade || isDefined(activeJobId),
+    upgradeProgress: activeJobProgress,
+  };
 };

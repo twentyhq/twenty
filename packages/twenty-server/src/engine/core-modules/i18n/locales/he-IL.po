@@ -205,6 +205,12 @@ msgstr "תזכורת לפני שתקופת הניסיון שלך ב-Twenty מס�
 msgid "A higher version of this application is already installed. Downgrading is not allowed."
 msgstr "גרסה חדשה יותר של יישום זה כבר מותקנת. שנמוך אסור."
 
+#. js-lingui-id: JoVKhy
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "A link tracked in a campaign"
+msgstr "קישור שנמצא במעקב בקמפיין"
+
 #. js-lingui-id: 0sxIdH
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
@@ -334,6 +340,11 @@ msgstr "שדה נדרש חסר. אנא ספק את כל הערכים הנדרש�
 msgid "A role with this label already exists."
 msgstr "תפקיד עם תווית זו כבר קיים."
 
+#. js-lingui-id: qk/eV0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
+msgid "A secret variable cannot have a default value."
+msgstr "למשתנה סודי לא יכול להיות ערך ברירת מחדל."
+
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "A skill with this name already exists"
@@ -381,6 +392,16 @@ msgstr "סוג פעילות ציר זמן המכוון לאובייקט של י�
 msgid "A timeline activity type with this name already exists for this application"
 msgstr "סוג פעילות בציר הזמן בשם זה כבר קיים עבור יישום זה"
 
+#. js-lingui-id: jFM4QN
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "A two-factor authentication recovery code was generated for you"
+msgstr "נוצר עבורך קוד שחזור לאימות דו-שלבי"
+
+#. js-lingui-id: 28Abul
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "A user variable cannot have a value: each member sets their own."
+msgstr "למשתנה משתמש לא יכול להיות ערך: כל חבר מגדיר ערך משלו."
+
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
@@ -421,6 +442,11 @@ msgstr "נדרש targetRecordId תקין עבור סוג RECORD"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid viewUniversalIdentifier is required for VIEW type"
 msgstr "נדרש viewUniversalIdentifier תקין עבור סוג VIEW"
+
+#. js-lingui-id: 4/naVr
+#: src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception.ts
+msgid "A validation rule could not be evaluated. Ask an admin to review it."
+msgstr "לא ניתן היה להעריך כלל אימות. בקש ממנהל מערכת לבדוק אותו."
 
 #. js-lingui-id: qqnpQ9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -496,6 +522,11 @@ msgstr "גרסת תהליך עבודה"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "חבר בסביבת עבודה"
+
+#. js-lingui-id: 7co7Js
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "A workspace variable must have a value."
+msgstr "למשתנה מרחב עבודה חייב להיות ערך."
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -606,18 +637,6 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "תחילת הקלטה בפועל"
 
-#. js-lingui-id: czQdYE
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Add a Node"
-msgstr "הוסף צומת"
-
-#. js-lingui-id: Opy73Z
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Add a Node"
-msgstr "הוסף צומת"
-
 #. js-lingui-id: ffpvxH
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "Add at least one field to update."
@@ -663,12 +682,6 @@ msgctxt "objectMetadata.description"
 msgid "Agent chat thread"
 msgstr "שרשור צ'אט של סוכן"
 
-#. js-lingui-id: 05II48
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
-msgid "Agent chat thread"
-msgstr "שרשור צ'אט של סוכן"
-
 #. js-lingui-id: leA1JY
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -680,12 +693,6 @@ msgstr "יעד שרשור שיחה של סוכן"
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent chat thread targets"
 msgstr "יעדי שרשור שיחה של סוכן"
-
-#. js-lingui-id: d9XlI/
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Agent chat threads"
-msgstr "שרשורי צ'אט של סוכן"
 
 #. js-lingui-id: kmAKx+
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -760,11 +767,45 @@ msgstr "סוכן לא נמצא."
 msgid "Agent step execution failed."
 msgstr "הרצת שלב סוכן נכשלה."
 
-#. js-lingui-id: DLyw5k
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Agent step of the workflow run that held this conversation"
-msgstr ""
+#. js-lingui-id: FwHD8A
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger ids must be unique"
+msgstr "מזהי מפעילי סוכן חייבים להיות ייחודיים"
+
+#. js-lingui-id: pkpppn
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger ids must be UUIDs"
+msgstr "מזהי מפעילי סוכן חייבים להיות מסוג UUID"
+
+#. js-lingui-id: DEjYze
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger instructions cannot exceed {maxLength} characters"
+msgstr "הוראות מפעיל הסוכן אינן יכולות לחרוג מ-{maxLength} תווים"
+
+#. js-lingui-id: IB9Gyw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger instructions must be text or null"
+msgstr "הוראות מפעיל הסוכן חייבות להיות טקסט או null"
+
+#. js-lingui-id: JCVBEh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger isActive must be true or false"
+msgstr "הערך isActive של גורם מפעיל חייב להיות true או false"
+
+#. js-lingui-id: R0xjlO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger settings must be an object"
+msgstr "הגדרות מפעיל הסוכן חייבות להיות אובייקט"
+
+#. js-lingui-id: UwmMbv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger type must be one of: {supportedTypes}"
+msgstr "סוג מפעיל הסוכן חייב להיות אחד מהבאים: {supportedTypes}"
+
+#. js-lingui-id: 9UuLk+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent triggers must be a list"
+msgstr "מפעילי סוכן חייבים להיות רשימה"
 
 #. js-lingui-id: fX04ru
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -777,24 +818,6 @@ msgstr "תור סוכן"
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent turn"
 msgstr "תור סוכן"
-
-#. js-lingui-id: mCEPno
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.description"
-msgid "Agent turn evaluation"
-msgstr "הערכת תור סוכן"
-
-#. js-lingui-id: 8TxJ/S
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
-msgid "Agent turn evaluation"
-msgstr "הערכת תור סוכן"
-
-#. js-lingui-id: 8JwBHf
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Agent turn evaluations"
-msgstr "הערכות תור סוכן"
 
 #. js-lingui-id: Tdydg8
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -845,6 +868,12 @@ msgctxt "fieldMetadata.description"
 msgid "AI chat messages sent by the workspace member"
 msgstr "הודעות צ'אט של בינה מלאכותית שנשלחו על ידי חבר במרחב העבודה"
 
+#. js-lingui-id: NBPjed
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "AI chat threads assigned to the workspace member"
+msgstr "שרשורי צ'אט של בינה מלאכותית שהוקצו לחבר במרחב העבודה"
+
 #. js-lingui-id: NHpbHJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -878,6 +907,16 @@ msgctxt "fieldMetadata.label"
 msgid "Amount"
 msgstr "סכום"
 
+#. js-lingui-id: /BH1B7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "An agent cannot have more than {maxTriggers} triggers"
+msgstr "לסוכן לא יכולים להיות יותר מ-{maxTriggers} מפעילים"
+
+#. js-lingui-id: 4vJ4de
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "An agent trigger is invalid"
+msgstr "מפעיל סוכן אינו תקין"
+
 #. js-lingui-id: pZEIPj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util.ts
 msgid "An agent with this name already exists"
@@ -887,6 +926,11 @@ msgstr "סוכן בשם זה כבר קיים"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "An agent with this name already exists."
 msgstr "סוכן בשם זה כבר קיים."
+
+#. js-lingui-id: uU52TI
+#: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
+msgid "An application can only start its own workflows."
+msgstr "יישום יכול להפעיל רק את תהליכי העבודה שלו."
 
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1029,6 +1073,11 @@ msgstr "הכנסות שנתיות"
 msgid "Another application in this workspace has already registered a permission flag with this key."
 msgstr "יישום אחר במרחב עבודה זה כבר רשם דגל הרשאה עם מפתח זה."
 
+#. js-lingui-id: hzz7Em
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Another recovery code was just generated for this member. Refresh the page to see it."
+msgstr "זה עתה נוצר קוד שחזור נוסף עבור חבר זה. רענן את הדף כדי לראות אותו."
+
 #. js-lingui-id: wsmbFt
 #. placeholder {0}: flatSettingsMenuItem.position
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -1145,6 +1194,18 @@ msgstr "פונקציית הלוגיקה של הסרת ההתקנה של הייש
 msgid "Application upgrade failed."
 msgstr "שדרוג היישום נכשל."
 
+#. js-lingui-id: Id/k1d
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key {key} is reserved"
+msgstr "מפתח משתנה היישום {key} שמור"
+
+#. js-lingui-id: wJwhrT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key {keyUpdate} is reserved"
+msgstr "מפתח משתנה היישום {keyUpdate} שמור"
+
 #. js-lingui-id: 5MJQ4s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
@@ -1169,6 +1230,31 @@ msgstr "משתנה יישום לא נמצא"
 #: src/engine/core-modules/application/application-variable/application-variable.exception.ts
 msgid "Application variable not found."
 msgstr "משתנה יישום לא נמצא."
+
+#. js-lingui-id: 6A2f5A
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "Application variable scope \"{scope}\" is invalid"
+msgstr "ההיקף \"{scope}\" של משתנה היישום אינו תקין"
+
+#. js-lingui-id: jtm6CB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable scope cannot be changed"
+msgstr "לא ניתן לשנות את היקף משתנה היישום"
+
+#. js-lingui-id: /Qr5Q/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable scope cannot be changed after creation"
+msgstr "לא ניתן לשנות את היקף משתנה היישום לאחר היצירה"
+
+#. js-lingui-id: TclsKI
+#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
+msgid "Application workflows are not enabled for this workspace."
+msgstr "תהליכי עבודה של יישומים אינם מופעלים עבור מרחב עבודה זה."
+
+#. js-lingui-id: l/Xlom
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Applications cannot update these fields: {fieldsList}."
+msgstr "יישומים אינם יכולים לעדכן שדות אלה: {fieldsList}."
 
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -1214,6 +1300,12 @@ msgctxt "fieldMetadata.label"
 msgid "Archived"
 msgstr "בארכיון"
 
+#. js-lingui-id: okfXhQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Archived at"
+msgstr "הועבר לארכיון בתאריך"
+
 #. js-lingui-id: Uj9aPO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -1226,11 +1318,34 @@ msgctxt "fieldMetadata.label"
 msgid "Archived At"
 msgstr "תאריך העברה לארכיון"
 
+#. js-lingui-id: b1O47s
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Ask a workspace admin for a new recovery code to finish setting up two-factor authentication."
+msgstr "בקש ממנהל מרחב העבודה קוד שחזור חדש כדי להשלים את הגדרת האימות הדו-שלבי."
+
 #. js-lingui-id: ITCVsf
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Ask AI"
 msgstr "שאל את ה-AI"
+
+#. js-lingui-id: YWpd8A
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Assign"
+msgstr "הקצה"
+
+#. js-lingui-id: Yd22pJ
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Assign"
+msgstr "הקצה"
+
+#. js-lingui-id: 66wSGr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Assigned chat threads"
+msgstr "שרשורי צ'אט שהוקצו"
 
 #. js-lingui-id: z2Vy8H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1245,6 +1360,7 @@ msgid "Assigned to Me"
 msgstr "מוקצה לי"
 
 #. js-lingui-id: EqqZEp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Assignee"
@@ -1450,6 +1566,12 @@ msgstr "נדרש אימות."
 msgid "Authentication required."
 msgstr "נדרש אימות."
 
+#. js-lingui-id: Z6TS/W
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Authored template URL"
+msgstr "כתובת URL של תבנית שנוצרה"
+
 #. js-lingui-id: hq1K5d
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -1485,6 +1607,11 @@ msgstr "קובץ אווטאר"
 msgctxt "fieldMetadata.label"
 msgid "Avatar URL"
 msgstr "כתובת אתר של אווטאר"
+
+#. js-lingui-id: EaJzRw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Batch mode of a database event trigger must be true or false"
+msgstr "מצב אצווה של מפעיל אירוע מסד נתונים חייב להיות true או false"
 
 #. js-lingui-id: Cei2D0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -1682,6 +1809,30 @@ msgstr "לפי שלב"
 msgctxt "view.name"
 msgid "By Status"
 msgstr "לפי מצב"
+
+#. js-lingui-id: gUmRmd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Cache Creation Tokens"
+msgstr "אסימוני יצירת מטמון"
+
+#. js-lingui-id: YIsqqp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Cache Creation Tokens"
+msgstr "אסימוני יצירת מטמון"
+
+#. js-lingui-id: CV5XMd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Cache Read Tokens"
+msgstr "אסימוני קריאת מטמון"
+
+#. js-lingui-id: Iwbkq0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Cache Read Tokens"
+msgstr "אסימוני קריאת מטמון"
 
 #. js-lingui-id: ma0oop
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -2344,6 +2495,12 @@ msgstr "האופרנד של מסנן התרשים אינו נתמך עבור ס�
 msgid "Chart filter value is not valid for this operand"
 msgstr "ערך סינון תרשים אינו תקף עבור אופרנד זה"
 
+#. js-lingui-id: ApLkPY
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Chat"
+msgstr "שיחה"
+
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chat message not found."
@@ -2360,10 +2517,23 @@ msgstr "הודעות צ'אט"
 msgid "Chat thread not found."
 msgstr "שרשור צ'אט לא נמצא."
 
-#. js-lingui-id: eLQjKW
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Chat thread title cannot be empty."
-msgstr "כותרת שרשור הצ'אט לא יכולה להיות ריקה."
+#. js-lingui-id: dkKfLP
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Chat thread participant"
+msgstr "משתתף בשרשור צ'אט"
+
+#. js-lingui-id: iCLf0Y
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Chat thread participants"
+msgstr "משתתפים בשרשור צ'אט"
+
+#. js-lingui-id: sTkIAU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Chat thread participations"
+msgstr "השתתפויות בשרשור צ'אט"
 
 #. js-lingui-id: lZ6AwB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2374,6 +2544,12 @@ msgstr "שרשורי צ'אט"
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
 msgctxt "fieldMetadata.label"
+msgid "Chats"
+msgstr "שיחות"
+
+#. js-lingui-id: 68T2AN
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
 msgid "Chats"
 msgstr "שיחות"
 
@@ -2399,6 +2575,11 @@ msgstr "שיחות שקשורות להזדמנות"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
 msgstr "בחר סוג פעילות ציר זמן קיים להחלפה."
+
+#. js-lingui-id: +eCqA7
+#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+msgid "Choose one person or one role to share with."
+msgstr "בחר אדם אחד או תפקיד אחד לשיתוף."
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -2521,18 +2702,6 @@ msgstr "פריט תפריט פקודות עם אותו מזהה אוניברסל
 msgctxt "fieldMetadata.label"
 msgid "Commas and dot"
 msgstr "פסיקים ונקודה"
-
-#. js-lingui-id: CqQgUE
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Comment"
-msgstr "הערה"
-
-#. js-lingui-id: 3lgJNW
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Comment"
-msgstr "הערה"
 
 #. js-lingui-id: snetsR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -2906,17 +3075,17 @@ msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
 msgstr "גודל השיחה"
 
-#. js-lingui-id: qsiOwY
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
+#. js-lingui-id: 5hyV33
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutTab.title"
 msgid "Conversations"
-msgstr ""
+msgstr "שיחות"
 
-#. js-lingui-id: z+qran
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Conversations held by the run's agent steps"
-msgstr ""
+#. js-lingui-id: Hl4lJ2
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutWidget.title"
+msgid "Conversations"
+msgstr "שיחות"
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -3059,11 +3228,11 @@ msgid "Create View"
 msgstr "צור תצוגה"
 
 #. js-lingui-id: 4lG6GV
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -3072,11 +3241,11 @@ msgid "Created At"
 msgstr "תאריך יצירה"
 
 #. js-lingui-id: ZA1xqP
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -3084,8 +3253,15 @@ msgctxt "fieldMetadata.label"
 msgid "Created At"
 msgstr "תאריך יצירה"
 
+#. js-lingui-id: AAy/QL
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Created by"
+msgstr "נוצר על ידי"
+
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3107,6 +3283,7 @@ msgstr "תאריך יצירה"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3151,6 +3328,7 @@ msgstr "יצירת רשומה של אובייקט פרטי מחייבת את ה�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3187,6 +3365,7 @@ msgstr "תאריך יצירה"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3243,6 +3422,11 @@ msgstr "קרון"
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Cron pattern \"{pattern}\" is invalid"
 msgstr "תבנית Cron \"{pattern}\" אינה חוקית."
+
+#. js-lingui-id: ViG9dm
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Cron triggers need a valid cron pattern such as \"0 9 * * 1\""
+msgstr "מפעילי Cron זקוקים לתבנית cron תקינה, כגון \"0 9 * * 1\""
 
 #. js-lingui-id: DIjcDc
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -3337,6 +3521,11 @@ msgstr "תצורת מסד הנתונים מושבתת."
 msgctxt "fieldMetadata.label"
 msgid "Database Event"
 msgstr "אירוע מסד נתונים"
+
+#. js-lingui-id: EMLSIx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Database event triggers need an event name such as \"company.created\""
+msgstr "מפעילי אירוע מסד נתונים זקוקים לשם אירוע, כגון \"company.created\""
 
 #. js-lingui-id: IakS6+
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -3486,6 +3675,12 @@ msgctxt "pageLayout.name"
 msgid "Default Campaign Layout"
 msgstr "פריסת קמפיין ברירת מחדל"
 
+#. js-lingui-id: fJiMYI
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-agent-chat-thread-page-layout.config.ts
+msgctxt "pageLayout.name"
+msgid "Default Chat Layout"
+msgstr "פריסת צ'אט כברירת מחדל"
+
 #. js-lingui-id: aBOgPF
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
@@ -3633,6 +3828,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Deleted {objectLabelPlural}"
 msgstr "נמחק {objectLabelPlural}"
 
+#. js-lingui-id: wG932w
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Deleted at"
+msgstr "תאריך מחיקה"
+
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -3656,6 +3857,7 @@ msgstr "נמחק {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3669,11 +3871,11 @@ msgid "Deleted at"
 msgstr "תאריך מחיקה"
 
 #. js-lingui-id: l+MMBR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -3682,11 +3884,11 @@ msgid "Deleted At"
 msgstr "תאריך מחיקה"
 
 #. js-lingui-id: Lu8j/6
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -3735,6 +3937,12 @@ msgstr "תיאור"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Design"
 msgstr "עיצוב"
+
+#. js-lingui-id: hlOMTM
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Destination URL after recipient variables are replaced"
+msgstr "כתובת ה-URL של היעד לאחר החלפת משתני הנמען"
 
 #. js-lingui-id: BlbMIB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3805,6 +4013,12 @@ msgstr "שם דומיין"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Domains"
 msgstr "תחומים"
+
+#. js-lingui-id: SFbVrl
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Done"
+msgstr "בוצע"
 
 #. js-lingui-id: uyJle/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -3885,6 +4099,11 @@ msgstr "שכפל זרימת עבודה"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "אפשרות כפולה {field}"
+
+#. js-lingui-id: YNySNZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Each agent trigger must be an object"
+msgstr "כל מפעיל סוכן חייב להיות אובייקט"
 
 #. js-lingui-id: nTBzmZ
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
@@ -4106,7 +4325,14 @@ msgctxt "fieldMetadata.label"
 msgid "End Date"
 msgstr "תאריך סיום"
 
+#. js-lingui-id: MRW3kn
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Ended At"
+msgstr "הסתיים ב-"
+
 #. js-lingui-id: BECIbc
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Ended At"
@@ -4127,6 +4353,16 @@ msgstr "נדרש engineComponentKey"
 msgctxt "fieldMetadata.label"
 msgid "Enqueued"
 msgstr "הוכנס לתור"
+
+#. js-lingui-id: q1jHuq
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Enter your two-factor authentication code to continue."
+msgstr "הזן את קוד האימות הדו-שלבי שלך כדי להמשיך."
+
+#. js-lingui-id: Doq+6U
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "Enter your two-factor authentication code to generate a recovery code."
+msgstr "הזן את קוד האימות הדו-שלבי שלך כדי ליצור קוד שחזור."
 
 #. js-lingui-id: vNNSFX
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
@@ -4160,6 +4396,18 @@ msgstr "משתנה סביבה CLOUDFLARE_API_KEY חייב להיות מוגדר 
 msgid "Error"
 msgstr "שגיאה"
 
+#. js-lingui-id: Z4B6mY
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Error"
+msgstr "שגיאה"
+
+#. js-lingui-id: AmBiAv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Error"
+msgstr "שגיאה"
+
 #. js-lingui-id: rG9Fzz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -4183,18 +4431,6 @@ msgstr "הודעת שגיאה"
 msgctxt "fieldMetadata.label"
 msgid "Error Message"
 msgstr "הודעת שגיאה"
-
-#. js-lingui-id: dFBOz1
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Evaluations"
-msgstr "הערכות"
-
-#. js-lingui-id: e8MefK
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Evaluations"
-msgstr "הערכות"
 
 #. js-lingui-id: ++Dmjj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4390,11 +4626,6 @@ msgstr "מספר הכישלונות"
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to build function dependencies."
 msgstr "בניית תלויות הפונקציה נכשלה."
-
-#. js-lingui-id: E7Dsiq
-#: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
-msgid "Failed to create evaluation. Please try again."
-msgstr "יצירת ההערכה נכשלה. אנא נסה שוב."
 
 #. js-lingui-id: RjuW0j
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -4750,6 +4981,7 @@ msgstr "שדה המשמש לחיפוש טקסט מלא"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5005,6 +5237,21 @@ msgstr "שדות פעולה של טופס חייבים להיות בעלי שמ�
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "פעולת הטופס חייבת לכלול לפחות שדה אחד."
+
+#. js-lingui-id: JRr+QW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
+msgid "Forwarded request headers must be a list of header names"
+msgstr "כותרות בקשה מועברות חייבות להיות רשימה של שמות כותרות"
+
+#. js-lingui-id: VMhHnD
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
+msgid "forwardedRequestHeaders cannot include credential headers: {headerNames}"
+msgstr "forwardedRequestHeaders אינו יכול לכלול כותרות אישורים: {headerNames}"
+
+#. js-lingui-id: u1byEn
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
+msgid "forwardedRequestHeaders must be an array of strings"
+msgstr "forwardedRequestHeaders חייב להיות מערך של מחרוזות"
 
 #. js-lingui-id: 39y5bn
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -5358,6 +5605,12 @@ msgstr "שם המטפל (Handler) אינו תקין"
 msgid "handlerName must be a valid JavaScript identifier or dotted path"
 msgstr "הערך handlerName חייב להיות מזהה JavaScript תקף או נתיב מופרד בנקודות"
 
+#. js-lingui-id: wtkOku
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Hash of the authored template and resolved destination URLs"
+msgstr "גיבוב של התבנית שנוצרה וכתובות ה-URL של היעד שנפתרו"
+
 #. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -5401,11 +5654,11 @@ msgstr "מזהה iCal"
 
 #. js-lingui-id: OtYhMx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -5430,6 +5683,7 @@ msgstr "מזהה iCal"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5444,11 +5698,11 @@ msgstr "מזהה"
 
 #. js-lingui-id: dB826o
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -5473,6 +5727,7 @@ msgstr "מזהה"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5578,6 +5833,18 @@ msgstr "אינדקס עם אותו שם כבר קיים"
 msgid "Index with same universal identifier already exists"
 msgstr "אינדקס עם אותו מזהה אוניברסלי כבר קיים"
 
+#. js-lingui-id: ghVcC2
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Input Credits"
+msgstr "קרדיטים של קלט"
+
+#. js-lingui-id: Ca4seM
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Input Credits"
+msgstr "קרדיטים של קלט"
+
 #. js-lingui-id: 9Lkkre
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Input exceeds maximum length."
@@ -5587,6 +5854,18 @@ msgstr "הקלט חורג מהאורך המרבי."
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Input is too short."
 msgstr "הקלט קצר מדי."
+
+#. js-lingui-id: Kfbja9
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Input Tokens"
+msgstr "אסימוני קלט"
+
+#. js-lingui-id: qUpYTQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Input Tokens"
+msgstr "אסימוני קלט"
 
 #. js-lingui-id: VUEkq2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5621,6 +5900,12 @@ msgctxt "fieldMetadata.description"
 msgid "Internal name of the campaign"
 msgstr "שם פנימי של הקמפיין"
 
+#. js-lingui-id: Lztd7b
+#: src/engine/core-modules/record-share/services/record-sharing.service.ts
+#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+msgid "Invalid access level."
+msgstr "רמת גישה לא תקינה."
+
 #. js-lingui-id: pSjWxS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
@@ -5637,15 +5922,20 @@ msgstr "קלט סוכן לא תקין."
 msgid "Invalid aggregate fields parameter."
 msgstr "פרמטר שדות אגרגציה לא תקין."
 
-#. js-lingui-id: pvMXsN
+#. js-lingui-id: kwF4Vs
 #: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Invalid answer for this question."
-msgstr "תשובה לא תקפה לשאלה זו."
+msgid "Invalid answer for this request."
+msgstr "תשובה לא תקינה לבקשה זו."
 
 #. js-lingui-id: 56bSD0
 #: src/engine/core-modules/application/application-variable/application-variable.exception.ts
 msgid "Invalid application variable input."
 msgstr "קלט לא תקין עבור משתנה יישום."
+
+#. js-lingui-id: fOpg3H
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
+msgid "Invalid application workflow definition."
+msgstr "הגדרת תהליך העבודה של היישום אינה תקינה."
 
 #. js-lingui-id: KNrRpL
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5814,6 +6104,16 @@ msgstr "מפתח Feature Flag לא תקין."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Invalid field input."
 msgstr "קלט שדה לא תקין."
+
+#. js-lingui-id: FHBTxe
+#: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
+msgid "Invalid field selection. Check the requested fields and relation depth."
+msgstr "בחירת שדות לא תקינה. בדוק את השדות המבוקשים ואת עומק הקשר."
+
+#. js-lingui-id: 0a1W33
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid fields parameter."
+msgstr "פרמטר שדות לא תקין."
 
 #. js-lingui-id: s6LppJ
 #. placeholder {0}: Object.keys(allowedExtensions).join(', ')
@@ -6003,6 +6303,11 @@ msgstr "קלט אובייקט לא תקין."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Invalid or expired export download link."
 msgstr "קישור ההורדה של הייצוא אינו תקין או שפג תוקפו."
+
+#. js-lingui-id: Mwwd+k
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Invalid or expired recovery code."
+msgstr "קוד שחזור לא תקין או שפג תוקפו."
 
 #. js-lingui-id: t4AABW
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -6210,9 +6515,20 @@ msgstr "פורמט URL לא תקין."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
+#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "פורמט UUID לא תקין."
+
+#. js-lingui-id: VJ3pD8
+#: src/engine/metadata-modules/validation-rule/validation-rule.exception.ts
+msgid "Invalid validation rule expression."
+msgstr "ביטוי כלל האימות אינו תקין."
+
+#. js-lingui-id: x0Uq3/
+#: src/engine/metadata-modules/validation-rule/validation-rule.exception.ts
+msgid "Invalid validation rule input."
+msgstr "קלט כלל אימות אינו תקין."
 
 #. js-lingui-id: RyBgV/
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -6708,11 +7024,41 @@ msgctxt "fieldMetadata.label"
 msgid "Language"
 msgstr "שפה"
 
+#. js-lingui-id: pPtB+n
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Last activity"
+msgstr "פעילות אחרונה"
+
+#. js-lingui-id: 6BLB1j
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Last mentioned at"
+msgstr "הוזכר לאחרונה בתאריך"
+
+#. js-lingui-id: 98c5Xs
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Last message"
+msgstr "הודעה אחרונה"
+
+#. js-lingui-id: XIwvdi
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Last message sender"
+msgstr "שולח ההודעה האחרונה"
+
 #. js-lingui-id: qqD3aX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last published Version ID"
 msgstr "מזהה של גרסת הפרסום האחרונה"
+
+#. js-lingui-id: R2LOsP
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Last read at"
+msgstr "נקרא לאחרונה בתאריך"
 
 #. js-lingui-id: 2zq4LZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -6725,6 +7071,12 @@ msgstr "שגיאת הזרם האחרונה"
 msgctxt "fieldMetadata.label"
 msgid "Last Stream Error"
 msgstr "שגיאת הזרם האחרונה"
+
+#. js-lingui-id: 94QD51
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Last time the link was changed"
+msgstr "הפעם האחרונה שהקישור שונה"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -6784,6 +7136,7 @@ msgstr "הפעם האחרונה שהרשומה שונתה"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6795,6 +7148,12 @@ msgstr "הפעם האחרונה שהרשומה שונתה"
 msgctxt "fieldMetadata.label"
 msgid "Last update"
 msgstr "עדכון אחרון"
+
+#. js-lingui-id: 4DNDAY
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Latest activity the member has read up to"
+msgstr "הפעילות האחרונה שהחבר קרא עד אליה"
 
 #. js-lingui-id: 0x2TQ/
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
@@ -6810,6 +7169,12 @@ msgstr "נדרשת פריסה עבור וידג'ט תרשים עמודות \"{wi
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Limits scoped below the workspace require the Organization plan."
 msgstr "מגבלות המוגדרות מתחת למרחב העבודה דורשות את תוכנית Organization."
+
+#. js-lingui-id: T2S+Em
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Link position"
+msgstr "מיקום הקישור"
 
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -7038,6 +7403,36 @@ msgstr "שגיאות אימות רבות"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
 msgstr "מרץ"
+
+#. js-lingui-id: Yzgk1u
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Mark as done"
+msgstr "סימון כבוצע"
+
+#. js-lingui-id: lL9UM0
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Mark as read"
+msgstr "סמן כנקרא"
+
+#. js-lingui-id: /Y0nEy
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Mark as read"
+msgstr "סמן כנקרא"
+
+#. js-lingui-id: c3ONTD
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Mark as unread"
+msgstr "סמן כלא נקרא"
+
+#. js-lingui-id: WnZHix
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Mark as unread"
+msgstr "סמן כלא נקרא"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -7565,6 +7960,18 @@ msgstr "חסר גוף הבקשה."
 msgid "Missing required fields: at least one unique constraint have to be fully populated for \"{connectFieldName}\"."
 msgstr "שדות חובה חסרים: לפחות אילוץ ייחודי אחד חייב להיות מאוכלס במלואו עבור \"{connectFieldName}\"."
 
+#. js-lingui-id: 770A/z
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Model ID"
+msgstr "מזהה מודל"
+
+#. js-lingui-id: yrTsg9
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Model ID"
+msgstr "מזהה מודל"
+
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -7681,11 +8088,6 @@ msgstr "שם הרצת זרימת העבודה"
 msgid "Names are not synced with labels"
 msgstr "השמות לא מסונכרנים עם התוויות"
 
-#. js-lingui-id: zL+3RN
-#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
-msgid "Navigate App"
-msgstr "נווט באפליקציה"
-
 #. js-lingui-id: GxRBGY
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -7755,6 +8157,18 @@ msgstr "נדרשת פעולה"
 msgctxt "fieldMetadata.label"
 msgid "New"
 msgstr "חדש"
+
+#. js-lingui-id: y2lV0S
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "New chat"
+msgstr "צ'אט חדש"
+
+#. js-lingui-id: xKvfAx
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "New chat"
+msgstr "צ'אט חדש"
 
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
@@ -8290,6 +8704,11 @@ msgstr "אחד או יותר מתחומי הגישה המבוקשים אינם �
 msgid "Only a scheduled or sending campaign can be canceled."
 msgstr "ניתן לבטל רק קמפיין מתוזמן או קמפיין שנשלח."
 
+#. js-lingui-id: 8Hy+aw
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "Only a server administrator can manage recovery codes for this member."
+msgstr "רק מנהל שרת יכול לנהל קודי שחזור עבור חבר זה."
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -8330,10 +8749,21 @@ msgstr "מותר וידג'ט אחד בלבד בגובה מלא בכל לשוני
 msgid "Only one workflow version identifier may be provided"
 msgstr "ניתן לספק מזהה גרסת זרימת עבודה אחד בלבד"
 
+#. js-lingui-id: gJqtB1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
+msgid "Only the application that owns this agent can change its triggers"
+msgstr "רק היישום שבבעלותו סוכן זה יכול לשנות את המפעילים שלו"
+
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "רק האדם שיצר זרימת עבודה זו יכול לשנות מי רואה אותה"
+
+#. js-lingui-id: E3ezWc
+#: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
+msgid "Only the values of this form can be changed."
+msgstr "ניתן לשנות רק את הערכים של טופס זה."
 
 #. js-lingui-id: lWLaJ5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8558,11 +8988,28 @@ msgstr "אחר"
 msgid "Other error"
 msgstr "שגיאה אחרת"
 
+#. js-lingui-id: qxvgIJ
+#: src/engine/core-modules/application/application.service.ts
+msgid "Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here."
+msgstr "מרחבי עבודה אחרים מסתמכים על נתיב השרת של יישום זה, המסופק ממרחב עבודה זה. העבר את הבעלות על היישום למרחב עבודה אחר שבו הוא מותקן, או הסר אותו מכל מרחבי העבודה האחרים, לפני הסרתו כאן."
+
 #. js-lingui-id: CN5Up3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Outgoing"
 msgstr "יוצא"
+
+#. js-lingui-id: B6syqB
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Output Credits"
+msgstr "קרדיטים של פלט"
+
+#. js-lingui-id: Vexcon
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Output Credits"
+msgstr "קרדיטים של פלט"
 
 #. js-lingui-id: NFhGiX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
@@ -8574,6 +9021,18 @@ msgstr "שמות שדות פלט יכולים להכיל רק אותיות, מס
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "Output field names must use only letters, numbers, underscores, dots or hyphens and be at most 64 characters: {0}"
 msgstr "שמות שדות פלט חייבים להשתמש רק באותיות, מספרים, קווים תחתונים, נקודות או מקפים ולהיות באורך של עד 64 תווים: {0}"
+
+#. js-lingui-id: C+hPEf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Output Tokens"
+msgstr "אסימוני פלט"
+
+#. js-lingui-id: FjWz1Z
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Output Tokens"
+msgstr "אסימוני פלט"
 
 #. js-lingui-id: Bxs7Ar
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8720,6 +9179,12 @@ msgstr "קבוצת האב של תנאי הרשאה ברמת השורה לא נמ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
 msgstr "קבוצת סינון תצוגת אב לא נמצאה"
+
+#. js-lingui-id: vTA2Ms
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Participants"
+msgstr "משתתפים"
 
 #. js-lingui-id: Yp8zt3
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -9085,6 +9550,7 @@ msgstr "איש קשר"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9349,11 +9815,34 @@ msgctxt "fieldMetadata.label"
 msgid "Read"
 msgstr "קריאה"
 
+#. js-lingui-id: FiHtmb
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Read and inbox state of a member in a chat thread"
+msgstr "מצב הקריאה ותיבת הדואר הנכנס של חבר בשרשור צ'אט"
+
+#. js-lingui-id: XReG0G
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Read and inbox state of each member in this thread"
+msgstr "מצב הקריאה ותיבת הדואר הנכנס של כל חבר בשרשור זה"
+
+#. js-lingui-id: uCOlF8
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Read and inbox state of the workspace member in AI chat threads"
+msgstr "מצב הקריאה ותיבת הדואר הנכנס של חבר מרחב העבודה בשרשורי צ'אט של בינה מלאכותית"
+
 #. js-lingui-id: ZsNi6Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "קריאה וכתיבה"
+
+#. js-lingui-id: e2WMO+
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Read, archive and snooze are not available yet. Try again in a few minutes."
+msgstr "קריאה, ארכוב והשהיה אינם זמינים עדיין. נסה שוב בעוד כמה דקות."
 
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -9665,6 +10154,18 @@ msgctxt "fieldMetadata.label"
 msgid "Rendering Failed At"
 msgstr "העיבוד נכשל ב-"
 
+#. js-lingui-id: VXwxSq
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Reopen"
+msgstr "פתח מחדש"
+
+#. js-lingui-id: jR8q6B
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Reopen"
+msgstr "פתח מחדש"
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9704,6 +10205,12 @@ msgstr "התבקשה"
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Requested file range cannot be served."
 msgstr "לא ניתן להגיש את טווח הקובץ המבוקש."
+
+#. js-lingui-id: pvmev1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Resolved destination URL"
+msgstr "כתובת URL של יעד שנפתרה"
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -9788,6 +10295,12 @@ msgstr "שחזור"
 msgctxt "commandMenuItem.label"
 msgid "Restore {objectLabel}"
 msgstr "שחזר את {objectLabel}"
+
+#. js-lingui-id: Ns9Rpt
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Restricted"
+msgstr "מוגבל"
 
 #. js-lingui-id: xKCu0t
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9980,6 +10493,11 @@ msgstr "מקטע לא נמצא."
 msgid "Route path already exists."
 msgstr "נתיב המקטע כבר קיים."
 
+#. js-lingui-id: k2dqAu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
+msgid "Route triggers cannot forward credential headers"
+msgstr "מפעילי נתיב אינם יכולים להעביר כותרות אישורים"
+
 #. js-lingui-id: dFzdKL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10120,18 +10638,6 @@ msgctxt "fieldMetadata.label"
 msgid "Scope"
 msgstr "היקף"
 
-#. js-lingui-id: rhC6Nh
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Score"
-msgstr "ציון"
-
-#. js-lingui-id: F2sVun
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Score"
-msgstr "ציון"
-
 #. js-lingui-id: SiXwZL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10223,6 +10729,7 @@ msgstr "וקטור חיפוש"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10250,6 +10757,11 @@ msgstr "שדה וקטור חיפוש חייב להשתייך לאותו אובי
 msgid "Search vector field not found"
 msgstr "שדה וקטור החיפוש לא נמצא"
 
+#. js-lingui-id: xvgOFj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
+msgid "Secret application variable cannot have a default value"
+msgstr "למשתנה יישום סודי לא יכול להיות ערך ברירת מחדל"
+
 #. js-lingui-id: 0Hcw3b
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -10275,18 +10787,6 @@ msgstr "צפה בהרצות"
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Runs"
 msgstr "צפה בהרצות"
-
-#. js-lingui-id: pRQO5R
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "See Version"
-msgstr "צפה בגרסה"
-
-#. js-lingui-id: onFkTP
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "See Version"
-msgstr "צפה בגרסה"
 
 #. js-lingui-id: cyovqN
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10489,6 +10989,11 @@ msgstr "התחזות ברמת השרת אינה מופעלת עבור משתמש
 msgid "Set up two-factor authentication before impersonating users in another workspace."
 msgstr "הגדר אימות דו-שלבי לפני התחזות למשתמשים במרחב עבודה אחר."
 
+#. js-lingui-id: hMtVF7
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "Set up two-factor authentication on your own account before generating a recovery code."
+msgstr "הגדר אימות דו-שלבי בחשבון שלך לפני יצירת קוד שחזור."
+
 #. js-lingui-id: vGWuPM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -10550,6 +11055,25 @@ msgstr "הכותרת \"{updatedTitle}\" של פריט בתפריט ההגדרו�
 msgid "Settings menu item title is required"
 msgstr "נדרשת כותרת לפריט בתפריט ההגדרות"
 
+#. js-lingui-id: r+zQgZ
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Share"
+msgstr "שתף"
+
+#. js-lingui-id: yBQtdU
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Share {objectLabelSingular}"
+msgstr "שתף {objectLabelSingular}"
+
+#. js-lingui-id: FiE0YS
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Share Record"
+msgstr "שתף רשומה"
+
 #. js-lingui-id: mPgP26
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -10582,6 +11106,18 @@ msgstr "shareWith מציין חבר סביבת עבודה שאינו שייך ל
 #: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith מציין את אותו גורם יותר מפעם אחת"
+
+#. js-lingui-id: K9lEbt
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Short link"
+msgstr "קישור מקוצר"
+
+#. js-lingui-id: Cftw//
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Short links"
+msgstr "קישורים מקוצרים"
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -10635,6 +11171,29 @@ msgctxt "fieldMetadata.label"
 msgid "Skipped count"
 msgstr "מספר שדולגו"
 
+#. js-lingui-id: WBwjjW
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Snooze"
+msgstr "השהה"
+
+#. js-lingui-id: 62MTp+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Snooze"
+msgstr "השהה"
+
+#. js-lingui-id: DAn6TI
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Snooze time must be in the future."
+msgstr "זמן ההשהיה חייב להיות בעתיד."
+
+#. js-lingui-id: Q/HVbF
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Snoozed until"
+msgstr "מושהה עד"
+
 #. js-lingui-id: kIKb9e
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "Social"
@@ -10665,11 +11224,6 @@ msgstr "חלק מהחברויות במרחב העבודה לא נמצאו. יי�
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "Something went wrong while saving your onboarding progress."
 msgstr "משהו השתבש בעת שמירת התקדמות תהליך ההצטרפות שלך."
-
-#. js-lingui-id: RjTo7h
-#: src/engine/core-modules/onboarding/onboarding.exception.ts
-msgid "Something went wrong while starting the app installation. Please try again."
-msgstr "משהו השתבש בעת התחלת התקנת האפליקציה. אנא נסה שוב."
 
 #. js-lingui-id: fWsBTs
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
@@ -10879,7 +11433,14 @@ msgctxt "fieldMetadata.label"
 msgid "Start of the week"
 msgstr "תחילת השבוע"
 
+#. js-lingui-id: kg0Ky1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Started At"
+msgstr "התחיל ב-"
+
 #. js-lingui-id: tCbiO2
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Started At"
@@ -10914,12 +11475,14 @@ msgstr "סטטיסטיקה"
 
 #. js-lingui-id: 45wQns
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Status"
 msgstr "מצב"
 
 #. js-lingui-id: a1tUtz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -10937,11 +11500,6 @@ msgstr "מצבים"
 #: src/modules/workflow/common/utils/assert-workflow-statuses-not-set.ts
 msgid "Statuses cannot be set manually."
 msgstr "לא ניתן להגדיר מצבים באופן ידני."
-
-#. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
-msgid "Step is not a form"
-msgstr "שלב אינו טופס."
 
 #. js-lingui-id: 9vB6Yo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -10998,6 +11556,24 @@ msgstr "נושא"
 msgctxt "fieldMetadata.label"
 msgid "Subject"
 msgstr "נושא"
+
+#. js-lingui-id: dkptzA
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Subscribe"
+msgstr "הירשם"
+
+#. js-lingui-id: YXzEKE
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Subscribe"
+msgstr "הירשם"
+
+#. js-lingui-id: lnqIRm
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Subscribed"
+msgstr "רשום כמנוי"
 
 #. js-lingui-id: x0Vn7k
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11324,6 +11900,12 @@ msgctxt "fieldMetadata.description"
 msgid "TaskTarget task"
 msgstr "TaskTarget משימה"
 
+#. js-lingui-id: nuuwhl
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Template and resolved URL hash"
+msgstr "גיבוב התבנית וכתובת ה-URL שנפתרה"
+
 #. js-lingui-id: 2kFzQB
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Temporary file cannot be downloaded."
@@ -11436,6 +12018,13 @@ msgstr "לא הוקצה ליישום תפקיד תקף. אנא בדוק את ה�
 msgid "The application key-value entry could not be saved. Please try again."
 msgstr "לא ניתן היה לשמור את רשומת מפתח-ערך של היישום. אנא נסה שוב."
 
+#. js-lingui-id: Y24OF2
+#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-workflow-version.util.ts
+msgid "The application workflow definition is invalid."
+msgstr "הגדרת תהליך העבודה של היישום אינה תקינה."
+
 #. js-lingui-id: WPAHpm
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of \"dependencies\"."
@@ -11486,6 +12075,12 @@ msgstr "סך כל ההכנסות השנתיות של החברה"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The connection-provider manifest is missing required fields."
 msgstr "למניפסט connection-provider חסרים שדות נדרשים."
+
+#. js-lingui-id: qTOWOx
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The creator of the link"
+msgstr "יוצר הקישור"
 
 #. js-lingui-id: WhUgpA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -11655,6 +12250,12 @@ msgstr "השדה happensAt המשמש את סוג פעילות ציר הזמן �
 msgid "The initial version of a workflow can not be deleted"
 msgstr "לא ניתן למחוק את גרסת המוצא של תהליך עבודה."
 
+#. js-lingui-id: EJ2jHl
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The last editor of the link"
+msgstr "העורך האחרון של הקישור"
+
 #. js-lingui-id: s8R9ou
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11687,6 +12288,18 @@ msgstr "פונקציית הלוגיקה שאמורה לרוץ בעת הניתו�
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on disconnect was not found."
 msgstr "פונקציית הלוגיקה שצריכה לרוץ בעת הניתוק לא נמצאה."
+
+#. js-lingui-id: gefH0a
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The member who wrote the last message, empty when the agent or an application did"
+msgstr "החבר שכתב את ההודעה האחרונה; ריק כאשר הסוכן או יישום כתב אותה"
+
+#. js-lingui-id: IK/8im
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The members who wrote in the thread"
+msgstr "החברים שכתבו בשרשור"
 
 #. js-lingui-id: fIq00W
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
@@ -11750,6 +12363,11 @@ msgstr "לא ניתן היה להגיע לרישום החבילות (package reg
 msgctxt "fieldMetadata.description"
 msgid "The people this campaign was sent to"
 msgstr "האנשים שאליהם נשלח הקמפיין הזה"
+
+#. js-lingui-id: lO2q5Z
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "The permissions of this run no longer allow submitting this form."
+msgstr "ההרשאות של הרצה זו אינן מאפשרות עוד לשלוח טופס זה."
 
 #. js-lingui-id: HvJTSR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-member-standard-flat-field-metadata.util.ts
@@ -11841,6 +12459,12 @@ msgstr "שמות היחיד והרבים לא יכולים להיות זהים �
 msgid "The standard application cannot be exported."
 msgstr "לא ניתן לייצא את היישום הסטנדרטי."
 
+#. js-lingui-id: D1ScNL
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The start of the last message in the thread"
+msgstr "תחילת ההודעה האחרונה בשרשור"
+
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
@@ -11908,6 +12532,11 @@ msgctxt "fieldMetadata.description"
 msgid "The workflow automated trigger type"
 msgstr "סוג הטריגר האוטומטי של זרימת העבודה"
 
+#. js-lingui-id: yf0hmT
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow field does not belong to the referenced object."
+msgstr "שדה תהליך העבודה אינו שייך לאובייקט שאליו בוצעה הפניה."
+
 #. js-lingui-id: ilJZDO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11919,6 +12548,16 @@ msgstr "מזהה הגרסה האחרונה שפורסמה של זרימת העב
 msgctxt "fieldMetadata.description"
 msgid "The workflow name"
 msgstr "שם זרימת העבודה"
+
+#. js-lingui-id: UAyJ4f
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow record picker must reference an object."
+msgstr "בורר הרשומות של תהליך העבודה חייב להפנות לאובייקט."
+
+#. js-lingui-id: R6vHYk
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow references metadata that is not available to this application."
+msgstr "תהליך העבודה מפנה למטא-נתונים שאינם זמינים ליישום זה."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -11966,6 +12605,16 @@ msgstr "סטטוס גרסת זרימת העבודה"
 msgctxt "fieldMetadata.description"
 msgid "The workspace member who last updated the record"
 msgstr "החבר בסביבת העבודה שעדכן לאחרונה את הרשומה"
+
+#. js-lingui-id: lRojhv
+#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+msgid "Their role cannot access these records, and this object is only shared with roles that can."
+msgstr "לתפקיד שלהם אין גישה לרשומות אלה, ואובייקט זה משותף רק עם תפקידים שיש להם גישה."
+
+#. js-lingui-id: qX/4Ez
+#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+msgid "Their role cannot see this record, and this object is only shared with people who can."
+msgstr "לתפקיד שלהם אין אפשרות לראות רשומה זו, ואובייקט זה משותף רק עם אנשים שיכולים לראות אותה."
 
 #. js-lingui-id: mTxjri
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -12074,6 +12723,11 @@ msgstr "יישום זה מותקן. יש להמתין לסיום ההתקנה ל
 msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
 msgstr "יישום זה מוסר. יש להמתין לסיום ההסרה לפני התקנתו מחדש."
 
+#. js-lingui-id: J6svMA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "This application variable scope is not supported."
+msgstr "היקף משתנה יישום זה אינו נתמך."
+
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -12130,15 +12784,20 @@ msgstr "לא ניתן להשתמש בחשבון המחובר הזה עבור פ�
 msgid "This connection is not allowed."
 msgstr "חיבור זה אינו מותר."
 
-#. js-lingui-id: 4GicxZ
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "This conversation belongs to a workflow run and can only be read."
-msgstr ""
+#. js-lingui-id: rTgIgB
+#: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
+msgid "This conversation is busy. Try again."
+msgstr "שיחה זו עסוקה. נסה שוב."
 
 #. js-lingui-id: y3SNqs
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This conversation is too long for the model. Start a new thread to continue."
 msgstr "השיחה הזו ארוכה מדי עבור המודל. פתח שרשור חדש כדי להמשיך."
+
+#. js-lingui-id: 7Wki2n
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This conversation is waiting on an earlier request. Send your message once it is answered or done."
+msgstr "שיחה זו ממתינה לבקשה קודמת. שלח את ההודעה שלך לאחר שתיענה או תושלם."
 
 #. js-lingui-id: z7bcpf
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -12179,11 +12838,6 @@ msgstr "נקודת קצה זו הועברה. קרא לה במקום זאת בכ�
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr "נקודת קצה זו אינה זמינה עוד תחת ‎/s/. השתמש במקום זאת ב-URL הייעודי של הדומיין הציבורי."
-
-#. js-lingui-id: mjE4RD
-#: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
-msgid "This evaluation target could not be found."
-msgstr "יעד ההערכה הזה לא נמצא."
 
 #. js-lingui-id: jBNDRQ
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12267,10 +12921,10 @@ msgstr "נתיב הקובץ הזה ארוך מדי להעלאה."
 msgid "This file upload has already been finalized."
 msgstr "העלאת קובץ זו כבר הושלמה."
 
-#. js-lingui-id: Ee9ncG
+#. js-lingui-id: HTylEV
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
-msgid "This form is no longer awaiting a submission"
-msgstr "טופס זה אינו ממתין עוד להגשה"
+msgid "This form no longer waits for an answer."
+msgstr "טופס זה אינו ממתין עוד לתשובה."
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -12316,6 +12970,16 @@ msgstr "מסנן יומן זה אינו חוקי."
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
 msgstr "טבלת יומן זו אינה חוקית."
+
+#. js-lingui-id: 7Ecb3M
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This member can't reply in this chat, so it can't be assigned to them."
+msgstr "חבר זה אינו יכול להשיב בצ'אט זה, ולכן לא ניתן להקצות אותו לו."
+
+#. js-lingui-id: fbSots
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "This member hasn't set up two-factor authentication, so there is nothing to recover."
+msgstr "חבר זה לא הגדיר אימות דו-שלבי, ולכן אין מה לשחזר."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -12412,11 +13076,6 @@ msgstr "ספק זה אינו נתמך."
 msgid "This public domain is already registered."
 msgstr "דומיין ציבורי זה כבר רשום."
 
-#. js-lingui-id: z7QJbR
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "This question has already been answered."
-msgstr "על שאלה זו כבר ניתנה תשובה."
-
 #. js-lingui-id: TjUnO1
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
@@ -12441,6 +13100,21 @@ msgstr "רשומה זו אינה קיימת או שנמחקה."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This relation field cannot be used in a record rule"
 msgstr "לא ניתן להשתמש בשדה קשר זה בכלל רשומה"
+
+#. js-lingui-id: 16eZJL
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This request for input could not be found."
+msgstr "לא נמצאה בקשה זו לקלט."
+
+#. js-lingui-id: KQoPVq
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This request is no longer waiting for an answer."
+msgstr "בקשה זו אינה ממתינה עוד לתשובה."
+
+#. js-lingui-id: jd14wQ
+#: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
+msgid "This request is still getting ready. Try again in a moment."
+msgstr "בקשה זו עדיין בהכנה. נסה שוב בעוד רגע."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -12541,6 +13215,11 @@ msgstr "העלאה זו כבר מושלמת. נא להמתין לסיומה."
 msgid "This user is already a member of the workspace."
 msgstr "משתמש זה כבר חבר בסביבת העבודה."
 
+#. js-lingui-id: r6G80y
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "This user is not a member of the workspace."
+msgstr "משתמש זה אינו חבר במרחב העבודה."
+
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."
@@ -12565,6 +13244,16 @@ msgstr "זרימת עבודה זו כבר קיימת"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "זרימת עבודה זו כבר קיימת."
+
+#. js-lingui-id: MuU6yL
+#: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
+msgid "This workflow is managed by an application and is read-only"
+msgstr "תהליך עבודה זה מנוהל על ידי יישום והוא לקריאה בלבד"
+
+#. js-lingui-id: ZyyOUp
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+msgid "This workflow step is not allowed with the permissions of the workflow."
+msgstr "שלב זה בתהליך העבודה אינו מותר בהתאם להרשאות של תהליך העבודה."
 
 #. js-lingui-id: cqZK9Z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
@@ -12642,6 +13331,7 @@ msgid "Thread"
 msgstr "שרשור"
 
 #. js-lingui-id: KJ4+gp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -12666,6 +13356,12 @@ msgstr "מזהה חיצוני של שיחה"
 msgctxt "fieldMetadata.description"
 msgid "Thread id from the messaging provider"
 msgstr "מזהה שיחה מספק המסרים"
+
+#. js-lingui-id: rwVcrd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Thread this state belongs to"
+msgstr "השרשור שאליו מצב זה שייך"
 
 #. js-lingui-id: kkDQ8m
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -13091,14 +13787,12 @@ msgstr "יום שלישי"
 
 #. js-lingui-id: Ucgl3N
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Turn"
 msgstr "תור"
 
 #. js-lingui-id: VM2Yjp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Turn"
 msgstr "תור"
@@ -13163,6 +13857,11 @@ msgstr "אין אפשרות לגשת להיסטוריית AI. נא לנסות ש
 msgid "Unable to retrieve the application package."
 msgstr "לא ניתן לאחזר את חבילת היישום."
 
+#. js-lingui-id: p/CSwP
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Unassign yourself before unsubscribing from this chat."
+msgstr "בטל את הקצאת עצמך לפני ביטול המנוי מצ'אט זה."
+
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -13213,6 +13912,30 @@ msgstr "ניתק קישור של הערה קשורה"
 msgctxt "timelineActivityType.label"
 msgid "unlinked a related task"
 msgstr "ניתק קישור של משימה קשורה"
+
+#. js-lingui-id: S6V7+e
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Unsnooze"
+msgstr "בטל השהיה"
+
+#. js-lingui-id: pm01mX
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Unsnooze"
+msgstr "בטל השהיה"
+
+#. js-lingui-id: rx6DZo
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Unsubscribe"
+msgstr "ביטול הרשמה"
+
+#. js-lingui-id: TkPhSO
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Unsubscribe"
+msgstr "ביטול הרשמה"
 
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -13328,11 +14051,11 @@ msgid "updated a related task"
 msgstr "עדכן משימה קשורה"
 
 #. js-lingui-id: zYS9b3
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -13341,11 +14064,11 @@ msgid "Updated At"
 msgstr "תאריך עדכון"
 
 #. js-lingui-id: LuWQ3A
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -13376,6 +14099,7 @@ msgstr "תאריך עדכון"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -13397,6 +14121,12 @@ msgstr "השם המעודכן של השדה אינו מסונכרן עם התו�
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Upsert"
 msgstr "הוספה או עדכון"
+
+#. js-lingui-id: CfAilE
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "URL as authored in the campaign, including variables"
+msgstr "כתובת ה-URL כפי שנוצרה בקמפיין, כולל משתנים"
 
 #. js-lingui-id: Gjk0so
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-url.util.ts
@@ -13439,6 +14169,11 @@ msgstr "המשתמש כבר קיים"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "למשתמש כבר מוקצה תפקיד."
+
+#. js-lingui-id: +FdZ1+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "User application variable cannot have a value"
+msgstr "למשתנה יישום של משתמש לא יכול להיות ערך"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -13500,8 +14235,7 @@ msgid "User time zone"
 msgstr "אזור זמן של המשתמש"
 
 #. js-lingui-id: VkcC68
-#: src/engine/core-modules/auth/services/auth.service.ts
-#: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util.ts
 msgid "User was not created with email/password"
 msgstr "המשתמש לא נוצר עם אימייל/סיסמה"
 
@@ -13521,7 +14255,6 @@ msgstr "מזהה סביבת העבודה של המשתמש"
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "סביבת העבודה של המשתמש לא נמצאה."
@@ -13554,6 +14287,55 @@ msgstr "היום ההתחלתי המועדף על המשתמש בשבוע"
 msgctxt "fieldMetadata.description"
 msgid "User's preferred time format"
 msgstr "פורמט הזמן המועדף על המשתמש"
+
+#. js-lingui-id: lgqX2U
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule error field must belong to the rule's object"
+msgstr "שדה השגיאה של כלל האימות חייב להשתייך לאובייקט של הכלל"
+
+#. js-lingui-id: s3MXA5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule expression cannot be parsed"
+msgstr "לא ניתן לנתח את ביטוי כלל האימות"
+
+#. js-lingui-id: zPzkn5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule message is required"
+msgstr "נדרשת הודעת כלל אימות"
+
+#. js-lingui-id: YHVOJA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule name is required"
+msgstr "נדרש שם כלל אימות"
+
+#. js-lingui-id: tRNbCu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule not found"
+msgstr "כלל אימות לא נמצא"
+
+#. js-lingui-id: 4U57GB
+#: src/engine/metadata-modules/validation-rule/validation-rule.exception.ts
+msgid "Validation rule not found."
+msgstr "כלל אימות לא נמצא."
+
+#. js-lingui-id: Wkov6K
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule object not found"
+msgstr "אובייקט כלל אימות לא נמצא"
+
+#. js-lingui-id: /zScA0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rules cannot be added to system objects"
+msgstr "לא ניתן להוסיף כללי אימות לאובייקטי מערכת"
 
 #. js-lingui-id: sFN4Dx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -13975,6 +14757,11 @@ msgstr "ViewId נדרש ליצירת קבוצת תצוגה."
 msgid "ViewId is required to create a view sort."
 msgstr "ViewId נדרש ליצירת מיון תצוגה."
 
+#. js-lingui-id: 4KUXUa
+#: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
+msgid "Wait for event step must have a valid event"
+msgstr "לשלב המתנה לאירוע חייב להיות אירוע תקין"
+
 #. js-lingui-id: vuzFx0
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -14004,6 +14791,16 @@ msgstr "שוחזר על ידי"
 msgctxt "timelineActivityType.label"
 msgid "was unlinked by"
 msgstr "נותק קישור על ידי"
+
+#. js-lingui-id: aIwQPa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Watched fields of a database event trigger must be field names"
+msgstr "השדות המנוטרים של מפעיל אירוע מסד נתונים חייבים להיות שמות שדות"
+
+#. js-lingui-id: CsCRdd
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Watched fields only apply to \"updated\" database event triggers"
+msgstr "שדות מנוטרים חלים רק על מפעילי אירוע מסד נתונים מסוג \"updated\""
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
@@ -14091,6 +14888,12 @@ msgctxt "fieldMetadata.description"
 msgid "What this list is for"
 msgstr "למה משמשת רשימה זו"
 
+#. js-lingui-id: bA46C1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When a snoozed thread comes back to the inbox"
+msgstr "כאשר שרשור מושהה חוזר לתיבת הדואר הנכנס"
+
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14102,6 +14905,24 @@ msgstr "מועד סיום שליחת הקמפיין"
 msgctxt "fieldMetadata.description"
 msgid "When the campaign is due to start sending"
 msgstr "מועד תחילת שליחת הקמפיין"
+
+#. js-lingui-id: xTbDMO
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the member archived or snoozed the thread"
+msgstr "כאשר החבר העביר את השרשור לארכיון או השהה אותו"
+
+#. js-lingui-id: LOsHJT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the member was last mentioned in the thread"
+msgstr "כאשר החבר הוזכר לאחרונה בשרשור"
+
+#. js-lingui-id: 6KK+Lq
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the thread was created or last received a message"
+msgstr "כאשר השרשור נוצר או התקבלה בו לאחרונה הודעה"
 
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -14120,6 +14941,12 @@ msgstr "האם משתמש הקצה במפורש יעד זה"
 msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
 msgstr "האם כללי המשתתפים הנוכחיים מצדיקים יעד זה"
+
+#. js-lingui-id: rJ6Dbr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether new activity brings the thread back to the inbox"
+msgstr "האם פעילות חדשה מחזירה את השרשור לתיבת הדואר הנכנס"
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -14298,6 +15125,7 @@ msgstr "זרימת עבודה מקושרת להרצה."
 #. js-lingui-id: dNmZ33
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
@@ -14321,12 +15149,6 @@ msgstr "מיקום רישום זרימת עבודה"
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
 msgid "Workflow root step not found."
 msgstr "שלב השורש של זרימת העבודה לא נמצא."
-
-#. js-lingui-id: U1tpnT
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Workflow Run"
-msgstr ""
 
 #. js-lingui-id: hqdwCt
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14398,12 +15220,6 @@ msgctxt "fieldMetadata.label"
 msgid "Workflow run status"
 msgstr "סטטוס הרצת זרימת עבודה"
 
-#. js-lingui-id: jwF6Mg
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow run whose agent step held this conversation"
-msgstr ""
-
 #. js-lingui-id: Tinlvs
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -14421,12 +15237,6 @@ msgstr "הרצות זרימת עבודה המקושרות לגרסה."
 msgctxt "fieldMetadata.description"
 msgid "Workflow runs linked to the workflow."
 msgstr "הרצות זרימת עבודה המקושרות לזרימת העבודה."
-
-#. js-lingui-id: 0madNH
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Workflow Step ID"
-msgstr ""
 
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -14636,6 +15446,11 @@ msgstr "מרחב עבודה"
 msgid "Workspace {workspaceId} is not found."
 msgstr "סביבת העבודה {workspaceId} לא נמצאה."
 
+#. js-lingui-id: Ulbao6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "Workspace application variable must have a value"
+msgstr "למשתנה יישום של מרחב עבודה חייב להיות ערך"
+
 #. js-lingui-id: lNgTSN
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace cannot be deleted: subscription is not yet canceled."
@@ -14692,6 +15507,7 @@ msgid "Workspace Member"
 msgstr "חבר סביבת עבודה"
 
 #. js-lingui-id: tz4ASG
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -14751,6 +15567,18 @@ msgstr "חבר סביבת עבודה לא נמצא."
 msgctxt "fieldMetadata.description"
 msgid "Workspace member position"
 msgstr "תפקיד חבר סביבת עבודה"
+
+#. js-lingui-id: 62xYnj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member responsible for the thread"
+msgstr "חבר מרחב העבודה האחראי על השרשור"
+
+#. js-lingui-id: JZ3O3J
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member this state belongs to"
+msgstr "חבר מרחב העבודה שאליו מצב זה שייך"
 
 #. js-lingui-id: 8GSlT/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -14823,6 +15651,11 @@ msgstr "סכמת סביבת עבודה לא נמצאה."
 msgid "Workspace setup"
 msgstr "הגדרת מרחב עבודה"
 
+#. js-lingui-id: 5TbIzO
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
+msgid "Workspace workflows cannot be adopted by an application."
+msgstr "יישום אינו יכול לאמץ תהליכי עבודה של מרחב עבודה."
+
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
@@ -14870,18 +15703,19 @@ msgstr "חבר סביבת עבודה"
 msgid "Would not reach this"
 msgstr "לא אמור להגיע לכאן"
 
+#. js-lingui-id: yxN9Xx
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Writers"
+msgstr "כותבים"
+
 #. js-lingui-id: VddeYt
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 msgid "Wrong extension for file."
 msgstr "סיומת קובץ שגויה."
 
-#. js-lingui-id: fV2Bu6
-#: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Wrong password"
-msgstr "סיסמה שגויה."
-
 #. js-lingui-id: RksBK0
-#: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util.ts
 msgid "Wrong password."
 msgstr "סיסמה שגויה."
 
@@ -14899,7 +15733,12 @@ msgstr "כן"
 #. js-lingui-id: 3N5PgZ
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "You are not allowed to access this function."
-msgstr ""
+msgstr "אינך מורשה לגשת לפונקציה זו."
+
+#. js-lingui-id: OkhBdX
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "You are not allowed to answer this request."
+msgstr "אין לך הרשאה להשיב לבקשה זו."
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
@@ -14932,6 +15771,16 @@ msgstr "ניתן לעדכן רשומה אחת בלבד עם שדה קבצים ב
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
+#. js-lingui-id: UyTIP7
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "You can't generate a recovery code for this member."
+msgstr "אין באפשרותך ליצור קוד שחזור עבור חבר זה."
+
+#. js-lingui-id: hZGogC
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "You can't generate a recovery code for yourself. Reset two-factor authentication from your profile instead."
+msgstr "אין באפשרותך ליצור קוד שחזור עבור עצמך. במקום זאת, אפס את האימות הדו-שלבי מהפרופיל שלך."
+
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
@@ -14962,6 +15811,11 @@ msgstr "לא ניתן להסיר את תפקיד המנהל מהאדמיניסט
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "אינך יכול לבטל גישת לוח הניהול ממנהל השרת האחרון."
+
+#. js-lingui-id: YAKRJR
+#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service.ts
+msgid "You cannot select this record in this form."
+msgstr "אין באפשרותך לבחור רשומה זו בטופס זה."
 
 #. js-lingui-id: y2sD5W
 #: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
@@ -15053,6 +15907,7 @@ msgstr "אין לך הרשאה לנהל את רשימת החסימה של סבי
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
+#: src/engine/guards/exceptions/auth-principal-refused.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "אין לך הרשאה לבצע פעולה זו."
@@ -15097,11 +15952,6 @@ msgstr "אין לך הרשאה ליצור תצוגות ברמת המרחב."
 msgid "You don't have permission to modify this view."
 msgstr "אין לך הרשאה לשנות תצוגה זו."
 
-#. js-lingui-id: WCKl4k
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-msgid "You have reached the maximum number of invitations for this step."
-msgstr "הגעת למספר המרבי של ההזמנות עבור שלב זה."
-
 #. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
@@ -15140,7 +15990,7 @@ msgid "Your AWS SES account is still in the sandbox, so this domain cannot send 
 msgstr "חשבון AWS SES שלך עדיין נמצא בארגז החול, ולכן דומיין זה אינו יכול לשלוח לנמענים שלא אומתו. בקש גישת ייצור מ-AWS, ולאחר מכן אמת את הדומיין שוב."
 
 #. js-lingui-id: J5Vm4Q
-#: src/engine/core-modules/billing/billing.validate.ts
+#: src/engine/core-modules/billing/utils/build-phase-update-params-or-throw.util.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "המנוי שלך לכרטיסייה תקול. אנא פנה לתמיכה."
 
@@ -15159,8 +16009,12 @@ msgstr "הסיסמה שלך שונתה בהצלחה"
 msgid "Your payment method was declined. Please update it and try again."
 msgstr "אמצעי התשלום שלך נדחה. נא לעדכן אותו ולנסות שוב."
 
+#. js-lingui-id: ycrsQ2
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Your purchased credits could not be added. Please contact support."
+msgstr "לא ניתן היה להוסיף את הקרדיטים שרכשת. צור קשר עם התמיכה."
+
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
@@ -15181,6 +16035,11 @@ msgstr "תוכנית ה-Twenty שלך מתחדשת בקרוב"
 #: src/engine/core-modules/billing/reminders/services/billing-reminder.service.ts
 msgid "Your Twenty trial is ending soon"
 msgstr "תקופת הניסיון שלך ב-Twenty מסתיימת בקרוב"
+
+#. js-lingui-id: pOQQ3U
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "Your two-factor authentication was reset"
+msgstr "האימות הדו-שלבי שלך אופס"
 
 #. js-lingui-id: ej/tZF
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

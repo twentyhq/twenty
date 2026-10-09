@@ -3149,8 +3149,11 @@ type Mutation {
   syncMarketplaceCatalog: Boolean!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
-  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
-  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
+  triggerInstallApplication(input: TriggerInstallApplicationInput!): TriggerInstallApplicationResult!
+  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult! @deprecated(reason: "Use triggerInstallApplication instead")
+  triggerUninstallApplication(input: TriggerUninstallApplicationInput!): TriggerUninstallApplicationResult!
+  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult! @deprecated(reason: "Use triggerUninstallApplication instead")
+  triggerUpgradeApplication(input: TriggerUpgradeApplicationInput!): TriggerUpgradeApplicationResult!
   uninstallApplication(universalIdentifier: String!): Boolean!
   updateAgentChatThreadInboxState(action: AgentChatInboxAction!, snoozedUntil: DateTime, threadIds: [UUID!]!): [AgentChatThreadParticipant!]!
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
@@ -3786,6 +3789,7 @@ type Query {
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findUpgradeApplicationJobStatus(universalIdentifier: String!): JobStatus
   findWorkspaceAiStats: WorkspaceAiStats!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
@@ -4465,6 +4469,10 @@ type TransientToken {
   transientToken: AuthToken!
 }
 
+input TriggerInstallApplicationInput {
+  universalIdentifier: String!
+}
+
 input TriggerInstallApplicationJobInput {
   universalIdentifier: String!
 }
@@ -4473,11 +4481,32 @@ type TriggerInstallApplicationJobResult {
   jobId: String!
 }
 
+type TriggerInstallApplicationResult {
+  jobId: String!
+}
+
+input TriggerUninstallApplicationInput {
+  universalIdentifier: String!
+}
+
 input TriggerUninstallApplicationJobInput {
   universalIdentifier: String!
 }
 
 type TriggerUninstallApplicationJobResult {
+  jobId: String!
+}
+
+type TriggerUninstallApplicationResult {
+  jobId: String!
+}
+
+input TriggerUpgradeApplicationInput {
+  targetVersion: String!
+  universalIdentifier: String!
+}
+
+type TriggerUpgradeApplicationResult {
   jobId: String!
 }
 

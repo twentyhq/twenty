@@ -146,6 +146,21 @@ const addMissingICalUIdsOrThrow = async ({
   );
 };
 
+const isUniquelyAssociated = ({
+  reference,
+  calendarChannelEventAssociations,
+}: {
+  reference: TeamsCalendarReference;
+  calendarChannelEventAssociations: CalendarChannelEventAssociation[];
+}): boolean =>
+  new Set(
+    calendarChannelEventAssociations
+      .filter(
+        ({ eventExternalId }) => eventExternalId === reference.eventExternalId,
+      )
+      .map(({ calendarEventId }) => calendarEventId),
+  ).size === 1;
+
 export const findTeamsCalendarEventIdsOrThrow = async ({
   accessToken,
   coreApiClient,
@@ -162,38 +177,32 @@ export const findTeamsCalendarEventIdsOrThrow = async ({
         ...new Set(references.map(({ eventExternalId }) => eventExternalId)),
       ],
     });
-  const associatedEventExternalIds = new Set(
-    calendarChannelEventAssociations.map(
-      ({ eventExternalId }) => eventExternalId,
-    ),
+  const uniquelyAssociatedReferences = references.filter((reference) =>
+    isUniquelyAssociated({ reference, calendarChannelEventAssociations }),
   );
-  const unassociatedReferences = await addMissingICalUIdsOrThrow({
+  const iCalUIdFallbackReferences = await addMissingICalUIdsOrThrow({
     accessToken,
     references: references.filter(
-      ({ eventExternalId }) => !associatedEventExternalIds.has(eventExternalId),
+      (reference) =>
+        !isUniquelyAssociated({ reference, calendarChannelEventAssociations }),
     ),
   });
-  const unassociatedICalUIds = [
+  const fallbackICalUIds = [
     ...new Set(
-      unassociatedReferences
+      iCalUIdFallbackReferences
         .map(({ iCalUId }) => iCalUId)
         .filter(isNonEmptyString),
     ),
   ];
 
   return matchTeamsCalendarEventIds({
-    references: [
-      ...references.filter(({ eventExternalId }) =>
-        associatedEventExternalIds.has(eventExternalId),
-      ),
-      ...unassociatedReferences,
-    ],
+    references: [...uniquelyAssociatedReferences, ...iCalUIdFallbackReferences],
     calendarChannelEventAssociations,
     calendarEvents:
-      unassociatedICalUIds.length > 0
+      fallbackICalUIds.length > 0
         ? await listCalendarEventsByICalUidOrThrow({
             coreApiClient,
-            iCalUIds: unassociatedICalUIds,
+            iCalUIds: fallbackICalUIds,
           })
         : [],
   });
