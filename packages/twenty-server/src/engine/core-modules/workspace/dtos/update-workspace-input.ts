@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { type AiModelTier } from 'twenty-shared/ai';
-import { EVENT_LOG_RETENTION_IN_DAYS } from 'twenty-shared/constants';
+import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 
 import {
   IsArray,
@@ -120,8 +120,8 @@ export class UpdateWorkspaceInput {
 
   @Field({ nullable: true })
   @IsInt()
-  @Min(EVENT_LOG_RETENTION_IN_DAYS.min)
-  @Max(EVENT_LOG_RETENTION_IN_DAYS.max)
+  @Min(EVENT_LOG_RETENTION.minInDays)
+  @Max(EVENT_LOG_RETENTION.maxInDays)
   @IsOptional()
   eventLogRetentionDays?: number;
 

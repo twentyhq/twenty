@@ -26,7 +26,7 @@ import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
-import { EVENT_LOG_RETENTION_IN_DAYS } from 'twenty-shared/constants';
+import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 import {
   BillingEntitlementKey,
   UpdateWorkspaceDocument,
@@ -149,8 +149,9 @@ export const SettingsSecuritySettings = () => {
     currentWorkspace,
   );
   const isEventLogsEnabled = hasAuditLogsEntitlement && isClickHouseConfigured;
-  const minEventLogRetentionInDays = EVENT_LOG_RETENTION_IN_DAYS.min;
-  const maxEventLogRetentionInDays = EVENT_LOG_RETENTION_IN_DAYS.max;
+  const minEventLogRetentionInDays = EVENT_LOG_RETENTION.minInDays;
+  const maxEventLogRetentionInDays = EVENT_LOG_RETENTION.maxInDays;
+  const proPlanEventLogRetentionInHours = EVENT_LOG_RETENTION.proPlanInHours;
   const hasSsoEntitlement =
     currentWorkspace?.billingEntitlements?.some(
       (entitlement) =>
@@ -232,10 +233,10 @@ export const SettingsSecuritySettings = () => {
                 <SettingsOptionCardContentCounter
                   Icon={IconClockHour8}
                   title={t`Log retention`}
-                  description={t`Number of days to retain audit logs (${minEventLogRetentionInDays}-${maxEventLogRetentionInDays} days)`}
+                  description={t`Number of days to retain logs (${minEventLogRetentionInDays}-${maxEventLogRetentionInDays} days)`}
                   value={
                     currentWorkspace?.eventLogRetentionDays ??
-                    EVENT_LOG_RETENTION_IN_DAYS.default
+                    EVENT_LOG_RETENTION.defaultInDays
                   }
                   onChange={handleEventLogRetentionDaysChange}
                   minValue={minEventLogRetentionInDays}
@@ -253,7 +254,7 @@ export const SettingsSecuritySettings = () => {
           ) : (
             <SettingsEnterpriseFeatureGateCard
               title={t`Organization feature`}
-              description={t`Upgrade to Organization to access audit logs.`}
+              description={t`Logs are kept ${proPlanEventLogRetentionInHours} hours on your plan. Upgrade to customize retention.`}
               buttonTitle={t`Activate`}
             />
           )}
