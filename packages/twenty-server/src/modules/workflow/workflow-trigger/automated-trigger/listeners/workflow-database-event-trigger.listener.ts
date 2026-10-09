@@ -41,6 +41,10 @@ import {
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { resolveAutomationAdmittedRecordIds } from 'src/engine/core-modules/record-share/utils/resolve-automation-admitted-record-ids.util';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   WorkflowTriggerJob,
   type WorkflowTriggerJobData,
@@ -71,6 +75,9 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -366,29 +373,61 @@ export class WorkflowDatabaseEventTriggerListener {
     const admittedRecordIds = await this.resolveAdmittedRecordIds(payload);
 
     for (const eventListener of eventListeners) {
-      for (const eventPayload of payload.events) {
-        const shouldTriggerJob = this.shouldTriggerJob({
+      const eventPayloadsToTrigger = payload.events.filter((eventPayload) =>
+        this.shouldTriggerJob({
           eventPayload,
           eventListener,
           action,
           admittedRecordIds,
-        });
+        }),
+      );
 
-        if (shouldTriggerJob) {
-          await this.messageQueueService.add<WorkflowTriggerJobData>(
-            WorkflowTriggerJob.name,
-            {
-              workspaceId,
-              workflowId:
-                eventListener.legacyWorkflowId ?? eventListener.workflowId,
-              ...buildCoreDispatchIds(eventListener),
-              payload: omitInheritedReadabilityChildRecords(eventPayload),
-            },
-            { retryLimit: 3 },
-          );
-        }
+      if (
+        eventPayloadsToTrigger.length === 0 ||
+        !(await this.isWorkflowApplicationInstalled(
+          workspaceId,
+          eventListener.workflowId,
+        ))
+      ) {
+        continue;
+      }
+
+      for (const eventPayload of eventPayloadsToTrigger) {
+        await this.messageQueueService.add<WorkflowTriggerJobData>(
+          WorkflowTriggerJob.name,
+          {
+            workspaceId,
+            workflowId:
+              eventListener.legacyWorkflowId ?? eventListener.workflowId,
+            ...buildCoreDispatchIds(eventListener),
+            payload: omitInheritedReadabilityChildRecords(eventPayload),
+          },
+          { retryLimit: 3 },
+        );
       }
     }
+  }
+
+  private async isWorkflowApplicationInstalled(
+    workspaceId: string,
+    workflowId: string,
+  ): Promise<boolean> {
+    const workflow =
+      await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
+        workspaceId,
+        workflowId,
+      );
+
+    if (!isDefined(workflow)) {
+      return false;
+    }
+
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { id: workflow.applicationId },
+      select: { id: true, version: true },
+    });
+
+    return !isDefined(application) || isDefined(application.version);
   }
 
   private async getDatabaseEventListeners(

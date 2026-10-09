@@ -9,13 +9,16 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -28,6 +31,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let messageQueueService: jest.Mocked<MessageQueueService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let recordShareStorageService: jest.Mocked<RecordShareStorageService>;
+  const applicationRepository = { findOne: jest.fn() };
 
   const setTriggerMap = (
     listeners: Array<{ workflowId: string; settings: object; type?: unknown }>,
@@ -108,9 +112,23 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       findByRecordIds: jest.fn().mockResolvedValue([]),
     } as unknown as jest.Mocked<RecordShareStorageService>;
 
+    applicationRepository.findOne.mockResolvedValue({ version: '1.0.1' });
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowDatabaseEventTriggerListener,
+        {
+          provide: WorkflowCoreSyncService,
+          useValue: {
+            findCoreWorkflowByIdOrWorkspaceWorkflowId: jest
+              .fn()
+              .mockResolvedValue({ applicationId: 'application-id' }),
+          },
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(ApplicationEntity),
+          useValue: applicationRepository,
+        },
         {
           provide: WorkspaceOrmManager,
           useValue: workspaceOrmManager,
@@ -200,6 +218,15 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         },
         { retryLimit: 3 },
       );
+    });
+
+    it('should not trigger workflow while its application is still installing', async () => {
+      applicationRepository.findOne.mockResolvedValue({ version: null });
+      setTriggerMap(mockEventListeners);
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
     it('should trigger workflow when no fields are specified', async () => {
