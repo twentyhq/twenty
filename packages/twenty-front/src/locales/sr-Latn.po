@@ -1363,10 +1363,10 @@ msgstr "Pristupite podacima svog radnog prostora iz svog omiljenog MCP klijenta,
 
 #. js-lingui-id: AeXO77
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
-#: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -1388,7 +1388,13 @@ msgstr "Nalog je uspešno dodat. Sinhronizacija je započeta."
 msgid "Account Deletion"
 msgstr "Brisanje naloga"
 
+#. js-lingui-id: T3FM0r
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+msgid "Account settings"
+msgstr ""
+
 #. js-lingui-id: bPwFdf
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -1641,6 +1647,7 @@ msgstr "Dodajte korak toka rada koji šalje poruku i, opciono, radnju za odobrav
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -3131,6 +3138,14 @@ msgstr "Dnevnici aplikacije"
 msgid "App logs are kept {retentionInDays} days."
 msgstr "Dnevnici aplikacije čuvaju se {retentionInDays} dana."
 
+#. js-lingui-id: MAyGac
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsAccounts.tsx
+msgid "App preferences"
+msgstr ""
+
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
 msgid "App URL"
@@ -3166,6 +3181,7 @@ msgid "Applicability"
 msgstr "Aplikativnost"
 
 #. js-lingui-id: IrC12v
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -4337,7 +4353,9 @@ msgstr "caldav.example.com"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/views/types/ViewType.ts
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Calendar"
 msgstr "Kalendar"
 
@@ -5523,6 +5541,7 @@ msgstr "Žalba"
 
 #. js-lingui-id: 3WrMP5
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Complete setup"
 msgstr "Dovršite podešavanje"
 
@@ -5848,7 +5867,7 @@ msgid "Connected"
 msgstr "Povezano"
 
 #. js-lingui-id: 9TzudL
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Connected accounts"
 msgstr "Povezani nalozi"
 
@@ -5876,6 +5895,7 @@ msgstr "Provajderi povezivanja"
 
 #. js-lingui-id: W4Kgwq
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Connection settings"
 msgstr "Podešavanja veze"
 
@@ -7752,16 +7772,19 @@ msgstr "Obrišite nalog i sve povezane podatke ili napustite radni prostor"
 
 #. js-lingui-id: 452Oso
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and data"
 msgstr "Obriši nalog i podatke"
 
 #. js-lingui-id: bwUbrT
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data"
 msgstr "Obriši nalog i sinhronizovane podatke"
 
 #. js-lingui-id: nmosf7
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data?"
 msgstr "Obriši nalog i sinhronizovane podatke?"
 
@@ -8249,6 +8272,9 @@ msgstr "Prekini vezu"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Disconnect account"
 msgstr "Prekini vezu sa nalogom"
 
@@ -9067,9 +9093,11 @@ msgstr "e-mailovi"
 
 #. js-lingui-id: BXEcos
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -11527,6 +11555,11 @@ msgstr "GitHub autorizacija nije uspela ili je odbijena. Ponovo povežite svoj G
 msgid "Global search"
 msgstr "Globalna pretraga"
 
+#. js-lingui-id: DSJEta
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+msgid "Gmail"
+msgstr ""
+
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent.tsx
@@ -11577,6 +11610,11 @@ msgstr "Gest dobre volje nakon incidenta u martu"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Google"
 msgstr "Google"
+
+#. js-lingui-id: ebIDwV
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+msgid "Google Calendar"
+msgstr ""
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -12414,6 +12452,7 @@ msgstr "Uvezeni podaci"
 #. js-lingui-id: RqSvT0
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing"
 msgstr "Uvoz u toku"
 
@@ -14348,7 +14387,7 @@ msgid "Manage workflows"
 msgstr "Upravljanje tokovima rada"
 
 #. js-lingui-id: FyFNsd
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Manage your internet accounts."
 msgstr "Upravljanje vašim internetskim nalozima."
 
@@ -14941,6 +14980,7 @@ msgstr "Još radnji"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
@@ -16578,6 +16618,7 @@ msgstr "Nije deljeno od strane {notSharedByFullName}"
 
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Nije sinhronizovano"
 
@@ -17444,6 +17485,11 @@ msgstr "OTP mora imati tačno 6 cifara"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
 msgid "Outage"
 msgstr "Prekid rada"
+
+#. js-lingui-id: gdC3cZ
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+msgid "Outlook"
+msgstr ""
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -18720,6 +18766,7 @@ msgstr "Preporučeno"
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect"
 msgstr "Ponovo poveži"
@@ -19382,6 +19429,11 @@ msgstr "Ponovo rasporedi polje"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent.tsx
 msgid "Reorder options"
 msgstr "Promeni redosled opcija"
+
+#. js-lingui-id: Jtm0TT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
+msgstr ""
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21369,6 +21421,7 @@ msgstr "stavka menija podešavanja"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Setup incomplete"
 msgstr "Podešavanje nije dovršeno"
 
@@ -21427,6 +21480,11 @@ msgstr "Podeli sa radnim prostorom?"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Share your app to other workspaces without pushing it on the marketplace"
 msgstr "Podelite svoju aplikaciju sa drugim radnim prostorima bez objavljivanja na marketplejsu"
+
+#. js-lingui-id: fX13zr
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Shared accounts between apps"
+msgstr ""
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -22674,6 +22732,7 @@ msgstr "Sinhronizuj svaku poruku"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync failed"
 msgstr "Sinhronizacija nije uspela"
 
@@ -22689,11 +22748,13 @@ msgstr "Sinhronizacija sa poštanskim sandučićem {mailboxHandle} je izgubljena
 
 #. js-lingui-id: U6wmNc
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync paused"
 msgstr "Sinhronizacija je pauzirana"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Synced"
 msgstr "Sinhronizovano"
 
@@ -22719,6 +22780,7 @@ msgstr "Sinhronizuj etikete i nazive API-a objekata"
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr "Sinhronizacija će se zaustaviti, a akreditivi ovog naloga će biti uklonjeni. Vaše e-poruke i događaji će biti sačuvani i dostupni nakon što se ponovo povežete."
 
@@ -23638,6 +23700,7 @@ msgstr "Ova stranica nije dostupna."
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
 msgstr "Ovim se trajno briše {accountHandle} i sve njegove sinhronizovane e-poruke i događaji. Ova radnja se ne može opozvati."
 
@@ -25481,6 +25544,11 @@ msgstr "Koristite mikrofon"
 msgid "Used"
 msgstr "Iskorišćeno"
 
+#. js-lingui-id: xUOPoQ
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Used by"
+msgstr ""
+
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Useful for pivot/junction tables"
@@ -25492,6 +25560,7 @@ msgstr "Korisno za spojne/vezne tabele"
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
