@@ -1,6 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { createRef } from 'react';
+import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
+import styles from '../OverflowingTextWithTooltip.module.scss';
 
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 
@@ -21,7 +24,119 @@ const setTextDimensions = ({
   });
 };
 
+runComponentConformance({
+  name: 'OverflowingTextWithTooltip',
+  element: <OverflowingTextWithTooltip text="Body" />,
+  ownClassName: styles.overflowingText,
+  refInstanceOf: HTMLDivElement,
+});
+
 describe('OverflowingTextWithTooltip', () => {
+  it('keeps URL strings plain inside a caller-provided anchor', () => {
+    render(
+      <a href="https://twenty.com">
+        <OverflowingTextWithTooltip text="https://twenty.com" />
+      </a>,
+    );
+
+    expect(screen.getAllByRole('link')).toHaveLength(1);
+    expect(screen.getByRole('link')).toHaveTextContent('https://twenty.com');
+  });
+
+  it('preserves explicit child links and their focus without adding a tab stop', async () => {
+    const user = userEvent.setup();
+    render(
+      <OverflowingTextWithTooltip
+        text={<a href="https://twenty.com">Documentation</a>}
+        tooltipContent="Open the documentation"
+        alwaysShowTooltip
+        tooltipDelay={0}
+        data-testid="text"
+      />,
+    );
+
+    const link = screen.getByRole('link', { name: 'Documentation' });
+    expect(screen.getByTestId('text')).not.toHaveAttribute('tabindex');
+    await user.tab();
+    expect(link).toHaveFocus();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Open the documentation',
+    );
+    await user.hover(link);
+    await user.unhover(link);
+    expect(screen.getByRole('tooltip')).toBeVisible();
+    await user.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
+    expect(link).toHaveFocus();
+  });
+
+  it('targets the rendered anchor with native props, ref and composed handlers', async () => {
+    const user = userEvent.setup();
+    const ref = createRef<HTMLDivElement>();
+    const onFocus = vi.fn();
+    const onPointerEnter = vi.fn();
+    const onClick = vi.fn((event) => event.preventDefault());
+    render(
+      <OverflowingTextWithTooltip
+        text="Documentation"
+        render={<a href="https://twenty.com" aria-label="Documentation" />}
+        ref={ref}
+        title="Read documentation"
+        onFocus={onFocus}
+        onPointerEnter={onPointerEnter}
+        onClick={onClick}
+        tooltipDelay={0}
+      />,
+    );
+
+    const link = screen.getByRole('link', { name: 'Documentation' });
+    setTextDimensions({ element: link, clientWidth: 80, scrollWidth: 160 });
+    expect(ref.current).toBe(link);
+    expect(link).toHaveAttribute('title', 'Read documentation');
+    await user.tab();
+    expect(onFocus).toHaveBeenCalledOnce();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Documentation',
+    );
+    await user.click(link);
+    expect(onPointerEnter).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it('uses caller tabIndex for focus even when the convenience tab stop is off', async () => {
+    const user = userEvent.setup();
+    render(
+      <OverflowingTextWithTooltip
+        text="Keyboard label"
+        tabIndex={0}
+        alwaysShowTooltip
+      />,
+    );
+    const text = screen.getByText('Keyboard label');
+    await user.tab();
+    expect(text).toHaveFocus();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Keyboard label',
+    );
+  });
+
+  it('does not open without a nonempty tooltip label', async () => {
+    const user = userEvent.setup();
+    render(
+      <OverflowingTextWithTooltip
+        text={<span>Value</span>}
+        tooltipContent=""
+        alwaysShowTooltip
+        isFocusable
+      />,
+    );
+    await user.tab();
+    await user.hover(screen.getByText('Value'));
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
   it('lets a parent tooltip open when the nested text fits', async () => {
     const user = userEvent.setup();
 

@@ -1,27 +1,32 @@
+import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Callout, MenuItem } from 'twenty-ui/components';
+import { Callout } from 'twenty-ui/components/feedback';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
 const LabelOverrides = () => {
+  const [isSuppliedVisible, setIsSuppliedVisible] = useState(true);
   return (
     <TwentyUiGalleryCard title="Label overrides">
-      <Callout variant="info" title="Default notice" isClosable />
-      <Callout
-        variant="info"
-        title="Supplied notice"
-        isClosable
-        closeLabel="Dismiss notice"
-      />
-      <ListItem hotkeys={['G', 'D']}>Default shortcut</ListItem>
-      <ListItem hotkeys={['G', 'S']} hotkeysJoinLabel="followed by">
+      <Callout status="info" title="Default notice" onDismiss={() => {}} />
+      {isSuppliedVisible && (
+        <Callout
+          status="info"
+          title="Supplied notice"
+          onDismiss={() => setIsSuppliedVisible(false)}
+          closeLabel="Dismiss notice"
+        />
+      )}
+      <ListItem shortcut={[['G'], ['D']]}>Default shortcut</ListItem>
+      <ListItem shortcut={[['G'], ['S']]} shortcutJoinLabel="followed by">
         Supplied shortcut
       </ListItem>
       <MenuItem
         text="Legacy shortcut"
-        hotKeys={['G', 'L']}
-        hotKeysJoinLabel="next"
+        shortcut={[['G'], ['L']]}
+        shortcutJoinLabel="next"
       />
     </TwentyUiGalleryCard>
   );

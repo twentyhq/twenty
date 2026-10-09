@@ -21,15 +21,15 @@ Twenty marketplace metadata comes from `defineApplication()`:
 - `description`
 - `author`
 - `category`
-- `logoUrl`
-- `screenshots`
+- `logo`
+- `galleryImages`
 - `aboutDescription`
 - `websiteUrl`
 - `termsUrl`
 - `emailSupport`
 - `issueReportUrl`
 
-`logoUrl` and `screenshots` must reference files from the app `public/` folder, for example `public/logo.png` and `public/screenshot-1.png`. If `aboutDescription` is omitted, the marketplace uses the package `README.md` from npm as the About tab content.
+`logo` and `galleryImages` must reference files from the app `public/` folder, for example `public/logo.png` and `public/screenshot-1.png`. `logoUrl` and `screenshots` are deprecated aliases, and external `http(s)` URLs are dropped at build time. The default role is declared with `defineApplicationRole()` in its own file, not in `defineApplication()`. If `aboutDescription` is omitted, the marketplace uses the package `README.md` from npm as the About tab content.
 
 Files in `public/` are public, synced in dev mode, included in builds, and served without authentication. Never put secrets, private data, customer records, real tokens, or unreleased confidential material in public assets.
 
@@ -172,15 +172,11 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   requestedCapabilities: ['microphone'],
   author: 'Your Company',
   category: 'Productivity',
-  logoUrl: 'public/logo.png',
-  screenshots: [
-    'public/screenshot-1.png',
-    'public/screenshot-2.png',
-  ],
+  logo: 'public/logo.png',
+  galleryImages: ['public/screenshot-1.png', 'public/screenshot-2.png'],
   websiteUrl: 'https://example.com',
   termsUrl: 'https://example.com/terms',
   emailSupport: 'support@example.com',
@@ -205,7 +201,7 @@ yarn twenty dev:build
 
 Then check:
 
-- Every `logoUrl` and `screenshots` path exists in `public/`.
+- Every `logo` and `galleryImages` path exists in `public/`.
 - `README.md` setup steps match actual variables, connections, and commands.
 - `package.json` has `keywords: ["twenty-app"]` when the app is intended for npm marketplace publishing.
 - `defineApplication()` metadata does not reference placeholder URLs, support addresses, screenshots, or terms.

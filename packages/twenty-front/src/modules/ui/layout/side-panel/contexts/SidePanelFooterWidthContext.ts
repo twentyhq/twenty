@@ -1,5 +1,4 @@
 import { createContext } from 'react';
 
-// Content width of the footer actions row, so an action that adapts to the
-// available space can size itself without stretching over the row to measure.
+// Lets an action adapt to the footer row width without stretching over the row to measure it
 export const SidePanelFooterWidthContext = createContext<number>(0);

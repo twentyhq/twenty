@@ -1,9 +1,9 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
-import { useAnswerFormStep } from '@/workflow/workflow-steps/workflow-actions/form-action/hooks/useAnswerFormStep';
+import { useSubmitFormStep } from '@/workflow/workflow-steps/workflow-actions/form-action/hooks/useSubmitFormStep';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 type WorkflowFormStepSubmitButtonProps = {
   workflowRunId: string;
@@ -22,7 +22,7 @@ export const WorkflowFormStepSubmitButton = ({
 }: WorkflowFormStepSubmitButtonProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const { answerFormStep } = useAnswerFormStep({
+  const { submitFormStep } = useSubmitFormStep({
     workflowRunId,
     stepId,
   });
@@ -36,18 +36,10 @@ export const WorkflowFormStepSubmitButton = ({
     setIsSubmitting(true);
 
     try {
-      const isSubmitted = await answerFormStep(await getResponse());
+      await submitFormStep(await getResponse());
+      onSubmitted();
 
-      if (isSubmitted) {
-        onSubmitted();
-
-        return;
-      }
-
-      enqueueToast({
-        variant: 'error',
-        children: t`This form no longer waits for an answer`,
-      });
+      return;
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }

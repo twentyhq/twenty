@@ -1,13 +1,4 @@
-const stripMarkdown = (value: string) =>
-  value
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '$1')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
-    .replace(/^>\s?/gm, '')
-    .replace(/^\s{0,3}(?:[-*+]\s+|\d+\.\s+)/gm, '')
-    .replace(/[*_~`#]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+import { getPlainTextFromMarkdown } from '~/utils/string/getPlainTextFromMarkdown';
 
 export const getApplicationDescriptionSummary = (
   description?: string | null,
@@ -17,7 +8,7 @@ export const getApplicationDescriptionSummary = (
   }
 
   for (const block of description.split(/\n\s*\n/)) {
-    const summary = stripMarkdown(block);
+    const summary = getPlainTextFromMarkdown(block);
 
     if (summary.length > 0) {
       return summary;

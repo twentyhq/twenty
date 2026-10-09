@@ -7,8 +7,7 @@ type ChatWidgetOpenInChatPageEffectProps = {
   threadId: string;
 };
 
-// The chat page and the side panel would share one current chat, so a chat
-// opened beside the chat page moves into it
+// The chat page and side panel share one current chat, so it moves into the chat page
 export const ChatWidgetOpenInChatPageEffect = ({
   threadId,
 }: ChatWidgetOpenInChatPageEffectProps) => {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -27,17 +28,22 @@ export default meta;
 type Story = StoryObj;
 
 export const CalloutDismissal: Story = {
-  render: () => (
-    <>
-      <Callout variant="info" title="Default notice" isClosable />
-      <Callout
-        variant="info"
-        title="Supplied notice"
-        isClosable
-        closeLabel="Dismiss notice"
-      />
-    </>
-  ),
+  render: function CalloutDismissal() {
+    const [isSuppliedVisible, setIsSuppliedVisible] = useState(true);
+    return (
+      <>
+        <Callout status="info" title="Default notice" onDismiss={() => {}} />
+        {isSuppliedVisible && (
+          <Callout
+            status="info"
+            title="Supplied notice"
+            onDismiss={() => setIsSuppliedVisible(false)}
+            closeLabel="Dismiss notice"
+          />
+        )}
+      </>
+    );
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -53,14 +59,14 @@ export const CalloutDismissal: Story = {
 export const ShortcutLabels: Story = {
   render: () => (
     <>
-      <ListItem hotkeys={['G', 'D']}>Default shortcut</ListItem>
-      <ListItem hotkeys={['G', 'S']} hotkeysJoinLabel="followed by">
+      <ListItem shortcut={[['G'], ['D']]}>Default shortcut</ListItem>
+      <ListItem shortcut={[['G'], ['S']]} shortcutJoinLabel="followed by">
         Supplied shortcut
       </ListItem>
       <MenuItem
         text="Legacy shortcut"
-        hotKeys={['G', 'L']}
-        hotKeysJoinLabel="next"
+        shortcut={[['G'], ['L']]}
+        shortcutJoinLabel="next"
       />
     </>
   ),
@@ -88,7 +94,7 @@ export const NativeNames: Story = {
       />
       <Text id="avatar-label">Open profile</Text>
       <Avatar
-        onClick={fn()}
+        render={<button type="button" onClick={fn()} />}
         aria-label="Fallback avatar"
         aria-labelledby="avatar-label"
       />
@@ -131,24 +137,27 @@ export const MenuShortcutLabels: Story = {
     <Menu.Root>
       <Menu.Trigger render={<Button>Open shortcuts</Button>} />
       <Menu.Popup aria-label="Shortcuts">
-        <Menu.Item hotkeys={['G', 'D']}>Default</Menu.Item>
-        <Menu.Item hotkeys={['G', 'A']} hotkeysJoinLabel="followed by">
+        <Menu.Item shortcut={[['G'], ['D']]}>Default</Menu.Item>
+        <Menu.Item shortcut={[['G'], ['A']]} shortcutJoinLabel="followed by">
           Action
         </Menu.Item>
-        <Menu.CheckboxItem hotkeys={['G', 'C']} hotkeysJoinLabel="next">
+        <Menu.CheckboxItem shortcut={[['G'], ['C']]} shortcutJoinLabel="next">
           Checkbox
         </Menu.CheckboxItem>
         <Menu.RadioGroup value="radio">
           <Menu.RadioItem
             value="radio"
-            hotkeys={['G', 'R']}
-            hotkeysJoinLabel="afterwards"
+            shortcut={[['G'], ['R']]}
+            shortcutJoinLabel="afterwards"
           >
             Radio
           </Menu.RadioItem>
         </Menu.RadioGroup>
         <Menu.SubmenuRoot>
-          <Menu.SubmenuTrigger hotkeys={['G', 'S']} hotkeysJoinLabel="and">
+          <Menu.SubmenuTrigger
+            shortcut={[['G'], ['S']]}
+            shortcutJoinLabel="and"
+          >
             Submenu
           </Menu.SubmenuTrigger>
           <Menu.Popup>
@@ -198,26 +207,26 @@ export const DropdownLabels: Story = {
           />
           <Dropdown.Empty>No matching choices</Dropdown.Empty>
           <Dropdown.Loading>Fetching choices</Dropdown.Loading>
-          <Dropdown.ActionItem hotkeys={['G', 'D']}>
+          <Dropdown.ActionItem shortcut={[['G'], ['D']]}>
             Default shortcut
           </Dropdown.ActionItem>
           <Dropdown.ActionItem
-            hotkeys={['G', 'A']}
-            hotkeysJoinLabel="followed by"
+            shortcut={[['G'], ['A']]}
+            shortcutJoinLabel="followed by"
           >
             Action
           </Dropdown.ActionItem>
           <Dropdown.OptionItem
             selected={false}
-            hotkeys={['G', 'O']}
-            hotkeysJoinLabel="next"
+            shortcut={[['G'], ['O']]}
+            shortcutJoinLabel="next"
           >
             Option
           </Dropdown.OptionItem>
           <Dropdown.Submenu>
             <Dropdown.SubmenuTrigger
-              hotkeys={['G', 'S']}
-              hotkeysJoinLabel="afterwards"
+              shortcut={[['G'], ['S']]}
+              shortcutJoinLabel="afterwards"
             >
               Submenu
             </Dropdown.SubmenuTrigger>

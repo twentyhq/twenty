@@ -51,10 +51,7 @@ export class I18nService implements OnModuleInit {
     {} as Record<keyof typeof APP_LOCALES, I18n>;
 
   async loadTranslations() {
-    // The global i18n singleton backs server-side t`…` calls and has no
-    // compiled catalog, so it needs a runtime message compiler. Since lingui
-    // 5.9 it also throws unless a locale is activated, so activate the source
-    // locale (t`…` then renders the English source text via the compiler).
+    // The global singleton backs server-side t`` with no compiled catalog, so it needs a runtime compiler; since lingui 5.9 it also throws unless a locale is active.
     i18n.setMessagesCompiler(compileMessage);
     i18n.load(SOURCE_LOCALE, enMessages);
     i18n.activate(SOURCE_LOCALE);

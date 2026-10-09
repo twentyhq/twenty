@@ -416,6 +416,7 @@
                       "developers/extend/apps/getting-started/project-structure",
                       "developers/extend/apps/getting-started/local-server",
                       "developers/extend/apps/getting-started/scaffolding",
+                      "developers/extend/apps/getting-started/good-practices",
                       "developers/extend/apps/getting-started/troubleshooting"
                     ]
                   },
@@ -537,7 +538,7 @@
                       {
                         "group": "Accessibility",
                         "pages": [
-                          "ui/primitives/accessibility/visibility-hidden"
+                          "ui/primitives/accessibility/visually-hidden"
                         ]
                       },
                       {
@@ -556,7 +557,9 @@
                         "pages": [
                           "ui/primitives/feedback/banner",
                           "ui/primitives/feedback/loader",
-                          "ui/primitives/feedback/progress-bar"
+                          "ui/primitives/feedback/progress-bar",
+                          "ui/primitives/feedback/progress-ring",
+                          "ui/primitives/feedback/skeleton"
                         ]
                       },
                       {
@@ -567,6 +570,7 @@
                           "ui/primitives/input/field",
                           "ui/primitives/input/input",
                           "ui/primitives/input/input-group",
+                          "ui/primitives/input/number-stepper",
                           "ui/primitives/input/textarea",
                           "ui/primitives/input/checkbox",
                           "ui/primitives/input/radio",
@@ -581,14 +585,15 @@
                         "group": "Layout",
                         "pages": [
                           "ui/primitives/layout/collapsible",
-                          "ui/primitives/layout/horizontal-separator",
+                          "ui/primitives/layout/separator",
                           "ui/primitives/layout/resize-handle",
-                          "ui/primitives/layout/text-direction-provider"
+                          "ui/primitives/layout/direction-provider"
                         ]
                       },
                       {
                         "group": "Navigation",
                         "pages": [
+                          "ui/primitives/navigation/breadcrumb",
                           "ui/primitives/navigation/list-item",
                           "ui/primitives/navigation/tabs"
                         ]
@@ -609,6 +614,7 @@
                         "pages": [
                           "ui/primitives/typography/heading",
                           "ui/primitives/typography/text",
+                          "ui/primitives/typography/shortcut",
                           "ui/primitives/typography/overflowing-text-with-tooltip"
                         ]
                       }
@@ -618,28 +624,68 @@
                     "group": "Components",
                     "pages": [
                       "ui/components/overview",
-                      "ui/components/input/main-button",
-                      "ui/components/input/light-button",
-                      "ui/components/input/icon-button",
-                      "ui/components/input/light-icon-button",
-                      "ui/components/section",
-                      "ui/components/settings-row",
-                      "ui/components/dropdown",
-                      "ui/components/tab-button",
-                      "ui/components/code-editor",
-                      "ui/components/toast",
-                      "ui/components/animated-icon-crossfade",
-                      "ui/components/avatar-group",
-                      "ui/components/callout",
-                      "ui/components/command-block",
-                      "ui/components/inline-banner",
-                      "ui/components/json-tree",
-                      "ui/components/menu-items",
-                      "ui/components/menu-picker",
-                      "ui/components/navigation-bar",
-                      "ui/components/notification-counter",
-                      "ui/components/search-input",
-                      "ui/components/tinted-icon-tile"
+                      {
+                        "group": "Data display",
+                        "pages": [
+                          "ui/components/data-display/avatar-group",
+                          "ui/components/data-display/command-block",
+                          "ui/components/data-display/json-tree",
+                          "ui/components/data-display/metric-row",
+                          "ui/components/data-display/notification-counter",
+                          "ui/components/data-display/tinted-icon-tile"
+                        ]
+                      },
+                      {
+                        "group": "Feedback",
+                        "pages": [
+                          "ui/components/feedback/callout",
+                          "ui/components/feedback/inline-banner",
+                          "ui/components/feedback/toast"
+                        ]
+                      },
+                      {
+                        "group": "Input",
+                        "pages": [
+                          "ui/components/input/main-button",
+                          "ui/components/input/light-button",
+                          "ui/components/input/icon-button",
+                          "ui/components/input/light-icon-button",
+                          "ui/components/input/country-select",
+                          "ui/components/input/currency-picker",
+                          "ui/components/input/phone-country-picker",
+                          "ui/components/input/image-input",
+                          "ui/components/input/search-input"
+                        ]
+                      },
+                      {
+                        "group": "Layout",
+                        "pages": [
+                          "ui/components/layout/section",
+                          "ui/components/layout/overflowing-list",
+                          "ui/components/layout/animated-icon-crossfade"
+                        ]
+                      },
+                      {
+                        "group": "Navigation",
+                        "pages": [
+                          "ui/components/navigation/dropdown",
+                          "ui/components/navigation/menu-items",
+                          "ui/components/navigation/menu-picker",
+                          "ui/components/navigation/tab-button"
+                        ]
+                      },
+                      {
+                        "group": "Settings",
+                        "pages": [
+                          "ui/components/settings/settings-row"
+                        ]
+                      },
+                      {
+                        "group": "Code editor",
+                        "pages": [
+                          "ui/components/code-editor/code-editor"
+                        ]
+                      }
                     ]
                   }
                 ]
@@ -6679,7 +6725,7 @@
   "redirects": [
     {
       "source": "/ui/components/info",
-      "destination": "/ui/components/inline-banner"
+      "destination": "/ui/components/feedback/inline-banner"
     },
     {
       "source": "/ui/primitives/layout/animated-expandable-container",
@@ -6928,6 +6974,10 @@
     {
       "source": "/zh/developers/extend/apps/translations/overview",
       "destination": "/zh/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/developers/extend/apps/logic/good-practices",
+      "destination": "/developers/extend/apps/getting-started/good-practices"
     },
     {
       "source": "/developers/extend/capabilities/api",
@@ -7431,7 +7481,7 @@
     },
     {
       "source": "/ui/primitives/feedback/toast",
-      "destination": "/ui/components/toast"
+      "destination": "/ui/components/feedback/toast"
     },
     {
       "source": "/ui/primitives/surfaces/card-header",

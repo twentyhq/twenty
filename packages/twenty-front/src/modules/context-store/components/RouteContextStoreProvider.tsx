@@ -63,8 +63,12 @@ export const RouteContextStoreProvider = () => {
     location,
     AppPath.WorkflowCoreShowPage,
   );
-  const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
-  // The chat page is the record page of a chat, on its own route
+  const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
+  // The chat page and the whole inbox act on chats: the chat on screen, or
+  // the chats selected in the inbox list
+  const isAiChatPage =
+    isMatchingLocation(location, AppPath.AiChat) ||
+    isMatchingLocation(location, AppPath.AiChatInbox);
   const isRecordShowPage =
     isCoreWorkflowShowPage ||
     isAiChatPage ||
@@ -72,7 +76,6 @@ export const RouteContextStoreProvider = () => {
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
   const isSettingsPage = useIsSettingsPage();
 
-  const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   const objectNamePlural = routeParams?.objectNamePlural;
   const objectNameSingular = isCoreWorkflowShowPage
     ? CoreObjectNameSingular.Workflow

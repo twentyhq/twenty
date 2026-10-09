@@ -16,10 +16,7 @@ type ResolvedFieldWidgetNestedRelation = {
   nestedRelationTargetObjectMetadataItem: EnrichedObjectMetadataItem;
 };
 
-// Resolves the second hop of a nested relation field widget: the one-to-many
-// relation field on the first hop's target object, and the terminal object
-// whose records the widget lists. Returns undefined when the chain is broken
-// (deleted or deactivated field) so callers can degrade gracefully.
+// Returns undefined when the chain is broken (deleted or deactivated field).
 export const resolveFieldWidgetNestedRelation = ({
   objectMetadataItems,
   relationTargetObjectMetadataId,

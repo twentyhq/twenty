@@ -24,7 +24,7 @@ export const AiChatQuotaLimitExhaustedMessage = ({
           ? undefined
           : t`Ask an admin to raise the limit.`
       }
-      button={manageLimitsButton}
+      action={manageLimitsButton}
     />
   );
 };

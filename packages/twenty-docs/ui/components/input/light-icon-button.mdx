@@ -4,7 +4,7 @@ description: Present lightweight icon actions with standard or subtle emphasis.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-import LightIconButtonReference from '/snippets/ui/generated/input/light-icon-button.mdx';
+import LightIconButtonReference from '/snippets/ui/generated/components/input/light-icon-button.mdx';
 
 `LightIconButton` composes [IconButton](/ui/components/input/icon-button) with a ghost surface and a small size. Supply an accessible name and decorative icon content.
 
@@ -17,7 +17,7 @@ import LightIconButtonReference from '/snippets/ui/generated/input/light-icon-bu
 ## Usage
 
 ```tsx
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const AddAction = () => (
@@ -27,13 +27,13 @@ export const AddAction = () => (
 );
 ```
 
-Standard emphasis uses secondary neutral text; subtle emphasis uses tertiary text. Explicit semantic colors and group colors take precedence. Small controls are 24px with a 14px icon; medium controls are 32px with a 16px icon. Compact controls use `size="xs"` and are 20px.
+Standard emphasis uses secondary neutral text; subtle emphasis uses tertiary text. Explicit child appearance takes precedence over ButtonGroup values, followed by the component defaults. Semantic colors retain their own contrast treatment. Small controls are 24px with a 14px icon; medium controls are 32px with a 16px icon. Compact controls use `size="xs"` and are 20px.
 
 ## State and interaction
 
 Button owns keyboard activation, disabled and loading behavior, refs, native attributes, and render composition. The native default is `type="button"`. Use `aria-pressed` for toggles and `aria-expanded` for disclosures. The application owns these states and can set `color="accent"` to highlight a selected action. Keyboard focus uses the shared focus ring.
 
-Tooltip text is optional and does not replace `aria-label`. Set `href` for a link and supply `render` when the application owns routing.
+Tooltip text is optional and does not replace an accessible name from `aria-label` or `aria-labelledby`. Set `href` for a link. For application-owned routing, supply `render`, `nativeButton={false}`, and `role="link"`.
 
 ## Updating existing controls
 
@@ -46,7 +46,8 @@ Replace `LightIconButtonGroup` with [ButtonGroup](/ui/primitives/input/button-gr
 `MenuItem`, `MenuItemDraggable`, and `MenuItemAvatar` accept JSX through `iconButtons`. Pass one `LightIconButton` directly, or use `ButtonGroup` for multiple buttons. The menu controls their placement and hover visibility; each button owns its accessible name, click handler, and disabled state. Wrap dropdown triggers directly around the button.
 
 ```tsx
-import { LightIconButton, MenuItem } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 

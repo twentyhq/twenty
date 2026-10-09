@@ -50,10 +50,7 @@ describe('deriveBillingPeriodTransition', () => {
     expect(result.closingPeriodStart).toEqual(JANUARY);
   });
 
-  // The whole point of resolving the boundary from the subscription is that the
-  // invoice's stamped period is unreliable. Classifying the trial off that same
-  // stamped period_start put an arrears-stamped first paid period on the paid
-  // tier allowance instead of the trial one.
+  // The invoice's stamped period is unreliable, so the trial must not be classified off it
   it('reads the trial from the boundary, not from where the closing period began', () => {
     const trialStart = new Date('2026-01-20T00:00:00.000Z');
 
@@ -76,8 +73,7 @@ describe('deriveBillingPeriodTransition', () => {
     expect(result.closingPeriodStart).toEqual(JANUARY);
   });
 
-  // The subscription still carries the closing period, so it is exact and
-  // nothing has to be reconstructed from a calendar or from the ledger.
+  // The subscription still carries the closing period, so it is exact
   it('keeps the subscription period start when it precedes the boundary', () => {
     const result = deriveFrom({
       ledgerPeriodStart: new Date('2026-01-15T00:00:00.000Z'),
@@ -87,9 +83,7 @@ describe('deriveBillingPeriodTransition', () => {
     expect(result.closingPeriodStart).toEqual(JANUARY);
   });
 
-  // The subscription records the boundary when it advances, so it is exact for
-  // any anchor. The ledger only knows it when the previous transition happened
-  // to close a grant there.
+  // The subscription records the boundary when it advances, so it is exact for any anchor
   it('prefers the period start the subscription recorded over the ledger', () => {
     const monthEndBoundary = new Date('2026-02-28T00:00:00.000Z');
 
@@ -105,10 +99,7 @@ describe('deriveBillingPeriodTransition', () => {
     );
   });
 
-  // A subscription anchored on the 31st runs January 31 to February 28, and
-  // subMonths clamps February 28 back to January 28. Three days of the previous
-  // period would count as usage here, and grants that expired on January 31
-  // would read as live and be carried forward a second time.
+  // subMonths clamps Feb 28 back to Jan 28 for a 31st anchor, miscounting usage and grants
   it('prefers the period start the ledger recorded over clamped calendar arithmetic', () => {
     const monthEndBoundary = new Date('2026-02-28T00:00:00.000Z');
     const ledgerPeriodStart = new Date('2026-01-31T00:00:00.000Z');
@@ -160,9 +151,7 @@ describe('deriveBillingPeriodTransition', () => {
     );
   });
 
-  // The column is nullable while its type says otherwise. Treating a missing
-  // interval as monthly would settle a yearly subscription against one month of
-  // usage and carry eleven months of allowance forward as unspent.
+  // Nullable despite its type: assuming monthly would settle a yearly subscription on one month of usage
   it('refuses to guess a period length when the subscription records no interval', () => {
     expect(() =>
       deriveFrom({
@@ -172,8 +161,7 @@ describe('deriveBillingPeriodTransition', () => {
     ).toThrow(/records no interval/);
   });
 
-  // Only the calendar fallback needs the interval, so an exact source still
-  // settles correctly without one.
+  // Only the calendar fallback needs the interval
   it('settles without an interval when the subscription recorded the period start', () => {
     const result = deriveFrom({
       subscriptionCurrentPeriodStart: FEBRUARY,

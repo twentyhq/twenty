@@ -21,12 +21,14 @@ export const getActionIconColorOrThrow = (
     case 'PICK_RECORD':
       return themeCssVariables.color.gray9;
     case 'FORM':
+    case 'SEND_CHAT_MESSAGE':
       return themeCssVariables.color.orange9;
     case 'ITERATOR':
     case 'EMPTY':
     case 'FILTER':
     case 'IF_ELSE':
     case 'DELAY':
+    case 'WAIT_FOR_EVENT':
       return themeCssVariables.color.green9;
     case 'AI_AGENT':
     case 'CLASSIFY':

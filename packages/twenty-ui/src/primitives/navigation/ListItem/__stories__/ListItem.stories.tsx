@@ -163,7 +163,7 @@ type ListItemCatalogSlot =
   | 'endIcon'
   | 'description'
   | 'endDescription'
-  | 'hotkeys'
+  | 'shortcut'
   | 'actions'
   | 'submenu';
 
@@ -175,7 +175,7 @@ const LIST_ITEM_CATALOG_SLOT_PROPS: Record<
   endIcon: { endIcon: <IconSettings /> },
   description: { description: 'Description' },
   endDescription: { description: '3 selected', descriptionPlacement: 'end' },
-  hotkeys: { hotkeys: ['⌘', 'K'] },
+  shortcut: { shortcut: ['Mod', 'K'] },
   actions: { actions: ACTIONS },
   submenu: { hasSubmenu: true },
 };
@@ -199,7 +199,7 @@ export const SlotsCatalog: CatalogStory<Story, typeof ListItem> = {
             'endIcon',
             'description',
             'endDescription',
-            'hotkeys',
+            'shortcut',
             'actions',
             'submenu',
           ] satisfies ListItemCatalogSlot[],

@@ -1,20 +1,18 @@
 import { DragDropProvider } from '@dnd-kit/react';
 import { type ReactNode } from 'react';
 
+import { PAGE_LAYOUT_DND_SENSORS } from '@/page-layout/constants/PageLayoutDndSensors';
 import { usePageLayoutWidgetDragAndDrop } from '@/page-layout/hooks/usePageLayoutWidgetDragAndDrop';
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
-import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 
 type PageLayoutWidgetDndProviderProps = {
   children: ReactNode;
 };
 
-// Mounted in both view and edit mode so toggling edit mode does not remount the
-// layout subtree (which would reset scroll position and widget-local state).
-// Widget sortables are disabled and their terminal drop target is detached in
-// view mode, so the provider is inert there.
+// Mounted in view mode too so toggling edit mode doesn't remount the layout (scroll, widget state);
+// it is inert there since sortables are disabled and the terminal drop target is detached.
 export const PageLayoutWidgetDndProvider = ({
   children,
 }: PageLayoutWidgetDndProviderProps) => {
@@ -23,7 +21,7 @@ export const PageLayoutWidgetDndProvider = ({
   return (
     <DragDropItemDndContext.Provider value={contextValues}>
       <DragDropProvider<PageLayoutWidgetDndData>
-        sensors={DND_KIT_SENSORS}
+        sensors={PAGE_LAYOUT_DND_SENSORS}
         plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
         onDragStart={handlers.onDragStart}
         onDragMove={handlers.onDragMove}

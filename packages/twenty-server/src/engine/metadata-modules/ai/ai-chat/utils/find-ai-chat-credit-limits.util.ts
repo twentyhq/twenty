@@ -4,6 +4,7 @@ import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/f
 import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usage-limits.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 export const findAiChatCreditLimits = ({
   usageLimits,
@@ -15,8 +16,7 @@ export const findAiChatCreditLimits = ({
   const creditQuotas = (
     usageLimits.byResourceType[UsageResourceType.AI] ?? []
   ).filter(
-    (limit) =>
-      limit.limitKind === 'quota' && limit.meter === 'creditsUsedMicro',
+    (limit) => limit.limitKind === 'quota' && limit.unit === UsageUnit.CREDIT,
   );
 
   return buildSpendersFromUsageSpenders({ userWorkspaceId }).flatMap(

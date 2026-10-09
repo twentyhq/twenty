@@ -2,8 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 
-import { getSafeUrl } from 'twenty-ui/utilities';
-
+import { getSafeUrl } from 'twenty-shared/utils';
 const StyledLink = styled.a`
   align-items: center;
   background-color: var(--t-background-transparent-lighter);
@@ -19,9 +18,6 @@ const StyledLink = styled.a`
   height: 10px;
   justify-content: center;
   flex-shrink: 0;
-  // Never wider than its container (content box + inline padding + border),
-  // so a long label is ellipsized inside the chip instead of the chip being
-  // clipped by the container, which in RTL cuts the start of an LTR value.
   max-width: calc(100% - 2 * var(--t-spacing-2) - 2px);
   overflow: hidden;
   padding: var(--t-spacing-1) var(--t-spacing-2);
@@ -61,8 +57,6 @@ export const RoundedLink = ({
   label,
   href,
   color = 'primary',
-  // Emails, URLs and names can read in either direction whatever the page
-  // direction; by default each one is laid out and truncated by its own.
   dir = 'auto',
   onClick,
   className,

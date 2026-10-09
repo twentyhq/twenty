@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
-
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 
 import { TIMELINE_ICON_SLOT_SIZE } from '@/activities/timeline-activities/constants/TimelineIconSlotSize';
@@ -22,7 +21,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';
 import { isDefined } from 'twenty-shared/utils';
@@ -153,14 +151,14 @@ export const EventRow = ({
       objectMetadataItems,
     }) ?? null;
 
-  if (isUndefinedOrNull(currentWorkspaceMember)) {
+  if (!isDefined(currentWorkspaceMember)) {
     return null;
   }
 
-  if (isUndefinedOrNull(recordStore)) {
+  if (!isDefined(recordStore)) {
     return null;
   }
-  if (isUndefinedOrNull(mainObjectMetadataItem)) {
+  if (!isDefined(mainObjectMetadataItem)) {
     return null;
   }
 

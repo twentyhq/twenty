@@ -125,7 +125,7 @@
   transition: opacity duration(instant) ease;
 }
 
-@include hover-capable {
+@include hover-capable-without-touch {
   .actions {
     opacity: 0;
   }

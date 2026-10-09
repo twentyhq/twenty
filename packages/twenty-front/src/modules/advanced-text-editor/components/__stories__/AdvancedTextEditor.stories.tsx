@@ -61,9 +61,7 @@ const EditorWrapper = ({
         url: `https://via.placeholder.com/400x200?text=${encodeURIComponent(file.name)}`,
       };
     },
-    onImageUploadError: (_error: Error, _file: File) => {
-      // Handle image upload error
-    },
+    onImageUploadError: (_error: Error, _file: File) => {},
   });
 
   if (!editor) {
@@ -308,7 +306,7 @@ export const Empty: Story = {
 export const MinimalDocument: Story = {
   args: {
     extensionSet: 'minimal',
-    placeholder: 'Ask anything, @ a record or / a skill...',
+    placeholder: 'Ask anything, @ a teammate or record, / a skill...',
   },
   play: async ({ canvasElement, step }) => {
     await step('Verify placeholder hints at @ and / references', async () => {
@@ -317,7 +315,7 @@ export const MinimalDocument: Story = {
           canvasElement.querySelector('[data-placeholder]'),
         ).toHaveAttribute(
           'data-placeholder',
-          'Ask anything, @ a record or / a skill...',
+          'Ask anything, @ a teammate or record, / a skill...',
         ),
       );
     });

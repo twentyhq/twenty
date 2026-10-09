@@ -6,12 +6,11 @@ import {
   MenuItemDraggable,
   MenuItemSuggestion,
   MenuPicker,
-  NavigationBar,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconHome, IconUser } from 'twenty-ui/icon';
 import { ColorSample, Tag } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Breadcrumb, ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme';
 import {
   ComponentGallery,
@@ -19,6 +18,18 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const NAVIGATION_ENTRIES: GalleryEntry[] = [
+  {
+    name: 'Breadcrumb',
+    node: (
+      <Breadcrumb
+        aria-label="Workspace breadcrumb"
+        links={[
+          { children: 'Workspace', href: '/workspace' },
+          { children: 'Settings' },
+        ]}
+      />
+    ),
+  },
   {
     name: 'MenuItem',
     node: <MenuItem text="Menu item" LeftIcon={IconUser} />,
@@ -159,17 +170,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'MenuPicker',
     node: <MenuPicker id="picker-1" icon={IconHome} label="Picker" />,
-  },
-  {
-    name: 'NavigationBar',
-    node: (
-      <NavigationBar
-        activeItemName="home"
-        items={[
-          { name: 'home', label: 'Home', Icon: IconHome, onClick: () => {} },
-        ]}
-      />
-    ),
   },
 ];
 

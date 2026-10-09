@@ -1,22 +1,17 @@
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemAvatar, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Dropdown, MenuItemAvatar } from 'twenty-ui/components/navigation';
 import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type EmailRecipientChipMenuContentProps = {
-  dropdownId: string;
   recipient: EmailRecipient;
   resolution: EmailRecipientResolution | undefined;
   isInvalid: boolean;
@@ -25,7 +20,6 @@ type EmailRecipientChipMenuContentProps = {
 };
 
 export const EmailRecipientChipMenuContent = ({
-  dropdownId,
   recipient,
   resolution,
   isInvalid,
@@ -33,7 +27,6 @@ export const EmailRecipientChipMenuContent = ({
   onRemove,
 }: EmailRecipientChipMenuContentProps) => {
   const { t } = useLingui();
-  const { closeDropdown } = useCloseDropdown();
   const { copyToClipboard } = useCopyToClipboard();
   const { enqueueToast } = useToast();
 
@@ -52,8 +45,6 @@ export const EmailRecipientChipMenuContent = ({
     : '';
 
   const handleAddAsPerson = async () => {
-    closeDropdown(dropdownId);
-
     const [firstName = '', ...lastNameParts] = (
       recipient.displayName ?? ''
     ).split(' ');
@@ -69,28 +60,17 @@ export const EmailRecipientChipMenuContent = ({
   };
 
   const handleCopy = () => {
-    closeDropdown(dropdownId);
     copyToClipboard(recipient.address, t`Email copied to clipboard`);
-  };
-
-  const handleEdit = () => {
-    closeDropdown(dropdownId);
-    onEdit();
-  };
-
-  const handleRemove = () => {
-    closeDropdown(dropdownId);
-    onRemove();
   };
 
   const showAddAsPerson =
     !isDefined(person) && !isDefined(workspaceMember) && !isInvalid;
 
   return (
-    <LegacyDropdownContent widthInPixels={280}>
+    <>
       {(isDefined(person) || isDefined(workspaceMember) || showAddAsPerson) && (
         <>
-          <DropdownMenuItemsContainer>
+          <Dropdown.Section>
             {isDefined(workspaceMember) ? (
               <MenuItemAvatar
                 avatar={{
@@ -128,30 +108,30 @@ export const EmailRecipientChipMenuContent = ({
                 contextualText={recipient.address}
               />
             ) : (
-              <ListItem
+              <Dropdown.ActionItem
                 startIcon={<IconUserPlus />}
                 onClick={handleAddAsPerson}
-              >{t`Add as person`}</ListItem>
+              >{t`Add as person`}</Dropdown.ActionItem>
             )}
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
+          </Dropdown.Section>
+          <Dropdown.Separator />
         </>
       )}
-      <DropdownMenuItemsContainer>
-        <ListItem
+      <Dropdown.Section>
+        <Dropdown.ActionItem
           startIcon={<IconCopy />}
           onClick={handleCopy}
-        >{t`Copy email`}</ListItem>
-        <ListItem
+        >{t`Copy email`}</Dropdown.ActionItem>
+        <Dropdown.ActionItem
           startIcon={<IconPencil />}
-          onClick={handleEdit}
-        >{t`Edit`}</ListItem>
-        <ListItem
+          onClick={onEdit}
+        >{t`Edit`}</Dropdown.ActionItem>
+        <Dropdown.ActionItem
           color="danger"
           startIcon={<IconTrash />}
-          onClick={handleRemove}
-        >{t`Remove`}</ListItem>
-      </DropdownMenuItemsContainer>
-    </LegacyDropdownContent>
+          onClick={onRemove}
+        >{t`Remove`}</Dropdown.ActionItem>
+      </Dropdown.Section>
+    </>
   );
 };

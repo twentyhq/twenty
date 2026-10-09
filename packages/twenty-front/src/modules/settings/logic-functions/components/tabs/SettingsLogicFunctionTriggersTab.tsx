@@ -7,7 +7,7 @@ import { SettingsLogicFunctionWorkflowActionTriggerSection } from '@/settings/lo
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/components';
+import { Callout } from 'twenty-ui/components/feedback';
 import { IconInfoCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -51,8 +51,13 @@ export const SettingsLogicFunctionTriggersTab = ({
     return isDefined(applicationName) ? (
       <StyledCalloutWrapper>
         <Callout
-          variant="info"
-          Icon={IconInfoCircle}
+          status="info"
+          icon={
+            <IconInfoCircle
+              size={themeCssVariables.icon.size.md}
+              aria-hidden="true"
+            />
+          }
           title={t`Bundled with ${applicationName}`}
           description={t`This function has no trigger configured, so it can only be invoked from the Test tab or by other functions.`}
         />

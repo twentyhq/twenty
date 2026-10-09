@@ -7,7 +7,7 @@ import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
 import { useReplaceBlockEditorContent } from '@/blocknote-editor/hooks/useReplaceBlockEditorContent';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
-import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
+import { stripImageUrlTokens } from '@/blocknote-editor/utils/stripImageUrlTokens';
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
@@ -149,16 +149,16 @@ export const RichTextFieldEditor = ({
 
   const { updateDraft, markDirty, flush, draftResyncKey } =
     useRecordSeededDraft({
-      upstreamDraft: { blocknote: fieldValue?.blocknote ?? '' },
+      upstreamDraft: {
+        blocknote: stripImageUrlTokens(fieldValue?.blocknote ?? ''),
+      },
       persistDebounceMs: 300,
       resetKey: recordId,
       onPersist: ({ blocknote }) => {
         if (isRecordFieldReadOnly === true) return;
 
-        const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
-
         if (onPersistBody) {
-          onPersistBody(preparedBlocknote);
+          onPersistBody(blocknote);
           return;
         }
 
@@ -167,7 +167,7 @@ export const RichTextFieldEditor = ({
           objectNameSingular,
           updateOneRecordInput: {
             [fieldName]: {
-              blocknote: preparedBlocknote,
+              blocknote,
               markdown: null,
             },
           },
@@ -175,15 +175,11 @@ export const RichTextFieldEditor = ({
       },
     });
 
-  // The BlockNote editor is uncontrolled; when a remote value is adopted,
-  // replace its content in place instead of remounting to keep the instance.
+  // Replace the uncontrolled editor's content in place instead of remounting it.
   const [lastAppliedResyncKey, setLastAppliedResyncKey] =
     useState(draftResyncKey);
 
-  // The editor reports programmatic replacements through the same change
-  // callback as typing, so latch around the adoption: without it the adopted
-  // body would be treated as a local edit, marked dirty and written straight
-  // back, blocking the next remote update from being adopted.
+  // Programmatic replacements fire the typing callback, so latch to keep them from echoing back as local edits.
   // oxlint-disable-next-line twenty/no-state-useref
   const isApplyingUpstreamBodyRef = useRef(false);
 
@@ -239,11 +235,8 @@ export const RichTextFieldEditor = ({
       | { blocknote?: string | null }
       | undefined;
 
-    // Only schedule the persist once the pre-edit body is captured above:
-    // persisting optimistically rewrites the record, and doing that earlier
-    // would make the attachment diff below compare the new body with itself,
-    // leaving attachments removed from the body undeleted.
-    updateDraft({ blocknote: newStringifiedBody });
+    // Only after capturing the pre-edit body: persisting rewrites the record, so the diff would miss removed attachments.
+    updateDraft({ blocknote: stripImageUrlTokens(newStringifiedBody) });
 
     await syncAttachments(newStringifiedBody, oldFieldValue?.blocknote);
   };
@@ -255,9 +248,7 @@ export const RichTextFieldEditor = ({
       return;
     }
 
-    // Serialization is debounced, so mark the draft dirty synchronously: a
-    // remote adoption arriving in that window would otherwise replace content
-    // the user is actively typing.
+    // Serialization is debounced, so mark dirty now or a remote adoption could replace in-progress typing.
     markDirty();
 
     handleBodyChangeDebounced(JSON.stringify(editor.document) ?? '');

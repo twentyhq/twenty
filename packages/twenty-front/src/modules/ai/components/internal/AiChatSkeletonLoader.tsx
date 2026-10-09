@@ -1,7 +1,8 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSkeletonContainer = styled(StyledAiChatContentContainer)`
   display: flex;
@@ -11,17 +12,9 @@ const StyledSkeletonContainer = styled(StyledAiChatContentContainer)`
 `;
 
 export const AiChatSkeletonLoader = () => {
-  const theme = useTheme();
-
   return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={4}
-    >
-      <StyledSkeletonContainer>
-        <Skeleton height={20} borderRadius={8} />
-      </StyledSkeletonContainer>
-    </SkeletonTheme>
+    <StyledSkeletonContainer>
+      <SkeletonLine height={20} borderRadius={8} />
+    </StyledSkeletonContainer>
   );
 };

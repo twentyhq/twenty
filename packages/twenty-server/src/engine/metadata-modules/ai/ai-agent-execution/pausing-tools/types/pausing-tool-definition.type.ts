@@ -5,16 +5,30 @@ import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/a
 
 export type PausingToolDefinition<TInput, TOutput> = {
   inputSchema: z.ZodType<TInput>;
-  // The output a person may submit depends on what the call asked, so the
-  // schema is built from the call's input.
-  outputSchema: (input: TInput) => z.ZodType<TOutput>;
-  // Runs once the person's output is accepted, and only then: whatever the
-  // call does on the person's behalf happens here, and the tool result says
-  // what came of it.
+  outputSchema: (
+    input: TInput,
+    pendingToolOutput: unknown,
+  ) => z.ZodType<TOutput>;
+  // runs only after the output is accepted, so side effects on the person's behalf belong here
   complete: (args: {
     output: TOutput;
     input: TInput;
+    pendingToolOutput: unknown;
     context: PausingToolCompletionContext;
   }) => Promise<PausingToolCompletion>;
-  toSkippedToolResult: (input: TInput) => Record<string, unknown>;
+  toSkippedToolResult: (
+    input: TInput,
+    pendingToolOutput: unknown,
+  ) => Record<string, unknown>;
+  // an answer that runs something is recorded as running first, so it can never be given twice, and
+  // closes as interrupted when its outcome never got recorded, without running it again
+  toRunningToolResult?: (args: {
+    output: TOutput;
+    input: TInput;
+    pendingToolOutput: unknown;
+  }) => Record<string, unknown> | undefined;
+  toInterruptedToolResult?: (
+    input: TInput,
+    runningToolOutput: unknown,
+  ) => Record<string, unknown>;
 };

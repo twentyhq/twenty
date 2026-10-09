@@ -10,8 +10,10 @@ const BEHIND_IDS_KEY = 'upgrade-status:behind-workspace-ids';
 const FAILED_IDS_KEY = 'upgrade-status:failed-workspace-ids';
 const UP_TO_DATE_COUNT_KEY = 'upgrade-status:up-to-date-workspace-count';
 const COMPUTED_AT_KEY = 'upgrade-status:computed-at';
+const REFRESH_LOCK_KEY = 'upgrade-status:refresh-lock';
 
 const CACHE_TTL_MS = 60 * 60 * 1000;
+const REFRESH_LOCK_TTL_MS = CACHE_TTL_MS - 10 * 1000;
 @Injectable()
 export class UpgradeStatusCacheService {
   constructor(
@@ -79,12 +81,27 @@ export class UpgradeStatusCacheService {
     ]);
   }
 
+  async tryAcquireRefreshLock(): Promise<string | null> {
+    return this.cacheStorage.acquireLock({
+      key: REFRESH_LOCK_KEY,
+      ttl: REFRESH_LOCK_TTL_MS,
+    });
+  }
+
+  async releaseRefreshLock(refreshLockOwnerToken: string): Promise<void> {
+    await this.cacheStorage.releaseLock({
+      key: REFRESH_LOCK_KEY,
+      ownerToken: refreshLockOwnerToken,
+    });
+  }
+
   async invalidate(): Promise<void> {
     await Promise.all([
       this.cacheStorage.del(BEHIND_IDS_KEY),
       this.cacheStorage.del(FAILED_IDS_KEY),
       this.cacheStorage.del(UP_TO_DATE_COUNT_KEY),
       this.cacheStorage.del(COMPUTED_AT_KEY),
+      this.cacheStorage.del(REFRESH_LOCK_KEY),
     ]);
   }
 }

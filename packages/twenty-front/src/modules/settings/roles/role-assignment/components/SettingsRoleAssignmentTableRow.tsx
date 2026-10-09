@@ -12,9 +12,9 @@ import { IconKey, useIcons } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { formatDateString } from '~/utils/string/formatDateString';
+import { formatDateString } from '@/object-record/record-field/ui/utils/formatDateString';
 
 const StyledIconWrapper = styled.div`
   align-items: center;

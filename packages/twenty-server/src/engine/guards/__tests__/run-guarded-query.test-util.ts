@@ -22,12 +22,15 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { type GraphQLSchema, graphql } from 'graphql';
 import supertest from 'supertest';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 
-// Runs one query through a real Nest + Yoga app so a guard's refusal takes the
-// same path as in production: the root module mirrors the real one, so an
-// exception no typed filter claims lands in the catch-all filter. The module
-// classes are built per call because the resolver's guard is the parameter.
+const EXCEPTION_HANDLER_SERVICE_PROVIDER = {
+  provide: ExceptionHandlerService,
+  useValue: { captureExceptions: () => [] },
+};
+
+// real Nest + Yoga app so a guard refusal reaches the catch-all filter as in production
 export const runGuardedQuery = async ({
   guard,
   request,
@@ -55,7 +58,10 @@ export const runGuardedQuery = async ({
       }),
       FeatureModule,
     ],
-    providers: [{ provide: APP_FILTER, useClass: UnhandledExceptionFilter }],
+    providers: [
+      { provide: APP_FILTER, useClass: UnhandledExceptionFilter },
+      EXCEPTION_HANDLER_SERVICE_PROVIDER,
+    ],
   })
   class RootModule {}
 
@@ -81,8 +87,6 @@ export const runGuardedQuery = async ({
   return result;
 };
 
-// Same for a REST route: the request fields are set by a middleware standing in
-// for authentication, and a refusal goes through the catch-all filter.
 export const runGuardedRestRequest = async ({
   guard,
   request,
@@ -101,7 +105,10 @@ export const runGuardedRestRequest = async ({
 
   @Module({
     controllers: [TestController],
-    providers: [{ provide: APP_FILTER, useClass: UnhandledExceptionFilter }],
+    providers: [
+      { provide: APP_FILTER, useClass: UnhandledExceptionFilter },
+      EXCEPTION_HANDLER_SERVICE_PROVIDER,
+    ],
   })
   class RootModule {}
 

@@ -116,11 +116,6 @@ export class DatabaseConfigDriver
     this.configCache.markKeyAsMissing(key);
   }
 
-  /**
-   * Refreshes all database-backed config variables.
-   * This method runs on a schedule and fetches all configs in one database query,
-   * then updates the cache with fresh values.
-   */
   @Cron(CONFIG_VARIABLES_REFRESH_CRON_INTERVAL)
   async refreshAllCache(): Promise<void> {
     try {

@@ -3,12 +3,11 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { useAgentChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
-import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
   jotaiStore,
@@ -27,20 +26,13 @@ const disconnect = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ refreshAgentChatThreads }),
 }));
-const key = { instanceId: 'sharing-test', familyKey: { threadId: 'thread' } };
-const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily(key);
-const fetchedAtom =
-  agentChatFetchedMessagesComponentFamilyState.atomFamily(key);
-const queuedAtom = agentChatQueuedMessagesComponentFamilyState.atomFamily(key);
-const errorAtom = agentChatErrorComponentFamilyState.atomFamily(key);
+const key = { threadId: 'thread' };
+const messagesAtom = agentChatMessagesFamilyState.atomFamily(key);
+const fetchedAtom = agentChatFetchedMessagesFamilyState.atomFamily(key);
+const queuedAtom = agentChatQueuedMessagesFamilyState.atomFamily(key);
+const errorAtom = agentChatErrorFamilyState.atomFamily(key);
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: key.instanceId }}
-    >
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 const denial = [
   { message: 'Thread not found', extensions: { code: 'NOT_FOUND' } },

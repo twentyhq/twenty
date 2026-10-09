@@ -22,20 +22,12 @@ const buildRecordReferenceSection = (
 const buildPermissionSection = ({
   runAsWorkspaceMemberId,
 }: {
-  runAsWorkspaceMemberId: string | undefined;
-}): string => {
-  const missingToolMeaning =
-    'Your tools are limited to what is permitted. A tool you need being absent means the action is not allowed, not that the object is missing, that the workspace is misconfigured or that the Slack connection is wrong. Say plainly what cannot be done and who to ask; never invite the requester to name the object, paste a record link or otherwise work around it.';
-
-  if (!isNonEmptyString(runAsWorkspaceMemberId)) {
-    return `You are answering with the app's own role, not the requester's. ${missingToolMeaning}`;
-  }
-
-  return [
+  runAsWorkspaceMemberId: string;
+}): string =>
+  [
     `You are acting as workspace member ${runAsWorkspaceMemberId}, with that member's own permissions. When the request says me, my or mine, it means that member, and you can use their id directly.`,
-    missingToolMeaning,
+    'Your tools are limited to what is permitted. A tool you need being absent means the action is not allowed, not that the object is missing, that the workspace is misconfigured or that the Slack connection is wrong. Say plainly what cannot be done and who to ask; never invite the requester to name the object, paste a record link or otherwise work around it.',
   ].join('\n\n');
-};
 
 const buildSharedFilesSection = ({
   attachedFileNames,
@@ -93,7 +85,7 @@ export const buildSlackAssistantMessages = ({
   requestText: string;
   requesterName: string | undefined;
   conversationMessages: SlackAssistantAgentMessage[];
-  runAsWorkspaceMemberId: string | undefined;
+  runAsWorkspaceMemberId: string;
   timeoutSeconds: number;
   workspaceBaseUrl: string | undefined;
   attachments: SlackAssistantAttachment[];

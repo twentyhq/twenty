@@ -47,9 +47,9 @@ export const validateUsageLimitAgainstKindRule = (
     );
   }
 
-  if (!rule.allowedMeters.includes(input.meter)) {
+  if (!rule.isZeroLimitValueAllowed && input.limitValue === 0) {
     throw new UsageLimitException(
-      `A ${input.limitKind} limit cannot be metered on ${input.meter}, only on ${rule.allowedMeters.join(', ')}`,
+      `A ${input.limitKind} limit needs a limit value above zero`,
       UsageLimitExceptionCode.LIMIT_INVALID,
     );
   }
@@ -57,17 +57,6 @@ export const validateUsageLimitAgainstKindRule = (
   if (!rule.isBurstValueAllowed && isDefined(input.burstValue)) {
     throw new UsageLimitException(
       `A ${input.limitKind} limit cannot hold a burst value`,
-      UsageLimitExceptionCode.LIMIT_INVALID,
-    );
-  }
-
-  if (
-    input.limitKind === 'quota' &&
-    input.meter === 'quantity' &&
-    spansEveryOperation
-  ) {
-    throw new UsageLimitException(
-      'A quantity quota needs an operation: only credits aggregate across operations',
       UsageLimitExceptionCode.LIMIT_INVALID,
     );
   }

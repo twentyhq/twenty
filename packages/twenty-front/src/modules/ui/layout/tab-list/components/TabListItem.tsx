@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
-import { TabButton } from 'twenty-ui/components';
+import { TabButton } from 'twenty-ui/components/navigation';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
@@ -71,6 +71,8 @@ export const TabListItem = ({
                 ref={ref}
                 href={href}
                 render={render}
+                nativeButton={false}
+                role="link"
                 active={active}
                 aria-current={active ? 'page' : undefined}
                 disabled={disabled}

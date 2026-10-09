@@ -8,6 +8,7 @@ import {
   ACTION_TOOL_LABELS,
   type ActionToolId,
 } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
+import { EMAIL_TOOL_APPROVALS } from 'src/engine/core-modules/tool-provider/constants/email-tool-approvals.constant';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -16,7 +17,7 @@ import { type ActionToolLabel } from 'src/engine/core-modules/tool-provider/type
 import { translateToolLabel } from 'src/engine/core-modules/tool-provider/utils/translate-tool-label.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 
-import { ToolCategory } from 'twenty-shared/ai';
+import { type ToolApproval, ToolCategory } from 'twenty-shared/ai';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -29,10 +30,10 @@ import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/sen
 import { CompleteFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/complete-file-upload-tool';
 import { CreateFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/create-file-upload-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
+import { ShareRecordTool } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -54,10 +55,10 @@ export class ActionToolProvider implements ToolProvider {
     private readonly createFileUploadTool: CreateFileUploadTool,
     private readonly completeFileUploadTool: CompleteFileUploadTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
-    private readonly navigateAppTool: NavigateAppTool,
     private readonly extractJsonPathsTool: ExtractJsonPathsTool,
     private readonly searchOutputTool: SearchOutputTool,
     private readonly saveCampaignTool: SaveCampaignTool,
+    private readonly shareRecordTool: ShareRecordTool,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly permissionsService: PermissionsService,
     private readonly i18nService: I18nService,
@@ -72,10 +73,10 @@ export class ActionToolProvider implements ToolProvider {
       ['create_file_upload', this.createFileUploadTool],
       ['complete_file_upload', this.completeFileUploadTool],
       ['code_interpreter', this.codeInterpreterTool],
-      ['navigate_app', this.navigateAppTool],
       ['extract_json_paths', this.extractJsonPathsTool],
       ['search_output', this.searchOutputTool],
       ['save_campaign', this.saveCampaignTool],
+      ['share_record', this.shareRecordTool],
     ]);
   }
 
@@ -90,11 +91,12 @@ export class ActionToolProvider implements ToolProvider {
     const includeSchemas = options?.includeSchemas ?? true;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const hasHttpPermission = await this.permissionsService.hasToolPermission(
-      context.rolePermissionConfig,
-      context.workspaceId,
-      PermissionFlagType.HTTP_REQUEST_TOOL,
-    );
+    const hasHttpPermission =
+      await this.permissionsService.checkRolesPermissions(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.HTTP_REQUEST_TOOL,
+      );
 
     if (hasHttpPermission) {
       descriptors.push(
@@ -107,11 +109,12 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
-    const hasEmailPermission = await this.permissionsService.hasToolPermission(
-      context.rolePermissionConfig,
-      context.workspaceId,
-      PermissionFlagType.SEND_EMAIL_TOOL,
-    );
+    const hasEmailPermission =
+      await this.permissionsService.checkRolesPermissions(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.SEND_EMAIL_TOOL,
+      );
 
     if (hasEmailPermission) {
       descriptors.push(
@@ -120,6 +123,7 @@ export class ActionToolProvider implements ToolProvider {
           this.sendEmailTool,
           includeSchemas,
           context.locale,
+          EMAIL_TOOL_APPROVALS.send_email,
         ),
       );
       descriptors.push(
@@ -128,6 +132,7 @@ export class ActionToolProvider implements ToolProvider {
           this.draftEmailTool,
           includeSchemas,
           context.locale,
+          EMAIL_TOOL_APPROVALS.draft_email,
         ),
       );
       descriptors.push(
@@ -141,7 +146,7 @@ export class ActionToolProvider implements ToolProvider {
     }
 
     const hasCreateCalendarEventPermission =
-      await this.permissionsService.hasToolPermission(
+      await this.permissionsService.checkRolesPermissions(
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
@@ -159,7 +164,7 @@ export class ActionToolProvider implements ToolProvider {
     }
 
     const hasUploadFilePermission =
-      await this.permissionsService.hasToolPermission(
+      await this.permissionsService.checkRolesPermissions(
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.UPLOAD_FILE,
@@ -195,15 +200,6 @@ export class ActionToolProvider implements ToolProvider {
 
     descriptors.push(
       this.buildDescriptor(
-        'navigate_app',
-        this.navigateAppTool,
-        includeSchemas,
-        context.locale,
-      ),
-    );
-
-    descriptors.push(
-      this.buildDescriptor(
         'extract_json_paths',
         this.extractJsonPathsTool,
         includeSchemas,
@@ -227,9 +223,20 @@ export class ActionToolProvider implements ToolProvider {
       ),
     );
 
+    if (await this.shareRecordTool.isEnabled(context.workspaceId)) {
+      descriptors.push(
+        this.buildDescriptor(
+          'share_record',
+          this.shareRecordTool,
+          includeSchemas,
+          context.locale,
+        ),
+      );
+    }
+
     const hasCodeInterpreterPermission =
       this.codeInterpreterService.isEnabled() &&
-      (await this.permissionsService.hasToolPermission(
+      (await this.permissionsService.checkRolesPermissions(
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.CODE_INTERPRETER_TOOL,
@@ -267,6 +274,8 @@ export class ActionToolProvider implements ToolProvider {
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
       threadId: context.threadId,
+      rolePermissionConfig: context.rolePermissionConfig,
+      authContext: context.authContext,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     });
   }
@@ -276,6 +285,7 @@ export class ActionToolProvider implements ToolProvider {
     tool: Tool,
     includeSchemas: boolean,
     locale?: ToolProviderContext['locale'],
+    approval?: ToolApproval,
   ): ToolIndexEntry | ToolDescriptor {
     const labels: ActionToolLabel | undefined =
       ACTION_TOOL_LABELS[toolId as ActionToolId];
@@ -292,6 +302,7 @@ export class ActionToolProvider implements ToolProvider {
         inputSchema: toToolJsonSchema(tool.inputSchema as z.ZodType),
       }),
       executionRef: { kind: 'static', toolId },
+      ...(isDefined(approval) && { approval }),
     };
   }
 }

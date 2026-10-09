@@ -13,7 +13,8 @@ export const useInstallMarketplaceAppWithPermissionValidation = (
   args?: UseInstallMarketplaceAppWithPermissionValidationArgs,
 ) => {
   const { openDialog } = useDialog();
-  const { install, isInstalling } = useInstallMarketplaceApp(args);
+  const { install, isInstalling, installProgress } =
+    useInstallMarketplaceApp(args);
 
   const requestInstall = useCallback(() => {
     openDialog(INSTALL_PERMISSION_VALIDATION_MODAL_ID);
@@ -23,6 +24,7 @@ export const useInstallMarketplaceAppWithPermissionValidation = (
     requestInstall,
     install,
     isInstalling,
+    installProgress,
     modalInstanceId: INSTALL_PERMISSION_VALIDATION_MODAL_ID,
   };
 };

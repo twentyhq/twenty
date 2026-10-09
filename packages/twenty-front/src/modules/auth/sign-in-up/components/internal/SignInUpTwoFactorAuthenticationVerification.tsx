@@ -12,6 +12,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
@@ -23,7 +24,8 @@ import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
-import { MainButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -198,14 +200,15 @@ export const SignInUpTOTPVerification = () => {
       }
 
       await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
-    } catch {
+    } catch (error) {
       form.setValue('otp', '');
 
-      enqueueToast({
-        variant: 'error',
-        children: t`Invalid verification code. Please try again.`,
-        dedupeKey: 'invalid-otp-dedupe-key',
-      });
+      enqueueToast(
+        getTwoFactorAuthenticationErrorToastOptions({
+          error,
+          dedupeKey: 'invalid-otp-dedupe-key',
+        }),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -213,6 +216,10 @@ export const SignInUpTOTPVerification = () => {
 
   const handleBack = () => {
     setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
+  };
+
+  const handleUseRecoveryCode = () => {
+    setSignInUpStep(SignInUpStep.TwoFactorAuthenticationRecovery);
   };
 
   return (
@@ -266,6 +273,11 @@ export const SignInUpTOTPVerification = () => {
         fullWidth
         disabled={isLoading}
       >{t`Submit`}</MainButton>
+      <StyledActionBackLinkContainer>
+        <Button variant="link" onClick={handleUseRecoveryCode}>
+          <Trans>Lost your authenticator? Use a recovery code</Trans>
+        </Button>
+      </StyledActionBackLinkContainer>
       <StyledActionBackLinkContainer>
         <Button variant="link" onClick={handleBack}>
           <Trans>Back</Trans>
