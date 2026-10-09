@@ -3,7 +3,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ToolSet, zodSchema } from 'ai';
-import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
+import {
+  type ActorMetadata,
+  FeatureFlagKey,
+  FieldActorSource,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
@@ -34,6 +38,8 @@ import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
+import { MontyPoolService } from 'src/engine/core-modules/code-mode/services/monty-pool.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -57,6 +63,11 @@ import {
   LOAD_SKILL_TOOL_NAME,
   loadSkillInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
+import {
+  createRunToolScriptTool,
+  RUN_TOOL_SCRIPT_TOOL_NAME,
+  runToolScriptInputSchema,
+} from 'src/engine/core-modules/tool-provider/tools/run-tool-script.tool';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
@@ -103,6 +114,8 @@ export class McpProtocolService {
     private readonly mcpInstructionBuilderService: McpInstructionBuilderService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly montyPoolService: MontyPoolService,
   ) {}
 
   async handleInitialize(
@@ -265,6 +278,14 @@ export class McpProtocolService {
       toolContext,
     );
 
+    const isToolAllowed = (toolName: string) =>
+      !MCP_EXCLUDED_TOOL_NAMES.has(toolName);
+
+    const isCodeModeEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_CODE_MODE_ENABLED,
+      workspace.id,
+    );
+
     const toolSet: ToolSet = {
       ...annotatePreloadedMcpTools(preloadedTools),
       [GET_TOOL_CATALOG_TOOL_NAME]: {
@@ -280,11 +301,25 @@ export class McpProtocolService {
       } as McpAnnotatedTool,
       [EXECUTE_TOOL_TOOL_NAME]: {
         ...createExecuteToolTool(this.toolRegistry, toolContext, {
-          isToolAllowed: (toolName) => !MCP_EXCLUDED_TOOL_NAMES.has(toolName),
+          isToolAllowed,
         }),
         inputSchema: executeToolInputSchema,
         annotations: MCP_EXECUTE_TOOL_ANNOTATIONS,
       } as McpAnnotatedTool,
+      ...(isCodeModeEnabled
+        ? {
+            [RUN_TOOL_SCRIPT_TOOL_NAME]: {
+              ...createRunToolScriptTool(
+                this.toolRegistry,
+                this.montyPoolService,
+                toolContext,
+                { isToolAllowed },
+              ),
+              inputSchema: runToolScriptInputSchema,
+              annotations: MCP_EXECUTE_TOOL_ANNOTATIONS,
+            } as McpAnnotatedTool,
+          }
+        : {}),
       [LOAD_SKILL_TOOL_NAME]: {
         ...createLoadSkillTool(
           (names) =>
@@ -315,7 +350,7 @@ export class McpProtocolService {
       } as McpAnnotatedTool,
       [LEARN_TOOLS_TOOL_NAME]: {
         ...createLearnToolsTool(this.toolRegistry, toolContext, {
-          isToolAllowed: (toolName) => !MCP_EXCLUDED_TOOL_NAMES.has(toolName),
+          isToolAllowed,
         }),
         inputSchema: zodSchema(learnToolsInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,

@@ -36,6 +36,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
+import { MontyPoolService } from 'src/engine/core-modules/code-mode/services/monty-pool.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -44,9 +45,11 @@ import {
   createExecuteToolTool,
   createLearnToolsTool,
   createLoadSkillTool,
+  createRunToolScriptTool,
   EXECUTE_TOOL_TOOL_NAME,
   LEARN_TOOLS_TOOL_NAME,
   LOAD_SKILL_TOOL_NAME,
+  RUN_TOOL_SCRIPT_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
@@ -154,6 +157,7 @@ export class ChatExecutionService {
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly montyPoolService: MontyPoolService,
   ) {}
 
   async streamChat({
@@ -291,6 +295,11 @@ export class ChatExecutionService {
     const isToolAllowed = (toolName: string) =>
       !AI_CHAT_EXCLUDED_TOOL_NAMES.has(toolName);
 
+    const isCodeModeEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_CODE_MODE_ENABLED,
+      workspace.id,
+    );
+
     const preloadedToolSet: ToolSet = {
       ...preloadedTools,
       ...nativeTools,
@@ -346,6 +355,16 @@ export class ChatExecutionService {
           isToolAllowed,
         },
       ),
+      ...(isCodeModeEnabled
+        ? {
+            [RUN_TOOL_SCRIPT_TOOL_NAME]: createRunToolScriptTool(
+              this.toolRegistry,
+              this.montyPoolService,
+              toolContext,
+              { isToolAllowed },
+            ),
+          }
+        : {}),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
         (skillNames) =>
           this.skillService.findFlatSkillsByNames(skillNames, workspace.id),
@@ -419,6 +438,7 @@ export class ChatExecutionService {
       workspaceId: workspace.id,
       isWorkspaceSetupThread,
       canAttachConversationToRecords,
+      isCodeModeEnabled,
     });
 
     this.logger.log(

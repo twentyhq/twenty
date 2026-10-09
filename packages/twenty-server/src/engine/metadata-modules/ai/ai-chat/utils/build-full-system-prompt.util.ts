@@ -37,6 +37,7 @@ type BuildSystemPromptArgs = {
   workspaceId: string;
   isWorkspaceSetupThread?: boolean;
   canAttachConversationToRecords?: boolean;
+  isCodeModeEnabled?: boolean;
 };
 
 export const buildSystemPromptSections = ({
@@ -51,6 +52,7 @@ export const buildSystemPromptSections = ({
   workspaceId,
   isWorkspaceSetupThread,
   canAttachConversationToRecords,
+  isCodeModeEnabled,
 }: BuildSystemPromptArgs): SystemPromptSection[] => {
   const workspaceInstructionsSection = isWorkspaceSetupThread
     ? ''
@@ -78,6 +80,10 @@ export const buildSystemPromptSections = ({
             content: CHAT_SYSTEM_PROMPTS.CONVERSATION_ATTACHMENT,
           },
         ]),
+    isCodeModeEnabled === true && {
+      title: 'Code Mode',
+      content: CHAT_SYSTEM_PROMPTS.CODE_MODE,
+    },
     {
       title: 'Response Format',
       content: CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,

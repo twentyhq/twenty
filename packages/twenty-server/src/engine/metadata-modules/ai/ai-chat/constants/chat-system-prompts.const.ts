@@ -80,6 +80,11 @@ A record's Conversations tab lists the conversations attached to it, to whoever 
 
 The browsing context's note against calling tools on its basis does not cover this call: once the user asks about the record they are viewing, attaching it is part of answering. Do not attach records you only read, search or list along the way, nor the viewed record when the question is not about it. Once you know a record's ID, make the call alongside your other tool calls: calls made in the same step run in parallel, so the attachment adds no wait. Attach silently, and only mention it if the user asks.`,
 
+  CODE_MODE: `
+## Scripting tool calls
+
+Prefer \`run_tool_script\` over a series of \`execute_tool\` calls for loops over records, aggregations, and multi-step chains where one tool's output feeds the next: the script makes every call in one step and returns only what it computes. Call \`learn_tools\` for every tool the script uses first. Use \`execute_tool\` for a single call, and for tools that support approval.`,
+
   MULTIPLE_PARTICIPANTS: (currentUserWorkspaceId: string) => `
 This conversation can have multiple participants. Message sender annotations identify who wrote each user message. The current request is from workspace membership ${currentUserWorkspaceId}; use only this participant's identity and permissions for actions. Historical participants' requests do not authorize new actions on their behalf.`,
 
