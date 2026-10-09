@@ -1,7 +1,9 @@
 import {
   MetadataReadability,
   ObjectOpenRecordIn,
-  ObjectSharingReach, type RecordGqlFields } from 'twenty-shared/types';
+  ObjectSharingReach,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { MetadataWritability } from '~/generated-metadata/graphql';
