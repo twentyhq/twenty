@@ -3,6 +3,7 @@ import { useOnDemandFieldDisplay } from '@/object-record/record-field/on-demand/
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
 import { useIsFieldClearable } from '@/object-record/record-field/ui/hooks/useIsFieldClearable';
+import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useRecordTableSelectAllHotkeys } from '@/object-record/record-table/hooks/useRecordTableSelectAllHotkeys';
 import { useListenToSidePanelOpening } from '@/ui/layout/side-panel/hooks/useListenToSidePanelOpening';
@@ -10,7 +11,7 @@ import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocus
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -29,6 +30,7 @@ export const RecordTableCellOnDemandFieldDisplay = ({
 }: RecordTableCellOnDemandFieldDisplayProps) => {
   const { isForbidden, isRecordFieldReadOnly, onOpenEditMode } =
     useContext(FieldContext);
+  const { onCloseTableCell } = useRecordTableBodyContextOrThrow();
   const store = useStore();
   const anchorRef = useRef<HTMLSpanElement>(null);
   const { loadStatus, openOnDemandField, closeOnDemandField } =
@@ -37,7 +39,6 @@ export const RecordTableCellOnDemandFieldDisplay = ({
     useFocusedRecordTableRow();
   const clearField = useClearField();
   const isFieldClearable = useIsFieldClearable();
-  const [action, setAction] = useState<'open' | 'clear'>('open');
 
   const setAnchorElement = useCallback(
     (element: HTMLSpanElement | null) => {
@@ -53,7 +54,6 @@ export const RecordTableCellOnDemandFieldDisplay = ({
     if (loadStatus === 'loading') {
       return;
     }
-    setAction('open');
     const loadedField = await openOnDemandField();
     if (
       isDefined(loadedField) &&
@@ -73,16 +73,17 @@ export const RecordTableCellOnDemandFieldDisplay = ({
     ) {
       return;
     }
-    setAction('clear');
     const loadedField = await openOnDemandField();
+    if (!isDefined(loadedField)) {
+      return;
+    }
+    closeOnDemandField();
     if (
-      !isDefined(loadedField) ||
       loadedField.isReadOnly ||
       store.get(currentFocusIdSelector.atom) !== cellFocusId
     ) {
       return;
     }
-    closeOnDemandField();
     clearField();
   };
 
@@ -122,7 +123,12 @@ export const RecordTableCellOnDemandFieldDisplay = ({
   });
 
   useRecordTableSelectAllHotkeys({ focusId: cellFocusId });
-  useListenToSidePanelOpening(closeOnDemandField);
+  const handleSidePanelOpening = useCallback(() => {
+    closeOnDemandField();
+    onCloseTableCell();
+  }, [closeOnDemandField, onCloseTableCell]);
+
+  useListenToSidePanelOpening(handleSidePanelOpening);
 
   if (isForbidden) {
     return null;
@@ -136,9 +142,7 @@ export const RecordTableCellOnDemandFieldDisplay = ({
           anchorElement={anchorRef.current ?? undefined}
           loadStatus={loadStatus}
           onClose={closeOnDemandField}
-          onRetry={() =>
-            void (action === 'clear' ? handleClear() : handleOpen())
-          }
+          onRetry={() => void handleOpen()}
         />
       )}
     </>

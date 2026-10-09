@@ -7,6 +7,7 @@ import { seedOnDemandCollectionFieldStory } from '@/object-record/record-field/o
 import { ON_DEMAND_FIELD_STORY_RECORD_ID } from '@/object-record/record-field/on-demand/testing/seedOnDemandFieldStory';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { PageFocusId } from '@/types/PageFocusId';
+import { emitSidePanelOpenEvent } from '@/ui/layout/side-panel/utils/emitSidePanelOpenEvent';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -102,6 +103,24 @@ export const KeyboardOpensExistingJsonEditor: Story = {
     ).toBeVisible();
     expect(body.getByText(ON_DEMAND_FIELD_STORY_TRANSCRIPT_TEXT)).toBeVisible();
     await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
+    await waitFor(() =>
+      expect(
+        body.queryByRole('button', { name: 'Edit JSON' }),
+      ).not.toBeInTheDocument(),
+    );
+    expect(persistValue).not.toHaveBeenCalled();
+  },
+};
+
+export const SidePanelOpeningClosesJsonEditor: Story = {
+  play: async ({ canvasElement }) => {
+    await focusJsonCell(canvasElement);
+    await userEvent.keyboard('{Enter}');
+    const body = within(canvasElement.ownerDocument.body);
+    expect(
+      await body.findByRole('button', { name: 'Edit JSON' }),
+    ).toBeVisible();
+    emitSidePanelOpenEvent();
     await waitFor(() =>
       expect(
         body.queryByRole('button', { name: 'Edit JSON' }),
@@ -211,6 +230,42 @@ export const FailedLoadCannotClear: Story = {
         recordStoreFamilyState.atomFamily(ON_DEMAND_FIELD_STORY_RECORD_ID),
       )?.transcript,
     ).toBeUndefined();
+  },
+};
+
+export const RetryAfterFailedClearOnlyLoads: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('FindOneCallRecording', () => {
+          requestValue();
+          if (requestValue.mock.calls.length === 1) {
+            return HttpResponse.json({ errors: [{ message: 'Unavailable' }] });
+          }
+          return HttpResponse.json(ON_DEMAND_FIELD_STORY_RESPONSE);
+        }),
+        persistValueHandler,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await focusJsonCell(canvasElement);
+    await userEvent.keyboard('{Delete}');
+    const body = within(canvasElement.ownerDocument.body);
+    expect(await body.findByRole('alert')).toHaveTextContent(
+      'Could not load this value.',
+    );
+    await userEvent.click(body.getByRole('button', { name: 'Retry' }));
+    expect(
+      await body.findByRole('button', { name: 'Edit JSON' }),
+    ).toBeVisible();
+    expect(requestValue).toHaveBeenCalledTimes(2);
+    expect(persistValue).not.toHaveBeenCalled();
+    expect(
+      jotaiStore.get(
+        recordStoreFamilyState.atomFamily(ON_DEMAND_FIELD_STORY_RECORD_ID),
+      )?.transcript,
+    ).toEqual({ text: ON_DEMAND_FIELD_STORY_TRANSCRIPT_TEXT });
   },
 };
 
