@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "Tipul declanșatorului automatizat al fluxului de lucru"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "Câmpul fluxului de lucru nu aparține obiectului la care se face referire."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "Selectorul de înregistrări al fluxului de lucru trebuie să facă referire la un obiect."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Fluxul de lucru face referire la metadate care nu sunt disponibile pentru această aplicație."
 

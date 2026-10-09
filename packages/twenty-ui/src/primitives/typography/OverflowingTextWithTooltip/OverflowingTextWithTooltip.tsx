@@ -101,6 +101,7 @@ export const OverflowingTextWithTooltip = memo(
               {...(isMultiline
                 ? { lineClamp }
                 : { truncate: truncate ?? true })}
+              dir="auto"
               data-content-overflowing={isTitleOverflowing ? '' : undefined}
               className={clsx(
                 isMultiline
