@@ -20,7 +20,9 @@ Card.Root (outer surface)
 
 Import `Card` from `twenty-ui/primitives/surfaces`. `Card.Root` supplies the outer border and clipping, but creates no sections internally. No part requires another part or a particular section order. The sections also work independently, without `Card.Root` or context.
 
-Each part renders a `div` and accepts native div attributes, `className`, and `style`. No part adds heading, button, or HTML `footer` semantics automatically.
+Each part renders a `div` by default and accepts native div attributes, event handlers, `className`, `style`, and a DOM `ref`. Use `render` with an element or callback to choose a semantic target. No part infers an element or role from `onClick`.
+
+`CardRootProps`, `CardHeaderProps`, `CardContentProps`, and `CardFooterProps` are exported from `twenty-ui/primitives/surfaces`, `twenty-ui/primitives`, and the root package.
 
 <StoryEmbed storyId="ui-surfaces-card--default" title="Card example" />
 
@@ -82,18 +84,66 @@ export const ImportSections = () => (
 );
 ```
 
-`Card.Content` supports `isClickable` for a pointer cursor and `hasHoverHighlight` for a hover background. These flags only change appearance. They do not add button semantics, keyboard activation, or a click handler.
+## Interactive composition
 
-## Independent parts and custom wrappers
-
-A section can be used without the outer surface. Wrappers can derive their props from the corresponding part and spread them to preserve native attributes, event handlers, classes, and styles. Card parts retain their existing props without `ref` support; a wrapper that needs a DOM ref can attach it to a host element it owns.
+Choose a native button for an action or an anchor for navigation through `render`. Supply target-specific attributes such as `type`, `disabled`, `href`, and `target` on that element. The actual owner supplies its keyboard, focus, disabled, and link behavior. Card does not add those behaviors to a display `div`.
 
 ```tsx
-import { type ComponentProps } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 
-type SummaryContentProps = ComponentProps<typeof Card.Content>;
+type ReviewCardProps = {
+  disabled?: boolean;
+  onReview: () => void;
+  onDismiss: () => void;
+};
+
+export const ReviewCard = ({
+  disabled,
+  onReview,
+  onDismiss,
+}: ReviewCardProps) => (
+  <Card.Root>
+    <Card.Content
+      render={<button type="button" disabled={disabled} />}
+      onClick={onReview}
+    >
+      <Text render={<span />}>Review 24 ready records</Text>
+    </Card.Content>
+    <Card.Footer>
+      <Button onClick={onDismiss}>Dismiss</Button>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+The action and dismiss button are siblings inside a display card. Do not place another button, link, input, or other interactive control inside a button or link owner. When a button contains Card parts, render those parts as phrasing elements such as `span`.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportLinkCard = () => (
+  <Card.Root render={<a href="/imports" />} fullWidth>
+    <Card.Content>
+      <Text>View imports</Text>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+Native button and link owners retain the card layout and get a visible focus outline. Explicit button and link owners highlight on hover. Disabled owners keep their disabled appearance. Custom owners must supply their interaction behavior, including keyboard activation and disabled handling when applicable.
+
+## Independent parts and custom wrappers
+
+A section can be used without the outer surface. Wrappers can use its exported props type and spread it to preserve native attributes, event handlers, refs, render composition, classes, and styles. With a custom target, put its target-specific ref on the supplied element. Base UI merges that ref with the part ref and composed props.
+
+```tsx
+import { Card, type CardContentProps } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type SummaryContentProps = CardContentProps;
 
 const SummaryContent = ({ children, ...props }: SummaryContentProps) => (
   <Card.Content {...props}>{children}</Card.Content>
@@ -119,7 +169,7 @@ Replace the four separate imports with `import { Card } from 'twenty-ui/primitiv
 | `ComponentProps<typeof Card>` | `ComponentProps<typeof Card.Root>` |
 | `styled(Card)`                | `styled(Card.Root)`                |
 
-Apply the same member names to JSX tags, styled wrappers, and prop types. Standalone part exports are removed without compatibility aliases. Existing props, styling defaults, and independent section use remain unchanged.
+Apply the same member names to JSX tags, styled wrappers, and prop types. Standalone part exports are removed without compatibility aliases. Layout props, styling defaults, and independent section use remain. Replace `isClickable` and `hasHoverHighlight` with an explicit native owner through `render`. Move action handlers off display-only wrappers, preserve accessible names, and keep nested controls outside the primary action. Use `render={<button type="button" disabled={disabled} />}` for an action and `render={<a href="/imports" />}` for navigation. DOM refs now point to the actual rendered part.
 
 ## Props
 

@@ -257,7 +257,13 @@ export const SignInUpWorkspaceCreationForm = () => {
               colorSeed={getWorkspaceAvatarColorSeed(workspaceName)}
               shape="square"
               size="xl"
-              onClick={openFilePicker}
+              render={
+                <button
+                  type="button"
+                  aria-label={t`Upload logo`}
+                  onClick={openFilePicker}
+                />
+              }
             />
             <StyledHiddenFileInput
               type="file"

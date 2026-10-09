@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
+import { type ValidationRuleViolation } from '@/validation-rules/types/ValidationRuleViolation';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import {
@@ -166,7 +166,7 @@ export const computeDraftValidationRuleViolations = ({
   fields: ValidationRuleFieldDescriptor[];
   fieldMetadataItems: DraftFieldMetadataItem[];
   now: string;
-}): DraftValidationRuleViolation[] => {
+}): ValidationRuleViolation[] => {
   const draftRecordWithDefaultValues = withStaticDefaultValues({
     draftRecord,
     fieldMetadataItems,

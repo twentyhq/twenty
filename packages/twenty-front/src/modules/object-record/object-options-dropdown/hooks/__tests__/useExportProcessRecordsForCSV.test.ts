@@ -136,4 +136,58 @@ describe('useExportProcessRecordsForCSV', () => {
       },
     ]);
   });
+
+  it('preserves null or undefined amountMicros for currency fields instead of converting to 0', () => {
+    const { result } = renderHook(() =>
+      useExportProcessRecordsForCSV('someObject'),
+    );
+
+    const records = [
+      {
+        __typename: 'ObjectRecord',
+        id: '1',
+        price: { amountMicros: null, currencyCode: 'USD' },
+        name: 'Empty amount',
+      },
+      {
+        __typename: 'ObjectRecord',
+        id: '2',
+        price: { amountMicros: undefined, currencyCode: 'EUR' },
+        name: 'Undefined amount',
+      },
+      {
+        __typename: 'ObjectRecord',
+        id: '3',
+        price: { amountMicros: 0, currencyCode: 'GBP' },
+        name: 'Zero amount',
+      },
+    ];
+
+    let processedRecords;
+
+    act(() => {
+      processedRecords = result.current.processRecordsForCSVExport(records);
+    });
+
+    expect(processedRecords).toEqual([
+      {
+        __typename: 'ObjectRecord',
+        id: '1',
+        price: { amountMicros: null, currencyCode: 'USD' },
+        name: 'Empty amount',
+      },
+      {
+        __typename: 'ObjectRecord',
+        id: '2',
+        price: { amountMicros: null, currencyCode: 'EUR' },
+        name: 'Undefined amount',
+      },
+      {
+        __typename: 'ObjectRecord',
+        id: '3',
+        price: { amountMicros: 0, currencyCode: 'GBP' },
+        name: 'Zero amount',
+      },
+    ]);
+  });
 });

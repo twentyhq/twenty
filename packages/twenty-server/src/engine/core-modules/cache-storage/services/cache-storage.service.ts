@@ -3,9 +3,11 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
+import { v4 } from 'uuid';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import {
   CacheStorageException,
   CacheStorageExceptionCode,
@@ -330,27 +332,58 @@ export class CacheStorageService {
     return count as number;
   }
 
-  async acquireLock(key: string, ttl = 1000): Promise<boolean> {
+  async acquireLock({
+    key,
+    ttl = 1000,
+  }: {
+    key: string;
+    ttl?: number;
+  }): Promise<string | null> {
     if (!this.isRedisCache(this.cache)) {
       throw new Error('acquireLock is only supported with Redis cache');
     }
 
     const redisClient = this.cache.store.client;
+    const ownerToken = v4();
 
-    const result = await redisClient.set(this.getKey(key), 'lock', {
+    const result = await redisClient.set(this.getKey(key), ownerToken, {
       NX: true,
       PX: ttl,
     });
 
-    return result === 'OK';
+    return result === 'OK' ? ownerToken : null;
   }
 
-  async releaseLock(key: string): Promise<void> {
-    if (!this.isRedisCache(this.cache)) {
-      throw new Error('releaseLock is only supported with Redis cache');
-    }
+  async extendLock({
+    key,
+    ownerToken,
+    ttl,
+  }: {
+    key: string;
+    ownerToken: string;
+    ttl: number;
+  }): Promise<boolean> {
+    const extended = await this.runScript<number>({
+      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
+      keys: [key],
+      args: [ownerToken, String(ttl)],
+    });
 
-    await this.del(key);
+    return extended === 1;
+  }
+
+  async releaseLock({
+    key,
+    ownerToken,
+  }: {
+    key: string;
+    ownerToken: string;
+  }): Promise<void> {
+    await this.runScript<number>({
+      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
+      keys: [key],
+      args: [ownerToken, '0'],
+    });
   }
 
   async incrBy(key: string, increment: number): Promise<number> {

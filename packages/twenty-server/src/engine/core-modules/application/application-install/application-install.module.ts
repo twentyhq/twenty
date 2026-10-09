@@ -53,6 +53,10 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     InstallApplicationCommand,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
-  exports: [ApplicationInstallService, ApplicationUninstallRunnerService],
+  exports: [
+    ApplicationInstallService,
+    ApplicationLifecycleJobService,
+    ApplicationUninstallRunnerService,
+  ],
 })
 export class ApplicationInstallModule {}

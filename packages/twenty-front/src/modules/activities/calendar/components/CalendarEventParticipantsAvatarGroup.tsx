@@ -2,6 +2,7 @@ import { CalendarEventCallRecorderAvatar } from '@/activities/calendar/component
 import { type CalendarEventCallRecording } from '@/activities/calendar/types/CalendarEventCallRecording';
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { isTimelineCalendarEventParticipant } from '@/activities/calendar/types/guards/IsTimelineCalendarEventParticipant';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { AvatarGroup } from 'twenty-ui/components/data-display';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -60,23 +61,28 @@ export const CalendarEventParticipantsAvatarGroup = ({
             status={callRecording.status}
           />
         )),
-        ...timelineParticipants.map((participant) => (
-          <Avatar
-            key={[participant.workspaceMemberId, participant.displayName]
-              .filter(isDefined)
-              .join('-')}
-            src={getAbsoluteImageUrl(participant.avatarUrl)}
-            name={
-              participant.firstName && participant.lastName
-                ? `${participant.firstName} ${participant.lastName}`
-                : participant.displayName
-            }
-            colorSeed={
-              participant.workspaceMemberId || participant.personId || ''
-            }
-            shape="circle"
-          />
-        )),
+        ...timelineParticipants.map((participant) => {
+          const participantName =
+            isNonEmptyString(participant.firstName) &&
+            isNonEmptyString(participant.lastName)
+              ? `${participant.firstName} ${participant.lastName}`
+              : participant.displayName;
+
+          return (
+            <Avatar
+              key={[participant.workspaceMemberId, participant.displayName]
+                .filter(isDefined)
+                .join('-')}
+              src={getAbsoluteImageUrl(participant.avatarUrl)}
+              name={participantName}
+              imageProps={{ alt: participantName }}
+              colorSeed={
+                participant.workspaceMemberId || participant.personId || ''
+              }
+              shape="circle"
+            />
+          );
+        }),
       ]}
     />
   );
