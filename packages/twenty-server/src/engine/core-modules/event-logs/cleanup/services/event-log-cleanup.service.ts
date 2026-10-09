@@ -35,8 +35,8 @@ export class EventLogCleanupService {
       return;
     }
 
-    const retentionInDaysByTable =
-      await this.eventLogRetentionService.getRetentionInDaysByTable({
+    const cutoffDate =
+      await this.eventLogRetentionService.getRetentionStartDate({
         workspaceId,
         workspaceRetentionInDays,
       });
@@ -47,10 +47,6 @@ export class EventLogCleanupService {
 
     for (const table of tablesToClean) {
       const tableName = getClickHouseTableName(table);
-      const retentionDays = retentionInDaysByTable[table];
-      const cutoffDate = new Date();
-
-      cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
       try {
         const success = await this.clickHouseService.executeCommand(
@@ -63,7 +59,7 @@ export class EventLogCleanupService {
 
         if (success) {
           this.logger.log(
-            `Scheduled deletion of old ${tableName} events for workspace ${workspaceId} (retention: ${retentionDays} days)`,
+            `Scheduled deletion of ${tableName} events before ${cutoffDate.toISOString()} for workspace ${workspaceId}`,
           );
         } else {
           this.logger.warn(

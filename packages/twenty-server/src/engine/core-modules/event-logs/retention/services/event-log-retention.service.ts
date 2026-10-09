@@ -2,8 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { EventLogTable } from 'twenty-shared/types';
-import { getEventLogRetentionInDays } from 'twenty-shared/utils';
+import { getEventLogRetentionInHours } from 'twenty-shared/utils';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -18,26 +17,19 @@ export class EventLogRetentionService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
-  async getRetentionInDaysByTable({
+  async getRetentionStartDate({
     workspaceId,
     workspaceRetentionInDays,
   }: {
     workspaceId: string;
     workspaceRetentionInDays: number;
-  }): Promise<Record<EventLogTable, number>> {
-    const hasAuditLogsEntitlement =
-      await this.hasAuditLogsEntitlement(workspaceId);
+  }): Promise<Date> {
+    const retentionInHours = getEventLogRetentionInHours({
+      workspaceRetentionInDays,
+      hasAuditLogsEntitlement: await this.hasAuditLogsEntitlement(workspaceId),
+    });
 
-    return Object.fromEntries(
-      Object.values(EventLogTable).map((table) => [
-        table,
-        getEventLogRetentionInDays({
-          table,
-          workspaceRetentionInDays,
-          hasAuditLogsEntitlement,
-        }),
-      ]),
-    ) as Record<EventLogTable, number>;
+    return new Date(Date.now() - retentionInHours * 60 * 60 * 1000);
   }
 
   async validateRetentionUpdateOrThrow(workspaceId: string): Promise<void> {
