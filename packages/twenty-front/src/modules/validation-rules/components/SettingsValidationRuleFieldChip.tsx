@@ -1,3 +1,4 @@
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { styled } from '@linaria/react';
 import { useIcons } from 'twenty-ui/icon';
 import { Chip } from 'twenty-ui/primitives/data-display';
@@ -32,7 +33,7 @@ export const SettingsValidationRuleFieldChip = ({
         title={path}
         startElement={<Icon size={theme.icon.size.sm} />}
       >
-        {label}
+        {getChipLabel(label).content}
       </Chip>
     </StyledWrapper>
   );

@@ -121,7 +121,7 @@ export const imageInputTest: TwentyUiGalleryPlayFunction = async ({
     throw new Error('ImageInput must render a native file input');
   }
 
-  await expect(fileInput).toHaveAttribute('accept', 'image/*');
+  await expect(fileInput).toHaveAttribute('accept', 'image/png, image/jpeg');
   await expect(fileInput).not.toBeVisible();
   await userEvent.upload(
     fileInput,

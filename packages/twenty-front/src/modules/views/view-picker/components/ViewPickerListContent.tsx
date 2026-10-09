@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { type MouseEvent, useCallback } from 'react';
@@ -219,10 +219,10 @@ export const ViewPickerListContent = () => {
       <DropdownMenuSeparator />
       <StyledBoldDropdownMenuItemsContainerWrapper>
         <DropdownMenuItemsContainer scrollable={false}>
-          <ListItem
+          <ListItemButton
             onClick={handleAddViewButtonClick}
             startIcon={<IconPlus />}
-          >{t`Add view`}</ListItem>
+          >{t`Add view`}</ListItemButton>
         </DropdownMenuItemsContainer>
       </StyledBoldDropdownMenuItemsContainerWrapper>
     </LegacyDropdownContent>

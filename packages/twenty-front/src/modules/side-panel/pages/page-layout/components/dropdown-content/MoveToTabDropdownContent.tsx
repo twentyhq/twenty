@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useMoveWidgetToTab } from '@/page-layout/hooks/useMoveWidgetToTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -64,7 +65,7 @@ export const MoveToTabDropdownContent = () => {
   return (
     <DropdownMenuItemsContainer>
       {eligibleTabs.map((tab) => (
-        <ListItem
+        <ListItemButton
           key={tab.id}
           onClick={() => {
             moveWidgetToTab(pageLayoutEditingWidgetId, tab.id);
@@ -72,7 +73,7 @@ export const MoveToTabDropdownContent = () => {
           }}
         >
           {tab.title ?? ''}
-        </ListItem>
+        </ListItemButton>
       ))}
     </DropdownMenuItemsContainer>
   );

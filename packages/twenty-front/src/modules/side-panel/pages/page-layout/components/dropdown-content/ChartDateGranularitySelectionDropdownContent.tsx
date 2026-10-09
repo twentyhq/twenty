@@ -15,7 +15,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   type FieldsConfiguration,
   type WidgetConfiguration,
@@ -160,7 +160,7 @@ export const ChartDateGranularitySelectionDropdownContent = ({
                 handleSelectDateGranularityOption(option);
               }}
             >
-              <ListItem
+              <ListItemButton
                 focused={selectedItemId === option}
                 onClick={() => {
                   handleSelectDateGranularityOption(option);
@@ -171,7 +171,7 @@ export const ChartDateGranularitySelectionDropdownContent = ({
                 indicator="check"
               >
                 {getDateGranularityLabel(option)}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           ))}
         </SelectableList>
