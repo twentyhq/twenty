@@ -127,6 +127,9 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
   }
 
   return {
+    transcriptCount: 0,
+    alreadyImportedCount: 0,
+    deletedCount: 0,
     importedCount:
       importableTranscripts.length - unavailableCallRecordingIds.length,
     skippedCount: transcripts.length - importableTranscripts.length,

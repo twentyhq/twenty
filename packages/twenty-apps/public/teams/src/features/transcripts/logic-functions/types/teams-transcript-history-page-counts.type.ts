@@ -2,5 +2,10 @@ import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic
 
 export type TeamsTranscriptHistoryPageCounts = Pick<
   TeamsTranscriptHistoryState,
-  'importedCount' | 'skippedCount' | 'unavailableCount'
+  | 'transcriptCount'
+  | 'alreadyImportedCount'
+  | 'deletedCount'
+  | 'importedCount'
+  | 'skippedCount'
+  | 'unavailableCount'
 >;

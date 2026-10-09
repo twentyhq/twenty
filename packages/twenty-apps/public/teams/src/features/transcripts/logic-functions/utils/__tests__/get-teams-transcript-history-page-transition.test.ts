@@ -10,23 +10,25 @@ const NEXT_PAGE_URL =
 
 const STATE = {
   runId: 'a1b2c3d4e5f60718',
+  days: 76,
   windowStart: '2026-07-01T00:00:00.000Z',
   windowEnd: '2026-09-15T00:00:00.000Z',
-  phase: 'importing' as const,
+  phase: 'counting' as const,
+  transcriptCount: 10,
+  alreadyImportedCount: 2,
+  deletedCount: 1,
   pageCount: 3,
-  importedCount: 10,
-  skippedCount: 2,
-  unavailableCount: 1,
+  importedCount: 0,
+  skippedCount: 0,
+  unavailableCount: 0,
+  checkedThrough: '2026-08-15T00:00:00.000Z',
   updatedAt: '2026-09-15T00:00:00.000Z',
 };
 
-const PAGE_COUNTS = {
-  importedCount: 5,
-  skippedCount: 1,
-  unavailableCount: 1,
-};
-
 const EMPTY_PAGE_COUNTS = {
+  transcriptCount: 0,
+  alreadyImportedCount: 0,
+  deletedCount: 0,
   importedCount: 0,
   skippedCount: 0,
   unavailableCount: 0,
@@ -46,16 +48,22 @@ describe('getTeamsTranscriptHistoryPageTransition', () => {
       getTeamsTranscriptHistoryPageTransition({
         state: STATE,
         job: JOB,
-        pageCounts: PAGE_COUNTS,
+        phase: 'counting',
+        pageCounts: {
+          ...EMPTY_PAGE_COUNTS,
+          transcriptCount: 5,
+          alreadyImportedCount: 1,
+          deletedCount: 1,
+        },
         nextPageUrl: NEXT_PAGE_URL,
         now: NOW,
       }),
     ).toEqual({
       state: {
         ...STATE,
-        importedCount: 15,
-        skippedCount: 3,
-        unavailableCount: 2,
+        transcriptCount: 15,
+        alreadyImportedCount: 3,
+        deletedCount: 2,
         pageCount: 4,
         updatedAt: '2026-09-15T00:05:00.000Z',
       },
@@ -68,11 +76,12 @@ describe('getTeamsTranscriptHistoryPageTransition', () => {
     });
   });
 
-  it('should move to the older chunk after the last page of a chunk', () => {
+  it('should mark the chunk as checked and move to the older chunk after its last page', () => {
     expect(
       getTeamsTranscriptHistoryPageTransition({
         state: STATE,
         job: { ...JOB, nextPageUrl: NEXT_PAGE_URL },
+        phase: 'counting',
         pageCounts: EMPTY_PAGE_COUNTS,
         now: NOW,
       }),
@@ -80,6 +89,7 @@ describe('getTeamsTranscriptHistoryPageTransition', () => {
       state: {
         ...STATE,
         pageCount: 4,
+        checkedThrough: '2026-07-15T00:00:00.000Z',
         updatedAt: '2026-09-15T00:05:00.000Z',
       },
       nextJob: {
@@ -92,20 +102,44 @@ describe('getTeamsTranscriptHistoryPageTransition', () => {
     });
   });
 
-  it('should complete the import after the last page of the oldest chunk', () => {
+  it('should complete the count after the last page of the oldest chunk', () => {
     const transition = getTeamsTranscriptHistoryPageTransition({
       state: STATE,
       job: { ...JOB, chunkIndex: 2 },
-      pageCounts: PAGE_COUNTS,
+      phase: 'counting',
+      pageCounts: EMPTY_PAGE_COUNTS,
+      now: NOW,
+    });
+
+    expect(transition.nextJob).toBeUndefined();
+    expect(transition.state).toMatchObject({
+      phase: 'counted',
+      checkedThrough: '2026-07-01T00:00:00.000Z',
+    });
+  });
+
+  it('should complete the import after the last page of the oldest chunk', () => {
+    const transition = getTeamsTranscriptHistoryPageTransition({
+      state: { ...STATE, phase: 'importing' },
+      job: { ...JOB, chunkIndex: 2 },
+      phase: 'importing',
+      pageCounts: {
+        ...EMPTY_PAGE_COUNTS,
+        importedCount: 4,
+        skippedCount: 2,
+        unavailableCount: 1,
+      },
       now: NOW,
     });
 
     expect(transition.nextJob).toBeUndefined();
     expect(transition.state).toMatchObject({
       phase: 'imported',
-      importedCount: 15,
-      skippedCount: 3,
-      unavailableCount: 2,
+      transcriptCount: 10,
+      importedCount: 4,
+      skippedCount: 2,
+      unavailableCount: 1,
+      checkedThrough: '2026-07-01T00:00:00.000Z',
     });
   });
 
@@ -113,6 +147,7 @@ describe('getTeamsTranscriptHistoryPageTransition', () => {
     const transition = getTeamsTranscriptHistoryPageTransition({
       state: { ...STATE, pageCount: TEAMS_TRANSCRIPT_HISTORY_MAX_PAGES - 1 },
       job: { ...JOB, pageIndex: TEAMS_TRANSCRIPT_HISTORY_MAX_PAGES - 1 },
+      phase: 'counting',
       pageCounts: EMPTY_PAGE_COUNTS,
       nextPageUrl: NEXT_PAGE_URL,
       now: NOW,
@@ -130,7 +165,8 @@ describe('getTeamsTranscriptHistoryPageTransition', () => {
       getTeamsTranscriptHistoryPageTransition({
         state: { ...STATE, pageCount: 4 },
         job: JOB,
-        pageCounts: PAGE_COUNTS,
+        phase: 'counting',
+        pageCounts: { ...EMPTY_PAGE_COUNTS, transcriptCount: 5 },
         nextPageUrl: NEXT_PAGE_URL,
         now: NOW,
       }),

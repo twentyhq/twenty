@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { TEAMS_TRANSCRIPT_HISTORY_RETRY_DELAYS_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/teams-transcript-history-retry-delays-milliseconds';
 import { type TeamsTranscriptHistoryJobPayload } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-job-payload.type';
 import { type TeamsTranscriptHistoryPageResult } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-page-result.type';
+import { type TeamsTranscriptHistoryRunningPhase } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-running-phase.type';
 import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-state.type';
 import { buildTeamsTranscriptHistoryKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-history-kv-key';
 import { enqueueTeamsTranscriptHistoryJobOrThrow } from 'src/features/transcripts/logic-functions/utils/enqueue-teams-transcript-history-job-or-throw';
@@ -12,12 +13,14 @@ import { getTeamsTranscriptHistoryFatalErrorCode } from 'src/features/transcript
 
 export const retryOrFailTeamsTranscriptHistoryPageOrThrow = async ({
   job,
+  phase,
   error,
 }: {
   job: TeamsTranscriptHistoryJobPayload;
+  phase: TeamsTranscriptHistoryRunningPhase;
   error: unknown;
 }): Promise<TeamsTranscriptHistoryPageResult> => {
-  const state = await findTeamsTranscriptHistoryStateForJob({ job });
+  const state = await findTeamsTranscriptHistoryStateForJob({ job, phase });
 
   if (!isDefined(state)) {
     return {
@@ -50,6 +53,7 @@ export const retryOrFailTeamsTranscriptHistoryPageOrThrow = async ({
     updatedAt: new Date().toISOString(),
   });
   await enqueueTeamsTranscriptHistoryJobOrThrow({
+    phase,
     job: { ...job, attempt: job.attempt + 1 },
     delayMilliseconds: retryDelayMilliseconds,
   });

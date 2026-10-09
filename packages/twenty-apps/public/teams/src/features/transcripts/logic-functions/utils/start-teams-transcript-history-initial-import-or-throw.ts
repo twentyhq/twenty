@@ -32,6 +32,7 @@ export const startTeamsTranscriptHistoryInitialImportOrThrow = async ({
   const state = await startTeamsTranscriptHistoryRunOrThrow({
     connectedAccountId,
     days: TEAMS_TRANSCRIPT_HISTORY_INITIAL_IMPORT_DAYS,
+    phase: 'importing',
   });
 
   await kv.set(initialImportKvKey, true);

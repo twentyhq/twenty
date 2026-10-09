@@ -6,6 +6,7 @@ import {
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams-provider-name';
+import { TeamsConnectionUnavailableError } from 'src/features/transcripts/logic-functions/types/teams-connection-unavailable-error';
 
 export const getTeamsConnectionForRequestOrThrow = async (
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
@@ -16,13 +17,18 @@ export const getTeamsConnectionForRequestOrThrow = async (
   );
 
   if (!isDefined(connection)) {
-    throw new Error(
-      'Microsoft Teams is not connected. Open Microsoft Teams app settings and add a connection first.',
-    );
+    throw new TeamsConnectionUnavailableError({
+      message:
+        'Microsoft Teams is not connected. Open Microsoft Teams app settings and add a connection first.',
+      code: 'not-connected',
+    });
   }
 
   if (isDefined(connection.authFailedAt)) {
-    throw new Error('Reconnect Microsoft Teams in the app settings.');
+    throw new TeamsConnectionUnavailableError({
+      message: 'Reconnect Microsoft Teams in the app settings.',
+      code: 'reconnect-required',
+    });
   }
 
   return connection;
