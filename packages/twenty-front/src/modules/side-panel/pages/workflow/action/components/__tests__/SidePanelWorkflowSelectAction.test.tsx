@@ -1,4 +1,4 @@
-import { i18n } from '@lingui/core';
+import { i18n, type MessageDescriptor } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
@@ -24,17 +24,25 @@ jest.mock('@/workspace/hooks/useWorkspaceFeatureFlagsMap', () => ({
 jest.mock(
   '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems',
   () => ({
+    // The action labels are message descriptors, translated like the real component does
     WorkflowActionMenuItems: ({
       actions,
     }: {
-      actions: { defaultLabel: string }[];
-    }) => (
-      <>
-        {actions.map((action) => (
-          <div key={action.defaultLabel}>{action.defaultLabel}</div>
-        ))}
-      </>
-    ),
+      actions: {
+        defaultLabel: MessageDescriptor;
+        type: string;
+      }[];
+    }) => {
+      const { i18n: mockI18n } = jest.requireActual('@lingui/core');
+
+      return (
+        <>
+          {actions.map((action) => (
+            <div key={action.type}>{mockI18n._(action.defaultLabel)}</div>
+          ))}
+        </>
+      );
+    },
   }),
 );
 
