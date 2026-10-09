@@ -9,12 +9,12 @@ export const applyNewInputSelectionCommands = ({
   element,
   selectionCommands,
   appliedSelectionSequenceRef,
-  latestInputValueSequence = 0,
+  latestInputValueSequence,
 }: {
   element: CaretPreservingElement | null;
   selectionCommands: unknown;
   appliedSelectionSequenceRef: RefObject<number>;
-  latestInputValueSequence?: number;
+  latestInputValueSequence: number;
 }): void => {
   if (!isArray(selectionCommands)) {
     return;
@@ -25,7 +25,7 @@ export const applyNewInputSelectionCommands = ({
       continue;
     }
 
-    const { sequence, request, inputValueSequence = 0 } = selectionCommand;
+    const { sequence, request, inputValueSequence } = selectionCommand;
 
     if (
       !isNumber(sequence) ||
@@ -35,11 +35,11 @@ export const applyNewInputSelectionCommands = ({
     }
 
     appliedSelectionSequenceRef.current = sequence;
-    const isStaleInputSelection =
-      isNumber(inputValueSequence) &&
-      inputValueSequence < latestInputValueSequence;
+    const commandInputValueSequence = isNumber(inputValueSequence)
+      ? inputValueSequence
+      : 0;
 
-    if (isStaleInputSelection) {
+    if (commandInputValueSequence < latestInputValueSequence) {
       continue;
     }
 

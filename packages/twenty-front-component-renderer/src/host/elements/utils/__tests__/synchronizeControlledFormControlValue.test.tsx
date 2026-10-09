@@ -4,27 +4,35 @@ import { act } from 'react';
 
 import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 import { createRemoteTextControlRenderer } from '@/testing/createRemoteTextControlRenderer';
+import { type InputSelectionDirection } from '@/types/InputSelectionDirection';
 
 (
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
 ).IS_REACT_ACT_ENVIRONMENT = true;
 
-const setNativeValue = ({
+const editNativeValue = ({
   hostControl,
   value,
+  selectionStart,
+  selectionEnd = selectionStart,
+  selectionDirection,
 }: {
   hostControl: CaretPreservingElement;
   value: string;
+  selectionStart: number;
+  selectionEnd?: number;
+  selectionDirection?: InputSelectionDirection;
 }) => {
-  const elementPrototype =
-    hostControl.tagName === 'INPUT'
-      ? HTMLInputElement.prototype
-      : HTMLTextAreaElement.prototype;
-
-  Object.getOwnPropertyDescriptor(elementPrototype, 'value')?.set?.call(
-    hostControl,
-    value,
+  Object.getOwnPropertyDescriptor(
+    Object.getPrototypeOf(hostControl),
+    'value',
+  )?.set?.call(hostControl, value);
+  hostControl.setSelectionRange(
+    selectionStart,
+    selectionEnd,
+    selectionDirection,
   );
+  hostControl.dispatchEvent(new Event('input', { bubbles: true }));
 };
 
 describe('controlled form control value synchronization with pending edits', () => {
@@ -33,24 +41,60 @@ describe('controlled form control value synchronization with pending edits', () 
 
   afterEach(unmountRenderedRemoteControls);
 
+  const renderRemoteControlWithDeferredHostEvents = (
+    htmlTag: 'input' | 'textarea',
+  ) => {
+    const pendingHostEvents: (() => void)[] = [];
+    const renderedRemoteControl = renderRemoteControl({
+      htmlTag,
+      deferHostEvent: (dispatchHostEvent) =>
+        pendingHostEvents.push(dispatchHostEvent),
+    });
+
+    const dispatchPendingHostEvents = async (hostEventCount: number) => {
+      await act(async () => {
+        for (const dispatchHostEvent of pendingHostEvents.splice(
+          0,
+          hostEventCount,
+        )) {
+          dispatchHostEvent();
+        }
+
+        await Promise.resolve();
+        renderedRemoteControl.connection.flush();
+      });
+    };
+
+    return {
+      ...renderedRemoteControl,
+      pendingHostEvents,
+      dispatchNextHostEvent: () => dispatchPendingHostEvents(1),
+      dispatchAllHostEvents: () =>
+        dispatchPendingHostEvents(pendingHostEvents.length),
+    };
+  };
+
   it.each(['input', 'textarea'] as const)(
     'should preserve newer native edits while an older %s value returns',
     async (htmlTag) => {
-      const pendingEvents: (() => void)[] = [];
-      const { connection, hostControl, remoteControl } = renderRemoteControl({
-        htmlTag,
-        deferHostEvent: (dispatchHostEvent) =>
-          pendingEvents.push(dispatchHostEvent),
-      });
+      const {
+        connection,
+        hostControl,
+        remoteControl,
+        pendingHostEvents,
+        dispatchNextHostEvent,
+      } = renderRemoteControlWithDeferredHostEvents(htmlTag);
 
       hostControl.focus();
       act(() => {
-        setNativeValue({ hostControl, value: 'Follow' });
-        hostControl.setSelectionRange(6, 6);
-        hostControl.dispatchEvent(new Event('input', { bubbles: true }));
-        setNativeValue({ hostControl, value: 'Follow up' });
-        hostControl.setSelectionRange(6, 8, 'backward');
-        hostControl.dispatchEvent(new Event('input', { bubbles: true }));
+        editNativeValue({ hostControl, value: 'Follow', selectionStart: 6 });
+        editNativeValue({
+          hostControl,
+          value: 'Follow up',
+          selectionStart: 6,
+          selectionEnd: 8,
+          selectionDirection: 'backward',
+        });
         remoteControl.setAttribute('placeholder', 'unrelated update');
         connection.flush();
       });
@@ -59,13 +103,9 @@ describe('controlled form control value synchronization with pending edits', () 
       expect(hostControl.selectionStart).toBe(6);
       expect(hostControl.selectionEnd).toBe(8);
       expect(hostControl.selectionDirection).toBe('backward');
-      expect(pendingEvents).toHaveLength(2);
+      expect(pendingHostEvents).toHaveLength(2);
 
-      await act(async () => {
-        pendingEvents.shift()?.();
-        await Promise.resolve();
-        connection.flush();
-      });
+      await dispatchNextHostEvent();
 
       expect(remoteControl.value).toBe('Follow');
       expect(hostControl.value).toBe('Follow up');
@@ -73,11 +113,7 @@ describe('controlled form control value synchronization with pending edits', () 
       expect(hostControl.selectionEnd).toBe(8);
       expect(hostControl.selectionDirection).toBe('backward');
 
-      await act(async () => {
-        pendingEvents.shift()?.();
-        await Promise.resolve();
-        connection.flush();
-      });
+      await dispatchNextHostEvent();
 
       expect(remoteControl.value).toBe('Follow up');
       expect(hostControl.value).toBe('Follow up');
@@ -90,12 +126,13 @@ describe('controlled form control value synchronization with pending edits', () 
   it.each(['input', 'textarea'] as const)(
     'should preserve an acknowledged same-length %s transform through a delayed blur snapshot',
     async (htmlTag) => {
-      const pendingEvents: (() => void)[] = [];
-      const { connection, hostControl, remoteControl } = renderRemoteControl({
-        htmlTag,
-        deferHostEvent: (dispatchHostEvent) =>
-          pendingEvents.push(dispatchHostEvent),
-      });
+      const {
+        connection,
+        hostControl,
+        remoteControl,
+        pendingHostEvents,
+        dispatchNextHostEvent,
+      } = renderRemoteControlWithDeferredHostEvents(htmlTag);
 
       remoteControl.addEventListener('change', () => {
         remoteControl.value = remoteControl.value.toUpperCase();
@@ -104,29 +141,19 @@ describe('controlled form control value synchronization with pending edits', () 
       act(() => connection.flush());
       hostControl.focus();
       act(() => {
-        setNativeValue({ hostControl, value: 'ab' });
-        hostControl.setSelectionRange(1, 1);
-        hostControl.dispatchEvent(new Event('input', { bubbles: true }));
+        editNativeValue({ hostControl, value: 'ab', selectionStart: 1 });
         hostControl.dispatchEvent(
           new FocusEvent('focusout', { bubbles: true }),
         );
       });
 
-      expect(pendingEvents).toHaveLength(2);
-      await act(async () => {
-        pendingEvents.shift()?.();
-        await Promise.resolve();
-        connection.flush();
-      });
+      expect(pendingHostEvents).toHaveLength(2);
+      await dispatchNextHostEvent();
 
       expect(hostControl.value).toBe('AB');
       expect(hostControl.selectionStart).toBe(1);
       expect(hostControl.selectionEnd).toBe(1);
-      await act(async () => {
-        pendingEvents.shift()?.();
-        await Promise.resolve();
-        connection.flush();
-      });
+      await dispatchNextHostEvent();
 
       expect(remoteControl.value).toBe('AB');
       expect(hostControl.value).toBe('AB');
@@ -147,12 +174,8 @@ describe('controlled form control value synchronization with pending edits', () 
   it.each(['input', 'textarea'] as const)(
     'should apply repeated %s resets after acknowledging each native edit',
     async (htmlTag) => {
-      const pendingEvents: (() => void)[] = [];
-      const { connection, hostControl, remoteControl } = renderRemoteControl({
-        htmlTag,
-        deferHostEvent: (dispatchHostEvent) =>
-          pendingEvents.push(dispatchHostEvent),
-      });
+      const { connection, hostControl, remoteControl, dispatchNextHostEvent } =
+        renderRemoteControlWithDeferredHostEvents(htmlTag);
 
       remoteControl.addEventListener('change', () => {
         remoteControl.value = '';
@@ -164,16 +187,8 @@ describe('controlled form control value synchronization with pending edits', () 
       hostControl.focus();
 
       for (const value of ['abc', 'abc']) {
-        act(() => {
-          setNativeValue({ hostControl, value });
-          hostControl.setSelectionRange(3, 3);
-          hostControl.dispatchEvent(new Event('input', { bubbles: true }));
-        });
-        await act(async () => {
-          pendingEvents.shift()?.();
-          await Promise.resolve();
-          connection.flush();
-        });
+        act(() => editNativeValue({ hostControl, value, selectionStart: 3 }));
+        await dispatchNextHostEvent();
 
         expect(remoteControl.value).toBe('');
         expect(hostControl.value).toBe('');
@@ -184,12 +199,8 @@ describe('controlled form control value synchronization with pending edits', () 
   );
 
   it('should discard a selection command from an older edit in a batch acknowledging the latest edit', async () => {
-    const pendingEvents: (() => void)[] = [];
-    const { connection, hostControl, remoteControl } = renderRemoteControl({
-      htmlTag: 'input',
-      deferHostEvent: (dispatchHostEvent) =>
-        pendingEvents.push(dispatchHostEvent),
-    });
+    const { connection, hostControl, remoteControl, dispatchAllHostEvents } =
+      renderRemoteControlWithDeferredHostEvents('input');
 
     remoteControl.addEventListener('change', () => {
       if (remoteControl.value === 'a') {
@@ -199,21 +210,10 @@ describe('controlled form control value synchronization with pending edits', () 
     act(() => connection.flush());
     hostControl.focus();
     act(() => {
-      setNativeValue({ hostControl, value: 'a' });
-      hostControl.setSelectionRange(1, 1);
-      hostControl.dispatchEvent(new Event('input', { bubbles: true }));
-      setNativeValue({ hostControl, value: 'ab' });
-      hostControl.setSelectionRange(2, 2);
-      hostControl.dispatchEvent(new Event('input', { bubbles: true }));
+      editNativeValue({ hostControl, value: 'a', selectionStart: 1 });
+      editNativeValue({ hostControl, value: 'ab', selectionStart: 2 });
     });
-    await act(async () => {
-      for (const dispatchHostEvent of pendingEvents.splice(0)) {
-        dispatchHostEvent();
-      }
-
-      await Promise.resolve();
-      connection.flush();
-    });
+    await dispatchAllHostEvents();
 
     expect(hostControl.value).toBe('ab');
     expect(hostControl.selectionStart).toBe(2);
@@ -229,12 +229,8 @@ describe('controlled form control value synchronization with pending edits', () 
   });
 
   it('should forward both input and change callbacks without replaying the native value over a transform', async () => {
-    const pendingEvents: (() => void)[] = [];
-    const { connection, hostControl, remoteControl } = renderRemoteControl({
-      htmlTag: 'input',
-      deferHostEvent: (dispatchHostEvent) =>
-        pendingEvents.push(dispatchHostEvent),
-    });
+    const { connection, hostControl, remoteControl, dispatchAllHostEvents } =
+      renderRemoteControlWithDeferredHostEvents('input');
     const receivedEvents: {
       type: string;
       target: EventTarget | null;
@@ -261,19 +257,8 @@ describe('controlled form control value synchronization with pending edits', () 
     });
     act(() => connection.flush());
     hostControl.focus();
-    act(() => {
-      setNativeValue({ hostControl, value: 'ab' });
-      hostControl.setSelectionRange(1, 1);
-      hostControl.dispatchEvent(new Event('input', { bubbles: true }));
-    });
-    await act(async () => {
-      for (const dispatchHostEvent of pendingEvents.splice(0)) {
-        dispatchHostEvent();
-      }
-
-      await Promise.resolve();
-      connection.flush();
-    });
+    act(() => editNativeValue({ hostControl, value: 'ab', selectionStart: 1 }));
+    await dispatchAllHostEvents();
 
     expect(receivedEvents).toEqual([
       {

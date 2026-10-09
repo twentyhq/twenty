@@ -3,8 +3,8 @@ import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { INPUT_VALUE_SEQUENCE_BRIDGE_PROPERTY } from '@/constants/InputValueSequenceBridgeProperty';
-import { workerInputValueSequenceStore } from '@/remote/elements/states/workerInputValueSequenceStore';
 import { SERIALIZED_EVENT_TARGET_PROPERTY_KEYS } from '@/remote/elements/constants/SerializedEventTargetPropertyKeys';
+import { workerInputValueSequenceByElement } from '@/remote/elements/states/workerInputValueSequenceByElement';
 import { applySelectedOptionIndexes } from '@/remote/elements/utils/applySelectedOptionIndexes';
 import { uncheckOtherRadioButtons } from '@/remote/elements/utils/uncheckOtherRadioButtons';
 import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
@@ -19,30 +19,25 @@ export const applySerializedEventTargetProperties = ({
   eventData: SerializedEventData;
 }): void => {
   const { inputValueSequence } = eventData;
-  const hasInputValueSequence =
-    isNumber(inputValueSequence) &&
-    Number.isSafeInteger(inputValueSequence) &&
-    inputValueSequence > 0;
-  const shouldApplyValue =
-    !hasInputValueSequence ||
-    inputValueSequence > workerInputValueSequenceStore.read(element);
+  const hasInputValueSequence = isNumber(inputValueSequence);
+  const isNewInputValue =
+    hasInputValueSequence &&
+    inputValueSequence > (workerInputValueSequenceByElement.get(element) ?? 0);
+  const isStaleInputValue = hasInputValueSequence && !isNewInputValue;
 
-  if (hasInputValueSequence && shouldApplyValue) {
-    workerInputValueSequenceStore.record({
-      element,
-      sequence: inputValueSequence,
-    });
+  if (isNewInputValue) {
+    workerInputValueSequenceByElement.set(element, inputValueSequence);
     queueMicrotask(() => {
       updateRemoteElementProperty(
         element as Element,
         INPUT_VALUE_SEQUENCE_BRIDGE_PROPERTY,
-        workerInputValueSequenceStore.read(element),
+        workerInputValueSequenceByElement.get(element),
       );
     });
   }
 
   for (const key of SERIALIZED_EVENT_TARGET_PROPERTY_KEYS) {
-    if (key === 'value' && !shouldApplyValue) {
+    if (key === 'value' && isStaleInputValue) {
       continue;
     }
 
