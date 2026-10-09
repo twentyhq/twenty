@@ -10,15 +10,15 @@ const BASE_URL = `http://localhost:${PORT}`;
 const READY_TIMEOUT_MS = 180_000;
 const REQUEST_TIMEOUT_MS = 60_000;
 
-const EXPECTED_STATUSES = [
-  ['/', 200],
-  ['/fr', 200],
-  ['/pricing', 200],
-  ['/fr/pricing', 200],
-  ['/customers', 200],
-  ['/sitemap.xml', 200],
-  ['/en/pricing', 301],
-  ['/smoke-test-missing-page', 404],
+const EXPECTED_RESPONSES = [
+  { path: '/', status: 200 },
+  { path: '/fr', status: 200 },
+  { path: '/pricing', status: 200 },
+  { path: '/fr/pricing', status: 200 },
+  { path: '/customers', status: 200 },
+  { path: '/sitemap.xml', status: 200 },
+  { path: '/en/pricing', status: 301, location: '/pricing' },
+  { path: '/smoke-test-missing-page', status: 404 },
 ];
 
 // `--env dev` gives the Worker its R2 and self-reference bindings; preview
@@ -29,32 +29,42 @@ const preview = spawn(
   { detached: true, stdio: 'inherit' },
 );
 
-let previewExited = false;
+let isPreviewExited = false;
 preview.on('exit', () => {
-  previewExited = true;
+  isPreviewExited = true;
 });
 
 const stopPreview = () => {
-  if (!previewExited) {
+  if (!isPreviewExited) {
     // Negative pid kills the whole group: npx, wrangler and workerd.
     process.kill(-preview.pid, 'SIGTERM');
   }
 };
 
-const fetchStatus = async (path) => {
+const fetchPath = async (path) => {
   const response = await fetch(`${BASE_URL}${path}`, {
     redirect: 'manual',
     signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
-  return response.status;
+  // Pages stream: a render error after the first bytes still sends a 200,
+  // so only a fully received body counts.
+  await response.text();
+  const location = response.headers.get('location');
+  return {
+    status: response.status,
+    location: location === null ? null : new URL(location, BASE_URL).pathname,
+  };
 };
 
+const describeResponse = ({ status, location }) =>
+  location ? `${status} ${location}` : `${status}`;
+
 const waitForPreview = async (deadline) => {
-  if (previewExited) {
+  if (isPreviewExited) {
     throw new Error('preview exited before serving requests');
   }
   try {
-    await fetchStatus('/sitemap.xml');
+    await fetchPath('/sitemap.xml');
   } catch {
     if (Date.now() > deadline) {
       throw new Error(`preview not ready after ${READY_TIMEOUT_MS / 1000}s`);
@@ -67,16 +77,22 @@ const waitForPreview = async (deadline) => {
 const failures = [];
 try {
   await waitForPreview(Date.now() + READY_TIMEOUT_MS);
-  for (const [path, expectedStatus] of EXPECTED_STATUSES) {
+  for (const expected of EXPECTED_RESPONSES) {
     // Sequential on purpose: workerd compiles the route on first hit.
     // eslint-disable-next-line no-await-in-loop
-    const status = await fetchStatus(path).catch((error) => error.message);
-    const passed = status === expectedStatus;
+    const actual = await fetchPath(expected.path).catch((error) => ({
+      status: error.message,
+      location: null,
+    }));
+    const passed =
+      actual.status === expected.status &&
+      (expected.location === undefined ||
+        actual.location === expected.location);
     console.log(
-      `${passed ? 'ok  ' : 'FAIL'} ${path} -> ${status} (expected ${expectedStatus})`,
+      `${passed ? 'ok  ' : 'FAIL'} ${expected.path} -> ${describeResponse(actual)} (expected ${describeResponse(expected)})`,
     );
     if (!passed) {
-      failures.push(path);
+      failures.push(expected.path);
     }
   }
 } catch (error) {
