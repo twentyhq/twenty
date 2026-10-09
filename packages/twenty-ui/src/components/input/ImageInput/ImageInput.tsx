@@ -41,7 +41,7 @@ export const ImageInput = ({
   const hasHelperText = isNonEmptyString(helperText);
   const hasErrorMessage = isNonEmptyString(errorMessage);
   const isSelectionUnavailable =
-    disabled || fileInputProps.disabled === true || !isDefined(onFileSelect);
+    disabled || fileInputProps.disabled || !isDefined(onFileSelect);
   const isRemovalUnavailable = disabled || !hasPicture || !isDefined(onRemove);
   const isUploadDisabled = isSelectionUnavailable || isUploading;
   const isRemoveDisabled = isRemovalUnavailable || isUploading;
