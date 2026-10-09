@@ -2194,7 +2194,11 @@ export interface Mutation {
     trackAnalytics: Analytics
     transferApplicationRegistrationOwnership: ApplicationRegistration
     triggerInstallApplication: TriggerInstallApplicationResult
+    /** @deprecated Use triggerInstallApplication instead */
+    triggerInstallApplicationJob: TriggerInstallApplicationJobResult
     triggerUninstallApplication: TriggerUninstallApplicationResult
+    /** @deprecated Use triggerUninstallApplication instead */
+    triggerUninstallApplicationJob: TriggerUninstallApplicationJobResult
     triggerUpgradeApplication: TriggerUpgradeApplicationResult
     uninstallApplication: Scalars['Boolean']
     updateAgentChatThreadInboxState: AgentChatThreadParticipant[]
@@ -3259,9 +3263,19 @@ export interface TransientToken {
     __typename: 'TransientToken'
 }
 
+export interface TriggerInstallApplicationJobResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerInstallApplicationJobResult'
+}
+
 export interface TriggerInstallApplicationResult {
     jobId: Scalars['String']
     __typename: 'TriggerInstallApplicationResult'
+}
+
+export interface TriggerUninstallApplicationJobResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerUninstallApplicationJobResult'
 }
 
 export interface TriggerUninstallApplicationResult {
@@ -6365,7 +6379,11 @@ export interface MutationGenqlSelection{
     trackAnalytics?: (AnalyticsGenqlSelection & { __args: {event?: (Scalars['String'] | null), name?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null), type: AnalyticsType} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
     triggerInstallApplication?: (TriggerInstallApplicationResultGenqlSelection & { __args: {input: TriggerInstallApplicationInput} })
+    /** @deprecated Use triggerInstallApplication instead */
+    triggerInstallApplicationJob?: (TriggerInstallApplicationJobResultGenqlSelection & { __args: {input: TriggerInstallApplicationJobInput} })
     triggerUninstallApplication?: (TriggerUninstallApplicationResultGenqlSelection & { __args: {input: TriggerUninstallApplicationInput} })
+    /** @deprecated Use triggerUninstallApplication instead */
+    triggerUninstallApplicationJob?: (TriggerUninstallApplicationJobResultGenqlSelection & { __args: {input: TriggerUninstallApplicationJobInput} })
     triggerUpgradeApplication?: (TriggerUpgradeApplicationResultGenqlSelection & { __args: {input: TriggerUpgradeApplicationInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     updateAgentChatThreadInboxState?: (AgentChatThreadParticipantGenqlSelection & { __args: {action: AgentChatInboxAction, snoozedUntil?: (Scalars['DateTime'] | null), threadIds: Scalars['UUID'][]} })
@@ -7536,6 +7554,14 @@ export interface TransientTokenGenqlSelection{
 
 export interface TriggerInstallApplicationInput {universalIdentifier: Scalars['String']}
 
+export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String']}
+
+export interface TriggerInstallApplicationJobResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface TriggerInstallApplicationResultGenqlSelection{
     jobId?: boolean | number
     __typename?: boolean | number
@@ -7543,6 +7569,14 @@ export interface TriggerInstallApplicationResultGenqlSelection{
 }
 
 export interface TriggerUninstallApplicationInput {universalIdentifier: Scalars['String']}
+
+export interface TriggerUninstallApplicationJobInput {universalIdentifier: Scalars['String']}
+
+export interface TriggerUninstallApplicationJobResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface TriggerUninstallApplicationResultGenqlSelection{
     jobId?: boolean | number
@@ -10611,10 +10645,26 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const TriggerInstallApplicationJobResult_possibleTypes: string[] = ['TriggerInstallApplicationJobResult']
+    export const isTriggerInstallApplicationJobResult = (obj?: { __typename?: any } | null): obj is TriggerInstallApplicationJobResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerInstallApplicationJobResult"')
+      return TriggerInstallApplicationJobResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const TriggerInstallApplicationResult_possibleTypes: string[] = ['TriggerInstallApplicationResult']
     export const isTriggerInstallApplicationResult = (obj?: { __typename?: any } | null): obj is TriggerInstallApplicationResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerInstallApplicationResult"')
       return TriggerInstallApplicationResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TriggerUninstallApplicationJobResult_possibleTypes: string[] = ['TriggerUninstallApplicationJobResult']
+    export const isTriggerUninstallApplicationJobResult = (obj?: { __typename?: any } | null): obj is TriggerUninstallApplicationJobResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUninstallApplicationJobResult"')
+      return TriggerUninstallApplicationJobResult_possibleTypes.includes(obj.__typename)
     }
     
 

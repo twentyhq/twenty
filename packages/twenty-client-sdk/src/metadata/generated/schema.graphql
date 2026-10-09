@@ -3150,7 +3150,9 @@ type Mutation {
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   triggerInstallApplication(input: TriggerInstallApplicationInput!): TriggerInstallApplicationResult!
+  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult! @deprecated(reason: "Use triggerInstallApplication instead")
   triggerUninstallApplication(input: TriggerUninstallApplicationInput!): TriggerUninstallApplicationResult!
+  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult! @deprecated(reason: "Use triggerUninstallApplication instead")
   triggerUpgradeApplication(input: TriggerUpgradeApplicationInput!): TriggerUpgradeApplicationResult!
   uninstallApplication(universalIdentifier: String!): Boolean!
   updateAgentChatThreadInboxState(action: AgentChatInboxAction!, snoozedUntil: DateTime, threadIds: [UUID!]!): [AgentChatThreadParticipant!]!
@@ -4471,12 +4473,28 @@ input TriggerInstallApplicationInput {
   universalIdentifier: String!
 }
 
+input TriggerInstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
+type TriggerInstallApplicationJobResult {
+  jobId: String!
+}
+
 type TriggerInstallApplicationResult {
   jobId: String!
 }
 
 input TriggerUninstallApplicationInput {
   universalIdentifier: String!
+}
+
+input TriggerUninstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
+type TriggerUninstallApplicationJobResult {
+  jobId: String!
 }
 
 type TriggerUninstallApplicationResult {

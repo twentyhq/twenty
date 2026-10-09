@@ -13,8 +13,12 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { TriggerInstallApplicationJobResultDTO } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-job-result.dto';
+import { TriggerInstallApplicationJobInput } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-job.input';
 import { TriggerInstallApplicationInput } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application.input';
 import { TriggerInstallApplicationResultDTO } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-result.dto';
+import { TriggerUninstallApplicationJobResultDTO } from 'src/engine/core-modules/application/application-install/dtos/trigger-uninstall-application-job-result.dto';
+import { TriggerUninstallApplicationJobInput } from 'src/engine/core-modules/application/application-install/dtos/trigger-uninstall-application-job.input';
 import { TriggerUninstallApplicationInput } from 'src/engine/core-modules/application/application-install/dtos/trigger-uninstall-application.input';
 import { TriggerUninstallApplicationResultDTO } from 'src/engine/core-modules/application/application-install/dtos/trigger-uninstall-application-result.dto';
 import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
@@ -240,6 +244,72 @@ export class ApplicationInstallResolver {
     { universalIdentifier }: TriggerUninstallApplicationInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TriggerUninstallApplicationResultDTO> {
+    return this.applicationLifecycleJobService.triggerUninstallApplication({
+      universalIdentifier,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => TriggerInstallApplicationJobResultDTO, {
+    deprecationReason: 'Use triggerInstallApplication instead',
+  })
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
+  async triggerInstallApplicationJob(
+    @ApplicationTargetArg<TriggerInstallApplicationJobInput>('input', {
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { universalIdentifier }: TriggerInstallApplicationJobInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<TriggerInstallApplicationJobResultDTO> {
+    return this.applicationLifecycleJobService.triggerInstallApplication({
+      universalIdentifier,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => TriggerUninstallApplicationJobResultDTO, {
+    deprecationReason: 'Use triggerUninstallApplication instead',
+  })
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
+  async triggerUninstallApplicationJob(
+    @ApplicationTargetArg<TriggerUninstallApplicationJobInput>('input', {
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { universalIdentifier }: TriggerUninstallApplicationJobInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<TriggerUninstallApplicationJobResultDTO> {
     return this.applicationLifecycleJobService.triggerUninstallApplication({
       universalIdentifier,
       workspaceId: workspace.id,

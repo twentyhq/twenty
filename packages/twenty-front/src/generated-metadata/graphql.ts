@@ -3313,7 +3313,11 @@ export type Mutation = {
   trackAnalytics: Analytics;
   transferApplicationRegistrationOwnership: ApplicationRegistration;
   triggerInstallApplication: TriggerInstallApplicationResult;
+  /** @deprecated Use triggerInstallApplication instead */
+  triggerInstallApplicationJob: TriggerInstallApplicationJobResult;
   triggerUninstallApplication: TriggerUninstallApplicationResult;
+  /** @deprecated Use triggerUninstallApplication instead */
+  triggerUninstallApplicationJob: TriggerUninstallApplicationJobResult;
   triggerUpgradeApplication: TriggerUpgradeApplicationResult;
   uninstallApplication: Scalars['Boolean']['output'];
   updateAgentChatThreadInboxState: Array<AgentChatThreadParticipant>;
@@ -4374,8 +4378,18 @@ export type MutationTriggerInstallApplicationArgs = {
 };
 
 
+export type MutationTriggerInstallApplicationJobArgs = {
+  input: TriggerInstallApplicationJobInput;
+};
+
+
 export type MutationTriggerUninstallApplicationArgs = {
   input: TriggerUninstallApplicationInput;
+};
+
+
+export type MutationTriggerUninstallApplicationJobArgs = {
+  input: TriggerUninstallApplicationJobInput;
 };
 
 
@@ -6584,6 +6598,15 @@ export type TriggerInstallApplicationInput = {
   universalIdentifier: Scalars['String']['input'];
 };
 
+export type TriggerInstallApplicationJobInput = {
+  universalIdentifier: Scalars['String']['input'];
+};
+
+export type TriggerInstallApplicationJobResult = {
+  __typename?: 'TriggerInstallApplicationJobResult';
+  jobId: Scalars['String']['output'];
+};
+
 export type TriggerInstallApplicationResult = {
   __typename?: 'TriggerInstallApplicationResult';
   jobId: Scalars['String']['output'];
@@ -6591,6 +6614,15 @@ export type TriggerInstallApplicationResult = {
 
 export type TriggerUninstallApplicationInput = {
   universalIdentifier: Scalars['String']['input'];
+};
+
+export type TriggerUninstallApplicationJobInput = {
+  universalIdentifier: Scalars['String']['input'];
+};
+
+export type TriggerUninstallApplicationJobResult = {
+  __typename?: 'TriggerUninstallApplicationJobResult';
+  jobId: Scalars['String']['output'];
 };
 
 export type TriggerUninstallApplicationResult = {
