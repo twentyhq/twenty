@@ -18,7 +18,8 @@ export const findActiveAgentTriggers = <TTriggerType extends AgentTriggerType>({
     .filter(isDefined)
     .filter((flatAgent) => !isDefined(flatAgent.deletedAt))
     .flatMap((flatAgent) =>
-      flatAgent.triggers
+      // Undefined on pods serving traffic before the 2.46 add-triggers-to-agent command ran
+      (flatAgent.triggers ?? [])
         .filter(
           (trigger): trigger is Extract<AgentTrigger, { type: TTriggerType }> =>
             trigger.type === type && trigger.isActive,
