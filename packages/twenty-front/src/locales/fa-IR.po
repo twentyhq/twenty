@@ -1540,7 +1540,7 @@ msgstr "افزودن"
 #. js-lingui-id: ly4D79
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
-msgstr ""
+msgstr "افزودن \"{optionName}\" به گزینه‌ها"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -2334,7 +2334,7 @@ msgstr "عامل‌ها"
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
 msgid "Aggregate"
-msgstr ""
+msgstr "تجمیع"
 
 #. js-lingui-id: sPQ5qN
 #: src/modules/page-layout/utils/getWidgetTitle.ts
@@ -3549,7 +3549,7 @@ msgstr "به کاربرانی اختصاص می‌یابد که از طریق پ
 #. js-lingui-id: ojKCLU
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
-msgstr ""
+msgstr "مسئول"
 
 #. js-lingui-id: 0dtKl9
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -3845,7 +3845,7 @@ msgstr "جزئیات برنامه موجود"
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
 #: src/modules/ui/field/display/utils/getAvatarButtonRender.tsx
 msgid "Avatar"
-msgstr ""
+msgstr "آواتار"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4121,7 +4121,7 @@ msgstr "برگشت ایمیل"
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 msgid "Breadcrumb"
-msgstr ""
+msgstr "مسیر راهنما"
 
 #. js-lingui-id: 8mzNUs
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -6861,12 +6861,12 @@ msgstr "اعتبارها علاوه بر سهمیه طرح اضافه می‌ش�
 #. js-lingui-id: U9hjv1
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "Credits are added when they accept your invite."
-msgstr ""
+msgstr "وقتی دعوت شما را بپذیرند، اعتبار اضافه می‌شود."
 
 #. js-lingui-id: ZSN5aF
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "Credits are added when your trial starts."
-msgstr ""
+msgstr "با شروع دوره آزمایشی شما، اعتبار اضافه می‌شود."
 
 #. js-lingui-id: 0o2LpE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -6913,7 +6913,7 @@ msgstr "Cron"
 #. js-lingui-id: 0KivXX
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Cron pattern"
-msgstr ""
+msgstr "الگوی Cron"
 
 #. js-lingui-id: rV1+uS
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
@@ -6965,7 +6965,7 @@ msgstr "کد ارز"
 #. js-lingui-id: oXgwB7
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 msgid "Currency: {currencyCode}"
-msgstr ""
+msgstr "ارز: {currencyCode}"
 
 #. js-lingui-id: Hp1l6f
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -7008,7 +7008,7 @@ msgstr "عضو فعلی فضای کاری یافت نشد."
 #. js-lingui-id: dUDTUc
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
 msgid "Currently:"
-msgstr ""
+msgstr "در حال حاضر:"
 
 #. js-lingui-id: mO0Peh
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -7163,7 +7163,7 @@ msgstr "مشتری"
 #. js-lingui-id: lfE233
 #: src/modules/validation-rules/components/SettingsValidationRuleNameForm.tsx
 msgid "Customer deals need an amount"
-msgstr ""
+msgstr "معاملات مشتری به مبلغ نیاز دارند"
 
 #. js-lingui-id: AdXh0n
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -7449,7 +7449,7 @@ msgstr "روز"
 #. js-lingui-id: 5w8B/7
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage.tsx
 msgid "Day & Time"
-msgstr ""
+msgstr "روز و زمان"
 
 #. js-lingui-id: ahA8fy
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
@@ -7600,7 +7600,7 @@ msgstr "نمای پیش‌فرض"
 #. js-lingui-id: iDTUBO
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Defaults to the step name"
-msgstr ""
+msgstr "به‌طور پیش‌فرض نام مرحله است"
 
 #. js-lingui-id: 6b8WDd
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7711,7 +7711,7 @@ msgstr "فیلد {fieldLabel} حذف شود؟"
 #. js-lingui-id: DKQlby
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete {numberOfCoreWorkflows} workflows?"
-msgstr ""
+msgstr "{numberOfCoreWorkflows} گردش کار حذف شود؟"
 
 #. js-lingui-id: j/OgnL
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -7891,7 +7891,7 @@ msgstr "این نقش را حذف کنید و نقش جدیدی به اعضای 
 #. js-lingui-id: G3jMHs
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Delete this rule?"
-msgstr ""
+msgstr "این قانون حذف شود؟"
 
 #. js-lingui-id: UvEQr6
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -7937,7 +7937,7 @@ msgstr "حذف ویجت"
 #. js-lingui-id: UA2IpC
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflow"
-msgstr ""
+msgstr "حذف گردش کار"
 
 #. js-lingui-id: D+Bgvi
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -7947,12 +7947,12 @@ msgstr "حذف گردش کار"
 #. js-lingui-id: JQPF/x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflow?"
-msgstr ""
+msgstr "گردش کار حذف شود؟"
 
 #. js-lingui-id: ABwG9x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflows"
-msgstr ""
+msgstr "حذف گردش‌های کاری"
 
 #. js-lingui-id: Z299hR
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -8081,7 +8081,7 @@ msgstr "توضیح ارائه‌شده توسط برنامه"
 #. js-lingui-id: f8fH8W
 #: src/modules/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel.ts
 msgid "Design"
-msgstr ""
+msgstr "طراحی"
 
 #. js-lingui-id: BBqGS9
 #: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
@@ -8209,7 +8209,7 @@ msgstr "جهت"
 #. js-lingui-id: cO9+2L
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable"
-msgstr ""
+msgstr "غیرفعال کردن"
 
 #. js-lingui-id: XDeNvP
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -8219,7 +8219,7 @@ msgstr "غیرفعال‌سازی جعل هویت"
 #. js-lingui-id: 8v3G2p
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable the rule to stop checking records against it."
-msgstr ""
+msgstr "برای متوقف کردن بررسی رکوردها بر اساس این قانون، آن را غیرفعال کنید."
 
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
@@ -8425,7 +8425,7 @@ msgstr "انجام شد"
 #. js-lingui-id: y+f/uY
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Done {doneTime}"
-msgstr ""
+msgstr "انجام شد {doneTime}"
 
 #. js-lingui-id: Wm78zZ
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -8528,7 +8528,7 @@ msgstr "اینجا بکشید و رها کنید"
 #. js-lingui-id: T/PLYo
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 msgid "Drag to move, click for options"
-msgstr ""
+msgstr "برای جابه‌جایی بکشید، برای گزینه‌ها کلیک کنید"
 
 #. js-lingui-id: VIbDgE
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
@@ -8675,7 +8675,7 @@ msgstr "قدیمی‌ترین تاریخ"
 #. js-lingui-id: tmDUtT
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 msgid "Earn {formattedCurrentStepCredits}"
-msgstr ""
+msgstr "کسب {formattedCurrentStepCredits}"
 
 #. js-lingui-id: +hvIFU
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -8784,7 +8784,7 @@ msgstr "ویرایش پیوند"
 #. js-lingui-id: WLw62E
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Edit linked records"
-msgstr ""
+msgstr "ویرایش رکوردهای پیوندشده"
 
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -8834,7 +8834,7 @@ msgstr "ویرایش رابطه"
 #. js-lingui-id: 0doodQ
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Edit rule"
-msgstr ""
+msgstr "ویرایش قانون"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -8933,7 +8933,7 @@ msgstr "نشانی ایمیل"
 #. js-lingui-id: M08Fhf
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Email addresses that opted out of campaign emails, a topic, or click tracking"
-msgstr ""
+msgstr "نشانی‌های ایمیلی که از ایمیل‌های کمپین، یک موضوع یا ردیابی کلیک انصراف داده‌اند"
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -9017,7 +9017,7 @@ msgstr "دعوت‌نامه را برای شرکت‌کنندگان ایمیل �
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Email tracking"
-msgstr ""
+msgstr "ردیابی ایمیل"
 
 #. js-lingui-id: LimKOG
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -9168,7 +9168,7 @@ msgstr "زبانه خالی"
 #. js-lingui-id: PaQ3df
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Enable"
-msgstr ""
+msgstr "فعال کردن"
 
 #. js-lingui-id: q11Dk2
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -9272,12 +9272,12 @@ msgstr "از یک دوره آزمایشی رایگان ۳۰ روزه لذت بب
 #. js-lingui-id: zPfy+F
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Enough for one of these on average"
-msgstr ""
+msgstr "به‌طور میانگین برای یکی از این‌ها کافی است"
 
 #. js-lingui-id: oWbT1n
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Enrichments"
-msgstr ""
+msgstr "غنی‌سازی‌ها"
 
 #. js-lingui-id: T/N+2Z
 #: src/modules/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput.tsx
@@ -9289,7 +9289,7 @@ msgstr "یک شیء JSON وارد کنید"
 #. js-lingui-id: zXhNUj
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter a JSON value"
-msgstr ""
+msgstr "یک مقدار JSON وارد کنید"
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -9484,7 +9484,7 @@ msgstr "متن وارد کنید یا برای فرمان‌ها '/' را تای
 #. js-lingui-id: 4E8Rhf
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter the arguments as a JSON object"
-msgstr ""
+msgstr "آرگومان‌ها را به‌صورت یک شیء JSON وارد کنید"
 
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -9499,12 +9499,12 @@ msgstr "اطلاعات را برای تنظیم اتصال وارد کنید"
 #. js-lingui-id: 9qdYw8
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Enter the message to post"
-msgstr ""
+msgstr "پیام موردنظر برای ارسال را وارد کنید"
 
 #. js-lingui-id: lZC0Js
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Enter the recovery code a workspace admin gave you. Your current authenticator for this workspace will be removed."
-msgstr ""
+msgstr "کد بازیابی را که مدیر فضای کاری به شما داده است وارد کنید. برنامه احراز هویت فعلی شما برای این فضای کاری حذف خواهد شد."
 
 #. js-lingui-id: 3EF9HN
 #: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
@@ -9519,7 +9519,7 @@ msgstr "زیردامنه فضای کاری را برای انتقال این ب�
 #. js-lingui-id: JS1v0D
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter valid JSON."
-msgstr ""
+msgstr "JSON معتبر وارد کنید."
 
 #. js-lingui-id: pubQie
 #: src/modules/object-core/workflows/components/CoreWorkflowFilterValueInput.tsx
@@ -9857,7 +9857,7 @@ msgstr "همه"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 msgid "Everyone with access to {objectLabelPlural}"
-msgstr ""
+msgstr "همه افرادی که به {objectLabelPlural} دسترسی دارند"
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -10181,7 +10181,7 @@ msgstr "دریافت مالکیت ناموفق بود."
 #: src/modules/object-core/agents/hooks/useCreateCoreAgent.ts
 #: src/modules/object-core/agents/hooks/useCreateCoreAgent.ts
 msgid "Failed to create agent"
-msgstr ""
+msgstr "ایجاد عامل ناموفق بود"
 
 #. js-lingui-id: kzaVCK
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
@@ -10202,7 +10202,7 @@ msgstr "ایجاد سقف ناموفق بود."
 #. js-lingui-id: jrwIEQ
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "Failed to create the rule."
-msgstr ""
+msgstr "ایجاد قانون ناموفق بود."
 
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -10238,7 +10238,7 @@ msgstr "حذف سقف ناموفق بود."
 #. js-lingui-id: P52MKW
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Failed to delete the rule."
-msgstr ""
+msgstr "حذف قانون ناموفق بود."
 
 #. js-lingui-id: AUprM8
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -10286,7 +10286,7 @@ msgstr "نهایی‌سازی بارگذاری نشان‌واره ناموفق 
 #: src/modules/settings/admin-panel/components/SettingsAdminTwoFactorAuthenticationRecoveryCode.tsx
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to generate a recovery code."
-msgstr ""
+msgstr "تولید کد بازیابی ناموفق بود."
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -10429,7 +10429,7 @@ msgstr "لغو کلید امضا ناموفق بود. لطفاً بعداً دو
 #. js-lingui-id: Px/B6S
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
-msgstr ""
+msgstr "لغو کد بازیابی ناموفق بود."
 
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
@@ -10542,7 +10542,7 @@ msgstr "به‌روزرسانی سقف ناموفق بود."
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Failed to update the rule."
-msgstr ""
+msgstr "به‌روزرسانی قانون ناموفق بود."
 
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
@@ -10644,7 +10644,7 @@ msgstr "ویژگی‌ها فعال تا"
 #. js-lingui-id: YirHq7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Feedback"
-msgstr ""
+msgstr "بازخورد"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -10733,7 +10733,7 @@ msgstr "فیلدها"
 #. js-lingui-id: K0tSFR
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Fields (optional)"
-msgstr ""
+msgstr "فیلدها (اختیاری)"
 
 #. js-lingui-id: oy3EF7
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
@@ -10780,7 +10780,7 @@ msgstr "فیلدهای قابل به‌روزرسانی"
 #. js-lingui-id: Dgd3Oe
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Fields used in the condition show their values here."
-msgstr ""
+msgstr "فیلدهای استفاده‌شده در شرط، مقادیرشان را اینجا نشان می‌دهند."
 
 #. js-lingui-id: 9k2rvq
 #: src/modules/views/types/ViewType.ts
@@ -10849,12 +10849,12 @@ msgstr "بارگذاری فایل ناموفق بود ({0})."
 #. js-lingui-id: 49BbAW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "files"
-msgstr ""
+msgstr "فایل‌ها"
 
 #. js-lingui-id: sER+bs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Files"
-msgstr ""
+msgstr "فایل‌ها"
 
 #. js-lingui-id: BZGmTs
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -10905,7 +10905,7 @@ msgstr "فیلتر سقف‌ها"
 #. js-lingui-id: iSXrBT
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "Filter opt-outs"
-msgstr ""
+msgstr "فیلتر انصراف‌ها"
 
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -10968,7 +10968,7 @@ msgstr "برای باز کردن هوش مصنوعی، ویرایش چیدمان
 #. js-lingui-id: KstqNM
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open Inbox"
-msgstr ""
+msgstr "ویرایش چیدمان را تمام کنید تا صندوق ورودی باز شود"
 
 #. js-lingui-id: 6cOXRd
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
@@ -11082,7 +11082,7 @@ msgstr "پوشه‌ها"
 #. js-lingui-id: Ovfdx1
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Follow the guide for your email provider."
-msgstr ""
+msgstr "راهنمای ارائه‌دهنده ایمیل خود را دنبال کنید."
 
 #. js-lingui-id: I7Exsw
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -11092,7 +11092,7 @@ msgstr "ما را در X دنبال کنید"
 #. js-lingui-id: y6sq5j
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Following"
-msgstr ""
+msgstr "دنبال‌کردن"
 
 #. js-lingui-id: M0vOQ6
 #: src/modules/ai/components/AiModelPicker.tsx
@@ -11143,12 +11143,12 @@ msgstr "داده فرم"
 #. js-lingui-id: oiy48l
 #: src/modules/ai/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
-msgstr ""
+msgstr "فرم رد شد"
 
 #. js-lingui-id: 6vS9Zq
 #: src/modules/ai/components/AiChatFormStatusRenderer.tsx
 msgid "Form submitted"
-msgstr ""
+msgstr "فرم ارسال شد"
 
 #. js-lingui-id: kI1qVD
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -11179,7 +11179,7 @@ msgstr "عضو پیشین"
 #. js-lingui-id: r8HLKr
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Forms are meant for manual triggers"
-msgstr ""
+msgstr "فرم‌ها برای محرک‌های دستی در نظر گرفته شده‌اند"
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -11215,12 +11215,12 @@ msgstr "چهارم"
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Free credits"
-msgstr ""
+msgstr "اعتبار رایگان"
 
 #. js-lingui-id: sCMpw5
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "Free credits earned"
-msgstr ""
+msgstr "اعتبار رایگان کسب‌شده"
 
 #. js-lingui-id: nLC6tu
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -11420,17 +11420,17 @@ msgstr "ایجاد"
 #. js-lingui-id: GmwkF+
 #: src/modules/settings/admin-panel/components/SettingsAdminTwoFactorAuthenticationRecoveryCode.tsx
 msgid "Generate 2FA recovery code"
-msgstr ""
+msgstr "تولید کد بازیابی 2FA"
 
 #. js-lingui-id: iFV2P6
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate a recovery code"
-msgstr ""
+msgstr "تولید یک کد بازیابی"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate code"
-msgstr ""
+msgstr "تولید کد"
 
 #. js-lingui-id: /Sq+WF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -11451,7 +11451,7 @@ msgstr "تولید خروجی تابع"
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Generate recovery code"
-msgstr ""
+msgstr "تولید کد بازیابی"
 
 #. js-lingui-id: wu9eMO
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
@@ -11499,7 +11499,7 @@ msgstr "با دعوت از تیم خود، بیشترین بهره را از ف�
 #. js-lingui-id: 7SwUXR
 #: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
 msgid "Gets this record only: their role can't access {objectLabelPlural}"
-msgstr ""
+msgstr "فقط این رکورد را دریافت می‌کند: نقش او به {objectLabelPlural} دسترسی ندارد"
 
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -11885,7 +11885,7 @@ msgstr "پنهان کردن"
 #. placeholder {0}: fieldMetadataItem.label
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 msgid "Hide {0}"
-msgstr ""
+msgstr "پنهان کردن {0}"
 
 #. js-lingui-id: MuEcPp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -11902,7 +11902,7 @@ msgstr "پنهان کردن گروه‌های خالی"
 #. js-lingui-id: zoo33+
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Hide empty optional arguments"
-msgstr ""
+msgstr "پنهان کردن آرگومان‌های اختیاری خالی"
 
 #. js-lingui-id: K+AYNB
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -12022,7 +12022,7 @@ msgstr "نحوه نمایش رکوردها، صفحه‌ها و ناوبری"
 #. js-lingui-id: tdbxbk
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "How this rule appears in settings."
-msgstr ""
+msgstr "نحوه نمایش این قانون در تنظیمات."
 
 #. js-lingui-id: e60vNl
 #: src/pages/onboarding/CreateProfile.tsx
@@ -12156,7 +12156,7 @@ msgstr "نماد و نام"
 #. js-lingui-id: mcmuCe
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Icons"
-msgstr ""
+msgstr "نمادها"
 
 #. js-lingui-id: S0kLOH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12350,7 +12350,7 @@ msgstr "وارد کردن همه ایمیل‌ها"
 #. js-lingui-id: RQkDtT
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Import contacts"
-msgstr ""
+msgstr "وارد کردن مخاطبان"
 
 #. js-lingui-id: 2CeOI3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -12429,7 +12429,7 @@ msgstr "گزینه‌های مهارت غیرفعال"
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 msgid "Inbox"
-msgstr ""
+msgstr "صندوق ورودی"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -12521,7 +12521,7 @@ msgstr "اطلاعات"
 #. js-lingui-id: 0PXONM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Initial object views"
-msgstr ""
+msgstr "نماهای اولیه شیء"
 
 #. js-lingui-id: XP/nZ1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -12583,17 +12583,17 @@ msgstr "درج اقدام"
 #. js-lingui-id: CoIXZj
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdown.tsx
 msgid "Insert variable"
-msgstr ""
+msgstr "درج متغیر"
 
 #. js-lingui-id: 0sUvZZ
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Insert your billing details to get a {trialDuration}-day <0>free</0> trial and more AI credits"
-msgstr ""
+msgstr "برای دریافت یک دوره آزمایشی <0>رایگان</0> {trialDuration} روزه و اعتبار بیشتر هوش مصنوعی، جزئیات صورت‌حساب خود را وارد کنید"
 
 #. js-lingui-id: wNiyuI
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Insert your billing details to get a <0>free</0> trial and more AI credits"
-msgstr ""
+msgstr "برای دریافت یک دوره آزمایشی <0>رایگان</0> و اعتبار بیشتر هوش مصنوعی، جزئیات صورت‌حساب خود را وارد کنید"
 
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
@@ -12662,7 +12662,7 @@ msgstr "برنامه‌های نصب‌شده"
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Installing {displayedInstallProgress}"
-msgstr ""
+msgstr "در حال نصب {displayedInstallProgress}"
 
 #. js-lingui-id: kc9VIS
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -12826,7 +12826,7 @@ msgstr "عدد نامعتبر"
 #. js-lingui-id: Mwwd+k
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Invalid or expired recovery code."
-msgstr ""
+msgstr "کد بازیابی نامعتبر است یا منقضی شده است."
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -13036,7 +13036,7 @@ msgstr "مورد"
 #. js-lingui-id: BzfzPK
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
 msgid "Items"
-msgstr ""
+msgstr "موارد"
 
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -13167,7 +13167,7 @@ msgstr "حتی اگر این گره شکست خورد، اجرای گره‌ها
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Keep tracking my clicks"
-msgstr ""
+msgstr "ردیابی کلیک‌های من را ادامه دهید"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -13202,7 +13202,7 @@ msgstr "میانبرهای صفحه‌کلید"
 #. js-lingui-id: nhxAdQ
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
 msgid "Keyword"
-msgstr ""
+msgstr "کلیدواژه"
 
 #. js-lingui-id: h6S9Yz
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -13436,7 +13436,7 @@ msgstr "آخرین به‌روزرسانی"
 #. js-lingui-id: p9uaTd
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
 msgid "Later today"
-msgstr ""
+msgstr "امروز بعدتر"
 
 #. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -13616,7 +13616,7 @@ msgstr "کوچک‌تر یا مساوی"
 #. js-lingui-id: EKKBiO
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins add conditions a record must meet to be saved, checked on every write."
-msgstr ""
+msgstr "به مدیران اجازه دهید شرط‌هایی اضافه کنند که یک رکورد باید برای ذخیره شدن برآورده کند؛ این شرط‌ها در هر نوشتن بررسی می‌شوند."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -13626,17 +13626,17 @@ msgstr "به هر عضو اجازه دهید خودش تصمیم بگیرد"
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
-msgstr ""
+msgstr "به افراد اجازه دهید رکوردهای جداگانه را محدود و به اشتراک بگذارند."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Let this member sign in again if they lost their authenticator app"
-msgstr ""
+msgstr "اگر این عضو برنامه احراز هویت خود را گم کرد، به او اجازه دهید دوباره وارد شود"
 
 #. js-lingui-id: RIWS8s
 #: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
-msgstr ""
+msgstr "بیایید آن را متناسب با شیوه کار شما تنظیم کنیم."
 
 #. js-lingui-id: vhRvfF
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
@@ -13814,7 +13814,7 @@ msgstr "برچسب پیوند"
 #. js-lingui-id: 8uujEK
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Link to a record"
-msgstr ""
+msgstr "پیوند به یک رکورد"
 
 #. js-lingui-id: roAe2K
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -13830,7 +13830,7 @@ msgstr "یک {objectLabel} را پیوند داد"
 #. js-lingui-id: tjNkJN
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Linked to"
-msgstr ""
+msgstr "پیوندشده به"
 
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -14182,7 +14182,7 @@ msgstr "حلقه"
 #. js-lingui-id: B3teiJ
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator? Use a recovery code"
-msgstr ""
+msgstr "برنامه احراز هویت خود را گم کرده‌اید؟ از کد بازیابی استفاده کنید"
 
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -14365,7 +14365,7 @@ msgstr "این برنامه را بررسی‌شده و تأییدشده علا�
 #. js-lingui-id: OybNQG
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Marked as done {eventTime}"
-msgstr ""
+msgstr "به‌عنوان انجام‌شده علامت‌گذاری شد {eventTime}"
 
 #. js-lingui-id: Zt5PUS
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -14386,7 +14386,7 @@ msgstr "تطبیق {0} ({unmatchedCount} تطبیق‌نیافته)"
 #. js-lingui-id: vzXvB4
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowRightDropdown.tsx
 msgid "Match {entry}"
-msgstr ""
+msgstr "تطبیق {entry}"
 
 #. js-lingui-id: gDLior
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -14507,7 +14507,7 @@ msgstr "من (شناسه کاربر)"
 #. js-lingui-id: HVaz6o
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Measure engagement on the campaigns this workspace sends"
-msgstr ""
+msgstr "میزان تعامل با کمپین‌هایی را که این فضای کاری ارسال می‌کند اندازه‌گیری کنید"
 
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -14576,7 +14576,7 @@ msgstr "اعضا و دعوت‌شدگان"
 #. js-lingui-id: /bZzdR
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Mentions"
-msgstr ""
+msgstr "اشاره‌ها"
 
 #. js-lingui-id: hFJP7z
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
@@ -14687,7 +14687,7 @@ msgstr "Microsoft"
 #. js-lingui-id: lWkKSO
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "min"
-msgstr ""
+msgstr "دقیقه"
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -14997,7 +14997,7 @@ msgstr "به زباله‌دان منتقل شد"
 #. js-lingui-id: TpHstq
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "ms"
-msgstr ""
+msgstr "میلی‌ثانیه"
 
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -15032,7 +15032,7 @@ msgstr "باید آرایه‌ای از ایمیل‌های معتبر باشد"
 #. js-lingui-id: PS4GGg
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Must be true to save. A write that makes it false is rejected."
-msgstr ""
+msgstr "برای ذخیره باید درست باشد. نوشتنی که آن را نادرست کند رد می‌شود."
 
 #. js-lingui-id: OJCJh9
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -15122,7 +15122,7 @@ msgstr "تابع خود را نام‌گذاری و توصیف کنید"
 #. js-lingui-id: Ei0iwZ
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Name and description"
-msgstr ""
+msgstr "نام و توضیحات"
 
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -15154,7 +15154,7 @@ msgstr "ناوبری"
 #. js-lingui-id: kBNHN1
 #: src/modules/side-panel/components/SidePanelBackButton.tsx
 msgid "Navigation history"
-msgstr ""
+msgstr "تاریخچه پیمایش"
 
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15185,7 +15185,7 @@ msgstr "به یک فیلد انتخاب نیاز دارد"
 #: src/modules/ai/components/AiChatThreadSubtitle.tsx
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Needs input"
-msgstr ""
+msgstr "به ورودی نیاز دارد"
 
 #. js-lingui-id: wW3b68
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -15382,7 +15382,7 @@ msgstr "محدودیت انتقالی جدید"
 #. js-lingui-id: yBF5J5
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "New rule"
-msgstr ""
+msgstr "قانون جدید"
 
 #. js-lingui-id: MdpSC1
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -15449,7 +15449,7 @@ msgstr "ویجت جدید"
 #. js-lingui-id: wxiEkK
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "New Workflow"
-msgstr ""
+msgstr "گردش‌کار جدید"
 
 #. js-lingui-id: horr45
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -15477,7 +15477,7 @@ msgstr "هزینه بعدی در {totalRenewDate}. اگر بین دوره‌ها
 #. js-lingui-id: vBiulE
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Next chat"
-msgstr ""
+msgstr "گفتگوی بعدی"
 
 #. js-lingui-id: LTn6w8
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -15497,12 +15497,12 @@ msgstr "پرسش بعدی"
 #. js-lingui-id: vpyN3x
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Next record"
-msgstr ""
+msgstr "رکورد بعدی"
 
 #. js-lingui-id: +VXdSO
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Next request"
-msgstr ""
+msgstr "درخواست بعدی"
 
 #. js-lingui-id: tgnDjk
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
@@ -15518,7 +15518,7 @@ msgstr "مرحله بعدی"
 #. js-lingui-id: IT903p
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
 msgid "Next week"
-msgstr ""
+msgstr "هفته آینده"
 
 #. js-lingui-id: ulck7h
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -15643,7 +15643,7 @@ msgstr "برنامه‌ای یافت نشد"
 #. js-lingui-id: 3bvkPk
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "No assignee"
-msgstr ""
+msgstr "بدون مسئول"
 
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
@@ -15715,13 +15715,13 @@ msgstr "بدون محتوا"
 #. js-lingui-id: r1vGgi
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "No conversation selected"
-msgstr ""
+msgstr "هیچ گفتگویی انتخاب نشده است"
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "No conversations"
-msgstr ""
+msgstr "بدون گفتگو"
 
 #. js-lingui-id: Zpgvun
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -15850,7 +15850,7 @@ msgstr "فیلدی موجود نیست"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "No fields found"
-msgstr ""
+msgstr "هیچ فیلدی یافت نشد"
 
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -16008,7 +16008,7 @@ msgstr "هیچ گزینه‌ای یافت نشد"
 #. js-lingui-id: UbbJ8j
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 msgid "No options found"
-msgstr ""
+msgstr "هیچ گزینه‌ای یافت نشد"
 
 #. js-lingui-id: XRc1G9
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -16097,7 +16097,7 @@ msgstr "رابطه‌ای یافت نشد"
 #. js-lingui-id: laEyIC
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 msgid "No reply"
-msgstr ""
+msgstr "بدون پاسخ"
 
 #. js-lingui-id: YLozFb
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -16156,12 +16156,12 @@ msgstr "هیچ ردیفی با خطا وجود ندارد"
 #. js-lingui-id: sndgwL
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 msgid "No rules yet"
-msgstr ""
+msgstr "هنوز قانونی وجود ندارد"
 
 #. js-lingui-id: eOvDHm
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "No runs yet"
-msgstr ""
+msgstr "هنوز اجرایی وجود ندارد"
 
 #. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -16203,7 +16203,7 @@ msgstr "در این ضبط، گفتاری تشخیص داده نشد."
 #. js-lingui-id: Cs7AbK
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No speech was detected, so there is nothing to summarize."
-msgstr ""
+msgstr "گفتاری تشخیص داده نشد، بنابراین چیزی برای خلاصه‌سازی وجود ندارد."
 
 #. js-lingui-id: eeoVfm
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
@@ -16346,12 +16346,12 @@ msgstr "هنوز هیچ نسخه‌ای از گردش کار وجود ندارد
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No Workflows found"
-msgstr ""
+msgstr "هیچ گردش‌کاری یافت نشد"
 
 #. js-lingui-id: Le81Ct
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No Workflows match your filters. Try removing some of them."
-msgstr ""
+msgstr "هیچ گردش‌کاری با فیلترهای شما مطابقت ندارد. برخی از آن‌ها را حذف کنید."
 
 #. js-lingui-id: 0R8Pxd
 #: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
@@ -16435,7 +16435,7 @@ msgstr "هیچ‌کدام"
 #. js-lingui-id: ixhAJF
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "None, only send the message"
-msgstr ""
+msgstr "هیچ‌کدام، فقط پیام را ارسال کن"
 
 #. js-lingui-id: 1IipHp
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -16518,7 +16518,7 @@ msgstr "ضبط نشده"
 #. js-lingui-id: gnnpkq
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed since it was proposed"
-msgstr ""
+msgstr "اجرا نشد: رکورد از زمان پیشنهاد تغییر کرده است"
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -16579,7 +16579,7 @@ msgstr "چیزی برای دیدن نیست"
 #. js-lingui-id: lGMk6n
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Nothing to suggest here."
-msgstr ""
+msgstr "چیزی برای پیشنهاد دادن در اینجا نیست."
 
 #. js-lingui-id: iDNBZe
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
@@ -16613,7 +16613,7 @@ msgstr "عدد"
 #. js-lingui-id: euEGx7
 #: src/modules/settings/components/SettingsCounter.tsx
 msgid "Number field"
-msgstr ""
+msgstr "فیلد عدد"
 
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -16832,7 +16832,7 @@ msgstr "در {0}"
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "On a schedule"
-msgstr ""
+msgstr "طبق زمان‌بندی"
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -16919,7 +16919,7 @@ msgstr "یک یا چند فیلتر به فیلدهای غیرفعال یا حذ
 #. js-lingui-id: mwvUSb
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "One per run"
-msgstr ""
+msgstr "یکی در هر اجرا"
 
 #. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -16993,22 +16993,22 @@ msgstr "فقط در روزهای {remainingDays} و {0}"
 #. js-lingui-id: k24ukM
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "Only people who can already access these records"
-msgstr ""
+msgstr "فقط افرادی که از قبل به این رکوردها دسترسی دارند"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
-msgstr ""
+msgstr "فقط وقتی اجرا شود که یکی از این فیلدها تغییر کند"
 
 #. js-lingui-id: YSJayJ
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Only the creator of this record and people with full access to it can change who has access."
-msgstr ""
+msgstr "فقط ایجادکننده این رکورد و افرادی که دسترسی کامل به آن دارند می‌توانند مشخص کنند چه کسانی دسترسی دارند."
 
 #. js-lingui-id: afNmH6
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
-msgstr ""
+msgstr "فقط ایجادکننده این رکورد، افرادی که دسترسی کامل به آن دارند و مدیران می‌توانند مشخص کنند چه کسانی دسترسی دارند."
 
 #. js-lingui-id: saaSLd
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
@@ -17018,7 +17018,7 @@ msgstr "فقط موضوع به اشتراک گذاشته شده است"
 #. js-lingui-id: 81b4+w
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Only write calendar events and participants that changed since the last sync."
-msgstr ""
+msgstr "فقط رویدادهای تقویم و شرکت‌کنندگانی را بنویس که از آخرین همگام‌سازی تغییر کرده‌اند."
 
 #. js-lingui-id: y0Uyng
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -17047,7 +17047,7 @@ msgstr "یک یکپارچه‌سازی پشتیبانی‌شده را باز ک�
 #. js-lingui-id: DsW8lN
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailDesignPage.tsx
 msgid "Open an email editor to design it."
-msgstr ""
+msgstr "برای طراحی آن، یک ویرایشگر ایمیل باز کنید."
 
 #. js-lingui-id: 650kGT
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -17057,7 +17057,7 @@ msgstr "برای ویرایش تنظیمات بلوک، یک ویرایشگر ا
 #. js-lingui-id: WsTGFR
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailPageStylePage.tsx
 msgid "Open an email editor to edit the page style."
-msgstr ""
+msgstr "برای ویرایش سبک صفحه، یک ویرایشگر ایمیل باز کنید."
 
 #. js-lingui-id: JG4LoU
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -17069,7 +17069,7 @@ msgstr "باز کردن به‌عنوان پیوند"
 #: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
 #: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
 msgid "Open chats in"
-msgstr ""
+msgstr "باز کردن گفتگوها در"
 
 #. js-lingui-id: n0vVgf
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17218,13 +17218,13 @@ msgstr "عملیات"
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Opt out of click tracking"
-msgstr ""
+msgstr "انصراف از ردیابی کلیک"
 
 #. js-lingui-id: IclqIc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribe.tsx
 msgid "Opt-outs"
-msgstr ""
+msgstr "انصراف‌ها"
 
 #. js-lingui-id: fgY76O
 #. placeholder {0}: index + 1
@@ -17268,7 +17268,7 @@ msgstr "گزینه‌ها"
 #. js-lingui-id: BzEFor
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuItem.tsx
 msgid "or"
-msgstr ""
+msgstr "یا"
 
 #. js-lingui-id: ZAVklK
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -17399,7 +17399,7 @@ msgstr "فضاهای کاری دیگر"
 #. js-lingui-id: qxvgIJ
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
 msgid "Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here."
-msgstr ""
+msgstr "سایر فضاهای کاری به مسیر سرور این برنامه، که از این فضای کاری ارائه می‌شود، وابسته‌اند. پیش از حذف نصب برنامه از اینجا، مالکیت برنامه را به فضای کاری دیگری که برنامه در آن نصب است منتقل کنید یا آن را از همه فضاهای کاری دیگر حذف نصب کنید."
 
 #. js-lingui-id: NuKR0h
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
@@ -17731,7 +17731,7 @@ msgstr "افرادی که به آن‌ها ایمیل فرستاده‌ام."
 #. js-lingui-id: XFoNbi
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "People you add get this record even if their role can't access {objectLabelPlural}. Field permissions still apply."
-msgstr ""
+msgstr "افرادی که اضافه می‌کنید این رکورد را دریافت می‌کنند، حتی اگر نقششان به {objectLabelPlural} دسترسی نداشته باشد. مجوزهای فیلد همچنان اعمال می‌شوند."
 
 #. js-lingui-id: VloFYI
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -17870,7 +17870,7 @@ msgstr "زمانی در آینده را برای ارسال انتخاب کنی�
 #. js-lingui-id: BypbQt
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
 msgid "Pick a time in the future"
-msgstr ""
+msgstr "زمانی را در آینده انتخاب کنید"
 
 #. js-lingui-id: rV71K7
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -18068,7 +18068,7 @@ msgstr "جمع"
 #. js-lingui-id: mtjKfB
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "points"
-msgstr ""
+msgstr "امتیاز"
 
 #. js-lingui-id: trnWaw
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -18141,7 +18141,7 @@ msgstr "پیشوند"
 #. js-lingui-id: IHoyJS
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Preparing an action to approve..."
-msgstr ""
+msgstr "در حال آماده‌سازی اقدامی برای تأیید..."
 
 #. js-lingui-id: dVCM1s
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -18203,7 +18203,7 @@ msgstr "۷ روز گذشته"
 #. js-lingui-id: RCsICd
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Previous chat"
-msgstr ""
+msgstr "گفتگوی قبلی"
 
 #. js-lingui-id: +Qcc/o
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -18218,12 +18218,12 @@ msgstr "دوره قبلی"
 #. js-lingui-id: gS9MCC
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Previous record"
-msgstr ""
+msgstr "رکورد قبلی"
 
 #. js-lingui-id: ToM1t/
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Previous request"
-msgstr ""
+msgstr "درخواست قبلی"
 
 #. js-lingui-id: k7xxm/
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
@@ -18424,7 +18424,7 @@ msgstr "برنامه خود را در بازار منتشر کنید تا دیگ
 #. js-lingui-id: zZk9Yz
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Purchase"
-msgstr ""
+msgstr "خرید"
 
 #. js-lingui-id: mF9LxA
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -18471,7 +18471,7 @@ msgstr "پرسش"
 #. js-lingui-id: pA8K5M
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
 msgid "Question skipped"
-msgstr ""
+msgstr "سؤال رد شد"
 
 #. js-lingui-id: enzGAL
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
@@ -18481,7 +18481,7 @@ msgstr "پرسش‌ها"
 #. js-lingui-id: Wzbxi7
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
 msgid "Questions skipped"
-msgstr ""
+msgstr "سؤال‌ها رد شدند"
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
@@ -18645,7 +18645,7 @@ msgstr "ایمیلی حاوی پیوند به‌روزرسانی گذرواژه 
 #. js-lingui-id: CCTop/
 #: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
 msgid "Recent"
-msgstr ""
+msgstr "اخیر"
 
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -18740,12 +18740,12 @@ msgstr "رکورد (ID)"
 #. js-lingui-id: fUbj63
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record (Optional)"
-msgstr ""
+msgstr "رکورد (اختیاری)"
 
 #. js-lingui-id: OhTdMH
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Record {displayedRecordNumber} of {recordCount}"
-msgstr ""
+msgstr "رکورد {displayedRecordNumber} از {recordCount}"
 
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -18787,17 +18787,17 @@ msgstr "تصویر رکورد"
 #. js-lingui-id: wNysMp
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record is created"
-msgstr ""
+msgstr "رکورد ایجاد می‌شود"
 
 #. js-lingui-id: pTBjmd
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record is deleted"
-msgstr ""
+msgstr "رکورد حذف می‌شود"
 
 #. js-lingui-id: rdLUKj
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record is updated"
-msgstr ""
+msgstr "رکورد به‌روزرسانی می‌شود"
 
 #. js-lingui-id: K6/7kH
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
@@ -18815,18 +18815,18 @@ msgstr "صفحه رکورد"
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
-msgstr ""
+msgstr "انتخاب رکورد"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
-msgstr ""
+msgstr "اشتراک‌گذاری رکورد"
 
 #. js-lingui-id: ugcm0I
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record sharing visibility"
-msgstr ""
+msgstr "قابلیت مشاهده اشتراک‌گذاری رکورد"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -18836,7 +18836,7 @@ msgstr "تنظیمات جدول رکوردها"
 #. js-lingui-id: CV/ZuS
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Record type"
-msgstr ""
+msgstr "نوع رکورد"
 
 #. js-lingui-id: kvxD0C
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
@@ -18853,7 +18853,7 @@ msgstr "در سطح رکورد"
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "Record:"
-msgstr ""
+msgstr "رکورد:"
 
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -18884,7 +18884,7 @@ msgstr "ضبط زمان‌بندی شده است"
 #. js-lingui-id: ECgtG5
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "records"
-msgstr ""
+msgstr "رکوردها"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/ai/components/AiChatAddMenu.tsx
@@ -18908,17 +18908,17 @@ msgstr "رکوردهای انتخاب‌شده"
 #. js-lingui-id: sE6EHz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Records will no longer be checked against it. Existing records are not changed."
-msgstr ""
+msgstr "رکوردها دیگر در برابر آن بررسی نمی‌شوند. رکوردهای موجود تغییر نمی‌کنند."
 
 #. js-lingui-id: FFbqii
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 msgid "Recovery code copied to clipboard"
-msgstr ""
+msgstr "کد بازیابی در کلیپ‌بورد کپی شد"
 
 #. js-lingui-id: Vms4rv
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Recovery code revoked."
-msgstr ""
+msgstr "کد بازیابی لغو شد."
 
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -19002,12 +19002,12 @@ msgstr "به‌عنوان یک نمونه توسعه ثبت شد. برای ای�
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Reject"
-msgstr ""
+msgstr "رد کردن"
 
 #. js-lingui-id: ekCRTP
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
-msgstr ""
+msgstr "رد شد"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -19110,7 +19110,7 @@ msgstr "{0} مورد از آیتم‌های منوی ناوبری حذف شون�
 #. js-lingui-id: Q7qiJ+
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Remove {address}"
-msgstr ""
+msgstr "حذف {address}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19288,7 +19288,7 @@ msgstr "این ارائه‌دهنده و اتصال همه مدل‌های آن
 #. js-lingui-id: txqag8
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Remove trigger"
-msgstr ""
+msgstr "حذف محرک"
 
 #. js-lingui-id: Kl3J3D
 #: src/modules/advanced-text-editor/extensions/variable-tag/VariableChip.tsx
@@ -19321,7 +19321,7 @@ msgstr "تغییر نام برای همه زبان‌ها"
 #. js-lingui-id: vtxT26
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
 msgid "Rename group"
-msgstr ""
+msgstr "تغییر نام گروه"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19337,7 +19337,7 @@ msgstr "تمدید در"
 #. placeholder {0}: tab.title
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
 msgid "Reorder {0} tab"
-msgstr ""
+msgstr "تغییر ترتیب برگه {0}"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -19399,7 +19399,7 @@ msgstr "درخواست"
 #. js-lingui-id: tZ7Xci
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Request {requestNumber} of {requestCount}"
-msgstr ""
+msgstr "درخواست {requestNumber} از {requestCount}"
 
 #. js-lingui-id: /laZGZ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -19409,12 +19409,12 @@ msgstr "درخواست ناموفق بود"
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "requests"
-msgstr ""
+msgstr "درخواست‌ها"
 
 #. js-lingui-id: PWfg7v
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Requests"
-msgstr ""
+msgstr "درخواست‌ها"
 
 #. js-lingui-id: +gFBV8
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -19430,7 +19430,7 @@ msgstr "الزامی"
 #. js-lingui-id: tT28g5
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Required to run the action"
-msgstr ""
+msgstr "برای اجرای اقدام لازم است"
 
 #. js-lingui-id: r38Vo4
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
@@ -19529,12 +19529,12 @@ msgstr "تغییر اندازه ورودی"
 #. js-lingui-id: vGU/RI
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Resize log console"
-msgstr ""
+msgstr "تغییر اندازه کنسول گزارش"
 
 #. js-lingui-id: W99DI7
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Resize log details"
-msgstr ""
+msgstr "تغییر اندازه جزئیات گزارش"
 
 #. js-lingui-id: w62xpE
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
@@ -19544,7 +19544,7 @@ msgstr "تغییر اندازه گزارش‌ها"
 #. js-lingui-id: vkwEuj
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawer.tsx
 msgid "Resize navigation drawer"
-msgstr ""
+msgstr "تغییر اندازه پنل ناوبری"
 
 #. js-lingui-id: UQyayN
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
@@ -19554,7 +19554,7 @@ msgstr "تغییر اندازه خروجی"
 #. js-lingui-id: vTWEAa
 #: src/modules/side-panel/components/SidePanelForDesktop.tsx
 msgid "Resize side panel"
-msgstr ""
+msgstr "تغییر اندازه پنل کناری"
 
 #. js-lingui-id: N0vrR6
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -19708,7 +19708,7 @@ msgstr "الفبایی معکوس"
 #. js-lingui-id: 35zlhZ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 msgid "Review this email before it goes out"
-msgstr ""
+msgstr "پیش از ارسال این ایمیل، آن را بررسی کنید"
 
 #. js-lingui-id: GXsAby
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
@@ -19897,27 +19897,27 @@ msgstr "یاقوتی"
 #. js-lingui-id: jXsttb
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "Rule created."
-msgstr ""
+msgstr "قانون ایجاد شد."
 
 #. js-lingui-id: Tz7o+/
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule deleted."
-msgstr ""
+msgstr "قانون حذف شد."
 
 #. js-lingui-id: GOqDOz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule disabled."
-msgstr ""
+msgstr "قانون غیرفعال شد."
 
 #. js-lingui-id: XdExw+
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule enabled."
-msgstr ""
+msgstr "قانون فعال شد."
 
 #. js-lingui-id: sBTDyi
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule updated."
-msgstr ""
+msgstr "قانون به‌روزرسانی شد."
 
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -19942,12 +19942,12 @@ msgstr "بخش‌های کند تغییرات مدل داده را پس از ذ�
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Run this agent on its own when records change or on a schedule. It runs with its role's permissions."
-msgstr ""
+msgstr "این عامل را هنگام تغییر رکوردها یا طبق زمان‌بندی، به‌صورت مستقل اجرا کنید. این عامل با مجوزهای نقش خود اجرا می‌شود."
 
 #. js-lingui-id: RiQMUh
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 msgid "Running"
-msgstr ""
+msgstr "در حال اجرا"
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/buildGenericToolStatusMessage.ts
@@ -19979,17 +19979,17 @@ msgstr "اجرا"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Runs"
-msgstr ""
+msgstr "اجراها"
 
 #. js-lingui-id: RASTzS
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Runs appear here once a workflow or an app uses this agent"
-msgstr ""
+msgstr "وقتی یک گردش‌کار یا یک برنامه از این عامل استفاده کند، اجراها اینجا ظاهر می‌شوند"
 
 #. js-lingui-id: eo1n1s
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Runtime"
-msgstr ""
+msgstr "زمان اجرا"
 
 #. js-lingui-id: nji0/X
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -20047,7 +20047,7 @@ msgstr "با صورت‌حساب سالانه 25% صرفه‌جویی کنید"
 #. js-lingui-id: 8tM8+a
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 msgid "Save as draft"
-msgstr ""
+msgstr "ذخیره به‌عنوان پیش‌نویس"
 
 #. js-lingui-id: apLRCm
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -20254,7 +20254,7 @@ msgstr "جستجوی یک نوع"
 #. js-lingui-id: JVbOF1
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 msgid "Search activity types"
-msgstr ""
+msgstr "جستجوی انواع فعالیت"
 
 #. js-lingui-id: ujLBwP
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
@@ -20414,7 +20414,7 @@ msgstr "جستجوی نماد"
 #. js-lingui-id: AaDUlx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
-msgstr ""
+msgstr "جستجوی اعضا"
 
 #. js-lingui-id: two5rl
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
@@ -20468,7 +20468,7 @@ msgstr "جستجوی مراحل و فیلدها"
 #. js-lingui-id: rws5EE
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 msgid "Search workspace members"
-msgstr ""
+msgstr "جستجوی اعضای فضای کاری"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -20505,7 +20505,7 @@ msgstr "جست‌وجو"
 #. js-lingui-id: bnmBb4
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Searches"
-msgstr ""
+msgstr "جستجوها"
 
 #. js-lingui-id: EvDUJy
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -20727,12 +20727,12 @@ msgstr "انتخاب ۱ فیلد"
 #. js-lingui-id: mY6oY7
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
 msgid "Select a block to edit its style."
-msgstr ""
+msgstr "یک بلوک را برای ویرایش سبک آن انتخاب کنید."
 
 #. js-lingui-id: PWGE2B
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker.tsx
 msgid "Select a current user field"
-msgstr ""
+msgstr "یک فیلد کاربر فعلی انتخاب کنید"
 
 #. js-lingui-id: OMoA3j
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -20765,7 +20765,7 @@ msgstr "یک فیلد برای نمایش در این ویجت انتخاب کن
 #. js-lingui-id: 0DL3XU
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect.tsx
 msgid "Select a filter field"
-msgstr ""
+msgstr "یک فیلد فیلتر انتخاب کنید"
 
 #. js-lingui-id: rHNnAT
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20853,7 +20853,7 @@ msgstr "یک گزینه انتخاب کنید"
 #. js-lingui-id: 0yxhOL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 msgid "Select chat"
-msgstr ""
+msgstr "انتخاب گفتگو"
 
 #. js-lingui-id: 21YIUv
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
@@ -20863,7 +20863,7 @@ msgstr "انتخاب ستون..."
 #. js-lingui-id: SJQM1I
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 msgid "Select date"
-msgstr ""
+msgstr "انتخاب تاریخ"
 
 #. js-lingui-id: U+WOF9
 #: src/modules/settings/components/SettingsDatePickerInput.tsx
@@ -20879,7 +20879,7 @@ msgstr "انتخاب موجودیت"
 #. js-lingui-id: vljOfc
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButton.tsx
 msgid "Select field"
-msgstr ""
+msgstr "انتخاب فیلد"
 
 #. js-lingui-id: PSqlgu
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -20951,7 +20951,7 @@ msgstr "فیلدهای مشخصی را برای گوش‌دادن انتخاب �
 #. js-lingui-id: ypTnjb
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Select specific fields to wait for"
-msgstr ""
+msgstr "فیلدهای مشخصی را برای انتظار انتخاب کنید"
 
 #. js-lingui-id: 8+U1XJ
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
@@ -20992,7 +20992,7 @@ msgstr "انتخاب مقدار"
 #. js-lingui-id: W5z7K7
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 msgid "Select workspace members"
-msgstr ""
+msgstr "اعضای فضای کاری را انتخاب کنید"
 
 #. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -21288,7 +21288,7 @@ msgstr "تنظیم DNS با هوش مصنوعی"
 #. js-lingui-id: nRVdl6
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Set up forwarding and DNS"
-msgstr ""
+msgstr "تنظیم بازارسال و DNS"
 
 #. js-lingui-id: l6W1lM
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -21367,12 +21367,12 @@ msgstr "اشتراک‌گذاری"
 #. js-lingui-id: Mt/oXT
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share {objectLabel}"
-msgstr ""
+msgstr "اشتراک‌گذاری {objectLabel}"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 msgid "Share this code with {memberName} through a channel you trust. It works once and expires at {formattedExpiresAt}. You won't be able to see it again."
-msgstr ""
+msgstr "این کد را از طریق کانالی که به آن اعتماد دارید با {memberName} به اشتراک بگذارید. این کد یک‌بار کار می‌کند و در {formattedExpiresAt} منقضی می‌شود. دیگر نمی‌توانید آن را ببینید."
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -21397,7 +21397,7 @@ msgstr "برنامه خود را بدون انتشار در بازار با فض
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Shared by key, across runs"
-msgstr ""
+msgstr "اشتراک‌گذاری‌شده بر اساس کلید، بین اجراها"
 
 #. js-lingui-id: JTP6zD
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -21407,22 +21407,22 @@ msgstr "ایمیل مشترک"
 #. js-lingui-id: iZYfeB
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Shared inbox emails"
-msgstr ""
+msgstr "ایمیل‌های صندوق ورودی مشترک"
 
 #. js-lingui-id: hkY6lZ
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Shared record"
-msgstr ""
+msgstr "رکورد به‌اشتراک‌گذاشته‌شده"
 
 #. js-lingui-id: k1qX20
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr ""
+msgstr "اشتراک‌گذاری هرگز فراتر از نقش‌ها و فیلترهای ردیف آن‌ها نمی‌رود. از آن برای اشیای حساس استفاده کنید."
 
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
-msgstr ""
+msgstr "در حال اشتراک‌گذاری رکورد"
 
 #. js-lingui-id: Z+MFnO
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -21464,17 +21464,17 @@ msgstr "آیا تغییر برچسب باید نام API را نیز تغییر 
 #. placeholder {0}: fieldMetadataItem.label
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 msgid "Show {0}"
-msgstr ""
+msgstr "نمایش {0}"
 
 #. js-lingui-id: gmYDKt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Show {hiddenOptionalCount} optional arguments"
-msgstr ""
+msgstr "نمایش {hiddenOptionalCount} آرگومان اختیاری"
 
 #. js-lingui-id: I2DNv8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show a Conversations tab listing the AI conversations attached to the record, on record pages of new workspaces."
-msgstr ""
+msgstr "در صفحه‌های رکورد فضاهای کاری جدید، برگه گفتگوها را نمایش دهید که فهرستی از گفتگوهای هوش مصنوعی متصل به رکورد را نشان می‌دهد."
 
 #. js-lingui-id: 3MO9Sa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -21504,7 +21504,7 @@ msgstr "نمایش همه"
 #: src/modules/ui/field/display/components/LinksDisplay.tsx
 #: src/modules/ui/field/display/components/PhonesDisplay.tsx
 msgid "Show all items"
-msgstr ""
+msgstr "نمایش همه موارد"
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -21524,7 +21524,7 @@ msgstr "نمایش گروه {0}"
 #. js-lingui-id: xTnLbK
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 msgid "Show hidden fields ({hiddenFieldsCount})"
-msgstr ""
+msgstr "نمایش فیلدهای پنهان ({hiddenFieldsCount})"
 
 #. js-lingui-id: 1OVrop
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -21546,7 +21546,7 @@ msgstr "نمایش بیشتر"
 #. js-lingui-id: wdogIE
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Show on"
-msgstr ""
+msgstr "نمایش در"
 
 #. js-lingui-id: qi+g0a
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -21568,7 +21568,7 @@ msgstr "نمایش این نوع فعالیت در خط‌های زمانی رک
 #. placeholder {0}: formatShortcut({ shortcut: ['Mod', 'K'] })
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu ({0})."
-msgstr ""
+msgstr "رکوردهای این شیء را در منوی فرمان نمایش دهید ({0})."
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -21578,7 +21578,7 @@ msgstr "نمایش مقدار در مرکز"
 #. js-lingui-id: nMqpRn
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Shown above the fields, for example what to fill in and why"
-msgstr ""
+msgstr "بالای فیلدها نمایش داده می‌شود؛ برای مثال، چه چیزی و چرا باید پر شود"
 
 #. js-lingui-id: P7rcbf
 #: src/modules/navigation/constants/OpenRecordInOptions.ts
@@ -21745,7 +21745,7 @@ msgstr "رد کردن"
 #. js-lingui-id: d70FL8
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
 msgid "Skip anyway"
-msgstr ""
+msgstr "به‌هرحال رد کردن"
 
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -21760,7 +21760,7 @@ msgstr "از شیء اتصال صرف‌نظر کنید (مشابه روابط �
 #. js-lingui-id: Jdqc8E
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip unchanged calendar records"
-msgstr ""
+msgstr "نادیده گرفتن رکوردهای تقویمِ بدون تغییر"
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -21826,32 +21826,32 @@ msgstr "smtp.example.com"
 #. js-lingui-id: 7+i6oV
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
-msgstr ""
+msgstr "تعویق"
 
 #. js-lingui-id: xKw3A1
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Snooze ended"
-msgstr ""
+msgstr "تعویق پایان یافت"
 
 #. js-lingui-id: e6uj9X
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snooze ended {eventTime}"
-msgstr ""
+msgstr "تعویق در {eventTime} پایان یافت"
 
 #. js-lingui-id: VkkXmS
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
 msgid "Snooze until {snoozedUntilLabel}"
-msgstr ""
+msgstr "تعویق تا {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Snoozed"
-msgstr ""
+msgstr "به‌تعویق‌افتاده"
 
 #. js-lingui-id: gbfQNt
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snoozed until {eventTime}"
-msgstr ""
+msgstr "به‌تعویق‌افتاده تا {eventTime}"
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -21900,7 +21900,7 @@ msgstr "هنگام ایجاد فضای کاری شما مشکلی پیش آمد.
 #. js-lingui-id: KzFgLR
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Something went wrong while fetching this record's conversations."
-msgstr ""
+msgstr "هنگام دریافت گفتگوهای این رکورد مشکلی پیش آمد."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -22040,7 +22040,7 @@ msgstr "جداسازی چند مقدار"
 #. js-lingui-id: /xCSTz
 #: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
 msgid "Split view"
-msgstr ""
+msgstr "نمای تقسیم‌شده"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -22077,7 +22077,7 @@ msgstr "خطوط پشته‌ای"
 #. js-lingui-id: x+vSk8
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Stacks on top of your plan and never expires"
-msgstr ""
+msgstr "به طرح شما افزوده می‌شود و هرگز منقضی نمی‌شود"
 
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -22121,7 +22121,7 @@ msgstr "شروع دیکته"
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Start with your whole network"
-msgstr ""
+msgstr "با کل شبکه خود شروع کنید"
 
 #. js-lingui-id: s+K73L
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -22132,7 +22132,7 @@ msgstr "اشتراک خود را آغاز کنید."
 #. js-lingui-id: JEGlfK
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Started"
-msgstr ""
+msgstr "شروع شد"
 
 #. js-lingui-id: hTX65V
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -22221,17 +22221,17 @@ msgstr "گزینه‌های فیلتر مرحله"
 #. js-lingui-id: 7Ilx5M
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "steps"
-msgstr ""
+msgstr "گام‌ها"
 
 #. js-lingui-id: A9onc2
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Steps"
-msgstr ""
+msgstr "گام‌ها"
 
 #. js-lingui-id: btg91h
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Steps of this workflow sharing a key write to the same conversation"
-msgstr ""
+msgstr "گام‌های این گردش کار که یک کلید مشترک دارند، در همان گفتگو می‌نویسند"
 
 #. js-lingui-id: ygCKqB
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
@@ -22498,7 +22498,7 @@ msgstr "پیشنهادشده"
 #. js-lingui-id: 8J32PY
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
-msgstr ""
+msgstr "پیشنهادها"
 
 #. js-lingui-id: AxQiPW
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -22814,12 +22814,12 @@ msgstr "عضو تیم"
 #. js-lingui-id: g4mm2M
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
-msgstr ""
+msgstr "هم‌تیمی‌ها"
 
 #. js-lingui-id: XpPpz7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Tell the agent what to change"
-msgstr ""
+msgstr "به عامل بگویید چه چیزی را تغییر دهد"
 
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
@@ -22907,7 +22907,7 @@ msgstr "ویرایشگر متن"
 #. js-lingui-id: Ldukks
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "That's about {formattedNewlyEarnedAiActions} AI actions. Credits never expire."
-msgstr ""
+msgstr "این مقدار تقریباً برابر با {formattedNewlyEarnedAiActions} اقدام هوش مصنوعی است. اعتبارها هرگز منقضی نمی‌شوند."
 
 #. js-lingui-id: Z4WP0F
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
@@ -22970,12 +22970,12 @@ msgstr "مدل داده پایه‌ای که هر فضای کاری Twenty بر 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The boolean value false."
-msgstr ""
+msgstr "مقدار بولی false."
 
 #. js-lingui-id: ijFf+X
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The boolean value true."
-msgstr ""
+msgstr "مقدار بولی true."
 
 #. js-lingui-id: VsxjzF
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -22990,12 +22990,12 @@ msgstr "ضبط تماس در حال پردازش است…"
 #. js-lingui-id: ejqgDV
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "The code lets {memberName} sign in to this workspace once without their authenticator app. Using it removes their current authenticator and signs them out of their other sessions here. They will be notified by email."
-msgstr ""
+msgstr "این کد به {memberName} اجازه می‌دهد یک‌بار بدون برنامه احراز هویت خود وارد این فضای کاری شود. استفاده از آن، ابزار احراز هویت فعلی او را حذف می‌کند و او را از سایر نشست‌هایش در اینجا خارج می‌کند. از طریق ایمیل به او اطلاع داده خواهد شد."
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
-msgstr ""
+msgstr "گفتگو فشرده شده است"
 
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -23005,7 +23005,7 @@ msgstr "توافق‌نامه پردازش داده بارگیری نشد. لط�
 #. js-lingui-id: 0H+RG6
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The date and time of the write being checked."
-msgstr ""
+msgstr "تاریخ و زمان نوشتاری که در حال بررسی است."
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -23117,7 +23117,7 @@ msgstr "نامی که گیرندگان در کنار نشانی شما می‌ب
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of items in the list, or 0 when it is not a list."
-msgstr ""
+msgstr "تعداد موارد در فهرست، یا در صورتی که فهرست نباشد 0."
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -23337,7 +23337,7 @@ msgstr "این اقدام قابل بازگشت نیست. عضویت شما حذ
 #. js-lingui-id: aIALnw
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "This action no longer takes this argument. Clear it to remove it."
-msgstr ""
+msgstr "این اقدام دیگر این آرگومان را نمی‌پذیرد. برای حذف آن، آن را پاک کنید."
 
 #. js-lingui-id: muD0kr
 #. placeholder {0}: favoritesEdit.navigationMenuItemCount
@@ -23358,7 +23358,7 @@ msgstr "این نشانی از قبل گرفته شده است"
 #. js-lingui-id: 4bI4er
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "This agent only runs when someone sends it a message."
-msgstr ""
+msgstr "این عامل فقط زمانی اجرا می‌شود که کسی برای آن پیام بفرستد."
 
 #. js-lingui-id: 9rY+8P
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -23430,7 +23430,7 @@ msgstr "این مؤلفه بدون رابط کاربری اجرا می‌شود 
 #. js-lingui-id: 2p+00J
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "This condition doesn't read any field."
-msgstr ""
+msgstr "این شرط هیچ فیلدی را نمی‌خواند."
 
 #. js-lingui-id: LqhE3c
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -23451,7 +23451,7 @@ msgstr "این گفت‌وگو دیگر در دسترس نیست."
 #. js-lingui-id: 4Rs3za
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "This cron pattern is not valid"
-msgstr ""
+msgstr "این الگوی cron معتبر نیست"
 
 #. js-lingui-id: 5VD/sC
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -23471,7 +23471,7 @@ msgstr "این دستگاه"
 #. js-lingui-id: GyVWfy
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
 msgid "This evening"
-msgstr ""
+msgstr "امشب"
 
 #. js-lingui-id: i6mVT3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
@@ -23536,7 +23536,7 @@ msgstr "این جلسه ضبط نشد."
 #. js-lingui-id: w5ooxr
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "This member hasn't set up two-factor authentication."
-msgstr ""
+msgstr "این عضو احراز هویت دومرحله‌ای را تنظیم نکرده است."
 
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -23586,12 +23586,12 @@ msgstr "این کار {accountHandle} و همه ایمیل‌ها و رویدا�
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "This permanently deletes these {numberOfCoreWorkflows} workflows and all their run history. This action cannot be undone."
-msgstr ""
+msgstr "این {numberOfCoreWorkflows} گردش کار و تمام تاریخچه اجرای آن‌ها برای همیشه حذف می‌شوند. این اقدام قابل بازگردانی نیست."
 
 #. js-lingui-id: riRzbk
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "This permanently deletes this workflow and all its run history. This action cannot be undone."
-msgstr ""
+msgstr "این گردش کار و تمام تاریخچه اجرای آن برای همیشه حذف می‌شود. این اقدام قابل بازگردانی نیست."
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -23601,7 +23601,7 @@ msgstr "این ارائه‌دهنده هنوز SDK بومی ندارد — از
 #. js-lingui-id: Wf1hgt
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "This record could not be loaded."
-msgstr ""
+msgstr "این رکورد بارگیری نشد."
 
 #. js-lingui-id: dWJTyU
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
@@ -23611,12 +23611,12 @@ msgstr "این رکورد حذف شده است"
 #. js-lingui-id: CS0+Ao
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "This record no longer exists or you cannot see it."
-msgstr ""
+msgstr "این رکورد دیگر وجود ندارد یا نمی‌توانید آن را ببینید."
 
 #. js-lingui-id: TG0qsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "This record will be deleted:"
-msgstr ""
+msgstr "این رکورد حذف خواهد شد:"
 
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -23636,12 +23636,12 @@ msgstr "این نقش با کاربران یا عامل‌های دیگر مشت
 #. js-lingui-id: 9IqK24
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "This rule is disabled. Records are not checked against it."
-msgstr ""
+msgstr "این قانون غیرفعال است. رکوردها بر اساس آن بررسی نمی‌شوند."
 
 #. js-lingui-id: Tz032x
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "This sender records which links you click in its emails. You can opt out for this email address."
-msgstr ""
+msgstr "این فرستنده ثبت می‌کند که روی کدام پیوندها در ایمیل‌هایش کلیک می‌کنید. می‌توانید برای این نشانی ایمیل از این کار انصراف دهید."
 
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -23833,17 +23833,17 @@ msgstr "مهلت زمانی"
 #. js-lingui-id: iXabD0
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Timeout days (Optional)"
-msgstr ""
+msgstr "روزهای زمان‌انتظار (اختیاری)"
 
 #. js-lingui-id: tfdFT7
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Timeout hours (Optional)"
-msgstr ""
+msgstr "ساعت‌های زمان‌انتظار (اختیاری)"
 
 #. js-lingui-id: 6+eCbH
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Timeout minutes (Optional)"
-msgstr ""
+msgstr "دقیقه‌های زمان‌انتظار (اختیاری)"
 
 #. js-lingui-id: 8TMaZI
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -23900,7 +23900,7 @@ msgstr "امروز"
 #. js-lingui-id: TNXmKt
 #: src/modules/ai/hooks/useFormatAgentChatThreadDate.ts
 msgid "Today, {time}"
-msgstr ""
+msgstr "امروز، {time}"
 
 #. js-lingui-id: L3b7Bm
 #. placeholder {0}: recordGroupDefinition.title
@@ -23936,7 +23936,7 @@ msgstr "مصرف توکن"
 #. js-lingui-id: WOr+hW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "tokens"
-msgstr ""
+msgstr "توکن‌ها"
 
 #. js-lingui-id: 6RDwJM
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -24040,7 +24040,7 @@ msgstr "مجموع"
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Total earned"
-msgstr ""
+msgstr "کل کسب‌شده"
 
 #. js-lingui-id: v7vAuj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -24057,17 +24057,17 @@ msgstr "مصرف هوش مصنوعی را در فضای کاری خود پیگی
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Track link clicks"
-msgstr ""
+msgstr "ردیابی کلیک‌های پیوند"
 
 #. js-lingui-id: U0HZma
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Tracking"
-msgstr ""
+msgstr "ردیابی"
 
 #. js-lingui-id: CVnZXW
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
 msgid "Tracking off"
-msgstr ""
+msgstr "ردیابی خاموش است"
 
 #. js-lingui-id: DDziIo
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
@@ -24126,7 +24126,7 @@ msgstr "ترجمه‌ها"
 #. js-lingui-id: R3UKip
 #: src/modules/ai/components/NavigationDrawerAiChatTriageSection.tsx
 msgid "Triage"
-msgstr ""
+msgstr "دسته‌بندی"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -24243,37 +24243,37 @@ msgstr "درست"
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when a multi-select or array field contains the value, or when a text contains the given text. Letter case matters."
-msgstr ""
+msgstr "زمانی درست است که یک فیلد چندانتخابی یا آرایه شامل مقدار باشد، یا متنی شامل متن داده‌شده باشد. بزرگی و کوچکی حروف مهم است."
 
 #. js-lingui-id: bRld7r
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "True when at least one side is true."
-msgstr ""
+msgstr "زمانی درست است که دست‌کم یکی از دو طرف درست باشد."
 
 #. js-lingui-id: KdPrHC
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "True when both sides are true."
-msgstr ""
+msgstr "زمانی درست است که هر دو طرف درست باشند."
 
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is a text with at least one character."
-msgstr ""
+msgstr "زمانی درست است که مقدار متنی با دست‌کم یک نویسه باشد."
 
 #. js-lingui-id: kRwBsc
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is not set, an empty text, an empty list, or a composite field with every part empty."
-msgstr ""
+msgstr "زمانی درست است که مقدار تنظیم نشده باشد، متن یا فهرست خالی باشد، یا فیلد ترکیبی‌ای باشد که همه بخش‌هایش خالی‌اند."
 
 #. js-lingui-id: SaqJTE
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "True when the value is one of the listed values."
-msgstr ""
+msgstr "زمانی درست است که مقدار یکی از مقادیر فهرست‌شده باشد."
 
 #. js-lingui-id: tgOmej
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is set, even to an empty text."
-msgstr ""
+msgstr "زمانی درست است که مقدار تنظیم شده باشد، حتی اگر متن خالی باشد."
 
 #. js-lingui-id: KDw4GX
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -24286,7 +24286,7 @@ msgstr "دوباره تلاش کنید"
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Try again in a moment"
-msgstr ""
+msgstr "لحظه‌ای دیگر دوباره تلاش کنید"
 
 #. js-lingui-id: 64tOpZ
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
@@ -24331,12 +24331,12 @@ msgstr "روشن کردن حالت توسعه‌دهنده"
 #. js-lingui-id: Ug9k2v
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, and let workflows route agent questions to a member."
-msgstr ""
+msgstr "زبانه هوش مصنوعی را به صندوق ورودی تبدیل کنید تا گفتگوها را دسته‌بندی، واگذار، به‌تعویق‌انداخته و دنبال کنید، و اجازه دهید گردش‌های کاری پرسش‌های عامل را به یک عضو هدایت کنند."
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "Turns true into false and false into true."
-msgstr ""
+msgstr "مقدار true را به false و مقدار false را به true تبدیل می‌کند."
 
 #. js-lingui-id: EdHWDU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -24346,7 +24346,7 @@ msgstr "فیروزه‌ای"
 #. js-lingui-id: 8pmRvi
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Twenty adds the people you email and meet, and keeps them up to date without manual data entry."
-msgstr ""
+msgstr "Twenty افرادی را که به آن‌ها ایمیل می‌زنید و ملاقات می‌کنید اضافه می‌کند و بدون ورود دستی داده، اطلاعاتشان را به‌روز نگه می‌دارد."
 
 #. js-lingui-id: JnaRPe
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
@@ -24361,7 +24361,7 @@ msgstr "Twenty هر سطح را با بهترین مدلی که نیازهای �
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "Twenty works better with your team"
-msgstr ""
+msgstr "Twenty با تیم شما بهتر کار می‌کند"
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -24410,7 +24410,7 @@ msgstr "راه‌اندازی احراز هویت دو عاملی با موفق�
 #. js-lingui-id: VgBvkK
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Two-factor authentication was reset for this workspace. Set it up again from Settings, Profile."
-msgstr ""
+msgstr "احراز هویت دومرحله‌ای برای این فضای کاری بازنشانی شد. آن را دوباره از تنظیمات، نمایه تنظیم کنید."
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/ai/components/AgentOutputFieldTypeSelector.tsx
@@ -24445,7 +24445,7 @@ msgstr "برای فرمان‌ها '/' و برای اشاره‌ها '@' را ت
 #. js-lingui-id: XhqvGG
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 msgid "Type a field name or a function"
-msgstr ""
+msgstr "نام یک فیلد یا یک تابع را وارد کنید"
 
 #. js-lingui-id: qzD6hf
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
@@ -24554,7 +24554,7 @@ msgstr "داده‌های نمایش‌داده‌نشده: حداکثر {maxIte
 #. js-lingui-id: 9uI/rE
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
 msgid "Undo"
-msgstr ""
+msgstr "واگرد"
 
 #. js-lingui-id: fo0VXg
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
@@ -24576,7 +24576,7 @@ msgstr "پیش از حذف این برنامه، آن را از همه فضاه�
 #. js-lingui-id: v3XLn7
 #: src/modules/settings/applications/components/SettingsApplicationUninstallButton.tsx
 msgid "Uninstalling {displayedUninstallProgress}"
-msgstr ""
+msgstr "در حال حذف نصب {displayedUninstallProgress}"
 
 #. js-lingui-id: wSXm5S
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -24600,7 +24600,7 @@ msgstr "واحد"
 #. js-lingui-id: aSwfbR
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Unit"
-msgstr ""
+msgstr "واحد"
 
 #. js-lingui-id: fMyWEp
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -24818,12 +24818,12 @@ msgstr "اشتراک لغو شد"
 #. js-lingui-id: v0c5Uz
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
-msgstr ""
+msgstr "لغو اشتراک در {eventTime}. پیام‌های جدید تا زمانی که از شما نام برده نشود، خارج از صندوق ورودی شما می‌مانند."
 
 #. js-lingui-id: 7fkcOT
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Unsubscribed {unsubscribedTime}"
-msgstr ""
+msgstr "لغو اشتراک در {unsubscribedTime}"
 
 #. js-lingui-id: uxfv+n
 #: src/modules/activities/emails/hooks/useUploadEmailImage.ts
@@ -24833,7 +24833,7 @@ msgstr "قالب تصویر پشتیبانی نمی‌شود"
 #. js-lingui-id: I9zMVO
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Until {snoozedUntilDay}"
-msgstr ""
+msgstr "تا {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadTitle.tsx
@@ -24871,7 +24871,7 @@ msgstr "{labelSingular} بدون عنوان"
 #. js-lingui-id: yTvVot
 #: src/modules/object-core/agents/hooks/useCreateCoreAgent.ts
 msgid "Untitled agent"
-msgstr ""
+msgstr "عامل بدون عنوان"
 
 #. js-lingui-id: zJsHrW
 #: src/modules/ai/components/AgentOutputSchemaFieldHeader.tsx
@@ -25128,7 +25128,7 @@ msgstr "برای دسترسی به گزارش‌های ممیزی، به ساز�
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Organization to configure SSO."
-msgstr ""
+msgstr "برای پیکربندی SSO به سازمان ارتقا دهید."
 
 #. js-lingui-id: Ic7ooY
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
@@ -25143,7 +25143,7 @@ msgstr "دوره آزمایشی رایگان خود را ارتقا دهید"
 #. js-lingui-id: iDbC4C
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Upgrade your trial"
-msgstr ""
+msgstr "نسخه آزمایشی خود را ارتقا دهید"
 
 #. js-lingui-id: T1mDWj
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -25347,12 +25347,12 @@ msgstr "هنگام ایجاد رکوردها از یک فرم اختصاصی ا�
 #. js-lingui-id: 2DCFBo
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use a dedicated initial view for each object in navigation and the view picker."
-msgstr ""
+msgstr "برای هر شیء در ناوبری و انتخاب‌گر نما، یک نمای آغازین اختصاصی استفاده کنید."
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx
 msgid "Use a recovery code"
-msgstr ""
+msgstr "از کد بازیابی استفاده کنید"
 
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
@@ -25543,7 +25543,7 @@ msgstr "از مقدار پیش‌فرض استفاده می‌شود. برای �
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "UTC is used when no time zone is selected"
-msgstr ""
+msgstr "وقتی هیچ منطقه زمانی انتخاب نشده باشد، از UTC استفاده می‌شود"
 
 #. js-lingui-id: b1dG47
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -25553,7 +25553,7 @@ msgstr "ازبکی"
 #. js-lingui-id: nfagfM
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Valid"
-msgstr ""
+msgstr "معتبر"
 
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -25563,13 +25563,13 @@ msgstr "اعتبارسنجی داده‌ها"
 #. js-lingui-id: 6N5/Xk
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "validation rule"
-msgstr ""
+msgstr "قانون اعتبارسنجی"
 
 #. js-lingui-id: 8Dcl1Z
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Validation rules"
-msgstr ""
+msgstr "قوانین اعتبارسنجی"
 
 #. js-lingui-id: PWZBIT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -25977,7 +25977,7 @@ msgstr "در انتظار فرزندان"
 #. js-lingui-id: 7YxIQV
 #: src/modules/ai/components/AiChatFormStatusRenderer.tsx
 msgid "Waiting for a form to be filled in"
-msgstr ""
+msgstr "در انتظار تکمیل شدن فرم"
 
 #. js-lingui-id: TdQd9Q
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -25992,7 +25992,7 @@ msgstr "در انتظار مجوز"
 #. js-lingui-id: /gO/m8
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Waiting for your approval"
-msgstr ""
+msgstr "در انتظار تأیید شما"
 
 #. js-lingui-id: THYlSm
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -26073,7 +26073,7 @@ msgstr "در حال حاضر با این برنامه مشکلاتی داریم 
 #. js-lingui-id: yIwCqY
 #: src/modules/object-core/components/CoreObjectIndexPageLayout.tsx
 msgid "We could not load your {labelPlural}. Please try again later."
-msgstr ""
+msgstr "نتوانستیم {labelPlural} شما را بارگیری کنیم. لطفاً بعداً دوباره تلاش کنید."
 
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -26089,7 +26089,7 @@ msgstr "نتوانستیم روش پرداخت شما را تأیید کنیم. 
 #. js-lingui-id: yL484l
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "We couldn't load the conversations"
-msgstr ""
+msgstr "نتوانستیم گفتگوها را بارگیری کنیم"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -26290,7 +26290,7 @@ msgstr "آنچه هر زبان برای برچسب‌های این شیء نما
 #. js-lingui-id: R+bEwa
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "What people see when the condition is false, and where it shows."
-msgstr ""
+msgstr "آنچه افراد هنگام نادرست بودن شرط می‌بینند و محل نمایش آن."
 
 #. js-lingui-id: 51JeJw
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -26300,7 +26300,7 @@ msgstr "چه چیزی باید طبقه‌بندی شود؟"
 #. js-lingui-id: rmMbbz
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "What should the agent do when this trigger fires?"
-msgstr ""
+msgstr "عامل هنگام فعال شدن این راه‌انداز چه کاری باید انجام دهد؟"
 
 #. js-lingui-id: N0N49E
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -26336,7 +26336,7 @@ msgstr "وقتی یک سرنخ جدید با منبع «وب‌سایت» ایج
 #. js-lingui-id: 8bOffh
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "When a record changes"
-msgstr ""
+msgstr "وقتی یک رکورد تغییر می‌کند"
 
 #. js-lingui-id: haFWB2
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26351,7 +26351,7 @@ msgstr "وقتی غیرفعال باشد، رویداد بدون شرکت‌کن
 #. js-lingui-id: E2I4La
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop."
-msgstr ""
+msgstr "عامل چه زمانی باید متوقف شود و از شما بپرسد؟ مثلاً پیش از ارسال هر ایمیل یا تغییر مبلغ یک معامله. برای اینکه هرگز متوقف نشود، خالی بگذارید."
 
 #. js-lingui-id: 7pDj1C
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
@@ -26399,12 +26399,12 @@ msgstr "این‌که آیا این مدل از استدلال زنجیره‌ا
 #. js-lingui-id: UbN9B0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Which conversation with the recipient this step writes to"
-msgstr ""
+msgstr "این گام در کدام گفتگو با گیرنده می‌نویسد"
 
 #. js-lingui-id: rfuOpl
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr ""
+msgstr "رکوردی از {objectLabel} را می‌توان با چه کسانی به اشتراک گذاشت. نقش‌ها همچنان تعیین می‌کنند افراد به‌طور پیش‌فرض چه چیزی را ببینند."
 
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -26414,7 +26414,7 @@ msgstr "کل فهرست"
 #. js-lingui-id: x6KwSw
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Whole record"
-msgstr ""
+msgstr "کل رکورد"
 
 #. js-lingui-id: AHXN2z
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -26452,7 +26452,7 @@ msgstr "Windsurf / Cascade"
 #. js-lingui-id: tVV1AC
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "With the recipient, or the workflow creator when empty. It stays out of their inbox until the agent needs them."
-msgstr ""
+msgstr "با گیرنده، یا در صورت خالی بودن با سازنده گردش کار. تا زمانی که عامل به آن‌ها نیاز نداشته باشد، خارج از صندوق ورودی‌شان می‌ماند."
 
 #. js-lingui-id: p9B1Re
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -26467,13 +26467,13 @@ msgstr "بدون کارت اعتباری"
 #. js-lingui-id: rZg70x
 #: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
 msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr ""
+msgstr "آن را نخواهند دید: نقش آن‌ها به {objectLabelPlural} دسترسی ندارد"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "Worked for {0}"
-msgstr ""
+msgstr "برای {0} کار کرد"
 
 #. js-lingui-id: 3J7l5w
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -26516,7 +26516,7 @@ msgstr "اجرای گردش کار"
 #. js-lingui-id: uMSeM4
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow inbox messages"
-msgstr ""
+msgstr "پیام‌های صندوق ورودی گردش کار"
 
 #. js-lingui-id: 91e2Af
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -26536,7 +26536,7 @@ msgstr "نتایج مرحله گردش کار"
 #. js-lingui-id: NOvOUq
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Workflow steps"
-msgstr ""
+msgstr "گام‌های گردش کار"
 
 #. js-lingui-id: 2CydYH
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -26665,7 +26665,7 @@ msgstr "ایجاد فضای کاری ناموفق بود"
 #. js-lingui-id: xM1hP9
 #: src/modules/object-core/agents/components/CoreAgentModelCell.tsx
 msgid "Workspace default"
-msgstr ""
+msgstr "پیش‌فرض فضای کاری"
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -26783,7 +26783,7 @@ msgstr "برای این عامل توضیحی بنویسید"
 #. js-lingui-id: P28Nzv
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 msgid "Write the email"
-msgstr ""
+msgstr "ایمیل را بنویسید"
 
 #. js-lingui-id: zeCIJi
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx

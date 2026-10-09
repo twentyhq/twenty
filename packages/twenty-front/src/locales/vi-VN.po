@@ -4121,7 +4121,7 @@ msgstr "Bị trả lại"
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 msgid "Breadcrumb"
-msgstr ""
+msgstr "Đường dẫn điều hướng"
 
 #. js-lingui-id: 8mzNUs
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -15467,7 +15467,7 @@ msgstr ""
 #. js-lingui-id: wxiEkK
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "New Workflow"
-msgstr ""
+msgstr "Quy trình công việc mới"
 
 #. js-lingui-id: horr45
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -15495,7 +15495,7 @@ msgstr "Lần tính phí tiếp theo {totalRenewDate}. Số tiền hóa đơn c�
 #. js-lingui-id: vBiulE
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Next chat"
-msgstr ""
+msgstr "Cuộc trò chuyện tiếp theo"
 
 #. js-lingui-id: LTn6w8
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -15515,12 +15515,12 @@ msgstr "Câu hỏi tiếp theo"
 #. js-lingui-id: vpyN3x
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Next record"
-msgstr ""
+msgstr "Bản ghi tiếp theo"
 
 #. js-lingui-id: +VXdSO
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Next request"
-msgstr ""
+msgstr "Yêu cầu tiếp theo"
 
 #. js-lingui-id: tgnDjk
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
@@ -15536,7 +15536,7 @@ msgstr "Bước tiếp theo"
 #. js-lingui-id: IT903p
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
 msgid "Next week"
-msgstr ""
+msgstr "Tuần tới"
 
 #. js-lingui-id: ulck7h
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -15661,7 +15661,7 @@ msgstr "Không tìm thấy ứng dụng nào"
 #. js-lingui-id: 3bvkPk
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "No assignee"
-msgstr ""
+msgstr "Chưa được giao"
 
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
@@ -15733,13 +15733,13 @@ msgstr "Không có nội dung"
 #. js-lingui-id: r1vGgi
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "No conversation selected"
-msgstr ""
+msgstr "Chưa chọn cuộc trò chuyện nào"
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "No conversations"
-msgstr ""
+msgstr "Không có cuộc trò chuyện nào"
 
 #. js-lingui-id: Zpgvun
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -16026,7 +16026,7 @@ msgstr "Không có tuỳ chọn nào"
 #. js-lingui-id: UbbJ8j
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 msgid "No options found"
-msgstr ""
+msgstr "Không tìm thấy tuỳ chọn nào"
 
 #. js-lingui-id: XRc1G9
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -16115,7 +16115,7 @@ msgstr "Không tìm thấy quan hệ nào"
 #. js-lingui-id: laEyIC
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 msgid "No reply"
-msgstr ""
+msgstr "Không có phản hồi"
 
 #. js-lingui-id: YLozFb
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -16174,12 +16174,12 @@ msgstr "Không có hàng nào có lỗi"
 #. js-lingui-id: sndgwL
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 msgid "No rules yet"
-msgstr ""
+msgstr "Chưa có quy tắc nào"
 
 #. js-lingui-id: eOvDHm
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "No runs yet"
-msgstr ""
+msgstr "Chưa có lần chạy nào"
 
 #. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -16221,7 +16221,7 @@ msgstr "Không phát hiện giọng nói trong bản ghi này."
 #. js-lingui-id: Cs7AbK
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No speech was detected, so there is nothing to summarize."
-msgstr ""
+msgstr "Không phát hiện lời nói, nên không có gì để tóm tắt."
 
 #. js-lingui-id: eeoVfm
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
@@ -16364,12 +16364,12 @@ msgstr "Chưa có phiên bản workflows nào"
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No Workflows found"
-msgstr ""
+msgstr "Không tìm thấy quy trình công việc nào"
 
 #. js-lingui-id: Le81Ct
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No Workflows match your filters. Try removing some of them."
-msgstr ""
+msgstr "Không có quy trình công việc nào khớp với bộ lọc của bạn. Hãy thử xóa một số bộ lọc."
 
 #. js-lingui-id: 0R8Pxd
 #: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
@@ -16453,7 +16453,7 @@ msgstr "Không có"
 #. js-lingui-id: ixhAJF
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "None, only send the message"
-msgstr ""
+msgstr "Không có, chỉ gửi tin nhắn"
 
 #. js-lingui-id: 1IipHp
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -16536,7 +16536,7 @@ msgstr "Chưa ghi âm"
 #. js-lingui-id: gnnpkq
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed since it was proposed"
-msgstr ""
+msgstr "Không chạy: bản ghi đã thay đổi kể từ khi được đề xuất"
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -16597,7 +16597,7 @@ msgstr "Không có gì để xem"
 #. js-lingui-id: lGMk6n
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Nothing to suggest here."
-msgstr ""
+msgstr "Không có gì để đề xuất ở đây."
 
 #. js-lingui-id: iDNBZe
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
@@ -16631,7 +16631,7 @@ msgstr "Số"
 #. js-lingui-id: euEGx7
 #: src/modules/settings/components/SettingsCounter.tsx
 msgid "Number field"
-msgstr ""
+msgstr "Trường số"
 
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -16850,7 +16850,7 @@ msgstr "trên {0}"
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "On a schedule"
-msgstr ""
+msgstr "Theo lịch trình"
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -16937,7 +16937,7 @@ msgstr "Một hoặc nhiều bộ lọc tham chiếu đến các trường đã 
 #. js-lingui-id: mwvUSb
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "One per run"
-msgstr ""
+msgstr "Một cho mỗi lần chạy"
 
 #. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -17011,22 +17011,22 @@ msgstr "chỉ vào {remainingDays} và {0}"
 #. js-lingui-id: k24ukM
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "Only people who can already access these records"
-msgstr ""
+msgstr "Chỉ những người đã có thể truy cập các bản ghi này"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
-msgstr ""
+msgstr "Chỉ chạy khi một trong các trường này thay đổi"
 
 #. js-lingui-id: YSJayJ
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Only the creator of this record and people with full access to it can change who has access."
-msgstr ""
+msgstr "Chỉ người tạo bản ghi này và những người có toàn quyền truy cập bản ghi mới có thể thay đổi người có quyền truy cập."
 
 #. js-lingui-id: afNmH6
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
-msgstr ""
+msgstr "Chỉ người tạo bản ghi này, những người có toàn quyền truy cập bản ghi và quản trị viên mới có thể thay đổi người có quyền truy cập."
 
 #. js-lingui-id: saaSLd
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
@@ -17036,7 +17036,7 @@ msgstr "Chỉ chủ đề được chia sẻ"
 #. js-lingui-id: 81b4+w
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Only write calendar events and participants that changed since the last sync."
-msgstr ""
+msgstr "Chỉ ghi các sự kiện lịch và người tham gia đã thay đổi kể từ lần đồng bộ hóa gần nhất."
 
 #. js-lingui-id: y0Uyng
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -17065,7 +17065,7 @@ msgstr "Mở một tích hợp được duy trì hoặc điền sẵn các ứng
 #. js-lingui-id: DsW8lN
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailDesignPage.tsx
 msgid "Open an email editor to design it."
-msgstr ""
+msgstr "Mở trình soạn thảo email để thiết kế email."
 
 #. js-lingui-id: 650kGT
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -17075,7 +17075,7 @@ msgstr "Mở trình soạn thảo email để chỉnh sửa cài đặt khối."
 #. js-lingui-id: WsTGFR
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailPageStylePage.tsx
 msgid "Open an email editor to edit the page style."
-msgstr ""
+msgstr "Mở trình soạn thảo email để chỉnh sửa kiểu trang."
 
 #. js-lingui-id: JG4LoU
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -17087,7 +17087,7 @@ msgstr "Mở dưới dạng liên kết"
 #: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
 #: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
 msgid "Open chats in"
-msgstr ""
+msgstr "Mở cuộc trò chuyện trong"
 
 #. js-lingui-id: n0vVgf
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17236,13 +17236,13 @@ msgstr "Các thao tác"
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Opt out of click tracking"
-msgstr ""
+msgstr "Không theo dõi lượt nhấp"
 
 #. js-lingui-id: IclqIc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribe.tsx
 msgid "Opt-outs"
-msgstr ""
+msgstr "Các lựa chọn không tham gia"
 
 #. js-lingui-id: fgY76O
 #. placeholder {0}: index + 1
@@ -17417,7 +17417,7 @@ msgstr "Không gian làm việc khác"
 #. js-lingui-id: qxvgIJ
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
 msgid "Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here."
-msgstr ""
+msgstr "Các không gian làm việc khác phụ thuộc vào tuyến máy chủ của ứng dụng này, được phục vụ từ không gian làm việc này. Hãy chuyển quyền sở hữu ứng dụng sang một không gian làm việc khác nơi ứng dụng được cài đặt, hoặc gỡ cài đặt ứng dụng khỏi tất cả không gian làm việc khác, trước khi gỡ cài đặt tại đây."
 
 #. js-lingui-id: NuKR0h
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
@@ -17749,7 +17749,7 @@ msgstr "Những người tôi đã gửi email đến."
 #. js-lingui-id: XFoNbi
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "People you add get this record even if their role can't access {objectLabelPlural}. Field permissions still apply."
-msgstr ""
+msgstr "Những người bạn thêm sẽ nhận được bản ghi này ngay cả khi vai trò của họ không thể truy cập {objectLabelPlural}. Quyền của trường vẫn được áp dụng."
 
 #. js-lingui-id: VloFYI
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -17888,7 +17888,7 @@ msgstr "Chọn thời gian gửi trong tương lai."
 #. js-lingui-id: BypbQt
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
 msgid "Pick a time in the future"
-msgstr ""
+msgstr "Chọn một thời điểm trong tương lai"
 
 #. js-lingui-id: rV71K7
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -18086,7 +18086,7 @@ msgstr "Số nhiều"
 #. js-lingui-id: mtjKfB
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "points"
-msgstr ""
+msgstr "điểm"
 
 #. js-lingui-id: trnWaw
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -18159,7 +18159,7 @@ msgstr "Tiền tố"
 #. js-lingui-id: IHoyJS
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Preparing an action to approve..."
-msgstr ""
+msgstr "Đang chuẩn bị một hành động để phê duyệt..."
 
 #. js-lingui-id: dVCM1s
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -18221,7 +18221,7 @@ msgstr "7 ngày trước"
 #. js-lingui-id: RCsICd
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Previous chat"
-msgstr ""
+msgstr "Cuộc trò chuyện trước"
 
 #. js-lingui-id: +Qcc/o
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -18236,12 +18236,12 @@ msgstr "Chu kỳ trước"
 #. js-lingui-id: gS9MCC
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Previous record"
-msgstr ""
+msgstr "Bản ghi trước"
 
 #. js-lingui-id: ToM1t/
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Previous request"
-msgstr ""
+msgstr "Yêu cầu trước"
 
 #. js-lingui-id: k7xxm/
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
@@ -18442,7 +18442,7 @@ msgstr "Xuất bản ứng dụng của bạn lên chợ ứng dụng để ngư
 #. js-lingui-id: zZk9Yz
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Purchase"
-msgstr ""
+msgstr "Mua"
 
 #. js-lingui-id: mF9LxA
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -18489,7 +18489,7 @@ msgstr "Câu hỏi"
 #. js-lingui-id: pA8K5M
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
 msgid "Question skipped"
-msgstr ""
+msgstr "Đã bỏ qua câu hỏi"
 
 #. js-lingui-id: enzGAL
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
@@ -18499,7 +18499,7 @@ msgstr "Câu hỏi"
 #. js-lingui-id: Wzbxi7
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
 msgid "Questions skipped"
-msgstr ""
+msgstr "Đã bỏ qua các câu hỏi"
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
@@ -18663,7 +18663,7 @@ msgstr "Nhận email chứa đường link cập nhật mật khẩu"
 #. js-lingui-id: CCTop/
 #: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
 msgid "Recent"
-msgstr ""
+msgstr "Gần đây"
 
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -18758,12 +18758,12 @@ msgstr "Bản ghi (ID)"
 #. js-lingui-id: fUbj63
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record (Optional)"
-msgstr ""
+msgstr "Bản ghi (Không bắt buộc)"
 
 #. js-lingui-id: OhTdMH
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Record {displayedRecordNumber} of {recordCount}"
-msgstr ""
+msgstr "Bản ghi {displayedRecordNumber} trong số {recordCount}"
 
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -18805,17 +18805,17 @@ msgstr "Ảnh hồ sơ"
 #. js-lingui-id: wNysMp
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record is created"
-msgstr ""
+msgstr "Bản ghi được tạo"
 
 #. js-lingui-id: pTBjmd
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record is deleted"
-msgstr ""
+msgstr "Bản ghi bị xóa"
 
 #. js-lingui-id: rdLUKj
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record is updated"
-msgstr ""
+msgstr "Bản ghi được cập nhật"
 
 #. js-lingui-id: K6/7kH
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
@@ -18833,18 +18833,18 @@ msgstr "Trang hồ sơ"
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
-msgstr ""
+msgstr "Lựa chọn bản ghi"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
-msgstr ""
+msgstr "Chia sẻ bản ghi"
 
 #. js-lingui-id: ugcm0I
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record sharing visibility"
-msgstr ""
+msgstr "Khả năng hiển thị khi chia sẻ bản ghi"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -18854,7 +18854,7 @@ msgstr "Cài đặt bảng bản ghi"
 #. js-lingui-id: CV/ZuS
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Record type"
-msgstr ""
+msgstr "Loại bản ghi"
 
 #. js-lingui-id: kvxD0C
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
@@ -18902,7 +18902,7 @@ msgstr "Đã lên lịch ghi âm"
 #. js-lingui-id: ECgtG5
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "records"
-msgstr ""
+msgstr "bản ghi"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/ai/components/AiChatAddMenu.tsx
@@ -18926,17 +18926,17 @@ msgstr "Bản ghi đã chọn"
 #. js-lingui-id: sE6EHz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Records will no longer be checked against it. Existing records are not changed."
-msgstr ""
+msgstr "Các bản ghi sẽ không còn được kiểm tra theo quy tắc này. Các bản ghi hiện có sẽ không thay đổi."
 
 #. js-lingui-id: FFbqii
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 msgid "Recovery code copied to clipboard"
-msgstr ""
+msgstr "Đã sao chép mã khôi phục vào bảng tạm"
 
 #. js-lingui-id: Vms4rv
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Recovery code revoked."
-msgstr ""
+msgstr "Đã thu hồi mã khôi phục."
 
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -19020,12 +19020,12 @@ msgstr "Đã đăng ký làm môi trường phát triển. Môi trường này s
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Reject"
-msgstr ""
+msgstr "Từ chối"
 
 #. js-lingui-id: ekCRTP
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
-msgstr ""
+msgstr "Đã từ chối"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -19306,7 +19306,7 @@ msgstr "Xóa nhà cung cấp này và ngắt kết nối tất cả các mô hì
 #. js-lingui-id: txqag8
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Remove trigger"
-msgstr ""
+msgstr "Xóa điều kiện kích hoạt"
 
 #. js-lingui-id: Kl3J3D
 #: src/modules/advanced-text-editor/extensions/variable-tag/VariableChip.tsx
@@ -19339,7 +19339,7 @@ msgstr "Đổi tên cho tất cả ngôn ngữ"
 #. js-lingui-id: vtxT26
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
 msgid "Rename group"
-msgstr ""
+msgstr "Đổi tên nhóm"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19355,7 +19355,7 @@ msgstr "Gia hạn vào ngày"
 #. placeholder {0}: tab.title
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
 msgid "Reorder {0} tab"
-msgstr ""
+msgstr "Sắp xếp lại tab {0}"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -19417,7 +19417,7 @@ msgstr "Yêu cầu"
 #. js-lingui-id: tZ7Xci
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Request {requestNumber} of {requestCount}"
-msgstr ""
+msgstr "Yêu cầu {requestNumber} trong số {requestCount}"
 
 #. js-lingui-id: /laZGZ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -19427,12 +19427,12 @@ msgstr "Yêu cầu thất bại"
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "requests"
-msgstr ""
+msgstr "yêu cầu"
 
 #. js-lingui-id: PWfg7v
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Requests"
-msgstr ""
+msgstr "Yêu cầu"
 
 #. js-lingui-id: +gFBV8
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -19448,7 +19448,7 @@ msgstr "Bắt buộc"
 #. js-lingui-id: tT28g5
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Required to run the action"
-msgstr ""
+msgstr "Bắt buộc để chạy hành động"
 
 #. js-lingui-id: r38Vo4
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
@@ -19547,12 +19547,12 @@ msgstr "Thay đổi kích thước đầu vào"
 #. js-lingui-id: vGU/RI
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Resize log console"
-msgstr ""
+msgstr "Thay đổi kích thước bảng điều khiển nhật ký"
 
 #. js-lingui-id: W99DI7
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Resize log details"
-msgstr ""
+msgstr "Thay đổi kích thước chi tiết nhật ký"
 
 #. js-lingui-id: w62xpE
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
@@ -19562,7 +19562,7 @@ msgstr "Thay đổi kích thước nhật ký"
 #. js-lingui-id: vkwEuj
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawer.tsx
 msgid "Resize navigation drawer"
-msgstr ""
+msgstr "Thay đổi kích thước ngăn điều hướng"
 
 #. js-lingui-id: UQyayN
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
@@ -19572,7 +19572,7 @@ msgstr "Thay đổi kích thước đầu ra"
 #. js-lingui-id: vTWEAa
 #: src/modules/side-panel/components/SidePanelForDesktop.tsx
 msgid "Resize side panel"
-msgstr ""
+msgstr "Thay đổi kích thước ngăn bên"
 
 #. js-lingui-id: N0vrR6
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -19726,7 +19726,7 @@ msgstr "ngược theo thứ tự bảng chữ cái"
 #. js-lingui-id: 35zlhZ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 msgid "Review this email before it goes out"
-msgstr ""
+msgstr "Xem lại email này trước khi gửi đi"
 
 #. js-lingui-id: GXsAby
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
@@ -19915,27 +19915,27 @@ msgstr "Ruby"
 #. js-lingui-id: jXsttb
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "Rule created."
-msgstr ""
+msgstr "Đã tạo quy tắc."
 
 #. js-lingui-id: Tz7o+/
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule deleted."
-msgstr ""
+msgstr "Đã xóa quy tắc."
 
 #. js-lingui-id: GOqDOz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule disabled."
-msgstr ""
+msgstr "Đã vô hiệu hóa quy tắc."
 
 #. js-lingui-id: XdExw+
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule enabled."
-msgstr ""
+msgstr "Đã bật quy tắc."
 
 #. js-lingui-id: sBTDyi
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule updated."
-msgstr ""
+msgstr "Đã cập nhật quy tắc."
 
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -19960,7 +19960,7 @@ msgstr "Chạy các phần chậm của thay đổi mô hình dữ liệu trong 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Run this agent on its own when records change or on a schedule. It runs with its role's permissions."
-msgstr ""
+msgstr "Chạy tác nhân này tự động khi bản ghi thay đổi hoặc theo lịch trình. Tác nhân chạy với quyền của vai trò của nó."
 
 #. js-lingui-id: RiQMUh
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
@@ -20002,7 +20002,7 @@ msgstr "Lượt chạy"
 #. js-lingui-id: RASTzS
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Runs appear here once a workflow or an app uses this agent"
-msgstr ""
+msgstr "Các lần chạy sẽ xuất hiện ở đây khi một quy trình công việc hoặc ứng dụng sử dụng tác nhân này"
 
 #. js-lingui-id: eo1n1s
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -20065,7 +20065,7 @@ msgstr "Tiết kiệm 25% khi thanh toán hàng năm"
 #. js-lingui-id: 8tM8+a
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 msgid "Save as draft"
-msgstr ""
+msgstr "Lưu dưới dạng bản nháp"
 
 #. js-lingui-id: apLRCm
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -20272,7 +20272,7 @@ msgstr "Tìm kiếm một loại"
 #. js-lingui-id: JVbOF1
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 msgid "Search activity types"
-msgstr ""
+msgstr "Tìm kiếm các loại hoạt động"
 
 #. js-lingui-id: ujLBwP
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
@@ -20432,7 +20432,7 @@ msgstr "Biểu tượng tìm kiếm"
 #. js-lingui-id: AaDUlx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
-msgstr ""
+msgstr "Tìm kiếm thành viên"
 
 #. js-lingui-id: two5rl
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
@@ -20486,7 +20486,7 @@ msgstr "Tìm kiếm các bước và trường"
 #. js-lingui-id: rws5EE
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 msgid "Search workspace members"
-msgstr ""
+msgstr "Tìm kiếm thành viên không gian làm việc"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -20523,7 +20523,7 @@ msgstr "lượt tìm kiếm"
 #. js-lingui-id: bnmBb4
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Searches"
-msgstr ""
+msgstr "Lượt tìm kiếm"
 
 #. js-lingui-id: EvDUJy
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -20745,12 +20745,12 @@ msgstr "Chọn 1 trường"
 #. js-lingui-id: mY6oY7
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
 msgid "Select a block to edit its style."
-msgstr ""
+msgstr "Chọn một khối để chỉnh sửa kiểu của khối."
 
 #. js-lingui-id: PWGE2B
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker.tsx
 msgid "Select a current user field"
-msgstr ""
+msgstr "Chọn một trường người dùng hiện tại"
 
 #. js-lingui-id: OMoA3j
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -20783,7 +20783,7 @@ msgstr "Chọn một trường để hiển thị trong tiện ích này"
 #. js-lingui-id: 0DL3XU
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect.tsx
 msgid "Select a filter field"
-msgstr ""
+msgstr "Chọn một trường lọc"
 
 #. js-lingui-id: rHNnAT
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20871,7 +20871,7 @@ msgstr "Chọn một tuỳ chọn"
 #. js-lingui-id: 0yxhOL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 msgid "Select chat"
-msgstr ""
+msgstr "Chọn cuộc trò chuyện"
 
 #. js-lingui-id: 21YIUv
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
@@ -20881,7 +20881,7 @@ msgstr "Chọn cột..."
 #. js-lingui-id: SJQM1I
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 msgid "Select date"
-msgstr ""
+msgstr "Chọn ngày"
 
 #. js-lingui-id: U+WOF9
 #: src/modules/settings/components/SettingsDatePickerInput.tsx
@@ -20897,7 +20897,7 @@ msgstr "Chọn thực thể"
 #. js-lingui-id: vljOfc
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButton.tsx
 msgid "Select field"
-msgstr ""
+msgstr "Chọn trường"
 
 #. js-lingui-id: PSqlgu
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -20969,7 +20969,7 @@ msgstr "Chọn các trường cụ thể để lắng nghe"
 #. js-lingui-id: ypTnjb
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Select specific fields to wait for"
-msgstr ""
+msgstr "Chọn các trường cụ thể để chờ"
 
 #. js-lingui-id: 8+U1XJ
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
@@ -21010,7 +21010,7 @@ msgstr "Chọn một giá trị"
 #. js-lingui-id: W5z7K7
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 msgid "Select workspace members"
-msgstr ""
+msgstr "Chọn thành viên không gian làm việc"
 
 #. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -21306,7 +21306,7 @@ msgstr "Thiết lập DNS bằng AI"
 #. js-lingui-id: nRVdl6
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Set up forwarding and DNS"
-msgstr ""
+msgstr "Thiết lập chuyển tiếp và DNS"
 
 #. js-lingui-id: l6W1lM
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -21385,12 +21385,12 @@ msgstr "Chia sẻ"
 #. js-lingui-id: Mt/oXT
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share {objectLabel}"
-msgstr ""
+msgstr "Chia sẻ {objectLabel}"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 msgid "Share this code with {memberName} through a channel you trust. It works once and expires at {formattedExpiresAt}. You won't be able to see it again."
-msgstr ""
+msgstr "Chia sẻ mã này với {memberName} qua một kênh mà bạn tin cậy. Mã chỉ hoạt động một lần và hết hạn vào {formattedExpiresAt}. Bạn sẽ không thể xem lại mã này."
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -21415,7 +21415,7 @@ msgstr "Chia sẻ ứng dụng của bạn tới các không gian làm việc kh
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Shared by key, across runs"
-msgstr ""
+msgstr "Được chia sẻ theo khóa, xuyên suốt các lần chạy"
 
 #. js-lingui-id: JTP6zD
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -21425,22 +21425,22 @@ msgstr "Email dùng chung"
 #. js-lingui-id: iZYfeB
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Shared inbox emails"
-msgstr ""
+msgstr "Email hộp thư dùng chung"
 
 #. js-lingui-id: hkY6lZ
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Shared record"
-msgstr ""
+msgstr "Bản ghi được chia sẻ"
 
 #. js-lingui-id: k1qX20
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr ""
+msgstr "Việc chia sẻ không bao giờ vượt quá các vai trò và bộ lọc hàng của chúng. Dùng tính năng này cho các đối tượng nhạy cảm."
 
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
-msgstr ""
+msgstr "Đang chia sẻ bản ghi"
 
 #. js-lingui-id: Z+MFnO
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -21482,17 +21482,17 @@ msgstr "Việc thay đổi nhãn có nên thay đổi cả tên API không?"
 #. placeholder {0}: fieldMetadataItem.label
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 msgid "Show {0}"
-msgstr ""
+msgstr "Hiển thị {0}"
 
 #. js-lingui-id: gmYDKt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Show {hiddenOptionalCount} optional arguments"
-msgstr ""
+msgstr "Hiển thị {hiddenOptionalCount} đối số không bắt buộc"
 
 #. js-lingui-id: I2DNv8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show a Conversations tab listing the AI conversations attached to the record, on record pages of new workspaces."
-msgstr ""
+msgstr "Hiển thị thẻ Cuộc trò chuyện liệt kê các cuộc trò chuyện AI được đính kèm vào bản ghi, trên trang bản ghi của các không gian làm việc mới."
 
 #. js-lingui-id: 3MO9Sa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -21522,7 +21522,7 @@ msgstr "Hiển thị tất cả"
 #: src/modules/ui/field/display/components/LinksDisplay.tsx
 #: src/modules/ui/field/display/components/PhonesDisplay.tsx
 msgid "Show all items"
-msgstr ""
+msgstr "Hiển thị tất cả mục"
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -21542,7 +21542,7 @@ msgstr "Hiện nhóm {0}"
 #. js-lingui-id: xTnLbK
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 msgid "Show hidden fields ({hiddenFieldsCount})"
-msgstr ""
+msgstr "Hiển thị các trường ẩn ({hiddenFieldsCount})"
 
 #. js-lingui-id: 1OVrop
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -21564,7 +21564,7 @@ msgstr "Hiển thị thêm"
 #. js-lingui-id: wdogIE
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Show on"
-msgstr ""
+msgstr "Hiển thị trên"
 
 #. js-lingui-id: qi+g0a
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -21586,7 +21586,7 @@ msgstr "Hiển thị loại hoạt động này trong dòng thời gian của b�
 #. placeholder {0}: formatShortcut({ shortcut: ['Mod', 'K'] })
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu ({0})."
-msgstr ""
+msgstr "Hiển thị các bản ghi của đối tượng này trong menu lệnh ({0})."
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -21596,7 +21596,7 @@ msgstr ""
 #. js-lingui-id: nMqpRn
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Shown above the fields, for example what to fill in and why"
-msgstr ""
+msgstr "Hiển thị phía trên các trường, ví dụ như nội dung cần điền và lý do"
 
 #. js-lingui-id: P7rcbf
 #: src/modules/navigation/constants/OpenRecordInOptions.ts
@@ -21763,7 +21763,7 @@ msgstr "Bỏ qua"
 #. js-lingui-id: d70FL8
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
 msgid "Skip anyway"
-msgstr ""
+msgstr "Vẫn bỏ qua"
 
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -21778,7 +21778,7 @@ msgstr "Bỏ qua đối tượng liên kết (tương tự quan hệ nhiều-nhi
 #. js-lingui-id: Jdqc8E
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip unchanged calendar records"
-msgstr ""
+msgstr "Bỏ qua các bản ghi lịch không thay đổi"
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -21844,32 +21844,32 @@ msgstr "smtp.example.com"
 #. js-lingui-id: 7+i6oV
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
-msgstr ""
+msgstr "Tạm ẩn"
 
 #. js-lingui-id: xKw3A1
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Snooze ended"
-msgstr ""
+msgstr "Đã kết thúc tạm ẩn"
 
 #. js-lingui-id: e6uj9X
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snooze ended {eventTime}"
-msgstr ""
+msgstr "Đã kết thúc tạm ẩn {eventTime}"
 
 #. js-lingui-id: VkkXmS
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
 msgid "Snooze until {snoozedUntilLabel}"
-msgstr ""
+msgstr "Tạm ẩn đến {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Snoozed"
-msgstr ""
+msgstr "Đã tạm ẩn"
 
 #. js-lingui-id: gbfQNt
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snoozed until {eventTime}"
-msgstr ""
+msgstr "Đã tạm ẩn đến {eventTime}"
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -21918,7 +21918,7 @@ msgstr "Đã xảy ra lỗi khi tạo không gian làm việc của bạn. Vui l
 #. js-lingui-id: KzFgLR
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Something went wrong while fetching this record's conversations."
-msgstr ""
+msgstr "Đã xảy ra lỗi khi tải các cuộc trò chuyện của bản ghi này."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -22058,7 +22058,7 @@ msgstr "Tách nhiều giá trị"
 #. js-lingui-id: /xCSTz
 #: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
 msgid "Split view"
-msgstr ""
+msgstr "Chế độ xem chia đôi"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -22095,7 +22095,7 @@ msgstr ""
 #. js-lingui-id: x+vSk8
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Stacks on top of your plan and never expires"
-msgstr ""
+msgstr "Được cộng thêm vào gói của bạn và không bao giờ hết hạn"
 
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -22139,7 +22139,7 @@ msgstr "Bắt đầu đọc chính tả"
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Start with your whole network"
-msgstr ""
+msgstr "Bắt đầu với toàn bộ mạng lưới của bạn"
 
 #. js-lingui-id: s+K73L
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -22150,7 +22150,7 @@ msgstr "Bắt đầu Đăng Ký Của Bạn"
 #. js-lingui-id: JEGlfK
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Started"
-msgstr ""
+msgstr "Đã bắt đầu"
 
 #. js-lingui-id: hTX65V
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -22239,17 +22239,17 @@ msgstr "Tùy chọn bộ lọc bước"
 #. js-lingui-id: 7Ilx5M
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "steps"
-msgstr ""
+msgstr "bước"
 
 #. js-lingui-id: A9onc2
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Steps"
-msgstr ""
+msgstr "Bước"
 
 #. js-lingui-id: btg91h
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Steps of this workflow sharing a key write to the same conversation"
-msgstr ""
+msgstr "Các bước của quy trình này dùng chung một khóa sẽ ghi vào cùng một cuộc trò chuyện"
 
 #. js-lingui-id: ygCKqB
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
@@ -22516,7 +22516,7 @@ msgstr "Đề xuất"
 #. js-lingui-id: 8J32PY
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
-msgstr ""
+msgstr "Đề xuất"
 
 #. js-lingui-id: AxQiPW
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -22832,12 +22832,12 @@ msgstr "Thành viên nhóm"
 #. js-lingui-id: g4mm2M
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
-msgstr ""
+msgstr "Đồng đội"
 
 #. js-lingui-id: XpPpz7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Tell the agent what to change"
-msgstr ""
+msgstr "Cho tác nhân biết cần thay đổi điều gì"
 
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
@@ -22925,7 +22925,7 @@ msgstr "Trình chỉnh sửa văn bản"
 #. js-lingui-id: Ldukks
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "That's about {formattedNewlyEarnedAiActions} AI actions. Credits never expire."
-msgstr ""
+msgstr "Tương đương khoảng {formattedNewlyEarnedAiActions} thao tác AI. Tín dụng không bao giờ hết hạn."
 
 #. js-lingui-id: Z4WP0F
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
@@ -23010,12 +23010,12 @@ msgstr ""
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The boolean value false."
-msgstr ""
+msgstr "Giá trị boolean false."
 
 #. js-lingui-id: ijFf+X
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The boolean value true."
-msgstr ""
+msgstr "Giá trị boolean true."
 
 #. js-lingui-id: VsxjzF
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -23030,12 +23030,12 @@ msgstr "Bản ghi cuộc gọi đang được xử lý…"
 #. js-lingui-id: ejqgDV
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "The code lets {memberName} sign in to this workspace once without their authenticator app. Using it removes their current authenticator and signs them out of their other sessions here. They will be notified by email."
-msgstr ""
+msgstr "Mã này cho phép {memberName} đăng nhập vào không gian làm việc này một lần mà không cần ứng dụng xác thực của họ. Việc sử dụng mã sẽ xóa trình xác thực hiện tại của họ và đăng xuất họ khỏi các phiên khác tại đây. Họ sẽ được thông báo qua email."
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
-msgstr ""
+msgstr "Cuộc trò chuyện đã được rút gọn"
 
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -23045,7 +23045,7 @@ msgstr "Không thể tải thỏa thuận xử lý dữ liệu. Vui lòng thử 
 #. js-lingui-id: 0H+RG6
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The date and time of the write being checked."
-msgstr ""
+msgstr "Ngày và giờ của thao tác ghi đang được kiểm tra."
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -23157,7 +23157,7 @@ msgstr "Tên mà người nhận nhìn thấy bên cạnh địa chỉ của b�
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of items in the list, or 0 when it is not a list."
-msgstr ""
+msgstr "Số lượng mục trong danh sách, hoặc 0 khi đó không phải là danh sách."
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -23378,7 +23378,7 @@ msgstr "Hành động này không thể hoàn tác. Tư cách thành viên của
 #. js-lingui-id: aIALnw
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "This action no longer takes this argument. Clear it to remove it."
-msgstr ""
+msgstr "Thao tác này không còn nhận đối số này. Hãy xóa đối số đó để loại bỏ."
 
 #. js-lingui-id: muD0kr
 #. placeholder {0}: favoritesEdit.navigationMenuItemCount
@@ -23399,7 +23399,7 @@ msgstr "Địa chỉ này đã được sử dụng"
 #. js-lingui-id: 4bI4er
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "This agent only runs when someone sends it a message."
-msgstr ""
+msgstr "Tác nhân này chỉ chạy khi có người gửi tin nhắn cho nó."
 
 #. js-lingui-id: 9rY+8P
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -23471,7 +23471,7 @@ msgstr "Thành phần này chạy không có giao diện người dùng và khô
 #. js-lingui-id: 2p+00J
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "This condition doesn't read any field."
-msgstr ""
+msgstr "Điều kiện này không đọc bất kỳ trường nào."
 
 #. js-lingui-id: LqhE3c
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -23492,7 +23492,7 @@ msgstr "Cuộc trò chuyện này không còn khả dụng."
 #. js-lingui-id: 4Rs3za
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "This cron pattern is not valid"
-msgstr ""
+msgstr "Mẫu cron này không hợp lệ"
 
 #. js-lingui-id: 5VD/sC
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -23512,7 +23512,7 @@ msgstr "Thiết bị này"
 #. js-lingui-id: GyVWfy
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
 msgid "This evening"
-msgstr ""
+msgstr "Tối nay"
 
 #. js-lingui-id: i6mVT3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
@@ -23577,7 +23577,7 @@ msgstr "Cuộc họp này không được ghi âm."
 #. js-lingui-id: w5ooxr
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "This member hasn't set up two-factor authentication."
-msgstr ""
+msgstr "Thành viên này chưa thiết lập xác thực hai yếu tố."
 
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -23627,12 +23627,12 @@ msgstr "Thao tác này sẽ xóa vĩnh viễn {accountHandle} cùng tất cả e
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "This permanently deletes these {numberOfCoreWorkflows} workflows and all their run history. This action cannot be undone."
-msgstr ""
+msgstr "Thao tác này sẽ xóa vĩnh viễn {numberOfCoreWorkflows} quy trình này và toàn bộ lịch sử chạy của chúng. Không thể hoàn tác thao tác này."
 
 #. js-lingui-id: riRzbk
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "This permanently deletes this workflow and all its run history. This action cannot be undone."
-msgstr ""
+msgstr "Thao tác này sẽ xóa vĩnh viễn quy trình này và toàn bộ lịch sử chạy của quy trình. Không thể hoàn tác thao tác này."
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -23642,7 +23642,7 @@ msgstr "Nhà cung cấp này chưa có SDK gốc — sẽ sử dụng chế đ�
 #. js-lingui-id: Wf1hgt
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "This record could not be loaded."
-msgstr ""
+msgstr "Không thể tải bản ghi này."
 
 #. js-lingui-id: dWJTyU
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
@@ -23652,12 +23652,12 @@ msgstr "Bản ghi này đã bị xóa"
 #. js-lingui-id: CS0+Ao
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "This record no longer exists or you cannot see it."
-msgstr ""
+msgstr "Bản ghi này không còn tồn tại hoặc bạn không thể xem bản ghi đó."
 
 #. js-lingui-id: TG0qsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "This record will be deleted:"
-msgstr ""
+msgstr "Bản ghi này sẽ bị xóa:"
 
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -23677,12 +23677,12 @@ msgstr ""
 #. js-lingui-id: 9IqK24
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "This rule is disabled. Records are not checked against it."
-msgstr ""
+msgstr "Quy tắc này bị vô hiệu hóa. Bản ghi không được kiểm tra theo quy tắc này."
 
 #. js-lingui-id: Tz032x
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "This sender records which links you click in its emails. You can opt out for this email address."
-msgstr ""
+msgstr "Người gửi này ghi lại những liên kết bạn nhấp trong email của họ. Bạn có thể từ chối theo dõi đối với địa chỉ email này."
 
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -23874,17 +23874,17 @@ msgstr "Thời gian chờ"
 #. js-lingui-id: iXabD0
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Timeout days (Optional)"
-msgstr ""
+msgstr "Số ngày hết thời gian chờ (Tùy chọn)"
 
 #. js-lingui-id: tfdFT7
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Timeout hours (Optional)"
-msgstr ""
+msgstr "Số giờ hết thời gian chờ (Tùy chọn)"
 
 #. js-lingui-id: 6+eCbH
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Timeout minutes (Optional)"
-msgstr ""
+msgstr "Số phút hết thời gian chờ (Tùy chọn)"
 
 #. js-lingui-id: 8TMaZI
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -23941,7 +23941,7 @@ msgstr "Hôm nay"
 #. js-lingui-id: TNXmKt
 #: src/modules/ai/hooks/useFormatAgentChatThreadDate.ts
 msgid "Today, {time}"
-msgstr ""
+msgstr "Hôm nay, {time}"
 
 #. js-lingui-id: L3b7Bm
 #. placeholder {0}: recordGroupDefinition.title
@@ -24081,7 +24081,7 @@ msgstr ""
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Total earned"
-msgstr ""
+msgstr "Tổng đã kiếm được"
 
 #. js-lingui-id: v7vAuj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -24098,17 +24098,17 @@ msgstr "Theo dõi mức tiêu thụ AI trong không gian làm việc của bạn
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Track link clicks"
-msgstr ""
+msgstr "Theo dõi lượt nhấp vào liên kết"
 
 #. js-lingui-id: U0HZma
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Tracking"
-msgstr ""
+msgstr "Theo dõi"
 
 #. js-lingui-id: CVnZXW
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
 msgid "Tracking off"
-msgstr ""
+msgstr "Đã tắt theo dõi"
 
 #. js-lingui-id: DDziIo
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
@@ -24167,7 +24167,7 @@ msgstr "Dịch thuật"
 #. js-lingui-id: R3UKip
 #: src/modules/ai/components/NavigationDrawerAiChatTriageSection.tsx
 msgid "Triage"
-msgstr ""
+msgstr "Phân loại"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -24284,37 +24284,37 @@ msgstr "Đúng"
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when a multi-select or array field contains the value, or when a text contains the given text. Letter case matters."
-msgstr ""
+msgstr "Đúng khi một trường chọn nhiều hoặc trường mảng chứa giá trị đó, hoặc khi một văn bản chứa văn bản đã cho. Có phân biệt chữ hoa chữ thường."
 
 #. js-lingui-id: bRld7r
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "True when at least one side is true."
-msgstr ""
+msgstr "Đúng khi ít nhất một vế là true."
 
 #. js-lingui-id: KdPrHC
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "True when both sides are true."
-msgstr ""
+msgstr "Đúng khi cả hai vế đều là true."
 
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is a text with at least one character."
-msgstr ""
+msgstr "Đúng khi giá trị là một văn bản có ít nhất một ký tự."
 
 #. js-lingui-id: kRwBsc
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is not set, an empty text, an empty list, or a composite field with every part empty."
-msgstr ""
+msgstr "Đúng khi giá trị chưa được đặt, là văn bản trống, danh sách trống hoặc trường tổng hợp có mọi phần đều trống."
 
 #. js-lingui-id: SaqJTE
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "True when the value is one of the listed values."
-msgstr ""
+msgstr "Đúng khi giá trị là một trong các giá trị được liệt kê."
 
 #. js-lingui-id: tgOmej
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is set, even to an empty text."
-msgstr ""
+msgstr "Đúng khi giá trị đã được đặt, kể cả là văn bản trống."
 
 #. js-lingui-id: KDw4GX
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -24327,7 +24327,7 @@ msgstr "Thử lại"
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Try again in a moment"
-msgstr ""
+msgstr "Thử lại sau giây lát"
 
 #. js-lingui-id: 64tOpZ
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
@@ -24372,12 +24372,12 @@ msgstr "Bật chế độ nhà phát triển"
 #. js-lingui-id: Ug9k2v
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, and let workflows route agent questions to a member."
-msgstr ""
+msgstr "Biến tab AI thành một hộp thư để phân loại, phân công, tạm ẩn và theo dõi các cuộc trò chuyện, đồng thời cho phép quy trình chuyển câu hỏi của tác nhân đến một thành viên."
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "Turns true into false and false into true."
-msgstr ""
+msgstr "Chuyển true thành false và false thành true."
 
 #. js-lingui-id: EdHWDU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -24387,7 +24387,7 @@ msgstr "Ngọc lam"
 #. js-lingui-id: 8pmRvi
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Twenty adds the people you email and meet, and keeps them up to date without manual data entry."
-msgstr ""
+msgstr "Twenty thêm những người bạn gửi email và gặp gỡ, đồng thời tự động cập nhật họ mà không cần nhập dữ liệu thủ công."
 
 #. js-lingui-id: JnaRPe
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
@@ -24402,7 +24402,7 @@ msgstr "Twenty điền vào mỗi cấp mô hình tốt nhất đáp ứng yêu 
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "Twenty works better with your team"
-msgstr ""
+msgstr "Twenty hoạt động hiệu quả hơn cùng nhóm của bạn"
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -24451,7 +24451,7 @@ msgstr "Thiết lập xác thực hai yếu tố thành công!"
 #. js-lingui-id: VgBvkK
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Two-factor authentication was reset for this workspace. Set it up again from Settings, Profile."
-msgstr ""
+msgstr "Xác thực hai yếu tố đã được đặt lại cho không gian làm việc này. Hãy thiết lập lại trong Cài đặt, Hồ sơ."
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/ai/components/AgentOutputFieldTypeSelector.tsx
@@ -24486,7 +24486,7 @@ msgstr "Nhập '/' để dùng lệnh, '@' để nhắc đến"
 #. js-lingui-id: XhqvGG
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 msgid "Type a field name or a function"
-msgstr ""
+msgstr "Nhập tên trường hoặc hàm"
 
 #. js-lingui-id: qzD6hf
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
@@ -24595,7 +24595,7 @@ msgstr ""
 #. js-lingui-id: 9uI/rE
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
 msgid "Undo"
-msgstr ""
+msgstr "Hoàn tác"
 
 #. js-lingui-id: fo0VXg
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
@@ -24617,7 +24617,7 @@ msgstr "Gỡ cài đặt ứng dụng này khỏi tất cả các không gian l�
 #. js-lingui-id: v3XLn7
 #: src/modules/settings/applications/components/SettingsApplicationUninstallButton.tsx
 msgid "Uninstalling {displayedUninstallProgress}"
-msgstr ""
+msgstr "Đang gỡ cài đặt {displayedUninstallProgress}"
 
 #. js-lingui-id: wSXm5S
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -24641,7 +24641,7 @@ msgstr "đơn vị"
 #. js-lingui-id: aSwfbR
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Unit"
-msgstr ""
+msgstr "Đơn vị"
 
 #. js-lingui-id: fMyWEp
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -24859,12 +24859,12 @@ msgstr "Đã hủy đăng ký"
 #. js-lingui-id: v0c5Uz
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
-msgstr ""
+msgstr "Đã hủy đăng ký {eventTime}. Tin nhắn mới sẽ không vào hộp thư đến của bạn trừ khi bạn được nhắc đến."
 
 #. js-lingui-id: 7fkcOT
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Unsubscribed {unsubscribedTime}"
-msgstr ""
+msgstr "Đã hủy đăng ký {unsubscribedTime}"
 
 #. js-lingui-id: uxfv+n
 #: src/modules/activities/emails/hooks/useUploadEmailImage.ts
@@ -24874,7 +24874,7 @@ msgstr "Định dạng hình ảnh không được hỗ trợ"
 #. js-lingui-id: I9zMVO
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Until {snoozedUntilDay}"
-msgstr ""
+msgstr "Đến {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadTitle.tsx
@@ -24912,7 +24912,7 @@ msgstr "{labelSingular} chưa có tiêu đề"
 #. js-lingui-id: yTvVot
 #: src/modules/object-core/agents/hooks/useCreateCoreAgent.ts
 msgid "Untitled agent"
-msgstr ""
+msgstr "Tác nhân chưa có tiêu đề"
 
 #. js-lingui-id: zJsHrW
 #: src/modules/ai/components/AgentOutputSchemaFieldHeader.tsx
@@ -25169,7 +25169,7 @@ msgstr "Nâng cấp lên Organization để truy cập nhật ký kiểm toán."
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Organization to configure SSO."
-msgstr ""
+msgstr "Nâng cấp lên Organization để cấu hình SSO."
 
 #. js-lingui-id: Ic7ooY
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
@@ -25184,7 +25184,7 @@ msgstr "Nâng cấp bản dùng thử miễn phí của bạn"
 #. js-lingui-id: iDbC4C
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Upgrade your trial"
-msgstr ""
+msgstr "Nâng cấp bản dùng thử của bạn"
 
 #. js-lingui-id: T1mDWj
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -25388,12 +25388,12 @@ msgstr "Sử dụng biểu mẫu chuyên dụng khi tạo bản ghi."
 #. js-lingui-id: 2DCFBo
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use a dedicated initial view for each object in navigation and the view picker."
-msgstr ""
+msgstr "Sử dụng chế độ xem ban đầu riêng cho từng đối tượng trong thanh điều hướng và bộ chọn chế độ xem."
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx
 msgid "Use a recovery code"
-msgstr ""
+msgstr "Sử dụng mã khôi phục"
 
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
@@ -25584,7 +25584,7 @@ msgstr "Đang sử dụng giá trị mặc định. Đặt một giá trị tùy
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "UTC is used when no time zone is selected"
-msgstr ""
+msgstr "UTC được dùng khi không chọn múi giờ"
 
 #. js-lingui-id: b1dG47
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -25594,7 +25594,7 @@ msgstr "Tiếng Uzbek"
 #. js-lingui-id: nfagfM
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Valid"
-msgstr ""
+msgstr "Hợp lệ"
 
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -25604,13 +25604,13 @@ msgstr "Xác thực dữ liệu"
 #. js-lingui-id: 6N5/Xk
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "validation rule"
-msgstr ""
+msgstr "quy tắc xác thực"
 
 #. js-lingui-id: 8Dcl1Z
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Validation rules"
-msgstr ""
+msgstr "Quy tắc xác thực"
 
 #. js-lingui-id: PWZBIT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -26018,7 +26018,7 @@ msgstr "Đang chờ trẻ em"
 #. js-lingui-id: 7YxIQV
 #: src/modules/ai/components/AiChatFormStatusRenderer.tsx
 msgid "Waiting for a form to be filled in"
-msgstr ""
+msgstr "Đang chờ biểu mẫu được điền"
 
 #. js-lingui-id: TdQd9Q
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -26033,7 +26033,7 @@ msgstr "Đang chờ cấp quyền"
 #. js-lingui-id: /gO/m8
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Waiting for your approval"
-msgstr ""
+msgstr "Đang chờ bạn phê duyệt"
 
 #. js-lingui-id: THYlSm
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -26114,7 +26114,7 @@ msgstr "Hiện tại chúng tôi đang gặp sự cố với ứng dụng này; 
 #. js-lingui-id: yIwCqY
 #: src/modules/object-core/components/CoreObjectIndexPageLayout.tsx
 msgid "We could not load your {labelPlural}. Please try again later."
-msgstr ""
+msgstr "Không thể tải {labelPlural} của bạn. Vui lòng thử lại sau."
 
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -26130,7 +26130,7 @@ msgstr "Chúng tôi không thể xác nhận phương thức thanh toán của b
 #. js-lingui-id: yL484l
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "We couldn't load the conversations"
-msgstr ""
+msgstr "Chúng tôi không thể tải các cuộc trò chuyện"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -26331,7 +26331,7 @@ msgstr "Nội dung mỗi ngôn ngữ hiển thị cho các nhãn của đối t�
 #. js-lingui-id: R+bEwa
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "What people see when the condition is false, and where it shows."
-msgstr ""
+msgstr "Những gì mọi người thấy khi điều kiện là false và vị trí hiển thị."
 
 #. js-lingui-id: 51JeJw
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -26341,7 +26341,7 @@ msgstr "Cần phân loại nội dung gì?"
 #. js-lingui-id: rmMbbz
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "What should the agent do when this trigger fires?"
-msgstr ""
+msgstr "Tác nhân nên làm gì khi điều kiện kích hoạt này xảy ra?"
 
 #. js-lingui-id: N0N49E
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -26377,7 +26377,7 @@ msgstr "Khi một khách hàng tiềm năng mới được tạo với nguồn \
 #. js-lingui-id: 8bOffh
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "When a record changes"
-msgstr ""
+msgstr "Khi một bản ghi thay đổi"
 
 #. js-lingui-id: haFWB2
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26392,7 +26392,7 @@ msgstr "Khi tắt, sự kiện được tạo mà không có người tham dự 
 #. js-lingui-id: E2I4La
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop."
-msgstr ""
+msgstr "Khi nào tác nhân nên dừng lại và hỏi bạn? Ví dụ: trước khi gửi bất kỳ email nào hoặc thay đổi giá trị của một giao dịch. Để trống để không bao giờ dừng."
 
 #. js-lingui-id: 7pDj1C
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
@@ -26440,12 +26440,12 @@ msgstr "Mô hình này có hỗ trợ lập luận theo chuỗi hay không"
 #. js-lingui-id: UbN9B0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Which conversation with the recipient this step writes to"
-msgstr ""
+msgstr "Bước này ghi vào cuộc trò chuyện nào với người nhận"
 
 #. js-lingui-id: rfuOpl
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr ""
+msgstr "Bản ghi {objectLabel} có thể được chia sẻ với những ai. Vai trò vẫn quyết định những gì mọi người thấy theo mặc định."
 
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -26455,7 +26455,7 @@ msgstr "Toàn bộ danh sách"
 #. js-lingui-id: x6KwSw
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Whole record"
-msgstr ""
+msgstr "Toàn bộ bản ghi"
 
 #. js-lingui-id: AHXN2z
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -26493,7 +26493,7 @@ msgstr "Windsurf / Cascade"
 #. js-lingui-id: tVV1AC
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "With the recipient, or the workflow creator when empty. It stays out of their inbox until the agent needs them."
-msgstr ""
+msgstr "Với người nhận, hoặc người tạo quy trình khi để trống. Nội dung sẽ không vào hộp thư đến của họ cho đến khi tác nhân cần đến họ."
 
 #. js-lingui-id: p9B1Re
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -26508,13 +26508,13 @@ msgstr "không cần thẻ tín dụng"
 #. js-lingui-id: rZg70x
 #: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
 msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr ""
+msgstr "Không thể xem: vai trò của họ không thể truy cập {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "Worked for {0}"
-msgstr ""
+msgstr "Đã hoạt động trong {0}"
 
 #. js-lingui-id: 3J7l5w
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -26557,7 +26557,7 @@ msgstr "Thực thi quy trình làm việc"
 #. js-lingui-id: uMSeM4
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow inbox messages"
-msgstr ""
+msgstr "Tin nhắn hộp thư đến của quy trình"
 
 #. js-lingui-id: 91e2Af
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -26577,7 +26577,7 @@ msgstr "Kết quả bước quy trình làm việc"
 #. js-lingui-id: NOvOUq
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Workflow steps"
-msgstr ""
+msgstr "Các bước quy trình"
 
 #. js-lingui-id: 2CydYH
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -26706,7 +26706,7 @@ msgstr "Tạo không gian làm việc thất bại"
 #. js-lingui-id: xM1hP9
 #: src/modules/object-core/agents/components/CoreAgentModelCell.tsx
 msgid "Workspace default"
-msgstr ""
+msgstr "Mặc định của không gian làm việc"
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -26824,7 +26824,7 @@ msgstr "Viết mô tả cho tác nhân này"
 #. js-lingui-id: P28Nzv
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 msgid "Write the email"
-msgstr ""
+msgstr "Soạn email"
 
 #. js-lingui-id: zeCIJi
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
