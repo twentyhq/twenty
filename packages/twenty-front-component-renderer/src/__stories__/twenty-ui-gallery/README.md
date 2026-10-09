@@ -125,6 +125,13 @@ through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
 currentNode without callback filters; document Selection and DOM Range are
 outside this scope.
 
+`ImageInput` calls `onFileSelect` when a file is selected. Applications own
+validation, uploads, progress, cancellation, and supplied preview URLs. Native
+chooser activation and readable `File` contents in React and Preact still depend
+on [C08 support](https://github.com/twentyhq/twenty/pull/27588).
+`userEvent.upload` checks selection handling and does not prove native chooser
+activation.
+
 ## Dialog policy
 
 Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popover activation are prohibited in front components. Their standalone Twenty UI APIs have dedicated unit and browser stories. Front components use SDK `openCommandConfirmationModal`, whose structured title, subtitle and confirm-button options are rendered by the host. The Dialog fixture checks the confirmation request. Result handling and actual host modal focus, restoration, dismissal and teardown acceptance remain part of the renderer integration work. No direct Dialog or AlertDialog gallery fixture is retained as a compatibility target.
@@ -132,6 +139,17 @@ Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popov
 ## Known sandbox limitations
 
 An invisible popup is not a compatibility pass.
+
+SettingsRow's flat Switch props target the control. Its controlled composition
+uses `nativeButton` and an actual button through `render`, preserving one change
+callback for label and control activation. `labelRender` supplies native label
+attributes and handlers, and `labelRef` targets that label. Default span-based
+rows still cover label activation, uncontrolled state, read-only and disabled
+behavior. Directly
+clicking a span control inside its label can produce duplicate change callbacks
+because worker cancellation cannot stop the host label's default activation in
+time. Native validation attributes such as `required` are currently filtered by
+the renderer; standalone UI stories verify that form contract.
 
 These are compatibility regression stories, not assertions that the components
 work fully in the sandbox. Scenarios pin the current behavior exactly: a

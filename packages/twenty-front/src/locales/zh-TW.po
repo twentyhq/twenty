@@ -19118,6 +19118,11 @@ msgstr "要移除 {0} 個導覽選單項目嗎？"
 msgid "Remove {address}"
 msgstr "移除 {address}"
 
+#. js-lingui-id: boQErO
+#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+msgid "Remove {displayName}"
+msgstr ""
+
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Remove {origin}"
@@ -24837,25 +24842,16 @@ msgstr "至 {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadTitle.tsx
-#: src/modules/ai/components/ChatReferenceChip.tsx
-#: src/modules/ai/components/ChatReferenceChip.tsx
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
-#: src/modules/log-console/components/LogConsoleMemberChip.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
-#: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/object-core/components/cells/CoreObjectNameCell.tsx
-#: src/modules/object-record/components/RecordChip.tsx
-#: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
 #: src/modules/page-layout/hooks/usePageLayoutAddTabStrategy.ts
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/side-panel/components/SidePanelContextChip.tsx
-#: src/modules/ui/field/display/components/ActorDisplay.tsx
-#: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/modules/ui/field/display/utils/getChipLabel.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
