@@ -1,5 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CALL_RECORDING_WITH_TRANSCRIPT_FILTER } from 'src/constants/call-recording-with-transcript-filter.constant';
 import { type FathomRecordingImportReference } from 'src/logic-functions/types/fathom-recording-import-reference.type';
 import { chunkIntoBatches } from 'src/utils/chunk-into-batches.util';
 
@@ -23,6 +24,7 @@ export const completeFathomCallRecordingImports = async ({
         __args: {
           filter: {
             status: { eq: 'PROCESSING' },
+            ...CALL_RECORDING_WITH_TRANSCRIPT_FILTER,
             or: callRecordingBatch.map((reference) => ({
               id: { eq: reference.callRecordingId },
               updatedAt: { eq: reference.callRecordingUpdatedAt },

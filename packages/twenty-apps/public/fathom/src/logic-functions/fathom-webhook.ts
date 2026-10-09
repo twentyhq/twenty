@@ -10,9 +10,11 @@ import { FATHOM_WEBHOOK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-ide
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
 import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
+import { findCallRecordingSyncStates } from 'src/logic-functions/utils/find-call-recording-sync-states.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
-import { listDeletedCallRecordingIds } from 'src/logic-functions/utils/list-deleted-call-recording-ids.util';
-import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
+import { isFathomCallRecordingUpToDate } from 'src/logic-functions/utils/is-fathom-call-recording-up-to-date.util';
+import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
+import { syncFathomMeetingsToCallRecordings } from 'src/logic-functions/utils/sync-fathom-meetings-to-call-recordings.util';
 
 type FathomWebhookResult =
   | {
@@ -92,12 +94,13 @@ export const fathomWebhookHandler = async (
   const callRecordingId = computeCallRecordingIdForFathomMeeting(
     meetingParseResult.value.recordingId,
   );
-  const deletedCallRecordingIds = await listDeletedCallRecordingIds({
+  const callRecordingSyncStates = await findCallRecordingSyncStates({
     coreApiClient,
     callRecordingIds: [callRecordingId],
   });
+  const existingCallRecording = callRecordingSyncStates.get(callRecordingId);
 
-  if (deletedCallRecordingIds.has(callRecordingId)) {
+  if (existingCallRecording?.isDeleted === true) {
     return {
       success: true,
       skipped: true,
@@ -105,11 +108,34 @@ export const fathomWebhookHandler = async (
     };
   }
 
-  const syncResult = await syncFathomMeetingToCallRecording({
+  if (
+    isDefined(existingCallRecording) &&
+    isFathomCallRecordingUpToDate({
+      meeting: serializeFathomMeeting(meetingParseResult.value),
+      callRecording: existingCallRecording,
+    })
+  ) {
+    return {
+      success: true,
+      skipped: true,
+      reason: 'The call recording is already up to date',
+    };
+  }
+
+  const [syncResult] = await syncFathomMeetingsToCallRecordings({
     coreApiClient,
-    meeting: meetingParseResult.value,
+    meetings: [meetingParseResult.value],
     connectedAccountId,
+    callRecordingSyncStates,
   });
+
+  if (!isDefined(syncResult) || 'skipped' in syncResult) {
+    return {
+      success: true,
+      skipped: true,
+      reason: syncResult?.reason ?? 'The call recording was not synced',
+    };
+  }
 
   return { success: true, ...syncResult };
 };

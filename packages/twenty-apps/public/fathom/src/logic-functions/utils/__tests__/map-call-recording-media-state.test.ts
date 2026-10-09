@@ -30,8 +30,6 @@ describe('mapCallRecordingMediaState', () => {
             },
           ],
         },
-        transcript: [{}],
-        summary: { markdown: 'Summary', blocknote: null },
       }),
     ).toEqual({
       id: 'call-recording-id',
@@ -41,8 +39,6 @@ describe('mapCallRecordingMediaState', () => {
       recordingId: 'recording-id',
       hasVideo: true,
       hasAudio: false,
-      hasTranscript: true,
-      hasSummary: true,
       failureReason: 'failure-reason',
       connectedAccountId: 'connected-account-id',
       downloadId: 'download-id',
@@ -80,8 +76,6 @@ describe('mapCallRecordingMediaState', () => {
             },
           ],
         },
-        transcript: {},
-        summary: { markdown: '', blocknote: null },
       }),
     ).toEqual({
       id: 'call-recording-id',
@@ -91,23 +85,10 @@ describe('mapCallRecordingMediaState', () => {
       recordingId: undefined,
       hasVideo: false,
       hasAudio: false,
-      hasTranscript: false,
-      hasSummary: false,
       failureReason: undefined,
       connectedAccountId: undefined,
       downloadId: undefined,
       uploadCheckpoint: undefined,
     });
-  });
-
-  it('detects summary content stored as blocknote', () => {
-    const mediaState = mapCallRecordingMediaState({
-      id: 'call-recording-id',
-      updatedAt: '2026-09-05T00:00:00.000Z',
-      fathomRecordingImports: null,
-      summary: { markdown: null, blocknote: {} },
-    });
-
-    expect(mediaState.hasSummary).toBe(true);
   });
 });

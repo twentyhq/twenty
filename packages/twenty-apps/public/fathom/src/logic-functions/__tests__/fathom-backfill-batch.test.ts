@@ -10,6 +10,7 @@ import {
   MAX_FATHOM_BACKFILL_REQUEUE_ATTEMPTS,
 } from 'src/constants/fathom.constant';
 import { FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
 
 const mocks = vi.hoisted(() => ({
@@ -19,7 +20,7 @@ const mocks = vi.hoisted(() => ({
   kvSet: vi.fn(),
   getRecordingTranscript: vi.fn(),
   getRecordingSummary: vi.fn(),
-  syncFathomMeetingToCallRecording: vi.fn(),
+  syncFathomMeetingsToCallRecordings: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -45,9 +46,10 @@ vi.mock('twenty-client-sdk/core', () => ({
 }));
 
 vi.mock(
-  'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util',
+  'src/logic-functions/utils/sync-fathom-meetings-to-call-recordings.util',
   () => ({
-    syncFathomMeetingToCallRecording: mocks.syncFathomMeetingToCallRecording,
+    syncFathomMeetingsToCallRecordings:
+      mocks.syncFathomMeetingsToCallRecordings,
   }),
 );
 
@@ -59,6 +61,40 @@ const MEETINGS = [1, 2, 3].map((recordingId) =>
   serializeFathomMeeting(buildFathomMeeting({ recordingId })),
 );
 const PAYLOAD = { connectedAccountId: 'connection-1', meetings: MEETINGS };
+
+type SyncMeetingsInput = {
+  meetings: Array<{ recordingId: number }>;
+  onMeetingSynced?: (result: {
+    callRecordingId: string;
+    created: boolean;
+  }) => void;
+};
+
+const syncMeetingsUntil =
+  (failingRecordingId?: number) =>
+  async ({ meetings, onMeetingSynced }: SyncMeetingsInput) => {
+    for (const meeting of meetings) {
+      if (meeting.recordingId === failingRecordingId) {
+        throw new RetryableLogicFunctionError('rate limited');
+      }
+
+      onMeetingSynced?.({
+        callRecordingId: computeCallRecordingIdForFathomMeeting(
+          meeting.recordingId,
+        ),
+        created: true,
+      });
+    }
+
+    return [];
+  };
+
+const getSyncedRecordingIds = () =>
+  mocks.syncFathomMeetingsToCallRecordings.mock.calls.map((call) => {
+    const input: SyncMeetingsInput = call[0];
+
+    return input.meetings.map(({ recordingId }) => recordingId);
+  });
 
 const failTranscriptFor = (recordingId: number, error: unknown) =>
   mocks.getRecordingTranscript.mockImplementation(
@@ -86,10 +122,8 @@ describe('fathomBackfillBatchHandler', () => {
     mocks.kvGet.mockResolvedValue(null);
     mocks.getRecordingTranscript.mockResolvedValue({ transcript: [] });
     mocks.getRecordingSummary.mockResolvedValue({ summary: null });
-    mocks.syncFathomMeetingToCallRecording.mockImplementation(
-      async ({ meeting }: { meeting: { recordingId: number } }) => ({
-        recordingId: meeting.recordingId,
-      }),
+    mocks.syncFathomMeetingsToCallRecordings.mockImplementation(
+      syncMeetingsUntil(),
     );
   });
 
@@ -108,7 +142,7 @@ describe('fathomBackfillBatchHandler', () => {
       importedMeetingCount: 1,
       requeuedMeetingCount: 2,
     });
-    expect(mocks.syncFathomMeetingToCallRecording).toHaveBeenCalledTimes(1);
+    expect(getSyncedRecordingIds()).toEqual([[1]]);
     expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         logicFunctionUniversalIdentifier:
@@ -145,18 +179,22 @@ describe('fathomBackfillBatchHandler', () => {
     );
   });
 
-  it('re-enqueues from the meeting whose save failed, without re-fetching earlier ones', async () => {
-    mocks.syncFathomMeetingToCallRecording
-      .mockResolvedValueOnce({ recordingId: 1 })
-      .mockResolvedValueOnce({ recordingId: 2 })
-      .mockRejectedValueOnce(new RetryableLogicFunctionError('rate limited'));
+  it('saves the whole batch together and re-enqueues only the meetings it could not save', async () => {
+    mocks.syncFathomMeetingsToCallRecordings.mockImplementation(
+      syncMeetingsUntil(3),
+    );
 
     const result = await fathomBackfillBatchHandler({
       ...PAYLOAD,
       requeueAttempt: 2,
     });
 
-    expect(result).toMatchObject({ success: true, requeuedMeetingCount: 1 });
+    expect(result).toMatchObject({
+      success: true,
+      importedMeetingCount: 2,
+      requeuedMeetingCount: 1,
+    });
+    expect(getSyncedRecordingIds()).toEqual([[1, 2, 3]]);
     expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         payloads: [
@@ -172,7 +210,7 @@ describe('fathomBackfillBatchHandler', () => {
   });
 
   it('hands a save that fails for good back to the platform without re-enqueueing', async () => {
-    mocks.syncFathomMeetingToCallRecording.mockRejectedValueOnce(
+    mocks.syncFathomMeetingsToCallRecordings.mockRejectedValueOnce(
       new Error('Invalid record'),
     );
 
@@ -180,6 +218,33 @@ describe('fathomBackfillBatchHandler', () => {
       RetryableLogicFunctionError,
     );
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
+  it('saves the meetings read before a rate limit and re-enqueues the rest with both delays honored', async () => {
+    failTranscriptFor(3, buildFathomRateLimitError('120'));
+    mocks.syncFathomMeetingsToCallRecordings.mockImplementation(
+      syncMeetingsUntil(2),
+    );
+
+    const result = await fathomBackfillBatchHandler(PAYLOAD);
+
+    expect(result).toMatchObject({
+      success: true,
+      importedMeetingCount: 1,
+      requeuedMeetingCount: 2,
+    });
+    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        payloads: [
+          {
+            connectedAccountId: 'connection-1',
+            meetings: MEETINGS.slice(1),
+            requeueAttempt: 1,
+          },
+        ],
+        delayMs: 120_000,
+      }),
+    );
   });
 
   it('hands the batch back to the platform once the re-enqueue budget is spent', async () => {
@@ -215,6 +280,7 @@ describe('fathomBackfillBatchHandler', () => {
       failedMeetingCount: 1,
       requeuedMeetingCount: 0,
     });
+    expect(getSyncedRecordingIds()).toEqual([[1, 3]]);
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 });

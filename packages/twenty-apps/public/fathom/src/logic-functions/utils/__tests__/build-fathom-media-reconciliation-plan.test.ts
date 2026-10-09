@@ -12,8 +12,6 @@ const buildCallRecording = (
   recordingId: '42',
   hasVideo: false,
   hasAudio: false,
-  hasTranscript: true,
-  hasSummary: true,
   failureReason: undefined,
   connectedAccountId: 'connected-account-id',
   downloadId: undefined,
@@ -82,10 +80,23 @@ describe('buildFathomMediaReconciliationPlan', () => {
     });
   });
 
-  it('does not retry settled media while its transcript is still absent', () => {
+  it('does not retry settled media and leaves completion to the transcript-guarded write', () => {
+    const plan = buildFathomMediaReconciliationPlan({
+      callRecordings: [buildCallRecording({ hasAudio: true })],
+      activeConnectedAccountIds: ['connected-account-id'],
+    });
+
+    expect(plan).toEqual({
+      callRecordingsToComplete: [buildReference('call-recording-id')],
+      importGroups: [],
+      disconnectedAccountIds: [],
+    });
+  });
+
+  it('does not complete a settled recording that is no longer processing', () => {
     const plan = buildFathomMediaReconciliationPlan({
       callRecordings: [
-        buildCallRecording({ hasTranscript: false, hasAudio: true }),
+        buildCallRecording({ status: 'COMPLETED', hasVideo: true }),
       ],
       activeConnectedAccountIds: ['connected-account-id'],
     });
@@ -99,9 +110,7 @@ describe('buildFathomMediaReconciliationPlan', () => {
 
   it('repairs missing media on a legacy completed recording', () => {
     const plan = buildFathomMediaReconciliationPlan({
-      callRecordings: [
-        buildCallRecording({ status: 'COMPLETED', hasTranscript: false }),
-      ],
+      callRecordings: [buildCallRecording({ status: 'COMPLETED' })],
       activeConnectedAccountIds: ['connected-account-id'],
     });
 

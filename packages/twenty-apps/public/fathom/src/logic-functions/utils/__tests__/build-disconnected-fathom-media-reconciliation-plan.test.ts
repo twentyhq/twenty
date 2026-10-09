@@ -13,7 +13,6 @@ const buildCallRecording = (
   hasVideo: false,
   hasAudio: false,
   hasTranscript: true,
-  hasSummary: true,
   failureReason: undefined,
   connectedAccountId: 'connected-account-id',
   downloadId: undefined,

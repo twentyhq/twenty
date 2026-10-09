@@ -12,7 +12,7 @@ const mocks = vi.hoisted(() => ({
   listMeetings: vi.fn(),
   mutation: vi.fn(),
   query: vi.fn(),
-  syncFathomMeetingToCallRecording: vi.fn(),
+  syncFathomMeetingsToCallRecordings: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -46,9 +46,10 @@ vi.mock(
 );
 
 vi.mock(
-  'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util',
+  'src/logic-functions/utils/sync-fathom-meetings-to-call-recordings.util',
   () => ({
-    syncFathomMeetingToCallRecording: mocks.syncFathomMeetingToCallRecording,
+    syncFathomMeetingsToCallRecordings:
+      mocks.syncFathomMeetingsToCallRecordings,
   }),
 );
 
@@ -62,7 +63,13 @@ const CONTEXT = buildLogicFunctionExecutionContext('user-workspace-1');
 const mockDeletedCallRecordingIds = (callRecordingIds: string[]) =>
   mocks.query.mockResolvedValue({
     callRecordings: {
-      edges: callRecordingIds.map((id) => ({ node: { id } })),
+      edges: callRecordingIds.map((id) => ({
+        node: {
+          id,
+          updatedAt: '2026-08-20T11:00:00.000Z',
+          deletedAt: '2026-08-21T00:00:00.000Z',
+        },
+      })),
     },
   });
 
@@ -79,10 +86,9 @@ describe('fathomSyncCallHandler', () => {
     );
     mocks.getRecordingTranscript.mockResolvedValue({ transcript: [] });
     mocks.getRecordingSummary.mockResolvedValue({ summary: null });
-    mocks.syncFathomMeetingToCallRecording.mockResolvedValue({
-      callRecordingId: CALL_RECORDING_ID,
-      created: false,
-    });
+    mocks.syncFathomMeetingsToCallRecordings.mockResolvedValue([
+      { callRecordingId: CALL_RECORDING_ID, created: false },
+    ]);
   });
 
   it('reports a recording the user deleted as skipped without recreating it', async () => {
@@ -97,7 +103,7 @@ describe('fathomSyncCallHandler', () => {
       skipped: true,
       reason: 'The call recording has been deleted',
     });
-    expect(mocks.syncFathomMeetingToCallRecording).not.toHaveBeenCalled();
+    expect(mocks.syncFathomMeetingsToCallRecordings).not.toHaveBeenCalled();
     expect(mocks.mutation).not.toHaveBeenCalled();
   });
 
@@ -112,6 +118,10 @@ describe('fathomSyncCallHandler', () => {
       callRecordingId: CALL_RECORDING_ID,
       created: false,
     });
-    expect(mocks.syncFathomMeetingToCallRecording).toHaveBeenCalledTimes(1);
+    expect(mocks.query).toHaveBeenCalledOnce();
+    expect(mocks.syncFathomMeetingsToCallRecordings).toHaveBeenCalledOnce();
+    expect(
+      mocks.syncFathomMeetingsToCallRecordings.mock.calls[0][0],
+    ).toMatchObject({ retryMedia: true, callRecordingSyncStates: new Map() });
   });
 });

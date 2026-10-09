@@ -3,7 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { MAX_CALENDAR_EVENT_PAGES } from 'src/constants/fathom.constant';
-import { findMatchingCalendarEvent } from 'src/logic-functions/utils/find-matching-calendar-event.util';
+import { findMatchingCalendarEvents } from 'src/logic-functions/utils/find-matching-calendar-events.util';
 
 const buildMeeting = (overrides: Partial<Meeting> = {}): Meeting => ({
   title: 'Customer call',
@@ -62,7 +62,18 @@ const EXACT_EVENT: CalendarEventCandidateFixture = {
   conferenceLink: { primaryLinkUrl: 'https://meet.google.com/abc-defg-hij' },
 };
 
-describe('findMatchingCalendarEvent', () => {
+const findMatchingCalendarEvent = async ({
+  coreApiClient,
+  meeting,
+}: {
+  coreApiClient: Pick<CoreApiClient, 'query'>;
+  meeting: Meeting;
+}) =>
+  (
+    await findMatchingCalendarEvents({ coreApiClient, meetings: [meeting] })
+  ).get(meeting.recordingId);
+
+describe('findMatchingCalendarEvents', () => {
   it('queries live events in a five minute window around the scheduled start', async () => {
     const coreApiClient = buildCoreApiClient([]);
 
@@ -73,10 +84,14 @@ describe('findMatchingCalendarEvent', () => {
         calendarEvents: expect.objectContaining({
           __args: expect.objectContaining({
             filter: {
-              and: [
-                { startsAt: { gte: '2026-01-01T09:55:00.000Z' } },
-                { startsAt: { lte: '2026-01-01T10:05:00.000Z' } },
-                { isCanceled: { eq: false } },
+              isCanceled: { eq: false },
+              or: [
+                {
+                  and: [
+                    { startsAt: { gte: '2026-01-01T09:55:00.000Z' } },
+                    { startsAt: { lte: '2026-01-01T10:05:00.000Z' } },
+                  ],
+                },
               ],
             },
           }),
@@ -222,5 +237,91 @@ describe('findMatchingCalendarEvent', () => {
       }),
     ).toBeUndefined();
     expect(coreApiClient.query).not.toHaveBeenCalled();
+  });
+
+  it('reads the windows of every meeting in one query and matches each meeting within its own window', async () => {
+    const laterMeeting = buildMeeting({
+      recordingId: 456,
+      scheduledStartTime: new Date('2026-01-01T14:00:00.000Z'),
+    });
+    const query = vi.fn().mockResolvedValue(
+      buildPage([
+        EXACT_EVENT,
+        {
+          ...EXACT_EVENT,
+          id: 'later-event',
+          startsAt: '2026-01-01T14:02:00.000Z',
+        },
+      ]),
+    );
+
+    const calendarEventIds = await findMatchingCalendarEvents({
+      coreApiClient: { query },
+      meetings: [buildMeeting(), laterMeeting],
+    });
+
+    expect(calendarEventIds).toEqual(
+      new Map([
+        [123, 'exact-event'],
+        [456, 'later-event'],
+      ]),
+    );
+    expect(query).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        calendarEvents: expect.objectContaining({
+          __args: expect.objectContaining({
+            filter: {
+              isCanceled: { eq: false },
+              or: [
+                {
+                  and: [
+                    { startsAt: { gte: '2026-01-01T09:55:00.000Z' } },
+                    { startsAt: { lte: '2026-01-01T10:05:00.000Z' } },
+                  ],
+                },
+                {
+                  and: [
+                    { startsAt: { gte: '2026-01-01T13:55:00.000Z' } },
+                    { startsAt: { lte: '2026-01-01T14:05:00.000Z' } },
+                  ],
+                },
+              ],
+            },
+          }),
+        }),
+      }),
+    );
+  });
+
+  it('falls back to one query per meeting when the shared windows cannot be read to the end', async () => {
+    const laterMeeting = buildMeeting({
+      recordingId: 456,
+      scheduledStartTime: new Date('2026-01-01T14:00:00.000Z'),
+    });
+    const query = vi.fn();
+
+    query.mockImplementation(
+      async ({
+        calendarEvents,
+      }: {
+        calendarEvents: { __args: { filter: { or: unknown[] } } };
+      }) =>
+        calendarEvents.__args.filter.or.length > 1
+          ? buildPage([], { hasNextPage: true, endCursor: null })
+          : buildPage([EXACT_EVENT]),
+    );
+
+    const calendarEventIds = await findMatchingCalendarEvents({
+      coreApiClient: { query },
+      meetings: [buildMeeting(), laterMeeting],
+    });
+
+    expect(calendarEventIds).toEqual(
+      new Map([
+        [123, 'exact-event'],
+        [456, undefined],
+      ]),
+    );
+    expect(query).toHaveBeenCalledTimes(3);
   });
 });

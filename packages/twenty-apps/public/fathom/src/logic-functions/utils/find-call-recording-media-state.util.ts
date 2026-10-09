@@ -1,6 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'src/utils/is-defined';
 
+import { CALL_RECORDING_MEDIA_STATE_NODE_SELECTION } from 'src/constants/call-recording-media-state-node-selection.constant';
 import { callRecordingMediaStateQueryResultSchema } from 'src/logic-functions/schemas/call-recording-media-state-query-result.schema';
 import { type CallRecordingMediaState } from 'src/logic-functions/types/call-recording-media-state.type';
 import { mapCallRecordingMediaState } from 'src/logic-functions/utils/map-call-recording-media-state.util';
@@ -18,31 +19,7 @@ export const findCallRecordingMediaState = async ({
         filter: { id: { eq: callRecordingId } },
         first: 1,
       },
-      edges: {
-        node: {
-          id: true,
-          updatedAt: true,
-          summary: { markdown: true, blocknote: true },
-          video: { fileId: true },
-          audio: { fileId: true },
-          fathomRecordingImports: {
-            __args: { first: 1 },
-            edges: {
-              node: {
-                id: true,
-                updatedAt: true,
-                recordingId: true,
-                connectedAccountId: true,
-                mediaDownloadId: true,
-                mediaFailureReason: true,
-                mediaImportClaimedAt: true,
-                mediaUploadCheckpoint: true,
-              },
-            },
-          },
-          transcript: true,
-        },
-      },
+      edges: { node: CALL_RECORDING_MEDIA_STATE_NODE_SELECTION },
     },
   });
   const parsedQueryResult =

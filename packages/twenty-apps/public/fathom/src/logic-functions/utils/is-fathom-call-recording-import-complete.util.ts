@@ -1,9 +1,9 @@
-import { type CallRecordingMediaState } from 'src/logic-functions/types/call-recording-media-state.type';
+import { type CallRecordingSyncState } from 'src/logic-functions/types/call-recording-sync-state.type';
 import { isFathomMediaSettled } from 'src/logic-functions/utils/is-fathom-media-settled.util';
 
 export const isFathomCallRecordingImportComplete = (
   callRecording: Pick<
-    CallRecordingMediaState,
+    CallRecordingSyncState,
     'hasTranscript' | 'hasVideo' | 'hasAudio' | 'failureReason'
   >,
 ): boolean =>
