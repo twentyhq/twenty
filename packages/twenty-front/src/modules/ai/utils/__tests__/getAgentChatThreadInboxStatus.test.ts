@@ -1,7 +1,6 @@
 import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
 
 const THREAD_ID = 'thread';
-const NOW = new Date('2026-10-01T12:00:00.000Z');
 const ARCHIVED_AT = '2026-10-01T10:00:00.000Z';
 
 const getStatus = ({
@@ -9,16 +8,28 @@ const getStatus = ({
   lastReadAt = lastActivityAt,
   archivedAt = null,
   snoozedUntil = null,
+  isSubscribed = true,
+  lastMentionedAt = null,
 }: {
   lastActivityAt?: string | null;
   lastReadAt?: string | null;
   archivedAt?: string | null;
   snoozedUntil?: string | null;
+  isSubscribed?: boolean;
+  lastMentionedAt?: string | null;
 } = {}) =>
   getAgentChatThreadInboxStatus({
     lastActivityAt,
-    participant: { threadId: THREAD_ID, lastReadAt, archivedAt, snoozedUntil },
-    now: NOW,
+    participant: {
+      id: 'participant',
+      threadId: THREAD_ID,
+      lastReadAt,
+      archivedAt,
+      snoozedUntil,
+      isSubscribed,
+      lastMentionedAt,
+      updatedAt: ARCHIVED_AT,
+    },
   });
 
 describe('getAgentChatThreadInboxStatus', () => {
@@ -27,15 +38,22 @@ describe('getAgentChatThreadInboxStatus', () => {
       getAgentChatThreadInboxStatus({
         lastActivityAt: '2026-10-01T09:00:00.000Z',
         participant: undefined,
-        now: NOW,
       }),
-    ).toEqual({ scope: 'INBOX', isUnread: true, event: null });
+    ).toEqual({
+      scope: 'INBOX',
+      isUnread: true,
+      isSubscribed: true,
+      isMentioned: false,
+      event: null,
+    });
   });
 
   it('reads a thread as read up to its read cursor', () => {
     expect(getStatus()).toEqual({
       scope: 'INBOX',
       isUnread: false,
+      isSubscribed: true,
+      isMentioned: false,
       event: null,
     });
     expect(getStatus({ lastReadAt: '2026-10-01T08:00:00.000Z' }).isUnread).toBe(
@@ -54,6 +72,8 @@ describe('getAgentChatThreadInboxStatus', () => {
     expect(getStatus({ archivedAt: ARCHIVED_AT })).toEqual({
       scope: 'ARCHIVED',
       isUnread: false,
+      isSubscribed: true,
+      isMentioned: false,
       event: { type: 'DONE', at: ARCHIVED_AT },
     });
     expect(
@@ -67,25 +87,26 @@ describe('getAgentChatThreadInboxStatus', () => {
     ).toMatchObject({ scope: 'INBOX', event: null });
   });
 
-  it('snoozes a thread until its snooze time, then shows the snooze ended', () => {
-    expect(
-      getStatus({
-        archivedAt: ARCHIVED_AT,
-        snoozedUntil: '2026-10-02T09:00:00.000Z',
-      }),
-    ).toMatchObject({
+  it('snoozes a thread until the server unarchives it', () => {
+    const snoozedUntil = '2026-10-02T09:00:00.000Z';
+
+    expect(getStatus({ archivedAt: ARCHIVED_AT, snoozedUntil })).toMatchObject({
       scope: 'SNOOZED',
-      event: { type: 'SNOOZED', at: '2026-10-02T09:00:00.000Z' },
+      event: { type: 'SNOOZED', at: snoozedUntil },
     });
+    expect(getStatus({ snoozedUntil })).toMatchObject({
+      scope: 'INBOX',
+      event: { type: 'SNOOZE_ENDED', at: snoozedUntil },
+    });
+  });
+
+  it('stops showing an ended snooze once activity follows it', () => {
     expect(
       getStatus({
-        archivedAt: ARCHIVED_AT,
-        snoozedUntil: NOW.toISOString(),
+        snoozedUntil: '2026-10-02T09:00:00.000Z',
+        lastActivityAt: '2026-10-02T10:00:00.000Z',
       }),
-    ).toMatchObject({
-      scope: 'INBOX',
-      event: { type: 'SNOOZE_ENDED', at: NOW.toISOString() },
-    });
+    ).toMatchObject({ scope: 'INBOX', event: null });
   });
 
   it('brings a snoozed thread back early when activity follows the snooze', () => {
@@ -96,6 +117,35 @@ describe('getAgentChatThreadInboxStatus', () => {
         lastActivityAt: '2026-10-01T11:00:00.000Z',
         lastReadAt: '2026-10-01T09:00:00.000Z',
       }),
-    ).toEqual({ scope: 'INBOX', isUnread: true, event: null });
+    ).toEqual({
+      scope: 'INBOX',
+      isUnread: true,
+      isSubscribed: true,
+      isMentioned: false,
+      event: null,
+    });
+  });
+
+  it('keeps an unsubscribed thread done whatever happens in it', () => {
+    expect(
+      getStatus({
+        isSubscribed: false,
+        archivedAt: ARCHIVED_AT,
+        lastActivityAt: '2026-10-01T11:00:00.000Z',
+        lastReadAt: ARCHIVED_AT,
+      }),
+    ).toEqual({
+      scope: 'ARCHIVED',
+      isUnread: true,
+      isSubscribed: false,
+      isMentioned: false,
+      event: { type: 'UNSUBSCRIBED', at: ARCHIVED_AT },
+    });
+  });
+
+  it('tells when the member was mentioned', () => {
+    expect(
+      getStatus({ lastMentionedAt: '2026-10-01T09:00:00.000Z' }).isMentioned,
+    ).toBe(true);
   });
 });

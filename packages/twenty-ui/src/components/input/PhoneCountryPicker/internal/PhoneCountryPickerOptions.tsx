@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
-import { normalizeSearchText } from '@ui/utilities/internal/normalizeSearchText';
+import { normalizeSearchText } from '@ui/utilities/utils/normalizeSearchText';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../PhoneCountryPicker.module.scss';

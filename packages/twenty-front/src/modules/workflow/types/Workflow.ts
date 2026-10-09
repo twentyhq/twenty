@@ -10,6 +10,7 @@ import {
   type workflowCronTriggerSchema,
   type workflowDatabaseEventTriggerSchema,
   type workflowDelayActionSchema,
+  type workflowWaitForEventActionSchema,
   type workflowDeleteRecordActionSchema,
   type workflowDraftEmailActionSchema,
   type workflowEmptyActionSchema,
@@ -70,6 +71,9 @@ export type WorkflowPickRecordAction = z.infer<
   typeof workflowPickRecordActionSchema
 >;
 export type WorkflowDelayAction = z.infer<typeof workflowDelayActionSchema>;
+export type WorkflowWaitForEventAction = z.infer<
+  typeof workflowWaitForEventActionSchema
+>;
 export type WorkflowFilterAction = z.infer<typeof workflowFilterActionSchema>;
 export type WorkflowFormAction = z.infer<typeof workflowFormActionSchema>;
 export type WorkflowIfElseAction = z.infer<typeof workflowIfElseActionSchema>;
@@ -106,6 +110,7 @@ export type WorkflowAction =
   | WorkflowClassifyAction
   | WorkflowIteratorAction
   | WorkflowDelayAction
+  | WorkflowWaitForEventAction
   | WorkflowEmptyAction;
 
 export type WorkflowActionType = WorkflowAction['type'];

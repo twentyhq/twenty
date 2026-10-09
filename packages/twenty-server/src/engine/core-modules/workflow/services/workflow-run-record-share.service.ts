@@ -224,6 +224,31 @@ export class WorkflowRunRecordShareService {
     }
   }
 
+  // a run's conversation goes to this member's inbox, until a workflow can name a team inbox
+  async findCreatorWorkspaceMemberId({
+    workspaceId,
+    coreWorkflowId,
+  }: {
+    workspaceId: string;
+    coreWorkflowId: string;
+  }): Promise<string | null> {
+    const coreWorkflow = await this.coreWorkflowRepository.findOne(
+      workspaceId,
+      {
+        where: { id: coreWorkflowId },
+        select: { id: true, createdByUserWorkspaceId: true },
+        withDeleted: true,
+      },
+    );
+
+    return isDefined(coreWorkflow?.createdByUserWorkspaceId)
+      ? this.resolveWorkspaceMemberId({
+          workspaceId,
+          userWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
+        })
+      : null;
+  }
+
   private async resolveAccess({
     workspaceId,
     coreWorkflowId,

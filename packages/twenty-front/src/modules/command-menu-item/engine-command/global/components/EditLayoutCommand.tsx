@@ -1,4 +1,4 @@
-import { useResetLocationHash } from '@/ui/navigation/utils/hooks/useResetLocationHash';
+import { useResetLocationHash } from '@/ui/navigation/hooks/useResetLocationHash';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';

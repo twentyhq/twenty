@@ -10,13 +10,10 @@ export const AiChatUsageLimitReachedBanner = () => {
   const manageLimitsButton = useManageUsageLimitsButton();
 
   return (
-    <AiChatInlineBanner
-      message={
-        isDefined(manageLimitsButton)
-          ? t`AI usage limit reached for this period.`
-          : t`AI usage limit reached. Ask an admin to raise the limit.`
-      }
-      button={manageLimitsButton}
-    />
+    <AiChatInlineBanner action={manageLimitsButton}>
+      {isDefined(manageLimitsButton)
+        ? t`AI usage limit reached for this period.`
+        : t`AI usage limit reached. Ask an admin to raise the limit.`}
+    </AiChatInlineBanner>
   );
 };

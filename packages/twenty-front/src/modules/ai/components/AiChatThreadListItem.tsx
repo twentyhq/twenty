@@ -1,58 +1,96 @@
 import { styled } from '@linaria/react';
+import { type MouseEvent, useId } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
+import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
+import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
+import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
+import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
-import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
-import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
-import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
-import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
 
-const StyledThreadItem = styled.div<{ $isSelected: boolean }>`
+const StyledThreadItem = styled.div<{
+  $isSelected: boolean;
+  $isChecked: boolean;
+}>`
   align-items: flex-start;
-  background: ${({ $isSelected }) =>
-    $isSelected ? themeCssVariables.background.transparent.light : 'none'};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  background: ${({ $isSelected, $isChecked }) =>
+    $isChecked
+      ? themeCssVariables.accent.tertiary
+      : $isSelected
+        ? themeCssVariables.background.transparent.light
+        : 'none'};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   cursor: pointer;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[4]};
   position: relative;
 
   &:hover {
-    background: ${themeCssVariables.background.transparent.light};
+    background: ${({ $isChecked }) =>
+      $isChecked
+        ? themeCssVariables.accent.tertiary
+        : themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledLeading = styled.div`
   display: flex;
   flex-shrink: 0;
+  justify-content: center;
   padding-top: ${themeCssVariables.spacing['0.5']};
-  width: ${themeCssVariables.spacing[10]};
+  width: ${themeCssVariables.spacing[7]};
+`;
+
+// The checkbox takes the avatar's place while the chat is checked, or while
+// the row is hovered or focused; without hover, a tap on the avatar checks it
+const StyledCheckboxContainer = styled.div<{ $isChecked: boolean }>`
+  display: ${({ $isChecked }) => ($isChecked ? 'flex' : 'none')};
+
+  ${StyledThreadItem}:focus-within & {
+    display: flex;
+  }
+
+  @media (hover: hover) {
+    ${StyledThreadItem}:hover & {
+      display: flex;
+    }
+  }
+`;
+
+const StyledAvatarContainer = styled.div<{
+  $isCheckable: boolean;
+  $isChecked: boolean;
+}>`
+  display: ${({ $isChecked }) => ($isChecked ? 'none' : 'flex')};
+
+  ${StyledThreadItem}:focus-within & {
+    display: ${({ $isCheckable, $isChecked }) =>
+      $isCheckable || $isChecked ? 'none' : 'flex'};
+  }
+
+  @media (hover: hover) {
+    ${StyledThreadItem}:hover & {
+      display: ${({ $isCheckable, $isChecked }) =>
+        $isCheckable || $isChecked ? 'none' : 'flex'};
+    }
+  }
 `;
 
 const StyledThreadContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
   min-width: 0;
 `;
 
@@ -60,40 +98,10 @@ const StyledThreadHeading = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: ${themeCssVariables.spacing[5]};
   min-width: 0;
 `;
 
-const StyledThreadTitle = styled.div<{ $isUnread: boolean }>`
-  color: ${({ $isUnread }) =>
-    $isUnread
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.secondary};
-  flex: 1;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${({ $isUnread }) =>
-    $isUnread
-      ? themeCssVariables.font.weight.semiBold
-      : themeCssVariables.font.weight.medium};
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledThreadPreview = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  min-height: ${themeCssVariables.spacing[4]};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledActivityTime = styled.div<{ $isDropdownOpen: boolean }>`
-  color: ${themeCssVariables.font.color.tertiary};
-  flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.sm};
+const StyledActivityTimeContainer = styled.div<{ $isDropdownOpen: boolean }>`
   visibility: ${({ $isDropdownOpen }) =>
     $isDropdownOpen ? 'hidden' : 'visible'};
 
@@ -107,8 +115,8 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
   pointer-events: ${({ $isDropdownOpen }) =>
     $isDropdownOpen ? 'auto' : 'none'};
   position: absolute;
-  right: ${themeCssVariables.spacing[1]};
-  top: ${themeCssVariables.spacing[1]};
+  right: ${themeCssVariables.spacing[3]};
+  top: ${themeCssVariables.spacing[3]};
   transition: opacity 150ms;
 
   ${StyledThreadItem}:hover & {
@@ -119,18 +127,30 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
 
 type AiChatThreadListItemProps = {
   thread: AgentChatThreadRecord;
-  surface: AiChatThreadActionsSurface;
   isSelected: boolean;
-  onClick: (thread: AgentChatThreadRecord) => void;
+  isChecked?: boolean;
+  onClick: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
+  onCheckboxClick?: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
+  onContextMenu?: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
   onDetach?: () => void;
 };
 
-// Keyed per surface; every record page uses RECORD_PAGE, so two record pages on screen share it.
 export const AiChatThreadListItem = ({
   thread,
-  surface,
   isSelected,
+  isChecked = false,
   onClick,
+  onCheckboxClick,
+  onContextMenu,
   onDetach,
 }: AiChatThreadListItemProps) => {
   const { t } = useLingui();
@@ -143,67 +163,59 @@ export const AiChatThreadListItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const { isUnread, event } = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusFamilySelector,
-    thread.id,
-  );
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
-  const threadMembers = useAgentChatThreadMembers(thread);
-  const isShownAsUnread = !isDefined(thread.deletedAt) && isUnread;
-  const previewText = getAgentChatThreadPreviewText({
-    thread,
-    workspaceMembers: currentWorkspaceMembers,
-    currentWorkspaceMemberId: currentWorkspaceMember?.id,
-  });
-  const displayTitle = thread.title ?? t`Untitled`;
-  const { formatAgentChatThreadDay } = useFormatAgentChatThreadDate();
-
-  const getActivityTimeLabel = () => {
-    switch (event?.type) {
-      case 'SNOOZED': {
-        const snoozedUntilDay = formatAgentChatThreadDay(new Date(event.at));
-
-        return t`Until ${snoozedUntilDay}`;
-      }
-      case 'SNOOZE_ENDED':
-        return t`Snooze ended`;
-      case 'DONE': {
-        const doneTime = beautifyPastDateRelativeToNowShort(event.at);
-
-        return t`Done ${doneTime}`;
-      }
-      default:
-        return beautifyPastDateRelativeToNowShort(
-          getAgentChatThreadLastActivityAt(thread),
-        );
-    }
-  };
-  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
-    threadId: thread.id,
-    surface,
-  });
+  const actionsInstanceId = useId();
+  const itemMenuDropdownId =
+    getCommandMenuDropdownIdFromCommandMenuId(actionsInstanceId);
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
+
   return (
     <StyledThreadItem
       $isSelected={isSelected}
-      onClick={() => {
+      $isChecked={isChecked}
+      data-selectable-id={thread.id}
+      data-select-disable={isRenaming || undefined}
+      onMouseDown={(event) => {
+        // Shift+click selects a range of chats, not the text in between
+        if (event.shiftKey && !isRenaming) {
+          event.preventDefault();
+        }
+      }}
+      onClick={(event) => {
         if (!isRenaming) {
-          onClick(thread);
+          onClick(thread, event);
+        }
+      }}
+      onContextMenu={(event) => {
+        if (!isRenaming) {
+          onContextMenu?.(thread, event);
         }
       }}
     >
-      <StyledLeading>
-        <WorkspaceMemberAvatarStack
-          workspaceMembers={threadMembers}
-          defaultAvatarName={t`Member`}
-          maxVisible={2}
-        />
+      <StyledLeading
+        data-select-disable={isDefined(onCheckboxClick) || undefined}
+        onClick={
+          isDefined(onCheckboxClick)
+            ? (event) => {
+                event.stopPropagation();
+                onCheckboxClick(thread, event);
+              }
+            : undefined
+        }
+      >
+        {isDefined(onCheckboxClick) && (
+          <StyledCheckboxContainer $isChecked={isChecked}>
+            <Checkbox checked={isChecked} aria-label={t`Select chat`} />
+          </StyledCheckboxContainer>
+        )}
+        <StyledAvatarContainer
+          $isCheckable={isDefined(onCheckboxClick)}
+          $isChecked={isChecked}
+        >
+          <AiChatThreadAvatar thread={thread} />
+        </StyledAvatarContainer>
       </StyledLeading>
       <StyledThreadContent>
         {isRenaming ? (
@@ -232,18 +244,13 @@ export const AiChatThreadListItem = ({
           />
         ) : (
           <StyledThreadHeading>
-            <StyledThreadTitle $isUnread={isShownAsUnread}>
-              {displayTitle}
-              {isShownAsUnread && (
-                <VisibilityHidden>{t`, unread`}</VisibilityHidden>
-              )}
-            </StyledThreadTitle>
-            <StyledActivityTime $isDropdownOpen={isDropdownOpen}>
-              {getActivityTimeLabel()}
-            </StyledActivityTime>
+            <AiChatThreadTitle thread={thread} />
+            <StyledActivityTimeContainer $isDropdownOpen={isDropdownOpen}>
+              <AiChatThreadActivityTime thread={thread} />
+            </StyledActivityTimeContainer>
           </StyledThreadHeading>
         )}
-        <StyledThreadPreview>{previewText}</StyledThreadPreview>
+        <AiChatThreadSubtitle thread={thread} />
       </StyledThreadContent>
       <StyledMenuTrigger
         $isDropdownOpen={isDropdownOpen}
@@ -251,7 +258,7 @@ export const AiChatThreadListItem = ({
       >
         <AiChatThreadActionsDropdown
           thread={thread}
-          surface={surface}
+          instanceId={actionsInstanceId}
           onRenameRequested={startRename}
           onDetach={onDetach}
         />

@@ -20,6 +20,15 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const PARTICIPANT_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier;
 
+// Added by add-agent-chat-thread-subscriptions instead, which runs after the
+// inbox backfill: runtime reads isSubscribed as the sign the backfill is done
+const SUBSCRIPTION_FIELD_UNIVERSAL_IDENTIFIERS: string[] = [
+  STANDARD_OBJECTS.agentChatThreadParticipant.fields.isSubscribed
+    .universalIdentifier,
+  STANDARD_OBJECTS.agentChatThreadParticipant.fields.lastMentionedAt
+    .universalIdentifier,
+];
+
 // Fields this change adds to objects that already exist
 const EXISTING_OBJECT_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentChatThread.fields.participants.universalIdentifier,
@@ -90,7 +99,8 @@ export class AddAgentChatThreadParticipantObjectCommand extends ProvisionedWorks
 
     const objectsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatObjectMetadata>({
-        standardFlatEntityMaps: standardAllFlatEntityMaps.flatObjectMetadataMaps,
+        standardFlatEntityMaps:
+          standardAllFlatEntityMaps.flatObjectMetadataMaps,
         existingFlatEntityMaps: flatObjectMetadataMaps,
         universalIdentifiers: [PARTICIPANT_OBJECT_UNIVERSAL_IDENTIFIER],
       });
@@ -99,9 +109,14 @@ export class AddAgentChatThreadParticipantObjectCommand extends ProvisionedWorks
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
         existingFlatEntityMaps: flatFieldMetadataMaps,
         universalIdentifiers: [
-          ...Object.values(
-            STANDARD_OBJECTS.agentChatThreadParticipant.fields,
-          ).map((field) => field.universalIdentifier),
+          ...Object.values(STANDARD_OBJECTS.agentChatThreadParticipant.fields)
+            .map((field) => field.universalIdentifier)
+            .filter(
+              (universalIdentifier) =>
+                !SUBSCRIPTION_FIELD_UNIVERSAL_IDENTIFIERS.includes(
+                  universalIdentifier,
+                ),
+            ),
           ...EXISTING_OBJECT_FIELD_UNIVERSAL_IDENTIFIERS,
         ],
       });

@@ -8,9 +8,9 @@ export const AGENT_CHAT_THREAD_FILTER_STATUS_LABELS: Record<
   MessageDescriptor
 > = {
   active: msg`Open`,
-  unread: msg`Unread`,
+  needsInput: msg`Needs input`,
+  mentions: msg`Mentions`,
+  assigned: msg`Assigned`,
   snoozed: msg`Snoozed`,
   done: msg`Done`,
-  archived: msg`Deleted`,
-  all: msg`All`,
 };

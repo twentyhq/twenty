@@ -45,18 +45,11 @@ export const NavigationMenuItemTypeTooltip = ({
   return (
     <Tooltip
       delay={TooltipDelay.mediumDelay}
-      content={
-        <Tooltip.Content
-          description={
-            type === NavigationMenuItemType.FOLDER
-              ? t`Click to edit`
-              : undefined
-          }
-          startIcon={<Icon size={theme.icon.size.sm} />}
-        >
-          {label}
-        </Tooltip.Content>
+      content={label}
+      description={
+        type === NavigationMenuItemType.FOLDER ? t`Click to edit` : undefined
       }
+      startIcon={<Icon size={theme.icon.size.sm} />}
       sideOffset={theme.spacingMultiplicator}
       disabled={hidden}
       onOpenChange={(...openChangeArguments) => {

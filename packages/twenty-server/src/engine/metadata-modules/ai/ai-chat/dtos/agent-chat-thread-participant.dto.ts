@@ -5,6 +5,9 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 @ObjectType('AgentChatThreadParticipant')
 export class AgentChatThreadParticipantDTO {
   @Field(() => UUIDScalarType)
+  id: string;
+
+  @Field(() => UUIDScalarType)
   threadId: string;
 
   @Field(() => Date, { nullable: true })
@@ -15,4 +18,14 @@ export class AgentChatThreadParticipantDTO {
 
   @Field(() => Date, { nullable: true })
   snoozedUntil: Date | null;
+
+  @Field(() => Boolean)
+  isSubscribed: boolean;
+
+  @Field(() => Date, { nullable: true })
+  lastMentionedAt: Date | null;
+
+  // Orders the copies a member's apps receive, so an older one never wins
+  @Field(() => Date)
+  updatedAt: Date;
 }

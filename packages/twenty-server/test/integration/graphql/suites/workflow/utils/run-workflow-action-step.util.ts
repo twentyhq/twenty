@@ -189,6 +189,7 @@ export const runWorkflowActionStep = async ({
   payload,
   runToken,
   beforeRun,
+  whileRunning,
 }: {
   name: string;
   stepType: WorkflowActionStepType;
@@ -196,6 +197,11 @@ export const runWorkflowActionStep = async ({
   payload?: object;
   runToken?: string;
   beforeRun?: () => Promise<unknown>;
+  // for a step that waits on a person, who answers here before the run is awaited
+  whileRunning?: (run: {
+    workflowRunId: string;
+    stepId: string;
+  }) => Promise<unknown>;
 }): Promise<WorkflowActionStepRun> => {
   const workflowId = await createWorkflow(name);
 
@@ -228,6 +234,8 @@ export const runWorkflowActionStep = async ({
       payload,
       token: runToken,
     });
+
+    await whileRunning?.({ workflowRunId, stepId: step.id });
 
     const workflowRun = await waitForWorkflowCompletion(workflowRunId);
     const stepInfo = workflowRun?.state?.stepInfos?.[step.id];

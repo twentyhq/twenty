@@ -62,7 +62,7 @@ The default element is a `div`. Use `render` to give an interactive row appropri
 
 ## Settings row
 
-Use [SettingsRow](/ui/components/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and applies disabled behavior to both.
+Use [SettingsRow](/ui/components/settings/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and applies disabled behavior to both.
 
 ## Selection indicator
 
@@ -121,7 +121,7 @@ export const AssigneeButtons = () => {
           aria-pressed={assignee === name}
           selected={assignee === name}
           indicator="check"
-          startIcon={<Avatar name={name} size="md" />}
+          startIcon={<Avatar name={name} size="md" imageProps={{ alt: '' }} />}
           onClick={() => setAssignee(name)}
         >
           {name}

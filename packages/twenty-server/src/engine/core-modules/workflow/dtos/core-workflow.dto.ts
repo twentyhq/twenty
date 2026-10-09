@@ -3,7 +3,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { WorkflowVisibility } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 
 registerEnumType(WorkflowStatus, {
   name: 'CoreWorkflowStatus',
@@ -33,6 +33,9 @@ export class CoreWorkflowDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   workspaceWorkflowId: string | null;
+
+  @Field(() => Boolean, { nullable: false })
+  isSystem: boolean;
 
   @Field(() => WorkflowVisibility, { nullable: false })
   visibility: WorkflowVisibility;

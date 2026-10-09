@@ -8,6 +8,13 @@
  */
 
 export type { AgentManifest } from './agentManifestType';
+export type {
+  AgentTriggerType,
+  AgentDatabaseEventTrigger,
+  AgentCronTrigger,
+  AgentTrigger,
+  AgentTriggerManifest,
+} from './agentTriggerType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
@@ -53,11 +60,17 @@ export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
   ApplicationVariableOption,
+  ApplicationVariableScope,
   ApplicationVariableValue,
   ApplicationVariable,
   ApplicationVariables,
 } from './applicationVariablesType';
-export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
+export {
+  APPLICATION_VARIABLE_FIELD_METADATA_TYPES,
+  APPLICATION_VARIABLE_SCOPES,
+  isApplicationVariableScope,
+  DEFAULT_APPLICATION_VARIABLE_SCOPE,
+} from './applicationVariablesType';
 export type { AppMessageChannel } from './appMessageChannelType';
 export type { AssetManifest } from './assetManifestType';
 export type {
@@ -66,6 +79,9 @@ export type {
 } from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
+export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
+export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
+export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from './constants/ApplicationWorkflowUnavailableStepTypes';
 export { ASSETS_DIR } from './constants/AssetDirectory';
@@ -204,6 +220,7 @@ export type { RunAgentMessageAttachment } from './runAgentMessageAttachmentType'
 export type {
   RunAgentMessageRole,
   RunAgentMessage,
+  RunAgentThread,
   RunAgentInput,
   RunAgentResult,
 } from './runAgentType';

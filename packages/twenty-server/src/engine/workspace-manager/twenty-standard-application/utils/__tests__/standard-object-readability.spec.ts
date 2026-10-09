@@ -23,7 +23,6 @@ const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
   agentChatThreadTarget: STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread,
-  agentChatThread: STANDARD_OBJECT_FIELDS.agentChatThread.workflowRun,
 } as const;
 
 describe('Standard object readability', () => {
@@ -67,7 +66,7 @@ describe('Standard object readability', () => {
     STANDARD_OBJECTS.agentMessage.universalIdentifier,
     STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
     STANDARD_OBJECTS.agentTurn.universalIdentifier,
-    STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
+    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
 
     STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
@@ -101,7 +100,7 @@ describe('Standard object readability', () => {
     });
   });
 
-  it.each(['recordShare', 'shortLink', 'agentChatThreadParticipant'] as const)(
+  it.each(['recordShare', 'shortLink'] as const)(
     'declares %s SYSTEM for readability and writability',
     (objectName) => {
       expect(findStandardFlatObjectMetadata(objectName)).toMatchObject({
@@ -110,6 +109,22 @@ describe('Standard object readability', () => {
       });
     },
   );
+
+  it('declares agentChatThread PRIVATE, read through its own grants', () => {
+    expect(findStandardFlatObjectMetadata('agentChatThread')).toMatchObject({
+      readability: MetadataReadability.PRIVATE,
+      readabilityParentFieldUniversalIdentifiers: null,
+    });
+  });
+
+  it('declares agentChatThreadParticipant PRIVATE, written only by the chat resolvers', () => {
+    expect(
+      findStandardFlatObjectMetadata('agentChatThreadParticipant'),
+    ).toMatchObject({
+      readability: MetadataReadability.PRIVATE,
+      writability: MetadataWritability.SYSTEM,
+    });
+  });
 
   // Inheriting from the record would reveal which private conversations are filed under it
   it('resolves its thread as the only parent of an agentChatThreadTarget', () => {
@@ -173,23 +188,8 @@ describe('Standard object readability', () => {
     ).toContainEqual({
       joinColumnName: 'targetAgentChatThreadId',
       parentNameSingular: 'agentChatThread',
-      parentReadability: MetadataReadability.INHERITED,
+      parentReadability: MetadataReadability.PRIVATE,
     });
-  });
-
-  it('resolves its workflow run as the only parent of an agentChatThread', () => {
-    expect(
-      resolveParents('agentChatThread').map((parent) =>
-        parent.kind === 'column'
-          ? {
-              joinColumnName: parent.joinColumnName,
-              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
-            }
-          : parent.kind,
-      ),
-    ).toEqual([
-      { joinColumnName: 'workflowRunId', parentNameSingular: 'workflowRun' },
-    ]);
   });
 
   it('resolves every target of a noteTarget as its parent, not the note', () => {

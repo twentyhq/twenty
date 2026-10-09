@@ -4,7 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -22,7 +22,8 @@ const onHostKeyDown = fn();
 const onItemClick = fn();
 
 const meta: Meta<typeof OverflowingList> = {
-  title: 'UI/Components/OverflowingList/Interactions',
+  id: 'ui-components-overflowinglist-interactions',
+  title: 'UI/Components/Layout/OverflowingList/Interactions',
   component: OverflowingList,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
@@ -442,9 +443,9 @@ export const ScopedThemeAndDirection: Story = {
           backgroundColor="var(--t-background-primary)"
           style={{ width: 360, height: 220, padding: 16 }}
         >
-          <TextDirectionProvider direction="rtl">
+          <DirectionProvider direction="rtl">
             <OverflowingList {...args} dir="rtl" />
-          </TextDirectionProvider>
+          </DirectionProvider>
         </Card.Root>
       </ThemeProvider>
     </section>
@@ -541,7 +542,12 @@ export const DescendantContentUpdates: Story = {
     style: { width: 200 },
     children: [
       <OverflowingListMutableTag key="customer" />,
-      <Tag key="partner" color="green" preventShrink>
+      <Tag
+        key="partner"
+        color="green"
+        truncate={false}
+        style={{ minWidth: 'fit-content' }}
+      >
         Partner
       </Tag>,
     ],

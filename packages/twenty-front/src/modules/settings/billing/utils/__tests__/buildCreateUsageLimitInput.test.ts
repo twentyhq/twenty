@@ -4,6 +4,7 @@ import { buildCreateUsageLimitInput } from '@/settings/billing/utils/buildCreate
 import {
   UsageOperationType,
   UsageResourceType,
+  UsageUnit,
 } from '~/generated-metadata/graphql';
 
 const buildValues = (
@@ -13,7 +14,7 @@ const buildValues = (
   resourceType: UsageResourceType.AI,
   operationType: UsageOperationType.ALL,
   spenderType: 'workspace',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   periodUnit: 'month',
   limitValue: '100',
   ...overrides,
@@ -27,6 +28,7 @@ describe('buildCreateUsageLimitInput', () => {
     expect(
       buildCreateUsageLimitInput(buildValues({ spenderType: null })),
     ).toBeNull();
+    expect(buildCreateUsageLimitInput(buildValues({ unit: null }))).toBeNull();
   });
 
   it('always builds a one-period quota without burst', () => {
@@ -40,26 +42,48 @@ describe('buildCreateUsageLimitInput', () => {
       limitKind: 'quota',
       periodCount: 1,
       periodUnit: 'month',
-      meter: 'creditsUsedMicro',
+      unit: UsageUnit.CREDIT,
       limitValue: 12_500_000,
       burstValue: null,
     });
   });
 
-  it('keeps a quantity quota as an integer and rejects fractions', () => {
+  it('rounds a count to a whole number', () => {
     expect(
       buildCreateUsageLimitInput(
         buildValues({
           operationType: UsageOperationType.WEB_SEARCH,
-          meter: 'quantity',
+          unit: UsageUnit.INVOCATION,
           limitValue: '200',
         }),
       ),
-    ).toEqual(expect.objectContaining({ limitValue: 200, meter: 'quantity' }));
+    ).toEqual(
+      expect.objectContaining({ limitValue: 200, unit: UsageUnit.INVOCATION }),
+    );
     expect(
       buildCreateUsageLimitInput(
-        buildValues({ meter: 'quantity', limitValue: '2.5' }),
-      ),
+        buildValues({ unit: UsageUnit.INVOCATION, limitValue: '2.4' }),
+      )?.limitValue,
+    ).toBe(2);
+  });
+
+  it('accepts a zero amount to block the usage entirely', () => {
+    expect(
+      buildCreateUsageLimitInput(buildValues({ limitValue: '0' }))?.limitValue,
+    ).toBe(0);
+  });
+
+  it('rejects an amount that is not a positive number or zero', () => {
+    for (const limitValue of ['', ' ', 'abc', '-5', '1e30']) {
+      expect(
+        buildCreateUsageLimitInput(buildValues({ limitValue })),
+      ).toBeNull();
+    }
+  });
+
+  it('rejects an amount too small to store', () => {
+    expect(
+      buildCreateUsageLimitInput(buildValues({ limitValue: '0.0000001' })),
     ).toBeNull();
   });
 

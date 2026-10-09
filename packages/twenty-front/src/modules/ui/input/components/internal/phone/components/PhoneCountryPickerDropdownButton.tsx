@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { type KeyboardEvent, useId, useMemo } from 'react';
-import { PhoneCountryPicker } from 'twenty-ui/components';
+import { PhoneCountryPicker } from 'twenty-ui/components/input';
 
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

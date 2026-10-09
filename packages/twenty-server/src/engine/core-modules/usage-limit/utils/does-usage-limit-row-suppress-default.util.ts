@@ -1,6 +1,6 @@
 import { type UsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 
-type SuppressibleScope = Omit<UsageLimitScope, 'periodCount' | 'periodUnit'>;
+type SuppressibleScope = Omit<UsageLimitScope, 'periodCount'>;
 
 export const doesUsageLimitRowSuppressDefault = ({
   scope,
@@ -15,4 +15,5 @@ export const doesUsageLimitRowSuppressDefault = ({
   scope.spenderType === usageLimitDefault.spenderType &&
   scope.spenderId === usageLimitDefault.spenderId &&
   scope.limitKind === usageLimitDefault.limitKind &&
-  scope.meter === usageLimitDefault.meter;
+  scope.periodUnit === usageLimitDefault.periodUnit &&
+  scope.unit === usageLimitDefault.unit;

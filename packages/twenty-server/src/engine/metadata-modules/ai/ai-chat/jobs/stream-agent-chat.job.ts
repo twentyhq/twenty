@@ -1,5 +1,10 @@
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { findAwaitingCallText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-awaiting-call-text.util';
+import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
+import { mapAgentChatTurnOutcomeToTurnStatus } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-agent-chat-turn-outcome-to-turn-status.util';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Logger, Scope } from '@nestjs/common';
@@ -28,9 +33,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
-import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
-import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-agent-turn-usage-from-steps.util';
 import {
   AiException,
   AiExceptionCode,
@@ -41,9 +44,14 @@ import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import {
+  type ChatExecutionOptions,
+  ChatExecutionService,
+} from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
 import {
   classifyAgentChatTurnOutcome,
@@ -52,19 +60,27 @@ import {
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
-import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 
-import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
-import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
+import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
+import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
-
-export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
 // assistantMessageId derives from streamId, so a retried job skips persistence while each resume persists its own message
 const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
+
+type StreamUsageTotals = {
+  inputTokens: number;
+  outputTokens: number;
+  inputCredits: number;
+  outputCredits: number;
+  cacheReadTokens: number;
+  cacheCreationTokens: number;
+  conversationSize: number;
+};
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
@@ -87,10 +103,13 @@ export class StreamAgentChatJob {
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
+    private readonly threadService: AgentChatThreadService,
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
     private readonly sharingService: AgentChatSharingService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -164,73 +183,78 @@ export class StreamAgentChatJob {
         );
       }
 
-      const { message, authorization } = await this.actorService.authorizeJob({
-        workspaceId: data.workspaceId,
-        threadId: data.threadId,
-        messageId: data.messageId,
-        turnId: data.existingTurnId,
-        userWorkspaceId: data.userWorkspaceId,
-      });
-      if (!isDefined(message.turnId)) {
+      const { message, sender, authorization } =
+        await this.actorService.authorizeJob({
+          workspaceId: data.workspaceId,
+          threadId: data.threadId,
+          messageId: data.messageId,
+          turnId: data.existingTurnId,
+          userWorkspaceId: data.userWorkspaceId,
+        });
+
+      const turnId = data.existingTurnId ?? message?.turnId;
+
+      if (!isDefined(turnId)) {
         throw new AiException(
           'Message turn not found',
           AiExceptionCode.MESSAGE_NOT_FOUND,
         );
       }
-      await this.executeStream(
-        {
-          ...data,
-          messageId: message.id,
-          existingTurnId: message.turnId,
-          workspaceMemberId: authorization.authContext.workspaceMemberId,
-        },
+
+      const isRunning = await this.turnRecorderService.markRunning({
+        workspaceId: data.workspaceId,
+        turnId,
+        modelId: turnModelId,
+        createdBy: buildActorMetadataFromAuthContext(authorization.authContext),
+        streamClaim: { threadId: data.threadId, streamId: data.streamId },
+      });
+
+      // the stream was stopped while starting, and its turn already ended
+      if (!isRunning) {
+        return;
+      }
+
+      const titlePromise = data.hasTitle
+        ? Promise.resolve(null)
+        : this.agentChatService
+            .generateTitleIfNeeded({
+              userWorkspaceId: data.userWorkspaceId,
+              threadId: data.threadId,
+              messageContent: data.lastUserMessageText,
+              workspaceId: data.workspaceId,
+            })
+            .catch(() => null);
+
+      await this.buildAndPublishStream({
         workspace,
-        abortController.signal,
+        data,
+        turnId,
+        sender,
+        authorization,
+        titlePromise,
+        abortSignal: abortController.signal,
         turnModelId,
-      );
+      });
     } catch (error) {
       this.logger.error(
         `[AI_CHAT_TURN_FAILED] failurePhase=execution, model=${turnModelId}, threadId=${data.threadId}, workspaceId=${data.workspaceId}, streamId=${data.streamId}: ${formatErrorWithCause(error)}`,
       );
-      const streamError = mapErrorToStreamError(error);
 
       this.recordTurnOutcome(
         {
           kind: 'failed',
           failurePhase: 'execution',
-          errorCode: streamError.code,
+          errorCode: mapErrorToStreamError(error).code,
         },
         turnModelId,
       );
 
-      await this.threadRepository
-        .update(
-          data.workspaceId,
-          { id: data.threadId, activeStreamId: data.streamId },
-          {
-            lastStreamError: {
-              ...streamError,
-              failedAt: new Date().toISOString(),
-            },
-          },
-        )
-        .catch((persistError) => {
-          this.logger.error(
-            `Failed to persist stream error for thread ${data.threadId}: ${persistError instanceof Error ? persistError.message : String(persistError)}`,
-          );
-        });
-
-      await this.eventPublisherService
-        .publish({
-          threadId: data.threadId,
-          workspaceId: data.workspaceId,
-          event: {
-            type: 'stream-error',
-            code: streamError.code,
-            message: streamError.message,
-          },
-        })
-        .catch(() => {});
+      await this.streamRecoveryService.failStream({
+        threadId: data.threadId,
+        workspaceId: data.workspaceId,
+        streamId: data.streamId,
+        error,
+      });
 
       await this.eventPublisherService
         .publish({
@@ -242,26 +266,22 @@ export class StreamAgentChatJob {
       throw error;
     } finally {
       stopHeartbeat();
-      await this.streamHeartbeatService.clear(data.streamId);
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
-      await this.threadRepository
-        .update(
-          data.workspaceId,
-          { id: data.threadId, activeStreamId: data.streamId },
-          { activeStreamId: null },
-        )
-        .catch(() => {});
+      await this.streamRecoveryService.releaseStreamClaim({
+        threadId: data.threadId,
+        workspaceId: data.workspaceId,
+        streamId: data.streamId,
+      });
 
       if (!abortController.signal.aborted && !this.isAwaitingInput) {
         await this.agentChatStreamingService
           .flushNextQueuedMessage({
             threadId: data.threadId,
             workspaceId: data.workspaceId,
-            hasTitle: data.hasTitle,
           })
           .catch((error) => {
             this.logger.error(
-              `Failed to flush queued message for thread ${data.threadId}: ${error instanceof Error ? error.message : String(error)}`,
+              `Failed to flush queued message for thread ${data.threadId}: ${formatErrorWithCause(error)}`,
             );
           });
       }
@@ -337,47 +357,21 @@ export class StreamAgentChatJob {
     }
   }
 
-  private async executeStream(
-    data: StreamAgentChatJobData & {
-      existingTurnId: string;
-      workspaceMemberId: string;
-    },
-    workspace: WorkspaceEntity,
-    abortSignal: AbortSignal,
-    turnModelId: string,
-  ): Promise<void> {
-    const titlePromise = data.hasTitle
-      ? Promise.resolve(null)
-      : this.agentChatService
-          .generateTitleIfNeeded({
-            workspaceMemberId: data.workspaceMemberId,
-            threadId: data.threadId,
-            messageContent: data.lastUserMessageText,
-            workspaceId: data.workspaceId,
-          })
-          .catch(() => null);
-
-    await this.buildAndPublishStream({
-      workspace,
-      data,
-      turnId: data.existingTurnId,
-      titlePromise,
-      abortSignal,
-      turnModelId,
-    });
-  }
-
   private async buildAndPublishStream({
     workspace,
     data,
     turnId,
+    sender,
+    authorization,
     titlePromise,
     abortSignal,
     turnModelId,
   }: {
     workspace: WorkspaceEntity;
-    data: StreamAgentChatJobData & { workspaceMemberId: string };
+    data: StreamAgentChatJobData;
     turnId: string;
+    sender: ChatExecutionOptions['sender'];
+    authorization: ChatExecutionOptions['authorization'];
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
     turnModelId: string;
@@ -388,15 +382,15 @@ export class StreamAgentChatJob {
     );
 
     return new Promise<void>((resolve, reject) => {
-      let streamUsage = {
+      const usageTotals: StreamUsageTotals = {
         inputTokens: 0,
         outputTokens: 0,
         inputCredits: 0,
         outputCredits: 0,
         cacheReadTokens: 0,
+        cacheCreationTokens: 0,
+        conversationSize: 0,
       };
-      let lastStepConversationSize = 0;
-      let totalCacheCreationTokens = 0;
       let streamError: unknown;
       let streamFinishError: unknown;
       let checkHasNoMoreAvailableCredits: () => boolean = () => false;
@@ -410,7 +404,7 @@ export class StreamAgentChatJob {
       ): Promise<void> => {
         persistChain = persistChain.then(persist).catch((error) => {
           this.logger.warn(
-            `Failed to checkpoint assistant message for stream ${data.streamId}: ${error instanceof Error ? error.message : String(error)}`,
+            `Failed to checkpoint assistant message for stream ${data.streamId}: ${formatErrorWithCause(error)}`,
           );
         });
 
@@ -467,10 +461,11 @@ export class StreamAgentChatJob {
           } = await this.chatExecutionService.streamChat({
             workspace,
             userWorkspaceId: data.userWorkspaceId,
+            sender,
+            authorization,
             threadId: data.threadId,
             streamId: data.streamId,
-            turnId: data.existingTurnId,
-            messageId: data.messageId,
+            turnId,
             messages: data.messages,
             browsingContext: data.browsingContext,
             modelId: data.modelId,
@@ -495,35 +490,18 @@ export class StreamAgentChatJob {
           writer.merge(
             toUIMessageStream({
               stream: stream.stream,
-              onError: (error) =>
-                error instanceof Error ? error.message : String(error),
+              onError: formatErrorWithCause,
               sendStart: true,
               generateMessageId: () => assistantMessageId,
-              messageMetadata: ({ part }) => {
-                return this.computeMessageMetadata({
-                  part,
-                  modelConfig,
-                  streamUsage,
-                  lastStepConversationSize,
-                  totalCacheCreationTokens,
-                  onUpdateUsage: (usage) => {
-                    streamUsage = usage;
-                  },
-                  onUpdateConversationSize: (size) => {
-                    lastStepConversationSize = size;
-                  },
-                  onUpdateCacheCreationTokens: (tokens) => {
-                    totalCacheCreationTokens = tokens;
-                  },
-                });
-              },
+              messageMetadata: ({ part }) =>
+                this.computeMessageMetadata({ part, modelConfig, usageTotals }),
               onEnd: async ({ responseMessage, isAborted }) => {
                 // Rejecting here would race chunks still draining.
                 try {
                   streamError ??= getStreamError();
                   isFinalizingPersist = true;
                   await persistChain;
-                  await this.handleStreamFinish({
+                  const outcome = await this.persistStreamFinish({
                     assistantMessageId,
                     streamId: data.streamId,
                     responseMessage,
@@ -532,14 +510,17 @@ export class StreamAgentChatJob {
                     outOfCredits: checkHasNoMoreAvailableCredits(),
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
-                    workspaceMemberId: data.workspaceMemberId,
-                    streamUsage,
-                    lastStepConversationSize,
-                    totalCacheCreationTokens,
+                    workspaceMemberId:
+                      authorization.authContext.workspaceMemberId,
+                    usageTotals,
                     modelConfig,
                     turnModelId,
                     turnId,
                   });
+
+                  if (isDefined(outcome)) {
+                    this.recordTurnOutcome(outcome, turnModelId);
+                  }
                   await titleWritePromise;
                 } catch (error) {
                   streamFinishError = error;
@@ -556,7 +537,7 @@ export class StreamAgentChatJob {
           streamError = error;
           resolveStreamFinished();
 
-          return error instanceof Error ? error.message : String(error);
+          return formatErrorWithCause(error);
         },
       });
 
@@ -652,12 +633,7 @@ export class StreamAgentChatJob {
   private computeMessageMetadata({
     part,
     modelConfig,
-    streamUsage,
-    lastStepConversationSize,
-    totalCacheCreationTokens,
-    onUpdateUsage,
-    onUpdateConversationSize,
-    onUpdateCacheCreationTokens,
+    usageTotals,
   }: {
     part: {
       type: string;
@@ -670,65 +646,33 @@ export class StreamAgentChatJob {
       providerMetadata?: Record<string, Record<string, unknown> | undefined>;
     };
     modelConfig: AiModelConfig;
-    streamUsage: {
-      inputTokens: number;
-      outputTokens: number;
-      inputCredits: number;
-      outputCredits: number;
-      cacheReadTokens: number;
-    };
-    lastStepConversationSize: number;
-    totalCacheCreationTokens: number;
-    onUpdateUsage: (usage: {
-      inputTokens: number;
-      outputTokens: number;
-      inputCredits: number;
-      outputCredits: number;
-      cacheReadTokens: number;
-    }) => void;
-    onUpdateConversationSize: (size: number) => void;
-    onUpdateCacheCreationTokens: (tokens: number) => void;
+    usageTotals: StreamUsageTotals;
   }) {
     if (part.type === 'finish-step') {
-      const stepCacheCreationTokens = extractCacheCreationTokens(
-        part.providerMetadata,
+      Object.assign(
+        usageTotals,
+        addStepToAgentTurnUsage(modelConfig, usageTotals, part),
       );
-      const stepBreakdown = computeStepCostBreakdown(modelConfig, {
-        usage: part.usage,
-        cacheCreationTokens: stepCacheCreationTokens,
-      });
+      usageTotals.conversationSize = part.usage?.inputTokens ?? 0;
+    }
 
-      onUpdateUsage({
-        inputTokens:
-          streamUsage.inputTokens + stepBreakdown.tokenCounts.totalInputTokens,
-        outputTokens:
-          streamUsage.outputTokens + (part.usage?.outputTokens ?? 0),
-        inputCredits:
-          streamUsage.inputCredits +
-          convertDollarsToCreditsMicro(stepBreakdown.inputCostInDollars),
-        outputCredits:
-          streamUsage.outputCredits +
-          convertDollarsToCreditsMicro(stepBreakdown.outputCostInDollars),
-        cacheReadTokens:
-          streamUsage.cacheReadTokens +
-          stepBreakdown.tokenCounts.cachedInputTokens,
-      });
-      onUpdateCacheCreationTokens(
-        totalCacheCreationTokens + stepCacheCreationTokens,
-      );
-      onUpdateConversationSize(part.usage?.inputTokens ?? 0);
+    if (part.type === 'start') {
+      return { startedAt: new Date().toISOString() };
     }
 
     if (part.type === 'finish') {
+      const finishedAt = new Date().toISOString();
+
       return {
-        createdAt: new Date().toISOString(),
+        createdAt: finishedAt,
+        finishedAt,
         usage: {
-          inputTokens: streamUsage.inputTokens,
-          outputTokens: streamUsage.outputTokens,
-          cachedInputTokens: streamUsage.cacheReadTokens,
-          inputCredits: toDisplayCredits(streamUsage.inputCredits),
-          outputCredits: toDisplayCredits(streamUsage.outputCredits),
-          conversationSize: lastStepConversationSize,
+          inputTokens: usageTotals.inputTokens,
+          outputTokens: usageTotals.outputTokens,
+          cachedInputTokens: usageTotals.cacheReadTokens,
+          inputCredits: toDisplayCredits(usageTotals.inputCredits),
+          outputCredits: toDisplayCredits(usageTotals.outputCredits),
+          conversationSize: usageTotals.conversationSize,
         },
         model: {
           contextWindowTokens: modelConfig.contextWindowTokens,
@@ -737,36 +681,6 @@ export class StreamAgentChatJob {
     }
 
     return undefined;
-  }
-
-  private async handleStreamFinish(args: {
-    assistantMessageId: string;
-    streamId: string;
-    responseMessage: Omit<ExtendedUIMessage, 'id'>;
-    isAborted: boolean;
-    streamError: unknown;
-    outOfCredits: boolean;
-    threadId: string;
-    workspaceId: string;
-    workspaceMemberId: string;
-    streamUsage: {
-      inputTokens: number;
-      outputTokens: number;
-      inputCredits: number;
-      outputCredits: number;
-      cacheReadTokens: number;
-    };
-    lastStepConversationSize: number;
-    totalCacheCreationTokens: number;
-    modelConfig: AiModelConfig;
-    turnModelId: string;
-    turnId: string;
-  }): Promise<void> {
-    const outcome = await this.persistStreamFinish(args);
-
-    if (isDefined(outcome)) {
-      this.recordTurnOutcome(outcome, args.turnModelId);
-    }
   }
 
   // null on stream error: the catch in handle() already counts that turn
@@ -780,9 +694,7 @@ export class StreamAgentChatJob {
     threadId,
     workspaceId,
     workspaceMemberId,
-    streamUsage,
-    lastStepConversationSize,
-    totalCacheCreationTokens,
+    usageTotals,
     modelConfig,
     turnModelId,
     turnId,
@@ -796,27 +708,15 @@ export class StreamAgentChatJob {
     threadId: string;
     workspaceId: string;
     workspaceMemberId: string;
-    streamUsage: {
-      inputTokens: number;
-      outputTokens: number;
-      inputCredits: number;
-      outputCredits: number;
-      cacheReadTokens: number;
-    };
-    lastStepConversationSize: number;
-    totalCacheCreationTokens: number;
+    usageTotals: StreamUsageTotals;
     modelConfig: AiModelConfig;
     turnModelId: string;
     turnId: string;
   }): Promise<AgentChatTurnOutcome | null> {
+    // A turn that only waits on the member still needs a preview in chat lists
     const replyText =
-      responseMessage.parts
-        .flatMap((part) =>
-          part.type === 'text' && isNonEmptyString(part.text.trim())
-            ? [part.text]
-            : [],
-        )
-        .pop() ?? null;
+      findLastMessageText(responseMessage.parts) ??
+      findAwaitingCallText(responseMessage.parts);
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
@@ -836,10 +736,12 @@ export class StreamAgentChatJob {
         hasText,
         threadId,
         workspaceId,
-        streamUsage,
+        inputTokens: usageTotals.inputTokens,
         modelId: turnModelId,
       });
     }
+
+    await this.recordTurnUsage({ workspaceId, threadId, turnId, usageTotals });
 
     if (isDefined(streamError)) {
       return null;
@@ -853,6 +755,15 @@ export class StreamAgentChatJob {
     });
 
     if (responseMessage.parts.length === 0) {
+      await this.finishTurn({
+        workspaceId,
+        turnId,
+        threadId,
+        streamId,
+        outcome,
+        turnModelId,
+      });
+
       return outcome;
     }
 
@@ -881,14 +792,8 @@ export class StreamAgentChatJob {
         ? { lastMessageText: replyText }
         : null,
       usage: {
-        totalInputTokens: streamUsage.inputTokens,
-        totalOutputTokens: streamUsage.outputTokens,
-        totalInputCredits: streamUsage.inputCredits,
-        totalOutputCredits: streamUsage.outputCredits,
-        totalCacheReadTokens: streamUsage.cacheReadTokens,
-        totalCacheCreationTokens,
         contextWindowTokens: modelConfig.contextWindowTokens,
-        conversationSize: lastStepConversationSize,
+        conversationSize: usageTotals.conversationSize,
         pendingQuestionMessageId: isAwaitingAnswer ? assistantMessageId : null,
       },
     });
@@ -896,11 +801,11 @@ export class StreamAgentChatJob {
     if (!totalsUpdate.affected) {
       // The reply is saved even though a newer stream owns the thread. That
       // activity is best-effort and must not turn the saved reply into an error
-      await this.agentChatService
+      await this.threadService
         .recordThreadActivity({ workspaceId, threadId, text: replyText })
         .catch((error: unknown) =>
           this.logger.warn(
-            `Could not record reply activity on thread ${threadId}: ${error instanceof Error ? error.message : String(error)}`,
+            `Could not record reply activity on thread ${threadId}: ${formatErrorWithCause(error)}`,
           ),
         );
 
@@ -916,6 +821,15 @@ export class StreamAgentChatJob {
 
     this.isAwaitingInput = isAwaitingAnswer;
 
+    await this.finishTurn({
+      workspaceId,
+      turnId,
+      threadId,
+      streamId,
+      outcome,
+      turnModelId,
+    });
+
     await this.agentChatService.notifyThreadUsageUpdated({
       threadBefore: threadBeforeUsage,
       workspaceMemberId,
@@ -923,6 +837,63 @@ export class StreamAgentChatJob {
     });
 
     return outcome;
+  }
+
+  // Usage is recorded on its own: a failure to count it must not fail a reply already saved
+  private async recordTurnUsage({
+    workspaceId,
+    threadId,
+    turnId,
+    usageTotals,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    usageTotals: StreamUsageTotals;
+  }): Promise<void> {
+    await this.turnRecorderService
+      .recordUsage({
+        workspaceId,
+        threadId,
+        turnId,
+        usage: {
+          inputTokens: usageTotals.inputTokens,
+          outputTokens: usageTotals.outputTokens,
+          cacheReadTokens: usageTotals.cacheReadTokens,
+          cacheCreationTokens: usageTotals.cacheCreationTokens,
+          inputCredits: usageTotals.inputCredits,
+          outputCredits: usageTotals.outputCredits,
+        },
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not record the usage of turn ${turnId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
+  }
+
+  private async finishTurn({
+    workspaceId,
+    turnId,
+    threadId,
+    streamId,
+    outcome,
+    turnModelId,
+  }: {
+    workspaceId: string;
+    turnId: string;
+    threadId: string;
+    streamId: string;
+    outcome: AgentChatTurnOutcome;
+    turnModelId: string;
+  }): Promise<void> {
+    await this.turnRecorderService.finish({
+      workspaceId,
+      turnId,
+      ...mapAgentChatTurnOutcomeToTurnStatus(outcome),
+      modelId: turnModelId,
+      streamClaim: { threadId, streamId },
+    });
   }
 
   private logAssistantTurnWithoutText({
@@ -933,7 +904,7 @@ export class StreamAgentChatJob {
     hasText,
     threadId,
     workspaceId,
-    streamUsage,
+    inputTokens,
     modelId,
   }: {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -943,10 +914,7 @@ export class StreamAgentChatJob {
     hasText: boolean;
     threadId: string;
     workspaceId: string;
-    streamUsage: {
-      inputTokens: number;
-      outputTokens: number;
-    };
+    inputTokens: number;
     modelId: string;
   }): void {
     const reason = isAborted
@@ -957,12 +925,9 @@ export class StreamAgentChatJob {
           ? 'credits-exhausted'
           : 'empty-completion';
 
-    const errorDetail =
-      streamError instanceof Error
-        ? `${streamError.name}: ${streamError.message}`
-        : isDefined(streamError)
-          ? String(streamError)
-          : 'none';
+    const errorDetail = isDefined(streamError)
+      ? formatErrorWithCause(streamError)
+      : 'none';
 
     this.logger.warn(
       `[AI_CHAT_NO_TEXT] Assistant turn ended without a text reply — ` +
@@ -970,7 +935,7 @@ export class StreamAgentChatJob {
         `threadId=${threadId}, workspaceId=${workspaceId}, ` +
         `isAborted=${isAborted}, outOfCredits=${outOfCredits}, hasText=${hasText}, ` +
         `streamError=${errorDetail}, ` +
-        `inputTokens=${streamUsage.inputTokens},` +
+        `inputTokens=${inputTokens},` +
         `responseMessage.parts=${JSON.stringify(responseMessage.parts)}`,
     );
 

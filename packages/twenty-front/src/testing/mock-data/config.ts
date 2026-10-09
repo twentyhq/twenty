@@ -16,6 +16,7 @@ export const mockedClientConfig: ClientConfig = {
     sso: [],
   },
   frontDomain: 'localhost',
+  serverUrl: 'http://localhost:3000',
   defaultSubdomain: 'app',
   analyticsEnabled: true,
   support: {
@@ -49,7 +50,6 @@ export const mockedClientConfig: ClientConfig = {
   onboarding: {
     importContactsCreditsReward: 2,
     inviteTeamCreditsRewardPerUser: 3,
-    installAppsCreditsReward: 0.5,
     createProfileCreditsReward: 0.5,
     upgradeCreditsReward: 2,
     inviteTeamMaxInvites: 10,

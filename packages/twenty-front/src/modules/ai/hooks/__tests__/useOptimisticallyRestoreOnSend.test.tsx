@@ -13,6 +13,10 @@ const ARCHIVED_PARTICIPANT = {
   lastReadAt: LAST_ACTIVITY_AT,
   archivedAt: '2026-10-01T11:00:00.000Z',
   snoozedUntil: null,
+  isSubscribed: true,
+  lastMentionedAt: null,
+  id: 'participant-id',
+  updatedAt: '2026-10-01T11:00:00.000Z',
 };
 
 describe('useOptimisticallyRestoreOnSend', () => {
@@ -53,6 +57,10 @@ describe('useOptimisticallyRestoreOnSend', () => {
       lastReadAt: sentAt,
       archivedAt: null,
       snoozedUntil: null,
+      isSubscribed: true,
+      lastMentionedAt: null,
+      id: 'participant-id',
+      updatedAt: ARCHIVED_PARTICIPANT.updatedAt,
     });
 
     act(() => rollback());

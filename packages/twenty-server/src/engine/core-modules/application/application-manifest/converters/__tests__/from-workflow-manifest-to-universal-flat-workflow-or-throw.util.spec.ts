@@ -61,6 +61,7 @@ describe('application workflow definitions', () => {
     expect(workflow.lastPublishedCoreWorkflowVersionId).toBe(version.id);
     expect(version.coreWorkflowId).toBe(workflow.id);
     expect(workflow.workspaceWorkflowId).toBeNull();
+    expect(workflow.isSystem).toBe(false);
     expect(version.workspaceWorkflowVersionId).toBeNull();
     expect(version.status).toBe('ACTIVE');
     expect(version.steps?.[0].settings.input).toEqual({

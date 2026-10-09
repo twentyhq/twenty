@@ -19,7 +19,7 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
   onEscapeKeyDown:
     'Called when Escape is about to close the popup. Call `event.preventDefault()` to keep it open.',
   onInteractOutside:
-    'Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open.',
+    'Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab, and `event.type` is the type of the DOM event that triggered it. Call `event.preventDefault()` to keep it open.',
   multiple:
     'Allows selecting several options. Options then keep the popup open and show a checkbox by default.',
   defaultPage:
@@ -27,6 +27,10 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
 } satisfies Partial<Record<keyof DropdownRootProps, string>>;
 
 const DROPDOWN_ITEM_PROP_DESCRIPTIONS = {
+  actions:
+    'Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.',
+  actionsVisibility:
+    'Whether trailing actions appear on hover or remain visible. Defaults to `hover`.',
   shortcutJoinLabel:
     'Text between sequential shortcut steps. Defaults to `then`.',
   className: 'CSS class applied to the row.',
@@ -38,6 +42,15 @@ const DROPDOWN_ITEM_PROP_DESCRIPTIONS = {
 export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
   Root: DROPDOWN_ROOT_PROP_DESCRIPTIONS,
   Content: {
+    container:
+      'Portal destination, using the scoped theme when omitted. Explicit null waits for a target, matching Popover.Portal.',
+    keepMounted: 'Keeps the popup mounted while closed.',
+    side: 'Preferred side of the anchor. Defaults to bottom, or inline-end in a submenu.',
+    align: 'Alignment along the anchor. Defaults to start.',
+    sideOffset:
+      'Distance from the anchor. Defaults to 0. Accepts a number or positioning function.',
+    alignOffset:
+      'Offset along the alignment axis. Accepts a number or positioning function.',
     width: 'CSS width of the popup. Numbers are in pixels.',
   } satisfies Partial<Record<keyof DropdownContentProps, string>>,
   ActionItem: {
@@ -49,7 +62,7 @@ export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
   OptionItem: {
     ...DROPDOWN_ITEM_PROP_DESCRIPTIONS,
     selected:
-      'Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types. Omit it for options that navigate or apply without a selection state.',
+      'Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types, or as `aria-current` when `render` is not a button, such as a link. Omit it for options that navigate or apply without a selection state.',
     onSelect:
       'Called when the option is activated. The application owns the selected value.',
     closeOnSelect:
@@ -80,6 +93,8 @@ export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
       'Delay in milliseconds before a submenu opened on hover closes. Requires `openOnHover`. Defaults to `0`.',
   } satisfies Partial<Record<keyof DropdownSubmenuTriggerProps, string>>,
   Section: {
+    columns:
+      'Number of grid columns. Sets the grid layout and enables horizontal arrow navigation and vertical movement by row.',
     label:
       'Heading displayed above the rows. It also names the group for assistive technologies.',
     scrollable:

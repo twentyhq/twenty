@@ -4,6 +4,7 @@ import { buildUsageQuotaScopeInput } from '@/settings/billing/utils/buildUsageQu
 import {
   UsageOperationType,
   UsageResourceType,
+  UsageUnit,
 } from '~/generated-metadata/graphql';
 
 const buildValues = (
@@ -13,7 +14,7 @@ const buildValues = (
   resourceType: UsageResourceType.AI,
   operationType: UsageOperationType.ALL,
   spenderType: 'workspace',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   periodUnit: 'month',
   limitValue: '100',
   ...overrides,
@@ -33,7 +34,7 @@ describe('buildUsageQuotaScopeInput', () => {
       operationType: UsageOperationType.ALL,
       spenderType: 'workspace',
       spenderId: null,
-      meter: 'creditsUsedMicro',
+      unit: UsageUnit.CREDIT,
       periodUnit: 'month',
     };
 

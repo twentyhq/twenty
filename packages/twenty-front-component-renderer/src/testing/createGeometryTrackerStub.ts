@@ -9,6 +9,7 @@ export const createGeometryTrackerStub = (): GeometryTracker => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   setRoot: jest.fn(),
+  setPortalLayer: jest.fn(),
   setPushGeometryUpdates: jest.fn(),
   getViewportGeometry: jest.fn<ViewportGeometrySnapshot, []>(),
   reset: jest.fn(),

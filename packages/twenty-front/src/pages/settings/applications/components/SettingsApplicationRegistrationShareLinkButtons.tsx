@@ -4,6 +4,7 @@ import { SettingsApplicationInstallPermissionValidationModal } from '@/marketpla
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
+import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useQuery } from '@apollo/client/react';
@@ -43,10 +44,15 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
   const installable =
     isDefined(isInstalled) && isDefined(universalIdentifier) && !isInstalled;
 
-  const { requestInstall, install, isInstalling, modalInstanceId } =
-    useInstallMarketplaceAppWithPermissionValidation({
-      universalIdentifier,
-    });
+  const {
+    requestInstall,
+    install,
+    isInstalling,
+    installProgress,
+    modalInstanceId,
+  } = useInstallMarketplaceAppWithPermissionValidation({
+    universalIdentifier,
+  });
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: universalIdentifier ?? '' },
@@ -58,6 +64,10 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
+  const displayedInstallProgress = formatQueueJobProgressLabel(
+    installProgress ?? 0,
+  );
+
   return (
     <StyledButtonGroup>
       {installable && (
@@ -65,10 +75,13 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
           <Button
             startIcon={<IconDownload />}
             onClick={requestInstall}
-            disabled={isInstalling}
+            loading={isInstalling}
+            loadingPosition="end"
             variant="outline"
           >
-            {isInstalling ? t`Installing...` : t`Install`}
+            {isInstalling
+              ? t`Installing ${displayedInstallProgress}`
+              : t`Install`}
           </Button>
           <SettingsApplicationInstallPermissionValidationModal
             modalInstanceId={modalInstanceId}

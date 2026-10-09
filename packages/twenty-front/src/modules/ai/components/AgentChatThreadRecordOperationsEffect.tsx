@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
+import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -43,13 +44,20 @@ export const AgentChatThreadRecordOperationsEffect = () => {
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
   const { leaveRemovedAiChatThread } = useLeaveRemovedAiChatThread();
   const store = useStore();
+  const { refreshAgentChatOpenThreadsSummary } =
+    useRefreshAgentChatOpenThreadsSummary();
   const isEnabled = isDefined(chatObjectMetadataItem);
 
   // The removal check looks the chat up itself, so it runs even if the reload fails.
   const reloadAgentChatThreads = useCallback(async () => {
+    refreshAgentChatOpenThreadsSummary();
     await refreshAgentChatThreads();
     await leaveRemovedAiChatThread();
-  }, [leaveRemovedAiChatThread, refreshAgentChatThreads]);
+  }, [
+    leaveRemovedAiChatThread,
+    refreshAgentChatOpenThreadsSummary,
+    refreshAgentChatThreads,
+  ]);
 
   useListenToEventsForQuery({
     queryId: 'agent-chat-thread-record-operations',
@@ -60,6 +68,9 @@ export const AgentChatThreadRecordOperationsEffect = () => {
 
   const handleRecordOperation = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
+      // Activity, assignment, questions and deletion all move the counts
+      refreshAgentChatOpenThreadsSummary();
+
       const applyUpdates = (
         updates: (Partial<AgentChatThreadRecord> & { id: string })[],
       ) => {
@@ -73,10 +84,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
           const createdThread =
             operation.createdRecord as AgentChatThreadRecord;
 
-          // Workflow run conversations are listed with the run, not in the chat list.
-          if (!isDefined(createdThread.workflowRunId)) {
-            addAgentChatThread(createdThread);
-          }
+          addAgentChatThread(createdThread);
           return;
         }
         case 'update-one':
@@ -88,7 +96,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
 
           applyUpdates(updateInputs.map(toThreadUpdate));
 
-          // An updated chat past the loaded pages moves to the top; reloading keeps workflow run chats out.
+          // An updated chat past the loaded pages moves to the top
           const listedThreadIds =
             store.get(agentChatThreadListState.atom)?.threadIds ?? [];
 
@@ -132,6 +140,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
     [
       addAgentChatThread,
       applyAgentChatThreadUpdate,
+      refreshAgentChatOpenThreadsSummary,
       refreshAgentChatThreads,
       reloadAgentChatThreads,
       store,

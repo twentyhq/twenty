@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
+import { Button } from '@ui/primitives/input/Button/Button';
 import { Field } from '@ui/primitives/input/Field/Field';
 import { ComponentDecorator } from '@ui/testing';
 
@@ -15,9 +16,9 @@ const ControlledInputExample = (props: InputProps) => {
   return (
     <>
       <Input {...props} value={value} />
-      <button type="button" onClick={() => setValue('ab')}>
+      <Button type="button" onClick={() => setValue('ab')}>
         Apply value
-      </button>
+      </Button>
     </>
   );
 };
@@ -30,9 +31,9 @@ const FieldInputExample = (props: InputProps) => {
       <Field.Root invalid disabled={disabled}>
         <Input {...props} />
       </Field.Root>
-      <button type="button" onClick={() => setDisabled(true)}>
+      <Button type="button" onClick={() => setDisabled(true)}>
         Disable input
-      </button>
+      </Button>
     </>
   );
 };

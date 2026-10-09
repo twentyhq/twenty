@@ -11,10 +11,12 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const markAgentChatThreadAsRead = jest.fn();
+const updateAgentChatThreadInboxState = jest.fn();
 
-jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
-  useAgentChatThreadParticipants: () => ({ markAgentChatThreadAsRead }),
+jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
+  useUpdateAgentChatThreadInboxState: () => ({
+    updateAgentChatThreadInboxState,
+  }),
 }));
 
 const THREAD_ID = '6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60';
@@ -44,6 +46,10 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
         lastReadAt: '2026-10-01T09:00:00.000Z',
         archivedAt: null,
         snoozedUntil: null,
+        isSubscribed: true,
+        lastMentionedAt: null,
+        id: 'participant-id',
+        updatedAt: '2026-10-01T10:00:00.000Z',
       },
     });
     jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
@@ -52,7 +58,10 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
   it('marks the thread on screen as read and keeps where the member left off', () => {
     renderChatView();
 
-    expect(markAgentChatThreadAsRead).toHaveBeenCalledWith(THREAD_ID);
+    expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
+      threadIds: [THREAD_ID],
+      action: 'READ',
+    });
     expect(jotaiStore.get(agentChatThreadVisitState.atom)).toEqual({
       threadId: THREAD_ID,
       isUnread: true,

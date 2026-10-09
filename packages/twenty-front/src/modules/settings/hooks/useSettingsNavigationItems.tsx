@@ -34,6 +34,7 @@ import {
   IconUsers,
 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -204,9 +205,8 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Documentation`,
           onClick: () =>
-            window.open(
+            openUrlInNewTab(
               getDocumentationUrl({ locale: currentWorkspaceMember?.locale }),
-              '_blank',
             ),
           Icon: IconHelpCircle,
         },

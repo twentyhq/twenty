@@ -3,17 +3,23 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import type * as React from 'react';
 import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
-import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+
+jest.mock('@/ai/hooks/useIsWorkspaceSetupChat', () => ({
+  useIsWorkspaceSetupChat: () => true,
+}));
+
+jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
+  WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
+}));
 
 jest.mock('@/ai/components/AiChatInitialLoadingIndicator', () => ({
   AiChatInitialLoadingIndicator: () => (
@@ -64,21 +70,12 @@ jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
   MarkdownLoadingSkeleton: () => <div role="status">Loading conversation</div>,
 }));
 
-const INSTANCE_ID = 'aiChatTabMessageListPreambleTest';
 const THREAD_ID = 'thread-1';
 
 const renderPreambleBranch = () =>
   render(
     <JotaiProvider store={jotaiStore}>
-      <AgentChatComponentInstanceContext.Provider
-        value={{ instanceId: INSTANCE_ID }}
-      >
-        <AiChatMessageListPreambleContext.Provider
-          value={<div data-testid="preamble" />}
-        >
-          <AiChatTabMessageList />
-        </AiChatMessageListPreambleContext.Provider>
-      </AgentChatComponentInstanceContext.Provider>
+      <AiChatTabMessageList />
     </JotaiProvider>,
   );
 
@@ -91,9 +88,8 @@ describe('AiChatTabMessageList preamble branch', () => {
 
   it('should render the preamble with the pending response loader when the displayed thread is awaiting its first chunk', () => {
     jotaiStore.set(
-      agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
-        instanceId: INSTANCE_ID,
-        familyKey: { threadId: THREAD_ID },
+      agentChatIsAwaitingFirstChunkFamilyState.atomFamily({
+        threadId: THREAD_ID,
       }),
       true,
     );
@@ -119,10 +115,7 @@ describe('AiChatTabMessageList loading', () => {
     resetJotaiStore();
     jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(
-      agentChatMessagesComponentFamilyState.atomFamily({
-        instanceId: INSTANCE_ID,
-        familyKey: { threadId: THREAD_ID },
-      }),
+      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [{ id: 'message-1', role: 'user', parts: [] }],
     );
   });

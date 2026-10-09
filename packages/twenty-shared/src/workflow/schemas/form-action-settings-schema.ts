@@ -22,4 +22,5 @@ export const workflowFormFieldSchema = z.object({
 export const workflowFormActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.array(workflowFormFieldSchema),
+    instructions: z.string().optional(),
   });

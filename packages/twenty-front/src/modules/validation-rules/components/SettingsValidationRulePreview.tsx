@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from 'twenty-shared/constants';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
@@ -10,15 +10,11 @@ import {
   isDefined,
   parseValidationRuleExpression,
 } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
-import {
-  IconAlertTriangle,
-  IconCheck,
-  IconChevronDown,
-  IconChevronUp,
-  IconX,
-} from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/primitives/surfaces';
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/icon';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -26,6 +22,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { buildValidationRulePreviewRelationGqlFields } from '@/validation-rules/utils/buildValidationRulePreviewRelationGqlFields';
 import { formatValidationRulePreviewValue } from '@/validation-rules/utils/formatValidationRulePreviewValue';
@@ -34,14 +32,20 @@ import { getValidationRulePreviewValue } from '@/validation-rules/utils/getValid
 
 const PREVIEW_RECORD_COUNT = 3;
 
-const StyledPreview = styled.div`
+const StyledPreviewHeader = styled.div`
+  align-items: center;
   display: flex;
-  flex-direction: column;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  min-height: 24px;
 `;
 
-const StyledHeader = styled.div`
+const StyledPreviewTitle = styled(StyledFormCardTitle)`
+  margin-bottom: 0;
+`;
+
+const StyledRecordHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -49,23 +53,46 @@ const StyledHeader = styled.div`
   min-width: 0;
 `;
 
+const StyledRecord = styled.div`
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const StyledStatus = styled.span`
+  flex-shrink: 0;
+`;
+
 const StyledNavigation = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledValues = styled.div`
-  column-gap: ${themeCssVariables.spacing[4]};
+const StyledFieldValues = styled.div`
+  column-gap: ${themeCssVariables.spacing[2]};
   display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
+  font-size: ${themeCssVariables.font.size.md};
+  grid-template-columns: fit-content(50%) minmax(0, 1fr);
+  line-height: 24px;
+  margin-top: ${themeCssVariables.spacing[2]};
   row-gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledValueLabel = styled.span`
+const StyledFieldLabel = styled.div`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+  overflow-wrap: anywhere;
+
+  > svg {
+    flex-shrink: 0;
+  }
 `;
 
 const StyledValue = styled.span<{ isEmpty: boolean }>`
@@ -73,20 +100,22 @@ const StyledValue = styled.span<{ isEmpty: boolean }>`
     isEmpty
       ? themeCssVariables.font.color.light
       : themeCssVariables.font.color.primary};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledResult = styled.div<{ color: string }>`
-  align-items: center;
-  color: ${({ color }) => color};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
+  overflow-wrap: anywhere;
 `;
 
 const StyledMuted = styled.div`
   color: ${themeCssVariables.font.color.light};
+`;
+
+const StyledFieldValuesPlaceholder = styled(StyledMuted)`
+  font-size: ${themeCssVariables.font.size.md};
+  line-height: 24px;
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledErrorMessage = styled.div`
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 type SettingsValidationRulePreviewProps = {
@@ -106,6 +135,7 @@ export const SettingsValidationRulePreview = ({
 }: SettingsValidationRulePreviewProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const { getIcon } = useIcons();
   const { objectMetadataItems } = useObjectMetadataItems();
   const [recordIndex, setRecordIndex] = useState(0);
 
@@ -133,21 +163,30 @@ export const SettingsValidationRulePreview = ({
     },
   });
 
+  const previewTitle = (
+    <StyledPreviewTitle>
+      <Trans>Preview</Trans>
+    </StyledPreviewTitle>
+  );
+
   if (loading) {
-    return null;
+    return <StyledPreviewHeader>{previewTitle}</StyledPreviewHeader>;
   }
 
   const record = records[Math.min(recordIndex, records.length - 1)];
 
   if (!isDefined(record)) {
     return (
-      <Card.Root fullWidth>
-        <Card.Content>
-          <StyledMuted>
-            {t`Create a few ${objectMetadataItem.labelPlural} to preview this rule on real records.`}
-          </StyledMuted>
-        </Card.Content>
-      </Card.Root>
+      <>
+        <StyledPreviewHeader>{previewTitle}</StyledPreviewHeader>
+        <Card.Root fullWidth>
+          <Card.Content>
+            <StyledMuted>
+              {t`Create a few ${objectMetadataItem.labelPlural} to preview this rule on real records.`}
+            </StyledMuted>
+          </Card.Content>
+        </Card.Root>
+      </>
     );
   }
 
@@ -161,43 +200,48 @@ export const SettingsValidationRulePreview = ({
       ].filter((path) => path !== VALIDATION_RULE_NOW_VARIABLE_NAME)
     : [];
 
-  const renderResult = () => {
-    if (!compilationResult.isValid) {
-      return (
-        <StyledMuted>{t`Write a valid condition to see the result.`}</StyledMuted>
-      );
-    }
+  const evaluationResult = compilationResult.isValid
+    ? evaluateValidationRuleExpression({
+        expression,
+        record,
+        fields,
+        now: new Date().toISOString(),
+      })
+    : undefined;
 
-    const evaluationResult = evaluateValidationRuleExpression({
-      expression,
-      record,
-      fields,
-      now: new Date().toISOString(),
-    });
+  const trimmedMessage = message.trim();
+  const isErrorMessageVisible =
+    evaluationResult?.status === 'failed' && isNonEmptyString(trimmedMessage);
+
+  const renderStatus = () => {
+    if (!isDefined(evaluationResult)) {
+      return null;
+    }
 
     switch (evaluationResult.status) {
       case 'passed':
         return (
-          <StyledResult color={themeCssVariables.color.green}>
-            <IconCheck size={theme.icon.size.md} />
-            {t`Passes. This record can be saved.`}
-          </StyledResult>
+          <StyledStatus>
+            <Status color="green">{t`Valid`}</Status>
+          </StyledStatus>
         );
       case 'failed':
         return (
-          <StyledResult color={themeCssVariables.color.red}>
-            <IconX size={theme.icon.size.md} />
-            {isNonEmptyString(message.trim())
-              ? t`Blocked: ${message}`
-              : t`Blocked. This record could not be saved.`}
-          </StyledResult>
+          <StyledStatus>
+            <Status color="red">{t`Blocked`}</Status>
+          </StyledStatus>
         );
       case 'errored':
         return (
-          <StyledResult color={themeCssVariables.color.orange}>
-            <IconAlertTriangle size={theme.icon.size.md} />
-            {evaluationResult.errorMessage}
-          </StyledResult>
+          <Tooltip
+            delay={TooltipDelay.mediumDelay}
+            content={evaluationResult.errorMessage}
+            side="top"
+          >
+            <StyledStatus tabIndex={0}>
+              <Status color="orange">{t`Error`}</Status>
+            </StyledStatus>
+          </Tooltip>
         );
     }
   };
@@ -206,62 +250,89 @@ export const SettingsValidationRulePreview = ({
   const recordCount = records.length;
 
   return (
-    <Card.Root fullWidth>
-      <Card.Content>
-        <StyledPreview>
-          <StyledHeader>
-            <RecordChip
-              objectNameSingular={objectMetadataItem.nameSingular}
-              record={record}
-              forceDisableClick
-            />
-            <StyledNavigation>
-              {t`Record ${displayedRecordNumber} of ${recordCount}`}
-              <LightIconButton
-                aria-label={t`Previous record`}
-                disabled={displayedRecordNumber === 1}
-                onClick={() => setRecordIndex(displayedRecordNumber - 2)}
-              >
-                <IconChevronUp />
-              </LightIconButton>
-              <LightIconButton
-                aria-label={t`Next record`}
-                disabled={displayedRecordNumber === recordCount}
-                onClick={() => setRecordIndex(displayedRecordNumber)}
-              >
-                <IconChevronDown />
-              </LightIconButton>
-            </StyledNavigation>
-          </StyledHeader>
-          {referencedPaths.length > 0 && (
-            <StyledValues>
+    <>
+      <StyledPreviewHeader>
+        {previewTitle}
+        <StyledNavigation>
+          {t`Record ${displayedRecordNumber} of ${recordCount}`}
+          <LightIconButton
+            aria-label={t`Previous record`}
+            disabled={displayedRecordNumber === 1}
+            onClick={() => setRecordIndex(displayedRecordNumber - 2)}
+          >
+            <IconChevronUp />
+          </LightIconButton>
+          <LightIconButton
+            aria-label={t`Next record`}
+            disabled={displayedRecordNumber === recordCount}
+            onClick={() => setRecordIndex(displayedRecordNumber)}
+          >
+            <IconChevronDown />
+          </LightIconButton>
+        </StyledNavigation>
+      </StyledPreviewHeader>
+      <Card.Root fullWidth>
+        <Card.Content>
+          <StyledRecordHeader>
+            <StyledRecord>
+              <RecordChip
+                objectNameSingular={objectMetadataItem.nameSingular}
+                record={record}
+                forceDisableClick
+              />
+            </StyledRecord>
+            {renderStatus()}
+          </StyledRecordHeader>
+          {referencedPaths.length === 0 ? (
+            <StyledFieldValuesPlaceholder>
+              {compilationResult.isValid
+                ? t`This condition doesn't read any field.`
+                : t`Fields used in the condition show their values here.`}
+            </StyledFieldValuesPlaceholder>
+          ) : (
+            <StyledFieldValues>
               {referencedPaths.map((path) => {
                 const editorField = editorFields.find(
                   (candidate) => candidate.path === path,
                 );
+                const fieldLabel = isDefined(editorField)
+                  ? getValidationRuleEditorFieldChipLabel(editorField)
+                  : path;
+                const FieldIcon = isDefined(editorField)
+                  ? getIcon(editorField.iconName)
+                  : undefined;
                 const formattedValue = formatValidationRulePreviewValue(
                   getValidationRulePreviewValue(record, path),
                 );
 
-                return [
-                  <StyledValueLabel key={`${path}-label`}>
-                    {isDefined(editorField)
-                      ? getValidationRuleEditorFieldChipLabel(editorField)
-                      : path}
-                  </StyledValueLabel>,
-                  <StyledValue
-                    key={`${path}-value`}
-                    isEmpty={formattedValue.length === 0}
-                  >
-                    {formattedValue.length > 0 ? formattedValue : t`Empty`}
-                  </StyledValue>,
-                ];
+                return (
+                  <Fragment key={path}>
+                    <StyledFieldLabel>
+                      {isDefined(FieldIcon) && (
+                        <FieldIcon
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                        />
+                      )}
+                      {fieldLabel}
+                    </StyledFieldLabel>
+                    <StyledValue isEmpty={formattedValue.length === 0}>
+                      {formattedValue.length > 0 ? formattedValue : t`Empty`}
+                    </StyledValue>
+                  </Fragment>
+                );
               })}
-            </StyledValues>
+            </StyledFieldValues>
           )}
-          {renderResult()}
-        </StyledPreview>
-      </Card.Content>
-    </Card.Root>
+          {isErrorMessageVisible && (
+            <StyledErrorMessage>
+              <InlineBanner status="error" embedded>
+                {trimmedMessage}
+              </InlineBanner>
+            </StyledErrorMessage>
+          )}
+        </Card.Content>
+      </Card.Root>
+    </>
   );
 };

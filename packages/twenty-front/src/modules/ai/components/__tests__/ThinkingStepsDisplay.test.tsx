@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
+import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({
@@ -45,6 +45,12 @@ jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
         </button>
       ))}
     </div>
+  ),
+}));
+
+jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+  LazyMarkdownRenderer: ({ text }: { text: string }) => (
+    <div data-testid="markdown-renderer">{text}</div>
   ),
 }));
 
@@ -101,11 +107,13 @@ const renderThinkingStepsDisplay = ({
   isLastMessageStreaming,
   parts,
   isTrailingWhileStreaming = false,
+  workDurationMs,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   hasAssistantTextResponseStarted?: boolean;
   isTrailingWhileStreaming?: boolean;
+  workDurationMs?: number | null;
 }) => {
   return render(
     <ThemeProvider colorScheme="light">
@@ -114,6 +122,7 @@ const renderThinkingStepsDisplay = ({
         isLastMessageStreaming={isLastMessageStreaming}
         hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
         isTrailingWhileStreaming={isTrailingWhileStreaming}
+        workDurationMs={workDurationMs}
       />
     </ThemeProvider>,
   );
@@ -134,7 +143,9 @@ describe('ThinkingStepsDisplay', () => {
 
     expect(screen.queryByRole('button', { name: /steps/i })).toBeNull();
     expect(screen.getByText('Thinking')).toBeInTheDocument();
-    expect(screen.getByText('Active reasoning content')).toBeInTheDocument();
+    expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
+      'Active reasoning content',
+    );
     expect(
       screen.getByText('Searched the web for crm software'),
     ).toBeInTheDocument();
@@ -202,6 +213,20 @@ describe('ThinkingStepsDisplay', () => {
     expect(summaryButton).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByText('Thought')).toBeNull();
     expect(screen.queryByText('Completed reasoning content')).toBeNull();
+  });
+
+  it('should summarize done state with the work duration when known', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
+      workDurationMs: 83_000,
+      parts: [createToolPart(), createReasoningPart()],
+    });
+
+    expect(
+      screen.getByRole('button', { name: 'Worked for 1m 23s' }),
+    ).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText(/steps/i)).toBeNull();
   });
 
   it('should keep done state expanded while streaming before answer text starts', () => {

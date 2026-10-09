@@ -8,7 +8,8 @@ import { CurrencyPickerExample } from './CurrencyPickerExample';
 import { openCurrencyPicker } from './openCurrencyPicker';
 
 const meta: Meta<typeof CurrencyPickerExample> = {
-  title: 'UI/Input/CurrencyPicker/Interactions',
+  id: 'ui-input-currencypicker-interactions',
+  title: 'UI/Components/Input/CurrencyPicker/Interactions',
   component: CurrencyPickerExample,
   render: (args) => <CurrencyPickerExample key={args.defaultValue} {...args} />,
   decorators: [ComponentDecorator],
@@ -177,6 +178,8 @@ export const DisabledCurrency: Story = {
     await userEvent.keyboard('{Enter}');
     await expect(args.onValueChange).toHaveBeenCalledOnce();
     await expect(args.onValueChange).toHaveBeenCalledWith('JPY');
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 

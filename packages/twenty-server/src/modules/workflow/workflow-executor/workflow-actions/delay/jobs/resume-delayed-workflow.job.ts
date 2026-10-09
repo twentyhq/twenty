@@ -21,8 +21,11 @@ import {
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import { isWorkflowRunNotFoundError } from 'src/modules/workflow/workflow-runner/utils/is-workflow-run-not-found-error.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
+// Drains delays 2.45 and earlier queued as delayed jobs; new ones are TIME waits resumed through
+// ResumePendingWakeUpJob. Remove once upgrades no longer start from 2.45
 @Processor({
   queueName: MessageQueue.delayedJobsQueue,
   scope: Scope.REQUEST,
@@ -102,6 +105,10 @@ export class ResumeDelayedWorkflowJob {
           buildRunWorkflowJobOptions(workflowRunId),
         );
       } catch (error) {
+        if (isWorkflowRunNotFoundError(error)) {
+          return;
+        }
+
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,
           workspaceId,

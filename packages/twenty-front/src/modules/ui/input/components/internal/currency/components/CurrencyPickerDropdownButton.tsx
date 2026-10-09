@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type KeyboardEvent, useId } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
-import { CurrencyPicker } from 'twenty-ui/components';
+import { CurrencyPicker } from 'twenty-ui/components/input';
 
 import { CURRENCY_PICKER_CURRENCIES } from '@/ui/input/components/internal/currency/constants/CurrencyPickerCurrencies';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

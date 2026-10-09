@@ -1,0 +1,35 @@
+---
+title: CommandBlock
+description: Display command lines with an optional action.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CommandBlockReference from '/snippets/ui/generated/components/data-display/command-block.mdx';
+
+`CommandBlock` displays each supplied command with a prompt marker. It does not execute commands or provide copying automatically. Supply `actions` with any React node, such as a [Button](/ui/primitives/input/button), link or status. Command text uses `pre` and `code` semantics, preserves line breaks, and wraps within the available width. Prompt markers are decorative.
+
+```tsx
+import { CommandBlock } from 'twenty-ui/components/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const InstallCommand = ({ onCopy }: { onCopy: () => void }) => (
+  <CommandBlock
+    commands={['yarn add twenty-ui']}
+    actions={<Button onClick={onCopy}>Copy command</Button>}
+  />
+);
+```
+
+<StoryEmbed
+  storyId="ui-components-data-display-commandblock--documentation"
+  title="CommandBlock example"
+  height={160}
+/>
+
+Native attributes, event handlers, classes, styles and refs target the outer `div`. Use `render` to compose another root, for example `render={<section aria-label="Installation commands" />}`. `CommandBlockProps` is exported from `twenty-ui/components/data-display`.
+
+When migrating, replace `button` with `actions`.
+
+## Props
+
+<CommandBlockReference />

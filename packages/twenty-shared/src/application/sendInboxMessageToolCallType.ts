@@ -1,11 +1,11 @@
-import { type AskQuestionsToolInput } from '@/ai/types/AskQuestionsToolInput';
-import { type ProposedEmail } from '@/ai/types/ProposedEmail';
+import { type AskQuestionToolInput } from '@/ai/types/AskQuestionToolInput';
+import { type ProposeToolCallToolInput } from '@/ai/types/ProposeToolCallToolInput';
 import { type RequestFormToolInput } from '@/ai/types/RequestFormToolInput';
 
 export type SendInboxMessageToolCall =
   | {
-      toolName: 'ask_questions';
-      input: AskQuestionsToolInput;
+      toolName: 'ask_question';
+      input: AskQuestionToolInput;
       logicFunctionUniversalIdentifier?: never;
     }
   | {
@@ -14,8 +14,9 @@ export type SendInboxMessageToolCall =
       logicFunctionUniversalIdentifier?: never;
     }
   | {
-      toolName: 'propose_email';
-      input: ProposedEmail;
+      // a call the app could run itself, which runs with the member's permissions once approved
+      toolName: 'propose_tool_call';
+      input: ProposeToolCallToolInput;
       logicFunctionUniversalIdentifier?: never;
     }
   | {

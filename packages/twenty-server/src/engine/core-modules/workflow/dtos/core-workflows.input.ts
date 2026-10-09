@@ -2,6 +2,7 @@ import { ArgsType, Field, Int, registerEnumType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsEnum,
   IsInt,
   IsOptional,
@@ -63,4 +64,8 @@ export class CoreWorkflowsArgs {
   @ValidateNested()
   @Type(() => CoreWorkflowFilterInput)
   filter?: CoreWorkflowFilterInput | null;
+
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  @IsBoolean()
+  includeSystem: boolean;
 }

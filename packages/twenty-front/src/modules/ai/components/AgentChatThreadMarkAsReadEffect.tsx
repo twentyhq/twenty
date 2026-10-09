@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
-import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
+import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatThreadOpenViewCountState } from '@/ai/states/agentChatThreadOpenViewCountState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
@@ -11,6 +11,7 @@ import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agent
 import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 const isDocumentVisible = () => document.visibilityState === 'visible';
 
@@ -33,7 +34,8 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     agentChatThreadParticipantsState,
   );
   const [isVisible, setIsVisible] = useState(isDocumentVisible);
-  const { markAgentChatThreadAsRead } = useAgentChatThreadParticipants();
+  const { updateAgentChatThreadInboxState } =
+    useUpdateAgentChatThreadInboxState();
 
   useEffect(() => {
     const handleVisibilityChange = () => setIsVisible(isDocumentVisible());
@@ -76,7 +78,6 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     const { isUnread } = getAgentChatThreadInboxStatus({
       lastActivityAt,
       participant,
-      now: new Date(),
     });
     const visit = store.get(agentChatThreadVisitState.atom);
 
@@ -94,13 +95,16 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     const isKeptUnread = visit?.threadId === threadId && visit.isKeptUnread;
 
     if (isUnread && !isKeptUnread) {
-      void markAgentChatThreadAsRead(threadId);
+      void updateAgentChatThreadInboxState({
+        threadIds: [threadId],
+        action: AgentChatInboxAction.READ,
+      });
     }
   }, [
     isVisible,
     lastActivityAt,
     agentChatThreadParticipants,
-    markAgentChatThreadAsRead,
+    updateAgentChatThreadInboxState,
     store,
     threadId,
   ]);

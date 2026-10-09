@@ -5,14 +5,21 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
+import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
+import {
+  type NavigationDrawerActiveTab,
+  NAVIGATION_DRAWER_TABS,
+} from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 // Expanded, the row matches the page card header so their borders read as one line.
@@ -92,6 +99,7 @@ const StyledModeIcon = styled.span`
   flex-shrink: 0;
   height: ${themeCssVariables.spacing[4]};
   justify-content: center;
+  position: relative;
   width: ${themeCssVariables.spacing[4]};
 `;
 
@@ -118,6 +126,20 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const { switchNavigationDrawerMode } = useSwitchNavigationDrawerMode();
   const shouldReduceMotion = useReducedMotion();
+  const { hasUnreadOpenThread } = useAgentChatOpenThreadsSummary();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+
+  const getDisabledModeTooltip = (mode: NavigationDrawerActiveTab) => {
+    if (mode === NAVIGATION_DRAWER_TABS.SETTINGS) {
+      return t`Finish editing the layout to open Settings`;
+    }
+
+    return isAiChatInboxEnabled
+      ? t`Finish editing the layout to open Inbox`
+      : t`Finish editing the layout to open AI`;
+  };
 
   if (modes.length === 0) {
     return null;
@@ -133,6 +155,12 @@ export const MainNavigationDrawerModeSwitcher = () => {
     >
       {modes.map(({ Icon, label, mode }) => {
         const isActive = mode === activeNavigationDrawerMode;
+        // Inside the inbox, its Open item already shows what is unread
+        const isUnread =
+          isAiChatInboxEnabled &&
+          mode === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY &&
+          hasUnreadOpenThread &&
+          !isActive;
         const isDisabled =
           mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
           isLayoutCustomizationModeEnabled;
@@ -140,13 +168,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
         return (
           <Tooltip
             key={mode}
-            content={
-              isDisabled
-                ? mode === NAVIGATION_DRAWER_TABS.SETTINGS
-                  ? t`Finish editing the layout to open Settings`
-                  : t`Finish editing the layout to open Inbox`
-                : label
-            }
+            content={isDisabled ? getDisabledModeTooltip(mode) : label}
             disabled={!shouldShowTooltips && !isDisabled}
             delay={TooltipDelay.noDelay}
             side={isExpanded ? 'bottom' : 'right'}
@@ -156,7 +178,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
               type="button"
               isActive={isActive}
               isExpanded={isExpanded}
-              aria-label={label}
+              aria-label={isUnread ? t`${label}, unread` : label}
               aria-current={isActive}
               aria-disabled={isDisabled}
               onClick={() => {
@@ -169,6 +191,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
             >
               <StyledModeIcon>
                 <Icon size={theme.icon.size.md} />
+                {isUnread && <StyledNavigationDrawerUnreadDot />}
               </StyledModeIcon>
               <StyledModeLabel
                 initial={false}

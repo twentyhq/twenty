@@ -1,16 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
-import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import {
+  mapErrorToStreamError,
+  type StreamErrorPayload,
+} from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { buildReleaseStreamClaimQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-release-stream-claim-query.util';
+import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+
+export type AgentChatStreamClaim = {
+  threadId: string;
+  workspaceId: string;
+  streamId: string;
+};
 
 @Injectable()
 export class AgentChatStreamRecoveryService {
@@ -22,7 +35,87 @@ export class AgentChatStreamRecoveryService {
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
+    private readonly upgradeFenceService: AgentHistoryUpgradeFenceService,
   ) {}
+
+  async releaseStreamClaim({
+    threadId,
+    workspaceId,
+    streamId,
+    turnError,
+  }: AgentChatStreamClaim & {
+    turnError?: StreamErrorPayload;
+  }): Promise<boolean> {
+    const isReleased = await this.clearStreamClaim({
+      threadId,
+      workspaceId,
+      streamId,
+      turnError,
+    }).catch((error: unknown) => {
+      this.logger.error(
+        `Failed to release stream claim for thread ${threadId}: ${formatErrorWithCause(error)}`,
+      );
+
+      return false;
+    });
+
+    await this.streamHeartbeatService.clear(streamId);
+
+    return isReleased;
+  }
+
+  // The error belongs to the turn the stream was running, and is only written
+  // by the caller still holding the claim
+  private async clearStreamClaim({
+    threadId,
+    workspaceId,
+    streamId,
+    turnError,
+  }: AgentChatStreamClaim & {
+    turnError?: StreamErrorPayload;
+  }): Promise<boolean> {
+    const hasAgentTurnRunFields =
+      await this.upgradeFenceService.hasUpgradedAgentHistory(workspaceId);
+
+    return this.threadRepository.query(
+      workspaceId,
+      async ({ manager, table }) => {
+        const releasedThreads = await manager.query<{ id: string }[]>(
+          buildReleaseStreamClaimQuery({ table, hasAgentTurnRunFields }),
+          hasAgentTurnRunFields
+            ? [
+                threadId,
+                streamId,
+                isDefined(turnError) ? AgentTurnStatus.FAILED : null,
+                isDefined(turnError) ? JSON.stringify(turnError) : null,
+              ]
+            : [threadId, streamId],
+        );
+
+        return releasedThreads.length > 0;
+      },
+    );
+  }
+
+  async failStream({
+    threadId,
+    workspaceId,
+    streamId,
+    error,
+  }: AgentChatStreamClaim & { error: unknown }): Promise<void> {
+    const turnError = mapErrorToStreamError(error);
+
+    const isReleased = await this.releaseStreamClaim({
+      threadId,
+      workspaceId,
+      streamId,
+      turnError,
+    });
+
+    if (isReleased) {
+      await this.publishStreamError({ threadId, workspaceId, turnError });
+    }
+  }
 
   async reapDeadStream({
     thread,
@@ -30,7 +123,7 @@ export class AgentChatStreamRecoveryService {
   }: {
     thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'activeStreamId'>;
     workspaceId: string;
-  }): Promise<AgentChatThreadLastStreamError | null> {
+  }): Promise<StreamErrorPayload | null> {
     if (!isNonEmptyString(thread.activeStreamId)) {
       return null;
     }
@@ -39,19 +132,19 @@ export class AgentChatStreamRecoveryService {
       return null;
     }
 
-    const interruptedError: AgentChatThreadLastStreamError = {
+    const interruptedError: StreamErrorPayload = {
       code: AiExceptionCode.STREAM_INTERRUPTED,
       message: 'The response was interrupted before it could finish.',
-      failedAt: new Date().toISOString(),
     };
 
-    const reap = await this.threadRepository.update(
+    const hasReaped = await this.clearStreamClaim({
+      threadId: thread.id,
       workspaceId,
-      { id: thread.id, activeStreamId: thread.activeStreamId },
-      { activeStreamId: null, lastStreamError: interruptedError },
-    );
+      streamId: thread.activeStreamId,
+      turnError: interruptedError,
+    });
 
-    if (!reap.affected) {
+    if (!hasReaped) {
       return null;
     }
 
@@ -69,18 +162,34 @@ export class AgentChatStreamRecoveryService {
     );
 
     await this.eventPublisherService.resetStreamState(thread.id);
+    await this.publishStreamError({
+      threadId: thread.id,
+      workspaceId,
+      turnError: interruptedError,
+    });
+
+    return interruptedError;
+  }
+
+  private async publishStreamError({
+    threadId,
+    workspaceId,
+    turnError,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    turnError: StreamErrorPayload;
+  }): Promise<void> {
     await this.eventPublisherService
       .publish({
-        threadId: thread.id,
+        threadId,
         workspaceId,
         event: {
           type: 'stream-error',
-          code: interruptedError.code,
-          message: interruptedError.message,
+          code: turnError.code,
+          message: turnError.message,
         },
       })
       .catch(() => {});
-
-    return interruptedError;
   }
 }

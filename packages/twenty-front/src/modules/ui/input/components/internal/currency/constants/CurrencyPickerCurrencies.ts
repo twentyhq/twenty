@@ -1,8 +1,8 @@
-import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
-import { type CurrencyPickerOption } from 'twenty-ui/components';
+import { type CurrencyPickerOption } from 'twenty-ui/components/input';
+import { CURRENCY_CODE_LABELS } from 'twenty-shared/constants';
 
 export const CURRENCY_PICKER_CURRENCIES: readonly CurrencyPickerOption[] =
-  Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(([code, { label }]) => ({
+  Object.entries(CURRENCY_CODE_LABELS).map(([code, { label }]) => ({
     code,
     name: label,
   }));

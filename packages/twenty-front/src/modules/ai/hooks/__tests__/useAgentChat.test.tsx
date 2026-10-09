@@ -6,15 +6,14 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
-import {
-  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-  agentChatDraftsByThreadIdState,
-} from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { serializeMentionTagAsAdvancedTextEditorDocument } from '@/mention/utils/serializeMentionTagAsAdvancedTextEditorDocument';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SendChatMessageDocument } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const attachChatThreadToRecord = jest.fn();
@@ -44,7 +43,7 @@ const DRAFT_MENTIONING_COMPANY =
 const buildSendChatMessageMock = (
   outcome: 'sent' | 'failed',
 ): MockedResponse => ({
-  request: { query: SEND_CHAT_MESSAGE, variables: () => true },
+  request: { query: SendChatMessageDocument, variables: () => true },
   ...(outcome === 'sent'
     ? {
         result: {
@@ -70,11 +69,11 @@ const renderAgentChat = ({
   persistedDrafts: Record<string, string>;
   sendChatMessageOutcomes: ('sent' | 'failed')[];
 }) => {
-  const ensureThreadIdForSend = jest.fn(() => Promise.resolve(THREAD_ID));
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: sendChatMessageOutcomes.map(buildSendChatMessageMock),
     onInitializeJotaiStore: (store) => {
       store.set(aiModelsState.atom, [{ modelId: 'model', label: 'Model' }]);
+      store.set(newAiChatThreadIdState.atom, THREAD_ID);
     },
   });
 
@@ -92,13 +91,19 @@ const renderAgentChat = ({
     () => {
       useAtomStateValue(agentChatDraftsByThreadIdState);
 
-      return useAgentChat(ensureThreadIdForSend);
+      return {
+        ...useAgentChat(),
+        currentAiChatThread: useAtomStateValue(currentAiChatThreadState),
+        newAiChatThreadId: useAtomStateValue(newAiChatThreadIdState),
+      };
     },
     { wrapper: Wrapper },
   ).result;
 };
 
-const send = async (result: { current: ReturnType<typeof useAgentChat> }) => {
+const send = async (result: {
+  current: Pick<ReturnType<typeof useAgentChat>, 'handleSendMessage'>;
+}) => {
   await act(async () => {
     await result.current.handleSendMessage();
   });
@@ -112,7 +117,7 @@ describe('useAgentChat', () => {
   it('files a chat started from a record under it once its message is sent', async () => {
     const result = renderAgentChat({
       persistedDrafts: {
-        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: DRAFT_STARTED_FROM_COMPANY,
+        [THREAD_ID]: DRAFT_STARTED_FROM_COMPANY,
       },
       sendChatMessageOutcomes: ['sent'],
     });
@@ -124,15 +129,32 @@ describe('useAgentChat', () => {
       threadId: THREAD_ID,
       ...COMPANY_TARGET,
     });
-    expect(readPersistedDrafts()).toEqual({
-      [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
+    expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
+  });
+
+  it('keeps the new chat until its first message is sent', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['failed', 'sent'],
     });
+
+    await send(result);
+
+    expect(result.current.currentAiChatThread).toBe(THREAD_ID);
+    expect(result.current.newAiChatThreadId).toBe(THREAD_ID);
+
+    await send(result);
+
+    expect(result.current.currentAiChatThread).toBe(THREAD_ID);
+    expect(result.current.newAiChatThreadId).not.toBe(THREAD_ID);
   });
 
   it('files the chat when the retry of a failed first send goes through', async () => {
     const result = renderAgentChat({
       persistedDrafts: {
-        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: DRAFT_STARTED_FROM_COMPANY,
+        [THREAD_ID]: DRAFT_STARTED_FROM_COMPANY,
       },
       sendChatMessageOutcomes: ['failed', 'sent'],
     });
@@ -155,7 +177,7 @@ describe('useAgentChat', () => {
   it('does not file a chat under a record it only mentions', async () => {
     const result = renderAgentChat({
       persistedDrafts: {
-        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: DRAFT_MENTIONING_COMPANY,
+        [THREAD_ID]: DRAFT_MENTIONING_COMPANY,
       },
       sendChatMessageOutcomes: ['sent'],
     });
@@ -168,8 +190,7 @@ describe('useAgentChat', () => {
   it('does not file a chat that mentions no record', async () => {
     const result = renderAgentChat({
       persistedDrafts: {
-        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]:
-          serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
       sendChatMessageOutcomes: ['sent'],
     });
