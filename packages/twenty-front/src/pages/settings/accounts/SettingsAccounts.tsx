@@ -1,4 +1,4 @@
-import { SettingsAccountGroupsSection } from '@/settings/consolidated-accounts/components/SettingsAccountGroupsSection';
+import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsLegacySections } from '@/settings/accounts/components/SettingsAccountsLegacySections';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -12,23 +12,24 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const SettingsAccounts = () => {
   const { t } = useLingui();
 
-  const isConsolidationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CONNECTED_ACCOUNTS_CONSOLIDATION_ENABLED,
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
+  const pageTitle = isAppPreferencesEnabled ? t`App preferences` : t`Account`;
 
   return (
     <SettingsPageLayout
-      title={t`Account`}
+      title={pageTitle}
       links={[
         {
           children: t`User`,
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
-        { children: t`Account` },
+        { children: pageTitle },
       ]}
     >
       <SettingsPageContainer>
-        {isConsolidationEnabled ? (
+        {isAppPreferencesEnabled ? (
           <>
             <SettingsAccountGroupsSection />
             <SettingsAccountsBlocklistSection />

@@ -1,5 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { type ConnectedAccountGroup } from '@/settings/consolidated-accounts/types/ConnectedAccountGroup';
+import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 

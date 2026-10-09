@@ -8,10 +8,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   FeatureFlagKey,
   { label: MessageDescriptor; description: MessageDescriptor }
 > = {
-  [FeatureFlagKey.IS_CONNECTED_ACCOUNTS_CONSOLIDATION_ENABLED]: {
-    label: msg`Consolidated accounts`,
-    description: msg`Group connected accounts by email and open their settings in app tabs.`,
-  },
   [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
     label: msg`Async CSV export`,
     description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
@@ -87,5 +83,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: {
     label: msg`AI chat inbox`,
     description: msg`Turn the AI tab into an inbox to triage, assign, snooze and follow chats, and let workflows route agent questions to a member.`,
+  },
+  [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
+    label: msg`App preferences`,
+    description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
   },
 };

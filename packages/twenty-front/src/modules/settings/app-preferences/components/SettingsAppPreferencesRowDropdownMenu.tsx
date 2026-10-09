@@ -29,13 +29,13 @@ import { DELETE_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/
 import { DISCONNECT_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/disconnectConnectedAccount';
 import { isConnectedAccountEligibleForProviderReconnect } from '@/settings/accounts/utils/isConnectedAccountEligibleForProviderReconnect';
 
-type SettingsConsolidatedAccountsRowDropdownMenuProps = {
+type SettingsAppPreferencesRowDropdownMenuProps = {
   account: ConnectedAccount;
 };
 
-export const SettingsConsolidatedAccountsRowDropdownMenu = ({
+export const SettingsAppPreferencesRowDropdownMenu = ({
   account,
-}: SettingsConsolidatedAccountsRowDropdownMenuProps) => {
+}: SettingsAppPreferencesRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
   const deleteAccountModalId = `delete-account-modal-${account.id}`;
   const disconnectAccountModalId = `disconnect-account-modal-${account.id}`;

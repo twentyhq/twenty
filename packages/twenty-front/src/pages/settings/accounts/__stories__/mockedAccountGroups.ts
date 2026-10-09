@@ -261,7 +261,7 @@ export const seedAccountGroupsStory = async () => {
     ],
     featureFlags: [
       {
-        key: FeatureFlagKey.IS_CONNECTED_ACCOUNTS_CONSOLIDATION_ENABLED,
+        key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
         value: true,
       },
     ],

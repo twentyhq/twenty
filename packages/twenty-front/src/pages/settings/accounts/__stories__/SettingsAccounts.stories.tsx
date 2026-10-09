@@ -62,6 +62,8 @@ export const Default: Story = {
     await canvas.findByText('Connected accounts', undefined, {
       timeout: 3000,
     });
+
+    expect(canvas.queryByText('App preferences')).not.toBeInTheDocument();
   },
 };
 
@@ -71,6 +73,9 @@ export const AccountsGroupedByEmail: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Used by', undefined, { timeout: 3000 });
+
+    expect(canvas.getAllByText('App preferences').length).toBeGreaterThan(0);
+    expect(canvas.queryByText('Connected accounts')).not.toBeInTheDocument();
 
     const timRow = getAccountRow(canvasElement, 'tim@apple.dev');
 

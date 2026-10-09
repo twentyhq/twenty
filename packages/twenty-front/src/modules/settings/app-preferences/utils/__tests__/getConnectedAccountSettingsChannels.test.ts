@@ -1,4 +1,4 @@
-import { getConnectedAccountSettingsChannels } from '@/settings/consolidated-accounts/utils/getConnectedAccountSettingsChannels';
+import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import {
   CalendarChannelSyncStage,
   MessageChannelSyncStage,

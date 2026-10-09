@@ -1,4 +1,4 @@
-import { groupConnectedAccountsByNativeAccount } from '@/settings/consolidated-accounts/utils/groupConnectedAccountsByNativeAccount';
+import { groupConnectedAccountsByNativeAccount } from '@/settings/app-preferences/utils/groupConnectedAccountsByNativeAccount';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 describe('groupConnectedAccountsByNativeAccount', () => {

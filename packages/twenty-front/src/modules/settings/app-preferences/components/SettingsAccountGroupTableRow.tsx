@@ -1,12 +1,12 @@
-import { SettingsAccountGroupUsedBy } from '@/settings/consolidated-accounts/components/SettingsAccountGroupUsedBy';
-import { SettingsConsolidatedAccountsRowDropdownMenu } from '@/settings/consolidated-accounts/components/SettingsConsolidatedAccountsRowDropdownMenu';
+import { SettingsAccountGroupUsedBy } from '@/settings/app-preferences/components/SettingsAccountGroupUsedBy';
+import { SettingsAppPreferencesRowDropdownMenu } from '@/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu';
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
-import { SettingsConnectedAccountSyncStatus } from '@/settings/consolidated-accounts/components/SettingsConnectedAccountSyncStatus';
-import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/consolidated-accounts/constants/SettingsAccountGroupTableGridTemplateColumns';
+import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
+import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
-import { type ConnectedAccountGroup } from '@/settings/consolidated-accounts/types/ConnectedAccountGroup';
+import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
-import { getConnectedAccountSettingsChannels } from '@/settings/consolidated-accounts/utils/getConnectedAccountSettingsChannels';
+import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
@@ -91,9 +91,7 @@ export const SettingsAccountGroupTableRow = ({
       </TableCell>
       <TableCell align="right" onClick={(event) => event.stopPropagation()}>
         {isDefined(nativeAccount) && (
-          <SettingsConsolidatedAccountsRowDropdownMenu
-            account={nativeAccount}
-          />
+          <SettingsAppPreferencesRowDropdownMenu account={nativeAccount} />
         )}
       </TableCell>
     </TableRow>
