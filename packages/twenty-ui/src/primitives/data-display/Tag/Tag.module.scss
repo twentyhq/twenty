@@ -50,6 +50,9 @@
     text-overflow: ellipsis;
   }
 }
+.overflowingText {
+  display: block;
+}
 .iconContainer {
   display: flex;
   flex-shrink: 0;

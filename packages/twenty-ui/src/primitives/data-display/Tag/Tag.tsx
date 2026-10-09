@@ -64,7 +64,7 @@ export const Tag = ({
               <OverflowingTextWithTooltip
                 text={children}
                 render={<span />}
-                style={{ display: 'block' }}
+                className={styles.overflowingText}
               />
             ) : (
               children
