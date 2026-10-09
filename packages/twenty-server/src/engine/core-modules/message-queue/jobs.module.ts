@@ -18,6 +18,7 @@ import { TriggerUninstallApplicationJob } from 'src/engine/core-modules/applicat
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
+import { TriggerUpgradeApplicationJob } from 'src/engine/core-modules/application/application-upgrade/jobs/trigger-upgrade-application.job';
 import { UpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs/upgrade-applications.job';
 import { UpgradeWorkspaceApplicationJob } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job';
 import { InstallPreInstalledAppsJob } from 'src/engine/core-modules/application/pre-installed-apps/jobs/install-pre-installed-apps.job';
@@ -140,6 +141,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     InstallPreInstalledAppsJob,
     TriggerInstallApplicationJob,
     TriggerUninstallApplicationJob,
+    TriggerUpgradeApplicationJob,
     WarmUpApplicationLogicFunctionsJob,
     RunDeferredWorkspaceMigrationActionsJob,
     DeferredWorkspaceMigrationActionRecoveryCronJob,
