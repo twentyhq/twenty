@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.1
+
+- Stop the backfill from restoring people trashed while it reads their emails and meetings. Writing a person's last contact restores the record if it is in the trash, and recreates it without a name if it was deleted. The people phase now reads its batch again right before writing, after the paced reads of their emails and meetings, and leaves out people that are gone. A person trashed during the write itself, or while it is retried after a rate limit, can still come back: closing that needs a server update that never restores a record.
+- Only write records whose last contact actually changes. Every write sets the record's "Last update" to now, so since 1.9.0 one backfill marked every person, company and opportunity in the workspace as just updated. The backfill and the company and opportunity recomputes now compare with the stored values first, which also saves the write call for a batch where nothing changed. A company recompute now reads the company before its people, so a company that was already up to date is no longer lowered when a live update raises it during the recompute.
+
 ## 1.9.0
 
 - Drop the `on-person-created` and `on-company-created` triggers. Last contact only comes from a synced email or meeting linked to a person, so a newly created person or company never has one, and recomputing the company on creation could not change anything. A mailbox sync that creates contacts spent 6 API calls per batch of 100 contacts on them.

@@ -10,7 +10,7 @@ import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode'
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { useCanReadObjectRecordsOrSharedRecords } from '@/object-record/record-sharing/hooks/useCanReadObjectRecordsOrSharedRecords';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
@@ -21,7 +21,7 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   withSoftDeleted = false,
 }: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  recordGqlFields?: RecordGqlFields;
   skip?: boolean;
   withSoftDeleted?: boolean;
 }) => {

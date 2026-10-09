@@ -17,7 +17,7 @@ import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindMan
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import {
   type RecordGqlOperationFilter,
-  type RecordGqlOperationGqlRecordFields,
+  type RecordGqlFields,
   type RecordGqlOperationVariables,
 } from 'twenty-shared/types';
 
@@ -28,7 +28,7 @@ export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
     onError?: (error?: Error) => void;
     onCompleted?: OnFindManyRecordsCompleted<T>;
     skip?: boolean;
-    recordGqlFields?: RecordGqlOperationGqlRecordFields;
+    recordGqlFields?: RecordGqlFields;
     fetchPolicy?: WatchQueryFetchPolicy;
     withSoftDeleted?: boolean;
   };
