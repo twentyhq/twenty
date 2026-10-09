@@ -1,3 +1,4 @@
+import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
 import { validateMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util';
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -103,6 +104,48 @@ describe('independent morph fields', () => {
     expect(recordFields).not.toContain(group);
     expect(recordFields).toEqual(expect.arrayContaining(targets));
   });
+
+  it.each([0, 3])(
+    'keeps OpenAPI schemas on physical targets with %i targets remaining',
+    (count) => {
+      const {
+        group,
+        object,
+        targets,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      } = fixture();
+      const remainingTargets = targets.slice(0, count);
+      const schemas = computeSchemaComponents(
+        [
+          {
+            ...object,
+            fieldIds: [
+              group.id,
+              ...remainingTargets.map((target) => target.id),
+            ],
+          },
+        ],
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+      for (const schema of Object.values(schemas)) {
+        expect(schema.properties).not.toHaveProperty(group.name);
+        expect(schema.properties).not.toHaveProperty(`${group.name}Id`);
+        for (const target of remainingTargets) {
+          expect(schema.properties).toHaveProperty(`${target.name}Id`, {
+            type: 'string',
+            format: 'uuid',
+          });
+        }
+      }
+      for (const target of remainingTargets) {
+        expect(schemas.NoteTargetForResponse.properties).toHaveProperty(
+          target.name,
+        );
+      }
+    },
+  );
 
   it.each([0, 1, 2, 3])(
     'resolves the same group with %i targets remaining',

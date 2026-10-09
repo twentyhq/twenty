@@ -162,6 +162,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "3fa2b4a3-bd88-50cb-954b-db72480f7290",
       },
+      "target": {
+        "universalIdentifier": "2c4cc537-39a2-4df9-81a1-dda26eb19658",
+      },
       "targetCompany": {
         "universalIdentifier": "b06cb6c7-6dc1-5b79-a2fc-c6abab6c1969",
       },
@@ -469,6 +472,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "searchVector": {
         "universalIdentifier": "e3222f8c-aad5-5873-9a10-648908f48f81",
       },
+      "target": {
+        "universalIdentifier": "20202020-f634-435d-ab8d-e1168b375c69",
+      },
       "targetAgentChatThread": {
         "universalIdentifier": "5beddb5d-6e18-5e7b-be55-de88e47fc337",
       },
@@ -548,26 +554,8 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "name": {
             "universalIdentifier": "d5a4f58e-abf1-52ce-a315-ea7b18e4a946",
           },
-          "targetCompany": {
-            "universalIdentifier": "7f76f6c5-078d-5064-89b4-e0042ee4e169",
-          },
-          "targetDashboard": {
-            "universalIdentifier": "4f1ae4ae-c1c9-5b2c-8f6f-9435171fca48",
-          },
-          "targetNote": {
-            "universalIdentifier": "6e24a74a-6d3d-54ce-afd0-7c55daf79d81",
-          },
-          "targetOpportunity": {
-            "universalIdentifier": "4e0a4cf7-8e45-5688-90a6-da6d67544f72",
-          },
-          "targetPerson": {
-            "universalIdentifier": "8cff29b2-23e8-5190-93da-f1b22faea495",
-          },
-          "targetTask": {
-            "universalIdentifier": "cc9c44ea-c27e-5f57-9094-85cf14dae3e2",
-          },
-          "targetWorkflow": {
-            "universalIdentifier": "75d1d092-412f-57b1-9e74-e3f8285a3f0c",
+          "target": {
+            "universalIdentifier": "3e59253a-d85e-5c45-8c34-4cf3ac1bc062",
           },
         },
       },
@@ -1083,6 +1071,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "searchVector": {
         "universalIdentifier": "03336cfc-bec6-5aeb-81a4-eff824e4fcea",
+      },
+      "target": {
+        "universalIdentifier": "676e9f68-7b5c-41e6-b46d-2fb9527b7051",
       },
       "targetCompany": {
         "universalIdentifier": "86d8ec48-6546-5434-a5bc-ba7e4374ecfc",
@@ -2480,6 +2471,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "searchVector": {
         "universalIdentifier": "95d8f54c-ebe5-56f9-89f3-e8257f69aae1",
       },
+      "target": {
+        "universalIdentifier": "e85e853d-c26e-41b3-bec0-7afc4bdbc2f7",
+      },
       "targetCompany": {
         "universalIdentifier": "70235b19-5ab1-588d-a25c-45c259190354",
       },
@@ -2640,6 +2634,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "searchVector": {
         "universalIdentifier": "d853a31b-f266-57a1-9a9f-ecc187864a01",
       },
+      "target": {
+        "universalIdentifier": "20202020-f635-435d-ab8d-e1168b375c70",
+      },
       "targetCompany": {
         "universalIdentifier": "26b5a2d6-3296-5660-8f5b-a5710c11ae33",
       },
@@ -2695,14 +2692,8 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "note": {
             "universalIdentifier": "de9a35c2-dd69-5b62-94ca-006fc7c4c28f",
           },
-          "targetCompany": {
-            "universalIdentifier": "e8175481-58d2-5c1d-a6b4-118448c78073",
-          },
-          "targetOpportunity": {
-            "universalIdentifier": "eb132124-1725-5528-affc-e4996415e01f",
-          },
-          "targetPerson": {
-            "universalIdentifier": "48f31dbf-75fc-5780-a58a-960d9ce5c18b",
+          "target": {
+            "universalIdentifier": "a1b92899-9a0c-5570-a462-cc720495f524",
           },
         },
       },
@@ -3458,6 +3449,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "searchVector": {
         "universalIdentifier": "821c713e-bf1c-569d-9f0c-8e10e80eee5e",
       },
+      "target": {
+        "universalIdentifier": "20202020-f636-435d-ab8d-e1168b375c71",
+      },
       "targetCompany": {
         "universalIdentifier": "805997f5-d539-5676-9aa8-0de602ac4152",
       },
@@ -3513,14 +3507,8 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "id": {
             "universalIdentifier": "d1aa56de-7a8a-5670-9cc5-c2c159a4ff4d",
           },
-          "targetCompany": {
-            "universalIdentifier": "47a3f1f8-e2ce-5a7c-af00-36dda03fbc44",
-          },
-          "targetOpportunity": {
-            "universalIdentifier": "2c09e527-cf94-5e74-9e23-fb4550c7cf18",
-          },
-          "targetPerson": {
-            "universalIdentifier": "611b9723-3be8-5470-8baf-5201053a38f0",
+          "target": {
+            "universalIdentifier": "48b0ddd0-e006-554e-b79c-cb45983be88c",
           },
           "task": {
             "universalIdentifier": "634c7721-c9d6-5ada-943f-914065531425",
@@ -3563,6 +3551,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "searchVector": {
         "universalIdentifier": "23a0482b-f41b-5e13-9b3e-356c5aaa90a3",
+      },
+      "target": {
+        "universalIdentifier": "20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1",
       },
       "targetCompany": {
         "universalIdentifier": "500e6797-19a2-5f11-b239-259b58765533",
@@ -3667,32 +3658,8 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "linkedRecordCachedName": {
             "universalIdentifier": "a7b9dfbb-4c2b-508f-9901-ae1874600042",
           },
-          "targetCompany": {
-            "universalIdentifier": "d271d5b4-86ad-513d-a042-d4f8a9c41665",
-          },
-          "targetDashboard": {
-            "universalIdentifier": "b899313f-2e84-51c2-8322-a02bb695ec91",
-          },
-          "targetNote": {
-            "universalIdentifier": "fd6171eb-8bb7-5d3d-a7f7-bd0ebf972f90",
-          },
-          "targetOpportunity": {
-            "universalIdentifier": "a53f262e-4810-55bc-9e47-f9b7bc9a4da7",
-          },
-          "targetPerson": {
-            "universalIdentifier": "c5bd0e0d-20aa-5112-8517-df71c63e5726",
-          },
-          "targetTask": {
-            "universalIdentifier": "3e21cd2a-77ca-5e49-90be-4532dd804c24",
-          },
-          "targetWorkflow": {
-            "universalIdentifier": "8e0e94b7-9c2a-5fda-bbfe-2604a0f9cbb4",
-          },
-          "targetWorkflowRun": {
-            "universalIdentifier": "13fff327-8fbe-5a91-8d95-4a9ca455cfe9",
-          },
-          "targetWorkflowVersion": {
-            "universalIdentifier": "c4aa8b50-d9bb-5395-a90a-fa0d36312634",
+          "target": {
+            "universalIdentifier": "36b636aa-825d-5801-aea0-3870bdf6e673",
           },
           "workspaceMember": {
             "universalIdentifier": "09d2d7d9-6809-561b-9dc7-1588b6a18673",

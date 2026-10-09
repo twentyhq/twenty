@@ -63,7 +63,7 @@ describe('manifestValidate', () => {
       ...validManifest,
       fields: [
         {
-          ...validField,
+          objectUniversalIdentifier: validField.objectUniversalIdentifier,
           type: FieldMetadataType.MORPH_RELATION,
           universalIdentifier,
           morphId: universalIdentifier,
