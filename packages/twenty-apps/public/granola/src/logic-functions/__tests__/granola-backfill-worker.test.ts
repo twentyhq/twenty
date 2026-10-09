@@ -3,17 +3,22 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { GRANOLA_WEBHOOK_REGISTRATION_KEY } from 'src/constants/granola.constant';
 import { GRANOLA_UNAVAILABLE_RETRY_LIMIT } from 'src/constants/granola-history.constant';
-import { GRANOLA_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
+  GRANOLA_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { buildGranolaNote } from 'src/__tests__/utils/build-granola-note.util';
 import { granolaBackfillWorkerHandler } from 'src/logic-functions/granola-backfill-worker';
 import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
 import { GranolaUnavailableError } from 'src/logic-functions/types/granola-unavailable-error';
+import { computeCallRecordingIdForGranolaNote } from 'src/logic-functions/utils/compute-call-recording-id-for-granola-note.util';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 
 const mocks = vi.hoisted(() => ({
   store: new Map<string, unknown>(),
   enqueueJobs: vi.fn<(input: EnqueueJobsInput) => Promise<unknown>>(),
   listNotes: vi.fn(),
+  query: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
@@ -32,7 +37,7 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
-    query = async () => ({ callRecordings: { edges: [] } });
+    query = mocks.query;
   },
 }));
 
@@ -96,7 +101,115 @@ describe('granolaBackfillWorkerHandler', () => {
     vi.clearAllMocks();
     process.env[GRANOLA_API_KEY_ENV_VAR_NAME] = API_KEY;
     mocks.enqueueJobs.mockResolvedValue({ enqueued: true });
+    mocks.query.mockResolvedValue({ callRecordings: { edges: [] } });
     mocks.store.set(GRANOLA_WEBHOOK_REGISTRATION_KEY, buildRegistration([]));
+  });
+
+  it('only schedules notes that are new or changed since their last import, with one lookup per page', async () => {
+    const notes = [
+      buildGranolaNote({
+        id: 'not_aaaaaaaaaaaaaa',
+        updated_at: '2026-09-05T11:00:00Z',
+      }),
+      buildGranolaNote({
+        id: 'not_bbbbbbbbbbbbbb',
+        updated_at: '2026-09-06T09:00:00Z',
+      }),
+      buildGranolaNote({
+        id: 'not_cccccccccccccc',
+        updated_at: '2026-09-05T11:00:00Z',
+      }),
+      buildGranolaNote({
+        id: 'not_dddddddddddddd',
+        updated_at: '2026-09-05T11:00:00Z',
+      }),
+      buildGranolaNote({
+        id: 'not_eeeeeeeeeeeeee',
+        updated_at: '2026-09-05T11:00:00Z',
+      }),
+    ];
+    const callRecordingIds = notes.map((note) =>
+      computeCallRecordingIdForGranolaNote(note.id),
+    );
+
+    mocks.listNotes.mockResolvedValue({ notes, hasMore: false, cursor: null });
+    mocks.query.mockResolvedValue({
+      callRecordings: {
+        edges: [
+          {
+            node: {
+              id: callRecordingIds[0],
+              deletedAt: null,
+              granolaNoteUpdatedAt: '2026-09-05T11:00:00Z',
+            },
+          },
+          {
+            node: {
+              id: callRecordingIds[1],
+              deletedAt: null,
+              granolaNoteUpdatedAt: '2026-09-05T11:00:00Z',
+            },
+          },
+          {
+            node: {
+              id: callRecordingIds[2],
+              deletedAt: '2026-09-05T12:00:00Z',
+              granolaNoteUpdatedAt: null,
+            },
+          },
+          {
+            node: {
+              id: callRecordingIds[3],
+              deletedAt: null,
+              granolaNoteUpdatedAt: null,
+            },
+          },
+        ],
+      },
+    });
+
+    const result = await granolaBackfillWorkerHandler({
+      registrationId: 'reg-1',
+      pageIndex: 0,
+      runHour: '2026-09-06T10',
+    });
+
+    expect(mocks.query).toHaveBeenCalledExactlyOnceWith({
+      callRecordings: {
+        __args: {
+          filter: {
+            id: { in: callRecordingIds },
+            or: [
+              { deletedAt: { is: 'NULL' } },
+              { deletedAt: { is: 'NOT_NULL' } },
+            ],
+          },
+          first: 5,
+        },
+        edges: {
+          node: { id: true, deletedAt: true, granolaNoteUpdatedAt: true },
+        },
+      },
+    });
+    expect(result).toEqual(
+      expect.objectContaining({ discoveredNoteCount: 5, enqueuedNoteCount: 3 }),
+    );
+    expect(
+      mocks.enqueueJobs.mock.calls
+        .filter(
+          ([input]) =>
+            input.logicFunctionUniversalIdentifier ===
+            GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
+        )
+        .map(([input]) => input.jobs?.[0]?.payload),
+    ).toEqual([
+      expect.objectContaining({
+        noteId: 'not_bbbbbbbbbbbbbb',
+        updatedAt: '2026-09-06T09:00:00Z',
+      }),
+      expect.objectContaining({ noteId: 'not_dddddddddddddd' }),
+      expect.objectContaining({ noteId: 'not_eeeeeeeeeeeeee' }),
+    ]);
   });
 
   it('gives an unchanged note the same import job across runs started in the same hour', async () => {

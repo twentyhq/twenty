@@ -115,7 +115,10 @@ describe('granolaBackfillNoteHandler for a deferred webhook note', () => {
     expect(result).toEqual({ success: true, importedNoteCount: 1 });
     expect(mocks.syncNote).toHaveBeenCalledTimes(1);
     expect(mocks.syncNote).toHaveBeenCalledWith(
-      expect.objectContaining({ noteId: NOTE_ID }),
+      expect.objectContaining({
+        noteId: NOTE_ID,
+        shouldSkipUnchangedNote: true,
+      }),
     );
   });
 

@@ -10,4 +10,5 @@ export type CallRecordingSyncFields = {
   transcript?: TranscriptEntry[];
   summary?: { markdown: string; blocknote: null };
   calendarEventId?: string;
+  granolaNoteUpdatedAt?: string | null;
 };

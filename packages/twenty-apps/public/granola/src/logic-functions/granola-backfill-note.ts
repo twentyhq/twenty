@@ -80,6 +80,7 @@ export const granolaBackfillNoteHandler = async (
         coreApiClient,
         client,
         noteId: payload.noteId,
+        shouldSkipUnchangedNote: true,
       });
 
       return {

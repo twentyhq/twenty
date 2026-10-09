@@ -14,13 +14,13 @@ import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { enqueueGranolaJobOrThrow } from 'src/logic-functions/utils/enqueue-granola-job-or-throw.util';
 import { enqueueGranolaRetryOrThrow } from 'src/logic-functions/utils/enqueue-granola-retry-or-throw.util';
-import { excludeDeletedGranolaNotesOrThrow } from 'src/logic-functions/utils/exclude-deleted-granola-notes-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 import { getGranolaJobId } from 'src/logic-functions/utils/get-granola-job-id.util';
 import { getGranolaNextPage } from 'src/logic-functions/utils/get-granola-next-page.util';
 import { isGranolaJobInRegistrationScope } from 'src/logic-functions/utils/is-granola-job-in-registration-scope.util';
 import { reserveGranolaNoteImportSlotsOrThrow } from 'src/logic-functions/utils/reserve-granola-note-import-slots-or-throw.util';
 import { rethrowKnownOrWrapGranolaError } from 'src/logic-functions/utils/rethrow-known-or-wrap-granola-error.util';
+import { selectGranolaNotesToSyncOrThrow } from 'src/logic-functions/utils/select-granola-notes-to-sync-or-throw.util';
 
 export const granolaBackfillWorkerHandler = async (
   payload: GranolaBackfillWorkerPayload,
@@ -46,9 +46,9 @@ export const granolaBackfillWorkerHandler = async (
       cursor: payload.cursor,
       page_size: GRANOLA_MAX_PAGE_SIZE,
     });
-    const noteIds = await excludeDeletedGranolaNotesOrThrow({
+    const noteIds = await selectGranolaNotesToSyncOrThrow({
       coreApiClient: createApplicationCoreApiClient(),
-      noteIds: page.notes.map((note) => note.id),
+      notes: page.notes,
     });
     const schedule = await reserveGranolaNoteImportSlotsOrThrow({
       noteCount: noteIds.length,

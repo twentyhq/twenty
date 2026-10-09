@@ -89,7 +89,10 @@ describe('granolaWebhookHandler', () => {
     expect(result).toEqual({ success: true, skipped: false });
     expect(mocks.syncNote).toHaveBeenCalledTimes(1);
     expect(mocks.syncNote).toHaveBeenCalledWith(
-      expect.objectContaining({ noteId: NOTE_ID }),
+      expect.objectContaining({
+        noteId: NOTE_ID,
+        shouldSkipUnchangedNote: true,
+      }),
     );
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });

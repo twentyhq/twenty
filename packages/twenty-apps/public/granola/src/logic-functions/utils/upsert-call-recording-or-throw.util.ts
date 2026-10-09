@@ -1,31 +1,32 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
-import { doesCallRecordingExistOrThrow } from 'src/logic-functions/utils/does-call-recording-exist-or-throw.util';
-import { isCallRecordingSoftDeletedOrThrow } from 'src/logic-functions/utils/is-call-recording-soft-deleted-or-throw.util';
+import { type CallRecordingSyncState } from 'src/logic-functions/types/call-recording-sync-state.type';
+import { findCallRecordingSyncStatesOrThrow } from 'src/logic-functions/utils/find-call-recording-sync-states-or-throw.util';
 import { toCallRecordingMutationFields } from 'src/logic-functions/utils/to-call-recording-mutation-fields.util';
 import { updateCallRecordingOrThrow } from 'src/logic-functions/utils/update-call-recording-or-throw.util';
 
 export const upsertCallRecordingOrThrow = async ({
   coreApiClient,
   callRecordingId,
+  syncState,
   fields,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
+  syncState: CallRecordingSyncState | undefined;
   fields: CallRecordingSyncFields;
 }): Promise<{
   callRecordingId: string;
   created: boolean;
   skipped?: boolean;
 }> => {
-  if (
-    await isCallRecordingSoftDeletedOrThrow({ coreApiClient, callRecordingId })
-  ) {
+  if (isDefined(syncState?.deletedAt)) {
     return { callRecordingId, created: false, skipped: true };
   }
 
-  if (await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId })) {
+  if (isDefined(syncState)) {
     await updateCallRecordingOrThrow({
       coreApiClient,
       callRecordingId,
@@ -50,10 +51,19 @@ export const upsertCallRecordingOrThrow = async ({
 
     return { callRecordingId, created: true };
   } catch (error) {
-    if (
-      !(await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId }))
-    ) {
+    const concurrentSyncState = (
+      await findCallRecordingSyncStatesOrThrow({
+        coreApiClient,
+        callRecordingIds: [callRecordingId],
+      })
+    ).get(callRecordingId);
+
+    if (!isDefined(concurrentSyncState)) {
       throw error;
+    }
+
+    if (isDefined(concurrentSyncState.deletedAt)) {
+      return { callRecordingId, created: false, skipped: true };
     }
 
     await updateCallRecordingOrThrow({

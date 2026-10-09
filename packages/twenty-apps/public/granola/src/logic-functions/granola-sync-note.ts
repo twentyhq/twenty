@@ -44,6 +44,7 @@ export const granolaSyncNoteHandler = async (parameters: unknown) => {
     coreApiClient: createApplicationCoreApiClient(),
     client: createGranolaClientOrThrow(),
     noteId: parsed.data.noteId,
+    shouldSkipUnchangedNote: false,
   });
 
   return { success: true, noteId: parsed.data.noteId, ...result };

@@ -104,6 +104,7 @@ export const granolaWebhookHandler = async ({
     coreApiClient: createApplicationCoreApiClient(),
     client: createGranolaClientOrThrow(),
     noteId: parsed.data.note_id,
+    shouldSkipUnchangedNote: true,
   }).catch(async (error: unknown) => {
     if (error instanceof GranolaUnavailableError) {
       const notePayload: GranolaBackfillNotePayload = {
