@@ -4,14 +4,20 @@ import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/bui
 import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
-import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
+import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 
 export const buildApplicationWorkflowCronTriggerCacheEntries = ({
   workspaceId,
   workflows,
 }: {
   workspaceId: string;
-  workflows: (UniversalFlatWorkflow & { id: string })[];
+  workflows: {
+    id: string;
+    flatUniversalWorkflowVersion?: Pick<
+      UniversalFlatWorkflowVersion,
+      'triggers'
+    > & { id: string };
+  }[];
 }): CachedCronTrigger[] =>
   workflows.flatMap((workflow) => {
     const version = workflow.flatUniversalWorkflowVersion;

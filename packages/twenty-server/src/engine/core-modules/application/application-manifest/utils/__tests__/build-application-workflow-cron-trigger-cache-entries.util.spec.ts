@@ -1,5 +1,4 @@
 import { buildApplicationWorkflowCronTriggerCacheEntries } from 'src/engine/core-modules/application/application-manifest/utils/build-application-workflow-cron-trigger-cache-entries.util';
-import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 import {
   type WorkflowTrigger,
   WorkflowTriggerType,
@@ -7,17 +6,13 @@ import {
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
-const applicationWorkflow = (
-  id: string,
-  trigger: WorkflowTrigger,
-): UniversalFlatWorkflow & { id: string } =>
-  ({
-    id,
-    flatUniversalWorkflowVersion: {
-      id: `${id.slice(0, -1)}9`,
-      triggers: [trigger],
-    },
-  }) as UniversalFlatWorkflow & { id: string };
+const applicationWorkflow = (id: string, trigger: WorkflowTrigger) => ({
+  id,
+  flatUniversalWorkflowVersion: {
+    id: `${id.slice(0, -1)}9`,
+    triggers: [trigger],
+  },
+});
 
 describe('buildApplicationWorkflowCronTriggerCacheEntries', () => {
   it('publishes only the scheduled workflows with their cron pattern', () => {
