@@ -34,6 +34,7 @@ import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/mes
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { INBOUND_EMAIL_LOCAL_PART_PREFIX } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-prefix.constant';
 import { INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-random-bytes.constant';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 @Injectable()
@@ -45,7 +46,21 @@ export class MessageChannelMetadataService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailingDomainService: EmailingDomainService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
+
+  async getImportProgress({
+    messageChannelId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    workspaceId: string;
+  }): Promise<number | null> {
+    return this.messageChannelSyncStatusService.getImportProgress(
+      workspaceId,
+      messageChannelId,
+    );
+  }
 
   async findAll(workspaceId: string): Promise<MessageChannelDTO[]> {
     return this.repository.find({ where: { workspaceId } });

@@ -1,5 +1,6 @@
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
+import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -26,6 +27,7 @@ export const SettingsAccounts = () => {
         { children: t`Account` },
       ]}
     >
+      <SettingsAccountsMessageChannelsSSEEffect />
       <SettingsPageContainer>
         {loading ? (
           <SettingsSectionSkeletonLoader />
