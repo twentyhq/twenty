@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { isDefined } from '@/utils/validation/isDefined';
+import { workflowCronTriggerSchema } from '@/workflow/schemas/cron-trigger-schema';
 
 const manualTriggerAvailabilityManifestSchema = z.discriminatedUnion('type', [
   z.strictObject({ type: z.literal('GLOBAL') }),
@@ -12,6 +13,20 @@ const manualTriggerAvailabilityManifestSchema = z.discriminatedUnion('type', [
     type: z.literal('BULK_RECORDS'),
     objectUniversalIdentifier: z.uuid(),
   }),
+]);
+
+const [
+  dailyCronSettingsSchema,
+  hourlyCronSettingsSchema,
+  minutelyCronSettingsSchema,
+  customCronSettingsSchema,
+] = workflowCronTriggerSchema.shape.settings.options;
+
+const cronTriggerSettingsManifestSchema = z.discriminatedUnion('type', [
+  dailyCronSettingsSchema.omit({ outputSchema: true }).strict(),
+  hourlyCronSettingsSchema.omit({ outputSchema: true }).strict(),
+  minutelyCronSettingsSchema.omit({ outputSchema: true }).strict(),
+  customCronSettingsSchema.omit({ outputSchema: true }).strict(),
 ]);
 
 const workflowTriggerManifestOptions = [
@@ -44,31 +59,7 @@ const workflowTriggerManifestOptions = [
     universalIdentifier: z.uuid(),
     type: z.literal('CRON'),
     nextStepIds: z.array(z.uuid()).min(1),
-    settings: z.discriminatedUnion('type', [
-      z.strictObject({
-        type: z.literal('DAYS'),
-        schedule: z.strictObject({
-          day: z.int().min(1),
-          hour: z.int().min(0).max(23),
-          minute: z.int().min(0).max(59),
-        }),
-      }),
-      z.strictObject({
-        type: z.literal('HOURS'),
-        schedule: z.strictObject({
-          hour: z.int().min(1),
-          minute: z.int().min(0).max(59),
-        }),
-      }),
-      z.strictObject({
-        type: z.literal('MINUTES'),
-        schedule: z.strictObject({ minute: z.int().min(1).max(60) }),
-      }),
-      z.strictObject({
-        type: z.literal('CUSTOM'),
-        pattern: z.string().min(1),
-      }),
-    ]),
+    settings: cronTriggerSettingsManifestSchema,
   }),
 ] as const;
 

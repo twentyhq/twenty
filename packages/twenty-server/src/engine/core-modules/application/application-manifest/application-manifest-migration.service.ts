@@ -30,7 +30,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
-import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
+import { publishCronTriggerCacheEntry } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/publish-cron-trigger-cache-entry.util';
 
 @Injectable()
 export class ApplicationManifestMigrationService {
@@ -314,11 +314,11 @@ export class ApplicationManifestMigrationService {
       workflows: applicationWorkflows,
     });
 
-    for (const cronTrigger of cronTriggers) {
-      await this.workflowCacheStorageService.hashSetIfExists({
-        key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        field: cronTrigger.workflowId,
-        value: JSON.stringify(cronTrigger),
+    for (const cachedTrigger of cronTriggers) {
+      await publishCronTriggerCacheEntry({
+        cacheStorageService: this.workflowCacheStorageService,
+        cachedTrigger,
+        logger: this.logger,
       });
     }
   }
