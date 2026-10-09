@@ -5263,7 +5263,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Prevents clicks and applies the disabled style."
+        "description": "Applies disabled styling only. Set native disabled behavior and accessible semantics on the button, link, or popup item owner."
       },
       {
         "name": "endIcon",
@@ -5277,7 +5277,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Applies the highlighted style, for example to the focused item of a list."
+        "description": "Applies highlighted styling without moving DOM focus or handling keyboard navigation."
       },
       {
         "name": "hasSubmenu",
@@ -5294,18 +5294,25 @@
         "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the actual DOM root, including a composed native button or link."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ListItemState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Composes the row with an element or render callback. The owner supplies interaction semantics, native attributes, and behavior."
       },
       {
         "name": "selected",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Whether the item is selected. Shows the check or checkbox indicator when\n`indicator` is set."
+        "description": "Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner."
       },
       {
         "name": "shortcut",
@@ -11326,6 +11333,111 @@
         "required": false,
         "defaultValue": null,
         "description": "Content shown after `startElement`. This is visible header content, not the native HTML title attribute."
+      }
+    ]
+  },
+  {
+    "name": "ListItemButton",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/list-item-button",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"danger\" | \"neutral\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Color of the text and icons. `danger` marks a destructive action."
+      },
+      {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Supporting text, placed according to `descriptionPlacement`."
+      },
+      {
+        "name": "descriptionPlacement",
+        "type": "\"end\" | \"inline\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Where the description renders: inline after the content or at the end of\nthe row."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables activation and applies the matching row appearance."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered after the content."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Keeps a disabled button focusable with aria-disabled while preventing activation."
+      },
+      {
+        "name": "focused",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Highlights the row without moving DOM focus."
+      },
+      {
+        "name": "hasSubmenu",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays a decorative submenu indicator."
+      },
+      {
+        "name": "indicator",
+        "type": "\"check\" | \"checkbox\" | \"none\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native HTMLButtonElement."
+      },
+      {
+        "name": "selected",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays decorative shortcut hints. The caller registers the shortcuts."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered before the content."
       }
     ]
   },

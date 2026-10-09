@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
@@ -82,14 +83,14 @@ export const ObjectOptionsDropdownDefaultView = () => {
             itemId="Fields"
             onEnter={() => onContentChange('fields')}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === 'Fields'}
               onClick={() => onContentChange('fields')}
               startIcon={<IconListDetails />}
               description={t`${visibleFieldsCount} selected`}
               descriptionPlacement="end"
               hasSubmenu
-            >{t`Fields`}</ListItem>
+            >{t`Fields`}</ListItemButton>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
@@ -101,24 +102,24 @@ export const ObjectOptionsDropdownDefaultView = () => {
               copyToClipboard(currentUrl, t`Link copied to clipboard`);
             }}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === 'Copy link to view'}
               onClick={() => {
                 const currentUrl = window.location.href;
                 copyToClipboard(currentUrl, t`Link copied to clipboard`);
               }}
               startIcon={<IconCopy />}
-            >{t`Copy link to view`}</ListItem>
+            >{t`Copy link to view`}</ListItemButton>
           </SelectableListItem>
           <SelectableListItem
             itemId="Create custom view"
             onEnter={handleCreateCustomView}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === 'Create custom view'}
               onClick={handleCreateCustomView}
               startIcon={<IconLayout />}
-            >{t`Create custom view`}</ListItem>
+            >{t`Create custom view`}</ListItemButton>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
       </SelectableList>

@@ -424,6 +424,15 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
     propDescriptions: {
+      ref: 'Ref to the actual DOM root, including a composed native button or link.',
+      selected:
+        'Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner.',
+      focused:
+        'Applies highlighted styling without moving DOM focus or handling keyboard navigation.',
+      disabled:
+        'Applies disabled styling only. Set native disabled behavior and accessible semantics on the button, link, or popup item owner.',
+      render:
+        'Composes the row with an element or render callback. The owner supplies interaction semantics, native attributes, and behavior.',
       shortcutJoinLabel:
         'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
@@ -735,6 +744,27 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/code-editor',
     slug: 'components/code-editor/code-editor-header',
     propDescriptions: CODE_EDITOR_HEADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ListItemButton',
+    source: 'components/navigation/ListItemButton/ListItemButton.tsx',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/list-item-button',
+    propDescriptions: {
+      ref: 'Ref to the native HTMLButtonElement.',
+      disabled: 'Disables activation and applies the matching row appearance.',
+      focusableWhenDisabled:
+        'Keeps a disabled button focusable with aria-disabled while preventing activation.',
+      selected:
+        'Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics.',
+      focused: 'Highlights the row without moving DOM focus.',
+      shortcut:
+        'Displays decorative shortcut hints. The caller registers the shortcuts.',
+      shortcutJoinLabel:
+        'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
+      hasSubmenu: 'Displays a decorative submenu indicator.',
+    },
+    propDefaults: { type: 'button', disabled: 'false' },
   },
   {
     name: 'TabButton',
