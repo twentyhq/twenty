@@ -7,6 +7,9 @@ import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCu
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
+import { getDisplayedApplicationVariables } from '@/settings/applications/utils/getDisplayedApplicationVariables';
+import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
+import { hasApplicationVariablesTab } from '@/settings/applications/utils/hasApplicationVariablesTab';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -15,7 +18,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useQuery } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -35,9 +38,12 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import {
+  ApplicationVariableScope,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
   IsApplicationStoppedDocument,
+  SettingsMenuItemScope,
+  UpdateOneApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
@@ -51,9 +57,7 @@ import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applicatio
 import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
-import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
-import { getWorkspaceSettingsMenuItems } from '~/pages/settings/applications/utils/getWorkspaceSettingsMenuItems';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
@@ -160,8 +164,16 @@ export const SettingsApplicationDetails = () => {
       onCompleted: handleUninstallCompleted,
     });
 
+  // Members set their own user-scoped values from App preferences
   const displayedApplicationVariables = getDisplayedApplicationVariables(
-    application?.applicationVariables ?? [],
+    (application?.applicationVariables ?? []).filter(
+      (applicationVariable) =>
+        applicationVariable.scope === ApplicationVariableScope.WORKSPACE,
+    ),
+  );
+
+  const [updateOneApplicationVariable] = useMutation(
+    UpdateOneApplicationVariableDocument,
   );
 
   const {
@@ -172,19 +184,27 @@ export const SettingsApplicationDetails = () => {
     isSavingApplicationVariables,
   } = useApplicationVariablesDraft({
     applicationId,
+    scope: ApplicationVariableScope.WORKSPACE,
     applicationVariables: displayedApplicationVariables,
+    updateApplicationVariable: ({ key, value }) =>
+      updateOneApplicationVariable({
+        variables: { key, value, applicationId },
+      }),
+    refetchApplicationVariables: refetch,
   });
 
-  const workspaceSettingsMenuItems = getWorkspaceSettingsMenuItems(
+  const workspaceSettingsMenuItems = getSettingsMenuItemsForScope(
     application?.settingsMenuItems ?? [],
+    SettingsMenuItemScope.WORKSPACE,
   );
 
   const missingRequiredApplicationVariables =
     getMissingRequiredApplicationVariables(displayedApplicationVariables);
 
-  const hasVariablesTab =
-    !isNonEmptyArray(workspaceSettingsMenuItems) &&
-    displayedApplicationVariables.length > 0;
+  const hasVariablesTab = hasApplicationVariablesTab({
+    settingsMenuItems: workspaceSettingsMenuItems,
+    displayedApplicationVariables,
+  });
 
   const { healthCheckResult, runHealthCheck } = useApplicationHealthCheck({
     applicationId,
@@ -198,7 +218,6 @@ export const SettingsApplicationDetails = () => {
 
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
-    // A custom settings tab lays out the application variables itself, so this tab would duplicate them
     ...(hasVariablesTab
       ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
       : []),

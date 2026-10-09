@@ -14,7 +14,16 @@ const StyledContainer = styled.div`
 `;
 
 type SettingsApplicationDetailVariablesTabProps = {
-  applicationVariables: ApplicationVariable[];
+  applicationVariables: Pick<
+    ApplicationVariable,
+    | 'key'
+    | 'label'
+    | 'description'
+    | 'isDeprecated'
+    | 'type'
+    | 'value'
+    | 'options'
+  >[];
   onVariableChange: (key: string, value: string) => void;
 };
 

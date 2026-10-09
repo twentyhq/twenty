@@ -1,138 +1,73 @@
-import { InMemoryCache, gql } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing/react';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
-import {
-  type Application,
-  type ApplicationVariable,
-  ApplicationVariableScope,
-  FindOneApplicationDocument,
-  UpdateOneApplicationVariableDocument,
-} from '~/generated-metadata/graphql';
+import { ApplicationVariableScope } from '~/generated-metadata/graphql';
 import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
 
-const APPLICATION_VARIABLE_FRAGMENT = gql`
-  fragment TestApplicationVariableFields on ApplicationVariable {
-    id
-    key
-    value
-    description
-    isSecret
-  }
-`;
-
-const VARIABLE_ID = 'var-1';
 const KEY = 'API_KEY';
+const OTHER_KEY = 'REGION';
 const OLD_VALUE = 'old';
 const NEW_VALUE = 'new';
 const LATER_VALUE = 'later';
 
-const buildApplicationVariable = (value: string): ApplicationVariable => ({
-  __typename: 'ApplicationVariable',
-  id: VARIABLE_ID,
-  key: KEY,
+const buildApplicationVariable = (key: string, value: string) => ({
+  key,
   value,
-  description: '',
-  label: '',
-  isSecret: false,
-  isDeprecated: false,
-  isRequired: false,
-  type: 'TEXT',
-  scope: ApplicationVariableScope.WORKSPACE,
 });
 
-const buildApplication = (
-  applicationId: string,
-  variableValue: string,
-): Application => ({
-  __typename: 'Application',
-  id: applicationId,
-  name: 'Test App',
-  description: null,
-  version: '1.0.0',
-  universalIdentifier: 'test-app',
-  applicationRegistrationId: null,
-  applicationRegistration: null,
-  canBeUninstalled: true,
-  isUninstallBlockedByOtherWorkspaceInstallations: false,
-  autoUpgrade: false,
-  defaultRoleId: null,
-  settingsCustomTabFrontComponentId: null,
-  availablePackages: {},
-  applicationVariables: [buildApplicationVariable(variableValue)],
-  agents: [],
-  frontComponents: [],
-  commandMenuItems: [],
-  settingsMenuItems: [],
-  objects: [],
-  logicFunctions: [],
-});
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <ToastProvider>{children}</ToastProvider>
+);
 
-const renderVariablesDraft = (applicationId: string) => {
-  const cache = new InMemoryCache();
+const renderVariablesDraft = ({
+  applicationId,
+  scope = ApplicationVariableScope.WORKSPACE,
+  applicationVariables = [buildApplicationVariable(KEY, OLD_VALUE)],
+  updateApplicationVariable = jest.fn().mockResolvedValue(true),
+}: {
+  applicationId: string;
+  scope?: ApplicationVariableScope;
+  applicationVariables?: { key: string; value: string }[];
+  updateApplicationVariable?: jest.Mock;
+}) => {
+  const refetchApplicationVariables = jest.fn().mockResolvedValue(undefined);
 
-  cache.writeQuery({
-    query: FindOneApplicationDocument,
-    variables: { id: applicationId },
-    data: { findOneApplication: buildApplication(applicationId, OLD_VALUE) },
-  });
-
-  const findOneApplicationMock = {
-    request: {
-      query: FindOneApplicationDocument,
-      variables: { id: applicationId },
-    },
-    result: {
-      data: {
-        findOneApplication: buildApplication(applicationId, NEW_VALUE),
-      },
-    },
-    // The hook watches the application and refetches it once the save
-    // completes, so the same request is issued more than once.
-    maxUsageCount: Number.POSITIVE_INFINITY,
-  };
-
-  const mocks = [
-    {
-      request: {
-        query: UpdateOneApplicationVariableDocument,
-        variables: { key: KEY, value: NEW_VALUE, applicationId },
-      },
-      result: { data: { updateOneApplicationVariable: true } },
-    },
-    findOneApplicationMock,
-  ];
-
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <MockedProvider mocks={mocks} cache={cache}>
-      <ToastProvider>{children}</ToastProvider>
-    </MockedProvider>
-  );
-
-  const { result } = renderHook(
-    () =>
+  const { result, rerender } = renderHook(
+    ({ currentApplicationVariables }) =>
       useApplicationVariablesDraft({
         applicationId,
-        applicationVariables: [buildApplicationVariable(OLD_VALUE)],
+        scope,
+        applicationVariables: currentApplicationVariables,
+        updateApplicationVariable,
+        refetchApplicationVariables,
       }),
-    { wrapper },
+    {
+      wrapper,
+      initialProps: { currentApplicationVariables: applicationVariables },
+    },
   );
 
-  return { result, cache };
+  return {
+    result,
+    rerender,
+    updateApplicationVariable,
+    refetchApplicationVariables,
+  };
 };
 
 describe('useApplicationVariablesDraft', () => {
   it('has nothing to save before an edit', () => {
-    const { result } = renderVariablesDraft('app-untouched');
+    const { result } = renderVariablesDraft({
+      applicationId: 'app-untouched',
+    });
 
     expect(result.current.hasUnsavedApplicationVariables).toBe(false);
     expect(result.current.draftApplicationVariables[0].value).toBe(OLD_VALUE);
   });
 
   it('keeps the edited value unsaved until it is saved', () => {
-    const { result } = renderVariablesDraft('app-edited');
+    const { result } = renderVariablesDraft({ applicationId: 'app-edited' });
 
     act(() => {
       result.current.setApplicationVariableValue(KEY, NEW_VALUE);
@@ -142,8 +77,19 @@ describe('useApplicationVariablesDraft', () => {
     expect(result.current.hasUnsavedApplicationVariables).toBe(true);
   });
 
-  it('persists the edited value once saved', async () => {
-    const { result, cache } = renderVariablesDraft('app-saved');
+  it('sends only the edited variables, then refetches once and drops the saved draft', async () => {
+    const {
+      result,
+      rerender,
+      updateApplicationVariable,
+      refetchApplicationVariables,
+    } = renderVariablesDraft({
+      applicationId: 'app-saved',
+      applicationVariables: [
+        buildApplicationVariable(KEY, OLD_VALUE),
+        buildApplicationVariable(OTHER_KEY, OLD_VALUE),
+      ],
+    });
 
     act(() => {
       result.current.setApplicationVariableValue(KEY, NEW_VALUE);
@@ -153,22 +99,29 @@ describe('useApplicationVariablesDraft', () => {
       await result.current.saveApplicationVariables();
     });
 
-    await waitFor(() => {
-      const cached = cache.readFragment<{ value: string }>({
-        id: cache.identify({
-          __typename: 'ApplicationVariable',
-          id: VARIABLE_ID,
-        }),
-        fragment: APPLICATION_VARIABLE_FRAGMENT,
-      });
-      expect(cached?.value).toBe(NEW_VALUE);
+    expect(updateApplicationVariable.mock.calls).toEqual([
+      [{ key: KEY, value: NEW_VALUE }],
+    ]);
+    expect(refetchApplicationVariables).toHaveBeenCalledTimes(1);
+    expect(
+      refetchApplicationVariables.mock.invocationCallOrder[0],
+    ).toBeGreaterThan(updateApplicationVariable.mock.invocationCallOrder[0]);
+
+    rerender({
+      currentApplicationVariables: [
+        buildApplicationVariable(KEY, NEW_VALUE),
+        buildApplicationVariable(OTHER_KEY, OLD_VALUE),
+      ],
     });
 
     expect(result.current.hasUnsavedApplicationVariables).toBe(false);
+    expect(result.current.draftApplicationVariables[0].value).toBe(NEW_VALUE);
   });
 
   it('keeps a value edited while the save is in flight', async () => {
-    const { result } = renderVariablesDraft('app-edited-during-save');
+    const { result } = renderVariablesDraft({
+      applicationId: 'app-edited-during-save',
+    });
 
     act(() => {
       result.current.setApplicationVariableValue(KEY, NEW_VALUE);
@@ -184,5 +137,45 @@ describe('useApplicationVariablesDraft', () => {
 
     expect(result.current.draftApplicationVariables[0].value).toBe(LATER_VALUE);
     expect(result.current.hasUnsavedApplicationVariables).toBe(true);
+  });
+
+  it('keeps the draft when the save fails', async () => {
+    const { result, refetchApplicationVariables } = renderVariablesDraft({
+      applicationId: 'app-save-failed',
+      updateApplicationVariable: jest.fn().mockRejectedValue(new Error()),
+    });
+
+    act(() => {
+      result.current.setApplicationVariableValue(KEY, NEW_VALUE);
+    });
+
+    await act(async () => {
+      await result.current.saveApplicationVariables();
+    });
+
+    expect(refetchApplicationVariables).not.toHaveBeenCalled();
+    expect(result.current.draftApplicationVariables[0].value).toBe(NEW_VALUE);
+    expect(result.current.isSavingApplicationVariables).toBe(false);
+  });
+
+  it('keeps the workspace and user drafts of an application apart', () => {
+    const { result: workspaceDraft } = renderVariablesDraft({
+      applicationId: 'app-both-scopes',
+      scope: ApplicationVariableScope.WORKSPACE,
+    });
+    const { result: userDraft } = renderVariablesDraft({
+      applicationId: 'app-both-scopes',
+      scope: ApplicationVariableScope.USER,
+    });
+
+    act(() => {
+      workspaceDraft.current.setApplicationVariableValue(KEY, NEW_VALUE);
+    });
+
+    expect(workspaceDraft.current.hasUnsavedApplicationVariables).toBe(true);
+    expect(userDraft.current.hasUnsavedApplicationVariables).toBe(false);
+    expect(userDraft.current.draftApplicationVariables[0].value).toBe(
+      OLD_VALUE,
+    );
   });
 });

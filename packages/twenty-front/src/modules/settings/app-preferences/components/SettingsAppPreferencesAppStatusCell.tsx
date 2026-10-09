@@ -1,22 +1,27 @@
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
+import { type AppPreferencesApp } from '@/settings/app-preferences/types/AppPreferencesApp';
 import { getNativeAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getNativeAccountAppsUsingAccount';
 import { useLingui } from '@lingui/react/macro';
 import { Status } from 'twenty-ui/primitives/data-display';
 
-type SettingsNativeAccountAppStatusCellProps = {
-  item: NativeAccountApp;
+type SettingsAppPreferencesAppStatusCellProps = {
+  item: AppPreferencesApp;
 };
 
-export const SettingsNativeAccountAppStatusCell = ({
+export const SettingsAppPreferencesAppStatusCell = ({
   item,
-}: SettingsNativeAccountAppStatusCellProps) => {
+}: SettingsAppPreferencesAppStatusCellProps) => {
   const { t } = useLingui();
   const { groups, loading } = useMyAccountGroups();
 
+  // An installed app does not rely on the member's native accounts
+  if (item.type !== 'native') {
+    return null;
+  }
+
   const hasAccount = groups.some((group) =>
     getNativeAccountAppsUsingAccount(group.nativeAccount).some(
-      (app) => app.id === item.id,
+      (app) => app.id === item.nativeAccountApp.id,
     ),
   );
 

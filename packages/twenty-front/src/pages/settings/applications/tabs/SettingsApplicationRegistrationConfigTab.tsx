@@ -17,7 +17,7 @@ import { type ApplicationVariableOption } from 'twenty-shared/application';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
 import { SettingsApplicationVariableLabelRow } from '~/pages/settings/applications/components/SettingsApplicationVariableLabelRow';
-import { shouldDisplayVariable } from '~/pages/settings/applications/utils/shouldDisplayVariable';
+import { shouldDisplayVariable } from '@/settings/applications/utils/shouldDisplayVariable';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 
 type ConfigVariable = {
