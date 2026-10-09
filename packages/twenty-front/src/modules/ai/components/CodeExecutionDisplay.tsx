@@ -215,7 +215,8 @@ export const CodeExecutionDisplay = ({
                   : 'gray'
             }
             weight="medium"
-            preventShrink
+            truncate={false}
+            style={{ minWidth: 'fit-content' }}
           >
             {statusText}
           </Tag>

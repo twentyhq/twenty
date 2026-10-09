@@ -36,7 +36,8 @@ export const MultiSelectDisplay = ({
     <StyledContainer className={className}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
-          preventShrink
+          truncate={false}
+          style={{ minWidth: 'fit-content' }}
           key={index}
           color={selectedOption.color ?? 'transparent'}
           startIcon={

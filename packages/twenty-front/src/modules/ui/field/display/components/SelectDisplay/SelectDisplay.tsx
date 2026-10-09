@@ -7,20 +7,14 @@ type SelectDisplayProps = {
   color: ThemeColor | 'transparent';
   label: string;
   Icon?: IconComponent;
-  preventPadding?: boolean;
 };
 
-export const SelectDisplay = ({
-  color,
-  label,
-  Icon,
-  preventPadding,
-}: SelectDisplayProps) => (
+export const SelectDisplay = ({ color, label, Icon }: SelectDisplayProps) => (
   <Tag
-    preventShrink
+    truncate={false}
+    style={{ minWidth: 'fit-content' }}
     color={color}
     startIcon={isDefined(Icon) ? <Icon /> : undefined}
-    preventPadding={preventPadding}
   >
     {label}
   </Tag>

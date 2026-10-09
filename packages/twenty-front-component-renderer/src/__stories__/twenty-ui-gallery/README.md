@@ -13,6 +13,8 @@ Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused Reac
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
 
+Tag and Status retain their presentational span when a native click handler is supplied. Their focused React/Preact fixtures check explicit native button/link composition, keyboard activation, disabled owners, refs, caller-owned links and native handlers. Tag checks positive truncation and native padding styles; Status checks controlled loading, caller-owned busy state and a decorative loader without an implicit live region.
+
 AvatarGroup checks derived counts, partially loaded totals, custom overflow and surviving keyed child state. Its native button and link (`target="_blank"`) verify refs, focus and pointer/keyboard activation in React and Preact.
 
 Scenarios share their checks between runtimes where behavior matches. The story
@@ -37,6 +39,8 @@ effect within the interaction timeout.
 | `twenty-ui-display-helpers`      | Text                                                                                                                                    |
 | `twenty-ui-avatar-controls`      | Avatar (stable presentational root, compound fallback, refs, explicit button/link composition and native keyboard/disabled behavior)    |
 | `twenty-ui-avatar-group`         | AvatarGroup (derived and partial totals, custom overflow, keyed child state, native refs and explicit button/link composition)          |
+| `twenty-ui-tag-controls`         | Tag (stable presentational root, positive truncation, native spacing, node content, refs and explicit button/link composition)          |
+| `twenty-ui-status-controls`      | Status (stable presentational root, loading/busy state, node content, refs and explicit button/link composition)                        |
 | `twenty-ui-avatar-image`         | Avatar Root/Image/Fallback (image labels/attributes/refs, loading callbacks, decoded images, fallback, replacement and unmount/remount) |
 | `twenty-ui-image-input`          | ImageInput                                                                                                                              |
 | `twenty-ui-list-item`            | ListItem                                                                                                                                |

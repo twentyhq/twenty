@@ -43,18 +43,6 @@ const createDisplayControlTest =
     await expect(canvas.getByLabelText('Activations')).toHaveTextContent('3');
   };
 
-export const statusControlsTest = createDisplayControlTest({
-  buttonName: 'Open status',
-  disabledButtonName: 'Disabled status',
-  staticContent: 'Loading status',
-});
-
-export const tagControlsTest = createDisplayControlTest({
-  buttonName: 'Open tag',
-  disabledButtonName: 'Disabled tag',
-  staticContent: 'Static tag',
-});
-
 export const chipControlsTest = createDisplayControlTest({
   buttonName: 'Open chip',
   disabledButtonName: 'Disabled chip',
