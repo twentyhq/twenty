@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-export type TriggerInstallApplicationJobFactoryInput = {
+export type TriggerInstallApplicationFactoryInput = {
   universalIdentifier: string;
 };
 
@@ -9,13 +9,13 @@ const DEFAULT_TRIGGER_INSTALL_APPLICATION_JOB_GQL_FIELDS = `
   jobId
 `;
 
-export const triggerInstallApplicationJobQueryFactory = ({
+export const triggerInstallApplicationQueryFactory = ({
   input,
   gqlFields = DEFAULT_TRIGGER_INSTALL_APPLICATION_JOB_GQL_FIELDS,
-}: PerformMetadataQueryParams<TriggerInstallApplicationJobFactoryInput>) => ({
+}: PerformMetadataQueryParams<TriggerInstallApplicationFactoryInput>) => ({
   query: gql`
-    mutation TriggerInstallApplicationJob($input: TriggerInstallApplicationJobInput!) {
-      triggerInstallApplicationJob(input: $input) {
+    mutation TriggerInstallApplication($input: TriggerInstallApplicationInput!) {
+      triggerInstallApplication(input: $input) {
         ${gqlFields}
       }
     }

@@ -4,17 +4,18 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { QUEUE_JOB_BROWSER_EVENT_NAME } from '@/queue-job/constants/QueueJobBrowserEventName';
-import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import {
-  FindUninstallApplicationJobStatusDocument,
+  FindUpgradeApplicationJobStatusDocument,
   JobState,
   type JobStatus,
-  TriggerUninstallApplicationDocument,
+  TriggerUpgradeApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
-const JOB_ID = `uninstall-application.workspace-id.${UNIVERSAL_IDENTIFIER}-5c98b035-5b09-4550-a4fb-b52056c494d1`;
+const TARGET_VERSION = '2.0.0';
+const JOB_ID = `upgrade-application.workspace-id.${UNIVERSAL_IDENTIFIER}-5c98b035-5b09-4550-a4fb-b52056c494d1`;
 
 const mockEnqueueToast = jest.fn();
 
@@ -23,24 +24,29 @@ jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
-const triggerUninstallMock = {
+const triggerUpgradeMock = {
   request: {
-    query: TriggerUninstallApplicationDocument,
-    variables: { input: { universalIdentifier: UNIVERSAL_IDENTIFIER } },
+    query: TriggerUpgradeApplicationDocument,
+    variables: {
+      input: {
+        universalIdentifier: UNIVERSAL_IDENTIFIER,
+        targetVersion: TARGET_VERSION,
+      },
+    },
   },
   result: {
-    data: { triggerUninstallApplication: { jobId: JOB_ID } },
+    data: { triggerUpgradeApplication: { jobId: JOB_ID } },
   },
 };
 
 const buildJobStatusMock = (
-  findUninstallApplicationJobStatus: Partial<JobStatus> | null,
+  findUpgradeApplicationJobStatus: Partial<JobStatus> | null,
 ) => ({
   request: {
-    query: FindUninstallApplicationJobStatusDocument,
+    query: FindUpgradeApplicationJobStatusDocument,
     variables: { universalIdentifier: UNIVERSAL_IDENTIFIER },
   },
-  result: { data: { findUninstallApplicationJobStatus } },
+  result: { data: { findUpgradeApplicationJobStatus } },
 });
 
 const buildWrapper =
@@ -49,7 +55,7 @@ const buildWrapper =
     <MockedProvider mocks={mocks}>{children}</MockedProvider>
   );
 
-describe('useUninstallApplication', () => {
+describe('useUpgradeApplication', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -58,20 +64,32 @@ describe('useUninstallApplication', () => {
     const onCompleted = jest.fn();
     const { result } = renderHook(
       () =>
-        useUninstallApplication({
+        useUpgradeApplication({
           universalIdentifier: UNIVERSAL_IDENTIFIER,
           onCompleted,
         }),
       {
-        wrapper: buildWrapper([buildJobStatusMock(null), triggerUninstallMock]),
+        wrapper: buildWrapper([buildJobStatusMock(null), triggerUpgradeMock]),
       },
     );
 
     await act(async () => {
-      await result.current.uninstall();
+      await result.current.upgrade(TARGET_VERSION);
     });
 
-    expect(result.current.isUninstalling).toBe(true);
+    expect(result.current.isUpgrading).toBe(true);
+
+    act(() => {
+      dispatchBrowserEvent<JobStatus>(QUEUE_JOB_BROWSER_EVENT_NAME, {
+        jobId: JOB_ID,
+        state: JobState.ACTIVE,
+        attemptsMade: 1,
+        progress: 43,
+        enqueuedAt: 1,
+      });
+    });
+
+    expect(result.current.upgradeProgress).toBe(43);
 
     act(() => {
       dispatchBrowserEvent<JobStatus>(QUEUE_JOB_BROWSER_EVENT_NAME, {
@@ -82,27 +100,29 @@ describe('useUninstallApplication', () => {
       });
     });
 
-    await waitFor(() => expect(result.current.isUninstalling).toBe(false));
+    await waitFor(() => expect(result.current.isUpgrading).toBe(false));
     expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'success',
-      children: 'Application successfully uninstalled.',
+      children: 'Application upgraded successfully.',
     });
     expect(onCompleted).toHaveBeenCalledTimes(1);
   });
 
-  it('surfaces the failure reason of a failed job', async () => {
+  it('surfaces the failure reason of a failed job without completing', async () => {
+    const onCompleted = jest.fn();
     const { result } = renderHook(
       () =>
-        useUninstallApplication({
+        useUpgradeApplication({
           universalIdentifier: UNIVERSAL_IDENTIFIER,
+          onCompleted,
         }),
       {
-        wrapper: buildWrapper([buildJobStatusMock(null), triggerUninstallMock]),
+        wrapper: buildWrapper([buildJobStatusMock(null), triggerUpgradeMock]),
       },
     );
 
     await act(async () => {
-      await result.current.uninstall();
+      await result.current.upgrade(TARGET_VERSION);
     });
 
     act(() => {
@@ -110,22 +130,23 @@ describe('useUninstallApplication', () => {
         jobId: JOB_ID,
         state: JobState.FAILED,
         attemptsMade: 1,
-        failedReason: 'This application cannot be uninstalled.',
+        failedReason: 'Upgrade failed for this application.',
         enqueuedAt: 1,
       });
     });
 
-    await waitFor(() => expect(result.current.isUninstalling).toBe(false));
+    await waitFor(() => expect(result.current.isUpgrading).toBe(false));
     expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'error',
-      children: 'This application cannot be uninstalled.',
+      children: 'Upgrade failed for this application.',
     });
+    expect(onCompleted).not.toHaveBeenCalled();
   });
 
-  it('reports an uninstallation still running on the server with its progress', async () => {
+  it('reports an upgrade still running on the server with its progress', async () => {
     const { result } = renderHook(
       () =>
-        useUninstallApplication({
+        useUpgradeApplication({
           universalIdentifier: UNIVERSAL_IDENTIFIER,
         }),
       {
@@ -135,25 +156,13 @@ describe('useUninstallApplication', () => {
             jobId: JOB_ID,
             state: JobState.ACTIVE,
             failedReason: null,
-            progress: 20,
+            progress: 29,
           }),
         ]),
       },
     );
 
-    await waitFor(() => expect(result.current.isUninstalling).toBe(true));
-    expect(result.current.uninstallProgress).toBe(20);
-
-    act(() => {
-      dispatchBrowserEvent<JobStatus>(QUEUE_JOB_BROWSER_EVENT_NAME, {
-        jobId: JOB_ID,
-        state: JobState.ACTIVE,
-        attemptsMade: 1,
-        progress: 80,
-        enqueuedAt: 1,
-      });
-    });
-
-    expect(result.current.uninstallProgress).toBe(80);
+    await waitFor(() => expect(result.current.isUpgrading).toBe(true));
+    expect(result.current.upgradeProgress).toBe(29);
   });
 });
