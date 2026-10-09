@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Test } from '@nestjs/testing';
 import {
   MetadataReadability,
@@ -7,6 +9,7 @@ import {
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
+import * as isRecordMatchingPredicateUtil from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -140,10 +143,11 @@ describe('mandatory event visibility', () => {
       ],
     }).compile();
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const predicateModule = require('src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util');
     const isRecordMatchingSpy = jest
-      .spyOn(predicateModule, 'isRecordMatchingRLSRowLevelPermissionPredicate')
+      .spyOn(
+        isRecordMatchingPredicateUtil,
+        'isRecordMatchingRLSRowLevelPermissionPredicate',
+      )
       .mockImplementation(({ record }: { record: { id: string } }) => {
         if (record.id === 'throwing-record') {
           throw new TypeError('e.split is not a function');
