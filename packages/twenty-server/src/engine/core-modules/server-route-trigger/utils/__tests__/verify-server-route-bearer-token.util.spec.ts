@@ -99,7 +99,10 @@ describe('verifyServerRouteBearerToken', () => {
       'a token from another issuer',
       signToken({ issuer: 'https://evil.example.com' }),
     ],
-    ['a token expired beyond the clock tolerance', signToken({ expiresIn: '-10m' })],
+    [
+      'a token expired beyond the clock tolerance',
+      signToken({ expiresIn: '-10m' }),
+    ],
     [
       'a token signed by another key',
       signToken({
@@ -108,11 +111,15 @@ describe('verifyServerRouteBearerToken', () => {
     ],
     [
       'an HS256 token signed with the public key',
-      sign({ iss: ISSUER, aud: AUDIENCE }, publicKey.export({ type: 'spki', format: 'pem' }), {
-        algorithm: 'HS256',
-        keyid: KEY_ID,
-        expiresIn: '5m',
-      }),
+      sign(
+        { iss: ISSUER, aud: AUDIENCE },
+        publicKey.export({ type: 'spki', format: 'pem' }),
+        {
+          algorithm: 'HS256',
+          keyid: KEY_ID,
+          expiresIn: '5m',
+        },
+      ),
     ],
     [
       'an unsigned token',
