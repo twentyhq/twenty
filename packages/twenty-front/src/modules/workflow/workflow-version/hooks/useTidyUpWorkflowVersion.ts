@@ -13,7 +13,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -130,7 +133,7 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
       steps: updatedSteps,
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       trigger: true,
       steps: true,
     };

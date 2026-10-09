@@ -20,7 +20,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   type ObjectRecord as ObjectRecordShared,
-  type RecordGqlOperationGqlRecordFields,
+  type RecordGqlFields,
 } from 'twenty-shared/types';
 
 import { type BaseObjectRecord } from '@/object-record/types/BaseObjectRecord';
@@ -34,7 +34,7 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  recordGqlFields?: RecordGqlFields;
   skipPostOptimisticEffect?: boolean;
   shouldMatchRootQueryFilter?: boolean;
 };
