@@ -5,7 +5,7 @@ import { findInnermostJsxEventRef } from '@/cli/utilities/build/common/front-com
 import { getJsxEventPropNamesOverriddenByClone } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/get-jsx-event-prop-names-overridden-by-clone';
 import { makeEventRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/make-event-ref';
 import { omitEventHandlers } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/omit-event-handlers';
-import { replaceJsxEventRefUserRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/replace-jsx-event-ref-user-ref';
+import { replaceJsxEventRefInnerRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/replace-jsx-event-ref-inner-ref';
 
 export const getCloneUserRefWithElementJsxEventHandlers = ({
   elementRef,
@@ -22,7 +22,7 @@ export const getCloneUserRefWithElementJsxEventHandlers = ({
     return cloneUserRef;
   }
 
-  const elementJsxEventHandlers = elementJsxEventRef._eventProps;
+  const elementJsxEventHandlers = elementJsxEventRef._eventHandlers;
   const jsxEventPropNamesOverriddenByClone =
     getJsxEventPropNamesOverriddenByClone({
       jsxEventHandlers: elementJsxEventHandlers,
@@ -30,7 +30,7 @@ export const getCloneUserRefWithElementJsxEventHandlers = ({
       eventHandlersSetByInnerClones,
     });
   if (jsxEventPropNamesOverriddenByClone.length === 0) {
-    return replaceJsxEventRefUserRef(elementJsxEventRef, cloneUserRef);
+    return replaceJsxEventRefInnerRef(elementJsxEventRef, cloneUserRef);
   }
 
   const remainingJsxEventHandlers = omitEventHandlers(

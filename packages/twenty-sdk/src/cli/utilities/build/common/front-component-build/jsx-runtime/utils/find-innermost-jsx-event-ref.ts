@@ -6,7 +6,7 @@ import { isJsxEventRef } from '@/cli/utilities/build/common/front-component-buil
 export const findInnermostJsxEventRef = (ref: UserRef): EventRef | null => {
   let innerRef = ref;
   while (isCloneEventRef(innerRef)) {
-    innerRef = innerRef._userRef;
+    innerRef = innerRef._innerRef;
   }
 
   if (isJsxEventRef(innerRef)) {

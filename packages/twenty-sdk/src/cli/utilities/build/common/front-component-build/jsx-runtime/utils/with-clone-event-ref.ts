@@ -18,10 +18,7 @@ export const withCloneEventRef = (
     ref: makeCloneEventRef({
       elementRef,
       cloneConfig,
-      replacesElementUserRef: doesCloneReplaceElementRef(
-        cloneConfig,
-        elementRef,
-      ),
+      replacesElementRef: doesCloneReplaceElementRef(cloneConfig, elementRef),
       cloneEvents,
     }),
   });

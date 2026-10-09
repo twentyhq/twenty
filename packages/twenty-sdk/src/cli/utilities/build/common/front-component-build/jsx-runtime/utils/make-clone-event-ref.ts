@@ -3,39 +3,39 @@ import { type EventHandlersByPropName } from '@/cli/utilities/build/common/front
 import { type EventRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/types/event-ref.type';
 import { type UserRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/types/user-ref.type';
 import { isCloneEventRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/is-clone-event-ref';
-import { makeCloneEventRefKeepingInnerCloneUserRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/make-clone-event-ref-keeping-inner-clone-user-ref';
-import { makeCloneEventRefReplacingInnerCloneUserRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/make-clone-event-ref-replacing-inner-clone-user-ref';
+import { makeCloneEventRefKeepingElementRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/make-clone-event-ref-keeping-element-ref';
+import { makeCloneEventRefReplacingElementRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/make-clone-event-ref-replacing-element-ref';
 import { makeCloneEventRefWithoutInnerClone } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/utils/make-clone-event-ref-without-inner-clone';
 
 export const makeCloneEventRef = ({
   elementRef,
   cloneConfig,
-  replacesElementUserRef,
+  replacesElementRef,
   cloneEvents,
 }: {
   elementRef: UserRef;
   cloneConfig: ElementProps;
-  replacesElementUserRef: boolean;
+  replacesElementRef: boolean;
   cloneEvents: EventHandlersByPropName | null;
 }): EventRef => {
   if (!isCloneEventRef(elementRef)) {
     return makeCloneEventRefWithoutInnerClone({
       elementRef,
       cloneConfig,
-      replacesElementUserRef,
+      replacesElementRef,
       cloneEvents,
     });
   }
 
-  if (replacesElementUserRef) {
-    return makeCloneEventRefReplacingInnerCloneUserRef({
+  if (replacesElementRef) {
+    return makeCloneEventRefReplacingElementRef({
       innerCloneEventRef: elementRef,
       cloneConfig,
       cloneEvents,
     });
   }
 
-  return makeCloneEventRefKeepingInnerCloneUserRef({
+  return makeCloneEventRefKeepingElementRef({
     innerCloneEventRef: elementRef,
     cloneEvents,
   });

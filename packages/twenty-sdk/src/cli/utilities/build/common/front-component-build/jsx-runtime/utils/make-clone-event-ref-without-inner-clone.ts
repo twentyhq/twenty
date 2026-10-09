@@ -9,15 +9,15 @@ import { makeEventRef } from '@/cli/utilities/build/common/front-component-build
 export const makeCloneEventRefWithoutInnerClone = ({
   elementRef,
   cloneConfig,
-  replacesElementUserRef,
+  replacesElementRef,
   cloneEvents,
 }: {
   elementRef: UserRef;
   cloneConfig: ElementProps;
-  replacesElementUserRef: boolean;
+  replacesElementRef: boolean;
   cloneEvents: EventHandlersByPropName | null;
 }): EventRef => {
-  const cloneUserRef = replacesElementUserRef
+  const cloneUserRef = replacesElementRef
     ? getCloneUserRefWithElementJsxEventHandlers({
         elementRef,
         cloneConfig,

@@ -4,9 +4,9 @@ import { type EventRef } from '@/cli/utilities/build/common/front-component-buil
 import { type UserRef } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/types/user-ref.type';
 
 export type EventRefProperties = {
-  _eventProps: EventHandlersByPropName;
+  _eventHandlers: EventHandlersByPropName;
   _outerWinningCloneEvents: EventHandlersByPropName | null | undefined;
-  _userRef: UserRef;
+  _innerRef: UserRef;
   _eventSource: EventHandlerSource;
-  _lastUserRefReplacement?: EventRef;
+  _lastInnerRefReplacement?: EventRef;
 };
