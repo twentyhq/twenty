@@ -90,6 +90,21 @@ export class ServerRouteTriggerRestApiExceptionFilter implements ExceptionFilter
           undefined,
           { shouldBeCapturedBySentry: false },
         );
+      case ServerRouteTriggerExceptionCode.INVALID_BEARER_TOKEN:
+        return this.httpExceptionHandlerService.handleError(
+          exception as CustomException,
+          response,
+          401,
+          undefined,
+          undefined,
+          { shouldBeCapturedBySentry: false },
+        );
+      case ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE:
+        return this.httpExceptionHandlerService.handleError(
+          exception as CustomException,
+          response,
+          503,
+        );
       default: {
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,

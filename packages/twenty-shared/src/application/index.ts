@@ -229,7 +229,10 @@ export type { SendInboxMessageResult } from './sendInboxMessageResultType';
 export type { SendInboxMessageToolCall } from './sendInboxMessageToolCallType';
 export type { ServerVariables } from './server-variables.type';
 export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
-export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';
+export type {
+  ServerRouteBearerTokenVerification,
+  ServerRouteTriggerSettings,
+} from './serverRouteTriggerSettingsType';
 export type { SettingsFrontComponentApplicationManifest } from './settingsFrontComponentApplicationType';
 export type {
   SettingsMenuItemScope,

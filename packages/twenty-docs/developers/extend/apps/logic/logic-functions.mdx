@@ -112,6 +112,7 @@ The `RoutePayload` type has the following structure:
   | `isBase64Encoded` | `boolean` | Whether the body is base64 encoded | |
   | `requestContext.http.method` | `string` | HTTP method (GET, POST, PUT, PATCH, DELETE) | |
   | `requestContext.http.path` | `string` | Raw request path | |
+  | `verifiedBearerTokenClaims` | `Record<string, unknown> \| undefined` | Claims of the verified `Authorization` bearer token, on server routes that declare `bearerTokenVerification` | `{ iss: 'https://api.botframework.com', aud: '<bot app id>' }` |
 
 
 #### forwardedRequestHeaders
@@ -349,6 +350,21 @@ For request signatures, most providers sign with HMAC-SHA256; the parts that dif
 | Slack | `x-slack-signature`, `x-slack-request-timestamp` | `v0:{timestamp}:{rawBody}` | hex (prefixed `v0=`) |
 
 The resolver example above already shows the GitHub HMAC-SHA256 flow — adapt the header name, digest encoding, and signed-payload string per the provider you're integrating.
+
+**Bearer token verification.** Some providers do not sign the body but send a signed JWT in the `Authorization` header instead, such as Microsoft's Bot Framework. Credential headers never reach app code, so declare `bearerTokenVerification` and the platform verifies the token before the resolver runs:
+
+```ts
+serverRouteTriggerSettings: {
+  bearerTokenVerification: {
+    jwksUrl: 'https://login.botframework.com/v1/.well-known/keys',
+    issuer: 'https://api.botframework.com',
+    audienceServerVariable: 'TEAMS_BOT_APP_ID',
+    requiredKeyEndorsement: 'msteams',
+  },
+}
+```
+
+The token must be an RS256 JWT signed by a key published at `jwksUrl`, issued by `issuer`, and addressed to the value of the server variable named by `audienceServerVariable`. `requiredKeyEndorsement` is optional and additionally requires the signing key to list that value in its `endorsements`. A missing or invalid token is answered `401` and the resolver never runs; an unset audience variable or unreachable `jwksUrl` is answered `503`. On success the resolver receives the token's claims in `event.verifiedBearerTokenClaims`. The token itself is never forwarded.
 
 <Note>
 When the resolver returns a dispatch object, the route responds `202 { queued: true }` and the target runs on the worker queue — the caller never observes the target's latency, result, or failures (those are recorded in execution logs). This keeps sender redeliveries from amplifying processing slowdowns, which is what you want for webhook ingestion.

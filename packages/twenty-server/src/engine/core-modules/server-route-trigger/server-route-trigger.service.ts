@@ -24,6 +24,7 @@ import {
   buildRouteTriggerResponse,
   type RouteTriggerResponse,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import { ServerRouteBearerTokenVerifierService } from 'src/engine/core-modules/server-route-trigger/server-route-bearer-token-verifier.service';
 import { DEFAULT_SERVER_ROUTE_HTTP_METHODS } from 'src/engine/core-modules/server-route-trigger/constants/default-server-route-http-methods.constant';
 import { SERVER_ROUTE_DISPATCH_JOB_PRIORITY } from 'src/engine/core-modules/server-route-trigger/constants/server-route-dispatch-job-priority.constant';
 import {
@@ -61,6 +62,7 @@ export class ServerRouteTriggerService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly serverRouteBearerTokenVerifierService: ServerRouteBearerTokenVerifierService,
   ) {}
 
   async handle({
@@ -103,13 +105,29 @@ export class ServerRouteTriggerService {
       );
     }
 
-    const event = buildLogicFunctionEvent({
-      request,
-      pathParameters: {},
-      forwardedRequestHeaders:
-        resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [],
-      userWorkspaceId: null,
-    });
+    const bearerTokenVerification =
+      resolver.serverRouteTriggerSettings?.bearerTokenVerification;
+
+    const verifiedBearerTokenClaims = isDefined(bearerTokenVerification)
+      ? await this.serverRouteBearerTokenVerifierService.verifyOrThrow({
+          authorizationHeader: request.headers.authorization,
+          bearerTokenVerification,
+          applicationRegistrationId,
+        })
+      : undefined;
+
+    const event = {
+      ...buildLogicFunctionEvent({
+        request,
+        pathParameters: {},
+        forwardedRequestHeaders:
+          resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [],
+        userWorkspaceId: null,
+      }),
+      ...(isDefined(verifiedBearerTokenClaims)
+        ? { verifiedBearerTokenClaims }
+        : {}),
+    };
 
     const resolverResult = await this.runFunction({
       logicFunctionUniversalIdentifier: resolver.universalIdentifier,

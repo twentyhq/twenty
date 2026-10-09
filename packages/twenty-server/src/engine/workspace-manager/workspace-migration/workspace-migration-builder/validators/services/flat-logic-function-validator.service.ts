@@ -15,6 +15,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateLogicFunctionBearerTokenVerification } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-bearer-token-verification.util';
 import { validateLogicFunctionForwardedRequestHeaders } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util';
 
 @Injectable()
@@ -96,6 +97,10 @@ export class FlatLogicFunctionValidatorService {
 
     validationResult.errors.push(
       ...validateLogicFunctionForwardedRequestHeaders(flatEntityUpdate),
+    );
+
+    validationResult.errors.push(
+      ...validateLogicFunctionBearerTokenVerification(flatEntityUpdate),
     );
 
     const mergedPrebuiltState = {
@@ -232,6 +237,12 @@ export class FlatLogicFunctionValidatorService {
 
     validationResult.errors.push(
       ...validateLogicFunctionForwardedRequestHeaders(
+        flatLogicFunctionToValidate,
+      ),
+    );
+
+    validationResult.errors.push(
+      ...validateLogicFunctionBearerTokenVerification(
         flatLogicFunctionToValidate,
       ),
     );
