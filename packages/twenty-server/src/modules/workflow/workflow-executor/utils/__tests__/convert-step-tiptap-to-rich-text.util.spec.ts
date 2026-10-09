@@ -45,18 +45,6 @@ const objectMetadataInfo = {
   flatFieldMetadataMaps,
 };
 
-const expectRichTextParagraph = (value: unknown, text: string) => {
-  const { blocknote, markdown } = value as {
-    blocknote: string;
-    markdown: string;
-  };
-
-  expect(markdown).toBe(text);
-  expect(JSON.parse(blocknote)).toMatchObject([
-    { type: 'paragraph', content: [{ type: 'text', text }] },
-  ]);
-};
-
 const context = {
   trigger: { body: { amount: 42, currency: 'EUR', meta: { source: 'form' } } },
 };
@@ -69,7 +57,7 @@ describe('convertStepTipTapToRichText', () => {
       context,
     );
 
-    expectRichTextParagraph(resolved.body, '42');
+    expect(resolved.body).toEqual({ markdown: '42', blocknote: null });
   });
 
   it('interpolates variables inside a markdown', () => {
@@ -85,7 +73,10 @@ describe('convertStepTipTapToRichText', () => {
       context,
     );
 
-    expectRichTextParagraph(resolved.body, 'Latest donation: 42 EUR');
+    expect(resolved.body).toEqual({
+      markdown: 'Latest donation: 42 EUR',
+      blocknote: null,
+    });
   });
 
   it('serializes an object resolved from a whole-string variable', () => {
@@ -95,7 +86,10 @@ describe('convertStepTipTapToRichText', () => {
       context,
     );
 
-    expectRichTextParagraph(resolved.body, '{"source":"form"}');
+    expect(resolved.body).toEqual({
+      markdown: '{"source":"form"}',
+      blocknote: null,
+    });
   });
 
   it('converts a TipTap body into BlockNote after resolving its variables', () => {
@@ -131,6 +125,24 @@ describe('convertStepTipTapToRichText', () => {
         { type: 'text', text: 'Amount', styles: { bold: true } },
         { type: 'text', text: ': 42' },
       ],
+    });
+  });
+
+  it('keeps a blocknote variable for the input resolution', () => {
+    const resolved = convertStepTipTapToRichText(
+      {
+        body: {
+          blocknote: '{{codeStep.report.blocknote}}',
+          markdown: '{{trigger.body.amount}}',
+        },
+      },
+      objectMetadataInfo,
+      context,
+    );
+
+    expect(resolved.body).toEqual({
+      blocknote: '{{codeStep.report.blocknote}}',
+      markdown: '42',
     });
   });
 

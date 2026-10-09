@@ -1,4 +1,4 @@
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
 import {
   type RichTextMetadata,
   richTextValueSchema,
@@ -47,18 +47,17 @@ export const convertStepTipTapToRichText = (
       ? convertTipTapBlocksToMarkdown(resolvedTipTapJson)
       : undefined;
 
-    const markdown =
-      tipTapMarkdown ??
-      (isString(stepMarkdown)
-        ? resolveStringTemplate(stepMarkdown, context)
-        : null);
-
-    const richTextValue: RichTextMetadata = {
-      markdown,
-      blocknote: isNonEmptyString(markdown)
-        ? convertMarkdownToBlocknote(markdown)
-        : null,
-    };
+    const richTextValue: RichTextMetadata = isDefined(tipTapMarkdown)
+      ? {
+          markdown: tipTapMarkdown,
+          blocknote: convertMarkdownToBlocknote(tipTapMarkdown),
+        }
+      : {
+          markdown: isString(stepMarkdown)
+            ? resolveStringTemplate(stepMarkdown, context)
+            : stepMarkdown,
+          blocknote: tipTapJson,
+        };
 
     objectRecord[fieldName] = richTextValue;
   }
