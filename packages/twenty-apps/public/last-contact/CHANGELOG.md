@@ -2,8 +2,7 @@
 
 ## 1.9.1
 
-- Stop counting unsent drafts as contacts. Providers sync drafts with their recipients, so a draft to a person used to set their last contact, last outbound and last email, both live and in the backfill. Drafts already counted stay until the person's next email or meeting, or until "Trigger backfill" is clicked.
-- Stop the backfill from restoring trashed people. Writing a person's last contact restores the record if it is in the trash, and recreates it without a name if it was deleted. The people phase now reads its batch again right before writing, after the paced reads of their emails and meetings, and leaves out people that are gone.
+- Stop the backfill from restoring trashed people. Writing a person's last contact restores the record if it is in the trash, and recreates it without a name if it was deleted. The people phase now reads its batch again right before writing, after the paced reads of their emails and meetings, and leaves out people that are gone. A person trashed during the write itself, or while it is retried after a rate limit, can still come back: closing that needs a server update that never restores a record.
 - Only write records whose last contact actually changes. Every write sets the record's "Last update" to now, so since 1.9.0 one backfill marked every person, company and opportunity in the workspace as just updated. The backfill and the company and opportunity recomputes now compare with the stored values first, which also saves the write call for a batch where nothing changed. A company recompute reads the company before its people, so it no longer lowers a company that a live update has just raised.
 
 ## 1.9.0

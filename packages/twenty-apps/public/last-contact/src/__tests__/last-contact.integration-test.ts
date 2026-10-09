@@ -251,7 +251,7 @@ const getWorkspaceMemberId = async (client: CoreApiClient): Promise<string> => {
 
 const createMessage = async (
   client: CoreApiClient,
-  { receivedAt, isDraft = false }: { receivedAt: string; isDraft?: boolean },
+  { receivedAt }: { receivedAt: string },
 ): Promise<string> => {
   const result = await client.mutation({
     createMessage: {
@@ -259,7 +259,6 @@ const createMessage = async (
         data: {
           subject: `[test-last-contact] message ${Date.now()}`,
           receivedAt,
-          isDraft,
         },
       },
       id: true,
@@ -485,15 +484,13 @@ describe('last contact handlers', () => {
     workspaceMemberId,
     receivedAt,
     direction,
-    isDraft = false,
   }: {
     personId: string;
     workspaceMemberId: string;
     receivedAt: string;
     direction: 'outbound' | 'inbound';
-    isDraft?: boolean;
   }): Promise<string> => {
-    const messageId = await createMessage(client, { receivedAt, isDraft });
+    const messageId = await createMessage(client, { receivedAt });
     createdMessageIds.push(messageId);
 
     const sender =
@@ -836,52 +833,6 @@ describe('last contact handlers', () => {
     expect(aggregate?.lastContactById).toBe(workspaceMemberId);
     expect(asTime(aggregate?.lastOutboundAt)).toBe(asTime(receivedAt));
     expect(asTime(aggregate?.lastInboundAt)).toBe(asTime(startsAt));
-  });
-
-  it('does not count an unsent draft as a contact', async () => {
-    const workspaceMemberId = await getWorkspaceMemberId(client);
-    const personId = await createPerson(client);
-    createdPersonIds.push(personId);
-
-    await recordEmail({
-      personId,
-      workspaceMemberId,
-      receivedAt: new Date(Date.now() - DAY_IN_MS).toISOString(),
-      direction: 'outbound',
-      isDraft: true,
-    });
-
-    const lastContact = await getPersonLastContact(client, personId);
-    expect(lastContact.lastContactAt).toBeNull();
-    expect(lastContact.lastEmailId).toBeNull();
-  });
-
-  it('leaves drafts out of a person backfill', async () => {
-    const workspaceMemberId = await getWorkspaceMemberId(client);
-    const personId = await createPerson(client);
-    createdPersonIds.push(personId);
-    const sentAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
-
-    const sentMessageId = await recordEmail({
-      personId,
-      workspaceMemberId,
-      receivedAt: sentAt,
-      direction: 'outbound',
-    });
-    await recordEmail({
-      personId,
-      workspaceMemberId,
-      receivedAt: new Date(Date.now() - DAY_IN_MS).toISOString(),
-      direction: 'outbound',
-      isDraft: true,
-    });
-
-    const aggregate = (await buildPersonAggregates(client, [personId])).get(
-      personId,
-    );
-
-    expect(aggregate?.lastEmail?.id).toBe(sentMessageId);
-    expect(asTime(aggregate?.lastContactAt)).toBe(asTime(sentAt));
   });
 
   it('keeps last contact writes off the person timeline', async () => {

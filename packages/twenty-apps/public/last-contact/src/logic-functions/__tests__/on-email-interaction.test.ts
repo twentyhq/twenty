@@ -233,7 +233,6 @@ describe('on-email-interaction handler', () => {
     expect(messageQueries).toHaveLength(1);
     expect(messageQueries[0][0].messages.__args.filter).toEqual({
       id: { in: [MESSAGE_ID] },
-      isDraft: { eq: false },
     });
     expect(mutationMock.mock.calls[0][0].createPeople.__args.data).toEqual([
       {
@@ -246,41 +245,5 @@ describe('on-email-interaction handler', () => {
         lastEmailId: MESSAGE_ID,
       },
     ]);
-  });
-
-  it('does not count an unsent draft as a contact', async () => {
-    setupQueryMock([
-      {
-        messageId: MESSAGE_ID,
-        role: 'FROM',
-        workspaceMemberId: MEMBER_ID,
-        message: { receivedAt: RECEIVED_AT, isDraft: true },
-      },
-    ]);
-
-    await handler(
-      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
-    );
-
-    expect(queryMock.mock.calls.some(([query]) => query.messages)).toBe(
-      false,
-    );
-    expect(mutationMock).not.toHaveBeenCalled();
-  });
-
-  it('does not count a draft without a sender or team member participant', async () => {
-    setupQueryMock([], []);
-
-    await handler(
-      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
-    );
-
-    const messageQueries = queryMock.mock.calls.filter(
-      ([query]) => query.messages,
-    );
-    expect(messageQueries[0][0].messages.__args.filter.isDraft).toEqual({
-      eq: false,
-    });
-    expect(mutationMock).not.toHaveBeenCalled();
   });
 });

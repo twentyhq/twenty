@@ -1,6 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { NOT_DRAFT_MESSAGE_FILTER } from 'src/constants/not-draft-message-filter';
 import { chunk } from 'src/utils/chunk';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
 
@@ -45,10 +44,7 @@ const collectEmailInteractions = async (
         client.query({
           messageParticipants: {
             __args: {
-              filter: {
-                personId: { in: ids },
-                message: NOT_DRAFT_MESSAGE_FILTER,
-              },
+              filter: { personId: { in: ids } },
               first: PAGE_SIZE,
               after,
             },
