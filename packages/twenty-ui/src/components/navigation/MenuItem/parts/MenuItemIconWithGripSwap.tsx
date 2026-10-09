@@ -32,10 +32,14 @@ export const MenuItemIconWithGripSwap = ({
       <div className={clsx(styles.defaultIcon, 'grip-swap-default-icon')}>
         {isDefined(iconThemeColor) ? (
           <TintedIconTile
-            Icon={LeftIcon}
+            icon={
+              <LeftIcon
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
             color={iconThemeColor}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
+            style={{ width: theme.icon.size.md, height: theme.icon.size.md }}
           />
         ) : (
           <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />

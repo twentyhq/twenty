@@ -1,13 +1,12 @@
-type ThreadWithLastActivity = {
-  updatedAt: string | Date;
-};
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 
-// Sending a message touches its conversation, so updatedAt is its last activity.
-const getLastActivityMs = (thread: ThreadWithLastActivity): number =>
-  new Date(thread.updatedAt).getTime();
+const getLastActivityMs = (
+  thread: Pick<AgentChatThreadRecord, 'lastActivityAt' | 'updatedAt'>,
+): number => new Date(getAgentChatThreadLastActivityAt(thread)).getTime();
 
 export const sortChatThreadsByLastActivityDesc = <
-  T extends ThreadWithLastActivity,
+  T extends Pick<AgentChatThreadRecord, 'lastActivityAt' | 'updatedAt'>,
 >(
   threads: T[],
 ): T[] =>

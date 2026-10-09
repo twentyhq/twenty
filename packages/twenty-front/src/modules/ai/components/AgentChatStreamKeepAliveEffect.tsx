@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -5,9 +6,9 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { AGENT_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai/constants/AgentChatStreamLivenessCheckIntervalInMs';
 import { AGENT_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS } from '@/ai/constants/AgentChatStreamLivenessTimeoutInMs';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
-import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
 import { agentChatStreamLastEventTimestampState } from '@/ai/states/agentChatStreamLastEventTimestampState';
 import { agentChatStreamRecoveryAttemptsState } from '@/ai/states/agentChatStreamRecoveryAttemptsState';
 import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStreamResubscribeNonceState';
@@ -18,7 +19,6 @@ import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowse
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
-import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const MAX_SILENT_RECOVERY_ATTEMPTS = 3;
@@ -27,25 +27,16 @@ export const AgentChatStreamKeepAliveEffect = () => {
   const store = useStore();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
-  const isStreamingFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatIsStreamingComponentFamilyState,
-  );
-  const isAwaitingFirstChunkFamilyCallback =
-    useAtomComponentFamilyStateCallbackState(
-      agentChatIsAwaitingFirstChunkComponentFamilyState,
-    );
-  const errorFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatErrorComponentFamilyState,
-  );
-
   const hasActiveSubscription =
     isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread);
 
   const recoverStreamIfStalled = useCallback(() => {
     const familyKey = { threadId: currentAiChatThread };
-    const isStreaming = store.get(isStreamingFamilyCallback(familyKey));
+    const isStreaming = store.get(
+      agentChatIsStreamingFamilyState.atomFamily(familyKey),
+    );
     const isAwaitingFirstChunk = store.get(
-      isAwaitingFirstChunkFamilyCallback(familyKey),
+      agentChatIsAwaitingFirstChunkFamilyState.atomFamily(familyKey),
     );
 
     if (!isStreaming && !isAwaitingFirstChunk) {
@@ -60,14 +51,17 @@ export const AgentChatStreamKeepAliveEffect = () => {
 
     if (recoveryAttempts >= MAX_SILENT_RECOVERY_ATTEMPTS) {
       store.set(
-        errorFamilyCallback(familyKey),
+        agentChatErrorFamilyState.atomFamily(familyKey),
         createAiChatCodedError(
-          'Connection to the assistant was lost. Reload to see the response.',
+          t`Connection to the assistant was lost. Reload to see the response.`,
           AiChatErrorCode.CONNECTION_LOST,
         ),
       );
-      store.set(isStreamingFamilyCallback(familyKey), false);
-      store.set(isAwaitingFirstChunkFamilyCallback(familyKey), false);
+      store.set(agentChatIsStreamingFamilyState.atomFamily(familyKey), false);
+      store.set(
+        agentChatIsAwaitingFirstChunkFamilyState.atomFamily(familyKey),
+        false,
+      );
       store.set(agentChatStreamRecoveryAttemptsState.atom, 0);
       store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
 
@@ -81,13 +75,7 @@ export const AgentChatStreamKeepAliveEffect = () => {
     store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
     store.set(agentChatStreamResubscribeNonceState.atom, (nonce) => nonce + 1);
     dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
-  }, [
-    store,
-    isStreamingFamilyCallback,
-    isAwaitingFirstChunkFamilyCallback,
-    errorFamilyCallback,
-    currentAiChatThread,
-  ]);
+  }, [store, currentAiChatThread]);
 
   useEffect(() => {
     if (!hasActiveSubscription) {
@@ -108,7 +96,7 @@ export const AgentChatStreamKeepAliveEffect = () => {
       if (timeSinceLastEventInMs <= AGENT_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS) {
         store.set(agentChatStreamRecoveryAttemptsState.atom, 0);
 
-        const errorAtom = errorFamilyCallback({
+        const errorAtom = agentChatErrorFamilyState.atomFamily({
           threadId: currentAiChatThread,
         });
         const currentError = store.get(errorAtom);
@@ -131,7 +119,6 @@ export const AgentChatStreamKeepAliveEffect = () => {
     hasActiveSubscription,
     store,
     recoverStreamIfStalled,
-    errorFamilyCallback,
     currentAiChatThread,
   ]);
 

@@ -1,7 +1,7 @@
 import uniqBy from 'lodash.uniqby';
 import { type QueryRunner } from 'typeorm';
 
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import {
   AGENT_CHAT_THREAD_DATA_SEED_IDS,
   APPLE_AGENT_CHAT_CONVERSATION_SEEDS,

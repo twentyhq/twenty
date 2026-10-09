@@ -17,6 +17,7 @@ import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
+import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelTargetProvider';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -149,15 +150,20 @@ export const PageLayoutSingleTabRenderer = ({
           instanceId: tabListInstanceId,
         }}
       >
-        <PageLayoutEditModeProvider
-          layoutType={layoutType}
-          pageLayoutId={pageLayoutId}
+        <PageLayoutSidePanelTargetProvider
+          pageLayoutId={pageLayoutComponentInstanceId}
+          targetRecordIdentifier={targetRecordIdentifier}
         >
-          <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
-          <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
-          <RecordTableWidgetViewDraftsInitializationEffect />
-          <PageLayoutSingleTabRendererContent />
-        </PageLayoutEditModeProvider>
+          <PageLayoutEditModeProvider
+            layoutType={layoutType}
+            pageLayoutId={pageLayoutId}
+          >
+            <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
+            <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
+            <RecordTableWidgetViewDraftsInitializationEffect />
+            <PageLayoutSingleTabRendererContent />
+          </PageLayoutEditModeProvider>
+        </PageLayoutSidePanelTargetProvider>
       </TabListComponentInstanceContext.Provider>
     </PageLayoutComponentInstanceContext.Provider>
   );

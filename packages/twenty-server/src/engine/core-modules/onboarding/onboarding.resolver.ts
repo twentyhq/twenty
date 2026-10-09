@@ -92,26 +92,6 @@ export class OnboardingResolver {
     return { success: true };
   }
 
-  @Mutation(() => OnboardingStepSuccessDTO)
-  @UseGuards(NoPermissionGuard)
-  async triggerInstallAppsOnboardingStep(
-    @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args({ name: 'universalIdentifiers', type: () => [String] })
-    universalIdentifiers: string[],
-    @Args({ name: 'isAutoSkipped', type: () => Boolean, defaultValue: false })
-    isAutoSkipped: boolean,
-  ): Promise<OnboardingStepSuccessDTO> {
-    await this.onboardingService.triggerInstallAppsOnboardingStep({
-      userId: user.id,
-      workspaceId: workspace.id,
-      universalIdentifiers,
-      isAutoSkipped,
-    });
-
-    return { success: true };
-  }
-
   @Mutation(() => OnboardingStepNavigationDTO)
   @UseGuards(NoPermissionGuard)
   async goBackToPreviousOnboardingStep(

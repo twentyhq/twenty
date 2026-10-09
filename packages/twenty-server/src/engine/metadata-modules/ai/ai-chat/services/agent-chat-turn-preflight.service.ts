@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import {
@@ -15,7 +15,7 @@ import {
 export class AgentChatTurnPreflightService {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly agentChatService: AgentChatService,
+    private readonly threadService: AgentChatThreadService,
     private readonly aiBillingService: AiBillingService,
   ) {}
 
@@ -43,7 +43,7 @@ export class AgentChatTurnPreflightService {
       getChatModelId({ requestedModelId: modelId, workspace }),
     );
 
-    const thread = await this.agentChatService.getWritableThread({
+    const thread = await this.threadService.getWritableThread({
       threadId,
       workspaceMemberId,
       workspaceId: workspace.id,

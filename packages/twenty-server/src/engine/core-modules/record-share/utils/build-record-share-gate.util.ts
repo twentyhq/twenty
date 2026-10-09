@@ -5,10 +5,11 @@ import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
+import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
 import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
-import { shouldEnforceRecordShareExceptions } from 'src/engine/core-modules/record-share/utils/should-enforce-record-share-exceptions.util';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
   type InheritedReadabilityParentExpression,
@@ -38,13 +39,16 @@ export const buildRecordShareGate = ({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
   });
+  const { sharingMode, isVisibilityGatingEnabled } = resolveObjectSharing({
+    flatObjectMetadata: target.flatObjectMetadata,
+    featureFlagsMap: context.environment.featureFlagsMap,
+  });
+
   switch (gateKind) {
     case 'open':
-      return shouldEnforceRecordShareExceptions({
-        flatObjectMetadata: target.flatObjectMetadata,
-        isRecordSharingEnabled: context.environment.isRecordSharingEnabled,
-        canAccessAllRecords: context.subject.canAccessAllRecords,
-      })
+      return isVisibilityGatingEnabled &&
+        sharingMode === RecordSharingMode.OPEN_BY_DEFAULT &&
+        !context.subject.canAccessAllRecords
         ? buildRecordShareExceptionGate(context, target)
         : { kind: 'open' };
     case 'deny':
@@ -54,9 +58,12 @@ export const buildRecordShareGate = ({
         context,
         target,
         buildParentPolicy,
+        isVisibilityGatingEnabled,
       });
     case 'private':
-      return buildOwnRecordShareGate(context, target);
+      return isVisibilityGatingEnabled
+        ? buildOwnRecordShareGate(context, target)
+        : { kind: 'open' };
     default:
       return assertUnreachable(gateKind);
   }
@@ -127,7 +134,10 @@ const buildInheritedReadabilityGate = ({
   context,
   target,
   buildParentPolicy,
-}: RecordShareGateArgs): RowAccessPolicy => {
+  isVisibilityGatingEnabled,
+}: RecordShareGateArgs & {
+  isVisibilityGatingEnabled: boolean;
+}): RowAccessPolicy => {
   const { tableAlias, flatObjectMetadata, depth, joinParentRelationShape } =
     target;
 
@@ -156,7 +166,7 @@ const buildInheritedReadabilityGate = ({
   const isOpenWhenDetached = isOpenWhenDetachedObject(flatObjectMetadata);
 
   if (parents.length === 0) {
-    return isOpenWhenDetached
+    return isOpenWhenDetached || !isVisibilityGatingEnabled
       ? { kind: 'open' }
       : buildOwnRecordShareGate(context, target);
   }
@@ -164,6 +174,24 @@ const buildInheritedReadabilityGate = ({
   const principals = resolveRecordSharePrincipals(context, target);
 
   if (!isDefined(principals)) {
+    return { kind: 'open' };
+  }
+
+  const parentExpressions = parents.map((parent) =>
+    buildInheritedReadabilityParentExpression({
+      context,
+      target,
+      parent,
+      buildParentPolicy,
+    }),
+  );
+
+  if (
+    !isVisibilityGatingEnabled &&
+    parentExpressions.every(
+      (parentExpression) => parentExpression.policy.kind === 'open',
+    )
+  ) {
     return { kind: 'open' };
   }
 
@@ -175,14 +203,7 @@ const buildInheritedReadabilityGate = ({
       objectMetadataId: flatObjectMetadata.id,
       ...principals,
       isOpenWhenDetached,
-      parents: parents.map((parent) =>
-        buildInheritedReadabilityParentExpression({
-          context,
-          target,
-          parent,
-          buildParentPolicy,
-        }),
-      ),
+      parents: parentExpressions,
     },
   };
 };

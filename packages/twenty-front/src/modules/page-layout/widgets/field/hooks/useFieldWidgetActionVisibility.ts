@@ -9,7 +9,6 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -72,10 +71,7 @@ export const useFieldWidgetActionVisibility = ({
 
   const isFieldReadOnly = isRecordFieldReadOnly({
     isRecordReadOnly,
-    objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
-      objectPermissionsByObjectMetadataId,
-      objectMetadataId: objectMetadataItem.id,
-    }),
+    objectMetadataId: objectMetadataItem.id,
     fieldMetadataItem,
     fieldDefinition,
     objectPermissionsByObjectMetadataId,

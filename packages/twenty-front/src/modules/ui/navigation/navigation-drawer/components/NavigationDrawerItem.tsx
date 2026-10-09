@@ -1,21 +1,23 @@
 import { type NavigationDrawerItemProps } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemProps';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { isObject } from '@sniptt/guards';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
+import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTooltip';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useMouseDownNavigation } from '@/ui/navigation/utils/hooks/useMouseDownNavigation';
+import { useMouseDownNavigation } from '@/ui/navigation/hooks/useMouseDownNavigation';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
+import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
@@ -23,6 +25,7 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/primitives/typography';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 const DEFAULT_INDENTATION_LEVEL = 1;
 
 type StyledItemProps = Pick<
@@ -133,8 +136,13 @@ const StyledLabelParent = styled.div`
   white-space: nowrap;
 `;
 
-const StyledItemLabel = styled.span`
-  font-weight: ${themeCssVariables.font.weight.medium};
+const StyledItemLabel = styled.span<{ $isUnread: boolean }>`
+  color: ${({ $isUnread }) =>
+    $isUnread ? themeCssVariables.font.color.primary : 'inherit'};
+  font-weight: ${({ $isUnread }) =>
+    $isUnread
+      ? themeCssVariables.font.weight.semiBold
+      : themeCssVariables.font.weight.medium};
 `;
 
 const StyledItemSecondaryLabel = styled.span`
@@ -158,6 +166,7 @@ const StyledIcon = styled.div`
   flex-shrink: 0;
   justify-content: center;
   margin-right: ${themeCssVariables.spacing[2]};
+  position: relative;
 `;
 
 const StyledRightOptionsContainer = styled.div`
@@ -214,6 +223,7 @@ export const NavigationDrawerItem = ({
   preventCollapseOnMobile = false,
   isSelectedInEditMode = false,
   variant = 'default',
+  isUnread = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const editingContent = useContext(NavigationDrawerItemEditingContext);
@@ -238,14 +248,13 @@ export const NavigationDrawerItem = ({
     }
   };
 
-  const isExternalLink =
-    isDefined(to) && (to.startsWith('http://') || to.startsWith('https://'));
+  const isExternalLink = isDefined(to) && isAbsoluteUrl(to);
   const isInternalLink = isDefined(to) && !isExternalLink;
 
   const handleExternalLinkClick = () => {
     handleMobileNavigation();
     if (isDefined(to)) {
-      window.open(to, '_blank', 'noopener,noreferrer');
+      openUrlInNewTab(to);
     }
   };
 
@@ -300,7 +309,7 @@ export const NavigationDrawerItem = ({
             handleMouseDown(event);
           }}
           active={active}
-          aria-current={isDefined(to) && active ? 'page' : undefined}
+          aria-current={active ? (isDefined(to) ? 'page' : true) : undefined}
           isSoon={isSoon}
           variant={variant}
           disabled={variant === 'placeholder'}
@@ -344,6 +353,9 @@ export const NavigationDrawerItem = ({
                         : 'currentColor'
                     }
                   />
+                  {isUnread && !isExpanded && (
+                    <StyledNavigationDrawerUnreadDot />
+                  )}
                 </StyledIcon>
               )
             )}
@@ -353,7 +365,12 @@ export const NavigationDrawerItem = ({
                 <OverflowingTextWithTooltip
                   text={
                     <>
-                      <StyledItemLabel>{label}</StyledItemLabel>
+                      <StyledItemLabel $isUnread={isUnread}>
+                        {label}
+                        {isUnread && (
+                          <VisuallyHidden>{t`, unread`}</VisuallyHidden>
+                        )}
+                      </StyledItemLabel>
                       {secondaryLabel && (
                         <StyledItemSecondaryLabel>
                           {' · '}

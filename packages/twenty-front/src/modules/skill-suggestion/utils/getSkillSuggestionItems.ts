@@ -1,6 +1,6 @@
 import type { SkillSuggestionItem } from '@/skill-suggestion/types/SkillSuggestionItem';
 import { type FindManySkillsForSuggestionQuery } from '~/generated-metadata/graphql';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 export const getSkillSuggestionItems = ({
   skills,

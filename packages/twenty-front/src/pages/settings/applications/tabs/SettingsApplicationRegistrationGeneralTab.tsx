@@ -1,8 +1,8 @@
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 
 import { useLingui } from '@lingui/react/macro';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { InlineBanner } from 'twenty-ui/components';
+import { Link, useLocation } from 'react-router-dom';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { SettingsApplicationRegistrationGeneralInfo } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo';
 
 import { SettingsAdminApplicationRegistrationClaims } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims';
@@ -19,23 +19,26 @@ export const SettingsApplicationRegistrationGeneralTab = ({
 }) => {
   const { t } = useLingui();
   const location = useLocation();
-  const navigate = useNavigate();
 
   return (
     <>
       {!registration.isConfigured && fromAdmin && (
         <InlineBanner
-          color="danger"
-          message={t`This app is not fully configured. Users won't be able to install it until all required server variables are set, and — for apps exposing a server route — until the app is claimed and installed on its owner workspace.`}
-          button={{
-            title: t`Configure`,
-            onClick: () =>
-              navigate(
-                { search: location.search, hash: '#config' },
-                { state: location.state },
-              ),
-          }}
-        />
+          status="error"
+          action={
+            <InlineBanner.Action
+              href={`${location.pathname}${location.search}#config`}
+              nativeButton={false}
+              role="link"
+              render={
+                <Link
+                  to={{ search: location.search, hash: '#config' }}
+                  state={location.state}
+                />
+              }
+            >{t`Configure`}</InlineBanner.Action>
+          }
+        >{t`This app is not fully configured. Users won't be able to install it until all required server variables are set, and — for apps exposing a server route — until the app is claimed and installed on its owner workspace.`}</InlineBanner>
       )}
       <SettingsApplicationRegistrationGeneralInfo registration={registration} />
       {fromAdmin && (

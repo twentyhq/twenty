@@ -5,7 +5,7 @@ import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCred
 import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
 import { type Ref } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components';
+import { MainButton } from 'twenty-ui/components/input';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { useTheme } from 'twenty-ui/theme';
 

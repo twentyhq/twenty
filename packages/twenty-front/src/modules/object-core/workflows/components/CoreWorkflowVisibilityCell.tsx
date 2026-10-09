@@ -20,13 +20,5 @@ export const CoreWorkflowVisibilityCell = ({
     return null;
   }
 
-  return (
-    <Tag
-      color="transparent"
-      startIcon={<visibilityOption.Icon />}
-      preventPadding
-    >
-      {t(visibilityOption.label)}
-    </Tag>
-  );
+  return <Tag color="gray">{t(visibilityOption.label)}</Tag>;
 };

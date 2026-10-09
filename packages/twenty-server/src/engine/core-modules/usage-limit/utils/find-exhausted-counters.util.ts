@@ -23,5 +23,5 @@ export const findExhaustedCounters = ({
       return true;
     }
 
-    return remaining < (cost?.[counter.meter] ?? 0);
+    return remaining < (cost?.[counter.unit] ?? 0);
   });

@@ -17,7 +17,6 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type AppChargeableOperationType =
@@ -44,7 +43,6 @@ export class AppBillingService {
   private readonly logger = new Logger(AppBillingService.name);
 
   constructor(
-    private readonly usageRecorderService: UsageRecorderService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserWorkspaceEntity)
@@ -75,34 +73,24 @@ export class AppBillingService {
         `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${operationType})`,
     );
 
-    const spenders = {
-      userWorkspaceId: attributedUserWorkspaceId,
-      applicationId,
-    };
-
-    await this.usageLimitQuotaService.consumeQuota({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
-      resourceType: UsageResourceType.APP,
-      operationType,
-      spenders,
-      cost: {
-        creditsUsedMicro: charge.creditsUsedMicro,
-        quantity: charge.quantity,
-      },
+      events: [
+        {
+          resourceType: UsageResourceType.APP,
+          operationType,
+          creditsUsedMicro: charge.creditsUsedMicro,
+          quantity: charge.quantity,
+          unit,
+          resourceId: applicationId,
+          resourceContext: charge.operation ?? charge.resourceContext ?? null,
+          spenders: {
+            userWorkspaceId: attributedUserWorkspaceId,
+            applicationId,
+          },
+        },
+      ],
     });
-
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.APP,
-        operationType,
-        creditsUsedMicro: charge.creditsUsedMicro,
-        quantity: charge.quantity,
-        unit,
-        resourceId: applicationId,
-        resourceContext: charge.operation ?? charge.resourceContext ?? null,
-        spenders,
-      },
-    ]);
   }
 
   private async resolveOperationType({

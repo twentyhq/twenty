@@ -84,21 +84,25 @@ export const FrontComponentMediaSessionIndicator = () => {
       >
         <StyledDot isCapturing={isCapturing} aria-hidden />
       </Popover.Trigger>
-      <Popover.Popup side="bottom" align="start" initialFocus={false}>
-        <StyledContent>
-          <Popover.Title>{title}</Popover.Title>
-          <StyledApplications role="list" aria-label={title}>
-            {Object.entries(sessionsByApplication).map(
-              ([applicationId, sessions]) => (
-                <FrontComponentMediaSessionTooltipRow
-                  key={applicationId}
-                  sessions={sessions}
-                />
-              ),
-            )}
-          </StyledApplications>
-        </StyledContent>
-      </Popover.Popup>
+      <Popover.Portal>
+        <Popover.Positioner side="bottom" align="start">
+          <Popover.Popup initialFocus={false}>
+            <StyledContent>
+              <Popover.Title>{title}</Popover.Title>
+              <StyledApplications role="list" aria-label={title}>
+                {Object.entries(sessionsByApplication).map(
+                  ([applicationId, sessions]) => (
+                    <FrontComponentMediaSessionTooltipRow
+                      key={applicationId}
+                      sessions={sessions}
+                    />
+                  ),
+                )}
+              </StyledApplications>
+            </StyledContent>
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
     </Popover.Root>
   );
 };

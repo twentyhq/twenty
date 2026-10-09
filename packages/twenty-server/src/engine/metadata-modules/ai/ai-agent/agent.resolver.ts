@@ -104,7 +104,7 @@ export class AgentResolver {
     }
 
     const createdAgent = await this.agentService.createOneAgent(
-      { ...input, isCustom: true },
+      input,
       workspace.id,
     );
 
@@ -112,9 +112,18 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+    ApplicationTargetGuard,
+  )
   async updateOneAgent(
-    @Args('input') input: UpdateAgentInput,
+    @ApplicationTargetArg<UpdateAgentInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'agent',
+      idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
+    })
+    input: UpdateAgentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
     if (isNonEmptyString(input.modelId)) {

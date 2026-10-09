@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type ThemeColor, useTheme } from 'twenty-ui/theme';
 
@@ -18,10 +18,9 @@ export const SelectOptionIcon = ({ Icon, color }: SelectOptionIconProps) => {
   if (isDefined(color)) {
     return (
       <TintedIconTile
-        Icon={Icon}
+        icon={<Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
         color={color}
-        size={theme.icon.size.md}
-        stroke={theme.icon.stroke.sm}
+        style={{ width: theme.icon.size.md, height: theme.icon.size.md }}
       />
     );
   }

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
-import { AgentInboxModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-inbox.module';
+import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
+import { WorkflowRunInboxSenderModule } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.module';
 import { SendChatMessageWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message.workflow-action';
 
 @Module({
-  imports: [AgentInboxModule, WorkflowCoreModule],
+  imports: [AiAgentExecutionModule, WorkflowRunInboxSenderModule],
   providers: [SendChatMessageWorkflowAction],
   exports: [SendChatMessageWorkflowAction],
 })

@@ -1,6 +1,7 @@
 import { type ObjectLiteral } from 'typeorm';
 
 import {
+  type FeatureFlagKey,
   type ObjectsPermissions,
   type RecordGqlOperationFilter,
   type RecordShareAccessLevel,
@@ -86,7 +87,7 @@ export type RowAccessPolicySubject = {
 export type RowAccessPolicyEnvironment = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  isRecordSharingEnabled: boolean;
+  featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 };
 
 export type RowAccessCompilationEnvironment = {

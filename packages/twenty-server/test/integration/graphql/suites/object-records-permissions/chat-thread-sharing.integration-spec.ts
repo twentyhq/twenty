@@ -32,6 +32,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -43,6 +44,9 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
+
+const getAgentChatThreadService = () =>
+  getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
 // Avoids loading the migration runner's ESM dependencies in Jest; the command gets the real service from the test app.
 jest.mock(
@@ -136,9 +140,49 @@ const readStoredThreadState = async (threadId: string) => {
   return rows[0] ?? null;
 };
 const SET_SHARE =
-  parse(`mutation SetThreadShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!, $accessLevel: RecordShareAccessLevel) {
-  setRecordShare(target: $target, principal: $principal, enabled: $enabled, accessLevel: $accessLevel) { isEnabled }
+  parse(`mutation SetThreadShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) {
+  setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { sharingMode }
 }`);
+const REMOVE_SHARE =
+  parse(`mutation RemoveThreadShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) {
+  removeRecordShare(target: $target, principal: $principal) { sharingMode }
+}`);
+const SET_GENERAL_ACCESS =
+  parse(`mutation SetThreadGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) {
+  setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { sharingMode }
+}`);
+type ThreadAudience = RecordSharePrincipalInput | 'everyone';
+// Everyone is reached through the general access, where NONE withdraws it
+const shareThread = ({
+  target,
+  audience,
+  accessLevel,
+  token,
+}: {
+  target: { objectMetadataId: string; recordId: string };
+  audience: ThreadAudience;
+  accessLevel: RecordShareAccessLevel;
+  token?: string;
+}) => {
+  if (audience === 'everyone') {
+    return makeMetadataApiRequest(
+      { query: SET_GENERAL_ACCESS, variables: { target, accessLevel } },
+      token,
+    );
+  }
+  return accessLevel === RecordShareAccessLevel.NONE
+    ? makeMetadataApiRequest(
+        { query: REMOVE_SHARE, variables: { target, principal: audience } },
+        token,
+      )
+    : makeMetadataApiRequest(
+        {
+          query: SET_SHARE,
+          variables: { target, principal: audience, accessLevel },
+        },
+        token,
+      );
+};
 
 describe('Conversation sharing through the authenticated API', () => {
   it.each(['member', 'role', 'everyone', 'setup'])(
@@ -157,14 +201,12 @@ describe('Conversation sharing through the authenticated API', () => {
       if (!isDefined(roleId)) {
         throw new Error('Seeded recipient role is missing');
       }
-      const principal: RecordSharePrincipalInput =
+      const threadAudience: ThreadAudience =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }
           : audience === 'role'
             ? { roleId }
-            : { everyone: true };
-      const chatService =
-        getAppProviderByClassName<AgentChatService>('AgentChatService');
+            : 'everyone';
       const threadId =
         audience === 'setup'
           ? buildWorkspaceSetupChatThreadId({
@@ -184,7 +226,7 @@ describe('Conversation sharing through the authenticated API', () => {
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       };
-      await chatService.createThread({
+      await getAgentChatThreadService().createThread({
         ...owner,
         id: threadId,
         title: 'Private sharing regression',
@@ -193,18 +235,35 @@ describe('Conversation sharing through the authenticated API', () => {
       const listedThreadIds = () =>
         listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN);
       const changeShare = (enabled: boolean) =>
-        makeMetadataApiRequest({
-          query: SET_SHARE,
-          variables: { target, principal, enabled },
+        shareThread({
+          target,
+          audience: threadAudience,
+          accessLevel: enabled
+            ? RecordShareAccessLevel.READ
+            : RecordShareAccessLevel.NONE,
         });
       try {
-        const kickoff = await chatService.ensureHiddenKickoffMessage({
-          userWorkspaceId: owner.userWorkspaceId,
+        const privateContext =
+          'Private setup enrichment and workspace identity';
+        const chatService =
+          getAppProviderByClassName<AgentChatService>('AgentChatService');
+        await chatService.replaceOpeningTurn({
           workspaceId,
           threadId,
-          text: 'Private setup enrichment and workspace identity',
+          context: privateContext,
         });
-        expect(kickoff.id).toBeDefined();
+        const contextsFor = (workspaceMemberId: string) =>
+          chatService.getThreadContexts({
+            workspaceId,
+            threadId,
+            workspaceMemberId,
+          });
+        expect(await contextsFor(owner.workspaceMemberId)).toEqual([
+          privateContext,
+        ]);
+        expect(await contextsFor(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY)).toEqual(
+          [],
+        );
         expect((await read()).body.errors[0].extensions.code).toBe('NOT_FOUND');
         expect(await listedThreadIds()).not.toContain(threadId);
         expect((await changeShare(true)).body.errors).toBeUndefined();
@@ -233,8 +292,7 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(sharedMessages.body.data.chatMessages).toEqual([]);
         const audienceDetails = await makeMetadataApiRequest(
           {
-            query:
-              parse(`query SharingDetails($target: RecordSharingTargetInput!) {
+            query: parse(`query SharingDetails($target: RecordTargetInput!) {
             recordSharing(target: $target) { permissions { canRead canUpdate canDelete canSoftDelete } shares { principalId } roles { id } }
           }`),
             variables: { target },
@@ -280,13 +338,12 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(stop.body.errors[0].extensions.code).toBe('NOT_FOUND');
-        const grantAsViewer = await makeMetadataApiRequest(
-          {
-            query: SET_SHARE,
-            variables: { target, principal: { everyone: true }, enabled: true },
-          },
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        );
+        const grantAsViewer = await shareThread({
+          target,
+          audience: 'everyone',
+          accessLevel: RecordShareAccessLevel.READ,
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        });
         expect(grantAsViewer.body.errors[0].extensions.code).toBe('NOT_FOUND');
         const anonymous = await readThread(threadId, null);
         expect(anonymous.body.errors).toBeDefined();
@@ -321,12 +378,12 @@ describe('Conversation sharing through the authenticated API', () => {
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       };
-      const principal =
+      const threadAudience: ThreadAudience =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }
           : audience === 'role'
             ? { roleId: userWorkspaceRoleMap[sender.userWorkspaceId] }
-            : { everyone: true };
+            : 'everyone';
       const threadId = randomUUID();
       const target = {
         objectMetadataId:
@@ -340,17 +397,14 @@ describe('Conversation sharing through the authenticated API', () => {
       const actors = getAppProviderByClassName<AgentChatActorService>(
         'AgentChatActorService',
       );
-      await chat.createThread({
+      await getAgentChatThreadService().createThread({
         ...owner,
         id: threadId,
         title: 'Multiplayer regression',
       });
       try {
         const grant = (accessLevel: RecordShareAccessLevel) =>
-          makeMetadataApiRequest({
-            query: SET_SHARE,
-            variables: { target, principal, enabled: true, accessLevel },
-          });
+          shareThread({ target, audience: threadAudience, accessLevel });
         expect(
           (await grant(RecordShareAccessLevel.READ_WRITE)).body.errors,
         ).toBeUndefined();
@@ -396,33 +450,37 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(stop.body.errors).toBeUndefined();
         expect(stop.body.data.stopAgentChatStream).toBe(true);
         const changeSharingAsParticipant = (enabled: boolean) =>
-          makeMetadataApiRequest(
-            {
-              query: SET_SHARE,
-              variables: {
-                target,
-                principal: {
-                  workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-                },
-                enabled,
-                accessLevel: RecordShareAccessLevel.READ,
-              },
+          shareThread({
+            target,
+            audience: {
+              workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
             },
-            APPLE_JONY_MEMBER_ACCESS_TOKEN,
-          );
+            accessLevel: enabled
+              ? RecordShareAccessLevel.READ
+              : RecordShareAccessLevel.NONE,
+            token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          });
         for (const enabled of [true, false]) {
           expect(
             (await changeSharingAsParticipant(enabled)).body.errors[0]
               .extensions.code,
           ).toBe('NOT_FOUND');
         }
-        expect(
-          (await grant(RecordShareAccessLevel.FULL)).body.errors,
-        ).toBeUndefined();
-        for (const enabled of [true, false]) {
+        // Full access lets its holder manage sharing, so everyone never gets it
+        if (threadAudience === 'everyone') {
           expect(
-            (await changeSharingAsParticipant(enabled)).body.errors,
+            (await grant(RecordShareAccessLevel.FULL)).body.errors[0].extensions
+              .code,
+          ).toBe('BAD_USER_INPUT');
+        } else {
+          expect(
+            (await grant(RecordShareAccessLevel.FULL)).body.errors,
           ).toBeUndefined();
+          for (const enabled of [true, false]) {
+            expect(
+              (await changeSharingAsParticipant(enabled)).body.errors,
+            ).toBeUndefined();
+          }
         }
         expect(
           (await grant(RecordShareAccessLevel.READ_WRITE)).body.errors,
@@ -515,7 +573,7 @@ describe('Conversation sharing through the authenticated API', () => {
     };
     const options = { workspaceId, options: { dryRun: false } } as never;
 
-    await chatService.createThread({
+    await getAgentChatThreadService().createThread({
       ...owner,
       id: owner.threadId,
       title: 'Upgrade ownership test',
@@ -538,7 +596,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const { deletedAt } = softDeleted.body.data.deleteAgentChatThread;
       expect(new Date(deletedAt).toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}T/);
       expect(
-        (await chatService.getWritableThread(owner)).deletedAt,
+        (await getAgentChatThreadService().getWritableThread(owner)).deletedAt,
       ).not.toBeNull();
       expect(await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
         owner.threadId,
@@ -567,8 +625,6 @@ describe('Conversation sharing through the authenticated API', () => {
   });
   it('lets non-owner writers rename through ordinary permissions and denies them after revocation', async () => {
     const workspaceId = SEED_APPLE_WORKSPACE_ID;
-    const chat =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const cache = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
@@ -586,7 +642,7 @@ describe('Conversation sharing through the authenticated API', () => {
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     };
-    await chat.createThread({
+    await getAgentChatThreadService().createThread({
       ...owner,
       id: owner.threadId,
       title: 'Original',
@@ -610,7 +666,9 @@ describe('Conversation sharing through the authenticated API', () => {
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
       expect(collaborativeRename.body.errors).toBeUndefined();
-      expect(await chat.getWritableThread(owner)).toMatchObject({
+      expect(
+        await getAgentChatThreadService().getWritableThread(owner),
+      ).toMatchObject({
         title: 'Collaborative rename',
         workspaceMemberId: owner.workspaceMemberId,
       });
@@ -622,7 +680,9 @@ describe('Conversation sharing through the authenticated API', () => {
       expect(writerView.body.data.recordPermissions[0]).toMatchObject({
         permissions: { canUpdate: true },
       });
-      await expect(chat.getWritableThread(writer)).resolves.toMatchObject({
+      await expect(
+        getAgentChatThreadService().getWritableThread(writer),
+      ).resolves.toMatchObject({
         id: owner.threadId,
       });
       await setManualRecordShare({ workspaceId, share, enabled: false });
@@ -632,7 +692,9 @@ describe('Conversation sharing through the authenticated API', () => {
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
       expect(revokedRename.body.errors[0].extensions.code).toBe('NOT_FOUND');
-      expect(await chat.getWritableThread(owner)).toMatchObject({
+      expect(
+        await getAgentChatThreadService().getWritableThread(owner),
+      ).toMatchObject({
         title: 'Collaborative rename',
       });
     } finally {
@@ -641,8 +703,6 @@ describe('Conversation sharing through the authenticated API', () => {
   });
 
   it('rolls back creation when grant initialization fails', async () => {
-    const chat =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const shareService = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
@@ -657,26 +717,32 @@ describe('Conversation sharing through the authenticated API', () => {
       .mockRejectedValueOnce(new Error('Grant storage unavailable'));
     try {
       await expect(
-        chat.createThread({ ...owner, id: owner.threadId }),
+        getAgentChatThreadService().createThread({
+          ...owner,
+          id: owner.threadId,
+        }),
       ).rejects.toThrow('Grant storage unavailable');
     } finally {
       cleanup.mockRestore();
     }
-    await expect(chat.getWritableThread(owner)).rejects.toMatchObject({
+    await expect(
+      getAgentChatThreadService().getWritableThread(owner),
+    ).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
     });
   });
 
   it('stores the member owner and preserves the legacy API identity', async () => {
-    const chat =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const owner = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: randomUUID(),
     };
-    await chat.createThread({ ...owner, id: owner.threadId });
+    await getAgentChatThreadService().createThread({
+      ...owner,
+      id: owner.threadId,
+    });
     try {
       const response = await makeGraphqlApiRequest(
         findOneOperationFactory({
@@ -730,11 +796,9 @@ describe('Conversations through the record API', () => {
       [threadId],
     );
   it('reads a conversation with its relations even though its messages stay out of the API', async () => {
-    const chat =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const threadId = randomUUID();
 
-    await chat.createThread({
+    await getAgentChatThreadService().createThread({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       id: threadId,
@@ -998,14 +1062,12 @@ describe('Conversations through the record API', () => {
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       };
-      const chatService =
-        getAppProviderByClassName<AgentChatService>('AgentChatService');
       const { flatObjectMetadataMaps } =
         await getAppProviderByClassName<WorkspaceCacheService>(
           'WorkspaceCacheService',
         ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
 
-      await chatService.createThread({
+      await getAgentChatThreadService().createThread({
         ...owner,
         id: threadId,
         title: 'Destroyed conversation audience',
