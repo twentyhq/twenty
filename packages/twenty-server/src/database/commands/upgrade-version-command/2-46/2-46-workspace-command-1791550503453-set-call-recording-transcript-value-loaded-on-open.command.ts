@@ -16,7 +16,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.46.0', 1791481209934)
+@RegisteredWorkspaceCommand('2.46.0', 1791550503453)
 @Command({
   name: 'upgrade:2-46:set-call-recording-transcript-value-loaded-on-open',
   description:
