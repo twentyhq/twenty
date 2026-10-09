@@ -175,7 +175,7 @@ export const SettingsObjectIndexesSection = ({
             <DropdownContent align="end" sideOffset={8}>
               <Dropdown.Section>
                 <SettingsRow
-                  startIcon={<IconEyeOff />}
+                  startElement={<IconEyeOff />}
                   onCheckedChange={() =>
                     setHideSystemIndexes(!hideSystemIndexes)
                   }

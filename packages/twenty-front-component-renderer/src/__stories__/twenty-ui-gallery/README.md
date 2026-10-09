@@ -130,6 +130,17 @@ Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popov
 
 An invisible popup is not a compatibility pass.
 
+SettingsRow's flat Switch props target the control. Its controlled composition
+uses `nativeButton` and an actual button through `render`, preserving one change
+callback for label and control activation. `labelRender` supplies native label
+attributes and handlers, and `labelRef` targets that label. Default span-based
+rows still cover label activation, uncontrolled state, read-only and disabled
+behavior. Directly
+clicking a span control inside its label can produce duplicate change callbacks
+because worker cancellation cannot stop the host label's default activation in
+time. Native validation attributes such as `required` are currently filtered by
+the renderer; standalone UI stories verify that form contract.
+
 These are compatibility regression stories, not assertions that the components
 work fully in the sandbox. Scenarios pin the current behavior exactly: a
 scenario that reaches a gap asserts what the component reports, and one that

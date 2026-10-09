@@ -5,6 +5,5 @@ import { SettingsRow } from '../SettingsRow';
 runComponentConformance({
   name: 'SettingsRow',
   element: <SettingsRow>Notifications</SettingsRow>,
-  refInstanceOf: HTMLLabelElement,
-  skip: ['renderProp'],
+  refInstanceOf: HTMLSpanElement,
 });
