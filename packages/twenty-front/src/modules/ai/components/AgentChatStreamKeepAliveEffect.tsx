@@ -38,15 +38,15 @@ export const AgentChatStreamKeepAliveEffect = () => {
       agentChatIsAwaitingFirstChunkFamilyState.atomFamily(familyKey),
     );
 
-    if (!isStreaming && !isAwaitingFirstChunk) {
-      store.set(agentChatStreamRecoveryAttemptsState.atom, 0);
-
-      return;
-    }
-
     const recoveryAttempts = store.get(
       agentChatStreamRecoveryAttemptsState.atom,
     );
+
+    // Resubscribing clears the stream flags, so a recovery already under way
+    // keeps counting until the subscription proves it delivers again
+    if (!isStreaming && !isAwaitingFirstChunk && recoveryAttempts === 0) {
+      return;
+    }
 
     if (recoveryAttempts >= MAX_SILENT_RECOVERY_ATTEMPTS) {
       store.set(

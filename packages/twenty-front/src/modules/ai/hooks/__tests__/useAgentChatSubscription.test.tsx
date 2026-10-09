@@ -1,18 +1,26 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, render, renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
+import { AgentChatStreamKeepAliveEffect } from '@/ai/components/AgentChatStreamKeepAliveEffect';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AGENT_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai/constants/AgentChatStreamLivenessCheckIntervalInMs';
 import { useAgentChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatStreamRecoveryAttemptsState } from '@/ai/states/agentChatStreamRecoveryAttemptsState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const refreshAgentChatThreads = jest.fn();
 const mockRefreshPermissions = jest.fn();
@@ -233,5 +241,96 @@ describe('Shared conversation access revocation', () => {
     act(() => subscribe.mock.calls[0][1].error(new Error('offline')));
     expect(jotaiStore.get(messagesAtom)).toHaveLength(1);
     expect(refreshAgentChatThreads).not.toHaveBeenCalled();
+  });
+});
+
+describe('Stream recovery', () => {
+  const recoveringThreadId = '6d1c2f4e-3a5b-4c7d-8e9f-0a1b2c3d4e5f';
+  const recoveringKey = { threadId: recoveringThreadId };
+  const recoveringErrorAtom =
+    agentChatErrorFamilyState.atomFamily(recoveringKey);
+
+  const keepalive = {
+    data: {
+      onAgentChatEvent: {
+        threadId: recoveringThreadId,
+        event: { type: 'keepalive' },
+      },
+    },
+  };
+
+  const isConnectionLost = () =>
+    isGraphqlErrorOfType(
+      jotaiStore.get(recoveringErrorAtom),
+      AiChatErrorCode.CONNECTION_LOST,
+    );
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    resetJotaiStore();
+    subscribe.mockReturnValue(disconnect);
+    jotaiStore.set(sseClientState.atom, { subscribe } as never);
+  });
+
+  it('only treats events after the first one as proof that the subscription delivers', () => {
+    const refetchListener = jest.fn();
+    window.addEventListener(
+      AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+      refetchListener,
+    );
+    jotaiStore.set(agentChatStreamRecoveryAttemptsState.atom, 2);
+    jotaiStore.set(
+      recoveringErrorAtom,
+      createAiChatCodedError('lost', AiChatErrorCode.CONNECTION_LOST),
+    );
+    renderHook(() => useAgentChatSubscription(recoveringThreadId), {
+      wrapper: Wrapper,
+    });
+    const sink = subscribe.mock.calls[0][1];
+
+    act(() => sink.next(keepalive));
+
+    expect(jotaiStore.get(agentChatStreamRecoveryAttemptsState.atom)).toBe(2);
+    expect(isConnectionLost()).toBe(true);
+    expect(refetchListener).not.toHaveBeenCalled();
+
+    act(() => sink.next(keepalive));
+
+    expect(jotaiStore.get(agentChatStreamRecoveryAttemptsState.atom)).toBe(0);
+    expect(jotaiStore.get(recoveringErrorAtom)).toBeNull();
+    expect(refetchListener).toHaveBeenCalledTimes(1);
+    window.removeEventListener(
+      AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+      refetchListener,
+    );
+  });
+
+  it('reports a lost connection when resubscribing never delivers', () => {
+    jest.useFakeTimers();
+    jotaiStore.set(currentAiChatThreadState.atom, recoveringThreadId);
+    jotaiStore.set(
+      agentChatIsAwaitingFirstChunkFamilyState.atomFamily(recoveringKey),
+      true,
+    );
+
+    const RecoveryHarness = () => {
+      useAgentChatSubscription(recoveringThreadId);
+
+      return <AgentChatStreamKeepAliveEffect />;
+    };
+
+    render(<RecoveryHarness />, { wrapper: Wrapper });
+
+    for (let index = 0; index < 20; index++) {
+      act(() => {
+        jest.advanceTimersByTime(
+          AGENT_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS,
+        );
+      });
+    }
+
+    expect(isConnectionLost()).toBe(true);
+    expect(subscribe).toHaveBeenCalledTimes(4);
+    jest.useRealTimers();
   });
 });
