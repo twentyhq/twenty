@@ -16,6 +16,7 @@ import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledCheckoutButton = styled(MainButton)`
   width: 200px;
@@ -131,7 +132,7 @@ export const EnterprisePlanModal = () => {
       const checkoutUrl = data?.enterpriseCheckoutSession;
 
       if (checkoutUrl !== null && checkoutUrl !== undefined) {
-        window.open(checkoutUrl, '_blank', 'noopener');
+        openUrlInNewTab(checkoutUrl);
         closeDialog(ENTERPRISE_PLAN_MODAL_ID);
       } else {
         enqueueToast({
@@ -153,10 +154,10 @@ export const EnterprisePlanModal = () => {
 
   return (
     <DialogInstance dialogId={ENTERPRISE_PLAN_MODAL_ID} dismissible>
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={t`Get Organization`}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           style={{ padding: 0 }}
         >

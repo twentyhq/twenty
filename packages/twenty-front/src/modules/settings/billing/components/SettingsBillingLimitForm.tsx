@@ -25,6 +25,7 @@ import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel'
 import { getUsageLimitAmountInput } from '@/settings/billing/utils/getUsageLimitAmountInput';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
+import { hasUsageLimitValue } from '@/settings/billing/utils/hasUsageLimitValue';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -84,6 +85,22 @@ export const SettingsBillingLimitForm = ({
 
   const options = getUsageLimitFormOptions({ definitions, values });
 
+  const handleValuesChange = (nextValues: UsageLimitFormValues) => {
+    const { periodUnits } = getUsageLimitFormOptions({
+      definitions,
+      values: nextValues,
+    });
+
+    onChange({
+      ...nextValues,
+      periodUnit:
+        isDefined(nextValues.periodUnit) &&
+        periodUnits.includes(nextValues.periodUnit)
+          ? nextValues.periodUnit
+          : (periodUnits[0] ?? null),
+    });
+  };
+
   const handleScopeChange = ({
     resourceType,
     operationType,
@@ -109,7 +126,7 @@ export const SettingsBillingLimitForm = ({
       values: nextValues,
     });
 
-    onChange({
+    handleValuesChange({
       ...nextValues,
       spenderType: isNewResource
         ? (nextOptions.spenderTypes[0] ?? null)
@@ -123,11 +140,13 @@ export const SettingsBillingLimitForm = ({
   };
 
   const consumedValue = scopeConsumption?.consumedValue ?? null;
-  const progress = computeUsageLimitProgress({
-    limitValue:
-      Number(values.limitValue) * getUsageLimitInputScale(values.unit),
-    consumedValue,
-  });
+  const progress = hasUsageLimitValue(values)
+    ? computeUsageLimitProgress({
+        limitValue:
+          Number(values.limitValue) * getUsageLimitInputScale(values.unit),
+        consumedValue,
+      })
+    : null;
   const consumedPercentage = progress?.consumedPercentage ?? 0;
   const isExhausted = progress?.remainingValue === 0;
   const hasConsumption = isDefined(consumedValue) && consumedValue > 0;
@@ -178,7 +197,9 @@ export const SettingsBillingLimitForm = ({
             spenderType={values.spenderType}
             spenderId={values.spenderId}
             isDisabled={!hasResource}
-            onChange={(spender) => onChange({ ...values, ...spender })}
+            onChange={(spender) =>
+              handleValuesChange({ ...values, ...spender })
+            }
           />
         </StyledRow>
       </Section.Root>
@@ -256,7 +277,7 @@ export const SettingsBillingLimitForm = ({
               }))}
               emptyOption={placeholderOption}
               onChange={(unit) =>
-                isDefined(unit) && onChange({ ...values, unit })
+                isDefined(unit) && handleValuesChange({ ...values, unit })
               }
             />
             <Select

@@ -17,6 +17,83 @@ const meta: Meta<typeof Switch> = {
 export default meta;
 type Story = StoryObj<typeof Switch>;
 
+export const ParentAlignment: Story = {
+  render: () => (
+    <div style={{ display: 'grid', gap: 16 }}>
+      {(['sm', 'md'] as const).map((size) => (
+        <div
+          key={size}
+          role="group"
+          aria-label={`${size} centered row`}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            height: 32,
+            gap: 16,
+          }}
+        >
+          <span>Centered {size} switch</span>
+          <Switch size={size} aria-label={`Centered ${size} switch`} />
+        </div>
+      ))}
+      <div
+        role="group"
+        aria-label="Top aligned row"
+        style={{ display: 'flex', alignItems: 'flex-start', height: 48 }}
+      >
+        <Switch aria-label="Top aligned switch" />
+      </div>
+      <div
+        role="group"
+        aria-label="Bottom aligned row"
+        style={{ display: 'flex', alignItems: 'flex-end', height: 48 }}
+      >
+        <Switch aria-label="Bottom aligned switch" />
+      </div>
+      <div
+        role="group"
+        aria-label="Column layout"
+        style={{ display: 'flex', flexDirection: 'column', width: 240 }}
+      >
+        <Switch aria-label="Column switch" />
+      </div>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const size of ['sm', 'md'] as const) {
+      const row = canvas.getByRole('group', { name: `${size} centered row` });
+      const controlBounds = within(row)
+        .getByRole('switch')
+        .getBoundingClientRect();
+      const labelBounds = within(row)
+        .getByText(`Centered ${size} switch`)
+        .getBoundingClientRect();
+
+      await expect(controlBounds.top + controlBounds.height / 2).toBeCloseTo(
+        labelBounds.top + labelBounds.height / 2,
+      );
+    }
+
+    const topRow = canvas.getByRole('group', { name: 'Top aligned row' });
+    await expect(
+      within(topRow).getByRole('switch').getBoundingClientRect().top,
+    ).toBeCloseTo(topRow.getBoundingClientRect().top);
+
+    const bottomRow = canvas.getByRole('group', { name: 'Bottom aligned row' });
+    await expect(
+      within(bottomRow).getByRole('switch').getBoundingClientRect().bottom,
+    ).toBeCloseTo(bottomRow.getBoundingClientRect().bottom);
+
+    await expect(
+      canvas
+        .getByRole('switch', { name: 'Column switch' })
+        .getBoundingClientRect().width,
+    ).toBe(32);
+  },
+};
+
 export const Pointer: Story = {
   decorators: [ComponentDecorator],
   args: { onCheckedChange: fn() },

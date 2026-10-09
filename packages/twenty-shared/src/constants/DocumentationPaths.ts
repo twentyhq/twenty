@@ -38,6 +38,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/data/timeline-activity-types',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_CONCEPTS:
     '/developers/extend/apps/getting-started/concepts',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_GOOD_PRACTICES:
+    '/developers/extend/apps/getting-started/good-practices',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_LOCAL_SERVER:
     '/developers/extend/apps/getting-started/local-server',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_PROJECT_STRUCTURE:
@@ -161,6 +163,8 @@ export const DOCUMENTATION_PATHS = {
     '/ui/components/layout/overflowing-list',
   UI_COMPONENTS_LAYOUT_SECTION: '/ui/components/layout/section',
   UI_COMPONENTS_NAVIGATION_DROPDOWN: '/ui/components/navigation/dropdown',
+  UI_COMPONENTS_NAVIGATION_LIST_ITEM_BUTTON:
+    '/ui/components/navigation/list-item-button',
   UI_COMPONENTS_NAVIGATION_MENU_ITEMS: '/ui/components/navigation/menu-items',
   UI_COMPONENTS_NAVIGATION_MENU_PICKER: '/ui/components/navigation/menu-picker',
   UI_COMPONENTS_NAVIGATION_TAB_BUTTON: '/ui/components/navigation/tab-button',
@@ -169,8 +173,8 @@ export const DOCUMENTATION_PATHS = {
   UI_DARK_MODE: '/ui/dark-mode',
   UI_GETTING_STARTED: '/ui/getting-started',
   UI_ICONS: '/ui/icons',
-  UI_PRIMITIVES_ACCESSIBILITY_VISIBILITY_HIDDEN:
-    '/ui/primitives/accessibility/visibility-hidden',
+  UI_PRIMITIVES_ACCESSIBILITY_VISUALLY_HIDDEN:
+    '/ui/primitives/accessibility/visually-hidden',
   UI_PRIMITIVES_DATA_DISPLAY_AVATAR: '/ui/primitives/data-display/avatar',
   UI_PRIMITIVES_DATA_DISPLAY_CHIP: '/ui/primitives/data-display/chip',
   UI_PRIMITIVES_DATA_DISPLAY_COLOR_SAMPLE:
@@ -182,6 +186,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_FEEDBACK_LOADER: '/ui/primitives/feedback/loader',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_BAR: '/ui/primitives/feedback/progress-bar',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_RING: '/ui/primitives/feedback/progress-ring',
+  UI_PRIMITIVES_FEEDBACK_SKELETON: '/ui/primitives/feedback/skeleton',
   UI_PRIMITIVES_INPUT_BUTTON: '/ui/primitives/input/button',
   UI_PRIMITIVES_INPUT_BUTTON_GROUP: '/ui/primitives/input/button-group',
   UI_PRIMITIVES_INPUT_CHECKBOX: '/ui/primitives/input/checkbox',
@@ -198,11 +203,10 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_SWITCH: '/ui/primitives/input/switch',
   UI_PRIMITIVES_INPUT_TEXTAREA: '/ui/primitives/input/textarea',
   UI_PRIMITIVES_LAYOUT_COLLAPSIBLE: '/ui/primitives/layout/collapsible',
-  UI_PRIMITIVES_LAYOUT_HORIZONTAL_SEPARATOR:
-    '/ui/primitives/layout/horizontal-separator',
+  UI_PRIMITIVES_LAYOUT_DIRECTION_PROVIDER:
+    '/ui/primitives/layout/direction-provider',
   UI_PRIMITIVES_LAYOUT_RESIZE_HANDLE: '/ui/primitives/layout/resize-handle',
-  UI_PRIMITIVES_LAYOUT_TEXT_DIRECTION_PROVIDER:
-    '/ui/primitives/layout/text-direction-provider',
+  UI_PRIMITIVES_LAYOUT_SEPARATOR: '/ui/primitives/layout/separator',
   UI_PRIMITIVES_NAVIGATION_BREADCRUMB: '/ui/primitives/navigation/breadcrumb',
   UI_PRIMITIVES_NAVIGATION_LIST_ITEM: '/ui/primitives/navigation/list-item',
   UI_PRIMITIVES_NAVIGATION_TABS: '/ui/primitives/navigation/tabs',

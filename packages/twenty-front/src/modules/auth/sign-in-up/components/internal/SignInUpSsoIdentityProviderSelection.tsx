@@ -8,8 +8,8 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/components/input';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SignInUpSeparator } from './SignInUpSeparator';
 
 export const SignInUpSsoIdentityProviderSelection = () => {
   const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
@@ -34,7 +34,7 @@ export const SignInUpSsoIdentityProviderSelection = () => {
                 >
                   {identityProvider.name}
                 </MainButton>
-                <HorizontalSeparator visible={false} />
+                <SignInUpSeparator />
               </React.Fragment>
             );
           })}

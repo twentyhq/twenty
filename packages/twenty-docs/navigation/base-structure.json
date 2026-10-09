@@ -415,6 +415,7 @@
                 "developers/extend/apps/getting-started/project-structure",
                 "developers/extend/apps/getting-started/local-server",
                 "developers/extend/apps/getting-started/scaffolding",
+                "developers/extend/apps/getting-started/good-practices",
                 "developers/extend/apps/getting-started/troubleshooting"
               ]
             },
@@ -548,7 +549,7 @@
                 {
                   "key": "uiAccessibility",
                   "label": "Accessibility",
-                  "pages": ["ui/primitives/accessibility/visibility-hidden"]
+                  "pages": ["ui/primitives/accessibility/visually-hidden"]
                 },
                 {
                   "key": "uiDataDisplay",
@@ -569,7 +570,8 @@
                     "ui/primitives/feedback/banner",
                     "ui/primitives/feedback/loader",
                     "ui/primitives/feedback/progress-bar",
-                    "ui/primitives/feedback/progress-ring"
+                    "ui/primitives/feedback/progress-ring",
+                    "ui/primitives/feedback/skeleton"
                   ]
                 },
                 {
@@ -597,9 +599,9 @@
                   "label": "Layout",
                   "pages": [
                     "ui/primitives/layout/collapsible",
-                    "ui/primitives/layout/horizontal-separator",
+                    "ui/primitives/layout/separator",
                     "ui/primitives/layout/resize-handle",
-                    "ui/primitives/layout/text-direction-provider"
+                    "ui/primitives/layout/direction-provider"
                   ]
                 },
                 {
@@ -689,6 +691,7 @@
                   "key": "uiComponentsNavigation",
                   "label": "Navigation",
                   "pages": [
+                    "ui/components/navigation/list-item-button",
                     "ui/components/navigation/dropdown",
                     "ui/components/navigation/menu-items",
                     "ui/components/navigation/menu-picker",

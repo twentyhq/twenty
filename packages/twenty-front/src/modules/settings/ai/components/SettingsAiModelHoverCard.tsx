@@ -1,3 +1,4 @@
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Chip } from 'twenty-ui/primitives/data-display';
@@ -13,11 +14,11 @@ import {
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
-import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
+import { getDataResidencyDisplay } from '@/ai/utils/getDataResidencyDisplay';
+import { getModelIcon } from '@/ai/utils/getModelIcon';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { isDefined } from 'twenty-shared/utils';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const StyledHoverCardWrapper = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -95,7 +96,7 @@ export const SettingsAiModelHoverCard = ({
             }
             endElement={null}
           >
-            {model.label}
+            {getChipLabel(model.label).content}
           </Chip>
         </StyledChipContainer>
       ),

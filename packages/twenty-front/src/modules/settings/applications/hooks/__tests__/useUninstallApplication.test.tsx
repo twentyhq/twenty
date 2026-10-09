@@ -10,7 +10,7 @@ import {
   FindUninstallApplicationJobStatusDocument,
   JobState,
   type JobStatus,
-  TriggerUninstallApplicationJobDocument,
+  TriggerUninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
@@ -25,11 +25,11 @@ jest.mock('twenty-ui/components/feedback', () => ({
 
 const triggerUninstallMock = {
   request: {
-    query: TriggerUninstallApplicationJobDocument,
+    query: TriggerUninstallApplicationDocument,
     variables: { input: { universalIdentifier: UNIVERSAL_IDENTIFIER } },
   },
   result: {
-    data: { triggerUninstallApplicationJob: { jobId: JOB_ID } },
+    data: { triggerUninstallApplication: { jobId: JOB_ID } },
   },
 };
 
@@ -122,7 +122,7 @@ describe('useUninstallApplication', () => {
     });
   });
 
-  it('reports an uninstallation still running on the server', async () => {
+  it('reports an uninstallation still running on the server with its progress', async () => {
     const { result } = renderHook(
       () =>
         useUninstallApplication({
@@ -135,11 +135,25 @@ describe('useUninstallApplication', () => {
             jobId: JOB_ID,
             state: JobState.ACTIVE,
             failedReason: null,
+            progress: 20,
           }),
         ]),
       },
     );
 
     await waitFor(() => expect(result.current.isUninstalling).toBe(true));
+    expect(result.current.uninstallProgress).toBe(20);
+
+    act(() => {
+      dispatchBrowserEvent<JobStatus>(QUEUE_JOB_BROWSER_EVENT_NAME, {
+        jobId: JOB_ID,
+        state: JobState.ACTIVE,
+        attemptsMade: 1,
+        progress: 80,
+        enqueuedAt: 1,
+      });
+    });
+
+    expect(result.current.uninstallProgress).toBe(80);
   });
 });

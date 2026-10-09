@@ -39,8 +39,10 @@ export type RunAgentInput = {
 );
 
 export type RunAgentResult = {
+  threadId: string;
+  // SUSPENDED: the agent paused on a wait and goes on by itself; its reply lands in the thread
+  status: 'COMPLETED' | 'SUSPENDED' | 'FAILED';
   result: object | null;
   error: string | null;
   success: boolean;
-  threadId: string | null;
 };

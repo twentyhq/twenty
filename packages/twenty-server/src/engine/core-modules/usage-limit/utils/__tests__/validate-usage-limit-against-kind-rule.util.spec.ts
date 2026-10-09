@@ -65,6 +65,10 @@ describe('validateUsageLimitAgainstKindRule', () => {
       ).not.toThrow();
     });
 
+    it('rejects a zero speed limit', () => {
+      rejects({ ...validSpeedLimit, limitValue: 0 });
+    });
+
     it('rejects a speed limit without a rolling window', () => {
       rejects({ ...validSpeedLimit, periodUnit: 'month' });
     });
@@ -88,6 +92,15 @@ describe('validateUsageLimitAgainstKindRule', () => {
     it('accepts a monthly credit quota', () => {
       expect(() =>
         validateUsageLimitAgainstKindRule(validQuotaLimit),
+      ).not.toThrow();
+    });
+
+    it('accepts a zero quota that blocks the usage', () => {
+      expect(() =>
+        validateUsageLimitAgainstKindRule({
+          ...validQuotaLimit,
+          limitValue: 0,
+        }),
       ).not.toThrow();
     });
 
@@ -127,6 +140,10 @@ describe('validateUsageLimitAgainstKindRule', () => {
   });
 
   describe('stock', () => {
+    it('rejects a zero stock limit', () => {
+      rejects({ ...validStockLimit, limitValue: 0 });
+    });
+
     it('accepts a workspace-wide stock on the operation that fills it', () => {
       expect(() =>
         validateUsageLimitAgainstKindRule(validStockLimit),

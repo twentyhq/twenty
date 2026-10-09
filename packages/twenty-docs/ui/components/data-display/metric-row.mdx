@@ -23,7 +23,11 @@ import { MetricRow } from 'twenty-ui/components/data-display';
 import { IconDatabase } from 'twenty-ui/icon';
 
 export const StorageMetric = () => (
-  <MetricRow startIcon={IconDatabase} value="12 / 20 GB" progress={60}>
+  <MetricRow
+    startIcon={<IconDatabase size={14} />}
+    value="12 / 20 GB"
+    progress={60}
+  >
     Storage
   </MetricRow>
 );
@@ -45,7 +49,7 @@ export const CompletedMetric = () => (
 
 ## Composition and accessibility
 
-The required text label names the progress ring. A string value is also exposed as its accessible value text. For formatted value content, supply `progressValueText` when a percentage does not describe the metric fully. This text overrides the string value fallback. Without it, other content keeps the ring's percentage value text. The optional `startIcon` is decorative and renders at 14px.
+Label content accepts nodes. Its accessible text names the progress ring through `aria-labelledby`, including nested text. Provide a meaningful visible label. A string value is also exposed as its accessible value text. For formatted value content, supply `progressValueText` when a percentage does not describe the metric fully. This text overrides the string value fallback. Without it, other content keeps the ring's percentage value text. The optional `startIcon` node is decorative. The caller controls its dimensions and stroke.
 
 ```tsx
 import { MetricRow } from 'twenty-ui/components/data-display';
@@ -57,10 +61,12 @@ export const FormattedStorageMetric = () => (
     progress={60}
     progressValueText="12 of 20 gigabytes used"
   >
-    Storage
+    <Text render={<strong />}>Storage</Text>
   </MetricRow>
 );
 ```
+
+Replace `startIcon={IconDatabase}` with `startIcon={<IconDatabase size={14} />}`. Values stay preformatted by the application.
 
 Native attributes, `className`, `style`, and `ref` target the outer row. `render` can replace that element. Progress stays controlled and bounded to 0 to 100, with the same reduced-motion behavior as `ProgressRing`.
 

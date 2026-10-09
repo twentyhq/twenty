@@ -1,3 +1,4 @@
+import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsApplicationUninstallButton } from '@/settings/applications/components/SettingsApplicationUninstallButton';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
@@ -27,6 +28,7 @@ type SettingsApplicationDetailGeneralTabProps = {
     | 'logoUrl'
     | 'autoUpgrade'
     | 'canBeUninstalled'
+    | 'isUninstallBlockedByOtherWorkspaceInstallations'
     | 'applicationRegistration'
     | 'logicFunctions'
   >;
@@ -38,8 +40,10 @@ type SettingsApplicationDetailGeneralTabProps = {
   latestAvailableVersion?: string;
   onUpgrade: () => void;
   isUpgrading: boolean;
+  upgradeProgress?: number;
   onUninstall: () => void;
   isUninstalling: boolean;
+  uninstallProgress?: number;
 };
 
 export const SettingsApplicationDetailGeneralTab = ({
@@ -52,8 +56,10 @@ export const SettingsApplicationDetailGeneralTab = ({
   latestAvailableVersion,
   onUpgrade,
   isUpgrading,
+  upgradeProgress,
   onUninstall,
   isUninstalling,
+  uninstallProgress,
 }: SettingsApplicationDetailGeneralTabProps) => {
   const navigateSettings = useNavigateSettings();
 
@@ -63,6 +69,10 @@ export const SettingsApplicationDetailGeneralTab = ({
 
   const isUpgradable = isUpgradableApplicationSourceType(
     application.applicationRegistration?.sourceType,
+  );
+
+  const displayedUpgradeProgress = formatQueueJobProgressLabel(
+    upgradeProgress ?? 0,
   );
 
   const actions = [
@@ -89,10 +99,11 @@ export const SettingsApplicationDetailGeneralTab = ({
             variant="outline"
             size="sm"
             onClick={onUpgrade}
-            disabled={isUpgrading}
+            loading={isUpgrading}
+            loadingPosition="end"
           >
             {isUpgrading
-              ? t`Upgrading...`
+              ? t`Upgrading ${displayedUpgradeProgress}`
               : t`Upgrade to ${latestAvailableVersion ?? ''}`}
           </Button>,
         ]
@@ -103,6 +114,12 @@ export const SettingsApplicationDetailGeneralTab = ({
             key="uninstall"
             onUninstall={onUninstall}
             isUninstalling={isUninstalling}
+            uninstallProgress={uninstallProgress}
+            disabledReason={
+              application.isUninstallBlockedByOtherWorkspaceInstallations
+                ? t`Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here.`
+                : undefined
+            }
           />,
         ]
       : []),

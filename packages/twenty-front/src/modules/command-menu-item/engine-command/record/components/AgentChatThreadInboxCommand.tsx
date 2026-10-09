@@ -1,23 +1,22 @@
-import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
+import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
+import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 type AgentChatThreadInboxCommandProps = {
-  action: 'read' | 'unread' | 'done' | 'reopen' | 'snooze';
+  action: AgentChatInboxAction | 'assign';
 };
 
 export const AgentChatThreadInboxCommand = ({
   action,
 }: AgentChatThreadInboxCommandProps) => {
   const { selectedRecords } = useHeadlessCommandContextApi();
-  const {
-    markAgentChatThreadAsRead,
-    markAgentChatThreadAsUnread,
-    archiveAgentChatThread,
-    moveAgentChatThreadToInbox,
-  } = useAgentChatThreadParticipants();
+  const { updateAgentChatThreadInboxState } =
+    useUpdateAgentChatThreadInboxState();
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
+  const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
 
   const handleExecute = async () => {
     const threadIds = selectedRecords.map(({ id }) => id);
@@ -26,22 +25,15 @@ export const AgentChatThreadInboxCommand = ({
       return;
     }
 
-    if (action === 'snooze') {
+    if (action === AgentChatInboxAction.SNOOZE) {
       return openSnoozeAiChatInSidePanel(threadIds);
     }
 
-    const updateThread = {
-      read: markAgentChatThreadAsRead,
-      unread: markAgentChatThreadAsUnread,
-      done: archiveAgentChatThread,
-      reopen: moveAgentChatThreadToInbox,
-    }[action];
-
-    // One at a time: a failed update reloads every chat's state, which would
-    // undo the optimistic change of an update still on its way
-    for (const threadId of threadIds) {
-      await updateThread(threadId);
+    if (action === 'assign') {
+      return openAssignAiChatInSidePanel(threadIds);
     }
+
+    await updateAgentChatThreadInboxState({ threadIds, action });
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

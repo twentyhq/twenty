@@ -1,7 +1,3 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -23,6 +19,7 @@ import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/creat
 import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
 import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
+import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelTargetProvider';
 import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
@@ -59,6 +56,10 @@ const NOTE_WIDGET = createDefaultStandaloneRichTextWidget({
 const DRAFT_ATOM = pageLayoutDraftComponentState.atomFamily({
   instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
 });
+const TARGET_RECORD_IDENTIFIER = {
+  id: 'company-record',
+  targetObjectNameSingular: 'company',
+};
 const EDITING_WIDGET_ATOM = pageLayoutEditingWidgetIdComponentState.atomFamily({
   instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
 });
@@ -186,18 +187,6 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
       }),
       'tab-1',
     );
-    jotaiStore.set(
-      contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-      }),
-      company.id,
-    );
-    jotaiStore.set(
-      contextStoreTargetedRecordsRuleComponentState.atomFamily({
-        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-      }),
-      { mode: 'selection', selectedRecordIds: ['company-record'] },
-    );
   },
   decorators: [
     ToastDecorator,
@@ -207,14 +196,12 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
           <LayoutRenderingProvider
             value={{
               layoutType: args.layoutType,
-              targetRecordIdentifier: {
-                id: 'company-record',
-                targetObjectNameSingular: 'company',
-              },
+              targetRecordIdentifier: TARGET_RECORD_IDENTIFIER,
             }}
           >
-            <ContextStoreComponentInstanceContext.Provider
-              value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+            <PageLayoutSidePanelTargetProvider
+              pageLayoutId={PAGE_LAYOUT_TEST_INSTANCE_ID}
+              targetRecordIdentifier={TARGET_RECORD_IDENTIFIER}
             >
               <PageLayoutContentProvider
                 value={{
@@ -227,7 +214,7 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
                   <Story />
                 </div>
               </PageLayoutContentProvider>
-            </ContextStoreComponentInstanceContext.Provider>
+            </PageLayoutSidePanelTargetProvider>
           </LayoutRenderingProvider>
         </PageLayoutTestWrapper>
       </MemoryRouter>

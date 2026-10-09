@@ -27,6 +27,10 @@ const createHookRecorder = () => {
     document: polyfillWindow.document as unknown as Document,
     callsNamed: (hookName: keyof Hooks) =>
       calls.filter((call) => call.name === hookName),
+    clearCalls: () => {
+      calls.length = 0;
+    },
+    callNames: () => calls.map((call) => call.name),
   };
 };
 
@@ -103,6 +107,21 @@ describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserv
     expect(callsNamed('removeChild')[0].args[0]).toBe(parent);
     expect(callsNamed('removeChild')[0].args[1]).toBe(secondChild);
     expect(callsNamed('removeChild')[0].args[2]).toBe(1);
+  });
+
+  it('calls removeChild then insertChild when an attached node moves', () => {
+    const { document, callNames, clearCalls } = createHookRecorder();
+
+    const parent = document.createElement('div');
+    const firstChild = document.createElement('span');
+    const secondChild = document.createElement('span');
+
+    parent.appendChild(firstChild);
+    parent.appendChild(secondChild);
+    clearCalls();
+    parent.insertBefore(secondChild, firstChild);
+
+    expect(callNames()).toEqual(['removeChild', 'insertChild']);
   });
 
   it('skips insertChild and removeChild when the parent is not an element node', () => {

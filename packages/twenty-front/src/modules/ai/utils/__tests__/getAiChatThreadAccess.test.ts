@@ -11,7 +11,7 @@ describe('getAiChatThreadAccess', () => {
   it.each([
     {
       description:
-        'lets the author write in the thread their draft just created while its permissions load',
+        'lets the author write in the new chat, which has no thread yet',
       isOnNewAiChatSlot: true,
       permissions: undefined,
       expectedAccess: 'writer',
@@ -23,9 +23,8 @@ describe('getAiChatThreadAccess', () => {
       expectedAccess: 'loading',
     },
     {
-      description:
-        'follows the loaded permissions of the thread the draft created',
-      isOnNewAiChatSlot: true,
+      description: 'lets a member who can only read the thread view it',
+      isOnNewAiChatSlot: false,
       permissions: READ_ONLY_PERMISSIONS,
       expectedAccess: 'viewer',
     },
@@ -43,12 +42,8 @@ describe('getAiChatThreadAccess', () => {
       expectedAccess: 'unavailable',
     },
   ])('$description', ({ isOnNewAiChatSlot, permissions, expectedAccess }) => {
-    expect(
-      getAiChatThreadAccess({
-        currentAiChatThread: 'thread',
-        isOnNewAiChatSlot,
-        permissions,
-      }),
-    ).toBe(expectedAccess);
+    expect(getAiChatThreadAccess({ isOnNewAiChatSlot, permissions })).toBe(
+      expectedAccess,
+    );
   });
 });

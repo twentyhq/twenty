@@ -170,19 +170,25 @@ jest.mock('@/file/hooks/useDirectFileUpload', () => ({
   }),
 }));
 
-jest.mock('twenty-front-component-renderer', () => ({
-  buildFrontComponentStorageNamespace: ({
-    applicationId,
-    userId,
-  }: {
-    applicationId: string;
-    userId: string;
-  }) => `frontComponentStorage:${applicationId}:${userId}:`,
-  setFrontComponentStorageItem: (...args: unknown[]) => mockStorageSet(...args),
-  deleteFrontComponentStorageItem: (...args: unknown[]) =>
-    mockStorageDelete(...args),
-  clearFrontComponentStorage: (...args: unknown[]) => mockStorageClear(...args),
-}));
+jest.mock(
+  'twenty-front-component-renderer',
+  () => ({
+    buildFrontComponentStorageNamespace: ({
+      applicationId,
+      userId,
+    }: {
+      applicationId: string;
+      userId: string;
+    }) => `frontComponentStorage:${applicationId}:${userId}:`,
+    setFrontComponentStorageItem: (...args: unknown[]) =>
+      mockStorageSet(...args),
+    deleteFrontComponentStorageItem: (...args: unknown[]) =>
+      mockStorageDelete(...args),
+    clearFrontComponentStorage: (...args: unknown[]) =>
+      mockStorageClear(...args),
+  }),
+  { virtual: true },
+);
 
 jest.mock('@/page-layout/utils/setRecordPageActiveTabId', () => ({
   setRecordPageActiveTabId: (params: unknown) =>
@@ -253,11 +259,31 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: 'record-456',
         selectedRecordIds: ['record-456'],
+        selectedRecordsFilter: null,
         selectedObjectMetadata: null,
         timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
       });
+    });
+
+    it('should pass the selected records filter through', () => {
+      const selectedRecordsFilter = {
+        and: [
+          { name: { ilike: '%acme%' } },
+          { not: { id: { in: ['record-3'] } } },
+        ],
+      };
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        selectedRecordIds: [],
+        selectedRecordsFilter,
+      });
+
+      expect(result.current.executionContext.selectedRecordsFilter).toEqual(
+        selectedRecordsFilter,
+      );
     });
 
     it('should return null recordId when multiple selectedRecordIds provided', () => {
@@ -271,6 +297,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: null,
         selectedRecordIds: ['record-1', 'record-2', 'record-3'],
+        selectedRecordsFilter: null,
         selectedObjectMetadata: null,
         timelineActivityId: null,
         colorScheme: 'light',
@@ -591,6 +618,24 @@ describe('useFrontComponentExecutionContext', () => {
       expect(mockNavigateSidePanel).not.toHaveBeenCalled();
     });
 
+    it('rejects page layout pages because they need the layout they edit', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          page: SidePanelPages.DashboardChartSettings,
+          pageTitle: 'Chart',
+          pageIcon: 'IconChartPie',
+        }),
+      ).rejects.toThrow(
+        'dashboard-chart-settings edits the page layout it was opened from and cannot be opened by a front component',
+      );
+
+      expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    });
+
     it('maps legacy Copilot calls to AskAI', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
@@ -828,7 +873,70 @@ describe('useFrontComponentExecutionContext', () => {
         pageTitle: 'My Component',
         pageIcon: 'icon-IconBolt',
         resetNavigationStack: undefined,
-        recordContext: { recordId: 'lead-1', objectNameSingular: 'lead' },
+        recordContext: {
+          selectedRecordIds: ['lead-1'],
+          objectNameSingular: 'lead',
+        },
+      });
+    });
+
+    it('should pass multiple selected record ids to a front component', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewFrontComponent,
+            frontComponentId: 'fc-1',
+            pageTitle: 'My Component',
+            pageIcon: 'IconBolt',
+            selectedRecordIds: ['lead-1', 'lead-2'],
+            objectNameSingular: 'lead',
+          },
+        );
+      });
+
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledTimes(1);
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith({
+        frontComponentId: 'fc-1',
+        pageTitle: 'My Component',
+        pageIcon: 'icon-IconBolt',
+        resetNavigationStack: undefined,
+        recordContext: {
+          selectedRecordIds: ['lead-1', 'lead-2'],
+          objectNameSingular: 'lead',
+        },
+      });
+    });
+
+    it('should retain selected ids without an object name', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewFrontComponent,
+            frontComponentId: 'fc-1',
+            pageTitle: 'My Component',
+            selectedRecordIds: ['lead-1', 'lead-2'],
+          },
+        );
+      });
+
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledTimes(1);
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith({
+        frontComponentId: 'fc-1',
+        pageTitle: 'My Component',
+        pageIcon: 'icon-undefined',
+        resetNavigationStack: undefined,
+        recordContext: {
+          objectNameSingular: undefined,
+          selectedRecordIds: ['lead-1', 'lead-2'],
+        },
       });
     });
 
@@ -854,7 +962,10 @@ describe('useFrontComponentExecutionContext', () => {
         pageTitle: 'My Component',
         pageIcon: 'icon-IconBolt',
         resetNavigationStack: undefined,
-        recordContext: { objectNameSingular: 'lead', recordId: undefined },
+        recordContext: {
+          objectNameSingular: 'lead',
+          selectedRecordIds: undefined,
+        },
       });
     });
   });

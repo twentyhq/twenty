@@ -24,7 +24,7 @@ describe('getHasJustCompletedOnboarding', () => {
     expect(
       getHasJustCompletedOnboarding({
         previousOnboardingStatus: OnboardingStatus.SYNC_EMAIL,
-        nextOnboardingStatus: OnboardingStatus.APPS_INSTALLATION,
+        nextOnboardingStatus: OnboardingStatus.PROFILE_CREATION,
       }),
     ).toBe(false);
   });

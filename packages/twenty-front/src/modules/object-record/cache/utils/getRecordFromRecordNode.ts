@@ -2,7 +2,6 @@ import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getR
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const getRecordFromRecordNode = <T extends ObjectRecord>({
   recordNode,
@@ -15,7 +14,7 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
     ...Object.fromEntries(
       Object.entries(recordNode).map(([fieldName, value]) => {
         if (
-          isUndefinedOrNull(value) ||
+          !isDefined(value) ||
           Array.isArray(value) ||
           typeof value !== 'object'
         ) {

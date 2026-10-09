@@ -11,7 +11,10 @@ const TURN_USAGE = {
 };
 
 const buildService = () => {
-  const service = new AgentTurnRecorderService({} as never);
+  const service = new AgentTurnRecorderService(
+    {} as never,
+    { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
+  );
   const recordUsage = jest
     .spyOn(service, 'recordUsage')
     .mockResolvedValue(undefined);
@@ -50,7 +53,7 @@ describe('AgentTurnRecorderService.finishExecutedTurn', () => {
     await service.finishExecutedTurn({
       ...turn,
       execution: { turnUsage: TURN_USAGE },
-      isAwaitingAnswer: true,
+      isWaiting: true,
     });
 
     expect(finish).toHaveBeenCalledWith(
@@ -64,7 +67,7 @@ describe('AgentTurnRecorderService.finishExecutedTurn', () => {
     await service.finishExecutedTurn({
       ...turn,
       execution: { turnUsage: TURN_USAGE, hasNoMoreAvailableCredits: true },
-      isAwaitingAnswer: true,
+      isWaiting: true,
     });
 
     expect(finish).toHaveBeenCalledWith(

@@ -1,11 +1,11 @@
-import { type TriggerEventType } from '@/ui/navigation/utils/types/TriggerEventType';
+import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
 import { type ComponentPropsWithRef, type MouseEvent } from 'react';
 import { type Link } from 'react-router-dom';
 import { type ChipProps } from 'twenty-ui/primitives/data-display';
 
 export type LinkChipProps = Omit<
   ChipProps,
-  'render' | 'ref' | 'onClick' | 'onMouseDown' | 'disabled' | 'nativeButton'
+  'render' | 'ref' | 'onClick' | 'onMouseDown'
 > &
   Pick<ComponentPropsWithRef<typeof Link>, 'target' | 'ref'> & {
     to: string;

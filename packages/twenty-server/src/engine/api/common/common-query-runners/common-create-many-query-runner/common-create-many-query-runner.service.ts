@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  ObjectRecord,
-} from 'twenty-shared/types';
+import { MetadataReadability, ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   Brackets,
@@ -27,6 +23,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -53,7 +50,7 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
-import { resolveRecordSharingMode } from 'src/engine/core-modules/record-share/utils/resolve-record-sharing-mode.util';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { resolveShareWithToWrite } from 'src/engine/core-modules/record-share/utils/resolve-share-with-to-write.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
@@ -83,7 +80,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const isPrivateObject =
       queryRunnerContext.flatObjectMetadata.readability ===
       MetadataReadability.PRIVATE;
-    const { sharingMode } = this.resolveRecordSharing(queryRunnerContext);
+    const { sharingMode } = resolveObjectSharing(queryRunnerContext);
     const isGatedThroughRecordShares =
       sharingMode === RecordSharingMode.PRIVATE ||
       sharingMode === RecordSharingMode.INHERITED;
@@ -617,10 +614,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }): Promise<void> {
     const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
-    const { sharingMode, isRecordSharingEnabled } =
-      this.resolveRecordSharing(queryRunnerContext);
+    const objectSharing = resolveObjectSharing(queryRunnerContext);
     const shareWithToWrite = resolveShareWithToWrite({
-      sharingMode,
+      sharingMode: objectSharing.sharingMode,
       shareWith,
     });
 
@@ -639,32 +635,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     await this.shareWithService.insertRecordSharesForCreatedRecords({
       authContext,
       flatObjectMetadata,
-      sharingMode,
-      isRecordSharingEnabled,
+      objectSharing,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
       shareWith: shareWithToWrite,
       transactionScope,
     });
-  }
-
-  private resolveRecordSharing({
-    flatObjectMetadata,
-    featureFlagsMap,
-  }: CommonExtendedQueryRunnerContext): {
-    sharingMode: RecordSharingMode;
-    isRecordSharingEnabled: boolean;
-  } {
-    const isRecordSharingEnabled =
-      featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
-
-    return {
-      sharingMode: resolveRecordSharingMode({
-        flatObjectMetadata,
-        isRecordSharingEnabled,
-      }),
-      isRecordSharingEnabled,
-    };
   }
 
   private resolveNestedRelationsForCreate({
@@ -828,5 +804,28 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     }
 
     return recordWithoutCreatedByUpdate;
+  }
+
+  protected override computeQueryComplexityV2(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonExtendedInput<CreateManyQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): number {
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
+
+    return (
+      args.data.length *
+      computeMaxFieldCountPerRecord({
+        selectedFieldsResult,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        recordLimitPerOneToManyRelation: args.upsert ? QUERY_MAX_RECORDS : 0,
+      })
+    );
   }
 }

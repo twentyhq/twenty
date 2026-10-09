@@ -65,7 +65,7 @@ export const EmailField = () => {
 
 ## Add an adornment
 
-`InputGroup` owns the surrounding border and sizes its input. The default size is `md`; use `sm` for a compact field. Set `size` on the group: a grouped input stretches to the group's height, so its own `size` has no visible effect.
+`InputGroup` owns the surrounding border and layout height. Input size resolves from the explicit child `size`, then the group default, then `md`. The grouped input stretches within the shared border, so use the group's `size` to change the overall field height.
 
 ```tsx
 import { IconSearch } from 'twenty-ui/icon';
@@ -78,8 +78,16 @@ export const CompactSearch = () => (
 );
 ```
 
+## Native control and wrapper customization
+
+Native attributes, handlers, `className`, `style`, and `ref` target the input. The ref receives an `HTMLInputElement`. Use `render` to compose another input component and forward the supplied props and ref to its native input.
+
+`onChange` receives a React change event for the native input. `onValueChange(value, details)` receives the next string and Base UI event details, including `event`, `reason`, `cancel`, and `allowPropagation`. The event targets the input. Canceling the details preserves Base UI's validation policy; it does not undo a native edit. Controlled callers decide which value to commit.
+
+Put layout styles, attributes, and refs on `InputGroup` when customizing the surrounding wrapper. The group owns no value. Native `name`, `form`, `required`, `readOnly`, `disabled`, submission, and reset behavior remain on the input, with Field naming and validation supplied through `Field.Root`.
+
 ## Props
 
-The reference includes component-specific and inherited Base UI props. Native input attributes are also accepted. A standalone input defaults to `md`; inside a group, the group's `size` applies.
+The reference includes component-specific and inherited Base UI props. Native input attributes are also accepted. A standalone input defaults to `md`; inside a group, an omitted input `size` inherits the group's size.
 
 <InputReference />

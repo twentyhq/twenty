@@ -7,7 +7,7 @@ import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
+import { AVAILABLE_TIMEZONE_OPTIONS } from '@/localization/constants/AvailableTimezoneOptions';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -131,7 +131,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
         />
         {isDefined(missingScopes) && (
           <Callout
-            variant={'error'}
+            status={'error'}
             title={t`Missing calendar permission.`}
             description={
               hasConnectedAccountsPermission
@@ -139,9 +139,12 @@ export const WorkflowEditActionCreateCalendarEvent = ({
                 : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
             }
             action={
-              hasConnectedAccountsPermission
-                ? { label: t`Reauthorize`, onClick: handleReauthorize }
-                : undefined
+              hasConnectedAccountsPermission ? (
+                <Callout.Action
+                  type="button"
+                  onClick={handleReauthorize}
+                >{t`Reauthorize`}</Callout.Action>
+              ) : undefined
             }
           />
         )}
@@ -188,9 +191,11 @@ export const WorkflowEditActionCreateCalendarEvent = ({
         />
         <FormSelectFieldInput
           label={t`Time zone`}
+          hint={t`UTC is used when no time zone is selected`}
           defaultValue={formData.timeZone}
           options={AVAILABLE_TIMEZONE_OPTIONS as SelectOption<string>[]}
           onChange={(value) => handleFieldChange('timeZone', value ?? '')}
+          isNullable
           readonly={actionOptions.readonly}
           VariablePicker={WorkflowVariablePicker}
         />

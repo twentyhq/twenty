@@ -25,4 +25,13 @@ export const buildAgentChatThreadStandardFlatIndexMetadatas = (
       indexWhereClause: null,
     },
   }),
+  assigneeIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: 'assigneeIndex',
+      relatedFieldNames: ['assignee'],
+      isUnique: false,
+      indexWhereClause: null,
+    },
+  }),
 });

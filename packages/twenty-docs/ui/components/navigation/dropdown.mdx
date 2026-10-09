@@ -14,6 +14,8 @@ import DropdownReference from '/snippets/ui/generated/components/navigation/drop
   height={380}
 />
 
+Dropdown.Content accepts numeric offsets or functions for `sideOffset` and `alignOffset`. Offset functions receive the anchor and popup dimensions, side, and alignment. Use them to preserve an anchored field picker’s overlap when the cell is scaled.
+
 ## Choose an interaction type
 
 Set `type` on `Dropdown.Root` to match the popup's contents.
@@ -67,6 +69,12 @@ export const RecordActions = ({ onDuplicate }: { onDuplicate: () => void }) => (
 ```
 
 Pass custom trigger elements through `render` so the trigger remains one interactive element. Custom components must forward the supplied props and ref. `ActionItem` also accepts `render` for links.
+
+## Item actions
+
+`ActionItem` and `OptionItem` accept `actions` for trailing controls, such as a tab's edit button. Use them in `picker` and `panel` pages only: a `menu` may only contain menu items, so it cannot hold other controls. Set `actionsVisibility="always"` to keep them visible; the default is `"hover"`. Secondary controls render beside the primary row control and activate independently: they do not close the popup, so close it from the action's handler when needed. The `render` prop and ref still apply to the primary control, so it can also serve as a drag handle.
+
+Use `tabIndex={-1}` for a pointer-only secondary action that has a separate keyboard alternative. Keyboard navigation continues to focus and activate the primary control.
 
 ## Headers
 
@@ -271,7 +279,7 @@ Escape dismisses the popup and restores focus to its trigger. Outside interactio
 
 ## Dismissal
 
-Escape, a press outside the popup and Tab out of it close the dropdown. Pass `onEscapeKeyDown` or `onInteractOutside` to `Root` to react before it closes, and call `event.preventDefault()` to keep it open. `event.target` is the element pressed outside, or `null` when focus leaves with Tab. A prevented outside press still reaches the element it lands on.
+Escape, a press outside the popup and Tab out of it close the dropdown. Pass `onEscapeKeyDown` or `onInteractOutside` to `Root` to react before it closes, and call `event.preventDefault()` to keep it open. `event.target` is the element pressed outside, or `null` when focus leaves with Tab, and `event.type` is the type of the DOM event that triggered it, such as `touchmove` for a swipe outside the popup. A prevented outside press still reaches the element it lands on.
 
 ```tsx
 import { Dropdown } from 'twenty-ui/components/navigation';

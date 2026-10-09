@@ -1,5 +1,5 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
@@ -10,7 +10,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { IconCheck, IconX } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { AggregateOperations } from '~/generated-metadata/graphql';
 
 export const ChartRatioOptionBooleanSelectableListItem = ({
@@ -22,7 +22,7 @@ export const ChartRatioOptionBooleanSelectableListItem = ({
   label: string;
   currentFieldMetadataId: string;
 }) => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
@@ -63,7 +63,7 @@ export const ChartRatioOptionBooleanSelectableListItem = ({
 
   return (
     <SelectableListItem itemId={optionValue} onEnter={handleClick}>
-      <ListItem
+      <ListItemButton
         focused={isFocused}
         onClick={handleClick}
         role="option"
@@ -75,7 +75,7 @@ export const ChartRatioOptionBooleanSelectableListItem = ({
         }
       >
         {label}
-      </ListItem>
+      </ListItemButton>
     </SelectableListItem>
   );
 };

@@ -63,9 +63,7 @@ export const SelectMeAndResetSearch: Story = {
     });
     const dropdown = within(dialog);
     const me = await dropdown.findByRole('button', { name: 'Me' });
-    await waitFor(() =>
-      expect(me).not.toHaveAttribute('aria-disabled', 'true'),
-    );
+    await waitFor(() => expect(me).not.toBeDisabled());
     await userEvent.click(me);
     await waitFor(() => expect(me).toHaveAttribute('aria-pressed', 'true'));
     expect(args.onChange).toHaveBeenCalledWith(
@@ -150,7 +148,7 @@ export const LoadingPreventsSelection: Story = {
     );
     expect(await dropdown.findByText('Loading...')).toBeVisible();
     const me = dropdown.getByRole('button', { name: 'Me' });
-    expect(me).toHaveAttribute('aria-disabled', 'true');
+    expect(me).toBeDisabled();
     await userEvent.click(me);
     expect(args.onChange).not.toHaveBeenCalled();
     await userEvent.keyboard('{Escape}');

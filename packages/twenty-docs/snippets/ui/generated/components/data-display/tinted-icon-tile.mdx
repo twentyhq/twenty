@@ -11,18 +11,22 @@
  *   npx nx generate:ui twenty-docs
  */}
 
+<ParamField body="className" type="string">
+  CSS class applied to the tile root.
+</ParamField>
+
 <ParamField body="color" type="string | null" default="gray">
-  Theme palette name used to derive the background and icon shades. Invalid names use the default theme color.
+  Theme palette name used to derive the background and foreground shades. Invalid names use the default theme color.
 </ParamField>
 
-<ParamField body="Icon" type="IconComponent" required>
-  Icon component rendered inside the tinted tile.
+<ParamField body="icon" type="ReactNode" required>
+  Decorative icon content. The caller controls its dimensions and stroke.
 </ParamField>
 
-<ParamField body="size" type="number">
-  Icon and tile dimension in pixels. When omitted, the icon uses the medium theme size.
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Replaces the div root while preserving icon content and native props.
 </ParamField>
 
-<ParamField body="stroke" type="number">
-  Icon stroke width. Defaults to the medium theme stroke.
+<ParamField body="style" type="CSSProperties">
+  Inline styles override tile geometry and palette defaults.
 </ParamField>

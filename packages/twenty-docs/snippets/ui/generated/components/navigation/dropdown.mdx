@@ -30,7 +30,7 @@
 </ParamField>
 
 <ParamField body="Root.onInteractOutside" type="((event: DropdownDismissEvent) =&gt; void)">
-  Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open.
+  Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab, and `event.type` is the type of the DOM event that triggered it. Call `event.preventDefault()` to keep it open.
 </ParamField>
 
 <ParamField body="Root.onOpenChange" type="((open: boolean) =&gt; void)">
@@ -95,15 +95,16 @@
 ### Dropdown.Content
 
 <ParamField body="Content.align" type="&quot;center&quot; | &quot;end&quot; | &quot;start&quot;" default="start">
-  Alignment of the popup along the anchor.
+  Alignment along the anchor. Defaults to start.
 </ParamField>
 
-<ParamField body="Content.alignOffset" type="number">
-  Offset in pixels along the alignment axis.
+<ParamField body="Content.alignOffset" type="number | OffsetFunction" default="0">
+  Offset along the alignment axis. Accepts a number or positioning function.
 </ParamField>
 
 <ParamField body="Content.anchor" type="Element | VirtualElement | RefObject&lt;Element | null&gt; | (() =&gt; Element | VirtualElement | null) | null">
-  Element or position the popup is anchored to. Defaults to the trigger.
+  An element to position the popup against.
+  By default, the popup will be positioned against the trigger.
 </ParamField>
 
 <ParamField body="Content.className" type="string | ((state: PopoverPopupState) =&gt; string | undefined)">
@@ -111,14 +112,12 @@
   returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Content.collisionPadding" type="Padding">
-  Space in pixels kept between the popup and the edges of its collision
-  boundary, for all sides or per side. Defaults to 5.
+<ParamField body="Content.collisionPadding" type="Padding" default="5">
+  Additional space to maintain from the edge of the collision boundary.
 </ParamField>
 
 <ParamField body="Content.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
-  Element the popup is portaled into. Defaults to the theme's portal
-  container.
+  Portal destination, using the scoped theme when omitted. Explicit null waits for a target, matching Popover.Portal.
 </ParamField>
 
 <ParamField body="Content.finalFocus" type="boolean | RefObject&lt;HTMLElement | null&gt; | ((closeType: InteractionType) =&gt; boolean | void | HTMLElement | null)">
@@ -143,8 +142,8 @@
     Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing.
 </ParamField>
 
-<ParamField body="Content.keepMounted" type="boolean">
-  Keeps the popup mounted in the DOM while the popover is closed.
+<ParamField body="Content.keepMounted" type="boolean" default="false">
+  Keeps the popup mounted while closed.
 </ParamField>
 
 <ParamField body="Content.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverPopupState&gt;">
@@ -154,12 +153,12 @@
   Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Content.side" type="&quot;bottom&quot; | &quot;inline-end&quot; | &quot;inline-start&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;">
-  Side of the anchor the popup is placed on.
+<ParamField body="Content.side" type="&quot;bottom&quot; | &quot;inline-end&quot; | &quot;inline-start&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;" default="bottom">
+  Preferred side of the anchor. Defaults to bottom, or inline-end in a submenu.
 </ParamField>
 
-<ParamField body="Content.sideOffset" type="number" default="0">
-  Distance in pixels between the anchor and the popup.
+<ParamField body="Content.sideOffset" type="number | OffsetFunction" default="0">
+  Distance from the anchor. Defaults to 0. Accepts a number or positioning function.
 </ParamField>
 
 <ParamField body="Content.style" type="CSSProperties | ((state: PopoverPopupState) =&gt; CSSProperties | undefined)">
@@ -172,6 +171,14 @@
 </ParamField>
 
 ### Dropdown.ActionItem
+
+<ParamField body="ActionItem.actions" type="ReactNode">
+  Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.
+</ParamField>
+
+<ParamField body="ActionItem.actionsVisibility" type="&quot;always&quot; | &quot;hover&quot;">
+  Whether trailing actions appear on hover or remain visible. Defaults to `hover`.
+</ParamField>
 
 <ParamField body="ActionItem.className" type="string">
   CSS class applied to the row.
@@ -238,6 +245,14 @@
 </ParamField>
 
 ### Dropdown.OptionItem
+
+<ParamField body="OptionItem.actions" type="ReactNode">
+  Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.
+</ParamField>
+
+<ParamField body="OptionItem.actionsVisibility" type="&quot;always&quot; | &quot;hover&quot;">
+  Whether trailing actions appear on hover or remain visible. Defaults to `hover`.
+</ParamField>
 
 <ParamField body="OptionItem.className" type="string">
   CSS class applied to the row.

@@ -62,11 +62,27 @@ describe('SidePanelFrontComponentPage', () => {
   it.each([
     {
       description: 'the record and its object',
-      recordContext: { objectNameSingular: 'company', recordId: 'record-id' },
+      recordContext: {
+        objectNameSingular: 'company',
+        selectedRecordIds: ['record-id'],
+      },
       expectedContent: 'front-component-id:company:record-id',
     },
     {
-      description: 'the object when no single record is selected',
+      description: 'every selected record and its object',
+      recordContext: {
+        objectNameSingular: 'company',
+        selectedRecordIds: ['record-1', 'record-2'],
+      },
+      expectedContent: 'front-component-id:company:record-1,record-2',
+    },
+    {
+      description: 'selected records without an object name',
+      recordContext: { selectedRecordIds: ['record-1', 'record-2'] },
+      expectedContent: 'front-component-id:no object:record-1,record-2',
+    },
+    {
+      description: 'the object when no record is selected',
       recordContext: { objectNameSingular: 'company' },
       expectedContent: 'front-component-id:company:no records',
     },

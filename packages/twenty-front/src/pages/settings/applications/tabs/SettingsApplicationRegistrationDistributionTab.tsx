@@ -61,7 +61,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
         {isTarballSource && (
           <CommandBlock
             commands={publishCommands}
-            button={
+            actions={
               <Button
                 onClick={() => {
                   copyToClipboard(

@@ -23,6 +23,7 @@ import {
   OpenRecordIn,
   SidePanelPages,
   type EnqueueSnackbarParams,
+  type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -43,6 +44,7 @@ import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFron
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -122,6 +124,7 @@ export const useFrontComponentExecutionContext = ({
   applicationId,
   commandMenuItemId,
   selectedRecordIds,
+  selectedRecordsFilter,
   objectNameSingular,
   timelineActivityId,
   toolCall,
@@ -131,6 +134,7 @@ export const useFrontComponentExecutionContext = ({
   applicationId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  selectedRecordsFilter?: RecordGqlOperationFilter | null;
   objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
@@ -349,12 +353,17 @@ export const useFrontComponentExecutionContext = ({
       }
 
       if (params.page === SidePanelPages.ViewFrontComponent) {
-        const recordContext = isDefined(params.objectNameSingular)
-          ? {
-              objectNameSingular: params.objectNameSingular,
-              recordId: params.recordId,
-            }
-          : undefined;
+        const recordContext =
+          isDefined(params.objectNameSingular) ||
+          isDefined(params.selectedRecordIds) ||
+          isDefined(params.recordId)
+            ? {
+                objectNameSingular: params.objectNameSingular,
+                selectedRecordIds:
+                  params.selectedRecordIds ??
+                  (isDefined(params.recordId) ? [params.recordId] : undefined),
+              }
+            : undefined;
 
         openFrontComponentInSidePanel({
           frontComponentId: params.frontComponentId,
@@ -385,6 +394,13 @@ export const useFrontComponentExecutionContext = ({
         }
 
         return;
+      }
+
+      if (isPageLayoutSidePanelPage(params.page)) {
+        throw new CustomError(
+          `${params.page} edits the page layout it was opened from and cannot be opened by a front component`,
+          'FRONT_COMPONENT_PAGE_LAYOUT_SIDE_PANEL_PAGE_UNSUPPORTED',
+        );
       }
 
       navigateSidePanel({
@@ -436,6 +452,7 @@ export const useFrontComponentExecutionContext = ({
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    selectedRecordsFilter: selectedRecordsFilter ?? null,
     selectedObjectMetadata: isDefined(selectedObjectMetadataItem)
       ? {
           id: selectedObjectMetadataItem.id,

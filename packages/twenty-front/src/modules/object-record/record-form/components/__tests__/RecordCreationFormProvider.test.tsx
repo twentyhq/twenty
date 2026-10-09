@@ -6,6 +6,7 @@ import {
   sidePanelNavigationStackState,
   type SidePanelNavigationStackItem,
 } from '@/side-panel/states/sidePanelNavigationStackState';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -19,10 +20,6 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
     navigateSidePanelMenu: mockNavigateSidePanelMenu,
     closeSidePanelMenu: mockCloseSidePanelMenu,
   }),
-}));
-jest.mock('twenty-ui/components/feedback', () => ({
-  ...jest.requireActual('twenty-ui/components/feedback'),
-  useToast: () => ({ enqueueToast: jest.fn() }),
 }));
 
 const setup = () => {
@@ -62,7 +59,7 @@ it('removes the form from deeper in the history when the user moved on before cr
     });
   });
   const [formPage] = store.get(sidePanelNavigationStackState.atom);
-  let submission: Promise<void> | undefined;
+  let submission: Promise<unknown> | undefined;
   act(() => {
     submission = result.current.settleRecordCreationDraft({
       requestId: formPage.pageId,
@@ -88,4 +85,43 @@ it('removes the form from deeper in the history when the user moved on before cr
 
   expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
   expect(store.get(sidePanelNavigationStackState.atom)).toEqual([otherPage]);
+});
+
+it('resolves with the error the server rejected the draft with and keeps the form open', async () => {
+  const { result, store } = setup();
+  const rejection = new CombinedGraphQLErrors({
+    data: null,
+    errors: [
+      {
+        message: 'A company needs an amount',
+        extensions: {
+          subCode: 'VALIDATION_RULE_VIOLATION',
+          validationRuleViolations: [
+            { ruleId: 'amount-rule', fieldMetadataId: 'field-amount' },
+          ],
+        },
+      },
+    ],
+  });
+  const createRecord = jest.fn(() => Promise.reject(rejection));
+  act(() => {
+    void result.current.requestRecordCreation({
+      objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
+      createRecord,
+    });
+  });
+  const [formPage] = store.get(sidePanelNavigationStackState.atom);
+
+  let settlement: unknown;
+  await act(async () => {
+    settlement = await result.current.settleRecordCreationDraft({
+      requestId: formPage.pageId,
+      draftRecord: { name: 'Test' },
+    });
+  });
+
+  expect(createRecord).toHaveBeenCalledTimes(1);
+  expect(createRecord).toHaveBeenCalledWith({ name: 'Test' });
+  expect(settlement).toEqual({ error: rejection });
+  expect(store.get(sidePanelNavigationStackState.atom)).toEqual([formPage]);
 });

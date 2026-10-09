@@ -14,6 +14,7 @@ import { t } from '@lingui/core/macro';
 import { MainButton } from 'twenty-ui/components/input';
 import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -95,14 +96,14 @@ export const EmailVerificationSent = ({
     const gmailUrl = email
       ? `https://mail.google.com/mail/u/${email}/`
       : 'https://mail.google.com/';
-    window.open(gmailUrl, '_blank');
+    openUrlInNewTab(gmailUrl);
   };
 
   const handleOpenOutlook = () => {
     const outlookUrl = email
       ? `https://outlook.live.com/mail/${email}/`
       : 'https://outlook.live.com/';
-    window.open(outlookUrl, '_blank');
+    openUrlInNewTab(outlookUrl);
   };
 
   const handleChangeEmail = () => {

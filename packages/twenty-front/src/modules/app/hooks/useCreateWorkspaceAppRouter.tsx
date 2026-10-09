@@ -17,8 +17,8 @@ import { OnboardingStepPageLoader } from '@/onboarding/components/OnboardingStep
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
-import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
+import { DefaultLayout } from '@/app/components/DefaultLayout';
+import { MainAppLayoutWithSidePanel } from '@/app/components/MainAppLayoutWithSidePanel';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
@@ -58,12 +58,6 @@ const SyncEmails = lazyWithPreload(() =>
   })),
 );
 
-const InstallApps = lazyWithPreload(() =>
-  import('~/pages/onboarding/InstallApps').then((module) => ({
-    default: module.InstallApps,
-  })),
-);
-
 const InviteTeam = lazyWithPreload(() =>
   import('~/pages/onboarding/InviteTeam').then((module) => ({
     default: module.InviteTeam,
@@ -92,7 +86,6 @@ const preloadOnboardingPages = () => {
   WorkspaceActivation.preload();
   CreateProfile.preload();
   SyncEmails.preload();
-  InstallApps.preload();
   InviteTeam.preload();
   BookCall.preload();
   ChooseYourPlan.preload();
@@ -217,14 +210,6 @@ const createWorkspaceAppRouter = ({
                       element: (
                         <LazyRoute fallback={<OnboardingStepPageLoader />}>
                           <SyncEmails />
-                        </LazyRoute>
-                      ),
-                    },
-                    {
-                      path: AppPath.InstallApps,
-                      element: (
-                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                          <InstallApps />
                         </LazyRoute>
                       ),
                     },

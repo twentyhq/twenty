@@ -3,6 +3,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { Button } from '@ui/primitives/input/Button/Button';
+
 import { ComponentDecorator } from '@ui/testing';
 
 import { Dropdown } from '../Dropdown';
@@ -11,6 +13,8 @@ import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 const PEOPLE = ['Ada Lovelace', 'Grace Hopper', 'Margaret Hamilton'];
 
 const onCreatePerson = fn();
+const onEditItem = fn();
+const onItemRef = fn<(element: HTMLElement | null) => void>();
 const onSelectPerson = fn();
 const onSelectOption = fn();
 const onSelectDisabledOption = fn();
@@ -114,6 +118,8 @@ const meta: Meta = {
   beforeEach: () => {
     for (const spy of [
       onCreatePerson,
+      onEditItem,
+      onItemRef,
       onSelectPerson,
       onSelectOption,
       onSelectDisabledOption,
@@ -538,6 +544,62 @@ export const LinkOptionsMarkCurrent: Story = {
   },
 };
 
+export const DisabledLinkOption: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Workspaces</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Switch workspace">
+        <Dropdown.OptionItem
+          ref={onItemRef}
+          disabled
+          selected={false}
+          render={
+            <a
+              href="#unavailable-workspace"
+              aria-label="Unavailable workspace"
+            />
+          }
+          onSelect={onSelectDisabledOption}
+        >
+          Unavailable workspace
+        </Dropdown.OptionItem>
+        <Dropdown.OptionItem selected={false}>
+          Current workspace
+        </Dropdown.OptionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const document = canvasElement.ownerDocument;
+    const body = within(document.body);
+    const initialLocation = document.URL;
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Workspaces' }),
+    );
+    const link = await body.findByRole('link', {
+      name: 'Unavailable workspace',
+    });
+    const currentWorkspace = body.getByRole('button', {
+      name: 'Current workspace',
+    });
+
+    await expect(link).toHaveAttribute('aria-disabled', 'true');
+    await expect(link).not.toHaveAttribute('disabled');
+    await expect(link).toHaveAttribute('tabindex', '-1');
+    await expect(onItemRef).toHaveBeenCalledWith(link);
+    await waitFor(() => expect(currentWorkspace).toHaveFocus());
+    await userEvent.click(link);
+    await expect(onSelectDisabledOption).not.toHaveBeenCalled();
+    await expect(document.URL).toBe(initialLocation);
+    await expect(body.getByRole('dialog')).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
 export const LoadingStatus: Story = {
   render: () => (
     <Dropdown.Root type="picker">
@@ -560,6 +622,183 @@ export const LoadingStatus: Story = {
     );
     expect(await body.findByRole('status')).toHaveTextContent('Loading people');
     await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const OptionWithTrailingAction: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Tabs</Dropdown.Trigger>
+      <Dropdown.Content>
+        <Dropdown.OptionItem
+          ref={onItemRef}
+          render={<div />}
+          role="button"
+          data-dnd-sortable-handle
+          selected
+          aria-label="Overview"
+          onSelect={onSelectOption}
+          actionsVisibility="always"
+          actions={
+            <Button
+              size="sm"
+              tabIndex={-1}
+              onClick={(event) => {
+                event.stopPropagation();
+                onEditItem();
+              }}
+            >
+              Edit overview
+            </Button>
+          }
+        >
+          Overview
+        </Dropdown.OptionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Tabs' }),
+    );
+    const option = await body.findByRole('button', {
+      name: 'Overview',
+    });
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
+    const action = body.getByRole('button', { name: 'Edit overview' });
+
+    expect(option.tagName).toBe('DIV');
+    expect(option).toHaveAttribute('aria-pressed', 'true');
+    expect(option).not.toHaveAttribute('aria-current');
+    expect(option).toHaveAttribute('data-dnd-sortable-handle');
+    expect(onItemRef).toHaveBeenCalledWith(option);
+    expect(option.contains(action)).toBe(false);
+    expect(action.closest('[data-dropdown-item]')).toBeNull();
+    expect(option).toHaveAttribute('data-actions-visibility', 'always');
+    expect(action).toHaveAttribute('tabindex', '-1');
+    await userEvent.click(action);
+    expect(onEditItem).toHaveBeenCalledOnce();
+    expect(onSelectOption).not.toHaveBeenCalled();
+    expect(body.getByRole('dialog')).toBeVisible();
+    option.focus();
+    await userEvent.keyboard('{Enter}');
+    expect(onSelectOption).toHaveBeenCalledOnce();
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const DisabledOptionsLeaveTabOrder: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Tabs</Dropdown.Trigger>
+      <Dropdown.Content>
+        <Dropdown.OptionItem render={<div />} role="button" selected={false}>
+          Overview
+        </Dropdown.OptionItem>
+        <Dropdown.OptionItem
+          render={<div />}
+          role="button"
+          selected={false}
+          disabled
+        >
+          Archive
+        </Dropdown.OptionItem>
+        <Dropdown.OptionItem
+          render={<div />}
+          role="button"
+          selected={false}
+          disabled
+          actionsVisibility="always"
+          actions={
+            <Button size="sm" tabIndex={-1}>
+              Edit timeline
+            </Button>
+          }
+        >
+          Timeline
+        </Dropdown.OptionItem>
+        <Dropdown.OptionItem render={<div />} role="button" selected={false}>
+          Notes
+        </Dropdown.OptionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Tabs' }),
+    );
+    const overview = await body.findByRole('button', { name: 'Overview' });
+
+    await waitFor(() => expect(overview).toHaveFocus());
+    expect(body.getByRole('button', { name: 'Archive' })).toHaveAttribute(
+      'tabindex',
+      '-1',
+    );
+    expect(body.getByRole('button', { name: 'Timeline' })).toHaveAttribute(
+      'tabindex',
+      '-1',
+    );
+    await userEvent.tab();
+    expect(body.getByRole('button', { name: 'Notes' })).toHaveFocus();
+  },
+};
+
+export const CommandWithTrailingAction: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Views</Dropdown.Trigger>
+      <Dropdown.Content>
+        <Dropdown.ActionItem
+          aria-label="Open overview"
+          onClick={onSelectOption}
+          actions={
+            <Button
+              size="sm"
+              tabIndex={-1}
+              onClick={(event) => {
+                event.stopPropagation();
+                onEditItem();
+              }}
+            >
+              Edit view
+            </Button>
+          }
+        >
+          Open overview
+        </Dropdown.ActionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Views' }),
+    );
+    const item = await body.findByRole('button', { name: 'Open overview' });
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
+
+    const action = body.getByRole('button', { name: 'Edit view' });
+
+    expect(item.tagName).toBe('BUTTON');
+    expect(item.contains(action)).toBe(false);
+    expect(action.closest('[data-dropdown-item]')).toBeNull();
+    await userEvent.click(action);
+    expect(onEditItem).toHaveBeenCalledOnce();
+    expect(onSelectOption).not.toHaveBeenCalled();
+    expect(body.getByRole('dialog')).toBeVisible();
+    item.focus();
+    await userEvent.keyboard(' ');
+    expect(onSelectOption).toHaveBeenCalledOnce();
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );

@@ -1,37 +1,40 @@
-import {
-  MultiItemBaseInput,
-  type MultiItemBaseInputProps,
-} from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { type MultiItemBaseInputProps } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemBaseInputProps';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
 import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-types/input/utils/sanitizeAndValidateInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
+import { OverlayMenuListSearchRow } from '@/ui/layout/overlay/components/OverlayMenuListSearchRow';
+import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { normalizeSearchText } from 'twenty-ui/utilities';
+
+const StyledAddItemContainer = styled.div`
+  padding: ${themeCssVariables.spacing[1]};
+`;
 
 type MultiItemFieldInputProps<T> = {
   items: T[];
@@ -311,80 +314,93 @@ export const MultiItemFieldInput = <T,>({
     dependencies: [handleEscape],
   });
 
+  const shouldShowItems =
+    isNonEmptyArray(filteredItems) &&
+    (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed);
+
   return (
-    <LegacyDropdownContent ref={containerRef}>
-      {shouldShowSearch && !isInputDisplayed && (
-        <>
-          <DropdownMenuSearchInput
-            value={searchFilter}
-            onChange={(event) =>
-              setSearchFilter(
-                turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
-              )
-            }
-            autoFocus
-          />
-          <DropdownMenuSeparator />
-        </>
-      )}
-      {!!filteredItems.length &&
-        (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed) && (
+    <OverlayMenuList
+      ref={containerRef}
+      header={
+        shouldShowSearch && !isInputDisplayed ? (
           <>
-            <DropdownMenuItemsContainer hasMaxHeight>
-              {filteredItems.map((item) => {
-                const originalIndex = items.indexOf(item);
-                return renderItem({
-                  value: item,
-                  index: originalIndex,
-                  handleEdit: () => handleEditButtonClick(originalIndex),
-                  handleSetPrimary: () => handleSetPrimaryItem(originalIndex),
-                  handleDelete: () => {
-                    handleDeleteItem(originalIndex);
-                  },
-                });
-              })}
-            </DropdownMenuItemsContainer>
-            {isInputDisplayed || !isLimitReached ? (
-              <DropdownMenuSeparator />
-            ) : null}
-          </>
-        )}
-      {isInputDisplayed ? (
-        <MultiItemBaseInput
-          instanceId={instanceId}
-          autoFocus={!shouldShowSearch}
-          placeholder={placeholder}
-          value={inputValue}
-          hasError={!errorData.isValid}
-          renderInput={renderInput}
-          onEscape={handleEscape}
-          onChange={(value) => {
-            value
-              ? handleInputChange(turnIntoEmptyStringIfWhitespacesOnly(value))
-              : handleInputChange('');
-          }}
-          onEnter={handleEnter}
-          hasItem={!!items.length}
-          rightComponent={
-            items.length ? (
-              <LightIconButton
-                onClick={handleEnter}
-                aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
-              >
-                {isAddingNewItem ? <IconPlus /> : <IconCheck />}
-              </LightIconButton>
-            ) : null
-          }
-        />
-      ) : !isLimitReached ? (
-        <DropdownMenuItemsContainer>
-          <ListItem onClick={handleAddButtonClick} startIcon={<IconPlus />}>
-            <OverflowingTextWithTooltip
-              text={newItemLabel || `Add ${placeholder}`}
+            <OverlayMenuListSearchRow
+              value={searchFilter}
+              onChange={(event) =>
+                setSearchFilter(
+                  turnIntoEmptyStringIfWhitespacesOnly(
+                    event.currentTarget.value,
+                  ),
+                )
+              }
             />
-          </ListItem>
-        </DropdownMenuItemsContainer>
-      ) : null}
-    </LegacyDropdownContent>
+            <OverlayMenuListSeparator />
+          </>
+        ) : undefined
+      }
+      footer={
+        <>
+          {shouldShowItems && (isInputDisplayed || !isLimitReached) && (
+            <OverlayMenuListSeparator />
+          )}
+          {isInputDisplayed ? (
+            <MultiItemBaseInput
+              instanceId={instanceId}
+              autoFocus={!shouldShowSearch}
+              placeholder={placeholder}
+              value={inputValue}
+              hasError={!errorData.isValid}
+              renderInput={renderInput}
+              onEscape={handleEscape}
+              onChange={(value) => {
+                value
+                  ? handleInputChange(
+                      turnIntoEmptyStringIfWhitespacesOnly(value),
+                    )
+                  : handleInputChange('');
+              }}
+              onEnter={handleEnter}
+              preventTabNavigation
+              hasItem={isNonEmptyArray(items)}
+              rightComponent={
+                isNonEmptyArray(items) ? (
+                  <LightIconButton
+                    onClick={handleEnter}
+                    aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
+                  >
+                    {isAddingNewItem ? <IconPlus /> : <IconCheck />}
+                  </LightIconButton>
+                ) : null
+              }
+            />
+          ) : !isLimitReached ? (
+            <StyledAddItemContainer>
+              <ListItemButton
+                onClick={handleAddButtonClick}
+                startIcon={<IconPlus />}
+              >
+                <OverflowingTextWithTooltip
+                  text={newItemLabel || `Add ${placeholder}`}
+                />
+              </ListItemButton>
+            </StyledAddItemContainer>
+          ) : null}
+        </>
+      }
+    >
+      {shouldShowItems
+        ? filteredItems.map((item) => {
+            const originalIndex = items.indexOf(item);
+
+            return renderItem({
+              value: item,
+              index: originalIndex,
+              handleEdit: () => handleEditButtonClick(originalIndex),
+              handleSetPrimary: () => handleSetPrimaryItem(originalIndex),
+              handleDelete: () => handleDeleteItem(originalIndex),
+            });
+          })
+        : undefined}
+    </OverlayMenuList>
   );
 };

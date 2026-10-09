@@ -11,7 +11,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
+import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 
 const StyledSearchInputContainer = styled.div`
@@ -108,7 +108,7 @@ export const SettingsApplicationsAvailableTab = () => {
               >
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconSparkles />}
+                    startElement={<IconSparkles />}
                     onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
                     checked={showVettedOnly}
                   >{t`Vetted only`}</SettingsRow>
@@ -146,10 +146,7 @@ export const SettingsApplicationsAvailableTab = () => {
 
           {!showVettedOnly && nonVettedApplications.length > 0 && (
             <StyledNotVettedContainer>
-              <InlineBanner
-                color={'danger'}
-                message={t`Applications below are not vetted. Use at your own risk.`}
-              />
+              <InlineBanner status="warning">{t`Applications below are not vetted. Use at your own risk.`}</InlineBanner>
               <StyledCardsGrid>
                 {nonVettedApplications.map((application) => (
                   <SettingsAvailableApplicationCard

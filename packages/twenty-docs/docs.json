@@ -416,6 +416,7 @@
                       "developers/extend/apps/getting-started/project-structure",
                       "developers/extend/apps/getting-started/local-server",
                       "developers/extend/apps/getting-started/scaffolding",
+                      "developers/extend/apps/getting-started/good-practices",
                       "developers/extend/apps/getting-started/troubleshooting"
                     ]
                   },
@@ -537,7 +538,7 @@
                       {
                         "group": "Accessibility",
                         "pages": [
-                          "ui/primitives/accessibility/visibility-hidden"
+                          "ui/primitives/accessibility/visually-hidden"
                         ]
                       },
                       {
@@ -557,7 +558,8 @@
                           "ui/primitives/feedback/banner",
                           "ui/primitives/feedback/loader",
                           "ui/primitives/feedback/progress-bar",
-                          "ui/primitives/feedback/progress-ring"
+                          "ui/primitives/feedback/progress-ring",
+                          "ui/primitives/feedback/skeleton"
                         ]
                       },
                       {
@@ -583,9 +585,9 @@
                         "group": "Layout",
                         "pages": [
                           "ui/primitives/layout/collapsible",
-                          "ui/primitives/layout/horizontal-separator",
+                          "ui/primitives/layout/separator",
                           "ui/primitives/layout/resize-handle",
-                          "ui/primitives/layout/text-direction-provider"
+                          "ui/primitives/layout/direction-provider"
                         ]
                       },
                       {
@@ -666,6 +668,7 @@
                       {
                         "group": "Navigation",
                         "pages": [
+                          "ui/components/navigation/list-item-button",
                           "ui/components/navigation/dropdown",
                           "ui/components/navigation/menu-items",
                           "ui/components/navigation/menu-picker",
@@ -6972,6 +6975,10 @@
     {
       "source": "/zh/developers/extend/apps/translations/overview",
       "destination": "/zh/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/developers/extend/apps/logic/good-practices",
+      "destination": "/developers/extend/apps/getting-started/good-practices"
     },
     {
       "source": "/developers/extend/capabilities/api",
