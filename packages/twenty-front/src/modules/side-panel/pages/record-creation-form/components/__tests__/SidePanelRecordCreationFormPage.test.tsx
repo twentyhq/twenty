@@ -87,7 +87,11 @@ const buildValidationRuleViolationError = (fieldMetadataId: string) =>
         extensions: {
           subCode: 'VALIDATION_RULE_VIOLATION',
           validationRuleViolations: [
-            { ruleId: 'nickname-rule', fieldMetadataId },
+            {
+              ruleId: 'nickname-rule',
+              message: 'A company needs a nickname',
+              fieldMetadataId,
+            },
           ],
         },
       },
@@ -96,6 +100,12 @@ const buildValidationRuleViolationError = (fieldMetadataId: string) =>
 let mockValidationRules: ValidationRule[] = [];
 const openRecordCreationFormSettingsInSidePanel = jest.fn();
 const mockHasPermissionFlag = jest.fn();
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
+}));
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItemById', () => ({
   useObjectMetadataItemById: () => ({ objectMetadataItem: COMPANY_OBJECT }),
@@ -370,7 +380,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
 
-  it('reveals a hidden field the server rejected through a validation rule', async () => {
+  it('reveals a hidden field the server rejected through a validation rule and shows the message in the form', async () => {
     const user = userEvent.setup();
 
     settleRecordCreationDraft.mockResolvedValue({
@@ -387,6 +397,49 @@ describe('SidePanelRecordCreationFormPage', () => {
       draftRecord: {},
     });
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'A company needs a nickname',
+    );
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
+  });
+
+  it('keeps a message from the server while the user edits, until the next create', async () => {
+    const user = userEvent.setup();
+
+    settleRecordCreationDraft.mockResolvedValueOnce({
+      error: buildValidationRuleViolationError(NAME_FIELD.id),
+    });
+
+    renderPage();
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+    await user.type(screen.getByLabelText('Domain'), 'apple.com');
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'A company needs a nickname',
+    );
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('shows a server error that is not a validation rule violation as a toast', async () => {
+    const user = userEvent.setup();
+
+    settleRecordCreationDraft.mockResolvedValue({
+      error: new Error('Network error'),
+    });
+
+    renderPage();
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({ variant: 'error', children: 'Network error' }),
+    );
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('keeps hidden fields collapsed when the server rejects a visible field', async () => {
