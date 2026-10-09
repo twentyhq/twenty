@@ -3,6 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_OCCURRENCE_MARGIN_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/teams-occurrence-margin-milliseconds';
+import { TEAMS_TRANSCRIPT_OCCURRENCE_MAX_PAGES } from 'src/features/transcripts/logic-functions/constants/teams-transcript-occurrence-max-pages';
 import { type GraphCallTranscript } from 'src/features/transcripts/logic-functions/types/graph-call-transcript.type';
 import { type GraphOnlineMeeting } from 'src/features/transcripts/logic-functions/types/graph-online-meeting.type';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
@@ -11,6 +12,38 @@ import { buildTeamsCalendarViewUrl } from 'src/features/transcripts/logic-functi
 import { findTeamsCalendarEventIdsOrThrow } from 'src/features/transcripts/logic-functions/utils/find-teams-calendar-event-ids-or-throw';
 import { findTeamsTranscriptCalendarReference } from 'src/features/transcripts/logic-functions/utils/find-teams-transcript-calendar-reference';
 import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page';
+import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
+
+const listOccurrencePagesOrThrow = async ({
+  accessToken,
+  url,
+  pageIndex,
+}: {
+  accessToken: string;
+  url: string;
+  pageIndex: number;
+}): Promise<TeamsMeetingOccurrence[]> => {
+  const { occurrences, nextPageUrl } = await listTeamsCalendarPage({
+    accessToken,
+    url,
+  });
+
+  if (
+    !isDefined(nextPageUrl) ||
+    pageIndex + 1 >= TEAMS_TRANSCRIPT_OCCURRENCE_MAX_PAGES
+  ) {
+    return occurrences;
+  }
+
+  return [
+    ...occurrences,
+    ...(await listOccurrencePagesOrThrow({
+      accessToken,
+      url: resolveTeamsCalendarNextPageUrlOrThrow(nextPageUrl),
+      pageIndex: pageIndex + 1,
+    })),
+  ];
+};
 
 const listOccurrencesAroundTranscriptStartOrThrow = async ({
   accessToken,
@@ -20,7 +53,7 @@ const listOccurrencesAroundTranscriptStartOrThrow = async ({
   transcriptStartMilliseconds: number;
 }): Promise<TeamsMeetingOccurrence[]> => {
   try {
-    const { occurrences } = await listTeamsCalendarPage({
+    return await listOccurrencePagesOrThrow({
       accessToken,
       url: buildTeamsCalendarViewUrl({
         startDateTime: new Date(
@@ -30,9 +63,8 @@ const listOccurrencesAroundTranscriptStartOrThrow = async ({
           transcriptStartMilliseconds + TEAMS_OCCURRENCE_MARGIN_MILLISECONDS,
         ).toISOString(),
       }),
+      pageIndex: 0,
     });
-
-    return occurrences;
   } catch (error) {
     if (
       error instanceof GraphRequestError &&
