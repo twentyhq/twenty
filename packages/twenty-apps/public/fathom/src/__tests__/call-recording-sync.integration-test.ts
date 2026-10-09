@@ -9,6 +9,7 @@ import { createFathomApplicationCoreApiClient } from 'src/__tests__/utils/create
 import { FATHOM_REQUEST_MEDIA_DOWNLOAD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { completeFathomCallRecordingImport } from 'src/logic-functions/utils/complete-fathom-call-recording-import.util';
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
+import { findCallRecordingSyncStates } from 'src/logic-functions/utils/find-call-recording-sync-states.util';
 import { filterImportableFathomMeetings } from 'src/logic-functions/utils/filter-importable-fathom-meetings.util';
 import { mapFathomTranscriptToEntries } from 'src/logic-functions/utils/map-fathom-transcript-to-entries.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
@@ -43,6 +44,9 @@ const callRecordingSnapshotsSchema = z.object({
           id: z.string(),
           updatedAt: z.string(),
           deletedAt: z.string().nullable(),
+          status: z.string().nullable(),
+          title: z.string().nullable(),
+          endedAt: z.string().nullable(),
         }),
       }),
     ),
@@ -87,7 +91,16 @@ const readCallRecordings = async (callRecordingIds: string[]) => {
           ],
         },
       },
-      edges: { node: { id: true, updatedAt: true, deletedAt: true } },
+      edges: {
+        node: {
+          id: true,
+          updatedAt: true,
+          deletedAt: true,
+          status: true,
+          title: true,
+          endedAt: true,
+        },
+      },
     },
   });
 
@@ -124,14 +137,22 @@ const syncPage = async ({
   return filterResult;
 };
 
-const settleMedia = async ({
+const readCallRecording = async (callRecordingId: string) =>
+  (await readCallRecordings([callRecordingId])).get(callRecordingId);
+
+const delayRecordingEnd = (meeting: Meeting): Meeting => ({
+  ...meeting,
+  recordingEndTime: new Date(meeting.recordingEndTime.getTime() + 5 * 60_000),
+});
+
+const markMediaUnavailable = async ({
   syncClient,
   callRecordingIds,
 }: {
   syncClient: CoreApiClient;
   callRecordingIds: string[];
-}) => {
-  await syncClient.mutation({
+}) =>
+  syncClient.mutation({
     updateFathomRecordingImports: {
       __args: {
         filter: { id: { in: callRecordingIds } },
@@ -140,6 +161,15 @@ const settleMedia = async ({
       id: true,
     },
   });
+
+const settleMedia = async ({
+  syncClient,
+  callRecordingIds,
+}: {
+  syncClient: CoreApiClient;
+  callRecordingIds: string[];
+}) => {
+  await markMediaUnavailable({ syncClient, callRecordingIds });
 
   for (const callRecordingId of callRecordingIds) {
     expect(
@@ -257,6 +287,20 @@ describe('Fathom call recording sync', () => {
       },
     ]);
     expect(syncClient.mutation).not.toHaveBeenCalled();
+
+    await expect(
+      syncFathomMeetingsToCallRecordings({
+        coreApiClient: syncClient,
+        meetings,
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        callRecordingSyncStates: new Map(),
+      }),
+    ).rejects.toThrow();
+    expect(
+      vi
+        .mocked(syncClient.mutation)
+        .mock.calls.map(([request]: [object]) => Object.keys(request)),
+    ).toEqual([['createCallRecording']]);
     expect(await readCallRecordings([callRecordingId])).toEqual(
       new Map([[callRecordingId, deletedCallRecording]]),
     );
@@ -328,6 +372,11 @@ describe('Fathom call recording sync', () => {
       getCallRecordingIds(meetings);
 
     await syncPage({ syncClient, meetings: meetings.slice(0, 1) });
+
+    const existingCallRecording = await readCallRecording(
+      existingCallRecordingId,
+    );
+
     vi.mocked(syncClient.mutation).mockClear();
 
     expect(
@@ -359,6 +408,123 @@ describe('Fathom call recording sync', () => {
     ]);
     expect([...(await readCallRecordings(newCallRecordingIds)).keys()]).toEqual(
       expect.arrayContaining(newCallRecordingIds),
+    );
+    expect(await readCallRecording(existingCallRecordingId)).toEqual(
+      existingCallRecording,
+    );
+  });
+
+  it('never completes a recording without transcript entries or with media still pending', async () => {
+    const meetings = buildMeetings(2);
+    const [untranscribedCallRecordingId, pendingMediaCallRecordingId] =
+      getCallRecordingIds(meetings);
+
+    await syncPage({ syncClient, meetings });
+    await coreApiClient.mutation({
+      updateCallRecording: {
+        __args: { id: untranscribedCallRecordingId, data: { transcript: [] } },
+        id: true,
+      },
+    });
+    await markMediaUnavailable({
+      syncClient,
+      callRecordingIds: [untranscribedCallRecordingId],
+    });
+
+    expect(
+      await completeFathomCallRecordingImport({
+        coreApiClient: syncClient,
+        callRecordingId: untranscribedCallRecordingId,
+      }),
+    ).toBe(false);
+
+    await syncFathomMeetingsToCallRecordings({
+      coreApiClient: syncClient,
+      meetings: [{ ...meetings[0], transcript: [] }],
+      connectedAccountId: CONNECTED_ACCOUNT_ID,
+    });
+
+    expect(await readCallRecording(untranscribedCallRecordingId)).toMatchObject(
+      { status: 'PROCESSING' },
+    );
+
+    vi.mocked(syncClient.mutation).mockClear();
+
+    expect(
+      await completeFathomCallRecordingImport({
+        coreApiClient: syncClient,
+        callRecordingId: pendingMediaCallRecordingId,
+      }),
+    ).toBe(false);
+    expect(syncClient.mutation).not.toHaveBeenCalled();
+    expect(await readCallRecording(pendingMediaCallRecordingId)).toMatchObject({
+      status: 'PROCESSING',
+    });
+  });
+
+  it('updates and completes an existing incomplete recording from the state it read', async () => {
+    const [meeting] = buildMeetings(1);
+    const [callRecordingId] = getCallRecordingIds([meeting]);
+    const updatedMeeting = delayRecordingEnd(meeting);
+
+    await syncPage({ syncClient, meetings: [meeting] });
+    await markMediaUnavailable({
+      syncClient,
+      callRecordingIds: [callRecordingId],
+    });
+
+    expect(
+      await syncFathomMeetingsToCallRecordings({
+        coreApiClient: syncClient,
+        meetings: [updatedMeeting],
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        callRecordingSyncStates: await findCallRecordingSyncStates({
+          coreApiClient: syncClient,
+          callRecordingIds: [callRecordingId],
+        }),
+      }),
+    ).toEqual([expect.objectContaining({ callRecordingId, created: false })]);
+
+    const callRecording = await readCallRecording(callRecordingId);
+
+    expect(callRecording?.status).toBe('COMPLETED');
+    expect(Date.parse(callRecording?.endedAt ?? '')).toBe(
+      updatedMeeting.recordingEndTime.getTime(),
+    );
+  });
+
+  it('does not overwrite a change made after the recording state was read', async () => {
+    const [meeting] = buildMeetings(1);
+    const [callRecordingId] = getCallRecordingIds([meeting]);
+
+    await syncPage({ syncClient, meetings: [meeting] });
+
+    const callRecordingSyncStates = await findCallRecordingSyncStates({
+      coreApiClient: syncClient,
+      callRecordingIds: [callRecordingId],
+    });
+
+    await coreApiClient.mutation({
+      updateCallRecording: {
+        __args: { id: callRecordingId, data: { title: 'Renewal follow-up' } },
+        id: true,
+      },
+    });
+
+    const renamedCallRecording = await readCallRecording(callRecordingId);
+
+    await expect(
+      syncFathomMeetingsToCallRecordings({
+        coreApiClient: syncClient,
+        meetings: [delayRecordingEnd(meeting)],
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        callRecordingSyncStates,
+      }),
+    ).rejects.toThrow(
+      'Fathom recording changed during import; retry the import',
+    );
+    expect(await readCallRecording(callRecordingId)).toEqual(
+      renamedCallRecording,
     );
   });
 });
