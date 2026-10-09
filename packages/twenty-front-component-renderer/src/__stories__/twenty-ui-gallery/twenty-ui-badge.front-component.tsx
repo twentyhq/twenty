@@ -114,6 +114,7 @@ const BadgeExample = () => {
             createElement('a', {
               ...props,
               href: '#badge-docs',
+              target: '_self',
               'data-composed': 'link',
             })
           }

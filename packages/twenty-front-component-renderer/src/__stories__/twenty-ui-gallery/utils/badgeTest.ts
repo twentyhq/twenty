@@ -97,6 +97,7 @@ export const badgeTest: TwentyUiGalleryPlayFunction = async ({
 
   const link = canvas.getByRole('link', { name: 'Badge documentation' });
   expect(link).toHaveAttribute('href', '#badge-docs');
+  expect(link).toHaveAttribute('target', '_self');
   expect(link).toHaveAttribute('data-composed', 'link');
   await waitFor(() => expect(link).toHaveAttribute('data-ref-tag', 'HTML-A'));
   await userEvent.click(link);
