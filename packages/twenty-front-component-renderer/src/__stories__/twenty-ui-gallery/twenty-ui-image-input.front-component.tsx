@@ -21,6 +21,7 @@ const ImageInputExample = () => {
   const [fileContents, setFileContents] = useState('none');
   const [isCallbackConnected, setIsCallbackConnected] = useState(true);
   const [revokedPreviewUrl, setRevokedPreviewUrl] = useState('none');
+  const [inputClicks, setInputClicks] = useState(0);
 
   useEffect(
     () => () => {
@@ -70,6 +71,7 @@ const ImageInputExample = () => {
         removeLabel="Remove profile image"
         abortLabel="Cancel profile upload"
         onFileSelect={isCallbackConnected ? selectFile : undefined}
+        onClick={() => setInputClicks((count) => count + 1)}
         onRemove={() => {
           setRemovals((count) => count + 1);
           setSrc(undefined);
@@ -111,6 +113,7 @@ const ImageInputExample = () => {
         Revoke preview URL
       </Button>
       <output aria-label="Revoked preview URL">{revokedPreviewUrl}</output>
+      <output aria-label="Input clicks">{inputClicks}</output>
       <output aria-label="File contents">{fileContents}</output>
       <output aria-label="Image actions">
         Uploads: {uploads}; Removals: {removals}; Aborts: {aborts}

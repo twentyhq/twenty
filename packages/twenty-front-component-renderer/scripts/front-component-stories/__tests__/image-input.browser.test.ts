@@ -74,14 +74,14 @@ const mountFixture = async ({ runtime }: { runtime: string }) => {
       imageUrls: [],
       revokedUrls: [],
     };
-    const click = HTMLInputElement.prototype.click;
-    HTMLInputElement.prototype.click = function () {
+    const showPicker = HTMLInputElement.prototype.showPicker;
+    HTMLInputElement.prototype.showPicker = function () {
       if (this.type === 'file') {
         window.fileInputEvidence.activations.push(
           navigator.userActivation.isActive,
         );
       }
-      click.call(this);
+      showPicker.call(this);
     };
     const createObjectURL = URL.createObjectURL.bind(URL);
     const revokeObjectURL = URL.revokeObjectURL.bind(URL);
@@ -274,6 +274,7 @@ for (const runtime of ['react', 'preact']) {
       }
     }
     await expectUploadCount({ renderer: secondary, uploads: 0 });
+    assert.equal(await primary.getByLabel('Input clicks').innerText(), '6');
     const evidence = await page.evaluate(() => window.fileInputEvidence);
     assert.equal(evidence.imageUrls.length, 6);
     assert.equal(

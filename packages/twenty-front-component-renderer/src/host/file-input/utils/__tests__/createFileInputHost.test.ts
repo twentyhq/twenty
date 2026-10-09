@@ -23,13 +23,14 @@ const createFixture = () => {
   document.body.append(button, input);
   geometryTracker.registerNode('button', button);
   geometryTracker.registerNode('input', input);
-  const click = jest.spyOn(input, 'click').mockImplementation(() => undefined);
+  const showPicker = jest.fn();
+  input.showPicker = showPicker;
 
   return {
     host,
     input,
     button,
-    click,
+    showPicker,
     recordClick,
     clickOwnedButton: () => recordClick({ isTrusted: true, target: button }),
   };
@@ -54,25 +55,25 @@ describe('createFileInputHost', () => {
   });
 
   it('opens an owned file input once after a trusted click inside the renderer', () => {
-    const { host, click, clickOwnedButton } = createFixture();
+    const { host, showPicker, clickOwnedButton } = createFixture();
     clickOwnedButton();
     host.openFilePicker('input');
     host.openFilePicker('input');
-    expect(click).toHaveBeenCalledTimes(1);
+    expect(showPicker).toHaveBeenCalledTimes(1);
   });
 
   it('ignores synthetic clicks and clicks outside the renderer', () => {
-    const { host, button, click, recordClick } = createFixture();
+    const { host, button, showPicker, recordClick } = createFixture();
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     recordClick({ isTrusted: true, target: document.body });
     host.openFilePicker('input');
-    expect(click).not.toHaveBeenCalled();
+    expect(showPicker).not.toHaveBeenCalled();
   });
 
   it.each(['disabled', 'detached', 'non-file', 'unregistered', 'inactive'])(
     'rejects a %s destination after a trusted click',
     (state) => {
-      const { host, input, click, clickOwnedButton } = createFixture();
+      const { host, input, showPicker, clickOwnedButton } = createFixture();
       clickOwnedButton();
       if (state === 'disabled') {
         input.disabled = true;
@@ -87,7 +88,7 @@ describe('createFileInputHost', () => {
         userActivation.isActive = false;
       }
       host.openFilePicker(state === 'unregistered' ? 'missing' : 'input');
-      expect(click).not.toHaveBeenCalled();
+      expect(showPicker).not.toHaveBeenCalled();
     },
   );
 
@@ -99,16 +100,16 @@ describe('createFileInputHost', () => {
     second.recordClick(clickInFirstRenderer);
     second.host.openFilePicker('input');
     first.host.openFilePicker('input');
-    expect(second.click).not.toHaveBeenCalled();
-    expect(first.click).toHaveBeenCalledTimes(1);
+    expect(second.showPicker).not.toHaveBeenCalled();
+    expect(first.showPicker).toHaveBeenCalledTimes(1);
   });
 
   it('expires the click after one second', () => {
-    const { host, click, clickOwnedButton } = createFixture();
+    const { host, showPicker, clickOwnedButton } = createFixture();
     clickOwnedButton();
     jest.advanceTimersByTime(1001);
     host.openFilePicker('input');
-    expect(click).not.toHaveBeenCalled();
+    expect(showPicker).not.toHaveBeenCalled();
   });
 
   it('stops listening to clicks on dispose', () => {

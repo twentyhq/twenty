@@ -50,7 +50,7 @@ export const createFileInputHost = ({
         return;
       }
 
-      input.click();
+      input.showPicker();
     },
     dispose: () => {
       document.removeEventListener('click', recordOwnedClick, true);

@@ -131,7 +131,8 @@ Its stories are tagged `!test`, so the Vitest run skips them and the native
 Chromium tests below exercise them instead. These tests wait for a browser
 `filechooser` event after trusted pointer, Enter and Space activation on both
 selection buttons. A worker `input.click()` on a file input asks the host to
-open the chooser. The host opens it once per trusted click inside the same
+open the chooser. The host opens it with `showPicker()`, so the worker click is
+the only click the input receives, once per trusted click inside the same
 renderer, within one second of that click and while the browser still has
 transient user activation. Synthetic events and clicks in another renderer do
 not count.
