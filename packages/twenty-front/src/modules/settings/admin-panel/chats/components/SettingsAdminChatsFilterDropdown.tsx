@@ -29,34 +29,37 @@ export const SettingsAdminChatsFilterDropdown = ({
       <DropdownContent side="bottom" align="end" sideOffset={8} alignOffset={0}>
         <Dropdown.Section>
           <SettingsRow
-            startIcon={<IconSparkles />}
-            onCheckedChange={() =>
-              onFiltersChange({
-                ...filters,
-                onboardingOnly: !filters.onboardingOnly,
-              })
-            }
-            checked={filters.onboardingOnly}
+            startElement={<IconSparkles />}
+            switchProps={{
+              onCheckedChange: () =>
+                onFiltersChange({
+                  ...filters,
+                  onboardingOnly: !filters.onboardingOnly,
+                }),
+              checked: filters.onboardingOnly,
+            }}
           >{t`Onboarding only`}</SettingsRow>
           <SettingsRow
-            startIcon={<IconAlertTriangle />}
-            onCheckedChange={() =>
-              onFiltersChange({
-                ...filters,
-                hasErrorOnly: !filters.hasErrorOnly,
-              })
-            }
-            checked={filters.hasErrorOnly}
+            startElement={<IconAlertTriangle />}
+            switchProps={{
+              onCheckedChange: () =>
+                onFiltersChange({
+                  ...filters,
+                  hasErrorOnly: !filters.hasErrorOnly,
+                }),
+              checked: filters.hasErrorOnly,
+            }}
           >{t`Has error`}</SettingsRow>
           <SettingsRow
-            startIcon={<IconMessage />}
-            onCheckedChange={() =>
-              onFiltersChange({
-                ...filters,
-                userNeverEngagedOnly: !filters.userNeverEngagedOnly,
-              })
-            }
-            checked={filters.userNeverEngagedOnly}
+            startElement={<IconMessage />}
+            switchProps={{
+              onCheckedChange: () =>
+                onFiltersChange({
+                  ...filters,
+                  userNeverEngagedOnly: !filters.userNeverEngagedOnly,
+                }),
+              checked: filters.userNeverEngagedOnly,
+            }}
           >{t`No user reply`}</SettingsRow>
         </Dropdown.Section>
       </DropdownContent>

@@ -9701,39 +9701,18 @@
     "slug": "components/settings/settings-row",
     "props": [
       {
-        "name": "checked",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Controlled checked state of the switch."
-      },
-      {
         "name": "children",
         "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Visible label and accessible name of the switch. Use non-interactive content."
-      },
-      {
-        "name": "defaultChecked",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Initial checked state when uncontrolled."
+        "description": "Visible label and default accessible name of the switch. Use non-interactive node content."
       },
       {
         "name": "description",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Non-interactive supporting content, associated with the switch as its accessible description."
-      },
-      {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Disables both the row and its switch."
+        "description": "Non-interactive supporting node content, used as the default accessible description of the switch."
       },
       {
         "name": "focused",
@@ -9743,53 +9722,32 @@
         "description": "Applies the highlighted row style without moving keyboard focus."
       },
       {
-        "name": "name",
-        "type": "string",
+        "name": "ref",
+        "type": "Ref<HTMLLabelElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Name of the hidden checkbox used in form submission."
+        "description": "Targets the outer label. Use switchProps.ref for the switch root and switchProps.inputRef for its hidden checkbox."
       },
       {
-        "name": "onCheckedChange",
-        "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the switch value changes, with the next checked state and Base UI event details."
+        "description": "Customizes the outer native label. Preserve a label element and forward its props to retain control association."
       },
       {
-        "name": "readOnly",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Keeps the switch focusable while preventing changes."
-      },
-      {
-        "name": "required",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Requires the switch to be checked for form submission."
-      },
-      {
-        "name": "size",
-        "type": "\"md\" | \"sm\"",
-        "required": false,
-        "defaultValue": "sm",
-        "description": "Visual size of the switch. The row height stays the same."
-      },
-      {
-        "name": "startIcon",
+        "name": "startElement",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Decorative content before the label."
+        "description": "Non-interactive node content before the label."
       },
       {
-        "name": "value",
-        "type": "string",
+        "name": "switchProps",
+        "type": "SwitchRootProps",
         "required": false,
-        "defaultValue": null,
-        "description": "Value submitted when the switch is checked."
+        "defaultValue": "{}",
+        "description": "Complete Switch configuration, including checked state, event details, native form integration, control ref, inputRef and render composition. Size defaults to sm."
       }
     ]
   },

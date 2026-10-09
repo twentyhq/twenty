@@ -218,19 +218,23 @@ export const SettingsAdminApps = () => {
               <DropdownContent align="end" sideOffset={8}>
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconPinned />}
-                    onCheckedChange={() =>
-                      setShowPreInstalledOnly(!showPreInstalledOnly)
-                    }
-                    checked={showPreInstalledOnly}
+                    startElement={<IconPinned />}
+                    switchProps={{
+                      onCheckedChange: () =>
+                        setShowPreInstalledOnly(!showPreInstalledOnly),
+                      checked: showPreInstalledOnly,
+                    }}
                   >{t`Pre-installed only`}</SettingsRow>
                 </Dropdown.Section>
                 <Dropdown.Section label={t`Source`}>
                   {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
                     <SettingsRow
                       key={sourceType}
-                      onCheckedChange={() => toggleSourceTypeFilter(sourceType)}
-                      checked={sourceTypeFilters.includes(sourceType)}
+                      switchProps={{
+                        onCheckedChange: () =>
+                          toggleSourceTypeFilter(sourceType),
+                        checked: sourceTypeFilters.includes(sourceType),
+                      }}
                     >
                       {label}
                     </SettingsRow>
@@ -238,38 +242,42 @@ export const SettingsAdminApps = () => {
                 </Dropdown.Section>
                 <Dropdown.Section label={t`Listed`}>
                   <SettingsRow
-                    onCheckedChange={() =>
-                      setIsListedFilter(
-                        isListedFilter === true ? undefined : true,
-                      )
-                    }
-                    checked={isListedFilter === true}
+                    switchProps={{
+                      onCheckedChange: () =>
+                        setIsListedFilter(
+                          isListedFilter === true ? undefined : true,
+                        ),
+                      checked: isListedFilter === true,
+                    }}
                   >{t`Listed`}</SettingsRow>
                   <SettingsRow
-                    onCheckedChange={() =>
-                      setIsListedFilter(
-                        isListedFilter === false ? undefined : false,
-                      )
-                    }
-                    checked={isListedFilter === false}
+                    switchProps={{
+                      onCheckedChange: () =>
+                        setIsListedFilter(
+                          isListedFilter === false ? undefined : false,
+                        ),
+                      checked: isListedFilter === false,
+                    }}
                   >{t`Not listed`}</SettingsRow>
                 </Dropdown.Section>
                 <Dropdown.Section label={t`Configured`}>
                   <SettingsRow
-                    onCheckedChange={() =>
-                      setIsConfiguredFilter(
-                        isConfiguredFilter === true ? undefined : true,
-                      )
-                    }
-                    checked={isConfiguredFilter === true}
+                    switchProps={{
+                      onCheckedChange: () =>
+                        setIsConfiguredFilter(
+                          isConfiguredFilter === true ? undefined : true,
+                        ),
+                      checked: isConfiguredFilter === true,
+                    }}
                   >{t`Configured`}</SettingsRow>
                   <SettingsRow
-                    onCheckedChange={() =>
-                      setIsConfiguredFilter(
-                        isConfiguredFilter === false ? undefined : false,
-                      )
-                    }
-                    checked={isConfiguredFilter === false}
+                    switchProps={{
+                      onCheckedChange: () =>
+                        setIsConfiguredFilter(
+                          isConfiguredFilter === false ? undefined : false,
+                        ),
+                      checked: isConfiguredFilter === false,
+                    }}
                   >{t`Not configured`}</SettingsRow>
                 </Dropdown.Section>
               </DropdownContent>

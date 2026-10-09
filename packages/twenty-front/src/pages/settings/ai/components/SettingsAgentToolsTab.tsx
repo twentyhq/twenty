@@ -98,19 +98,25 @@ export const SettingsAgentToolsTab = () => {
               >
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconTool />}
-                    onCheckedChange={setShowCustomTools}
-                    checked={showCustomTools}
+                    startElement={<IconTool />}
+                    switchProps={{
+                      onCheckedChange: setShowCustomTools,
+                      checked: showCustomTools,
+                    }}
                   >{t`Custom`}</SettingsRow>
                   <SettingsRow
-                    startIcon={<IconLock />}
-                    onCheckedChange={setShowManagedTools}
-                    checked={showManagedTools}
+                    startElement={<IconLock />}
+                    switchProps={{
+                      onCheckedChange: setShowManagedTools,
+                      checked: showManagedTools,
+                    }}
                   >{t`Managed`}</SettingsRow>
                   <SettingsRow
-                    startIcon={<IconPuzzle />}
-                    onCheckedChange={setShowStandardTools}
-                    checked={showStandardTools}
+                    startElement={<IconPuzzle />}
+                    switchProps={{
+                      onCheckedChange: setShowStandardTools,
+                      checked: showStandardTools,
+                    }}
                   >{t`Standard`}</SettingsRow>
                 </Dropdown.Section>
               </DropdownContent>

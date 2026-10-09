@@ -177,19 +177,21 @@ export const SettingsObjectTable = ({
                 >
                   <Dropdown.Section>
                     <SettingsRow
-                      startIcon={<IconArchive />}
-                      onCheckedChange={() =>
-                        setShowDeactivated(!showDeactivated)
-                      }
-                      checked={showDeactivated}
+                      startElement={<IconArchive />}
+                      switchProps={{
+                        onCheckedChange: () =>
+                          setShowDeactivated(!showDeactivated),
+                        checked: showDeactivated,
+                      }}
                     >{t`Deactivated`}</SettingsRow>
                     {isAdvancedModeEnabled && (
                       <SettingsRow
-                        startIcon={<IconSettings />}
-                        onCheckedChange={() =>
-                          setShowSystemObjects(!showSystemObjects)
-                        }
-                        checked={showSystemObjects}
+                        startElement={<IconSettings />}
+                        switchProps={{
+                          onCheckedChange: () =>
+                            setShowSystemObjects(!showSystemObjects),
+                          checked: showSystemObjects,
+                        }}
                       >{t`System objects`}</SettingsRow>
                     )}
                   </Dropdown.Section>

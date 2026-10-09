@@ -330,14 +330,15 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 >
                   <SettingsRow
                     focused={selectedItemId === 'Compact view'}
-                    startIcon={<IconBaselineDensitySmall />}
-                    onCheckedChange={() =>
-                      setAndPersistIsCompactModeActive(
-                        !isCompactModeActive,
-                        currentView,
-                      )
-                    }
-                    checked={isCompactModeActive}
+                    startElement={<IconBaselineDensitySmall />}
+                    switchProps={{
+                      onCheckedChange: () =>
+                        setAndPersistIsCompactModeActive(
+                          !isCompactModeActive,
+                          currentView,
+                        ),
+                      checked: isCompactModeActive,
+                    }}
                   >{t`Compact view`}</SettingsRow>
                 </SelectableListItem>
               )}

@@ -1,24 +1,15 @@
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type useRender } from '@base-ui/react/use-render';
+import { type ReactNode } from 'react';
 
 import { type SwitchProps } from '@ui/primitives/input/Switch/types/SwitchProps';
-import { type ListItemProps } from '@ui/primitives/navigation/ListItem/types/ListItemProps';
 
 export type SettingsRowProps = Omit<
-  ComponentPropsWithRef<'label'>,
-  'children' | 'htmlFor' | 'onChange' | 'onClick'
-> &
-  Pick<ListItemProps, 'startIcon' | 'description' | 'focused'> &
-  Pick<
-    SwitchProps,
-    | 'checked'
-    | 'defaultChecked'
-    | 'onCheckedChange'
-    | 'disabled'
-    | 'readOnly'
-    | 'size'
-    | 'name'
-    | 'value'
-    | 'required'
-  > & {
-    children: ReactNode;
-  };
+  useRender.ComponentProps<'label'>,
+  'children' | 'htmlFor'
+> & {
+  children: ReactNode;
+  startElement?: ReactNode;
+  description?: ReactNode;
+  focused?: boolean;
+  switchProps?: SwitchProps;
+};

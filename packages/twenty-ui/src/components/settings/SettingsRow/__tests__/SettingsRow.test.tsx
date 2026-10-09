@@ -6,5 +6,4 @@ runComponentConformance({
   name: 'SettingsRow',
   element: <SettingsRow>Notifications</SettingsRow>,
   refInstanceOf: HTMLLabelElement,
-  skip: ['renderProp'],
 });

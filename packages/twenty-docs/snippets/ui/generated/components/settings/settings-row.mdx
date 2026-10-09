@@ -11,54 +11,30 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="checked" type="boolean">
-  Controlled checked state of the switch.
-</ParamField>
-
 <ParamField body="children" type="ReactNode" required>
-  Visible label and accessible name of the switch. Use non-interactive content.
-</ParamField>
-
-<ParamField body="defaultChecked" type="boolean" default="false">
-  Initial checked state when uncontrolled.
+  Visible label and default accessible name of the switch. Use non-interactive node content.
 </ParamField>
 
 <ParamField body="description" type="ReactNode">
-  Non-interactive supporting content, associated with the switch as its accessible description.
-</ParamField>
-
-<ParamField body="disabled" type="boolean" default="false">
-  Disables both the row and its switch.
+  Non-interactive supporting node content, used as the default accessible description of the switch.
 </ParamField>
 
 <ParamField body="focused" type="boolean" default="false">
   Applies the highlighted row style without moving keyboard focus.
 </ParamField>
 
-<ParamField body="name" type="string">
-  Name of the hidden checkbox used in form submission.
+<ParamField body="ref" type="Ref&lt;HTMLLabelElement&gt;">
+  Targets the outer label. Use switchProps.ref for the switch root and switchProps.inputRef for its hidden checkbox.
 </ParamField>
 
-<ParamField body="onCheckedChange" type="((checked: boolean, eventDetails: { reason: &quot;none&quot;; event: Event; cancel: () =&gt; void; allowPropagation: () =&gt; void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) =&gt; void)">
-  Called when the switch value changes, with the next checked state and Base UI event details.
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Customizes the outer native label. Preserve a label element and forward its props to retain control association.
 </ParamField>
 
-<ParamField body="readOnly" type="boolean" default="false">
-  Keeps the switch focusable while preventing changes.
+<ParamField body="startElement" type="ReactNode">
+  Non-interactive node content before the label.
 </ParamField>
 
-<ParamField body="required" type="boolean" default="false">
-  Requires the switch to be checked for form submission.
-</ParamField>
-
-<ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="sm">
-  Visual size of the switch. The row height stays the same.
-</ParamField>
-
-<ParamField body="startIcon" type="ReactNode">
-  Decorative content before the label.
-</ParamField>
-
-<ParamField body="value" type="string">
-  Value submitted when the switch is checked.
+<ParamField body="switchProps" type="SwitchRootProps" default="{}">
+  Complete Switch configuration, including checked state, event details, native form integration, control ref, inputRef and render composition. Size defaults to sm.
 </ParamField>

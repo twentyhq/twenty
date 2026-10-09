@@ -188,27 +188,31 @@ export const SettingsObjectFieldTable = ({
               >
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconArchive />}
-                    onCheckedChange={() => setShowInactive(!showInactive)}
-                    checked={showInactive}
+                    startElement={<IconArchive />}
+                    switchProps={{
+                      onCheckedChange: () => setShowInactive(!showInactive),
+                      checked: showInactive,
+                    }}
                   >{t`Inactive`}</SettingsRow>
                   {(mostlyEmptyFieldMetadataIds.size > 0 ||
                     showOnlyMostlyEmpty) && (
                     <SettingsRow
-                      startIcon={<IconCircleDashed />}
-                      onCheckedChange={() =>
-                        setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
-                      }
-                      checked={showOnlyMostlyEmpty}
+                      startElement={<IconCircleDashed />}
+                      switchProps={{
+                        onCheckedChange: () =>
+                          setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty),
+                        checked: showOnlyMostlyEmpty,
+                      }}
                     >{t`Mostly empty`}</SettingsRow>
                   )}
                   {isAdvancedModeEnabled && (
                     <SettingsRow
-                      startIcon={<IconSettings />}
-                      onCheckedChange={() =>
-                        setShowSystemFields(!showSystemFields)
-                      }
-                      checked={showSystemFields}
+                      startElement={<IconSettings />}
+                      switchProps={{
+                        onCheckedChange: () =>
+                          setShowSystemFields(!showSystemFields),
+                        checked: showSystemFields,
+                      }}
                     >{t`System fields`}</SettingsRow>
                   )}
                 </Dropdown.Section>
