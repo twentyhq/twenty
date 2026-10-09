@@ -117,13 +117,17 @@ describe('Legacy morph application manifests', () => {
       expect(owner.name).toBe('legacyRelated');
       if (iteration === 0) ownerId = owner.id;
       expect(owner.id).toBe(ownerId);
-      const { data: views } = await findViews({ expectToFail: false });
+      const { data: views } = await findViews({
+        expectToFail: false,
+        gqlFields: 'id universalIdentifier',
+      });
       const view = views.getViews.find(
         (candidate) => candidate.universalIdentifier === VIEW_ID,
       );
       assertIsDefinedOrThrow(view);
       const { data: columns } = await findViewFields({
         viewId: view.id,
+        gqlFields: 'id universalIdentifier fieldMetadataId',
         expectToFail: false,
       });
       expect(
