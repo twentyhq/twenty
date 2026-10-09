@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
-msgstr ""
+msgstr "{actorName} heeft een herstelcode gegenereerd waarmee je je zonder je authenticator-app kunt aanmelden bij {workspaceDisplayName}."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -46,7 +46,7 @@ msgstr "Een seintje voordat uw proefperiode afloopt"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
-msgstr ""
+msgstr "Er is een herstelcode gebruikt om je aan te melden bij {workspaceDisplayName}. Je authenticator voor deze werkruimte is verwijderd en je andere sessies daar zijn afgemeld."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -140,7 +140,7 @@ msgstr "Beste {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Als jij dit niet was, neem dan contact op met je werkruimtebeheerder en wijzig je wachtwoord."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -150,7 +150,7 @@ msgstr "Als Twenty goed voor u werkt, bent u helemaal klaar — u hoeft niets te
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "If you did not ask for this, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Als je dit niet hebt aangevraagd, neem dan contact op met je werkruimtebeheerder en wijzig je wachtwoord."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -256,7 +256,7 @@ msgstr "Instellen"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "Stel two-factor-authenticatie opnieuw in onder Instellingen, Profiel."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "Test e-mail"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "De code kan eenmaal worden gebruikt en verloopt op {formattedExpiresAt}. Door deze te gebruiken, verwijdert u uw huidige authenticator voor deze werkruimte en wordt u afgemeld bij uw andere sessies daar."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, Public Benefit Corporation"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "Herstelcode voor two-factor-authenticatie uitgegeven"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "Two-factor-authenticatie opnieuw ingesteld"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
