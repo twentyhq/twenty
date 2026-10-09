@@ -4,7 +4,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { convertStepTipTapToRichText } from 'src/modules/workflow/workflow-executor/utils/convert-step-tiptap-to-rich-text.util';
+import { convertStepTipTapToMarkdown } from 'src/modules/workflow/workflow-executor/utils/convert-step-tiptap-to-markdown.util';
 
 const bodyField = getFlatFieldMetadataMock({
   id: 'body-field',
@@ -49,9 +49,9 @@ const context = {
   trigger: { body: { amount: 42, currency: 'EUR', meta: { source: 'form' } } },
 };
 
-describe('convertStepTipTapToRichText', () => {
+describe('convertStepTipTapToMarkdown', () => {
   it('keeps a markdown that is exactly one variable a string', () => {
-    const resolved = convertStepTipTapToRichText(
+    const resolved = convertStepTipTapToMarkdown(
       { body: { markdown: '{{trigger.body.amount}}', blocknote: null } },
       objectMetadataInfo,
       context,
@@ -61,7 +61,7 @@ describe('convertStepTipTapToRichText', () => {
   });
 
   it('interpolates variables inside a markdown', () => {
-    const resolved = convertStepTipTapToRichText(
+    const resolved = convertStepTipTapToMarkdown(
       {
         body: {
           markdown:
@@ -80,7 +80,7 @@ describe('convertStepTipTapToRichText', () => {
   });
 
   it('serializes an object resolved from a whole-string variable', () => {
-    const resolved = convertStepTipTapToRichText(
+    const resolved = convertStepTipTapToMarkdown(
       { body: { markdown: '{{trigger.body.meta}}', blocknote: null } },
       objectMetadataInfo,
       context,
@@ -92,7 +92,7 @@ describe('convertStepTipTapToRichText', () => {
     });
   });
 
-  it('converts a TipTap body into BlockNote after resolving its variables', () => {
+  it('converts a TipTap body into markdown after resolving its variables', () => {
     const tipTapBody = JSON.stringify([
       {
         type: 'paragraph',
@@ -107,29 +107,20 @@ describe('convertStepTipTapToRichText', () => {
       },
     ]);
 
-    const resolved = convertStepTipTapToRichText(
+    const resolved = convertStepTipTapToMarkdown(
       { body: { blocknote: tipTapBody, markdown: null } },
       objectMetadataInfo,
       context,
     );
 
-    const { blocknote, markdown } = resolved.body as {
-      blocknote: string;
-      markdown: string;
-    };
-
-    expect(markdown).toBe('**Amount**: 42');
-    expect(JSON.parse(blocknote)[0]).toMatchObject({
-      type: 'paragraph',
-      content: [
-        { type: 'text', text: 'Amount', styles: { bold: true } },
-        { type: 'text', text: ': 42' },
-      ],
+    expect(resolved.body).toEqual({
+      markdown: '**Amount**: 42',
+      blocknote: null,
     });
   });
 
   it('keeps a blocknote variable for the input resolution', () => {
-    const resolved = convertStepTipTapToRichText(
+    const resolved = convertStepTipTapToMarkdown(
       {
         body: {
           blocknote: '{{codeStep.report.blocknote}}',
@@ -147,7 +138,7 @@ describe('convertStepTipTapToRichText', () => {
   });
 
   it('leaves a value that is not a rich text object untouched', () => {
-    const resolved = convertStepTipTapToRichText(
+    const resolved = convertStepTipTapToMarkdown(
       { body: 'legacy bare string {{trigger.body.amount}}', title: 'x' },
       objectMetadataInfo,
       context,
@@ -157,7 +148,7 @@ describe('convertStepTipTapToRichText', () => {
   });
 
   it('does not touch fields that are not rich text', () => {
-    const resolved = convertStepTipTapToRichText(
+    const resolved = convertStepTipTapToMarkdown(
       {
         title: '{{trigger.body.amount}}',
         body: { markdown: 'a', blocknote: null },

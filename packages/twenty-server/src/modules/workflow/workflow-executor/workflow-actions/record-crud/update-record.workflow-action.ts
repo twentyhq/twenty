@@ -17,7 +17,7 @@ import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-execut
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
 import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import { convertStepTipTapToRichText } from 'src/modules/workflow/workflow-executor/utils/convert-step-tiptap-to-rich-text.util';
+import { convertStepTipTapToMarkdown } from 'src/modules/workflow/workflow-executor/utils/convert-step-tiptap-to-markdown.util';
 import { isWorkflowUpdateRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-update-record-action.guard';
 import { type WorkflowUpdateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
@@ -59,7 +59,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
 
     const inputWithRichText = {
       ...rawInput,
-      objectRecord: convertStepTipTapToRichText(
+      objectRecord: convertStepTipTapToMarkdown(
         rawInput.objectRecord,
         objectMetadataInfo,
         context,

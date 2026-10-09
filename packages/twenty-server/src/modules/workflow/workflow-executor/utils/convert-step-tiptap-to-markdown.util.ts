@@ -10,15 +10,13 @@ import {
   resolveStringTemplate,
 } from 'twenty-shared/utils';
 
-import { convertMarkdownToBlocknote } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
-
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
 
 // The step editor is TipTap but saves its JSON under a key named blocknote
 const workflowStepTipTapValueSchema = richTextValueSchema;
 
-export const convertStepTipTapToRichText = (
+export const convertStepTipTapToMarkdown = (
   stepObjectRecord: Record<string, unknown>,
   objectMetadataInfo: Pick<
     ObjectMetadataInfo,
@@ -50,7 +48,7 @@ export const convertStepTipTapToRichText = (
     const richTextValue: RichTextMetadata = isDefined(tipTapMarkdown)
       ? {
           markdown: tipTapMarkdown,
-          blocknote: convertMarkdownToBlocknote(tipTapMarkdown),
+          blocknote: null,
         }
       : {
           markdown: isString(stepMarkdown)
