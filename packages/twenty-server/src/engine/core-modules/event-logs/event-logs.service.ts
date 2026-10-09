@@ -195,7 +195,7 @@ export class EventLogsService {
 
     if (!hasAccess) {
       throw new EventLogsException(
-        'Audit logs require an Enterprise subscription.',
+        'Audit logs require an Organization subscription.',
         EventLogsExceptionCode.NO_ENTITLEMENT,
       );
     }
