@@ -195,9 +195,17 @@ export const SETTINGS_BILLING_PLAN_COMPARISON_ROWS = [
     type: 'feature',
   },
   {
+    featureLabel: msg`Record change logs`,
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Up to 3 years` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`90 days` },
+    },
+    type: 'feature',
+  },
+  {
     featureLabel: msg`Audit logs`,
     plans: {
-      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Up to 3 years` },
       [BillingPlanKey.PRO]: { kind: 'excluded' },
     },
     type: 'feature',
@@ -317,6 +325,14 @@ export const SETTINGS_BILLING_PLAN_COMPARISON_ROWS = [
     plans: {
       [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
       [BillingPlanKey.PRO]: { kind: 'included' },
+    },
+    type: 'feature',
+  },
+  {
+    featureLabel: msg`App logs`,
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`30 days` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`30 days` },
     },
     type: 'feature',
   },
