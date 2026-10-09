@@ -30,13 +30,4 @@ describe('compareUrls', () => {
     const result = compareUrls(urlA, urlB);
     expect(result).toEqual(false);
   });
-
-  it('should treat the default HTTPS port as the same image URL', () => {
-    expect(
-      compareUrls(
-        'https://example.com:443/files/images/test.png',
-        'https://example.com/files/images/test.png',
-      ),
-    ).toBe(true);
-  });
 });

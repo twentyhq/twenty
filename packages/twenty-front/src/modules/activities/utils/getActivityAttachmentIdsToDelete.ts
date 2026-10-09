@@ -20,8 +20,8 @@ export const getActivityAttachmentIdsToDelete = (
   const pathsToDelete = oldActivityAttachmentPaths
     .filter(
       (oldActivity) =>
-        !newActivityAttachmentPaths.some((newActivity) =>
-          compareUrls(newActivity.path, oldActivity.path),
+        !newActivityAttachmentPaths.some(
+          (newActivity) => newActivity.path === oldActivity.path,
         ),
     )
     .map((activity) => activity.path);

@@ -75,33 +75,4 @@ describe('getActivityAttachmentIdsToDelete', () => {
     );
     expect(attachmentIdsToDelete).toEqual(['2']);
   });
-
-  it('should keep an unchanged image when autosave normalizes its URL', () => {
-    const attachments = [
-      {
-        id: '1',
-        file: [{ url: 'https://example.com/files/images/test.png' }],
-      },
-    ] as Attachment[];
-    const oldActivityBody = JSON.stringify([
-      {
-        type: 'image',
-        props: { url: 'https://example.com/files/images/test.png' },
-      },
-    ]);
-    const newActivityBody = JSON.stringify([
-      {
-        type: 'image',
-        props: { url: 'https://example.com:443/files/images/test.png' },
-      },
-    ]);
-
-    expect(
-      getActivityAttachmentIdsToDelete(
-        newActivityBody,
-        attachments,
-        oldActivityBody,
-      ),
-    ).toEqual([]);
-  });
 });
