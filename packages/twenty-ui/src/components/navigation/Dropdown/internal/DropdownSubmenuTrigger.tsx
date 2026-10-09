@@ -1,5 +1,4 @@
 import { useDirection } from '@base-ui/react/direction-provider';
-import { isBoolean } from '@sniptt/guards';
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { useId } from 'react';
 
@@ -9,6 +8,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownSubmenuTriggerProps } from '../types/DropdownSubmenuTriggerProps';
 import { DropdownItemOwner } from './DropdownItemOwner';
+import { getNativeDisabled } from './getNativeDisabled';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
@@ -100,12 +100,10 @@ export const DropdownSubmenuTrigger = ({
         }
       }}
       render={(renderProps) => {
-        const nativeDisabled =
-          nativeButton &&
-          'disabled' in renderProps &&
-          isBoolean(renderProps.disabled)
-            ? renderProps.disabled
-            : undefined;
+        const nativeDisabled = getNativeDisabled({
+          nativeButton,
+          renderProps,
+        });
 
         return (
           <ListItem

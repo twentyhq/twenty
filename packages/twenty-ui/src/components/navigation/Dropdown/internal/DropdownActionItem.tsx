@@ -1,5 +1,4 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
-import { isBoolean } from '@sniptt/guards';
 import { useId } from 'react';
 import { clsx } from 'clsx';
 
@@ -9,6 +8,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Dropdown.module.scss';
 import { DropdownItemOwner } from './DropdownItemOwner';
+import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
@@ -95,12 +95,10 @@ export const DropdownActionItem = ({
         }
       }}
       render={(renderProps) => {
-        const nativeDisabled =
-          nativeButton &&
-          'disabled' in renderProps &&
-          isBoolean(renderProps.disabled)
-            ? renderProps.disabled
-            : undefined;
+        const nativeDisabled = getNativeDisabled({
+          nativeButton,
+          renderProps,
+        });
 
         return (
           <ListItem
