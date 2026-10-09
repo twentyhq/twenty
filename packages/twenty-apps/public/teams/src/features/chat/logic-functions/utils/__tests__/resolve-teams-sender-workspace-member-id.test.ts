@@ -19,6 +19,7 @@ vi.mock(
 );
 
 const CLIENT = { query: vi.fn() };
+const CLAIMED_TENANT_ID = 'claimed-tenant-id';
 
 const resolve = () =>
   resolveTeamsSenderWorkspaceMemberId({
@@ -26,6 +27,7 @@ const resolve = () =>
     serviceUrl: 'https://smba.trafficmanager.net/amer/',
     conversationId: 'a:personal-conversation',
     teamsUserId: '29:user-id',
+    teamsTenantId: CLAIMED_TENANT_ID,
     accessToken: 'connector-access-token',
   });
 
@@ -38,6 +40,7 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
   it('should match the sender to a workspace member by email', async () => {
     getTeamsConversationMemberMock.mockResolvedValue({
       id: '29:user-id',
+      tenantId: CLAIMED_TENANT_ID,
       email: 'jane@acme.com',
       userPrincipalName: 'jane.doe@acme.onmicrosoft.com',
     });
@@ -58,6 +61,7 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
   it('should fall back to the user principal name when Teams returns no email', async () => {
     getTeamsConversationMemberMock.mockResolvedValue({
       id: '29:user-id',
+      tenantId: CLAIMED_TENANT_ID,
       userPrincipalName: 'jane@acme.com',
     });
 
@@ -69,7 +73,31 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
   });
 
   it('should not look up a member when the sender has no email at all', async () => {
-    getTeamsConversationMemberMock.mockResolvedValue({ id: '29:user-id' });
+    getTeamsConversationMemberMock.mockResolvedValue({
+      id: '29:user-id',
+      tenantId: CLAIMED_TENANT_ID,
+    });
+
+    expect(await resolve()).toBeUndefined();
+    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('should not trust an email asserted by a tenant other than the claimed one', async () => {
+    getTeamsConversationMemberMock.mockResolvedValue({
+      id: '29:user-id',
+      tenantId: 'other-tenant-id',
+      email: 'jane@acme.com',
+    });
+
+    expect(await resolve()).toBeUndefined();
+    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('should not trust an email when Teams does not report the sender tenant', async () => {
+    getTeamsConversationMemberMock.mockResolvedValue({
+      id: '29:user-id',
+      email: 'jane@acme.com',
+    });
 
     expect(await resolve()).toBeUndefined();
     expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();

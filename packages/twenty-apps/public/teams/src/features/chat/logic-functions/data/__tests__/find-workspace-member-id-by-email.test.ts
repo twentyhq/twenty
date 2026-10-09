@@ -30,6 +30,15 @@ describe('findWorkspaceMemberIdByEmail', () => {
     });
   });
 
+  it('should return nothing when no member has the email', async () => {
+    expect(
+      await findWorkspaceMemberIdByEmail({
+        client: buildClient([]),
+        email: 'nobody@acme.com',
+      }),
+    ).toBeUndefined();
+  });
+
   it('should not pick a member when the email matches more than one', async () => {
     expect(
       await findWorkspaceMemberIdByEmail({
