@@ -85,6 +85,23 @@ export const Default: Story = {
   },
 };
 
+export const NonManualTrigger: Story = {
+  args: {
+    triggerType: 'DATABASE_EVENT',
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Forms are meant for manual triggers'),
+    ).toBeVisible();
+    expect(canvas.queryByText(/Send to Inbox/)).not.toBeInTheDocument();
+  },
+};
+
 export const DeleteFields: Story = {
   args: {
     actionOptions: {
