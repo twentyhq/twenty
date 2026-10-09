@@ -188,14 +188,17 @@ Once both are set, **reconnect** so the token picks up the assistant scopes.
 
 ### Permissions
 
-The `slack-assistant` agent binds to the app's **Slack Assistant** role
-automatically on install and upgrade. That role is the ceiling for everything
-the bot can do.
+Only a Slack account linked to a workspace member can use the assistant. An
+account with no link is told to ask an admin for a link, and a linked member
+whose message was not addressed to the assistant (for example a reply in a
+followed thread from someone who never mentioned it there) is asked to mention
+it in a new message.
 
-Where a Slack account is linked to a workspace member, the bot also runs with
-that member's own permissions, so it can never do more than the person asking.
-Accounts with no link act with the Slack Assistant role alone, so keep it scoped
-to what you're comfortable exposing to anyone who can message the bot.
+Every answer runs with the linked member's own permissions, so the assistant can
+never do more than the person asking. The app's role only covers what the app's
+own functions need: tracking assistant requests, linking Slack accounts, reading
+workspace members for the email match and rendering record previews. It is not
+an extra ceiling on a member's answer.
 
 ## Linking Slack accounts to workspace members
 
@@ -403,4 +406,5 @@ Fields use camelCase in the step UI:
 | Feedback buttons show a warning when clicked | **Interactivity & Shortcuts** is not enabled, or its Request URL is wrong | Enable it and set the `slack-interactivity-resolver` URL above |
 | Connecting is rejected because the Slack team is already claimed | Another Twenty workspace on this server has connected the same Slack team | Remove the connection on that workspace, or uninstall the app there, to release the claim |
 | A manual link stays *Awaiting consent* | The person has not answered the consent DM, or `im:write` was not granted so it was never sent | Resend the request from the **Slack user links** settings section; if nothing arrives, reconnect to grant `im:write` |
-| The bot acts with the Slack Assistant role instead of the member's permissions | The Slack account has no link, or its verified email no longer matches the member | Check the link's status in the settings section and link the account by hand if the email cannot match |
+| The bot declines a person with *"not linked"* instead of answering | The Slack account has no link, or its verified email no longer matches the member | Check the link's status in the settings section and link the account by hand if the email cannot match |
+| The bot asks a linked member to mention it in a new message | The message was not addressed to the assistant, such as a reply in a followed thread from someone who never mentioned it there | Mention the assistant in a new message |

@@ -6,6 +6,7 @@ import { APP_TEMPLATE_PACKAGE_VERSION } from '@/app/constants/app-template-packa
 import { APP_TEMPLATE_FIRST_PARTY_PACKAGES } from '@/app/constants/app-template-packages.constant';
 import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
 import { printTypescriptValue } from '@/app/pull/print-typescript-value';
+import { CLI_VERSION } from '@/constants/cli-version.constant';
 
 export const renderAppTemplate = async ({
   appDirectory,
@@ -19,6 +20,7 @@ export const renderAppTemplate = async ({
   appDescription: string;
 }) => {
   await cp(getAppTemplateDirectory(), appDirectory, { recursive: true });
+  await writeFile(join(appDirectory, 'yarn.lock'), '', { flag: 'a' });
 
   // npm excludes these dotfiles when packing the template.
   for (const [source, destination] of [
@@ -30,6 +32,14 @@ export const renderAppTemplate = async ({
   }
 
   await cp(join(appDirectory, 'AGENTS.md'), join(appDirectory, 'CLAUDE.md'));
+
+  const workflowPath = join(appDirectory, '.github', 'workflows', 'ci.yml');
+  const workflow = (await readFile(workflowPath, 'utf8')).replace(
+    'CLI-VERSION-TO-BE-GENERATED',
+    CLI_VERSION,
+  );
+
+  await writeFile(workflowPath, workflow);
 
   const identifiersPath = join(
     appDirectory,

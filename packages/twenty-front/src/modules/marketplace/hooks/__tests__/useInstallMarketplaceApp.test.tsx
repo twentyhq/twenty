@@ -10,7 +10,7 @@ import {
   FindInstallApplicationJobStatusDocument,
   JobState,
   type JobStatus,
-  TriggerInstallApplicationJobDocument,
+  TriggerInstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
@@ -25,11 +25,11 @@ jest.mock('twenty-ui/components/feedback', () => ({
 
 const triggerInstallMock = {
   request: {
-    query: TriggerInstallApplicationJobDocument,
+    query: TriggerInstallApplicationDocument,
     variables: { input: { universalIdentifier: UNIVERSAL_IDENTIFIER } },
   },
   result: {
-    data: { triggerInstallApplicationJob: { jobId: JOB_ID } },
+    data: { triggerInstallApplication: { jobId: JOB_ID } },
   },
 };
 

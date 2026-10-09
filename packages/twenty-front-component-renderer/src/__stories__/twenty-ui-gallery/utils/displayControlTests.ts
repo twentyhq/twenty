@@ -43,35 +43,6 @@ const createDisplayControlTest =
     await expect(canvas.getByLabelText('Activations')).toHaveTextContent('3');
   };
 
-export const statusControlsTest = createDisplayControlTest({
-  buttonName: 'Open status',
-  disabledButtonName: 'Disabled status',
-  staticContent: 'Loading status',
-});
-
-export const tagControlsTest = createDisplayControlTest({
-  buttonName: 'Open tag',
-  disabledButtonName: 'Disabled tag',
-  staticContent: 'Static tag',
-});
-
-const avatarGalleryTest: TwentyUiGalleryPlayFunction = async (context) => {
-  await galleryRenderTest(context);
-  const imageEntry = within(
-    within(context.canvasElement).getByTestId('gallery-item-AvatarImage'),
-  );
-
-  await expect(imageEntry.getByText('I')).toBeVisible();
-  await expect(imageEntry.queryByRole('presentation')).not.toBeInTheDocument();
-};
-
-export const avatarControlsTest = createDisplayControlTest({
-  buttonName: 'Jane',
-  disabledButtonName: 'Disabled avatar',
-  staticContent: 'A',
-  checkGallery: avatarGalleryTest,
-});
-
 export const chipControlsTest = createDisplayControlTest({
   buttonName: 'Open chip',
   disabledButtonName: 'Disabled chip',

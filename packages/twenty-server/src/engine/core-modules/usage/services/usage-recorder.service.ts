@@ -65,8 +65,12 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     await this.flush();
   }
 
+  isEnabled(): boolean {
+    return this.eventLogEmitterService.isEnabled();
+  }
+
   async record(workspaceId: string, inputs: RecordUsageInput[]): Promise<void> {
-    if (!this.eventLogEmitterService.isEnabled() || inputs.length === 0) {
+    if (!this.isEnabled() || inputs.length === 0) {
       return;
     }
 
@@ -83,7 +87,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
   }
 
   accumulate(workspaceId: string, input: RecordUsageInput): void {
-    if (!this.eventLogEmitterService.isEnabled()) {
+    if (!this.isEnabled()) {
       return;
     }
 

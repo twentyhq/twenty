@@ -1,9 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
+import { Temporal } from 'temporal-polyfill';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
-import { hasAgentChatBeenOpenedState } from '@/ai/states/hasAgentChatBeenOpenedState';
+import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import {
   currentWorkspaceState,
   type CurrentWorkspace,
@@ -24,9 +25,6 @@ jest.mock('@/ai/components/AgentChatPrepromptEffect', () => ({
 jest.mock('@/ai/components/AgentChatStreamKeepAliveEffect', () => ({
   AgentChatStreamKeepAliveEffect: () => null,
 }));
-jest.mock('@/ai/components/AgentChatSessionStartTimeEffect', () => ({
-  AgentChatSessionStartTimeEffect: () => null,
-}));
 
 const renderRuntimeEffects = () =>
   render(
@@ -37,7 +35,10 @@ const renderRuntimeEffects = () =>
 
 describe('AgentChatRuntimeEffects', () => {
   beforeEach(() => {
-    jotaiStore.set(hasAgentChatBeenOpenedState.atom, true);
+    jotaiStore.set(
+      agentChatUISessionStartTimeState.atom,
+      Temporal.Now.instant(),
+    );
     jotaiStore.set(currentWorkspaceState.atom, null);
   });
 

@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In, IsNull } from 'typeorm';
 
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
@@ -9,6 +12,7 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -50,6 +54,114 @@ export class AgentChatThreadService {
     });
 
     return savedThread;
+  }
+
+  // The client picks a new chat's id, so its first message creates the thread.
+  // An existing thread is left for the caller to check access to.
+  async createThreadIfMissing({
+    threadId,
+    ...args
+  }: AgentChatThreadAccessArgs): Promise<void> {
+    if (
+      await this.threadRepository.existsBy(args.workspaceId, { id: threadId })
+    ) {
+      return;
+    }
+
+    try {
+      await this.createThread({ ...args, id: threadId });
+    } catch (error) {
+      if (!isUniqueViolationError(error)) {
+        throw error;
+      }
+    }
+  }
+
+  // owned threads are skipped so an upsert cannot reassign them
+  async assignCreatedThreadsToCreator({
+    authContext,
+    threadIds,
+  }: {
+    authContext: WorkspaceAuthContext;
+    threadIds: string[];
+  }): Promise<void> {
+    if (!isUserAuthContext(authContext) || !isNonEmptyArray(threadIds)) {
+      return;
+    }
+
+    const workspaceId = authContext.workspace.id;
+    const { workspaceMemberId } = authContext;
+    const unassignedThreadCriteria = { workspaceMemberId: IsNull() };
+
+    const threadsBefore = await this.threadRepository.find(workspaceId, {
+      where: { id: In(threadIds), ...unassignedThreadCriteria },
+    });
+
+    if (!isNonEmptyArray(threadsBefore)) {
+      return;
+    }
+
+    const { generatedMaps: assignedThreads } =
+      await this.threadRepository.update(
+        workspaceId,
+        {
+          id: In(threadsBefore.map(({ id }) => id)),
+          ...unassignedThreadCriteria,
+        },
+        {
+          workspaceMemberId,
+          userWorkspaceId: authContext.userWorkspaceId,
+        },
+      );
+
+    if (!isNonEmptyArray(assignedThreads)) {
+      return;
+    }
+
+    const assignedThreadIds = assignedThreads.map(({ id }) => id);
+    const participantObjectMetadataId =
+      await this.sharingService.findParticipantObjectMetadataId(workspaceId);
+
+    const setUpThreads = await this.threadRepository.query(
+      workspaceId,
+      (context) =>
+        this.sharingService.setUpCreatedThreadsInboxState({
+          ...context,
+          workspaceId,
+          workspaceMemberId,
+          threadIds: assignedThreadIds,
+          participantObjectMetadataId,
+        }),
+    );
+
+    // Sent first, so a new thread never shows as unread to its creator
+    for (const { id: threadId } of setUpThreads) {
+      await this.participantService.emitParticipantCreated({
+        workspaceId,
+        workspaceMemberId,
+        threadId,
+      });
+    }
+
+    const threadsAfter = await this.threadRepository.find(workspaceId, {
+      where: { id: In(assignedThreadIds) },
+    });
+
+    for (const threadAfter of threadsAfter) {
+      const threadBefore = threadsBefore.find(
+        ({ id }) => id === threadAfter.id,
+      );
+
+      if (!isDefined(threadBefore)) {
+        continue;
+      }
+
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+        threadAfter,
+      });
+    }
   }
 
   async findWritableThread(args: AgentChatThreadAccessArgs) {

@@ -10,14 +10,13 @@ import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
-import { agentChatFirstUnreadMessageIdComponentSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdComponentSelector';
-import { agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector';
-import { agentChatMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatMessageComponentFamilySelector';
+import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
+import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
+import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { getAgentChatMessageWorkDurationMs } from '@/ai/utils/getAgentChatMessageWorkDurationMs';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
@@ -26,6 +25,9 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { LabeledDivider } from '@/ui/layout/line/components/LabeledDivider';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
   align-items: ${({ isUser }) => (isUser ? 'flex-end' : 'flex-start')};
@@ -186,19 +188,22 @@ export const AiChatMessage = ({
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const agentChatMessage = useAtomComponentFamilySelectorValue(
-    agentChatMessageComponentFamilySelector,
+  const agentChatMessage = useAtomFamilySelectorValue(
+    agentChatMessageFamilySelector,
     { messageId },
   );
 
-  const isMessageBeforeFirstUserMessage = useAtomComponentFamilySelectorValue(
-    agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector,
+  const isMessageBeforeFirstUserMessage = useAtomFamilySelectorValue(
+    agentChatIsMessageBeforeFirstUserMessageFamilySelector,
     { messageId },
   );
 
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
-  const firstUnreadMessageId = useAtomComponentSelectorValue(
-    agentChatFirstUnreadMessageIdComponentSelector,
+  const agentChatFirstUnreadMessageId = useAtomStateValue(
+    agentChatFirstUnreadMessageIdSelector,
+  );
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
   if (!isDefined(agentChatMessage)) {
@@ -225,12 +230,16 @@ export const AiChatMessage = ({
       messageParts={agentChatMessage.parts}
       hasError={shouldShowError}
       shouldHideThinkingSteps={isMessageBeforeFirstUserMessage}
+      workDurationMs={getAgentChatMessageWorkDurationMs({
+        metadata: agentChatMessage.metadata,
+        isStreaming: isLastMessageStreaming,
+      })}
     />
   );
 
   return (
     <>
-      {firstUnreadMessageId === messageId && (
+      {isAiChatInboxEnabled && agentChatFirstUnreadMessageId === messageId && (
         <LabeledDivider
           textPosition="end"
           color={themeCssVariables.tag.text.red}

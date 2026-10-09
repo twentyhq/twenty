@@ -19,7 +19,7 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
 import { resolveWidgetTypeSelectTargetTabId } from '@/side-panel/pages/page-layout/utils/resolveWidgetTypeSelectTargetTabId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -47,8 +47,10 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
-  const { pageLayoutId, objectNameSingular: targetObjectNameSingular } =
-    usePageLayoutIdFromContextStore();
+  const {
+    pageLayoutId,
+    targetRecordIdentifier: { targetObjectNameSingular },
+  } = usePageLayoutSidePanelTarget();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { createRecordPageNoteWidget } =

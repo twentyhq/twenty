@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
+msgstr "{actorName} a généré un code de récupération qui vous permet de vous connecter à {workspaceDisplayName} sans votre application d'authentification."
+
+#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
 msgstr "{actorName} a mis à jour l'accès administrateur du serveur pour {targetName} ({targetEmail})."
@@ -37,6 +42,11 @@ msgstr "{senderName} (<0>{senderEmail}</0>) : Veuillez valider ce domaine pour p
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
 msgstr "Un petit rappel avant la fin de votre essai"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
+msgstr "Un code de récupération a été utilisé pour vous connecter à {workspaceDisplayName}. Votre authentificateur pour cet espace de travail a été supprimé et vos autres sessions y ont été déconnectées."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -128,9 +138,19 @@ msgid "Hi {userName},"
 msgstr "Bonjour {userName},"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "If this was not you, contact your workspace administrator and change your password."
+msgstr "Si vous n'êtes pas à l'origine de cette action, contactez l'administrateur de votre espace de travail et changez votre mot de passe."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
 msgstr "Si Twenty vous convient, tout est en ordre — vous n’avez rien à faire. Si ce n’est pas la bonne solution pour vous, vous pouvez annuler en un clic avant cette date et vous ne serez pas facturé."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "If you did not ask for this, contact your workspace administrator and change your password."
+msgstr "Si vous n'avez pas demandé cela, contactez l'administrateur de votre espace de travail et changez votre mot de passe."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -234,6 +254,11 @@ msgid "Set"
 msgstr "Définir"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "Set up two-factor authentication again under Settings, Profile."
+msgstr "Configurez à nouveau l'authentification à deux facteurs dans Paramètres, Profil."
+
+#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
 msgstr "Définir votre mot de passe 🗝"
@@ -247,6 +272,11 @@ msgstr "Créer un nouvel espace de travail"
 #: src/emails/test.email.tsx
 msgid "Test email"
 msgstr "E-mail de test"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
+msgstr "Le code ne peut être utilisé qu'une seule fois et expire le {formattedExpiresAt}. Son utilisation supprime votre authentificateur actuel pour cet espace de travail et vous déconnecte de vos autres sessions qui s'y trouvent."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -267,6 +297,16 @@ msgstr "Pour conserver votre espace de travail et tout ce que vous avez créé, 
 #: src/components/Footer.tsx
 msgid "Twenty.com, Public Benefit Corporation"
 msgstr "Twenty.com, Société d'intérêt public"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "Two-factor authentication recovery code issued"
+msgstr "Code de récupération pour l'authentification à deux facteurs émis"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "Two-factor authentication reset"
+msgstr "Réinitialisation de l'authentification à deux facteurs"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

@@ -60,7 +60,7 @@ const buildOptionsFilter = ({
     return {
       type: 'object',
       properties: {
-        in: {
+        containsAny: {
           description: 'Contains any of these values',
           type: 'array',
           items: option,

@@ -8,7 +8,10 @@ export class RolesSection {
   constructor(page: Page) {
     this.page = page;
     this.createRoleButton = page.getByRole('button', { name: 'Create Role' });
-    this.defaultRoleDropdown = page.getByTestId('tooltip');
+    this.defaultRoleDropdown = page
+      .getByText('Set a default for this workspace', { exact: true })
+      .locator('xpath=../../..')
+      .getByRole('button');
   }
 
   async clickCreateRoleButton() {
@@ -17,6 +20,6 @@ export class RolesSection {
 
   async selectDefaultRole(role: string) {
     await this.defaultRoleDropdown.click();
-    await this.page.getByTestId('tooltip').getByText(role).click();
+    await this.page.getByText(role, { exact: true }).click();
   }
 }

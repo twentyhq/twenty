@@ -5,8 +5,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -70,11 +68,7 @@ const AiNavigationContent = () => {
   return (
     <Provider store={store}>
       <MemoryRouter initialEntries={['/chat']}>
-        <AgentChatComponentInstanceContext.Provider
-          value={{ instanceId: AGENT_CHAT_INSTANCE_ID }}
-        >
-          <ContentWithCollapseControl />
-        </AgentChatComponentInstanceContext.Provider>
+        <ContentWithCollapseControl />
       </MemoryRouter>
     </Provider>
   );
