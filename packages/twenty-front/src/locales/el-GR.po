@@ -1206,7 +1206,7 @@ msgstr "Ένα πρόχειρο υπάρχει ήδη για αυτή τη ρο�
 #. js-lingui-id: xk6SkO
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run."
-msgstr ""
+msgstr "Ανοίγει μια φόρμα για το άτομο που εκκινεί τη ροή εργασίας και συμπληρώνεται εκείνη τη στιγμή. Με αυτό το έναυσμα, εμφανίζεται μόνο κατά την εκτέλεση της ροής εργασίας."
 
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -9021,7 +9021,7 @@ msgstr "Στείλτε πρόσκληση στους συμμετέχοντες 
 #. js-lingui-id: ju58G/
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
 msgid "Email thread"
-msgstr ""
+msgstr "Νήμα email"
 
 #. js-lingui-id: +V3dhy
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -25208,7 +25208,7 @@ msgstr "Αναβαθμίστηκε"
 #. js-lingui-id: nDpDl0
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
 msgid "Upgrading {displayedUpgradeProgress}"
-msgstr ""
+msgstr "Αναβάθμιση {displayedUpgradeProgress}"
 
 #. js-lingui-id: 9gm/Oo
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts

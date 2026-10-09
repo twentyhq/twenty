@@ -1206,7 +1206,7 @@ msgstr "Այս աշխատանքահոսքի համար սևագիր արդեն �
 #. js-lingui-id: xk6SkO
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run."
-msgstr ""
+msgstr "Աշխատահոսքը գործարկող անձի համար բացվում է ձև, որը լրացվում է տեղում։ Այս գործարկիչի դեպքում այն ցուցադրվում է միայն աշխատահոսքի գործարկման ընթացքում։"
 
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -9021,7 +9021,7 @@ msgstr "Ուղարկել հրավեր նամակ մասնակիցներին"
 #. js-lingui-id: ju58G/
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
 msgid "Email thread"
-msgstr ""
+msgstr "Էլեկտրոնային փոստի թել"
 
 #. js-lingui-id: +V3dhy
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -25206,7 +25206,7 @@ msgstr "Թարմացվել է"
 #. js-lingui-id: nDpDl0
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
 msgid "Upgrading {displayedUpgradeProgress}"
-msgstr ""
+msgstr "Թարմացվում է {displayedUpgradeProgress}"
 
 #. js-lingui-id: 9gm/Oo
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
