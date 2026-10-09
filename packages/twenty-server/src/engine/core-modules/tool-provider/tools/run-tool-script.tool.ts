@@ -178,11 +178,13 @@ export const createRunToolScriptTool = (
         );
       }
 
+      // Results stay in the sandbox, so compacting saves no tokens; it only drops
+      // the empty lists and null fields scripts index into
       const toolOutput = await toolRegistry.resolveAndExecute(
         toolName,
         toolArguments,
         context,
-        { compactOutput: true },
+        { compactOutput: false },
       );
 
       toolCalls.push({ name: toolName, success: toolOutput.success });

@@ -221,4 +221,23 @@ describe('run_tool_script over MCP', () => {
       ]),
     );
   });
+
+  it('hands scripts empty lists and null fields as they are', async () => {
+    const output = await runToolScriptThroughMcp({
+      code: `
+nothing = await call_tool("find_many_opportunities", {
+    "select": ["id"],
+    "name": {"eq": "${OPPORTUNITY_NAME_PREFIX} does not exist"},
+})
+unowned = await call_tool("find_many_opportunities", {
+    "select": ["id", "ownerId"],
+    "name": {"eq": "${OPPORTUNITY_NAME_PREFIX} unowned"},
+})
+{"nothing": nothing["records"], "ownerId": unowned["records"][0]["ownerId"]}
+`,
+      expectToFail: false,
+    });
+
+    expect(output.result).toEqual({ nothing: [], ownerId: null });
+  });
 });

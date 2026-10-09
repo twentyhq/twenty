@@ -178,7 +178,7 @@ print("covered", len(covered))
       'find_many_opportunities',
       { filter: { closeDate: { gte: '2026-10-01' } } },
       context,
-      { compactOutput: true },
+      { compactOutput: false },
     );
   });
 
