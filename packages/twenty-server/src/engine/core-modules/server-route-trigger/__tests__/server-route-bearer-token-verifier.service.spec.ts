@@ -1,5 +1,6 @@
 import { generateKeyPairSync, type KeyObject } from 'crypto';
 
+import { Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -64,6 +65,9 @@ describe('ServerRouteBearerTokenVerifierService', () => {
   });
 
   beforeEach(async () => {
+    jest.spyOn(Logger.prototype, 'warn').mockImplementation();
+    jest.spyOn(Logger.prototype, 'error').mockImplementation();
+
     fetchJwks = jest
       .fn()
       .mockResolvedValue({ data: { keys: [buildPublishedKey()] } });
@@ -130,6 +134,7 @@ describe('ServerRouteBearerTokenVerifierService', () => {
   ])('should reject %s', async (_, authorizationHeader) => {
     await expect(verify(authorizationHeader)).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.INVALID_BEARER_TOKEN,
+      message: 'Bearer token is invalid',
     });
   });
 
@@ -215,6 +220,7 @@ describe('ServerRouteBearerTokenVerifierService', () => {
 
     await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
+      message: 'Bearer token verification is unavailable',
     });
   });
 });

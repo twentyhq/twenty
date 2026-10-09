@@ -1,6 +1,6 @@
 import { createPublicKey } from 'crypto';
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -28,15 +28,11 @@ type FetchedSigningKeys = {
   fetchedAtMs: number;
 };
 
-const throwInvalidBearerToken = (reason: string): never => {
-  throw new ServerRouteTriggerException(
-    reason,
-    ServerRouteTriggerExceptionCode.INVALID_BEARER_TOKEN,
-  );
-};
-
 @Injectable()
 export class ServerRouteBearerTokenVerifierService {
+  private readonly logger = new Logger(
+    ServerRouteBearerTokenVerifierService.name,
+  );
   private readonly signingKeysByJwksUrl = new Map<string, FetchedSigningKeys>();
   private readonly signingKeysFetchByJwksUrl = new Map<
     string,
@@ -66,13 +62,13 @@ export class ServerRouteBearerTokenVerifierService {
     const token = extractBearerToken(authorizationHeader);
 
     if (!isDefined(token)) {
-      return throwInvalidBearerToken('Missing or malformed bearer token');
+      return this.throwInvalidBearerToken('Missing or malformed bearer token');
     }
 
     const keyId = decode(token, { complete: true })?.header.kid;
 
     if (!isNonEmptyString(keyId)) {
-      return throwInvalidBearerToken('Bearer token names no signing key');
+      return this.throwInvalidBearerToken('Bearer token names no signing key');
     }
 
     const audience = await this.findAudienceOrThrow({
@@ -91,7 +87,7 @@ export class ServerRouteBearerTokenVerifierService {
       isNonEmptyString(requiredKeyEndorsement) &&
       !(signingKey.endorsements ?? []).includes(requiredKeyEndorsement)
     ) {
-      return throwInvalidBearerToken(
+      return this.throwInvalidBearerToken(
         `Bearer token signing key is not endorsed for ${requiredKeyEndorsement}`,
       );
     }
@@ -113,13 +109,13 @@ export class ServerRouteBearerTokenVerifierService {
         },
       );
     } catch (error) {
-      return throwInvalidBearerToken(
+      return this.throwInvalidBearerToken(
         `Bearer token verification failed: ${error instanceof Error ? error.message : 'unknown error'}`,
       );
     }
 
     if (!isPlainObject(claims)) {
-      return throwInvalidBearerToken('Bearer token carries no claims');
+      return this.throwInvalidBearerToken('Bearer token carries no claims');
     }
 
     return claims;
@@ -144,9 +140,8 @@ export class ServerRouteBearerTokenVerifierService {
       : '';
 
     if (!isNonEmptyString(audience)) {
-      throw new ServerRouteTriggerException(
+      return this.throwBearerTokenVerificationUnavailable(
         `Server variable ${audienceServerVariable} holding the expected bearer token audience is not set`,
-        ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
       );
     }
 
@@ -177,7 +172,7 @@ export class ServerRouteBearerTokenVerifierService {
     );
 
     if (!isDefined(signingKey)) {
-      return throwInvalidBearerToken(
+      return this.throwInvalidBearerToken(
         'Bearer token is signed with a key the issuer does not publish',
       );
     }
@@ -263,12 +258,33 @@ export class ServerRouteBearerTokenVerifierService {
     const cachedSigningKeys = this.signingKeysByJwksUrl.get(jwksUrl);
 
     if (!isDefined(cachedSigningKeys)) {
-      throw new ServerRouteTriggerException(
+      return this.throwBearerTokenVerificationUnavailable(
         `Could not load signing keys from ${jwksUrl}: ${reason}`,
-        ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
       );
     }
 
     return cachedSigningKeys.keys;
+  }
+
+  // The exception message is sent back to unauthenticated callers, so the
+  // reason, which can name the expected audience or the JWKS URL, is only logged.
+  private throwInvalidBearerToken(reason: string): never {
+    this.logger.warn(`Rejected server route bearer token: ${reason}`);
+
+    throw new ServerRouteTriggerException(
+      'Bearer token is invalid',
+      ServerRouteTriggerExceptionCode.INVALID_BEARER_TOKEN,
+    );
+  }
+
+  private throwBearerTokenVerificationUnavailable(reason: string): never {
+    this.logger.error(
+      `Server route bearer token verification is unavailable: ${reason}`,
+    );
+
+    throw new ServerRouteTriggerException(
+      'Bearer token verification is unavailable',
+      ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
+    );
   }
 }
