@@ -25,15 +25,16 @@ export const resolveRichTextFieldsInRecord = (
   const resolvedRecord = { ...objectRecord };
 
   for (const fieldName of richTextFieldNames) {
-    const parsedRichTextValue = richTextValueSchema.safeParse(
+    const parsedStepRichTextValue = richTextValueSchema.safeParse(
       resolvedRecord[fieldName],
     );
 
-    if (!parsedRichTextValue.success) {
+    if (!parsedStepRichTextValue.success) {
       continue;
     }
 
-    const { blocknote: tipTapJson, markdown } = parsedRichTextValue.data;
+    // Workflow step editors are TipTap, and store their JSON in the blocknote subfield
+    const { blocknote: tipTapJson, markdown } = parsedStepRichTextValue.data;
 
     const resolvedTipTapJson = resolveRichTextVariables(tipTapJson, context);
     const tipTapMarkdown = isDefined(resolvedTipTapJson)
