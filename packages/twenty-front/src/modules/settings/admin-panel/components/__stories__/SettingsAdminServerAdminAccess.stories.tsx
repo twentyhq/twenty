@@ -56,7 +56,7 @@ export const LastAdministratorProtection: Story = {
       name: 'Revoke admin panel access',
     });
 
-    await expect(revokeAdminAccess).toHaveAttribute('aria-disabled', 'true');
+    await expect(revokeAdminAccess).toBeDisabled();
     await userEvent.click(revokeAdminAccess);
     await expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
     await expect(canvas.getByRole('menu')).toBeVisible();

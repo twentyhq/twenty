@@ -16,7 +16,7 @@ const meta: Meta<typeof SettingsRow> = {
   id: 'ui-components-settingsrow',
   title: 'UI/Components/Settings/SettingsRow',
   component: SettingsRow,
-  args: { children: 'Notifications', startIcon: <IconBell aria-hidden /> },
+  args: { children: 'Notifications', startElement: <IconBell aria-hidden /> },
   parameters: { container: { width: 320 } },
 };
 

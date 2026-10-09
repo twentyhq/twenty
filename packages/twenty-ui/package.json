@@ -63,6 +63,7 @@
     "sass-embedded": "^1.83.0",
     "size-limit": "^12.1.0",
     "slash": "^5.1.0",
+    "storybook": "^10.4.6",
     "storybook-addon-pseudo-states": "^10.3.3",
     "tsx": "^4.19.3",
     "typescript": "^5.9.3",

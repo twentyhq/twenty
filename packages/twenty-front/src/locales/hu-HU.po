@@ -1206,7 +1206,7 @@ msgstr "Egy vázlat már létezik ehhez a workflow-hoz. Biztosan törölni akarj
 #. js-lingui-id: xk6SkO
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run."
-msgstr ""
+msgstr "Űrlap nyílik meg a munkafolyamatot elindító személy számára, amelyet helyben tölt ki. Ezzel az indítóval csak a munkafolyamat futása közben jelenik meg."
 
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -1363,10 +1363,10 @@ msgstr "Érje el munkatéradatait a kedvenc MCP-klienséből, például a Claude
 
 #. js-lingui-id: AeXO77
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
-#: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -1388,7 +1388,13 @@ msgstr "Fiók sikeresen hozzáadva. Szinkronizálás megkezdődött."
 msgid "Account Deletion"
 msgstr "Fiók törlése"
 
+#. js-lingui-id: T3FM0r
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+msgid "Account settings"
+msgstr ""
+
 #. js-lingui-id: bPwFdf
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -1641,6 +1647,7 @@ msgstr "Adjon hozzá egy munkafolyamat-lépést, amely üzenetet, valamint opcio
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -3131,6 +3138,14 @@ msgstr "Alkalmazásnaplók"
 msgid "App logs are kept {retentionInDays} days."
 msgstr "Az alkalmazásnaplókat {retentionInDays} napig őrizzük meg."
 
+#. js-lingui-id: MAyGac
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsAccounts.tsx
+msgid "App preferences"
+msgstr ""
+
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
 msgid "App URL"
@@ -3166,6 +3181,7 @@ msgid "Applicability"
 msgstr "Alkalmazhatóság"
 
 #. js-lingui-id: IrC12v
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -4337,7 +4353,9 @@ msgstr "caldav.example.com"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/views/types/ViewType.ts
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Calendar"
 msgstr "Naptár"
 
@@ -5523,6 +5541,7 @@ msgstr "Panasz"
 
 #. js-lingui-id: 3WrMP5
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Complete setup"
 msgstr "Beállítás befejezése"
 
@@ -5848,7 +5867,7 @@ msgid "Connected"
 msgstr "Csatlakoztatva"
 
 #. js-lingui-id: 9TzudL
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Connected accounts"
 msgstr "Csatlakoztatott fiókok"
 
@@ -5876,6 +5895,7 @@ msgstr "Csatlakozási szolgáltatók"
 
 #. js-lingui-id: W4Kgwq
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Connection settings"
 msgstr "Kapcsolati beállítások"
 
@@ -5890,7 +5910,7 @@ msgid "Connection successfully updated"
 msgstr "Kapcsolat sikeresen frissítve"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/components/AgentChatStreamKeepAliveEffect.tsx
+#: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Megszakadt a kapcsolat az asszisztenssel. Töltse újra az oldalt a válasz megtekintéséhez."
 
@@ -7752,16 +7772,19 @@ msgstr "Fiók és az összes hozzá kapcsolódó adat törlése vagy munkaterül
 
 #. js-lingui-id: 452Oso
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and data"
 msgstr "Fiók és adatok törlése"
 
 #. js-lingui-id: bwUbrT
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data"
 msgstr "Fiók és szinkronizált adatok törlése"
 
 #. js-lingui-id: nmosf7
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data?"
 msgstr "Törli a fiókot és a szinkronizált adatokat?"
 
@@ -8249,6 +8272,9 @@ msgstr "Leválasztás"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Disconnect account"
 msgstr "Fiók leválasztása"
 
@@ -9021,7 +9047,7 @@ msgstr "A résztvevők meghívása e-mailben"
 #. js-lingui-id: ju58G/
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
 msgid "Email thread"
-msgstr ""
+msgstr "E-mail-szál"
 
 #. js-lingui-id: +V3dhy
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -9067,9 +9093,11 @@ msgstr "e-mailek"
 
 #. js-lingui-id: BXEcos
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -11527,6 +11555,11 @@ msgstr "A GitHub-engedélyezés sikertelen volt vagy meg lett tagadva. Kérjük,
 msgid "Global search"
 msgstr "Globális keresés"
 
+#. js-lingui-id: DSJEta
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+msgid "Gmail"
+msgstr ""
+
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent.tsx
@@ -11577,6 +11610,11 @@ msgstr "Jóindulatú gesztus a márciusi incidens után"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Google"
 msgstr "Google"
+
+#. js-lingui-id: ebIDwV
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+msgid "Google Calendar"
+msgstr ""
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -12414,6 +12452,7 @@ msgstr "Importált adatok"
 #. js-lingui-id: RqSvT0
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing"
 msgstr "Importálás folyamatban"
 
@@ -14348,7 +14387,7 @@ msgid "Manage workflows"
 msgstr "Munkafolyamatok kezelése"
 
 #. js-lingui-id: FyFNsd
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Manage your internet accounts."
 msgstr "Kezeld az internetes fiókjaid."
 
@@ -14941,6 +14980,7 @@ msgstr "További műveletek"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
@@ -16578,6 +16618,7 @@ msgstr "Nem osztotta meg {notSharedByFullName}"
 
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Nincs szinkronizálva"
 
@@ -17444,6 +17485,11 @@ msgstr "Az egyszer használatos kódnak pontosan 6 számjegyűnek kell lennie"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
 msgid "Outage"
 msgstr "Leállás"
+
+#. js-lingui-id: gdC3cZ
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+msgid "Outlook"
+msgstr ""
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -18720,6 +18766,7 @@ msgstr "Ajánlott"
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect"
 msgstr "Újracsatlakozás"
@@ -19141,6 +19188,11 @@ msgstr "Eltávolít {0} navigációs menüelemet?"
 msgid "Remove {address}"
 msgstr "{address} eltávolítása"
 
+#. js-lingui-id: boQErO
+#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+msgid "Remove {displayName}"
+msgstr ""
+
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Remove {origin}"
@@ -19377,6 +19429,11 @@ msgstr "Mező átrendezése"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent.tsx
 msgid "Reorder options"
 msgstr "Opciók átrendezése"
+
+#. js-lingui-id: Jtm0TT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
+msgstr ""
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21364,6 +21421,7 @@ msgstr "beállítások menüpont"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Setup incomplete"
 msgstr "A beállítás nincs kész"
 
@@ -21422,6 +21480,11 @@ msgstr "Megosztás a munkaterülettel?"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Share your app to other workspaces without pushing it on the marketplace"
 msgstr "Ossza meg az alkalmazását más munkaterületekkel anélkül, hogy feltöltené a piactérre"
+
+#. js-lingui-id: fX13zr
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Shared accounts between apps"
+msgstr ""
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -22669,6 +22732,7 @@ msgstr "Minden üzenet szinkronizálása"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync failed"
 msgstr "Szinkronizálás sikertelen"
 
@@ -22684,11 +22748,13 @@ msgstr "A szinkron megszakadt a(z) {mailboxHandle} postafiókkal. Kérjük, csat
 
 #. js-lingui-id: U6wmNc
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync paused"
 msgstr "Szinkronizálás szüneteltetve"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Synced"
 msgstr "Szinkronizálva"
 
@@ -22714,6 +22780,7 @@ msgstr "Objektumok címkéinek és API neveinek szinkronizálása"
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr "A szinkronizálás leáll, és ennek a fióknak a hitelesítő adatai törlődnek. Az e-mailjei és eseményei megmaradnak, és az újbóli csatlakozás után elérhetők lesznek."
 
@@ -23633,6 +23700,7 @@ msgstr "Ez az oldal nem érhető el."
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
 msgstr "Ez véglegesen törli a(z) {accountHandle} fiókot és az összes szinkronizált e-mailjét és eseményét. Ez a művelet nem vonható vissza."
 
@@ -24890,25 +24958,16 @@ msgstr "Eddig: {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadTitle.tsx
-#: src/modules/ai/components/ChatReferenceChip.tsx
-#: src/modules/ai/components/ChatReferenceChip.tsx
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
-#: src/modules/log-console/components/LogConsoleMemberChip.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
-#: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/object-core/components/cells/CoreObjectNameCell.tsx
-#: src/modules/object-record/components/RecordChip.tsx
-#: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
 #: src/modules/page-layout/hooks/usePageLayoutAddTabStrategy.ts
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/side-panel/components/SidePanelContextChip.tsx
-#: src/modules/ui/field/display/components/ActorDisplay.tsx
-#: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/modules/ui/field/display/utils/getChipLabel.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
@@ -25206,7 +25265,7 @@ msgstr "Frissítve"
 #. js-lingui-id: nDpDl0
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
 msgid "Upgrading {displayedUpgradeProgress}"
-msgstr ""
+msgstr "Frissítés: {displayedUpgradeProgress}"
 
 #. js-lingui-id: 9gm/Oo
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
@@ -25485,6 +25544,11 @@ msgstr "Mikrofon használata"
 msgid "Used"
 msgstr "Felhasználva"
 
+#. js-lingui-id: xUOPoQ
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Used by"
+msgstr ""
+
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Useful for pivot/junction tables"
@@ -25496,6 +25560,7 @@ msgstr "Hasznos pivot/kapcsoló táblákhoz"
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx

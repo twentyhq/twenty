@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -117,8 +118,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
       <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
         {filteredSelectedItems?.map((item) => {
           return (
-            <ListItem
-              render={<button type="button" />}
+            <ListItemButton
               key={item.id}
               role="option"
               aria-selected={true}
@@ -130,13 +130,12 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               startIcon={item.AvatarIcon && <item.AvatarIcon size="16" />}
             >
               {item.name}
-            </ListItem>
+            </ListItemButton>
           );
         })}
         {filteredSelectableItems?.map((item) => {
           return (
-            <ListItem
-              render={<button type="button" />}
+            <ListItemButton
               key={item.id}
               role="option"
               aria-selected={false}
@@ -148,7 +147,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               startIcon={item.AvatarIcon && <item.AvatarIcon size="16" />}
             >
               {item.name}
-            </ListItem>
+            </ListItemButton>
           );
         })}
         {showNoResult && <ListItem disabled>{t`No results`}</ListItem>}

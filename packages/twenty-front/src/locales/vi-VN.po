@@ -1206,7 +1206,7 @@ msgstr "Một bản nháp đã tồn tại cho quy trình làm việc này. Bạ
 #. js-lingui-id: xk6SkO
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run."
-msgstr ""
+msgstr "Một biểu mẫu sẽ mở cho người khởi chạy quy trình làm việc và được điền tại chỗ. Với trình kích hoạt này, biểu mẫu chỉ hiển thị trong lần chạy quy trình làm việc."
 
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -1363,10 +1363,10 @@ msgstr "Truy cập dữ liệu không gian làm việc của bạn từ ứng d�
 
 #. js-lingui-id: AeXO77
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
-#: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -1388,7 +1388,13 @@ msgstr "Tài khoản đã được thêm thành công. Đồng bộ hóa đã b�
 msgid "Account Deletion"
 msgstr "Xóa Tài khoản"
 
+#. js-lingui-id: T3FM0r
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+msgid "Account settings"
+msgstr ""
+
 #. js-lingui-id: bPwFdf
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -1641,6 +1647,7 @@ msgstr "Thêm một bước quy trình làm việc để gửi tin nhắn và, n
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -3131,6 +3138,14 @@ msgstr "Nhật ký ứng dụng"
 msgid "App logs are kept {retentionInDays} days."
 msgstr "Nhật ký ứng dụng được lưu giữ trong {retentionInDays} ngày."
 
+#. js-lingui-id: MAyGac
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsAccounts.tsx
+msgid "App preferences"
+msgstr ""
+
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
 msgid "App URL"
@@ -3166,6 +3181,7 @@ msgid "Applicability"
 msgstr "Tính áp dụng"
 
 #. js-lingui-id: IrC12v
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -4337,7 +4353,9 @@ msgstr "caldav.example.com"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/views/types/ViewType.ts
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Calendar"
 msgstr "Lịch"
 
@@ -5523,6 +5541,7 @@ msgstr "Khiếu nại"
 
 #. js-lingui-id: 3WrMP5
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Complete setup"
 msgstr "Hoàn tất thiết lập"
 
@@ -5848,7 +5867,7 @@ msgid "Connected"
 msgstr "Đã kết nối"
 
 #. js-lingui-id: 9TzudL
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Connected accounts"
 msgstr "Tài khoản đã kết nối"
 
@@ -5876,6 +5895,7 @@ msgstr "Nhà cung cấp kết nối"
 
 #. js-lingui-id: W4Kgwq
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Connection settings"
 msgstr "Cài đặt kết nối"
 
@@ -5890,7 +5910,7 @@ msgid "Connection successfully updated"
 msgstr "Kết nối đã được cập nhật thành công"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/components/AgentChatStreamKeepAliveEffect.tsx
+#: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Đã mất kết nối với trợ lý. Tải lại để xem phản hồi."
 
@@ -7752,16 +7772,19 @@ msgstr "Xóa tài khoản và tất cả dữ liệu liên quan hoặc rời kh�
 
 #. js-lingui-id: 452Oso
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and data"
 msgstr "Xóa tài khoản và dữ liệu"
 
 #. js-lingui-id: bwUbrT
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data"
 msgstr "Xóa tài khoản và dữ liệu đã đồng bộ"
 
 #. js-lingui-id: nmosf7
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data?"
 msgstr "Xóa tài khoản và dữ liệu đã đồng bộ?"
 
@@ -8249,6 +8272,9 @@ msgstr "Ngắt kết nối"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Disconnect account"
 msgstr "Ngắt kết nối tài khoản"
 
@@ -9021,7 +9047,7 @@ msgstr "Gửi thư mời cho người tham dự qua email"
 #. js-lingui-id: ju58G/
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
 msgid "Email thread"
-msgstr ""
+msgstr "Chuỗi email"
 
 #. js-lingui-id: +V3dhy
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -9067,9 +9093,11 @@ msgstr "emails"
 
 #. js-lingui-id: BXEcos
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -11527,6 +11555,11 @@ msgstr "Việc ủy quyền GitHub không thành công hoặc đã bị từ ch�
 msgid "Global search"
 msgstr "Tìm kiếm toàn hệ thống"
 
+#. js-lingui-id: DSJEta
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+msgid "Gmail"
+msgstr ""
+
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent.tsx
@@ -11577,6 +11610,11 @@ msgstr "Cử chỉ thiện chí sau sự cố tháng Ba"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Google"
 msgstr "Google"
+
+#. js-lingui-id: ebIDwV
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+msgid "Google Calendar"
+msgstr ""
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -12414,6 +12452,7 @@ msgstr "Dữ liệu đã nhập"
 #. js-lingui-id: RqSvT0
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing"
 msgstr "Đang nhập"
 
@@ -14348,7 +14387,7 @@ msgid "Manage workflows"
 msgstr "Quản lý các quy trình công việc"
 
 #. js-lingui-id: FyFNsd
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Manage your internet accounts."
 msgstr "Quản lý các tài khoản internet của bạn."
 
@@ -14941,6 +14980,7 @@ msgstr "Hành động khác"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
@@ -16578,6 +16618,7 @@ msgstr "Không chia sẻ bởi {notSharedByFullName}"
 
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Chưa đồng bộ hóa"
 
@@ -17444,6 +17485,11 @@ msgstr "OTP phải gồm đúng 6 chữ số"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
 msgid "Outage"
 msgstr "Gián đoạn"
+
+#. js-lingui-id: gdC3cZ
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+msgid "Outlook"
+msgstr ""
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -18720,6 +18766,7 @@ msgstr "Được khuyến nghị"
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect"
 msgstr "Kết nối lại"
@@ -19141,6 +19188,11 @@ msgstr "Xóa {0} mục menu điều hướng?"
 msgid "Remove {address}"
 msgstr "Xóa {address}"
 
+#. js-lingui-id: boQErO
+#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+msgid "Remove {displayName}"
+msgstr ""
+
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Remove {origin}"
@@ -19377,6 +19429,11 @@ msgstr "Sắp xếp lại trường"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent.tsx
 msgid "Reorder options"
 msgstr "Sắp xếp lại các tùy chọn"
+
+#. js-lingui-id: Jtm0TT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
+msgstr ""
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21364,6 +21421,7 @@ msgstr "mục menu cài đặt"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Setup incomplete"
 msgstr "Thiết lập chưa hoàn tất"
 
@@ -21422,6 +21480,11 @@ msgstr "Chia sẻ với không gian làm việc?"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Share your app to other workspaces without pushing it on the marketplace"
 msgstr "Chia sẻ ứng dụng của bạn tới các không gian làm việc khác mà không cần đưa nó lên chợ ứng dụng"
+
+#. js-lingui-id: fX13zr
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Shared accounts between apps"
+msgstr ""
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -22669,6 +22732,7 @@ msgstr "Đồng bộ mọi tin nhắn"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync failed"
 msgstr "Đồng bộ hóa thất bại"
 
@@ -22684,11 +22748,13 @@ msgstr "Mất đồng bộ với hộp thư {mailboxHandle}. Vui lòng kết n�
 
 #. js-lingui-id: U6wmNc
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync paused"
 msgstr "Đã tạm dừng đồng bộ hóa"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Synced"
 msgstr "Đã đồng bộ"
 
@@ -22714,6 +22780,7 @@ msgstr "Đồng bộ nhãn và tên API của đối tượng"
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr "Quá trình đồng bộ hóa sẽ dừng và thông tin xác thực của tài khoản này sẽ bị xóa. Email và sự kiện của bạn sẽ được giữ lại và vẫn khả dụng sau khi bạn kết nối lại."
 
@@ -23633,6 +23700,7 @@ msgstr "Trang này không khả dụng."
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
 msgstr "Thao tác này sẽ xóa vĩnh viễn {accountHandle} cùng tất cả email và sự kiện đã đồng bộ của tài khoản đó. Không thể hoàn tác hành động này."
 
@@ -24890,25 +24958,16 @@ msgstr "Đến {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadTitle.tsx
-#: src/modules/ai/components/ChatReferenceChip.tsx
-#: src/modules/ai/components/ChatReferenceChip.tsx
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
-#: src/modules/log-console/components/LogConsoleMemberChip.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
-#: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/object-core/components/cells/CoreObjectNameCell.tsx
-#: src/modules/object-record/components/RecordChip.tsx
-#: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
 #: src/modules/page-layout/hooks/usePageLayoutAddTabStrategy.ts
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/side-panel/components/SidePanelContextChip.tsx
-#: src/modules/ui/field/display/components/ActorDisplay.tsx
-#: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/modules/ui/field/display/utils/getChipLabel.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
@@ -25206,7 +25265,7 @@ msgstr "Đã nâng cấp"
 #. js-lingui-id: nDpDl0
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
 msgid "Upgrading {displayedUpgradeProgress}"
-msgstr ""
+msgstr "Đang nâng cấp {displayedUpgradeProgress}"
 
 #. js-lingui-id: 9gm/Oo
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
@@ -25485,6 +25544,11 @@ msgstr "Sử dụng micrô của bạn"
 msgid "Used"
 msgstr "Đã sử dụng"
 
+#. js-lingui-id: xUOPoQ
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Used by"
+msgstr ""
+
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Useful for pivot/junction tables"
@@ -25496,6 +25560,7 @@ msgstr "Hữu ích cho các bảng trung gian/liên kết"
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
