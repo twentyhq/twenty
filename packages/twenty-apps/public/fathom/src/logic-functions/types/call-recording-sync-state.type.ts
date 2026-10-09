@@ -7,7 +7,6 @@ export type CallRecordingSyncState = CallRecordingMediaState & {
   recordingRequestStatus: string | undefined;
   startedAt: string | undefined;
   endedAt: string | undefined;
-  calendarEventId: string | undefined;
   hasTranscript: boolean;
   hasSummary: boolean;
 };

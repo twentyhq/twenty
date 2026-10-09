@@ -10,7 +10,6 @@ type MeetingFixture = Parameters<
 const MEETING: MeetingFixture = {
   title: 'Customer call',
   meetingTitle: 'Customer call',
-  meetingUrl: 'https://meet.google.com/abc-defg-hij',
   recordingStartTime: '2026-08-20T10:00:00.000Z',
   recordingEndTime: '2026-08-20T10:30:00.000Z',
 };
@@ -38,7 +37,6 @@ const COMPLETE_CALL_RECORDING: CallRecordingSyncState = {
   recordingRequestStatus: 'REQUESTED',
   startedAt: '2026-08-20T10:00:00+00:00',
   endedAt: '2026-08-20T10:30:00.000Z',
-  calendarEventId: 'calendar-event-id',
   hasTranscript: true,
   hasSummary: true,
 };
@@ -50,11 +48,6 @@ describe('isFathomCallRecordingUpToDate', () => {
       'has media Fathom could not provide',
       MEETING,
       { hasVideo: false, failureReason: 'no_downloadable_media' },
-    ],
-    [
-      'has no calendar link for a meeting without a URL',
-      { ...MEETING, meetingUrl: null },
-      { calendarEventId: undefined },
     ],
     [
       'has its generated impromptu title',
@@ -85,11 +78,6 @@ describe('isFathomCallRecordingUpToDate', () => {
       { startedAt: '2026-08-20T10:01:00.000Z' },
     ],
     ['recorded at another end time', MEETING, { endedAt: undefined }],
-    [
-      'not linked to a calendar event yet',
-      MEETING,
-      { calendarEventId: undefined },
-    ],
     [
       'still holding the impromptu placeholder title',
       IMPROMPTU_MEETING,

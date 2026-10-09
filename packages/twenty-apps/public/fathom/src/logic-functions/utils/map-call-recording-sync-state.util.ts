@@ -16,7 +16,6 @@ export const mapCallRecordingSyncState = (
   recordingRequestStatus: node.recordingRequestStatus ?? undefined,
   startedAt: node.startedAt ?? undefined,
   endedAt: node.endedAt ?? undefined,
-  calendarEventId: node.calendarEventId ?? undefined,
   hasTranscript: isNonEmptyArray(node.transcript),
   hasSummary:
     isNonEmptyString(node.summary?.markdown) ||
