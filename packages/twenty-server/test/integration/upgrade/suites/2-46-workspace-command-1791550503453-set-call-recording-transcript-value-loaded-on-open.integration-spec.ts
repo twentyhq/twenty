@@ -5,7 +5,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type SetCallRecordingTranscriptValueLoadedOnOpenCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791481209934-set-call-recording-transcript-value-loaded-on-open.command';
+import { type SetCallRecordingTranscriptValueLoadedOnOpenCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791550503453-set-call-recording-transcript-value-loaded-on-open.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
