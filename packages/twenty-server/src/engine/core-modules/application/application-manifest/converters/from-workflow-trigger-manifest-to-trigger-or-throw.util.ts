@@ -139,7 +139,10 @@ const fromDatabaseEventTriggerManifest = ({
           filter: {
             stepFilterGroups: settings.filter.stepFilterGroups,
             stepFilters: settings.filter.stepFilters.map((stepFilter) =>
-              resolvers.fieldReference(stepFilter),
+              resolvers.fieldReference(
+                stepFilter,
+                settings.objectUniversalIdentifier,
+              ),
             ),
           },
         }

@@ -367,6 +367,63 @@ describe('application workflow definitions', () => {
     ).toThrow('Workflow field does not belong to the referenced object');
   });
 
+  it('refuses a trigger filter on a field from another object', () => {
+    const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+    const FIELD_ID = '88888888-8888-4888-8888-888888888888';
+    expect(() =>
+      convert({
+        ...options,
+        manifest: {
+          ...manifest,
+          version: {
+            ...manifest.version,
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'DATABASE_EVENT',
+              nextStepIds: [STEP_ID],
+              settings: {
+                objectUniversalIdentifier: OBJECT_ID,
+                action: 'updated',
+                filter: {
+                  stepFilterGroups: [
+                    { id: 'group', logicalOperator: StepLogicalOperator.AND },
+                  ],
+                  stepFilters: [
+                    {
+                      id: 'filter',
+                      type: 'TEXT',
+                      stepOutputKey: '{{trigger.properties.after.name}}',
+                      operand: ViewFilterOperand.IS,
+                      value: 'Acme',
+                      stepFilterGroupId: 'group',
+                      fieldMetadataUniversalIdentifier: FIELD_ID,
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        objectByUniversalIdentifier: new Map([
+          [OBJECT_ID, { nameSingular: 'ticket' }],
+        ]),
+        fieldByUniversalIdentifier: new Map([
+          [
+            FIELD_ID,
+            {
+              id: 'name-field-id',
+              name: 'name',
+              objectUniversalIdentifier: '77777777-7777-4777-8777-777777777777',
+              type: FieldMetadataType.TEXT,
+              settings: null,
+              relationTargetObjectMetadataUniversalIdentifier: null,
+            },
+          ],
+        ]),
+      }),
+    ).toThrow('Workflow field does not belong to the referenced object');
+  });
+
   it('rejects an unsupported trigger on the server too', () => {
     const invalid = structuredClone(manifest);
     Object.assign(invalid.version.trigger, { type: 'WEBHOOK' });
