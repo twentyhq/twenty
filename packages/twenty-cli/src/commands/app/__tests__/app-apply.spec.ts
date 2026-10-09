@@ -120,7 +120,6 @@ type ServerState = {
   installError?: string;
   uploadTargetsStatus?: number;
   unchangedPaths?: string[];
-  isFileReuseUnsupported?: boolean;
   unchangedFilesOverride?: unknown;
   completeError?: string;
   syncError?: string;
@@ -287,20 +286,6 @@ const server = await startTestServer((request, response) => {
   }
 
   if (operation === 'upload-targets') {
-    if (
-      state.isFileReuseUnsupported &&
-      readGraphqlRequest(request).query.includes('unchangedFiles')
-    ) {
-      return sendJson(response, 400, {
-        errors: [
-          {
-            message:
-              'Cannot query field "unchangedFiles" on type "CreateApplicationFileUploadsResult".',
-            extensions: { code: 'GRAPHQL_VALIDATION_FAILED' },
-          },
-        ],
-      });
-    }
     if (isDefined(state.uploadTargetsStatus)) {
       return sendJson(response, state.uploadTargetsStatus, {
         message: 'Storage is unavailable.',
@@ -544,7 +529,6 @@ describe('app apply', () => {
       installError: undefined,
       uploadTargetsStatus: undefined,
       unchangedPaths: undefined,
-      isFileReuseUnsupported: false,
       unchangedFilesOverride: undefined,
       completeError: undefined,
       syncError: undefined,
@@ -691,24 +675,6 @@ describe('app apply', () => {
     expect(exitCode).toBe(0);
     expect(stderr).toContain('Files already up to date.');
     expect(stderr).not.toContain('Uploading');
-  });
-
-  it('falls back to ordinary uploads when the server lacks file reuse', async () => {
-    state.isFileReuseUnsupported = true;
-    const { envelope, exitCode } = await runJson();
-
-    expect(exitCode).toBe(0);
-    expect(envelope.data).toMatchObject({ upload: { fileCount: 2 } });
-    const requests = server.requests.filter(
-      (request) => getOperation(request) === 'upload-targets',
-    );
-    expect(requests).toHaveLength(2);
-    expect(readGraphqlRequest(requests[1]).query).not.toContain(
-      'unchangedFiles',
-    );
-    expect(
-      JSON.stringify(readGraphqlRequest(requests[1]).arguments),
-    ).not.toContain('sha256');
   });
 
   it.each([

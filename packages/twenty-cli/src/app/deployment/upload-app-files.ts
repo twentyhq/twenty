@@ -13,7 +13,6 @@ import {
 } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
-import { sendGraphqlRequest } from '@/transport/graphql/send-graphql-request';
 import { createMetadataClient } from '@/transport/metadata/create-metadata-client';
 
 type UploadTarget = {
@@ -34,7 +33,6 @@ type UploadBatchContext = {
   target: ResolvedTarget;
   signal: AbortSignal;
   progress: AppUploadProgress;
-  supportsFileReuse: boolean;
 };
 
 const createInvalidUploadResponseError = () =>
@@ -88,7 +86,12 @@ const toUploadRequest = (artifact: ToolingArtifact) => {
     });
   }
 
-  return { fileFolder, filePath: artifact.path, size: artifact.size };
+  return {
+    fileFolder,
+    filePath: artifact.path,
+    size: artifact.size,
+    sha256: artifact.sha256,
+  };
 };
 
 const runConcurrently = async <TItem>({
@@ -131,29 +134,6 @@ const runConcurrently = async <TItem>({
   }
 };
 
-const isFileReuseUnsupported = (error: unknown) => {
-  if (!(error instanceof CliError) || error.code !== 'GRAPHQL_ERROR') {
-    return false;
-  }
-  const errors = error.details?.errors;
-
-  return (
-    isArray(errors) &&
-    errors.length === 1 &&
-    errors.every(
-      (entry) =>
-        isPlainObject(entry) &&
-        entry.path === null &&
-        (entry.code === 'GRAPHQL_VALIDATION_FAILED' ||
-          (entry.code === null && error.details?.status === 400)) &&
-        isNonEmptyString(entry.message) &&
-        entry.message.startsWith(
-          'Cannot query field "unchangedFiles" on type "CreateApplicationFileUploadsResult".',
-        ),
-    )
-  );
-};
-
 const requestUploadTargets = async ({
   artifacts,
   context,
@@ -161,58 +141,26 @@ const requestUploadTargets = async ({
   artifacts: ToolingArtifact[];
   context: UploadBatchContext;
 }) => {
-  const legacyRequest = () =>
-    createMetadataClient({
-      target: context.target,
-      signal: context.signal,
-    }).mutation({
-      __name: 'CreateApplicationFileUploads',
-      createApplicationFileUploads: {
-        __args: {
-          applicationUniversalIdentifier:
-            context.applicationUniversalIdentifier,
-          files: artifacts.map(toUploadRequest),
-        },
-        targets: {
-          fileId: true,
-          filePath: true,
-          uploadUrl: true,
-          contentType: true,
-        },
-        errors: { filePath: true, message: true },
+  const data = await createMetadataClient({
+    target: context.target,
+    signal: context.signal,
+  }).mutation({
+    __name: 'CreateApplicationFileUploads',
+    createApplicationFileUploads: {
+      __args: {
+        applicationUniversalIdentifier: context.applicationUniversalIdentifier,
+        files: artifacts.map(toUploadRequest),
       },
-    });
-  const data = context.supportsFileReuse
-    ? await sendGraphqlRequest({
-        target: context.target,
-        signal: context.signal,
-        endpoint: 'metadata',
-        query: `mutation CreateApplicationFileUploads(
-          $applicationUniversalIdentifier: String!,
-          $files: [ApplicationFileUploadRequestInput!]!
-        ) {
-          createApplicationFileUploads(applicationUniversalIdentifier: $applicationUniversalIdentifier, files: $files) {
-            targets { fileId filePath uploadUrl contentType }
-            unchangedFiles { fileFolder filePath }
-            errors { filePath message }
-          }
-        }`,
-        variables: {
-          applicationUniversalIdentifier:
-            context.applicationUniversalIdentifier,
-          files: artifacts.map((artifact) => ({
-            ...toUploadRequest(artifact),
-            sha256: artifact.sha256,
-          })),
-        },
-      }).catch((error: unknown) => {
-        if (!isFileReuseUnsupported(error)) {
-          throw error;
-        }
-        context.supportsFileReuse = false;
-        return legacyRequest();
-      })
-    : await legacyRequest();
+      targets: {
+        fileId: true,
+        filePath: true,
+        uploadUrl: true,
+        contentType: true,
+      },
+      unchangedFiles: { fileFolder: true, filePath: true },
+      errors: { filePath: true, message: true },
+    },
+  });
   const created = data?.createApplicationFileUploads;
 
   if (
@@ -225,14 +173,12 @@ const requestUploadTargets = async ({
 
   context.progress.hasCreatedTargets ||= created.targets.length > 0;
 
-  const unchangedFiles = context.supportsFileReuse
-    ? created.unchangedFiles
-    : [];
+  const unchangedFiles = created.unchangedFiles;
 
   if (
     !isArray(unchangedFiles) ||
     !unchangedFiles.every(
-      (file): file is { filePath: string; fileFolder: string } =>
+      (file) =>
         isPlainObject(file) &&
         artifacts.some(
           (artifact) =>
@@ -436,7 +382,6 @@ export const uploadAppFiles = async ({
     target,
     signal,
     progress,
-    supportsFileReuse: true,
   };
   const artifactByPath = new Map(
     build.files.map((artifact) => [artifact.path, artifact]),
