@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { isDefined } from '@/utils/validation/isDefined';
+
 const manualTriggerAvailabilityManifestSchema = z.discriminatedUnion('type', [
   z.strictObject({ type: z.literal('GLOBAL') }),
   z.strictObject({
@@ -22,6 +24,19 @@ const workflowTriggerManifestOptions = [
         availability: manualTriggerAvailabilityManifestSchema.optional(),
         icon: z.string().optional(),
         isPinned: z.boolean().optional(),
+      })
+      .superRefine((settings, context) => {
+        if (
+          !isDefined(settings.availability) &&
+          (isDefined(settings.icon) || isDefined(settings.isPinned))
+        ) {
+          context.addIssue({
+            code: 'custom',
+            path: ['availability'],
+            message:
+              'Set an availability for the icon and pin to show in the command menu',
+          });
+        }
       })
       .optional(),
   }),

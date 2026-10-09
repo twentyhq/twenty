@@ -147,7 +147,9 @@ describe('application workflow definitions', () => {
         version: {
           ...manifest.version,
           trigger: {
-            ...manifest.version.trigger,
+            universalIdentifier: TRIGGER_ID,
+            type: 'MANUAL',
+            nextStepIds: [STEP_ID],
             settings: {
               availability: {
                 type: 'SINGLE_RECORD',
@@ -183,7 +185,9 @@ describe('application workflow definitions', () => {
           version: {
             ...manifest.version,
             trigger: {
-              ...manifest.version.trigger,
+              universalIdentifier: TRIGGER_ID,
+              type: 'MANUAL',
+              nextStepIds: [STEP_ID],
               settings: {
                 availability: {
                   type: 'BULK_RECORDS',

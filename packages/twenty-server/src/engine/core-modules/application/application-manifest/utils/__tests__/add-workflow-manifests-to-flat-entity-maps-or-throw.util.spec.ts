@@ -144,7 +144,9 @@ describe('application workflow manifest updates', () => {
       version: {
         ...workflow.version,
         trigger: {
-          ...workflow.version.trigger,
+          universalIdentifier: workflow.version.trigger.universalIdentifier,
+          type: 'MANUAL' as const,
+          nextStepIds: workflow.version.trigger.nextStepIds,
           settings: { availability: { type: 'GLOBAL' as const } },
         },
       },

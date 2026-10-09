@@ -180,6 +180,19 @@ describe('workflow manifest manual trigger', () => {
     ]);
   });
 
+  it('needs an availability before an icon or pin can show in the command menu', () => {
+    const result = workflowManifestSchema.safeParse(
+      withTrigger({ settings: { isPinned: true } }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'availability',
+    ]);
+  });
+
   it('names the supported trigger types when the type is unknown', () => {
     const result = workflowManifestSchema.safeParse(
       withTrigger({ type: 'WEBHOOK' }),

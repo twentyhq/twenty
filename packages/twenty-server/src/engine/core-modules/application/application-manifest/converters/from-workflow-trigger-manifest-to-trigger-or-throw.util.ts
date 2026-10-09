@@ -1,72 +1,31 @@
-import { msg } from '@lingui/core/macro';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
-import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
+import { buildWorkflowManifestReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util';
 import {
   type WorkflowManualTrigger,
   type WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { assertNever } from 'src/utils/assert';
+
+type WorkflowManifestReferenceResolvers = ReturnType<
+  typeof buildWorkflowManifestReferenceResolvers
+>;
 
 type ManualTriggerManifest = Extract<
   WorkflowTriggerManifest,
   { type: 'MANUAL' }
 >;
 
-type ManualTriggerManifestAvailability = NonNullable<
-  NonNullable<ManualTriggerManifest['settings']>['availability']
->;
-
-const resolveObjectNameSingularOrThrow = (
-  objectUniversalIdentifier: string,
-  references: WorkflowManifestReferences,
-): string => {
-  const object = references.objectByUniversalIdentifier?.get(
-    objectUniversalIdentifier,
-  );
-
-  if (!isDefined(object)) {
-    throw new ApplicationException(
-      `Workflow trigger: missing object ${objectUniversalIdentifier}`,
-      ApplicationExceptionCode.INVALID_INPUT,
-      {
-        userFriendlyMessage: msg`The workflow references metadata that is not available to this application.`,
-      },
-    );
-  }
-
-  return object.nameSingular;
-};
-
-const fromManualTriggerAvailabilityManifest = (
-  availability: ManualTriggerManifestAvailability,
-  references: WorkflowManifestReferences,
-): NonNullable<WorkflowManualTrigger['settings']['availability']> => {
-  if (availability.type === 'GLOBAL') {
-    return { type: 'GLOBAL' };
-  }
-
-  return {
-    type: availability.type,
-    objectNameSingular: resolveObjectNameSingularOrThrow(
-      availability.objectUniversalIdentifier,
-      references,
-    ),
-  };
-};
-
-export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
+const fromManualTriggerManifest = ({
   trigger,
-  references,
+  resolvers,
 }: {
-  trigger: WorkflowTriggerManifest;
-  references: WorkflowManifestReferences;
-}): WorkflowTrigger => {
+  trigger: ManualTriggerManifest;
+  resolvers: WorkflowManifestReferenceResolvers;
+}): WorkflowManualTrigger => {
   const { settings, ...identity } = trigger;
   const availability = settings?.availability;
   const icon = settings?.icon;
@@ -83,12 +42,37 @@ export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
       ...(isDefined(isPinned) ? { isPinned } : {}),
       ...(isDefined(availability)
         ? {
-            availability: fromManualTriggerAvailabilityManifest(
-              availability,
-              references,
-            ),
+            availability:
+              availability.type === 'GLOBAL'
+                ? { type: 'GLOBAL' as const }
+                : {
+                    type: availability.type,
+                    objectNameSingular: resolvers.objectName(
+                      availability.objectUniversalIdentifier,
+                    ),
+                  },
           }
         : {}),
     },
   } satisfies WorkflowManualTrigger;
+};
+
+export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
+  trigger,
+  references,
+}: {
+  trigger: WorkflowTriggerManifest;
+  references: WorkflowManifestReferences;
+}): WorkflowTrigger => {
+  const resolvers = buildWorkflowManifestReferenceResolvers({
+    references,
+    subject: 'Workflow trigger',
+  });
+
+  switch (trigger.type) {
+    case 'MANUAL':
+      return fromManualTriggerManifest({ trigger, resolvers });
+    default:
+      return assertNever(trigger);
+  }
 };
