@@ -284,6 +284,7 @@ export { compileApplicationTranslations } from './cli/utilities/translations/com
       signal: new AbortController().signal,
     });
     await symlink(join(root, 'node_modules'), join(appPath, 'node_modules'));
+    await rm(join(appPath, 'yarn.lock'));
     const result = await compareManifest(appPath);
     const packageJson = JSON.parse(
       await readFile(join(appPath, 'package.json'), 'utf8'),
