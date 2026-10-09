@@ -1,4 +1,5 @@
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { Module } from '@nestjs/common';
 
@@ -32,6 +33,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     WorkflowCronTriggerCronJob,
     WorkflowCronTriggerCronCommand,
     provideWorkspaceScopedRepository(ApplicationEntity),
+    provideWorkspaceScopedRepository(WorkflowEntity),
   ],
   exports: [AutomatedTriggerWorkspaceService, WorkflowCronTriggerCronCommand],
 })
