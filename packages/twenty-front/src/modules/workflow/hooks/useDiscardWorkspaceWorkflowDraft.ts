@@ -30,7 +30,9 @@ export const useDiscardWorkspaceWorkflowDraft = () => {
 
     evictDiscardedDraftFromWorkflowCache(workspaceWorkflowVersionId);
 
-    await invalidateCoreWorkflowVersions(apolloCoreClient);
+    await invalidateCoreWorkflowVersions(apolloCoreClient, {
+      deletedWorkflowVersionId: workspaceWorkflowVersionId,
+    });
   };
 
   return { discardWorkspaceWorkflowDraft };

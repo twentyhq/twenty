@@ -4,8 +4,10 @@ import { invalidateCoreWorkflowQueries } from '@/object-core/workflows/utils/inv
 
 export const invalidateCoreWorkflowVersions = async (
   apolloCoreClient: ApolloClient,
+  { deletedWorkflowVersionId }: { deletedWorkflowVersionId?: string } = {},
 ) => {
   await invalidateCoreWorkflowQueries(apolloCoreClient, {
     shouldInvalidateWorkflowList: false,
+    deletedWorkflowVersionId,
   });
 };

@@ -1,4 +1,5 @@
 import { type ApolloClient } from '@apollo/client';
+import { isDefined } from 'twenty-shared/utils';
 
 import { GET_WORKFLOW_VERSION_CONTENT } from '@/workflow/workflow-version/graphql/queries/getWorkflowVersionContent';
 import {
@@ -13,7 +14,11 @@ export const invalidateCoreWorkflowQueries = async (
   apolloCoreClient: ApolloClient,
   {
     shouldInvalidateWorkflowList = true,
-  }: { shouldInvalidateWorkflowList?: boolean } = {},
+    deletedWorkflowVersionId,
+  }: {
+    shouldInvalidateWorkflowList?: boolean;
+    deletedWorkflowVersionId?: string;
+  } = {},
 ) => {
   const fieldNames = [
     'coreWorkflowById',
@@ -39,6 +44,11 @@ export const invalidateCoreWorkflowQueries = async (
       GetCoreWorkflowsWithCurrentVersionsDocument,
       ...(shouldInvalidateWorkflowList ? [GetCoreWorkflowsDocument] : []),
     ],
-    onQueryUpdated: (query) => query.options.fetchPolicy !== 'standby',
+    // A surface still showing the deleted version only unmounts its query on
+    // the next render, and refetching it now fails the whole invalidation.
+    onQueryUpdated: (query) =>
+      query.options.fetchPolicy !== 'standby' &&
+      (!isDefined(deletedWorkflowVersionId) ||
+        query.variables?.workflowVersionId !== deletedWorkflowVersionId),
   });
 };
