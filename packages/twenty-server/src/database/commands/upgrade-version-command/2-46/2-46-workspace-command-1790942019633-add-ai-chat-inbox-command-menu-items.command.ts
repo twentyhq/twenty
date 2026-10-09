@@ -21,13 +21,11 @@ const AI_CHAT_INBOX_COMMAND_MENU_ITEM_NAMES = [
   'snoozeAiChat',
 ] as const;
 
-const NEW_AI_CHAT_UNIVERSAL_IDENTIFIER = '604bc9b2-e438-4572-bd35-726fa0fb2ec7';
-
 @RegisteredWorkspaceCommand('2.46.0', 1790942019633)
 @Command({
   name: 'upgrade:2-46:add-ai-chat-inbox-command-menu-items',
   description:
-    'Add the Mark as read, Mark as unread, Mark as done, Reopen, Unsnooze and Snooze commands to chats, and unpin New chat from the chat header',
+    'Add the Mark as read, Mark as unread, Mark as done, Reopen, Unsnooze and Snooze commands to chats',
 })
 export class AddAiChatInboxCommandMenuItemsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -81,33 +79,15 @@ export class AddAiChatInboxCommandMenuItemsCommand extends ProvisionedWorkspaceC
           ).filter(isDefined)
         : [];
 
-    const newAiChat =
-      flatCommandMenuItemMaps.byUniversalIdentifier[
-        NEW_AI_CHAT_UNIVERSAL_IDENTIFIER
-      ];
-    const isNewAiChatPinned = direction === 'down';
-    const commandMenuItemsToUpdate =
-      isDefined(newAiChat) && newAiChat.isPinned !== isNewAiChatPinned
-        ? [
-            {
-              ...newAiChat,
-              isPinned: isNewAiChatPinned,
-              updatedAt: new Date().toISOString(),
-            },
-          ]
-        : [];
-
     if (
-      commandMenuItemsToCreate.length +
-        commandMenuItemsToDelete.length +
-        commandMenuItemsToUpdate.length ===
+      commandMenuItemsToCreate.length + commandMenuItemsToDelete.length ===
       0
     ) {
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId} (${direction}): creating ${commandMenuItemsToCreate.length}, deleting ${commandMenuItemsToDelete.length} and updating ${commandMenuItemsToUpdate.length} chat command menu item(s)`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId} (${direction}): creating ${commandMenuItemsToCreate.length} and deleting ${commandMenuItemsToDelete.length} chat command menu item(s)`,
     );
 
     if (options.dryRun) {
@@ -125,7 +105,7 @@ export class AddAiChatInboxCommandMenuItemsCommand extends ProvisionedWorkspaceC
             commandMenuItem: {
               flatEntityToCreate: commandMenuItemsToCreate,
               flatEntityToDelete: commandMenuItemsToDelete,
-              flatEntityToUpdate: commandMenuItemsToUpdate,
+              flatEntityToUpdate: [],
             },
           },
         },

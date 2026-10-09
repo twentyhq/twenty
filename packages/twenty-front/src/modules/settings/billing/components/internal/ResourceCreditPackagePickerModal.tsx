@@ -255,9 +255,9 @@ export const ResourceCreditPackagePickerModal = ({
       dismissible={true}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           data-globally-prevent-click-outside
           style={{

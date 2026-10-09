@@ -3,11 +3,8 @@ import { forwardRef } from 'react';
 
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
+import { type FieldErrorProps } from '../types/FieldErrorProps';
 import styles from './FieldError.module.scss';
-
-type FieldErrorProps = React.ComponentPropsWithoutRef<
-  typeof FieldPrimitive.Error
->;
 
 export const FieldError = forwardRef<
   React.ElementRef<typeof FieldPrimitive.Error>,

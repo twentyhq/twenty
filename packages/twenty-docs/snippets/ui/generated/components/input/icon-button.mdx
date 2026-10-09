@@ -11,8 +11,12 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="aria-label" type="string" required>
-  Required accessible name describing the action.
+<ParamField body="aria-label" type="string">
+  Accessible name describing the action. Required unless `aria-labelledby` supplies the name.
+</ParamField>
+
+<ParamField body="aria-labelledby" type="string">
+  ID of the element supplying the accessible name. Can be used instead of `aria-label`.
 </ParamField>
 
 <ParamField body="children" type="ReactNode" required>
@@ -24,7 +28,7 @@
   returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="color" type="&quot;accent&quot; | &quot;danger&quot; | &quot;neutral&quot; | &quot;success&quot;">
+<ParamField body="color" type="&quot;accent&quot; | &quot;danger&quot; | &quot;neutral&quot; | &quot;success&quot;" default="neutral">
   Semantic color of the button.
 </ParamField>
 
@@ -37,15 +41,23 @@
 </ParamField>
 
 <ParamField body="href" type="string">
-  Destination URL. Enables native link semantics instead of button semantics.
+  Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract.
 </ParamField>
 
 <ParamField body="loading" type="boolean">
   Shows a loading indicator and disables activation.
 </ParamField>
 
+<ParamField body="nativeButton" type="boolean" default="true (false for the built-in href anchor)">
+  Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence.
+</ParamField>
+
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ButtonState&gt;">
-  Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.
+  Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role="link"` for a custom navigation anchor. Router integration belongs to the caller.
+</ParamField>
+
+<ParamField body="role" type="AriaRole">
+  Role of the root element. Use `link` for custom navigation renderers.
 </ParamField>
 
 <ParamField body="shape" type="&quot;round&quot; | &quot;square&quot;" default="square">
@@ -77,6 +89,6 @@
   Preferred placement of the tooltip relative to the button.
 </ParamField>
 
-<ParamField body="variant" type="&quot;ghost&quot; | &quot;link&quot; | &quot;outline&quot; | &quot;soft&quot; | &quot;solid&quot;">
-  Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics.
+<ParamField body="variant" type="&quot;ghost&quot; | &quot;link&quot; | &quot;outline&quot; | &quot;soft&quot; | &quot;solid&quot;" default="outline">
+  Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics.
 </ParamField>

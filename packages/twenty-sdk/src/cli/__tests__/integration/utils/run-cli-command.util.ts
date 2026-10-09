@@ -4,8 +4,8 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CLI_DIR = path.resolve(__dirname, '../../../..');
-const CLI_PATH = path.resolve(CLI_DIR, 'cli/cli.ts');
+const PACKAGE_ROOT = path.resolve(__dirname, '../../../../..');
+const CLI_PATH = path.resolve(PACKAGE_ROOT, 'dist/cli.cjs');
 
 export type RunCliCommandOptions = {
   command: string;
@@ -25,19 +25,14 @@ export const runCliCommand = (
   const { command, args = [], waitForOutput, timeout = 30_000 } = options;
 
   return new Promise((resolve) => {
-    // Run from CLI directory to use twenty-sdk's tsconfig paths
-    const child: ChildProcess = spawn(
-      'npx',
-      ['tsx', CLI_PATH, command, ...args],
-      {
-        cwd: CLI_DIR,
-        stdio: ['ignore', 'pipe', 'pipe'],
-        env: {
-          ...process.env,
-          FORCE_COLOR: '0',
-        },
+    const child: ChildProcess = spawn('node', [CLI_PATH, command, ...args], {
+      cwd: PACKAGE_ROOT,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: {
+        ...process.env,
+        FORCE_COLOR: '0',
       },
-    );
+    });
 
     let output = '';
     const timeoutId = setTimeout(() => {

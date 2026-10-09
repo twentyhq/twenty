@@ -1,4 +1,9 @@
 import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 describe('getFieldBaseFile', () => {
   it('should render proper file using defineField', () => {
@@ -189,7 +194,44 @@ describe('getFieldBaseFile', () => {
       /morphId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
     );
     expect(result).toContain(
-      'universalSettings: { relationType: RelationType.MANY_TO_ONE }',
+      "universalSettings: { relationType: RelationType.MANY_TO_ONE, joinColumnName: 'targetId' }",
     );
+  });
+
+  it('should derive joinColumnName from the field name for a MANY_TO_ONE relation', () => {
+    const result = getFieldBaseFile({
+      data: {
+        name: 'recipient',
+        label: 'Recipient',
+        type: FieldMetadataType.RELATION,
+        objectUniversalIdentifier: 'obj-1',
+        relationTargetObjectMetadataUniversalIdentifier: 'target-obj',
+        relationTargetFieldMetadataUniversalIdentifier: 'target-field',
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+      },
+      name: 'recipient',
+    });
+
+    expect(result).toContain(
+      "universalSettings: { relationType: RelationType.MANY_TO_ONE, onDelete: OnDeleteAction.SET_NULL, joinColumnName: 'recipientId' }",
+    );
+  });
+
+  it('should not emit joinColumnName for a ONE_TO_MANY relation', () => {
+    const result = getFieldBaseFile({
+      data: {
+        name: 'postCards',
+        label: 'Post cards',
+        type: FieldMetadataType.RELATION,
+        objectUniversalIdentifier: 'obj-1',
+        relationTargetObjectMetadataUniversalIdentifier: 'target-obj',
+        relationTargetFieldMetadataUniversalIdentifier: 'target-field',
+        relationType: RelationType.ONE_TO_MANY,
+      },
+      name: 'postCards',
+    });
+
+    expect(result).not.toContain('joinColumnName');
   });
 });

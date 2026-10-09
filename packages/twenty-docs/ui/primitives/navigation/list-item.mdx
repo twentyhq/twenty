@@ -121,7 +121,7 @@ export const AssigneeButtons = () => {
           aria-pressed={assignee === name}
           selected={assignee === name}
           indicator="check"
-          startIcon={<Avatar name={name} size="md" />}
+          startIcon={<Avatar name={name} size="md" imageProps={{ alt: '' }} />}
           onClick={() => setAssignee(name)}
         >
           {name}

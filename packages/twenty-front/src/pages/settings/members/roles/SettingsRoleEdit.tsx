@@ -1,5 +1,6 @@
 import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
 import { SettingsRole } from '@/settings/roles/role/components/SettingsRole';
+import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { SettingsRoleEditEffect } from '@/settings/roles/role/components/SettingsRoleEditEffect';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { Navigate, useParams } from 'react-router-dom';
@@ -24,6 +25,7 @@ export const SettingsRoleEdit = () => {
   return (
     <SettingsRoleRouteGuard roleId={roleId}>
       <SettingsRoleEditEffect roleId={roleId} />
+      <SettingsRoleDraftSyncEffect roleId={roleId} />
       <SettingsRole roleId={roleId} isCreateMode={isCreateMode} />
     </SettingsRoleRouteGuard>
   );

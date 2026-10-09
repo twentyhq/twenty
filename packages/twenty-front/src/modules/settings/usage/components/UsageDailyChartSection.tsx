@@ -76,7 +76,7 @@ export const UsageDailyChartSection = ({
       <Section.Header
         title={title}
         description={description}
-        adornment={
+        actions={
           <Select
             dropdownId={`${chartId}-period`}
             value={period}

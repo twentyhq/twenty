@@ -13,7 +13,15 @@ export const computeUsageLimitProgress = ({
   limitValue: number;
   consumedValue: number | null;
 }): UsageLimitProgress | null => {
-  if (!isDefined(consumedValue) || limitValue <= 0) {
+  if (limitValue === 0) {
+    return {
+      remainingValue: 0,
+      consumedPercentage: 100,
+      remainingPercentage: 0,
+    };
+  }
+
+  if (!isDefined(consumedValue) || limitValue < 0) {
     return null;
   }
 

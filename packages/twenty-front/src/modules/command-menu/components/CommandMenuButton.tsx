@@ -85,6 +85,8 @@ export const CommandMenuButton = ({
             size="sm"
             variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
             color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+            nativeButton={!isDefined(to)}
+            role={isDefined(to) ? 'link' : undefined}
             render={isDefined(to) ? <Link to={to} /> : undefined}
             href={to}
             onClick={onClick}
