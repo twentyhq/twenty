@@ -32,7 +32,6 @@ export const findDeletedOrCompletedCallRecordings = async ({
       recordingRequestStatus: true,
       startedAt: true,
       endedAt: true,
-      calendarEventId: true,
       summary: { markdown: true },
     },
   });

@@ -25,7 +25,6 @@ export const findCallRecordingSyncStates = async ({
       recordingRequestStatus: true,
       startedAt: true,
       endedAt: true,
-      calendarEventId: true,
       summary: { markdown: true, blocknote: true },
       transcript: true,
     },

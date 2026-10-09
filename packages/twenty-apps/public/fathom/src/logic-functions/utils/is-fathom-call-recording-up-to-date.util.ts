@@ -4,8 +4,6 @@ import { type CallRecordingSyncState } from 'src/logic-functions/types/call-reco
 import { type SerializedFathomMeeting } from 'src/logic-functions/types/serialized-fathom-meeting.type';
 import { buildFathomCallRecordingTitle } from 'src/logic-functions/utils/build-fathom-call-recording-title.util';
 import { isFathomCallRecordingImportComplete } from 'src/logic-functions/utils/is-fathom-call-recording-import-complete.util';
-import { normalizeMeetingUrl } from 'src/logic-functions/utils/normalize-meeting-url.util';
-import { isDefined } from 'src/utils/is-defined';
 
 const isAwaitingGeneratedTitle = ({
   meeting,
@@ -39,7 +37,6 @@ export const isFathomCallRecordingUpToDate = ({
 }: {
   meeting: Pick<
     SerializedFathomMeeting,
-    | 'meetingUrl'
     | 'meetingTitle'
     | 'title'
     | 'recordingStartTime'
@@ -53,7 +50,6 @@ export const isFathomCallRecordingUpToDate = ({
     | 'recordingRequestStatus'
     | 'startedAt'
     | 'endedAt'
-    | 'calendarEventId'
     | 'fathomRecordingImportId'
     | 'hasTranscript'
     | 'hasSummary'
@@ -70,6 +66,4 @@ export const isFathomCallRecordingUpToDate = ({
   callRecording.hasSummary &&
   !isAwaitingGeneratedTitle({ meeting, storedTitle: callRecording.title }) &&
   isSameInstant(callRecording.startedAt, meeting.recordingStartTime) &&
-  isSameInstant(callRecording.endedAt, meeting.recordingEndTime) &&
-  (isNonEmptyString(callRecording.calendarEventId) ||
-    !isDefined(normalizeMeetingUrl(meeting.meetingUrl)));
+  isSameInstant(callRecording.endedAt, meeting.recordingEndTime);

@@ -10,7 +10,6 @@ export const callRecordingSyncStateNodeSchema =
     recordingRequestStatus: z.string().nullable().optional(),
     startedAt: z.string().nullable().optional(),
     endedAt: z.string().nullable().optional(),
-    calendarEventId: z.string().nullable().optional(),
     transcript: z.unknown().nullable().optional(),
     summary: z
       .object({
