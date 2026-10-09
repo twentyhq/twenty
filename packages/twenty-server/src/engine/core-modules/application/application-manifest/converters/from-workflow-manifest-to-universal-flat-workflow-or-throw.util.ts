@@ -1,6 +1,7 @@
 import { createHash } from 'crypto';
 import { z } from 'zod';
 import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
+import { fromWorkflowTriggerManifestToTriggerOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,10 +20,6 @@ import { v4 } from 'uuid';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
-import {
-  type WorkflowManualTrigger,
-  WorkflowTriggerType,
-} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 
 export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
@@ -70,13 +67,10 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     fromWorkflowStepManifestToActionOrThrow({ step, index, references }),
   );
 
-  const trigger = {
-    ...definition.version.trigger,
-    name: 'Manual trigger',
-    type: WorkflowTriggerType.MANUAL,
-    position: { x: 0, y: 0 },
-    settings: { outputSchema: {} },
-  } satisfies WorkflowManualTrigger;
+  const trigger = fromWorkflowTriggerManifestToTriggerOrThrow({
+    trigger: definition.version.trigger,
+    references,
+  });
   return {
     id: workflowId,
     universalIdentifier: definition.universalIdentifier,
