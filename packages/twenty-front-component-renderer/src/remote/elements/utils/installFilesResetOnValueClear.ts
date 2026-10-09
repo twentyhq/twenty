@@ -16,7 +16,7 @@ export const installFilesResetOnValueClear = (element: object): void => {
 
   Object.defineProperty(element, 'value', {
     ...valueDescriptor,
-    set: (value: unknown) => {
+    set: (value: string) => {
       setValue.call(element, value);
       if (value === '') {
         Reflect.set(element, 'files', []);

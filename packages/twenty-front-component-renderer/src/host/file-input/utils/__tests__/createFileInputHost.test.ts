@@ -74,10 +74,18 @@ describe('createFileInputHost', () => {
     (state) => {
       const { host, input, click, clickOwnedButton } = createFixture();
       clickOwnedButton();
-      if (state === 'disabled') input.disabled = true;
-      if (state === 'detached') input.remove();
-      if (state === 'non-file') input.type = 'text';
-      if (state === 'inactive') userActivation.isActive = false;
+      if (state === 'disabled') {
+        input.disabled = true;
+      }
+      if (state === 'detached') {
+        input.remove();
+      }
+      if (state === 'non-file') {
+        input.type = 'text';
+      }
+      if (state === 'inactive') {
+        userActivation.isActive = false;
+      }
       host.openFilePicker(state === 'unregistered' ? 'missing' : 'input');
       expect(click).not.toHaveBeenCalled();
     },
