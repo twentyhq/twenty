@@ -7,12 +7,18 @@ const PAGE_SIZE = 200;
 
 export type RecordQueryField = 'people' | 'companies' | 'opportunities';
 
-export const collectExistingRecordIds = async (
+export type RecordNode = { id: string } & Record<string, unknown>;
+
+export const collectRecordsById = async (
   client: CoreApiClient,
   queryField: RecordQueryField,
   recordIds: string[],
-): Promise<Set<string>> => {
-  const existingRecordIds = new Set<string>();
+  fieldNames: string[],
+): Promise<Map<string, RecordNode>> => {
+  const recordsById = new Map<string, RecordNode>();
+  const selection = Object.fromEntries(
+    fieldNames.map((fieldName) => [fieldName, true]),
+  );
 
   for (const ids of chunk(recordIds, PAGE_SIZE)) {
     let after: string | undefined;
@@ -22,7 +28,7 @@ export const collectExistingRecordIds = async (
         client.query({
           [queryField]: {
             __args: { filter: { id: { in: ids } }, first: PAGE_SIZE, after },
-            edges: { node: { id: true } },
+            edges: { node: { ...selection, id: true } },
             pageInfo: { hasNextPage: true, endCursor: true },
           },
         }),
@@ -30,8 +36,10 @@ export const collectExistingRecordIds = async (
       const connection = result?.[queryField];
 
       for (const edge of connection?.edges ?? []) {
-        if (edge.node.id) {
-          existingRecordIds.add(edge.node.id);
+        const node = edge.node as RecordNode;
+
+        if (node.id) {
+          recordsById.set(node.id, node);
         }
       }
 
@@ -41,5 +49,5 @@ export const collectExistingRecordIds = async (
     } while (after);
   }
 
-  return existingRecordIds;
+  return recordsById;
 };

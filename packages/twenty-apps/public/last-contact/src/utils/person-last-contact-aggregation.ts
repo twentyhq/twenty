@@ -1,5 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { NOT_DRAFT_MESSAGE_FILTER } from 'src/constants/not-draft-message-filter';
 import { chunk } from 'src/utils/chunk';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
 
@@ -44,7 +45,10 @@ const collectEmailInteractions = async (
         client.query({
           messageParticipants: {
             __args: {
-              filter: { personId: { in: ids } },
+              filter: {
+                personId: { in: ids },
+                message: NOT_DRAFT_MESSAGE_FILTER,
+              },
               first: PAGE_SIZE,
               after,
             },
@@ -360,3 +364,7 @@ export const buildPersonUpdateData = (
   lastContactItemCalendarEventId:
     agg?.item?.kind === 'meeting' ? agg.item.id : null,
 });
+
+export const PERSON_LAST_CONTACT_FIELD_NAMES = Object.keys(
+  buildPersonUpdateData(undefined),
+);
