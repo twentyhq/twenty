@@ -25,15 +25,6 @@ export const isTipTapNode = (value: unknown): value is TipTapNode => {
     return false;
   }
 
-  // Reject BlockNote-shaped values. BlockNote blocks always carry a top-level
-  // `id`, which TipTap nodes never have — but don't rely on `id` alone:
-  // `props` / `children` mark BlockNote blocks and `styles` marks BlockNote
-  // inline content, and none of these keys exist on TipTap nodes. Without
-  // this guard BlockNote JSON is mistaken for TipTap content: e.g. a
-  // BlockNote divider (`type: 'divider'`) collides with
-  // TIPTAP_NODE_TYPES.DIVIDER and sends the document through a lossy markdown
-  // round-trip that strips BlockNote `styles` (bold, italic, ...).
-  // See https://github.com/twentyhq/twenty/issues/26865
   if (
     typeof value.id === 'string' ||
     isDefined(value.props) ||
