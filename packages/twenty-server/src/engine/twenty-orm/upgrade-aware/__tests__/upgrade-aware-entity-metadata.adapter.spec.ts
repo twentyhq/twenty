@@ -186,6 +186,13 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
       name: ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME,
       status: 'completed',
     });
+    const getUpgradeSequence = jest.fn().mockReturnValue([
+      {
+        name: ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME,
+      },
+      { name: ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME },
+      { name: DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME },
+    ]);
     const moduleRef = await Test.createTestingModule({
       providers: [
         UpgradeAwareEntityMetadataAdapter,
@@ -195,15 +202,7 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
         },
         {
           provide: UpgradeSequenceReaderService,
-          useValue: {
-            getUpgradeSequence: jest.fn().mockReturnValue([
-              {
-                name: ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME,
-              },
-              { name: ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME },
-              { name: DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME },
-            ]),
-          },
+          useValue: { getUpgradeSequence },
         },
         { provide: getDataSourceToken(), useValue: dataSource },
       ],
@@ -212,6 +211,11 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
     const agentRepository = dataSource.getRepository(AgentEntity);
 
     await adapter.onModuleInit();
+
+    expect(getUpgradeSequence).toHaveBeenCalledTimes(1);
+    expect(getUpgradeSequence).toHaveBeenCalledWith();
+    expect(getLastAttemptedInstanceCommand).toHaveBeenCalledTimes(1);
+    expect(getLastAttemptedInstanceCommand).toHaveBeenNthCalledWith(1);
 
     expect(agentRepository.createQueryBuilder('agent').getSql()).toContain(
       '"agent"."evaluationInputs"',
@@ -223,6 +227,10 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
     });
 
     await adapter.refresh();
+
+    expect(getUpgradeSequence).toHaveBeenCalledTimes(1);
+    expect(getLastAttemptedInstanceCommand).toHaveBeenCalledTimes(2);
+    expect(getLastAttemptedInstanceCommand).toHaveBeenNthCalledWith(2);
 
     const selectAfterDrop = agentRepository
       .createQueryBuilder('agent')
