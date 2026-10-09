@@ -4856,6 +4856,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bytecodealliance/preview2-shim@npm:^0.19.0":
+  version: 0.19.0
+  resolution: "@bytecodealliance/preview2-shim@npm:0.19.0"
+  checksum: 10c0/c15b6aff80dfcb8cd2c2fb532f7b5a35bef0031d1df1f08064d8ef591668621ce379e5a285a3f48d2de5101fbc5a8e6badc935eaaa97eeb9ccb73d60c280c74d
+  languageName: node
+  linkType: hard
+
 "@calcom/embed-core@npm:1.5.3":
   version: 1.5.3
   resolution: "@calcom/embed-core@npm:1.5.3"
@@ -13544,6 +13551,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@opentelemetry/api-logs@npm:^0.222.0":
+  version: 0.222.0
+  resolution: "@opentelemetry/api-logs@npm:0.222.0"
+  dependencies:
+    "@opentelemetry/api": "npm:^1.3.0"
+  checksum: 10c0/c957f506eff4cf4b2e3e115cb37908f810f7e4fec99aae6eb9ad5832db40743bf35532ac566d765eea6e5a513839a5838f306874c44adb1515444c56257cc727
+  languageName: node
+  linkType: hard
+
 "@opentelemetry/api@npm:1.9.1":
   version: 1.9.1
   resolution: "@opentelemetry/api@npm:1.9.1"
@@ -15073,6 +15089,68 @@ __metadata:
   version: 1.1.2
   resolution: "@protobufjs/utf8@npm:1.1.2"
   checksum: 10c0/975c6e2c0319bd50c17531d186b537a88cb4d3205e3ca9297cd842b631d341da0ee3ff16be8656cd2660756dc753b29c8a6a14c0ad8ed602c1f91ddf22e7b3f3
+  languageName: node
+  linkType: hard
+
+"@pydantic/monty-darwin-arm64@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@pydantic/monty-darwin-arm64@npm:1.1.0"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@pydantic/monty-darwin-x64@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@pydantic/monty-darwin-x64@npm:1.1.0"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@pydantic/monty-linux-arm64-gnu@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@pydantic/monty-linux-arm64-gnu@npm:1.1.0"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@pydantic/monty-linux-x64-gnu@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@pydantic/monty-linux-x64-gnu@npm:1.1.0"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@pydantic/monty-win32-x64-msvc@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@pydantic/monty-win32-x64-msvc@npm:1.1.0"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@pydantic/monty@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@pydantic/monty@npm:1.1.0"
+  dependencies:
+    "@bytecodealliance/preview2-shim": "npm:^0.19.0"
+    "@opentelemetry/api": "npm:^1.9.1"
+    "@opentelemetry/api-logs": "npm:^0.222.0"
+    "@pydantic/monty-darwin-arm64": "npm:1.1.0"
+    "@pydantic/monty-darwin-x64": "npm:1.1.0"
+    "@pydantic/monty-linux-arm64-gnu": "npm:1.1.0"
+    "@pydantic/monty-linux-x64-gnu": "npm:1.1.0"
+    "@pydantic/monty-win32-x64-msvc": "npm:1.1.0"
+  dependenciesMeta:
+    "@pydantic/monty-darwin-arm64":
+      optional: true
+    "@pydantic/monty-darwin-x64":
+      optional: true
+    "@pydantic/monty-linux-arm64-gnu":
+      optional: true
+    "@pydantic/monty-linux-x64-gnu":
+      optional: true
+    "@pydantic/monty-win32-x64-msvc":
+      optional: true
+  checksum: 10c0/25ee8d5d8a9ceaedcad05af2c5d2f29469e2dd92998c25a85944c000668210a64ee01eff9fb46b8c8d1330e5af5f70582084abffd2916ada7f4aeca751fc9361
   languageName: node
   linkType: hard
 
@@ -50677,6 +50755,7 @@ __metadata:
     "@opentelemetry/exporter-prometheus": "npm:^0.219.0"
     "@opentelemetry/resources": "npm:^2.8.0"
     "@opentelemetry/sdk-metrics": "npm:^2.8.0"
+    "@pydantic/monty": "npm:1.1.0"
     "@react-pdf/renderer": "npm:^4.1.6"
     "@sentry/nestjs": "npm:^10.73.0"
     "@sentry/node": "npm:^10.73.0"

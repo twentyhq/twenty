@@ -73,6 +73,7 @@
     "@opentelemetry/exporter-prometheus": "^0.219.0",
     "@opentelemetry/resources": "^2.8.0",
     "@opentelemetry/sdk-metrics": "^2.8.0",
+    "@pydantic/monty": "1.1.0",
     "@react-pdf/renderer": "^4.1.6",
     "@sentry/nestjs": "^10.73.0",
     "@sentry/node": "^10.73.0",
