@@ -19,18 +19,14 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
-import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
-import { publishCronTriggerCacheEntry } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/publish-cron-trigger-cache-entry.util';
 
 @Injectable()
 export class ApplicationManifestMigrationService {
@@ -40,8 +36,7 @@ export class ApplicationManifestMigrationService {
     private readonly applicationService: ApplicationService,
     private readonly computeManifestFlatEntityMapsService: ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     private readonly logger: LoggerService,
-    @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
-    private readonly workflowCacheStorageService: CacheStorageService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
   async syncPreInstallLogicFunctionFromManifest({
@@ -290,37 +285,18 @@ export class ApplicationManifestMigrationService {
         inferDeletionFromMissingEntities,
       });
 
-      await this.publishApplicationWorkflowCronTriggers({
-        workspaceId,
-        applicationWorkflows,
-      });
+      await this.workflowVersionCoreSyncService.publishCronTriggerCacheEntries(
+        buildApplicationWorkflowCronTriggerCacheEntries({
+          workspaceId,
+          workflows: applicationWorkflows,
+        }),
+      );
     }
 
     return {
       workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
     };
-  }
-
-  private async publishApplicationWorkflowCronTriggers({
-    workspaceId,
-    applicationWorkflows,
-  }: {
-    workspaceId: string;
-    applicationWorkflows: (UniversalFlatWorkflow & { id: string })[];
-  }): Promise<void> {
-    const cronTriggers = buildApplicationWorkflowCronTriggerCacheEntries({
-      workspaceId,
-      workflows: applicationWorkflows,
-    });
-
-    for (const cachedTrigger of cronTriggers) {
-      await publishCronTriggerCacheEntry({
-        cacheStorageService: this.workflowCacheStorageService,
-        cachedTrigger,
-        logger: this.logger,
-      });
-    }
   }
 
   private async syncApplicationReferencesFromManifest({
