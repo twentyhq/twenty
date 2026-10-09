@@ -1,6 +1,7 @@
 import { isArray } from '@sniptt/guards';
 import React from 'react';
 
+import { INPUT_VALUE_SEQUENCE_BRIDGE_PROPERTY } from '@/constants/InputValueSequenceBridgeProperty';
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { useCaretPreservingElementRef } from '@/host/caret/hooks/useCaretPreservingElementRef';
 import { useHtmlHostElementProps } from '@/host/elements/hooks/useHtmlHostElementProps';
@@ -61,6 +62,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
   return ({
     children,
+    [INPUT_VALUE_SEQUENCE_BRIDGE_PROPERTY]: inputValueSequence,
     [INPUT_SELECTION_BRIDGE_PROPERTIES.request]: selectionCommands,
     [INPUT_SELECTION_BRIDGE_PROPERTIES.update]: onSelectionUpdate,
     ...props
@@ -83,6 +85,8 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       value: isFileInput && !shouldClearFileInputSelection ? undefined : value,
       selectionCommands,
       onSelectionUpdate,
+      inputValueSequence,
+      shouldPreserveNativeEdits: !isFileInput,
     });
 
     if (

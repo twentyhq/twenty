@@ -10,11 +10,13 @@ import {
   createRemoteComponentRenderer,
   RemoteRootRenderer,
 } from '@remote-dom/react/host';
-import { act } from 'react';
+import { isFunction } from '@sniptt/guards';
+import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createHtmlHostWrapper } from '@/host/elements/utils/createHtmlHostWrapper';
+import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
 import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
 import { type WorkerInputSelectionStore } from '@/polyfills/input-selection/types/WorkerInputSelectionStore';
 import { installInputSelectionPolyfill } from '@/polyfills/input-selection/utils/installInputSelectionPolyfill';
@@ -30,11 +32,13 @@ export const createRemoteTextControlRenderer = () => {
     type,
     selectionStore = workerInputSelectionStore,
     shouldReadBeforeConnect = true,
+    deferHostEvent,
   }: {
     htmlTag: 'input' | 'textarea';
     type?: string;
     selectionStore?: WorkerInputSelectionStore;
     shouldReadBeforeConnect?: boolean;
+    deferHostEvent?: (dispatchHostEvent: () => void) => void;
   }) => {
     const container = document.createElement('div');
     const remoteRoot = document.createElement(
@@ -53,6 +57,23 @@ export const createRemoteTextControlRenderer = () => {
       batch: scheduleBatch,
     });
     const remoteMutationObserver = new RemoteMutationObserver(connection);
+    const HostControl = createHtmlHostWrapper(htmlTag);
+    type DeferredHostControlProps = Record<string, unknown>;
+    const DeferredHostControl = (props: DeferredHostControlProps) =>
+      createElement(
+        HostControl,
+        Object.fromEntries(
+          Object.entries(props).map(([key, value]) => [
+            key,
+            isDefined(deferHostEvent) &&
+            isEventHandlerKey(key) &&
+            isFunction(value)
+              ? (...eventArguments: unknown[]) =>
+                  deferHostEvent(() => value(...eventArguments))
+              : value,
+          ]),
+        ),
+      );
 
     document.body.append(container, remoteRoot);
     mountedRoots.push(root);
@@ -88,7 +109,7 @@ export const createRemoteTextControlRenderer = () => {
             new Map([
               [
                 `html-${htmlTag}`,
-                createRemoteComponentRenderer(createHtmlHostWrapper(htmlTag)),
+                createRemoteComponentRenderer(DeferredHostControl),
               ],
               [
                 'html-div',

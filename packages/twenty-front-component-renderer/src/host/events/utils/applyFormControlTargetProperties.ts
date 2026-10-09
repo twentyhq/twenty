@@ -1,6 +1,8 @@
 import { isBoolean, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { hostInputValueSequenceStore } from '@/host/caret/states/hostInputValueSequenceStore';
+
 import { CHECKED_STATE_SETTLED_EVENT_TYPES } from '@/host/events/constants/CheckedStateSettledEventTypes';
 import { FORM_CONTROL_VALUE_SETTLED_EVENT_TYPES } from '@/host/events/constants/FormControlValueSettledEventTypes';
 import { serializeFileList } from '@/host/events/utils/serializeFileList';
@@ -34,6 +36,11 @@ export const applyFormControlTargetProperties = ({
 
   if (isString(target.value)) {
     serializedEvent.value = target.value;
+    const inputValueSequence = hostInputValueSequenceStore.read(target);
+
+    if (inputValueSequence > 0) {
+      serializedEvent.inputValueSequence = inputValueSequence;
+    }
   }
 
   const selectedOptionIndexes = serializeSelectedOptionIndexes(target);

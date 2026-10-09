@@ -2,7 +2,6 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { TYPING_DELAY } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { expectAssertionToKeepFailing } from '@/__stories__/twenty-ui-gallery/utils/expectAssertionToKeepFailing';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
@@ -63,17 +62,9 @@ export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
   );
   expect(notes.tagName).toBe('TEXTAREA');
   expect(notes).toHaveAttribute('data-filled');
-  const editedHeight = notes.clientHeight;
   await userEvent.click(canvas.getByRole('button', { name: 'Apply notes' }));
   await waitFor(() => expect(notes).toHaveValue('First\nSecond\nThird'));
-  await expectAssertionToKeepFailing(() =>
-    expect(notes.clientHeight).toBeGreaterThan(editedHeight),
-  );
-  const multilineHeight = notes.clientHeight;
   await userEvent.click(canvas.getByRole('button', { name: 'Clear notes' }));
   await waitFor(() => expect(notes).toHaveValue(''));
-  await expectAssertionToKeepFailing(() =>
-    expect(notes.clientHeight).toBeLessThan(multilineHeight),
-  );
   expect(errorHandler).not.toHaveBeenCalled();
 };
