@@ -1,5 +1,6 @@
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableListNativeItemRef } from '@/ui/layout/selectable-list/hooks/useSelectableListNativeItemRef';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -21,6 +22,30 @@ const focusId = 'selectable-list-story';
 type RenderProps = {
   onEnter: (itemLabel: string) => void;
   shouldPreselectFirstItem?: boolean;
+};
+
+type NativeSelectableItemProps = {
+  itemLabel: string;
+  onEnter: () => void;
+};
+
+const NativeSelectableItem = ({
+  itemLabel,
+  onEnter,
+}: NativeSelectableItemProps) => {
+  const nativeItemRef = useSelectableListNativeItemRef(itemLabel);
+
+  return (
+    <SelectableListItem itemId={itemLabel} onEnter={onEnter}>
+      <ListItem
+        render={<button type="button" />}
+        ref={nativeItemRef}
+        onClick={onEnter}
+      >
+        {itemLabel}
+      </ListItem>
+    </SelectableListItem>
+  );
 };
 
 const Render = ({ onEnter, shouldPreselectFirstItem }: RenderProps) => {
@@ -58,13 +83,11 @@ const Render = ({ onEnter, shouldPreselectFirstItem }: RenderProps) => {
         autoFocus
       />
       {filteredItemLabels.map((itemLabel) => (
-        <SelectableListItem
+        <NativeSelectableItem
           key={itemLabel}
-          itemId={itemLabel}
+          itemLabel={itemLabel}
           onEnter={() => onEnter(itemLabel)}
-        >
-          <ListItem>{itemLabel}</ListItem>
-        </SelectableListItem>
+        />
       ))}
     </SelectableList>
   );
@@ -161,5 +184,26 @@ export const SelectsNothingWithoutPreselection: Story = {
     await userEvent.keyboard('{Enter}');
 
     expect(args.onEnter).not.toHaveBeenCalled();
+  },
+};
+
+export const NavigatesNativeOwnersAfterPointerSelection: Story = {
+  args: {
+    shouldPreselectFirstItem: true,
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Content Marketing' }),
+    );
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+
+    await waitFor(() => {
+      expect(args.onEnter).toHaveBeenLastCalledWith('Growth Hacking');
+      expect(
+        canvas.getByRole('button', { name: 'Growth Hacking' }),
+      ).toHaveFocus();
+    });
   },
 };

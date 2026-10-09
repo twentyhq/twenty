@@ -10,11 +10,17 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 
 type Direction = 'up' | 'down' | 'left' | 'right';
 
-export const useSelectableListHotKeys = (
-  instanceId: string,
-  focusId: string,
-  onSelect?: (itemId: string) => void,
-) => {
+export const useSelectableListHotKeys = ({
+  instanceId,
+  focusId,
+  onSelect,
+  onNavigate,
+}: {
+  instanceId: string;
+  focusId: string;
+  onSelect?: (itemId: string) => void;
+  onNavigate?: (itemId: string) => void;
+}) => {
   const store = useStore();
 
   const findPosition = (
@@ -104,6 +110,10 @@ export const useSelectableListHotKeys = (
 
       const nextId = computeNextId(direction);
 
+      if (isNonEmptyString(nextId)) {
+        onNavigate?.(nextId);
+      }
+
       if (selectedItemId !== nextId) {
         if (isNonEmptyString(nextId)) {
           store.set(
@@ -133,7 +143,7 @@ export const useSelectableListHotKeys = (
         }
       }
     },
-    [store, instanceId, onSelect],
+    [store, instanceId, onSelect, onNavigate],
   );
 
   useHotkeysOnFocusedElement({

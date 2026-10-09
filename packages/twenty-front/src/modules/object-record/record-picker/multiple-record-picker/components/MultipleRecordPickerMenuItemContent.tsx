@@ -6,6 +6,7 @@ import { multipleRecordPickerIsSelectedComponentFamilySelector } from '@/object-
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableListNativeItemRef } from '@/ui/layout/selectable-list/hooks/useSelectableListNativeItemRef';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -29,6 +30,8 @@ export const MultipleRecordPickerMenuItemContent = ({
   objectMetadataItem,
   onChange,
 }: MultipleRecordPickerMenuItemContentProps) => {
+  const nativeItemRef = useSelectableListNativeItemRef(searchRecord.recordId);
+
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
@@ -78,6 +81,7 @@ export const MultipleRecordPickerMenuItemContent = ({
     >
       <ListItem
         render={<button type="button" />}
+        ref={nativeItemRef}
         focused={isSelectedItemId}
         role="option"
         aria-selected={isRecordSelectedWithObjectItem}
