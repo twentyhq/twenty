@@ -76,6 +76,24 @@ describe('searchVariableInOutputSchema - iterator output schema', () => {
     });
   });
 
+  it.each([{}, { currentItem: null }])(
+    'should return an unresolved variable for an incomplete iterator schema %j',
+    (schema) => {
+      const result = searchVariableInOutputSchema({
+        schema,
+        stepType: 'ITERATOR',
+        stepName: 'Iterate Companies',
+        rawVariableName: '{{step1.currentItem.name}}',
+        isFullRecord: false,
+      });
+
+      expect(result).toEqual({
+        variableLabel: undefined,
+        variablePathLabel: undefined,
+      });
+    },
+  );
+
   it('should handle hasProcessedAllItems variable correctly', () => {
     const result = searchVariableThroughIteratorOutputSchema({
       stepName: 'Iterate Companies',

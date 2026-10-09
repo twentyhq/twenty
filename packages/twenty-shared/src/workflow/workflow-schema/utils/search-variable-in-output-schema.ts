@@ -549,7 +549,7 @@ const searchThroughIteratorOutputSchema = ({
   }
 
   if (iteratorResultKey === 'currentItem') {
-    const schema = iteratorOutputSchema.currentItem.value;
+    const schema = iteratorOutputSchema.currentItem?.value;
 
     if (!isDefined(schema)) {
       return EMPTY_RESULT;
