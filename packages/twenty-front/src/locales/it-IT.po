@@ -1203,6 +1203,11 @@ msgstr "Una bozza esiste già su questo workflow"
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "Una bozza esiste già per questo workflow. Sei sicuro di volerla cancellare?"
 
+#. js-lingui-id: xk6SkO
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run."
+msgstr ""
+
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
@@ -9013,6 +9018,11 @@ msgstr "Supporto via email"
 msgid "Email the attendees an invitation"
 msgstr "Invia ai partecipanti un invito via email"
 
+#. js-lingui-id: ju58G/
+#: src/modules/activities/emails/components/EmailThreadPreview.tsx
+msgid "Email thread"
+msgstr ""
+
 #. js-lingui-id: +V3dhy
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -10560,6 +10570,7 @@ msgid "Failed to upgrade credit plan."
 msgstr "Aggiornamento del piano crediti non riuscito."
 
 #. js-lingui-id: pBEL6J
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
 #: src/modules/marketplace/hooks/useUpgradeApplication.ts
 msgid "Failed to upgrade the application."
 msgstr "Aggiornamento dell'applicazione non riuscito."
@@ -22810,6 +22821,7 @@ msgstr "Sottodominio dello spazio di lavoro di destinazione"
 
 #. js-lingui-id: R+s8S+
 #: src/modules/activities/tasks/components/TaskRow.tsx
+#: src/modules/activities/tasks/components/TaskRow.tsx
 msgid "Task title"
 msgstr "Titolo dell'attività"
 
@@ -25193,15 +25205,15 @@ msgstr "Esegui l'upgrade della tua prova"
 msgid "Upgraded"
 msgstr "Aggiornato"
 
+#. js-lingui-id: nDpDl0
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
+msgid "Upgrading {displayedUpgradeProgress}"
+msgstr ""
+
 #. js-lingui-id: 9gm/Oo
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
 msgid "Upgrading subscription..."
 msgstr "Aggiornamento dell'abbonamento in corso..."
-
-#. js-lingui-id: +Gi3x1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
-msgid "Upgrading..."
-msgstr "Aggiornamento in corso..."
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/settings/components/SettingsImageInput.tsx

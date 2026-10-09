@@ -1203,6 +1203,11 @@ msgstr "Ja hi ha un esborrany existent"
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "Ja hi ha un esborrany existent per aquest flux de treball. Estàs segur que vols esborrar-lo?"
 
+#. js-lingui-id: xk6SkO
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run."
+msgstr ""
+
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
@@ -9013,6 +9018,11 @@ msgstr "Suport per correu electrònic"
 msgid "Email the attendees an invitation"
 msgstr "Envia una invitació per correu electrònic als assistents"
 
+#. js-lingui-id: ju58G/
+#: src/modules/activities/emails/components/EmailThreadPreview.tsx
+msgid "Email thread"
+msgstr ""
+
 #. js-lingui-id: +V3dhy
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -10560,6 +10570,7 @@ msgid "Failed to upgrade credit plan."
 msgstr "No s'ha pogut actualitzar el pla de crèdits."
 
 #. js-lingui-id: pBEL6J
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
 #: src/modules/marketplace/hooks/useUpgradeApplication.ts
 msgid "Failed to upgrade the application."
 msgstr "No s'ha pogut actualitzar l'aplicació."
@@ -22810,6 +22821,7 @@ msgstr "Subdomini de destinació de l'espai de treball"
 
 #. js-lingui-id: R+s8S+
 #: src/modules/activities/tasks/components/TaskRow.tsx
+#: src/modules/activities/tasks/components/TaskRow.tsx
 msgid "Task title"
 msgstr "Títol de la tasca"
 
@@ -25191,15 +25203,15 @@ msgstr "Actualitzeu la prova"
 msgid "Upgraded"
 msgstr "Actualitzat"
 
+#. js-lingui-id: nDpDl0
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
+msgid "Upgrading {displayedUpgradeProgress}"
+msgstr ""
+
 #. js-lingui-id: 9gm/Oo
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
 msgid "Upgrading subscription..."
 msgstr "S'està actualitzant la subscripció..."
-
-#. js-lingui-id: +Gi3x1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
-msgid "Upgrading..."
-msgstr "Actualitzant..."
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/settings/components/SettingsImageInput.tsx

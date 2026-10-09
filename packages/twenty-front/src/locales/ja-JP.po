@@ -1203,6 +1203,11 @@ msgstr "下書きはすでに存在します"
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "この作業フローにはすでに下書きが存在します。それを削除してもよろしいですか？"
 
+#. js-lingui-id: xk6SkO
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run."
+msgstr ""
+
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
@@ -9013,6 +9018,11 @@ msgstr "サポートにメールを送る"
 msgid "Email the attendees an invitation"
 msgstr "出席者に招待状をメールで送信する"
 
+#. js-lingui-id: ju58G/
+#: src/modules/activities/emails/components/EmailThreadPreview.tsx
+msgid "Email thread"
+msgstr ""
+
 #. js-lingui-id: +V3dhy
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -10560,6 +10570,7 @@ msgid "Failed to upgrade credit plan."
 msgstr "クレジットプランのアップグレードに失敗しました。"
 
 #. js-lingui-id: pBEL6J
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
 #: src/modules/marketplace/hooks/useUpgradeApplication.ts
 msgid "Failed to upgrade the application."
 msgstr "アプリケーションのアップグレードに失敗しました。"
@@ -22810,6 +22821,7 @@ msgstr "対象ワークスペースのサブドメイン"
 
 #. js-lingui-id: R+s8S+
 #: src/modules/activities/tasks/components/TaskRow.tsx
+#: src/modules/activities/tasks/components/TaskRow.tsx
 msgid "Task title"
 msgstr "タスクのタイトル"
 
@@ -25191,15 +25203,15 @@ msgstr "トライアルをアップグレード"
 msgid "Upgraded"
 msgstr "アップグレード済み"
 
+#. js-lingui-id: nDpDl0
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
+msgid "Upgrading {displayedUpgradeProgress}"
+msgstr ""
+
 #. js-lingui-id: 9gm/Oo
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
 msgid "Upgrading subscription..."
 msgstr "サブスクリプションをアップグレード中..."
-
-#. js-lingui-id: +Gi3x1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
-msgid "Upgrading..."
-msgstr "アップグレード中..."
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/settings/components/SettingsImageInput.tsx
