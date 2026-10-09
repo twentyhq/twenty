@@ -3,11 +3,14 @@ import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Select } from '../Select';
-import { SelectExample, type SelectExampleProps } from './SelectExample';
+import { SelectExample } from './SelectExample';
+import { SelectPositioningExample } from './SelectPositioningExample';
+import { type SelectExampleProps } from './SelectExampleProps';
 import { waitForSelectPopup } from './waitForSelectPopup';
 
 const meta: Meta<typeof SelectExample> = {
@@ -24,9 +27,9 @@ export const BodyPortalAndOutsideDismissal: Story = {
   render: () => (
     <>
       <SelectExample defaultValue="apple" modal={false} />
-      <button type="button" style={{ marginTop: 160 }}>
+      <Button type="button" style={{ marginTop: 160 }}>
         Outside
-      </button>
+      </Button>
     </>
   ),
   play: async ({ canvasElement }) => {
@@ -109,9 +112,9 @@ const DeferredContainerExample = () => {
           }}
           modal={false}
         />
-        <button type="button" onClick={() => setMounted(true)}>
+        <Button type="button" onClick={() => setMounted(true)}>
           Mount portal
-        </button>
+        </Button>
         {mounted && (
           <div ref={setContainer} role="region" aria-label="Deferred portal" />
         )}
@@ -176,14 +179,24 @@ export const Scrollable: Story = {
     >
       <Select.Trigger aria-label="Long list">
         <Select.Value />
+        <Select.Icon />
       </Select.Trigger>
-      <Select.Popup style={{ maxHeight: 160 }}>
-        {Array.from({ length: 30 }, (_, index) => (
-          <Select.Item key={index} value={index + 1}>
-            Option {index + 1}
-          </Select.Item>
-        ))}
-      </Select.Popup>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup style={{ maxHeight: 160 }}>
+            {Array.from({ length: 30 }, (_, index) => (
+              <Select.Item key={index} value={index + 1}>
+                <Select.ItemText>Option {index + 1}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
     </Select.Root>
   ),
   play: async ({ canvasElement }) => {
@@ -233,4 +246,47 @@ export const AlignedWithSelectedItem: Story = {
       ).toBeLessThan(3);
     });
   },
+};
+
+export const AdvancedPositioning: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 580, height: 400 } },
+  render: () => <SelectPositioningExample defaultValue="apple" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('combobox', { name: 'Fruit' }));
+    const list = await waitForSelectPopup(canvasElement);
+    const positioner = within(canvasElement.ownerDocument.body).getByTestId(
+      'custom-positioner',
+    );
+    const anchor = canvas.getByRole('region', { name: 'Popup anchor' });
+    await expect(positioner).toHaveStyle({ position: 'fixed' });
+    await expect(positioner).toHaveAttribute('data-side', 'bottom');
+    await expect(positioner).toHaveAttribute('data-align', 'end');
+    await expect(positioner).toContainElement(list);
+    await expect(
+      within(canvasElement.ownerDocument.body).getByTestId('select-arrow'),
+    ).toHaveAttribute('data-side', 'bottom');
+    await waitFor(() => {
+      const anchorBounds = anchor.getBoundingClientRect();
+      const positionerBounds = positioner.getBoundingClientRect();
+      expect(
+        Math.abs(
+          positionerBounds.top - anchorBounds.bottom - anchorBounds.height / 2,
+        ),
+      ).toBeLessThan(2);
+    });
+    await expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
+    await userEvent.keyboard('{End}{Enter}');
+    await waitFor(() => expect(list).not.toBeVisible());
+    await expect(canvas.getByRole('combobox')).toHaveTextContent(
+      'Dragon fruit',
+    );
+  },
+};
+
+export const PositioningDocumentation: Story = {
+  decorators: AdvancedPositioning.decorators,
+  parameters: AdvancedPositioning.parameters,
+  render: () => <SelectPositioningExample defaultValue="apple" />,
 };

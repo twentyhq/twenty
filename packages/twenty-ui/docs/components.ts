@@ -1,3 +1,4 @@
+import { SELECT_PART_PROP_DESCRIPTIONS } from './selectPartPropDescriptions';
 import { CHECKBOX_PROP_DESCRIPTIONS } from './checkboxPropDescriptions';
 import { SWITCH_PROP_DESCRIPTIONS } from './switchPropDescriptions';
 import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
@@ -393,6 +394,8 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Select/Select.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/select',
+    partPropDescriptions: SELECT_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: { Trigger: { size: 'md' } },
   },
   {
     name: 'Slider',

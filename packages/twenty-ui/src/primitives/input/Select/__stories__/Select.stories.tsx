@@ -10,11 +10,9 @@ import {
 } from '@ui/testing';
 
 import { Select } from '../Select';
-import {
-  SelectExample,
-  type SelectExampleProps,
-  SELECT_ITEMS,
-} from './SelectExample';
+import { SelectExample } from './SelectExample';
+import { type SelectExampleProps } from './SelectExampleProps';
+import { SELECT_ITEMS } from './selectItems';
 import { waitForSelectPopup } from './waitForSelectPopup';
 
 const meta: Meta<typeof SelectExample> = {
@@ -100,19 +98,37 @@ export const Grouped: Story = {
     <Select.Root items={SELECT_ITEMS} defaultValue="apple">
       <Select.Trigger aria-label="Fruit">
         <Select.Value />
+        <Select.Icon />
       </Select.Trigger>
-      <Select.Popup>
-        <Select.Group>
-          <Select.GroupLabel>Everyday</Select.GroupLabel>
-          <Select.Item value="apple">Apple</Select.Item>
-          <Select.Item value="cherry">Cherry</Select.Item>
-        </Select.Group>
-        <Select.Separator />
-        <Select.Group>
-          <Select.GroupLabel>Tropical</Select.GroupLabel>
-          <Select.Item value="dragon-fruit">Dragon fruit</Select.Item>
-        </Select.Group>
-      </Select.Popup>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            <Select.Group>
+              <Select.GroupLabel>Everyday</Select.GroupLabel>
+              <Select.Item value="apple">
+                <Select.ItemText>Apple</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+              <Select.Item value="cherry">
+                <Select.ItemText>Cherry</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            </Select.Group>
+            <Select.Separator />
+            <Select.Group>
+              <Select.GroupLabel>Tropical</Select.GroupLabel>
+              <Select.Item value="dragon-fruit">
+                <Select.ItemText>Dragon fruit</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            </Select.Group>
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
     </Select.Root>
   ),
   play: async ({ canvasElement }) => {
@@ -153,18 +169,28 @@ const SelectCatalogCell = ({
       >
         <Select.Trigger id={triggerId} size={size} aria-label="Fruit">
           <Select.Value />
+          <Select.Icon />
         </Select.Trigger>
-        <Select.Popup container={container}>
-          {SELECT_ITEMS.map(({ value, label }) => (
-            <Select.Item
-              key={value}
-              value={value}
-              disabled={value === 'banana'}
-            >
-              {label}
-            </Select.Item>
-          ))}
-        </Select.Popup>
+        <Select.Portal container={container}>
+          <Select.Positioner
+            align="start"
+            sideOffset={8}
+            alignItemWithTrigger={false}
+          >
+            <Select.Popup>
+              {SELECT_ITEMS.map(({ value, label }) => (
+                <Select.Item
+                  key={value}
+                  value={value}
+                  disabled={value === 'banana'}
+                >
+                  <Select.ItemText>{label}</Select.ItemText>
+                  <Select.ItemIndicator />
+                </Select.Item>
+              ))}
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
       </Select.Root>
     </div>
   );

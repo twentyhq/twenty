@@ -7,7 +7,7 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import SelectReference from '/snippets/ui/generated/input/select.mdx';
 
-Use `Select` for a form value chosen from a list. Use [Menu](/ui/primitives/surfaces/menu) for commands and actions.
+Use `Select` for a form value chosen from a list. [Dropdown](/ui/components/navigation/dropdown) remains the main higher-level API for menus, pickers, panels, and pages that combine those workflows. Use [Menu](/ui/primitives/surfaces/menu) for primitive commands and actions.
 
 <StoryEmbed
   storyId="ui-input-select--documentation"
@@ -17,27 +17,51 @@ Use `Select` for a form value chosen from a list. Use [Menu](/ui/primitives/surf
 
 ## Anatomy
 
-Keep the trigger and popup inside the same `Select.Root`. Put option labels directly inside `Select.Item`.
+Compose the public parts inside `Select.Root`. `Trigger` and `Item` render only their children. Add `Icon`, `ItemText`, and `ItemIndicator` explicitly when you want the default chevron, label, and checkmark.
 
 ```text
 Select.Root
+├── Select.Label
 ├── Select.Trigger
-│   └── Select.Value
-└── Select.Popup
-    └── Select.Item
+│   ├── Select.Value
+│   └── Select.Icon
+└── Select.Portal
+    ├── Select.Backdrop
+    └── Select.Positioner
+        └── Select.Popup
+            ├── Select.Arrow
+            ├── Select.ScrollUpArrow
+            ├── Select.List
+            │   ├── Select.Group
+            │   │   ├── Select.GroupLabel
+            │   │   └── Select.Item
+            │   │       ├── Select.ItemText
+            │   │       └── Select.ItemIndicator
+            │   └── Select.Separator
+            └── Select.ScrollDownArrow
 ```
 
-| Part                  | Requirement                         | Purpose                                                                              |
-| --------------------- | ----------------------------------- | ------------------------------------------------------------------------------------ |
-| `Root`                | Required                            | Owns selection, open state, and form integration.                                    |
-| `Trigger`             | Required for a trigger-based select | Opens the list and displays its current value.                                       |
-| `Value`               | Optional                            | Renders the selected label or a placeholder; you can provide custom trigger content. |
-| `Popup`               | Required for the option list        | Renders the positioned, portaled list.                                               |
-| `Item`                | One per option                      | Provides selection behavior and an option label.                                     |
-| `Group`, `GroupLabel` | Optional                            | Group related options under a label.                                                 |
-| `Separator`           | Optional                            | Separates groups visually.                                                           |
+| Part                               | Purpose                                                                       |
+| ---------------------------------- | ----------------------------------------------------------------------------- |
+| `Root`                             | Owns selection, open state, generic values, and native form integration.      |
+| `Label`                            | Associates a visible label with the trigger.                                  |
+| `Trigger`                          | Opens the list and contains the displayed value.                              |
+| `Value`                            | Renders the selected label or a placeholder.                                  |
+| `Icon`                             | Renders a default chevron or custom children in the trigger.                  |
+| `Portal`                           | Moves popup content to the theme's portal container or an explicit container. |
+| `Backdrop`                         | Provides an optional backdrop while the popup is open.                        |
+| `Positioner`                       | Owns anchor geometry, placement, offsets, and collision behavior.             |
+| `Popup`                            | Renders the popup surface without adding a portal or positioner.              |
+| `List`                             | Provides a separate scrolling container for options.                          |
+| `Item`                             | Provides selection behavior for one option.                                   |
+| `ItemText`                         | Identifies the option label used for typeahead and selected-value alignment.  |
+| `ItemIndicator`                    | Renders the selected option's default checkmark or custom children.           |
+| `Arrow`                            | Positions an optional arrow against the popup anchor.                         |
+| `ScrollUpArrow`, `ScrollDownArrow` | Scroll a long list when hovered.                                              |
+| `Group`, `GroupLabel`              | Group related options under a label.                                          |
+| `Separator`                        | Separates groups visually.                                                    |
 
-Twenty UI includes the chevron in `Trigger`, the option text and checkmark in `Item`, and the portal and positioner in `Popup`. Compose these public parts directly; placement and portal options belong on `Popup`.
+`Portal`, `List`, `Backdrop`, arrows, and indicators are optional. Use `Positioner` around `Popup` for positioning, including when you render the popup inline without a portal.
 
 ## Uncontrolled state
 
@@ -56,14 +80,24 @@ export const PrioritySelect = () => (
   <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
     <Select.Trigger aria-label="Priority">
       <Select.Value placeholder="Choose a priority" />
+      <Select.Icon />
     </Select.Trigger>
-    <Select.Popup>
-      {PRIORITIES.map(({ value, label }) => (
-        <Select.Item key={value} value={value}>
-          {label}
-        </Select.Item>
-      ))}
-    </Select.Popup>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          {PRIORITIES.map(({ value, label }) => (
+            <Select.Item key={value} value={value}>
+              <Select.ItemText>{label}</Select.ItemText>
+              <Select.ItemIndicator />
+            </Select.Item>
+          ))}
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
   </Select.Root>
 );
 ```
@@ -96,14 +130,24 @@ export const PrioritySelect = () => {
     >
       <Select.Trigger aria-label="Priority">
         <Select.Value placeholder="Choose a priority" />
+        <Select.Icon />
       </Select.Trigger>
-      <Select.Popup>
-        {PRIORITIES.map(({ value, label }) => (
-          <Select.Item key={value} value={value}>
-            {label}
-          </Select.Item>
-        ))}
-      </Select.Popup>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
     </Select.Root>
   );
 };
@@ -133,14 +177,24 @@ export const LanguageSelect = () => {
     >
       <Select.Trigger aria-label="Languages">
         <Select.Value placeholder="Choose languages" />
+        <Select.Icon />
       </Select.Trigger>
-      <Select.Popup>
-        {LANGUAGES.map(({ value, label }) => (
-          <Select.Item key={value} value={value}>
-            {label}
-          </Select.Item>
-        ))}
-      </Select.Popup>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {LANGUAGES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
     </Select.Root>
   );
 };
@@ -177,14 +231,24 @@ export const PrioritySelect = () => {
     >
       <Select.Trigger aria-label="Priority">
         <Select.Value placeholder="Choose a priority" />
+        <Select.Icon />
       </Select.Trigger>
-      <Select.Popup>
-        {PRIORITIES.map(({ value, label }) => (
-          <Select.Item key={value} value={value}>
-            {label}
-          </Select.Item>
-        ))}
-      </Select.Popup>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
     </Select.Root>
   );
 };
@@ -209,14 +273,24 @@ export const PriorityField = () => (
     <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
       <Select.Trigger>
         <Select.Value />
+        <Select.Icon />
       </Select.Trigger>
-      <Select.Popup>
-        {PRIORITIES.map(({ value, label }) => (
-          <Select.Item key={value} value={value}>
-            {label}
-          </Select.Item>
-        ))}
-      </Select.Popup>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
     </Select.Root>
     <Field.Description>
       Choose how soon this record needs attention.
@@ -225,13 +299,177 @@ export const PriorityField = () => (
 );
 ```
 
-## Placement and keyboard
+## Item composition
 
-Set `size="sm"` or `size="md"` on `Trigger`. Customize option content with `Item.startIcon`, `Item.endIcon`, and `Item.description` while keeping the option's label in its children.
+Compose arbitrary content inside `Item`. Put the searchable label in `ItemText`; additional content does not become its typeahead label. Provide children to `Icon` or `ItemIndicator` to replace their default icons, or omit those parts altogether.
 
-`Popup` defaults to `side="bottom"`, `align="start"`, and `sideOffset={8}`. Set `alignItemWithTrigger` to align the selected option over the trigger. It uses the [theme's portal container](/ui/theming#scope-an-override) unless you provide `container`.
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
 
-Keyboard users can open the list from the trigger, navigate options with arrow keys, and type to find an option. Escape dismisses the popup. Label the trigger or integrate the select with [Field](/ui/primitives/input/field); a placeholder alone does not name the control.
+export const PrioritySelect = () => (
+  <Select.Root defaultValue="high" items={{ high: 'High' }}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          <Select.Item value="high">
+            <Select.ItemText>High</Select.ItemText>
+            <span>Needs attention today</span>
+            <Select.ItemIndicator />
+          </Select.Item>
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
+```
+
+All parts that render elements accept native attributes, refs, and Base UI's `render`, `className`, and `style` composition APIs. For example, use `render={<Button />}` on `Trigger` to compose it with a Twenty UI button. For a non-button render element, also set `nativeButton={false}`.
+
+## Placement
+
+Set `size="sm"` or `size="md"` on `Trigger`. Placement belongs on `Positioner`; portal destination belongs on `Portal`.
+
+`Positioner` preserves Base UI's defaults: `side="bottom"`, `align="center"`, `sideOffset={0}`, and `alignItemWithTrigger={true}`. Selected-item alignment applies to pointer input when there is enough space. Set `alignItemWithTrigger={false}` to use anchored positioning consistently. The examples above choose `align="start"` and `sideOffset={8}` explicitly.
+
+```tsx
+import { useRef, useState } from 'react';
+import { Button, Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PositionedPrioritySelect = () => {
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const boundaryRef = useRef<HTMLDivElement>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
+    null,
+  );
+
+  return (
+    <div ref={boundaryRef}>
+      <Button ref={anchorRef}>Position anchor</Button>
+      <Select.Root defaultValue="normal" items={PRIORITIES}>
+        <Select.Trigger aria-label="Priority">
+          <Select.Value />
+          <Select.Icon />
+        </Select.Trigger>
+        <Select.Portal container={portalContainer}>
+          <Select.Positioner
+            anchor={anchorRef}
+            positionMethod="fixed"
+            side="inline-end"
+            align="start"
+            alignItemWithTrigger={false}
+            sideOffset={({ anchor }) => anchor.width / 4}
+            alignOffset={4}
+            collisionBoundary={boundaryRef.current ?? undefined}
+            collisionPadding={12}
+            collisionAvoidance={{ side: 'flip', align: 'shift' }}
+            sticky
+          >
+            <Select.Popup>
+              <Select.Arrow />
+              <Select.List>
+                {PRIORITIES.map(({ value, label }) => (
+                  <Select.Item key={value} value={value}>
+                    <Select.ItemText>{label}</Select.ItemText>
+                    <Select.ItemIndicator />
+                  </Select.Item>
+                ))}
+              </Select.List>
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
+      </Select.Root>
+      <div ref={setPortalContainer} />
+    </div>
+  );
+};
+```
+
+`Positioner` also supports virtual anchors, offset functions, `arrowPadding`, and `disableAnchorTracking`. `Portal` uses the [theme's portal container](/ui/theming#scope-an-override) unless you provide `container`. An explicit `container={null}` waits until that container is available.
+
+<StoryEmbed
+  storyId="ui-input-select-portals--positioning-documentation"
+  title="Select with a custom anchor and scrollable list"
+  height={440}
+/>
+
+## Native forms and callback details
+
+Set `name` on `Root` to include the selected value in `FormData`. Multiple selection submits one entry per selected value. `form` associates the hidden input with an external form, and `inputRef` gives access to that input. `required`, `disabled`, and `autoComplete` retain Base UI's native form behavior.
+
+`onValueChange` and `onOpenChange` receive the next state and upstream event details, including `reason`, the native `event`, `cancel()`, and `allowPropagation()`. Calling `cancel()` prevents the corresponding internal state change. Controlled roots still require you to update `value` or `open`.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+type PrioritySelectProps = { canSetHighPriority: boolean };
+
+export const PrioritySelect = ({ canSetHighPriority }: PrioritySelectProps) => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      items={PRIORITIES}
+      value={priority}
+      onValueChange={(nextPriority, details) => {
+        if (nextPriority === 'high' && !canSetHighPriority) {
+          details.cancel();
+          return;
+        }
+        setPriority(nextPriority);
+      }}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+The generic root types represent the option value and whether multiple selection is enabled. Object values support `itemToStringLabel`, `itemToStringValue`, and `isItemEqualToValue`. Use `null` for an empty single selection and an empty array for an empty multiple selection.
+
+## Keyboard
+
+Keyboard users can open the list from the trigger, navigate options with arrow keys, and type to find an option. Home and End jump to the first and last options. Enter selects an option; Escape dismisses the popup and restores trigger focus. Multiple selection keeps the popup open while options are toggled.
+
+Label the trigger with `Select.Label`, an accessible name, or [Field](/ui/primitives/input/field). A placeholder alone does not name the control.
 
 ## Props
 
