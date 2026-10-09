@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-export type TriggerUninstallApplicationJobFactoryInput = {
+export type TriggerUninstallApplicationFactoryInput = {
   universalIdentifier: string;
 };
 
@@ -9,13 +9,13 @@ const DEFAULT_TRIGGER_UNINSTALL_APPLICATION_JOB_GQL_FIELDS = `
   jobId
 `;
 
-export const triggerUninstallApplicationJobQueryFactory = ({
+export const triggerUninstallApplicationQueryFactory = ({
   input,
   gqlFields = DEFAULT_TRIGGER_UNINSTALL_APPLICATION_JOB_GQL_FIELDS,
-}: PerformMetadataQueryParams<TriggerUninstallApplicationJobFactoryInput>) => ({
+}: PerformMetadataQueryParams<TriggerUninstallApplicationFactoryInput>) => ({
   query: gql`
-    mutation TriggerUninstallApplicationJob($input: TriggerUninstallApplicationJobInput!) {
-      triggerUninstallApplicationJob(input: $input) {
+    mutation TriggerUninstallApplication($input: TriggerUninstallApplicationInput!) {
+      triggerUninstallApplication(input: $input) {
         ${gqlFields}
       }
     }

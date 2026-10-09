@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 
 import { gmailHistoryHandler } from 'test/integration/google/mocks/gmail-history-handler.util';
 import { gmailMailboxHandlers } from 'test/integration/google/mocks/gmail-mailbox-handlers.util';
+import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { gmailMessageListHandler } from 'test/integration/google/mocks/gmail-message-list-handler.util';
 import { googleCalendarEventsHandlers } from 'test/integration/google/mocks/google-calendar-events-handlers.util';
 import { GOOGLE_CALENDAR_EVENTS_URL } from 'test/integration/google/mocks/google-calendar-events-url.constant';
@@ -38,6 +39,7 @@ export type GoogleMock = {
   rateLimitCalendarEventList: () => void;
   failMessageList: (failure: GoogleApiFailure) => void;
   failCalendarEventList: (failure: GoogleApiFailure) => void;
+  failSentMessageHeaderRead: () => void;
   declineTokenRefresh: () => void;
 };
 
@@ -93,8 +95,18 @@ export const setupGoogleMock = ({
       });
 
       const id = `gmail-sent-${sentMessages.length}`;
+      const threadId = body.threadId ?? id;
 
-      return HttpResponse.json({ id, threadId: body.threadId ?? id });
+      inbox.push(
+        gmailMessage({
+          id,
+          threadId,
+          from: handle,
+          labelIds: ['SENT'],
+        }),
+      );
+
+      return HttpResponse.json({ id, threadId });
     }),
     http.post('*/gmail/v1/users/me/drafts', async ({ request }) => {
       const body = (await request.json()) as {
@@ -212,6 +224,20 @@ export const setupGoogleMock = ({
         http.get(GOOGLE_CALENDAR_EVENTS_URL, () =>
           googleApiErrorResponse(failure),
         ),
+      ),
+    failSentMessageHeaderRead: () =>
+      httpMock.use(
+        http.get('*/gmail/v1/users/me/messages/:messageId', ({ request }) => {
+          if (new URL(request.url).searchParams.get('format') !== 'metadata') {
+            return;
+          }
+
+          return googleApiErrorResponse({
+            status: 500,
+            reason: 'backendError',
+            message: 'Backend Error',
+          });
+        }),
       ),
     declineTokenRefresh: () =>
       httpMock.use(
