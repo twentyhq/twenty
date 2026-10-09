@@ -300,24 +300,26 @@ describe('AgentInboxService ids', () => {
         ...conversationWriterService.insertMessage.mock.calls,
       ].map(([{ id }]) => id),
     ];
-    const guessableIds = [
+    const guessedThreadIds = [
       'workflow:workflow-id:run-id',
       'workspace-id:workflow:workflow-id:run-id',
-    ].flatMap((name) => {
-      const guessedThreadId = v5(name, INBOX_MESSAGE_ID_NAMESPACE);
-      const guessedMessageId = v5(
-        `${guessedThreadId}:message:step-id`,
-        INBOX_MESSAGE_ID_NAMESPACE,
-      );
+    ].map((name) => v5(name, INBOX_MESSAGE_ID_NAMESPACE));
+    const guessableIds = [
+      ...guessedThreadIds,
+      ...[...guessedThreadIds, threadId].flatMap((guessedThreadId) => {
+        const guessedMessageId = v5(
+          `${guessedThreadId}:message:step-id`,
+          INBOX_MESSAGE_ID_NAMESPACE,
+        );
 
-      return [
-        guessedThreadId,
-        guessedMessageId,
-        `call_${guessedMessageId.replace(/-/g, '')}`,
-        v5(`${guessedThreadId}:turn`, INBOX_MESSAGE_ID_NAMESPACE),
-        v5(`${guessedThreadId}:opening`, INBOX_MESSAGE_ID_NAMESPACE),
-      ];
-    });
+        return [
+          guessedMessageId,
+          `call_${guessedMessageId.replace(/-/g, '')}`,
+          v5(`${guessedThreadId}:turn`, INBOX_MESSAGE_ID_NAMESPACE),
+          v5(`${guessedThreadId}:opening`, INBOX_MESSAGE_ID_NAMESPACE),
+        ];
+      }),
+    ];
 
     expect(writtenIds).toHaveLength(5);
     expect(writtenIds.filter((id) => guessableIds.includes(id))).toEqual([]);
