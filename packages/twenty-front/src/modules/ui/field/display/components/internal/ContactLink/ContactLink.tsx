@@ -25,7 +25,6 @@ type ContactLinkProps = {
   children?: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
   maxWidth?: number;
-  dir?: 'ltr' | 'rtl' | 'auto';
 };
 
 export const ContactLink = ({
@@ -33,7 +32,6 @@ export const ContactLink = ({
   children,
   onClick,
   maxWidth,
-  dir,
 }: ContactLinkProps) => {
   return (
     <a
@@ -44,7 +42,7 @@ export const ContactLink = ({
         } as React.CSSProperties
       }
       target="_blank"
-      dir={dir}
+      dir="ltr"
       onClick={onClick}
       href={getSafeUrl(href)}
     >
