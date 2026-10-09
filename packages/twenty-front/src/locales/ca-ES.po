@@ -4484,11 +4484,6 @@ msgstr "Botó de crida a l’acció"
 msgid "Calling Code"
 msgstr "Prefix de trucada"
 
-#. js-lingui-id: 9rnFEa
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Calls"
-msgstr "Trucades"
-
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Camera"
@@ -9123,7 +9118,6 @@ msgstr "correus electrònics"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "Correus electrònics"
 
@@ -22071,8 +22065,6 @@ msgstr "S'ha produït un error en carregar aquesta pàgina."
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Soon"
 msgstr "Properament"
 
@@ -26501,11 +26493,6 @@ msgstr "Què pot fer aquesta API: Seleccioneu un rol d\\'usuari per definir-ne e
 msgid "What's installed and being used in your workspace"
 msgstr "Què hi ha instal·lat i què s’està utilitzant al teu espai de treball"
 
-#. js-lingui-id: RlSr4h
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Whatsapp"
-msgstr "WhatsApp"
-
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
@@ -26833,11 +26820,6 @@ msgstr "Espai de treball"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Workspace access is also managed by an application."
 msgstr "L'accés a l'espai de treball també és gestionat per una aplicació."
-
-#. js-lingui-id: rxazlH
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Workspace communications"
-msgstr "Comunicacions de l'espai de treball"
 
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts

@@ -74,7 +74,7 @@ describe('shouldFieldBeQueried', () => {
 
     it('should be queried if object', () => {
       const res = shouldFieldBeQueried({
-        recordGqlFields: { fieldName: { subFieldName: false } },
+        recordGqlFields: { fieldName: { subFieldName: true } },
         fieldMetadata: {
           name: 'fieldName',
           type: FieldMetadataType.RELATION,
@@ -87,21 +87,6 @@ describe('shouldFieldBeQueried', () => {
       expect(res).toBe(true);
     });
 
-    it('should not be queried if false', () => {
-      const res = shouldFieldBeQueried({
-        gqlField: 'fieldName',
-        fieldMetadata: {
-          name: 'fieldName',
-          type: FieldMetadataType.RELATION,
-          settings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-        },
-        recordGqlFields: { fieldName: false },
-      });
-      expect(res).toBe(false);
-    });
-
     it('should not be queried if absent', () => {
       const res = shouldFieldBeQueried({
         gqlField: 'fieldName',
@@ -112,7 +97,7 @@ describe('shouldFieldBeQueried', () => {
             relationType: RelationType.ONE_TO_MANY,
           },
         },
-        recordGqlFields: { otherFieldName: false },
+        recordGqlFields: { otherFieldName: true },
       });
       expect(res).toBe(false);
     });
