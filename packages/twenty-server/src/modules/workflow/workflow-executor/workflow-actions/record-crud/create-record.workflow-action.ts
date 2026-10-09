@@ -14,6 +14,7 @@ import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executo
 import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { convertStepTipTapToMarkdown } from 'src/modules/workflow/workflow-executor/utils/convert-step-tiptap-to-markdown.util';
+import { resolveRichTextMarkdownVariables } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-markdown-variables.util';
 import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
 @Injectable()
@@ -47,8 +48,8 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
 
     const inputWithRichText = {
       ...rawInput,
-      objectRecord: convertStepTipTapToMarkdown(
-        rawInput.objectRecord,
+      objectRecord: resolveRichTextMarkdownVariables(
+        convertStepTipTapToMarkdown(rawInput.objectRecord, objectMetadataInfo),
         objectMetadataInfo,
         context,
       ),

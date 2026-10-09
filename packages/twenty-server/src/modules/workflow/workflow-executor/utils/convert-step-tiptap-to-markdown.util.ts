@@ -1,11 +1,5 @@
-import { isString } from '@sniptt/guards';
 import { richTextValueSchema } from 'twenty-shared/types';
-import {
-  convertTipTapBlocksToMarkdown,
-  isDefined,
-  resolveRichTextVariables,
-  resolveStringTemplate,
-} from 'twenty-shared/utils';
+import { convertTipTapBlocksToMarkdown, isDefined } from 'twenty-shared/utils';
 
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
@@ -19,43 +13,28 @@ export const convertStepTipTapToMarkdown = (
     ObjectMetadataInfo,
     'flatObjectMetadata' | 'flatFieldMetadataMaps'
   >,
-  context: Record<string, unknown>,
 ): Record<string, unknown> => {
-  const richTextFieldNames = findRichTextFieldNames(objectMetadataInfo);
-
   const objectRecord = { ...stepObjectRecord };
 
-  for (const fieldName of richTextFieldNames) {
+  for (const fieldName of findRichTextFieldNames(objectMetadataInfo)) {
     const parsedStepValue = workflowStepTipTapValueSchema.safeParse(
       stepObjectRecord[fieldName],
     );
 
-    if (!parsedStepValue.success) {
-      continue;
-    }
-
-    const { blocknote, markdown } = parsedStepValue.data;
-
-    const resolvedBlocknote = resolveRichTextVariables(blocknote, context);
-    const tipTapMarkdown = isDefined(resolvedBlocknote)
-      ? convertTipTapBlocksToMarkdown(resolvedBlocknote)
+    const tipTapJson = parsedStepValue.success
+      ? parsedStepValue.data.blocknote
+      : undefined;
+    const tipTapMarkdown = isDefined(tipTapJson)
+      ? convertTipTapBlocksToMarkdown(tipTapJson)
       : undefined;
 
     // TODO: steps built through the API can hold markdown only, BlockNote or a variable instead of TipTap.
-    // Migrate them to TipTap so they go through the same conversion, then remove this branch.
+    // Migrate them to TipTap so they go through the same conversion, then remove this check.
     if (!isDefined(tipTapMarkdown)) {
-      objectRecord[fieldName] = {
-        blocknote,
-        markdown: isString(markdown)
-          ? resolveStringTemplate(markdown, context)
-          : markdown,
-      };
       continue;
     }
 
-    objectRecord[fieldName] = {
-      markdown: resolveStringTemplate(tipTapMarkdown, context),
-    };
+    objectRecord[fieldName] = { markdown: tipTapMarkdown };
   }
 
   return objectRecord;
