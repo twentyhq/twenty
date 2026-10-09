@@ -10,6 +10,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
+import { buildInboxConversationKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-conversation-key.util';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
@@ -25,6 +26,7 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
@@ -51,6 +53,7 @@ export class AgentInboxService {
     private readonly sharingService: AgentChatSharingService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   // Every record has an id derived from the keys: the thread key picks the
@@ -81,8 +84,12 @@ export class AgentInboxService {
     const senderDetails = getAgentInboxSenderDetails(sender);
     const { threadId, turnId, openingMessageId, messageId, toolCallId } =
       buildInboxMessageIds({
-        senderKey: senderDetails.key,
-        threadKey: input.threadKey,
+        conversationKey: buildInboxConversationKey({
+          appSecret: this.twentyConfigService.get('APP_SECRET'),
+          workspaceId,
+          senderKey: senderDetails.key,
+          threadKey: input.threadKey,
+        }),
         idempotencyKey: input.idempotencyKey,
       });
 
@@ -213,8 +220,12 @@ export class AgentInboxService {
     isCreated: boolean;
   }> {
     const threadId = buildInboxThreadId({
-      senderKey: getAgentInboxSenderDetails(sender).key,
-      threadKey,
+      conversationKey: buildInboxConversationKey({
+        appSecret: this.twentyConfigService.get('APP_SECRET'),
+        workspaceId,
+        senderKey: getAgentInboxSenderDetails(sender).key,
+        threadKey,
+      }),
     });
     const existingThread = await this.findThread({ workspaceId, threadId });
 

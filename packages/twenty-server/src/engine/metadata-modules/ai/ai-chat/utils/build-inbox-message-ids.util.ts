@@ -12,27 +12,27 @@ type InboxMessageIds = {
 };
 
 export const buildInboxMessageIds = ({
-  senderKey,
-  threadKey,
+  conversationKey,
   idempotencyKey,
 }: {
-  senderKey: string;
-  threadKey: string;
+  conversationKey: string;
   idempotencyKey: string;
 }): InboxMessageIds => {
-  const threadId = buildInboxThreadId({ senderKey, threadKey });
   const messageId = v5(
-    `${threadId}:message:${idempotencyKey}`,
+    `${conversationKey}:message:${idempotencyKey}`,
     INBOX_MESSAGE_ID_NAMESPACE,
   );
 
   // A thread opens with a single context message, so every message the
   // application sends shares the turn that opener starts.
   return {
-    threadId,
+    threadId: buildInboxThreadId({ conversationKey }),
     messageId,
     toolCallId: `call_${messageId.replace(/-/g, '')}`,
-    turnId: v5(`${threadId}:turn`, INBOX_MESSAGE_ID_NAMESPACE),
-    openingMessageId: v5(`${threadId}:opening`, INBOX_MESSAGE_ID_NAMESPACE),
+    turnId: v5(`${conversationKey}:turn`, INBOX_MESSAGE_ID_NAMESPACE),
+    openingMessageId: v5(
+      `${conversationKey}:opening`,
+      INBOX_MESSAGE_ID_NAMESPACE,
+    ),
   };
 };

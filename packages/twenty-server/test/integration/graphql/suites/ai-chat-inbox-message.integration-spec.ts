@@ -15,7 +15,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
-import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { buildInboxConversationKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-conversation-key.util';
+import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -349,10 +351,15 @@ describe('Sending an inbox message as an application', () => {
       failMessagePartsSpy.mockRestore();
     }
 
-    const { threadId: failedThreadId } = buildInboxMessageIds({
-      senderKey: `application:${application.id}`,
-      threadKey,
-      idempotencyKey: input.idempotencyKey,
+    const failedThreadId = buildInboxThreadId({
+      conversationKey: buildInboxConversationKey({
+        appSecret: getAppProviderByClassName<TwentyConfigService>(
+          'TwentyConfigService',
+        ).get('APP_SECRET'),
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        senderKey: `application:${application.id}`,
+        threadKey,
+      }),
     });
 
     try {

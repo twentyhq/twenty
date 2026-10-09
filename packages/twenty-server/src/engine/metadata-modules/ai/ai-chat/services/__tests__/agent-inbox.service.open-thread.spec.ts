@@ -1,6 +1,10 @@
 import { QueryFailedError } from 'typeorm';
+import { v5 } from 'uuid';
+
+import { INBOX_MESSAGE_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/inbox-message-id-namespace.constant';
 
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
+import { buildInboxConversationKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-conversation-key.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import {
   AiException,
@@ -12,6 +16,8 @@ const SENDER = {
   workflowId: 'workflow-id',
   workflowName: 'New deals',
 };
+
+const APP_SECRET = 'app-secret';
 
 const OPEN_ARGS = {
   workspaceId: 'workspace-id',
@@ -47,6 +53,11 @@ const buildService = () => {
       .mockImplementation(({ participantWorkspaceMemberIds }) =>
         Promise.resolve(participantWorkspaceMemberIds),
       ),
+    recordThreadActivity: jest.fn().mockResolvedValue(undefined),
+  };
+  const conversationWriterService = {
+    insertTurn: jest.fn().mockResolvedValue(undefined),
+    insertMessage: jest.fn().mockResolvedValue(undefined),
   };
   const sharingService = {
     getAuthContext: jest.fn().mockResolvedValue({}),
@@ -61,8 +72,9 @@ const buildService = () => {
     {} as never,
     threadService as never,
     sharingService as never,
+    conversationWriterService as never,
     {} as never,
-    {} as never,
+    { get: () => APP_SECRET } as never,
   );
 
   return {
@@ -71,12 +83,17 @@ const buildService = () => {
     threadService,
     sharingService,
     messageRepository,
+    conversationWriterService,
   };
 };
 
 const THREAD_ID = buildInboxThreadId({
-  senderKey: 'workflow:workflow-id',
-  threadKey: 'run-id',
+  conversationKey: buildInboxConversationKey({
+    appSecret: APP_SECRET,
+    workspaceId: 'workspace-id',
+    senderKey: 'workflow:workflow-id',
+    threadKey: 'run-id',
+  }),
 });
 
 describe('AgentInboxService.openThread', () => {
@@ -257,6 +274,53 @@ describe('AgentInboxService.openThread', () => {
     await expect(
       service.openThread({ ...OPEN_ARGS, workspaceMemberIds: ['member-id'] }),
     ).resolves.toEqual({ thread: concurrentThread, isCreated: false });
+  });
+});
+
+describe('AgentInboxService ids', () => {
+  it('writes nothing under an id a member can compute from the sender and keys', async () => {
+    const { service, conversationWriterService } = buildService();
+
+    const { threadId, toolCallId } = await service.sendMessage({
+      workspaceId: 'workspace-id',
+      sender: SENDER,
+      input: {
+        workspaceMemberIds: ['member-id'],
+        threadKey: 'run-id',
+        idempotencyKey: 'step-id',
+        title: 'Draft the quote',
+        text: 'Here is the quote',
+      },
+    });
+    const writtenIds = [
+      threadId,
+      toolCallId,
+      ...[
+        ...conversationWriterService.insertTurn.mock.calls,
+        ...conversationWriterService.insertMessage.mock.calls,
+      ].map(([{ id }]) => id),
+    ];
+    const guessableIds = [
+      'workflow:workflow-id:run-id',
+      'workspace-id:workflow:workflow-id:run-id',
+    ].flatMap((name) => {
+      const guessedThreadId = v5(name, INBOX_MESSAGE_ID_NAMESPACE);
+      const guessedMessageId = v5(
+        `${guessedThreadId}:message:step-id`,
+        INBOX_MESSAGE_ID_NAMESPACE,
+      );
+
+      return [
+        guessedThreadId,
+        guessedMessageId,
+        `call_${guessedMessageId.replace(/-/g, '')}`,
+        v5(`${guessedThreadId}:turn`, INBOX_MESSAGE_ID_NAMESPACE),
+        v5(`${guessedThreadId}:opening`, INBOX_MESSAGE_ID_NAMESPACE),
+      ];
+    });
+
+    expect(writtenIds).toHaveLength(5);
+    expect(writtenIds.filter((id) => guessableIds.includes(id))).toEqual([]);
   });
 });
 

@@ -4,9 +4,7 @@ import { INBOX_MESSAGE_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-ch
 
 // The key is the conversation, shared by every member it is sent to
 export const buildInboxThreadId = ({
-  senderKey,
-  threadKey,
+  conversationKey,
 }: {
-  senderKey: string;
-  threadKey: string;
-}): string => v5(`${senderKey}:${threadKey}`, INBOX_MESSAGE_ID_NAMESPACE);
+  conversationKey: string;
+}): string => v5(conversationKey, INBOX_MESSAGE_ID_NAMESPACE);
