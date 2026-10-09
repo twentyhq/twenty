@@ -186,8 +186,6 @@ export class WorkflowWaitingStepWorkspaceService
     });
   }
 
-  // The run job claims the step, so the wake-up is removed only once the job is queued: a resolution
-  // interrupted before then is tried again, and a job queued twice resumes the step once
   async resolve({
     wakeUp,
     outcome,
@@ -199,42 +197,49 @@ export class WorkflowWaitingStepWorkspaceService
   }): Promise<void> {
     const { workspaceId, ownerId: workflowRunId, ownerKey: stepId } = wakeUp;
 
-    if (!isOwnerGone) {
-      // the step ends through the executor's usual path, so a failure is retried or continues on
-      // failure like any failed step
-      try {
-        await this.messageQueueService.add<RunWorkflowJobData>(
-          RUN_WORKFLOW_JOB_NAME,
-          {
-            workspaceId,
-            workflowRunId,
-            awaitedStepOutput: {
-              stepId,
-              actionOutput:
-                outcome.type === 'ANSWERED'
-                  ? outcome.answer
-                  : { result: buildDefaultWaitResult(outcome) },
-            },
-          },
-          buildRunWorkflowJobOptions(workflowRunId),
-        );
-      } catch (error) {
-        // nothing delivers an answered call again, so a step that cannot resume fails its run
-        await this.workflowRunWorkspaceService.endWorkflowRun({
-          workflowRunId,
+    // claiming is what resumes each wait once: the run job knows only the step, so a second delivery
+    // could otherwise resume the step's next wait, in a loop, with this one's outcome
+    if (
+      !isDefined(
+        await this.pendingWakeUpService.claim({
           workspaceId,
-          status: WorkflowRunStatus.FAILED,
-          error: `A waiting step could not resume: ${error instanceof Error ? error.message : String(error)}`,
-          isSystemError: true,
-        });
-
-        throw error;
-      }
+          wakeUpId: wakeUp.id,
+        }),
+      ) ||
+      isOwnerGone
+    ) {
+      return;
     }
 
-    await this.pendingWakeUpService.claim({
-      workspaceId,
-      wakeUpId: wakeUp.id,
-    });
+    // the claimed wait is gone, so a step that cannot resume would wait forever
+    try {
+      // the step ends through the executor's usual path, so a failure is retried or continues on
+      // failure like any failed step
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RUN_WORKFLOW_JOB_NAME,
+        {
+          workspaceId,
+          workflowRunId,
+          awaitedStepOutput: {
+            stepId,
+            actionOutput:
+              outcome.type === 'ANSWERED'
+                ? outcome.answer
+                : { result: buildDefaultWaitResult(outcome) },
+          },
+        },
+        buildRunWorkflowJobOptions(workflowRunId),
+      );
+    } catch (error) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        status: WorkflowRunStatus.FAILED,
+        error: `A waiting step could not resume: ${error instanceof Error ? error.message : String(error)}`,
+        isSystemError: true,
+      });
+
+      throw error;
+    }
   }
 }

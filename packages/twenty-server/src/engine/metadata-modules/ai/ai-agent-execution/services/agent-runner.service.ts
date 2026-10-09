@@ -69,8 +69,9 @@ export class AgentRunnerService {
   }
 
   // Picks a suspended run up where it paused once its wake-up resolved, under its conversation's lock.
-  // The wake-up is removed only once the run went on, so a job interrupted midway finds it again, and
-  // a pause the run made again replaced it with another id, so each pause goes on once
+  // The wake-up is removed only once the run went on and its caller has the outcome, so a job that
+  // died or failed midway finds it again, and a pause the run made again replaced it with another
+  // id, so each pause goes on once
   continue({
     workspaceId,
     threadId,
@@ -90,16 +91,14 @@ export class AgentRunnerService {
           return;
         }
 
-        try {
-          await this.continueSuspendedRun({
-            workspaceId,
-            threadId,
-            wakeUp,
-            outcome,
-          });
-        } finally {
-          await this.pendingWakeUpService.claim({ workspaceId, wakeUpId });
-        }
+        await this.continueSuspendedRun({
+          workspaceId,
+          threadId,
+          wakeUp,
+          outcome,
+        });
+
+        await this.pendingWakeUpService.claim({ workspaceId, wakeUpId });
       },
     });
   }
@@ -110,7 +109,7 @@ export class AgentRunnerService {
     wakeUp,
     outcome,
   }: Omit<ContinueAgentRunJobData, 'wakeUpId'> & {
-    wakeUp: PendingWakeUpEntity;
+    wakeUp: Pick<PendingWakeUpEntity, 'payload' | 'condition'>;
   }): Promise<void> {
     const suspension = wakeUp.payload as AgentRunSuspension;
     const isAwaitingAnswer = wakeUp.condition.type === 'ANSWER';

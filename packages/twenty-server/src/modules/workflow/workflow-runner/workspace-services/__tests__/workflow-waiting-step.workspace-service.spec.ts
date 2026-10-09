@@ -140,19 +140,15 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
     );
   });
 
-  it('removes the wait only once the run job is queued, so an interrupted resolution finds it again', async () => {
+  it('resumes the step once when its wait is resolved twice', async () => {
     const { service, pendingWakeUpService, messageQueueService } =
       buildService();
 
+    pendingWakeUpService.claim.mockResolvedValue(null);
+
     await service.resolve({ workspaceId: WORKSPACE_ID, wakeUpId: WAIT_ID });
 
-    expect(pendingWakeUpService.claim).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      wakeUpId: WAIT_ID,
-    });
-    expect(messageQueueService.add.mock.invocationCallOrder[0]).toBeLessThan(
-      pendingWakeUpService.claim.mock.invocationCallOrder[0],
-    );
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
   it('ends the step with the answer to the call it posted through the run job', async () => {
@@ -374,7 +370,7 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('fails the run when the step cannot resume', async () => {
+  it('fails the run when the step cannot resume, since its wait is gone', async () => {
     const { service, workflowRunWorkspaceService, messageQueueService } =
       buildService();
 

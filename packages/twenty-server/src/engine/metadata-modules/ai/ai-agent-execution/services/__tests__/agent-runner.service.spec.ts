@@ -409,6 +409,17 @@ describe('AgentRunnerService', () => {
     });
   });
 
+  it('keeps the wake-up of a run whose caller could not be handed the outcome', async () => {
+    const { service, pendingWakeUpService, agentRunSuspensionService } =
+      buildService();
+
+    agentRunSuspensionService.settle.mockRejectedValue(new Error('db down'));
+
+    await expect(service.continue(CONTINUATION)).rejects.toThrow('db down');
+
+    expect(pendingWakeUpService.claim).not.toHaveBeenCalled();
+  });
+
   it('fails the run when its answer could not be delivered', async () => {
     const { service, agentRunSuspensionService, agentAsyncExecutorService } =
       buildService();
