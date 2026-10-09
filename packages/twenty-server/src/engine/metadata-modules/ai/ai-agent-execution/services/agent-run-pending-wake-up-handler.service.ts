@@ -56,7 +56,7 @@ export class AgentRunPendingWakeUpHandlerService
       .buildExecutionContext({ workspaceId, caller });
   }
 
-  // the run claims its wake-up once it holds its conversation, so the conversation waits until it goes on
+  // the run removes its wake-up once it went on, so the conversation waits until then
   async resolve({
     wakeUp,
     outcome,
