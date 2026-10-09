@@ -244,4 +244,17 @@ describe('workflow manifest cron trigger', () => {
       'hour',
     ]);
   });
+
+  it('rejects a schedule key the schedule type does not use', () => {
+    const result = workflowManifestSchema.safeParse(
+      withCron({ type: 'MINUTES', schedule: { minute: 15, hour: 2 } }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'schedule',
+    ]);
+  });
 });

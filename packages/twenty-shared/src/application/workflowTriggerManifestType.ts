@@ -23,9 +23,18 @@ const [
 ] = workflowCronTriggerSchema.shape.settings.options;
 
 const cronTriggerSettingsManifestSchema = z.discriminatedUnion('type', [
-  dailyCronSettingsSchema.omit({ outputSchema: true }).strict(),
-  hourlyCronSettingsSchema.omit({ outputSchema: true }).strict(),
-  minutelyCronSettingsSchema.omit({ outputSchema: true }).strict(),
+  dailyCronSettingsSchema
+    .omit({ outputSchema: true })
+    .extend({ schedule: dailyCronSettingsSchema.shape.schedule.strict() })
+    .strict(),
+  hourlyCronSettingsSchema
+    .omit({ outputSchema: true })
+    .extend({ schedule: hourlyCronSettingsSchema.shape.schedule.strict() })
+    .strict(),
+  minutelyCronSettingsSchema
+    .omit({ outputSchema: true })
+    .extend({ schedule: minutelyCronSettingsSchema.shape.schedule.strict() })
+    .strict(),
   customCronSettingsSchema.omit({ outputSchema: true }).strict(),
 ]);
 
