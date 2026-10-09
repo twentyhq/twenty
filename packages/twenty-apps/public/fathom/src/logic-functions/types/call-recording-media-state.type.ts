@@ -8,8 +8,6 @@ export type CallRecordingMediaState = {
   recordingId: string | undefined;
   hasVideo: boolean;
   hasAudio: boolean;
-  hasTranscript: boolean;
-  hasSummary: boolean;
   failureReason: string | undefined;
   connectedAccountId: string | undefined;
   downloadId: string | undefined;

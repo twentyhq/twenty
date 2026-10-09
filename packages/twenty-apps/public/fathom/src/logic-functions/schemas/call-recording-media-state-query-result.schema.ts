@@ -42,14 +42,6 @@ export const callRecordingMediaStateNodeSchema = z.object({
   video: z.array(fileSchema).nullable().optional(),
   audio: z.array(fileSchema).nullable().optional(),
   fathomRecordingImports: fathomRecordingImportsConnectionSchema,
-  transcript: z.unknown().nullable().optional(),
-  summary: z
-    .object({
-      markdown: z.string().nullable().optional(),
-      blocknote: z.unknown().nullable().optional(),
-    })
-    .nullable()
-    .optional(),
 });
 
 export const callRecordingMediaStateQueryResultSchema = z.object({

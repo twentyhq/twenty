@@ -16,6 +16,7 @@ export type FathomMediaReconciliationPlan = {
 
 export type FathomMediaReconciliationCandidate = CallRecordingMediaState & {
   status: string;
+  hasTranscript?: boolean;
 };
 
 export type FathomMediaReconciliationRun = {

@@ -10,8 +10,8 @@ import { FATHOM_SYNC_CALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-i
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
+import { findCallRecordingSyncStates } from 'src/logic-functions/utils/find-call-recording-sync-states.util';
 import { hydrateFathomMeeting } from 'src/logic-functions/utils/hydrate-fathom-meeting.util';
-import { listDeletedCallRecordingIds } from 'src/logic-functions/utils/list-deleted-call-recording-ids.util';
 import { listFathomConnectionsForRequest } from 'src/logic-functions/utils/list-fathom-connections-for-request.util';
 import { listFathomMeetings } from 'src/logic-functions/utils/list-fathom-meetings.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
@@ -85,12 +85,12 @@ export const fathomSyncCallHandler = async (
 
     const coreApiClient = createFathomCoreApiClient();
     const callRecordingId = computeCallRecordingIdForFathomMeeting(recordingId);
-    const deletedCallRecordingIds = await listDeletedCallRecordingIds({
+    const callRecordingSyncStates = await findCallRecordingSyncStates({
       coreApiClient,
       callRecordingIds: [callRecordingId],
     });
 
-    if (deletedCallRecordingIds.has(callRecordingId)) {
+    if (callRecordingSyncStates.get(callRecordingId)?.isDeleted) {
       return {
         success: true,
         recordingId,
@@ -109,6 +109,16 @@ export const fathomSyncCallHandler = async (
       connectedAccountId: connection.id,
       retryMedia: true,
     });
+
+    if ('skipped' in syncResult) {
+      return {
+        success: true,
+        recordingId,
+        callRecordingId,
+        skipped: true,
+        reason: syncResult.reason,
+      };
+    }
 
     return { success: true, recordingId, ...syncResult };
   }

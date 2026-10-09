@@ -2,15 +2,24 @@ import { ConnectionError } from 'fathom-typescript/sdk/models/errors';
 import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { buildFathomMeeting } from 'src/__tests__/utils/build-fathom-meeting.util';
+import { buildFathomMeetingPages } from 'src/__tests__/utils/build-fathom-meeting-pages.util';
 import { buildFathomNotFoundError } from 'src/__tests__/utils/build-fathom-not-found-error.util';
 import { buildFathomRateLimitError } from 'src/__tests__/utils/build-fathom-rate-limit-error.util';
 import { buildFathomServerError } from 'src/__tests__/utils/build-fathom-server-error.util';
 import { MAX_FATHOM_BACKFILL_REQUEUE_ATTEMPTS } from 'src/constants/fathom.constant';
-import { FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER,
+  FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
 
 const mocks = vi.hoisted(() => ({
   enqueueJobs: vi.fn(),
+  filterImportableFathomMeetings: vi.fn(),
   getConnection: vi.fn(),
+  kvGet: vi.fn(),
+  kvSet: vi.fn(),
   listMeetings: vi.fn(),
 }));
 
@@ -22,7 +31,19 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<typeof import('twenty-sdk/logic-function')>()),
   enqueueJobs: mocks.enqueueJobs,
   getConnection: mocks.getConnection,
+  kv: { get: mocks.kvGet, set: mocks.kvSet },
 }));
+
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: class CoreApiClient {},
+}));
+
+vi.mock(
+  'src/logic-functions/utils/filter-importable-fathom-meetings.util',
+  () => ({
+    filterImportableFathomMeetings: mocks.filterImportableFathomMeetings,
+  }),
+);
 
 vi.mock('fathom-typescript', () => ({
   Fathom: class Fathom {
@@ -126,6 +147,43 @@ describe('fathomBackfillWorkerHandler', () => {
       }),
     ).rejects.toBeInstanceOf(RetryableLogicFunctionError);
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
+  it('enqueues only the importable meetings and reports the skipped ones', async () => {
+    const meetings = [1, 2, 3].map((recordingId) =>
+      buildFathomMeeting({ recordingId }),
+    );
+    const importableMeeting = serializeFathomMeeting(meetings[2]);
+
+    mocks.listMeetings.mockImplementation(buildFathomMeetingPages([meetings]));
+    mocks.filterImportableFathomMeetings.mockResolvedValue({
+      importableMeetings: [importableMeeting],
+      deletedMeetingCount: 1,
+      upToDateMeetingCount: 1,
+    });
+
+    expect(await fathomBackfillWorkerHandler(PAYLOAD)).toMatchObject({
+      discoveredMeetingCount: 3,
+      skippedDeletedMeetingCount: 1,
+      skippedUpToDateMeetingCount: 1,
+      enqueuedBatchCount: 1,
+    });
+    expect(
+      mocks.filterImportableFathomMeetings,
+    ).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        meetings: meetings.map(serializeFathomMeeting),
+      }),
+    );
+    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        logicFunctionUniversalIdentifier:
+          FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER,
+        payloads: [
+          { connectedAccountId: 'connection-1', meetings: [importableMeeting] },
+        ],
+      }),
+    );
   });
 
   it('does not retry a page Fathom rejects permanently', async () => {

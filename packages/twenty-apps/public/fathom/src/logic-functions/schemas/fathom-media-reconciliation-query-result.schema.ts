@@ -13,6 +13,7 @@ export const fathomMediaReconciliationQueryResultSchema = z.object({
         z.object({
           node: callRecordingMediaStateNodeSchema.extend({
             status: z.string(),
+            transcript: z.unknown().nullable().optional(),
           }),
         }),
       ),

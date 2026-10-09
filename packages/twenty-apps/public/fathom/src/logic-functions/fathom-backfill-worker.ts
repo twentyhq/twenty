@@ -17,8 +17,8 @@ import { type FathomBackfillWorkerPayload } from 'src/logic-functions/types/fath
 import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retryable-fathom-error.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
-import { excludeDeletedFathomMeetings } from 'src/logic-functions/utils/exclude-deleted-fathom-meetings.util';
 import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fathom-jobs-or-throw.util';
+import { filterImportableFathomMeetings } from 'src/logic-functions/utils/filter-importable-fathom-meetings.util';
 import { getFathomRequeueDelay } from 'src/logic-functions/utils/get-fathom-requeue-delay.util';
 import { listFathomMeetingPage } from 'src/logic-functions/utils/list-fathom-meeting-page.util';
 import { reserveFathomImportSlots } from 'src/logic-functions/utils/reserve-fathom-import-slots.util';
@@ -105,10 +105,11 @@ export const fathomBackfillWorkerHandler = async (
   }
 
   const serializedMeetings = meetingPage.meetings.map(serializeFathomMeeting);
-  const importableMeetings = await excludeDeletedFathomMeetings({
-    coreApiClient: createFathomCoreApiClient(),
-    meetings: serializedMeetings,
-  });
+  const { importableMeetings, deletedMeetingCount, upToDateMeetingCount } =
+    await filterImportableFathomMeetings({
+      coreApiClient: createFathomCoreApiClient(),
+      meetings: serializedMeetings,
+    });
   const meetingBatches = chunkIntoBatches(
     importableMeetings,
     FATHOM_BACKFILL_BATCH_SIZE,
@@ -160,8 +161,8 @@ export const fathomBackfillWorkerHandler = async (
     success: true,
     createdAfter,
     discoveredMeetingCount: meetingPage.meetings.length,
-    skippedDeletedMeetingCount:
-      serializedMeetings.length - importableMeetings.length,
+    skippedDeletedMeetingCount: deletedMeetingCount,
+    skippedUpToDateMeetingCount: upToDateMeetingCount,
     enqueuedBatchCount: meetingBatches.length,
     hasMoreMeetings: hasMoreMeetings && !isPageBoundReached,
   };

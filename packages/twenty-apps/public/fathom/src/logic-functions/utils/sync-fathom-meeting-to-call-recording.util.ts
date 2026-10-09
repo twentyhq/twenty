@@ -4,13 +4,15 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { MAX_FATHOM_TITLE_SUMMARY_CHARACTERS } from 'src/constants/fathom.constant';
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
+import { type CallRecordingSyncState } from 'src/logic-functions/types/call-recording-sync-state.type';
+import { type FathomMeetingSyncResult } from 'src/logic-functions/types/fathom-meeting-sync-result.type';
 import { buildFathomCallRecordingTitle } from 'src/logic-functions/utils/build-fathom-call-recording-title.util';
 import { buildFathomCallRecordingUpsertFields } from 'src/logic-functions/utils/build-fathom-call-recording-upsert-fields.util';
 import { completeFathomCallRecordingImport } from 'src/logic-functions/utils/complete-fathom-call-recording-import.util';
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
 import { enqueueFathomCallRecordingTitleGeneration } from 'src/logic-functions/utils/enqueue-fathom-call-recording-title-generation.util';
 import { enqueueFathomMediaDownloadRequest } from 'src/logic-functions/utils/enqueue-fathom-media-download-request.util';
-import { findCallRecordingMediaState } from 'src/logic-functions/utils/find-call-recording-media-state.util';
+import { findCallRecordingSyncStates } from 'src/logic-functions/utils/find-call-recording-sync-states.util';
 import { findMatchingCalendarEvent } from 'src/logic-functions/utils/find-matching-calendar-event.util';
 import { formatFathomSummary } from 'src/logic-functions/utils/format-fathom-summary.util';
 import { mapFathomTranscriptToEntries } from 'src/logic-functions/utils/map-fathom-transcript-to-entries.util';
@@ -22,16 +24,33 @@ export const syncFathomMeetingToCallRecording = async ({
   meeting,
   connectedAccountId,
   retryMedia = false,
+  callRecordingSyncStates,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   meeting: Meeting;
   connectedAccountId: string;
   retryMedia?: boolean;
-}): Promise<{
-  callRecordingId: string;
-  calendarEventId?: string;
-  created: boolean;
-}> => {
+  callRecordingSyncStates?: Map<string, CallRecordingSyncState>;
+}): Promise<FathomMeetingSyncResult> => {
+  const callRecordingId = computeCallRecordingIdForFathomMeeting(
+    meeting.recordingId,
+  );
+  const existingCallRecording = (
+    callRecordingSyncStates ??
+    (await findCallRecordingSyncStates({
+      coreApiClient,
+      callRecordingIds: [callRecordingId],
+    }))
+  ).get(callRecordingId);
+
+  if (existingCallRecording?.isDeleted) {
+    return {
+      callRecordingId,
+      skipped: true,
+      reason: 'The call recording has been deleted',
+    };
+  }
+
   const transcriptEntries = mapFathomTranscriptToEntries(meeting.transcript);
   const summaryMarkdown = formatFathomSummary({
     summaryMarkdown: meeting.defaultSummary?.markdownFormatted,
@@ -40,13 +59,6 @@ export const syncFathomMeetingToCallRecording = async ({
   const calendarEventId = await findMatchingCalendarEvent({
     coreApiClient,
     meeting,
-  });
-  const callRecordingId = computeCallRecordingIdForFathomMeeting(
-    meeting.recordingId,
-  );
-  const existingCallRecording = await findCallRecordingMediaState({
-    coreApiClient,
-    callRecordingId,
   });
   const { title, impromptuTitle } = buildFathomCallRecordingTitle(meeting);
   const sharedFields: CallRecordingSyncFields = {
@@ -93,17 +105,19 @@ export const syncFathomMeetingToCallRecording = async ({
     expectedUpdatedAt: existingCallRecording?.fathomRecordingImportUpdatedAt,
   });
 
-  await completeFathomCallRecordingImport({
-    coreApiClient,
-    callRecordingId,
-  });
+  if (!upsertResult.created) {
+    await completeFathomCallRecordingImport({
+      coreApiClient,
+      callRecordingId,
+    });
+  }
 
   const meetingSummary = meeting.defaultSummary?.markdownFormatted?.trim();
 
   if (
-    upsertResult.created &&
     isNonEmptyString(impromptuTitle) &&
-    isNonEmptyString(meetingSummary)
+    isNonEmptyString(meetingSummary) &&
+    (upsertResult.created || existingCallRecording?.title === title)
   ) {
     await enqueueFathomCallRecordingTitleGeneration({
       callRecordingId,
