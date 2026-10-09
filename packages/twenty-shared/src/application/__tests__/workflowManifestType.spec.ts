@@ -314,4 +314,39 @@ describe('workflow manifest database event trigger', () => {
       'Watched fields only apply to updated and upserted events',
     );
   });
+
+  it('refuses a record filter that points to an undeclared filter group', () => {
+    const result = workflowManifestSchema.safeParse(
+      withDatabaseEvent({
+        objectUniversalIdentifier: OBJECT_ID,
+        action: 'updated',
+        filter: {
+          stepFilterGroups: [
+            { id: 'group', logicalOperator: 'AND' },
+            {
+              id: 'nested',
+              logicalOperator: 'OR',
+              parentStepFilterGroupId: 'missing-parent',
+            },
+          ],
+          stepFilters: [
+            {
+              id: 'filter',
+              type: 'TEXT',
+              stepOutputKey: '{{trigger.properties.after.status}}',
+              operand: 'IS',
+              value: 'open',
+              stepFilterGroupId: 'missing-group',
+              fieldMetadataUniversalIdentifier: FIELD_ID,
+            },
+          ],
+        },
+      }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues.map((issue) => issue.message)).toEqual([
+      'Filter group missing-parent is not declared in stepFilterGroups',
+      'Filter group missing-group is not declared in stepFilterGroups',
+    ]);
+  });
 });

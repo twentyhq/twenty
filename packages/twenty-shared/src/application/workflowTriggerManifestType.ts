@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { workflowStepFilterManifestSchema } from '@/application/workflowStepManifestType';
 import { ViewFilterOperand } from '@/types/ViewFilterOperand';
+import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { isDefined } from '@/utils/validation/isDefined';
 import { workflowCronTriggerSchema } from '@/workflow/schemas/cron-trigger-schema';
 import { stepFilterGroupSchema } from '@/workflow/schemas/step-filter-group-schema';
@@ -97,7 +98,7 @@ const workflowTriggerManifestOptions = [
       })
       .superRefine((settings, context) => {
         if (
-          (settings.fieldUniversalIdentifiers?.length ?? 0) > 0 &&
+          isNonEmptyArray(settings.fieldUniversalIdentifiers) &&
           !DATABASE_EVENT_ACTIONS_WITH_WATCHED_FIELDS.includes(settings.action)
         ) {
           context.addIssue({
@@ -106,6 +107,44 @@ const workflowTriggerManifestOptions = [
             message: `Watched fields only apply to ${DATABASE_EVENT_ACTIONS_WITH_WATCHED_FIELDS.join(' and ')} events`,
           });
         }
+
+        if (!isDefined(settings.filter)) {
+          return;
+        }
+
+        const stepFilterGroupIds = new Set(
+          settings.filter.stepFilterGroups.map(
+            (stepFilterGroup) => stepFilterGroup.id,
+          ),
+        );
+
+        settings.filter.stepFilterGroups.forEach((stepFilterGroup, index) => {
+          if (
+            isDefined(stepFilterGroup.parentStepFilterGroupId) &&
+            !stepFilterGroupIds.has(stepFilterGroup.parentStepFilterGroupId)
+          ) {
+            context.addIssue({
+              code: 'custom',
+              path: [
+                'filter',
+                'stepFilterGroups',
+                index,
+                'parentStepFilterGroupId',
+              ],
+              message: `Filter group ${stepFilterGroup.parentStepFilterGroupId} is not declared in stepFilterGroups`,
+            });
+          }
+        });
+
+        settings.filter.stepFilters.forEach((stepFilter, index) => {
+          if (!stepFilterGroupIds.has(stepFilter.stepFilterGroupId)) {
+            context.addIssue({
+              code: 'custom',
+              path: ['filter', 'stepFilters', index, 'stepFilterGroupId'],
+              message: `Filter group ${stepFilter.stepFilterGroupId} is not declared in stepFilterGroups`,
+            });
+          }
+        });
       }),
   }),
 ] as const;
