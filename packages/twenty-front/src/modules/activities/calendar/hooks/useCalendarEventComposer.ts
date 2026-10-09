@@ -1,4 +1,3 @@
-import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { useCalendarEventTargetObjectMetadataItems } from '@/activities/calendar/hooks/useCalendarEventTargetObjectMetadataItems';
 import { useCreateCalendarEvent } from '@/activities/calendar/hooks/useCreateCalendarEvent';
 import { useCreateCalendarEventTargets } from '@/activities/calendar/hooks/useCreateCalendarEventTargets';
@@ -26,7 +25,7 @@ import { useCallback, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getMissingCreateEventScopes, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
@@ -86,7 +85,7 @@ export const useCalendarEventComposer = ({
     (account) => account.id === connectedAccountId,
   );
   const missingScopes = isDefined(selectedAccount)
-    ? getMissingCreateCalendarEventScopes(selectedAccount)
+    ? getMissingCreateEventScopes(selectedAccount)
     : [];
 
   const attendeeEmails = attendees.map(({ address }) => address);

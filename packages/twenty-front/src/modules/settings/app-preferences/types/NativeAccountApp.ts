@@ -1,6 +1,8 @@
-import { type NativeAccountAppPermission } from '@/settings/app-preferences/types/NativeAccountAppPermission';
 import { type MessageDescriptor } from '@lingui/core';
-import { type ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  type ConnectedAccountPermission,
+  type ConnectedAccountProvider,
+} from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/icon';
 
 export type NativeAccountApp = {
@@ -10,5 +12,5 @@ export type NativeAccountApp = {
   provider: ConnectedAccountProvider;
   hasEmails: boolean;
   hasCalendar: boolean;
-  permissions: NativeAccountAppPermission[];
+  permissions: ConnectedAccountPermission[];
 };

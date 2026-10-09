@@ -1,6 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
-import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
@@ -35,6 +34,7 @@ import {
 } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
+  getMissingDraftEmailScopes,
   getSendableEmailHandles,
   isDefined,
 } from 'twenty-shared/utils';

@@ -16,19 +16,7 @@ export const NATIVE_ACCOUNT_APPS: NativeAccountApp[] = [
     provider: ConnectedAccountProvider.GOOGLE,
     hasEmails: true,
     hasCalendar: false,
-    permissions: [
-      {
-        label: msg`Read emails`,
-        scopes: ['https://www.googleapis.com/auth/gmail.readonly'],
-      },
-      {
-        label: msg`Send emails`,
-        scopes: [
-          'https://www.googleapis.com/auth/gmail.send',
-          'https://www.googleapis.com/auth/gmail.compose',
-        ],
-      },
-    ],
+    permissions: ['READ_EMAILS', 'SEND_EMAILS'],
   },
   {
     id: 'google-calendar',
@@ -37,12 +25,7 @@ export const NATIVE_ACCOUNT_APPS: NativeAccountApp[] = [
     provider: ConnectedAccountProvider.GOOGLE,
     hasEmails: false,
     hasCalendar: true,
-    permissions: [
-      {
-        label: msg`Manage events`,
-        scopes: ['https://www.googleapis.com/auth/calendar.events'],
-      },
-    ],
+    permissions: ['MANAGE_EVENTS'],
   },
   {
     id: 'outlook',
@@ -51,11 +34,7 @@ export const NATIVE_ACCOUNT_APPS: NativeAccountApp[] = [
     provider: ConnectedAccountProvider.MICROSOFT,
     hasEmails: true,
     hasCalendar: true,
-    permissions: [
-      { label: msg`Read emails`, scopes: ['Mail.ReadWrite'] },
-      { label: msg`Send emails`, scopes: ['Mail.Send'] },
-      { label: msg`Manage events`, scopes: ['Calendars.ReadWrite'] },
-    ],
+    permissions: ['READ_EMAILS', 'SEND_EMAILS', 'MANAGE_EVENTS'],
   },
   {
     id: 'imap',

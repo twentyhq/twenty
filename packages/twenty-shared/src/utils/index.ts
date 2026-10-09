@@ -30,6 +30,9 @@ export { evaluateConditionalAvailabilityExpression } from './command-menu-items/
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { getConnectedAccountPermissionScopes } from './connectedAccount/getConnectedAccountPermissionScopes';
+export { getMissingCreateEventScopes } from './connectedAccount/getMissingCreateEventScopes';
+export { getMissingDraftEmailScopes } from './connectedAccount/getMissingDraftEmailScopes';
 export { formatValueForCSV } from './csv/formatValueForCSV';
 export { sanitizeValueForCSVExport } from './csv/sanitizeValueForCSVExport';
 export { convertCurrencyAmountToCurrencyMicros } from './currency/convertCurrencyAmountToCurrencyMicros';

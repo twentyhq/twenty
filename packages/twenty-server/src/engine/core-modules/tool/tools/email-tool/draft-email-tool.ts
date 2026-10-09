@@ -1,10 +1,10 @@
 import { EmailOperation } from 'twenty-shared/types';
+import { getMissingDraftEmailScopes } from 'twenty-shared/utils';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { EmailToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/email-tool.schema';
 import { EmailToolException } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
-import { getMissingDraftEmailScopes } from 'src/engine/core-modules/tool/tools/email-tool/utils/get-missing-draft-email-scopes.util';
 import { isInsufficientPermissionsError } from 'src/engine/core-modules/tool/tools/email-tool/utils/is-insufficient-permissions-error.util';
 import { type ComposedEmail } from 'src/engine/core-modules/tool/tools/email-tool/types/composed-email.type';
 import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';

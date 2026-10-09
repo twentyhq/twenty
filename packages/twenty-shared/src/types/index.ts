@@ -70,6 +70,7 @@ export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameTyp
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';
+export type { ConnectedAccountPermission } from './ConnectedAccountPermission';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { ContextStorePageType } from './ContextStorePageType';
 export { CoreObjectNameSingular } from './CoreObjectNameSingular';

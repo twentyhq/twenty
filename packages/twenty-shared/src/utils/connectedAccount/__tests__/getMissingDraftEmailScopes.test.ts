@@ -1,26 +1,22 @@
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-
-import { getMissingDraftEmailScopes } from 'src/engine/core-modules/tool/tools/email-tool/utils/get-missing-draft-email-scopes.util';
+import { ConnectedAccountProvider } from '@/types';
+import { getMissingDraftEmailScopes } from '@/utils/connectedAccount/getMissingDraftEmailScopes';
 
 const GMAIL_COMPOSE_SCOPE = 'https://www.googleapis.com/auth/gmail.compose';
+const GMAIL_SEND_SCOPE = 'https://www.googleapis.com/auth/gmail.send';
 const MICROSOFT_SEND_SCOPE = 'Mail.Send';
 
 describe('getMissingDraftEmailScopes', () => {
   describe('Google provider', () => {
-    it('returns the compose scope when missing', () => {
+    it.each([
+      ['no scopes', []],
+      ['only login scopes', ['email', 'profile']],
+      ['gmail.send without gmail.compose', [GMAIL_SEND_SCOPE]],
+      ['null scopes', null],
+    ])('returns the compose scope with %s', (_, scopes) => {
       expect(
         getMissingDraftEmailScopes({
           provider: ConnectedAccountProvider.GOOGLE,
-          scopes: ['email', 'profile'],
-        }),
-      ).toEqual([GMAIL_COMPOSE_SCOPE]);
-    });
-
-    it('returns the compose scope when scopes are null', () => {
-      expect(
-        getMissingDraftEmailScopes({
-          provider: ConnectedAccountProvider.GOOGLE,
-          scopes: null,
+          scopes,
         }),
       ).toEqual([GMAIL_COMPOSE_SCOPE]);
     });
@@ -36,11 +32,15 @@ describe('getMissingDraftEmailScopes', () => {
   });
 
   describe('Microsoft provider', () => {
-    it('returns the send scope when missing', () => {
+    it.each([
+      ['no scopes', []],
+      ['only Mail.ReadWrite', ['Mail.ReadWrite']],
+      ['null scopes', null],
+    ])('returns the send scope with %s', (_, scopes) => {
       expect(
         getMissingDraftEmailScopes({
           provider: ConnectedAccountProvider.MICROSOFT,
-          scopes: ['Mail.ReadWrite'],
+          scopes,
         }),
       ).toEqual([MICROSOFT_SEND_SCOPE]);
     });

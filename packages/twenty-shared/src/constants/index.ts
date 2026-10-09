@@ -16,6 +16,7 @@ export { CLIENT_CONFIG_BOOTSTRAP_ELEMENT_ID } from './ClientConfigBootstrapEleme
 export { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from './CommandMenuConfirmationModalResultBrowserEventName';
 export { COMPOSITE_FIELD_SUB_FIELD_LABELS } from './CompositeFieldSubFieldLabels';
 export { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from './CompositeFieldTypeSubFieldsNames';
+export { CONNECTED_ACCOUNT_PERMISSION_SCOPES } from './ConnectedAccountPermissionScopes';
 export { CORE_PICTURE_MIME_TYPES } from './CorePictureMimeTypes';
 export { CSV_DANGEROUS_CHARACTERS } from './CsvDangerousCharacters';
 export { CSV_INJECTION_PREVENTION_ZWJ } from './CsvInjectionPreventionZwj';
@@ -50,6 +51,7 @@ export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestric
 export { FIELD_TYPE_DEFAULT_ICONS } from './FieldTypeDefaultIcons';
 export { FILES_FIELD_MAX_NUMBER_OF_VALUES } from './FilesFieldMaxNumberOfValues';
 export { GIN_COMPATIBLE_FIELD_TYPES } from './GinCompatibleFieldTypes';
+export { GMAIL_COMPOSE_SCOPE } from './GmailComposeScope';
 export { GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE } from './GroupByDateGranularityThatRequireTimeZone';
 export { IANA_TIME_ZONES } from './IanaTimeZones';
 export { IMAGE_IDENTIFIER_FIELD_METADATA_TYPES } from './ImageIdentifierFieldMetadataTypes';

@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { Temporal } from 'temporal-polyfill';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -61,6 +62,8 @@ jest.mock('@/settings/accounts/hooks/useMyConnectedAccounts', () => ({
       {
         id: 'account-id',
         handle: 'tim@apple.dev',
+        provider: ConnectedAccountProvider.GOOGLE,
+        scopes: ['https://www.googleapis.com/auth/calendar.events'],
       },
     ],
     loading: false,
@@ -73,10 +76,6 @@ jest.mock(
     isCalendarCreationEnabledForAccount: () => true,
   }),
 );
-
-jest.mock('@/accounts/utils/hasMissingCreateCalendarEventScopes', () => ({
-  getMissingCreateCalendarEventScopes: () => [],
-}));
 
 describe('useCalendarEventComposer', () => {
   beforeEach(() => {

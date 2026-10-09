@@ -3,13 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  getMissingCreateEventScopes,
+  isDefined,
+  isValidUuid,
+} from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { getMissingCreateEventScopes } from 'src/modules/calendar/calendar-event-creation-manager/utils/get-missing-create-event-scopes.util';
 import { isCalendarCreationSupportedProvider } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-calendar-creation-supported-provider.util';
 import { isValidTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-valid-time-zone.util';
 import { resolveCalendarEventTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/utils/resolve-calendar-event-time-zone.util';

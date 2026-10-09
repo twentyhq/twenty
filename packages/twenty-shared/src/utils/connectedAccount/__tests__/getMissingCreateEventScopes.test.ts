@@ -1,6 +1,5 @@
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-
-import { getMissingCreateEventScopes } from 'src/modules/calendar/calendar-event-creation-manager/utils/get-missing-create-event-scopes.util';
+import { ConnectedAccountProvider } from '@/types';
+import { getMissingCreateEventScopes } from '@/utils/connectedAccount/getMissingCreateEventScopes';
 
 const GOOGLE_SCOPE = 'https://www.googleapis.com/auth/calendar.events';
 const MICROSOFT_SCOPE = 'Calendars.ReadWrite';
@@ -42,21 +41,22 @@ describe('getMissingCreateEventScopes', () => {
     ).toEqual([MICROSOFT_SCOPE]);
   });
 
-  it('treats null scopes as missing', () => {
-    expect(
-      getMissingCreateEventScopes({
-        provider: ConnectedAccountProvider.GOOGLE,
-        scopes: null,
-      }),
-    ).toEqual([GOOGLE_SCOPE]);
+  it.each([
+    [ConnectedAccountProvider.GOOGLE, GOOGLE_SCOPE],
+    [ConnectedAccountProvider.MICROSOFT, MICROSOFT_SCOPE],
+  ])('treats null scopes on %s as missing', (provider, scope) => {
+    expect(getMissingCreateEventScopes({ provider, scopes: null })).toEqual([
+      scope,
+    ]);
   });
 
-  it('does not require OAuth scopes for non-OAuth providers', () => {
-    expect(
-      getMissingCreateEventScopes({
-        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-        scopes: null,
-      }),
-    ).toEqual([]);
+  it.each([
+    ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+    ConnectedAccountProvider.EMAIL_GROUP,
+    ConnectedAccountProvider.APP,
+    ConnectedAccountProvider.OIDC,
+    ConnectedAccountProvider.SAML,
+  ])('does not require OAuth scopes for %s accounts', (provider) => {
+    expect(getMissingCreateEventScopes({ provider, scopes: null })).toEqual([]);
   });
 });
