@@ -1,12 +1,6 @@
 {
   ".": {
-    "reExports": [
-      "components",
-      "icon",
-      "primitives",
-      "theme",
-      "utilities"
-    ],
+    "reExports": ["components", "icon", "primitives", "theme", "utilities"],
     "values": {},
     "types": {}
   },
