@@ -15,6 +15,10 @@ Typography composition checks constrained text, explicit links, semantic element
 
 Card composition checks native part props and DOM refs, customized anatomy, ordinary display semantics, independent nested controls, button keyboard activation and disabled state, and explicit link ownership in both runtimes.
 
+RadioGroup checks controlled and uncontrolled selection, disabled skipping and looping, arrow selection in vertical and horizontal layouts, RTL direction, and Space activation. Enter does not select a radio. `Radio.Root` and `Radio.Indicator` preserve render state, native props and registered remote HTML refs, whose tag names use the `HTML-` prefix. Host queries separately verify the composed fieldset, default span card and explicit native button card. Native forms retain named radio values, external form association and required validation before and after a choice.
+
+SegmentedControl is imported from `twenty-ui/components/input` and presents an accessible exclusive-choice radio group without tab panels. Its disabled options are skipped during arrow selection. Radio arrows select the focused choice; Dropdown.SelectionGroup arrows only move focus.
+
 AvatarGroup checks derived counts, partially loaded totals, custom overflow and surviving keyed child state. Its native button and link (`target="_blank"`) verify refs, focus and pointer/keyboard activation in React and Preact.
 
 Scenarios share their checks between runtimes where behavior matches. The story
@@ -57,7 +61,7 @@ effect within the interaction timeout.
 | `twenty-ui-toast`                | Toast                                                                                                                                   |
 | `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                                 |
 | `twenty-ui-checkbox`             | Checkbox                                                                                                                                |
-| `twenty-ui-radio-group`          | RadioGroup, Radio (standard and card)                                                                                                   |
+| `twenty-ui-radio-group`          | RadioGroup, Radio Root/Indicator and styled cards, SegmentedControl                                                                     |
 | `twenty-ui-tooltip`              | Tooltip (convenience and compound APIs)                                                                                                 |
 | `twenty-ui-responsive-hooks`     | useIsMobile, useIsTouchDevice, Button hotkeys                                                                                           |
 | `twenty-ui-reading-directions`   | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`)     |

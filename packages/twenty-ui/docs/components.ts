@@ -190,9 +190,9 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'SegmentedControl',
-    source: 'primitives/input/SegmentedControl/SegmentedControl.tsx',
-    entryPoint: 'twenty-ui/primitives/input',
-    slug: 'input/segmented-control',
+    source: 'components/input/SegmentedControl/SegmentedControl.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/segmented-control',
     propDescriptions: SEGMENTED_CONTROL_PROP_DESCRIPTIONS,
   },
   {
@@ -359,7 +359,9 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Radio/Radio.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio',
+    parts: ['Root', 'Indicator'],
     propDescriptions: RADIO_PROP_DESCRIPTIONS,
+    propDefaults: { size: 'sm', variant: 'default' },
   },
   {
     name: 'RadioGroup',

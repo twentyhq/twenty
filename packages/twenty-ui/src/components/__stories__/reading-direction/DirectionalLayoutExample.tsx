@@ -1,12 +1,7 @@
 import { AvatarGroup, Callout, JsonTree } from '@ui/components';
+import { SegmentedControl } from '@ui/components/input/SegmentedControl/SegmentedControl';
 import { Avatar, Pill } from '@ui/primitives/data-display';
-import {
-  Button,
-  ButtonGroup,
-  Radio,
-  RadioGroup,
-  SegmentedControl,
-} from '@ui/primitives/input';
+import { Button, ButtonGroup, Radio, RadioGroup } from '@ui/primitives/input';
 import { ListItem } from '@ui/primitives/navigation';
 import { Text } from '@ui/primitives/typography';
 

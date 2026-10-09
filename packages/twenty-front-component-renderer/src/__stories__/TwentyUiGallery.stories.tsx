@@ -61,6 +61,7 @@ import { radioCardTest } from '@/__stories__/twenty-ui-gallery/utils/radioCardTe
 import { checkboxTest } from '@/__stories__/twenty-ui-gallery/utils/checkboxTest';
 import { fieldControlsTest } from '@/__stories__/twenty-ui-gallery/utils/fieldControlsTest';
 import { radioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/radioGroupTest';
+import { segmentedControlTest } from '@/__stories__/twenty-ui-gallery/utils/segmentedControlTest';
 import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRangeTest';
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
@@ -535,6 +536,17 @@ export const RadioCardPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-radio-group',
   runtime: 'preact',
   play: radioCardTest,
+});
+
+export const SegmentedControlReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'react',
+  play: segmentedControlTest,
+});
+export const SegmentedControlPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'preact',
+  play: segmentedControlTest,
 });
 
 export const StatusControlsReact: Story = createGalleryStory({

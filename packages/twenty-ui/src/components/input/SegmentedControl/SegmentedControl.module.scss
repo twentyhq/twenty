@@ -1,4 +1,4 @@
-.container {
+.container[data-item-width] {
   align-items: center;
   background: var(--t-background-secondary);
   border: 1px solid var(--t-border-color-medium);

@@ -79,18 +79,18 @@ const StyledIntervalContainer = styled.div`
   width: 100%;
 `;
 
-const StyledIntervalCardContent = styled.div`
+const StyledIntervalCardContent = styled.span`
   display: flex;
   flex-direction: column;
 `;
 
-const StyledIntervalTitle = styled.div`
+const StyledIntervalTitle = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledIntervalSubtitle = styled.div`
+const StyledIntervalSubtitle = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
 `;
@@ -193,13 +193,13 @@ export const EnterprisePlanModal = () => {
               value={selectedInterval}
               onValueChange={setSelectedInterval}
             >
-              <Radio variant="card" value="monthly">
+              <Radio variant="card" value="monthly" render={<div />}>
                 <StyledIntervalCardContent>
                   <StyledIntervalTitle>{t`Monthly`}</StyledIntervalTitle>
                   <StyledIntervalSubtitle>{`$${MONTHLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
                 </StyledIntervalCardContent>
               </Radio>
-              <Radio variant="card" value="yearly">
+              <Radio variant="card" value="yearly" render={<div />}>
                 <StyledIntervalCardContent>
                   <StyledIntervalTitle>{t`Yearly`}</StyledIntervalTitle>
                   <StyledIntervalSubtitle>{`$${YEARLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>

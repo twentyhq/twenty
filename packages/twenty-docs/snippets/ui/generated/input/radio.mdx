@@ -63,5 +63,73 @@
 </ParamField>
 
 <ParamField body="variant" type="&quot;card&quot; | &quot;default&quot;" default="default">
-  Presentation of the option: a standard radio or a full-width card. Defaults to default.
+  Appearance of the styled assembly: a standard radio or a full-width card. Both use the same span target unless render replaces it.
+</ParamField>
+
+### Radio.Root
+
+<ParamField body="Root.className" type="string | ((state: RadioRootState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Root.disabled" type="boolean">
+  Whether the component should ignore user interaction.
+</ParamField>
+
+<ParamField body="Root.inputRef" type="Ref&lt;HTMLInputElement&gt;">
+  A ref to access the hidden input element.
+</ParamField>
+
+<ParamField body="Root.nativeButton" type="boolean" default="false">
+  Whether the component renders a native `<button>` element when replacing it
+  via the `render` prop.
+  Set to `true` if the rendered element is a native button.
+</ParamField>
+
+<ParamField body="Root.readOnly" type="boolean">
+  Whether the user should be unable to select the radio button.
+</ParamField>
+
+<ParamField body="Root.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, RadioRootState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Root.required" type="boolean">
+  Whether the user must choose a value before submitting a form.
+</ParamField>
+
+<ParamField body="Root.style" type="CSSProperties | ((state: RadioRootState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+<ParamField body="Root.value" type="Value" required>
+  The unique identifying value of the radio in a group.
+</ParamField>
+
+### Radio.Indicator
+
+<ParamField body="Indicator.className" type="string | ((state: RadioIndicatorState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Indicator.keepMounted" type="boolean" default="false">
+  Whether to keep the HTML element in the DOM when the radio button is inactive.
+</ParamField>
+
+<ParamField body="Indicator.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, RadioIndicatorState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Indicator.style" type="CSSProperties | ((state: RadioIndicatorState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>

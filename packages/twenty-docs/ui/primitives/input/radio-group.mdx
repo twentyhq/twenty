@@ -17,7 +17,7 @@ import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
 
 ## Anatomy
 
-Put each `Radio` inside the group and associate it with a label. `RadioGroup` and `Radio` are separate exports.
+Put each `Radio` or `Radio.Root` inside the group and associate it with a label. Use `Radio.Indicator` to compose a custom indicator. `RadioGroup` and `Radio` are separate exports.
 
 ```text
 fieldset
@@ -108,7 +108,17 @@ export const BillingFrequency = () => {
 };
 ```
 
-`onValueChange` receives the next value and event details. The generic value type is inferred from the props. Use `disabled` on the group to disable every option, or on an individual radio to disable one choice. Arrow keys navigate the enabled options; Tab moves out of the group.
+`onValueChange` receives the next value and event details. The generic value type is inferred from the props. Use `disabled` on the group to disable every option, or on an individual radio to disable one choice. Arrow keys navigate and select enabled options; Tab moves out of the group. The installed Base UI version supports both horizontal and vertical arrow keys and does not expose an orientation prop. Use [DirectionProvider](/ui/primitives/layout/direction-provider) for right-to-left horizontal navigation. Visual row or column layout does not replace the upstream keyboard behavior.
+
+## Native integration and event details
+
+`RadioGroup` renders a div by default. Native props and `ref` target that element; `render` composes another element and changes the actual ref target. `inputRef` targets the representative hidden input of a child radio, using the selected enabled option or an enabled fallback. The public types include generic `RadioGroupProps`, `RadioGroupState`, `RadioGroupChangeEventReason` and `RadioGroupChangeEventDetails`.
+
+The callback receives the original event details, including the native `event`, `reason`, `cancel()` and `allowPropagation()`. Cancel a proposed change before updating controlled state when the choice should be rejected.
+
+Keep `name`, `form`, `required`, `disabled` and `readOnly` on the group for the existing Base UI form contract. The selected value is submitted under `name`; disabled groups are excluded and read-only groups keep their selection. `form` supports a group outside its owning form. The installed version does not restore group state automatically on native form reset. Reset controlled state from the form's `onReset` handler when your workflow requires it.
+
+[SegmentedControl](/ui/components/input/segmented-control) is a convenience preset assembled from these primitives for a short exclusive choice. It uses radio semantics and requires an accessible group name. Tabs and tab-panel navigation are separate controls.
 
 ## Props
 

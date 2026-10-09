@@ -12,10 +12,10 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import {
-  Button,
   SegmentedControl,
   type SegmentedControlOption,
-} from 'twenty-ui/primitives/input';
+} from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   BillingPlanKey,

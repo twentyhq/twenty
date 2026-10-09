@@ -82,11 +82,13 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     properties: {
       type: { type: 'string', optional: true },
       name: { type: 'string', optional: true },
+      form: { type: 'string', optional: true },
       value: { type: 'string', optional: true },
       placeholder: { type: 'string', optional: true },
       disabled: { type: 'boolean', optional: true },
       checked: { type: 'boolean', optional: true },
       readOnly: { type: 'boolean', optional: true },
+      required: { type: 'boolean', optional: true },
       accept: { type: 'string', optional: true },
       multiple: { type: 'boolean', optional: true },
       capture: { type: 'string', optional: true },

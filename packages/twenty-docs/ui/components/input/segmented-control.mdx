@@ -5,12 +5,12 @@ description: Choose one value from a compact group of labeled or icon options.
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
-import SegmentedControlReference from '/snippets/ui/generated/input/segmented-control.mdx';
+import SegmentedControlReference from '/snippets/ui/generated/components/input/segmented-control.mdx';
 
-`SegmentedControl` is a radio group with joined options. Use it for a short, mutually exclusive choice. For navigation between content panels, use [Tabs](/ui/primitives/navigation/tabs).
+`SegmentedControl` is a preset assembled from [Radio](/ui/primitives/input/radio) and [RadioGroup](/ui/primitives/input/radio-group), with joined options. Use it for a short, mutually exclusive choice. For navigation between content panels, use [Tabs](/ui/primitives/navigation/tabs).
 
 <StoryEmbed
-  storyId="ui-input-segmentedcontrol--documentation"
+  storyId="components-input-segmentedcontrol--documentation"
   title="SegmentedControl example"
 />
 
@@ -21,7 +21,7 @@ Supply an accessible group name with `aria-label` or `aria-labelledby`. Each opt
 ## Uncontrolled state
 
 ```tsx
-import { SegmentedControl } from 'twenty-ui/primitives/input';
+import { SegmentedControl } from 'twenty-ui/components/input';
 
 export const BillingPeriod = () => (
   <SegmentedControl
@@ -42,7 +42,7 @@ export const BillingPeriod = () => (
 
 ```tsx
 import { useState } from 'react';
-import { SegmentedControl } from 'twenty-ui/primitives/input';
+import { SegmentedControl } from 'twenty-ui/components/input';
 
 export const BillingPeriod = () => {
   const [period, setPeriod] = useState('annual');
@@ -67,7 +67,7 @@ Keep `value` in application state and update it in `onValueChange`. Do not combi
 ## Icon options
 
 ```tsx
-import { SegmentedControl } from 'twenty-ui/primitives/input';
+import { SegmentedControl } from 'twenty-ui/components/input';
 import { IconList, IconLayoutKanban } from 'twenty-ui/icon';
 
 export const RecordLayout = () => (
@@ -91,9 +91,13 @@ An icon-only option requires an `aria-label`. `startIcon` is decorative and hidd
 
 ## Keyboard, forms, and direction
 
-Tab enters the group; arrow keys move between enabled options and update selection. `itemWidth="equal"` is the default; use `content` when labels should determine widths. Set `name` to include the selected value in native form submission.
+Tab enters the group; arrow keys move between enabled options and update selection. This follows radio behavior. Dropdown selection groups move focus with arrow keys and select on activation. `itemWidth="equal"` is the default; use `content` when labels should determine widths. Set `name` to include the selected value in native form submission. The preset preserves RadioGroup's `required`, `readOnly`, disabled state, and native form integration. `onValueChange` receives the selected value and Base UI event details, including `reason` and `cancel()`.
 
 For right-to-left content, pair [DirectionProvider](/ui/primitives/layout/direction-provider) with a matching `dir` attribute. The provider controls directional interaction; `dir` controls the document layout.
+
+## Composition and native props
+
+Native props, `className`, `style`, `render`, and `ref` target the group's `div`. Use `render` to compose that group with another element; preserve its accessible name and radio-group semantics. Options render `span` elements with `role="radio"` and hidden native radio inputs. The preset does not assign tab or tab-panel roles. For custom radio content, per-option native props, or a different radio render target, compose `Radio.Root` and `RadioGroup` directly.
 
 ## Props
 

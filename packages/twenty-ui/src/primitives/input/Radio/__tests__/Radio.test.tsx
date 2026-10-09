@@ -34,7 +34,6 @@ runComponentConformance({
     </Radio>
   ),
   wrapper: RadioGroupWrapper,
-  refInstanceOf: HTMLDivElement,
+  refInstanceOf: HTMLSpanElement,
   ownClassName: styles.card,
-  renderPropTagName: 'div',
 });

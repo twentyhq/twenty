@@ -6,5 +6,5 @@ export const RADIO_PROP_DESCRIPTIONS = {
   children:
     'Option content. Card options wrap it in a padded full-width content area.',
   variant:
-    'Presentation of the option: a standard radio or a full-width card. Defaults to default.',
+    'Appearance of the styled assembly: a standard radio or a full-width card. Both use the same span target unless render replaces it.',
 } satisfies Partial<Record<keyof ComponentProps<typeof Radio>, string>>;

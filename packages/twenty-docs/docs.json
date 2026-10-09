@@ -577,8 +577,7 @@
                           "ui/primitives/input/radio-group",
                           "ui/primitives/input/select",
                           "ui/primitives/input/slider",
-                          "ui/primitives/input/switch",
-                          "ui/primitives/input/segmented-control"
+                          "ui/primitives/input/switch"
                         ]
                       },
                       {
@@ -654,7 +653,8 @@
                           "ui/components/input/currency-picker",
                           "ui/components/input/phone-country-picker",
                           "ui/components/input/image-input",
-                          "ui/components/input/search-input"
+                          "ui/components/input/search-input",
+                          "ui/components/input/segmented-control"
                         ]
                       },
                       {

@@ -1,7 +1,7 @@
 import { type ComponentProps } from 'react';
 import { type KeysOfUnion } from 'type-fest';
 
-import { type SegmentedControl } from '../src/primitives/input/SegmentedControl/SegmentedControl';
+import { type SegmentedControl } from '../src/components/input/SegmentedControl/SegmentedControl';
 
 export const SEGMENTED_CONTROL_PROP_DESCRIPTIONS = {
   itemWidth: 'Use equal-width options or size each option to its content.',

@@ -30,3 +30,6 @@ export type { PhoneCountryPickerOptionsProps } from './PhoneCountryPicker/types/
 export type { PhoneCountryPickerTriggerProps } from './PhoneCountryPicker/types/PhoneCountryPickerTriggerProps';
 export { SearchInput } from './SearchInput/SearchInput';
 export type { SearchInputProps } from './SearchInput/types/SearchInputProps';
+export { SegmentedControl } from './SegmentedControl/SegmentedControl';
+export type { SegmentedControlOption } from './SegmentedControl/types/SegmentedControlOption';
+export type { SegmentedControlProps } from './SegmentedControl/types/SegmentedControlProps';

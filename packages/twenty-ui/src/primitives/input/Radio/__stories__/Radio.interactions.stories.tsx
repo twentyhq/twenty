@@ -1,10 +1,10 @@
-import { DirectionProvider } from '@base-ui/react/direction-provider';
-import { Field as FieldPrimitive } from '@base-ui/react/field';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { Button } from '@ui/primitives/input/Button/Button';
 import { Field } from '@ui/primitives/input/Field/Field';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
 import { type RadioGroupProps } from '@ui/primitives/input/RadioGroup/types/RadioGroupProps';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
@@ -57,7 +57,10 @@ export const Keyboard: Story = {
     await expect(apple).not.toBeChecked();
     await expect(args.onValueChange).toHaveBeenLastCalledWith(
       'cherry',
-      expect.anything(),
+      expect.objectContaining({
+        reason: 'none',
+        isCanceled: false,
+      }),
     );
     await userEvent.keyboard('{ArrowDown}');
     await waitFor(() => expect(apple).toHaveFocus());
@@ -163,9 +166,7 @@ const ControlledExample = ({ onValueChange }: RadioGroupProps) => {
   return (
     <>
       <RadioExample value={value} onValueChange={onValueChange} />
-      <button type="button" onClick={() => setValue('cherry')}>
-        Apply Cherry
-      </button>
+      <Button onClick={() => setValue('cherry')}>Apply Cherry</Button>
     </>
   );
 };
@@ -203,21 +204,21 @@ const FormExample = ({ variant }: Pick<RadioProps, 'variant'>) => {
       <Field.Root name="fruit">
         <Field.Label>Fruit</Field.Label>
         <RadioGroup value={value} onValueChange={setValue} required>
-          <FieldPrimitive.Item>
+          <Field.Item>
             <Radio variant={variant} value="apple">
               Apple
             </Radio>
-          </FieldPrimitive.Item>
-          <FieldPrimitive.Item>
+          </Field.Item>
+          <Field.Item>
             <Radio variant={variant} value="cherry">
               Cherry
             </Radio>
-          </FieldPrimitive.Item>
+          </Field.Item>
         </RadioGroup>
         <Field.Description>Choose one fruit</Field.Description>
       </Field.Root>
-      <button type="submit">Submit</button>
-      <button type="reset">Reset</button>
+      <Button type="submit">Submit</Button>
+      <Button type="reset">Reset</Button>
       <output aria-label="Submitted fruit">{submitted}</output>
     </form>
   );
@@ -253,9 +254,7 @@ const InputRefExample = () => {
           One
         </Radio>
       </RadioGroup>
-      <button type="button" onClick={() => inputRef.current?.focus()}>
-        Focus One
-      </button>
+      <Button onClick={() => inputRef.current?.focus()}>Focus One</Button>
     </>
   );
 };
@@ -357,4 +356,85 @@ export const CardsForm: Story = {
 export const CardsRightToLeft: Story = {
   ...RightToLeft,
   args: { ...RightToLeft.args, variant: 'card' },
+};
+
+export const CompleteParts: Story = {
+  decorators: [ComponentDecorator],
+  args: { defaultValue: 'apple' },
+  render: (args) => (
+    <RadioGroup {...args} aria-label="Fruit" render={<fieldset />}>
+      <Radio.Root value="apple">
+        <Radio.Indicator keepMounted render={<strong />} aria-hidden>
+          Selected
+        </Radio.Indicator>
+        Apple
+      </Radio.Root>
+      <Radio.Root value="cherry">
+        <Radio.Indicator keepMounted render={<strong />} aria-hidden>
+          Selected
+        </Radio.Indicator>
+        Cherry
+      </Radio.Root>
+    </RadioGroup>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const apple = canvas.getByRole('radio', { name: 'Apple' });
+    const cherry = canvas.getByRole('radio', { name: 'Cherry' });
+    await expect(canvas.getByRole('radiogroup').tagName).toBe('FIELDSET');
+    await expect(apple.tagName).toBe('SPAN');
+    await expect(apple.querySelector('strong')).toHaveAttribute('data-checked');
+    await expect(cherry.querySelector('strong')).toHaveAttribute(
+      'data-unchecked',
+    );
+    await userEvent.tab();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onValueChange).not.toHaveBeenCalled();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(cherry).toHaveFocus();
+    await expect(cherry).toBeChecked();
+    await expect(cherry.querySelector('strong')).toHaveAttribute(
+      'data-checked',
+    );
+    await expect(apple.querySelector('strong')).toHaveAttribute(
+      'data-unchecked',
+    );
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const NativeButtonCards: Story = {
+  decorators: [ComponentDecorator],
+  args: { defaultValue: 'apple' },
+  render: (args) => (
+    <RadioGroup {...args} aria-label="Fruit">
+      <Radio
+        variant="card"
+        value="apple"
+        nativeButton
+        render={<button type="button" />}
+      >
+        Apple
+      </Radio>
+      <Radio
+        variant="card"
+        value="cherry"
+        nativeButton
+        render={<button type="button" />}
+      >
+        Cherry
+      </Radio>
+    </RadioGroup>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const apple = canvas.getByRole('radio', { name: 'Apple' });
+    const cherry = canvas.getByRole('radio', { name: 'Cherry' });
+    await expect(apple.tagName).toBe('BUTTON');
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(cherry).toHaveFocus();
+    await expect(cherry).toBeChecked();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+  },
 };

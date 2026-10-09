@@ -5,6 +5,7 @@ import {
   LightIconButton,
   MainButton,
   SearchInput,
+  SegmentedControl,
 } from 'twenty-ui/components/input';
 import { TabButton } from 'twenty-ui/components/navigation';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
@@ -15,7 +16,6 @@ import {
   Checkbox,
   Radio,
   RadioGroup,
-  SegmentedControl,
   Slider,
   Switch,
 } from 'twenty-ui/primitives/input';
