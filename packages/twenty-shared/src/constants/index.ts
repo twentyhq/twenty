@@ -41,6 +41,7 @@ export { EMAIL_IMAGE_MIME_TYPES } from './EmailImageMimeTypes';
 export { EMAIL_SENDING_PROVIDERS } from './EmailSendingProviders';
 export type { EnterpriseInstanceType } from './EnterpriseInstanceType';
 export { ENTERPRISE_INSTANCE_TYPE } from './EnterpriseInstanceType';
+export { EVENT_LOG_RETENTION_IN_DAYS } from './EventLogRetentionInDays';
 export { EVERYONE_PRINCIPAL_ID } from './EveryonePrincipalId';
 export { EXCLUDED_FIELD_NAMES_FROM_AGENT_TOOL_SCHEMA } from './ExcludedFieldNamesFromAgentToolSchema';
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';

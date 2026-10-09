@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { type AiModelTier } from 'twenty-shared/ai';
+import { EVENT_LOG_RETENTION_IN_DAYS } from 'twenty-shared/constants';
 
 import {
   IsArray,
@@ -119,8 +120,8 @@ export class UpdateWorkspaceInput {
 
   @Field({ nullable: true })
   @IsInt()
-  @Min(30) // Minimum 30 days retention for audit compliance
-  @Max(1095) // Maximum 3 years (matches ClickHouse table-level TTL)
+  @Min(EVENT_LOG_RETENTION_IN_DAYS.min)
+  @Max(EVENT_LOG_RETENTION_IN_DAYS.max)
   @IsOptional()
   eventLogRetentionDays?: number;
 

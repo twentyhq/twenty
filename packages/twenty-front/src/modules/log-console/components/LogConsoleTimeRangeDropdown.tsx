@@ -45,7 +45,7 @@ export const LogConsoleTimeRangeDropdown = ({
 }: LogConsoleTimeRangeDropdownProps) => {
   const { t } = useLingui();
   const { timeZone: memberTimeZone } = useDateTimeFormat();
-  const { retentionInDays, retentionDescription } =
+  const { retentionInDays, retentionDescription, isRetentionConfigurable } =
     useLogConsoleRetention(source);
   const [logConsoleTimeZone, setLogConsoleTimeZone] = useAtomState(
     logConsoleTimeZoneState,
@@ -172,7 +172,7 @@ export const LogConsoleTimeRangeDropdown = ({
                   other: '# days',
                 })}
                 descriptionPlacement="end"
-                disabled={!source.requiresAuditLogs}
+                disabled={!isRetentionConfigurable}
                 onClick={openRetentionSettings}
               >
                 {t`Retention`}
