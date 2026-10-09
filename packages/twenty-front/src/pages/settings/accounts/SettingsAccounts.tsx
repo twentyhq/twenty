@@ -1,6 +1,6 @@
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
-import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsLegacySections } from '@/settings/accounts/components/SettingsAccountsLegacySections';
+import { SettingsNativeAccountAppsSection } from '@/settings/app-preferences/components/SettingsNativeAccountAppsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -32,7 +32,7 @@ export const SettingsAccounts = () => {
         {isAppPreferencesEnabled ? (
           <>
             <SettingsAccountGroupsSection />
-            <SettingsAccountsBlocklistSection />
+            <SettingsNativeAccountAppsSection />
           </>
         ) : (
           <SettingsAccountsLegacySections />

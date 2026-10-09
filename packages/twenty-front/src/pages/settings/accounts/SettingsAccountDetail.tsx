@@ -1,16 +1,13 @@
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
-import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { SETTINGS_ACCOUNT_GROUP_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsAccountGroupTabListComponentId';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
-import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { Navigate, useParams } from 'react-router-dom';
@@ -19,7 +16,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconCalendarEvent, IconMail } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { SettingsAccountsConfigurationSelectedMessageChannelEffect } from '~/pages/settings/accounts/SettingsAccountsConfigurationSelectedMessageChannelEffect';
+import { SettingsAppPreferencesSelectedMessageChannelDetails } from '~/pages/settings/accounts/SettingsAppPreferencesSelectedMessageChannelDetails';
 
 export const SettingsAccountDetail = () => {
   const { t } = useLingui();
@@ -29,9 +26,7 @@ export const SettingsAccountDetail = () => {
   );
   const { connectedAccountId } = useParams<{ connectedAccountId: string }>();
   const { groups, loading } = useMyAccountGroups();
-  const settingsAccountsSelectedMessageChannel = useAtomStateValue(
-    settingsAccountsSelectedMessageChannelState,
-  );
+  const tabListComponentInstanceId = `${SETTINGS_ACCOUNT_GROUP_TAB_LIST_COMPONENT_ID}-${connectedAccountId}`;
 
   const nativeAccount = groups.find(
     (group) => group.nativeAccount?.id === connectedAccountId,
@@ -49,7 +44,7 @@ export const SettingsAccountDetail = () => {
   ].filter(isDefined);
 
   const activeTabId = useSettingsActiveTabId(
-    SETTINGS_ACCOUNT_GROUP_TAB_LIST_COMPONENT_ID,
+    tabListComponentInstanceId,
     tabs.map((tab) => tab.id),
   );
 
@@ -64,18 +59,9 @@ export const SettingsAccountDetail = () => {
   const renderContent = () => {
     if (activeTabId === 'emails' && isDefined(messageChannel)) {
       return (
-        <>
-          <SettingsAccountsConfigurationSelectedMessageChannelEffect
-            messageChannel={messageChannel}
-          />
-          {settingsAccountsSelectedMessageChannel?.id === messageChannel.id ? (
-            <SettingsAccountsMessageChannelDetails
-              messageChannel={messageChannel}
-            />
-          ) : (
-            <SettingsSectionSkeletonLoader />
-          )}
-        </>
+        <SettingsAppPreferencesSelectedMessageChannelDetails
+          messageChannel={messageChannel}
+        />
       );
     }
 
@@ -114,7 +100,7 @@ export const SettingsAccountDetail = () => {
           <SettingsTabBar
             aria-label={t`Account settings`}
             tabs={tabs}
-            componentInstanceId={SETTINGS_ACCOUNT_GROUP_TAB_LIST_COMPONENT_ID}
+            componentInstanceId={tabListComponentInstanceId}
           />
         ) : undefined
       }
