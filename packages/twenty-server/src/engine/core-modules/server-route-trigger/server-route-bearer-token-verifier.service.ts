@@ -1,18 +1,15 @@
-import { createPublicKey } from 'crypto';
-
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { decode, verify } from 'jsonwebtoken';
 import { type ServerRouteBearerTokenVerification } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { SERVER_ROUTE_BEARER_TOKEN_CLOCK_TOLERANCE_SECONDS } from 'src/engine/core-modules/server-route-trigger/constants/server-route-bearer-token-clock-tolerance-seconds.constant';
 import { SERVER_ROUTE_JWKS_MAX_AGE_MS } from 'src/engine/core-modules/server-route-trigger/constants/server-route-jwks-max-age-ms.constant';
 import { SERVER_ROUTE_JWKS_MIN_REFRESH_INTERVAL_MS } from 'src/engine/core-modules/server-route-trigger/constants/server-route-jwks-min-refresh-interval-ms.constant';
 import {
@@ -22,6 +19,7 @@ import {
 import { type ServerRouteSigningKey } from 'src/engine/core-modules/server-route-trigger/types/server-route-signing-key.type';
 import { extractBearerToken } from 'src/engine/core-modules/server-route-trigger/utils/extract-bearer-token.util';
 import { parseServerRouteSigningKeys } from 'src/engine/core-modules/server-route-trigger/utils/parse-server-route-signing-keys.util';
+import { verifyServerRouteBearerToken } from 'src/engine/core-modules/server-route-trigger/utils/verify-server-route-bearer-token.util';
 
 type FetchedSigningKeys = {
   keys: ServerRouteSigningKey[];
@@ -65,60 +63,35 @@ export class ServerRouteBearerTokenVerifierService {
       return this.throwInvalidBearerToken('Missing or malformed bearer token');
     }
 
-    const keyId = decode(token, { complete: true })?.header.kid;
+    const keyId = decodeJwtHeader(token)?.kid;
 
     if (!isNonEmptyString(keyId)) {
       return this.throwInvalidBearerToken('Bearer token names no signing key');
     }
-
-    const audience = await this.findAudienceOrThrow({
-      applicationRegistrationId,
-      audienceServerVariable: bearerTokenVerification.audienceServerVariable,
-    });
 
     const signingKey = await this.findSigningKeyOrThrow({
       jwksUrl: bearerTokenVerification.jwksUrl,
       keyId,
     });
 
-    const { requiredKeyEndorsement } = bearerTokenVerification;
+    const audience = await this.findAudienceOrThrow({
+      applicationRegistrationId,
+      audienceServerVariable: bearerTokenVerification.audienceServerVariable,
+    });
 
-    if (
-      isNonEmptyString(requiredKeyEndorsement) &&
-      !(signingKey.endorsements ?? []).includes(requiredKeyEndorsement)
-    ) {
-      return this.throwInvalidBearerToken(
-        `Bearer token signing key is not endorsed for ${requiredKeyEndorsement}`,
-      );
+    const verification = verifyServerRouteBearerToken({
+      token,
+      signingKey,
+      issuer: bearerTokenVerification.issuer,
+      audience,
+      requiredKeyEndorsement: bearerTokenVerification.requiredKeyEndorsement,
+    });
+
+    if (!verification.isValid) {
+      return this.throwInvalidBearerToken(verification.reason);
     }
 
-    let claims: unknown;
-
-    try {
-      claims = verify(
-        token,
-        createPublicKey({
-          key: { kty: signingKey.kty, n: signingKey.n, e: signingKey.e },
-          format: 'jwk',
-        }),
-        {
-          algorithms: ['RS256'],
-          issuer: bearerTokenVerification.issuer,
-          audience,
-          clockTolerance: SERVER_ROUTE_BEARER_TOKEN_CLOCK_TOLERANCE_SECONDS,
-        },
-      );
-    } catch (error) {
-      return this.throwInvalidBearerToken(
-        `Bearer token verification failed: ${error instanceof Error ? error.message : 'unknown error'}`,
-      );
-    }
-
-    if (!isPlainObject(claims)) {
-      return this.throwInvalidBearerToken('Bearer token carries no claims');
-    }
-
-    return claims;
+    return verification.claims;
   }
 
   private async findAudienceOrThrow({
@@ -133,11 +106,15 @@ export class ServerRouteBearerTokenVerifierService {
         where: { applicationRegistrationId, key: audienceServerVariable },
       });
 
-    const audience = isDefined(variable)
-      ? this.secretEncryptionService.decryptVersionedOrThrow(
-          variable.encryptedValue,
-        )
-      : '';
+    if (!isDefined(variable)) {
+      return this.throwBearerTokenVerificationUnavailable(
+        `Server variable ${audienceServerVariable} holding the expected bearer token audience is not declared`,
+      );
+    }
+
+    const audience = this.secretEncryptionService.decryptVersionedOrThrow(
+      variable.encryptedValue,
+    );
 
     if (!isNonEmptyString(audience)) {
       return this.throwBearerTokenVerificationUnavailable(
@@ -180,8 +157,7 @@ export class ServerRouteBearerTokenVerifierService {
     return signingKey;
   }
 
-  // Forged tokens naming unknown keys must not turn every request into a
-  // fetch, so fetches are shared while in flight and paced across attempts.
+  // Forged tokens naming unknown keys must not turn every request into a fetch.
   private async loadSigningKeysOrThrow(
     jwksUrl: string,
   ): Promise<ServerRouteSigningKey[]> {
@@ -219,33 +195,36 @@ export class ServerRouteBearerTokenVerifierService {
   private async fetchSigningKeysOrThrow(
     jwksUrl: string,
   ): Promise<ServerRouteSigningKey[]> {
-    let jwksResponseBody: unknown;
-
-    try {
-      const response = await this.secureHttpClientService
-        .getHttpClient()
-        .get(jwksUrl);
-
-      jwksResponseBody = response.data;
-    } catch (error) {
-      return this.getCachedSigningKeysOrThrow({
-        jwksUrl,
-        reason: error instanceof Error ? error.message : 'unknown error',
-      });
-    }
-
-    const keys = parseServerRouteSigningKeys(jwksResponseBody);
+    const keys = parseServerRouteSigningKeys(
+      await this.fetchJwksResponseBody(jwksUrl),
+    );
 
     if (!isNonEmptyArray(keys)) {
       return this.getCachedSigningKeysOrThrow({
         jwksUrl,
-        reason: 'the response carried no usable RSA signing key',
+        reason: 'no usable RSA signing key was fetched',
       });
     }
 
     this.signingKeysByJwksUrl.set(jwksUrl, { keys, fetchedAtMs: Date.now() });
 
     return keys;
+  }
+
+  private async fetchJwksResponseBody(jwksUrl: string): Promise<unknown> {
+    try {
+      const response = await this.secureHttpClientService
+        .getHttpClient()
+        .get(jwksUrl);
+
+      return response.data;
+    } catch (error) {
+      this.logger.warn(
+        `Could not fetch signing keys from ${jwksUrl}: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
+
+      return undefined;
+    }
   }
 
   private getCachedSigningKeysOrThrow({
@@ -266,8 +245,7 @@ export class ServerRouteBearerTokenVerifierService {
     return cachedSigningKeys.keys;
   }
 
-  // The exception message is sent back to unauthenticated callers, so the
-  // reason, which can name the expected audience or the JWKS URL, is only logged.
+  // The message reaches unauthenticated callers, so the reason is only logged.
   private throwInvalidBearerToken(reason: string): never {
     this.logger.warn(`Rejected server route bearer token: ${reason}`);
 

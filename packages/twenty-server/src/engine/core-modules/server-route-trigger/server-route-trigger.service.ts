@@ -116,18 +116,14 @@ export class ServerRouteTriggerService {
         })
       : undefined;
 
-    const event = {
-      ...buildLogicFunctionEvent({
-        request,
-        pathParameters: {},
-        forwardedRequestHeaders:
-          resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [],
-        userWorkspaceId: null,
-      }),
-      ...(isDefined(verifiedBearerTokenClaims)
-        ? { verifiedBearerTokenClaims }
-        : {}),
-    };
+    const event = buildLogicFunctionEvent({
+      request,
+      pathParameters: {},
+      forwardedRequestHeaders:
+        resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [],
+      userWorkspaceId: null,
+      verifiedBearerTokenClaims,
+    });
 
     const resolverResult = await this.runFunction({
       logicFunctionUniversalIdentifier: resolver.universalIdentifier,

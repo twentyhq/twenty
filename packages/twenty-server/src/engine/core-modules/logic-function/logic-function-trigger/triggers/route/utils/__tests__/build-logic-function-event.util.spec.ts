@@ -401,6 +401,25 @@ describe('buildLogicFunctionEvent', () => {
     });
   });
 
+  it('should attach verified bearer token claims without the token itself', () => {
+    const request = createMockRequest({
+      headers: { authorization: 'Bearer token' },
+    });
+
+    const result = buildLogicFunctionEvent({
+      request,
+      pathParameters: {},
+      forwardedRequestHeaders: ['authorization'],
+      userWorkspaceId: null,
+      verifiedBearerTokenClaims: { iss: 'https://api.example.com' },
+    });
+
+    expect(result.headers).toEqual({});
+    expect(result.verifiedBearerTokenClaims).toEqual({
+      iss: 'https://api.example.com',
+    });
+  });
+
   it('should preserve the request path as-is', () => {
     const request = createMockRequest({
       path: '/s/api/users',

@@ -1,22 +1,14 @@
 import { msg, t } from '@lingui/core/macro';
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import { isHttpsUrl } from 'src/engine/core-modules/application/application-registration/utils/is-https-url.util';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
-const isHttpsUrl = (value: unknown): boolean => {
-  if (!isNonEmptyString(value)) {
-    return false;
-  }
-
-  try {
-    return new URL(value).protocol === 'https:';
-  } catch {
-    return false;
-  }
-};
+const isHttpsUrlValue = (value: unknown): boolean =>
+  isNonEmptyString(value) && isHttpsUrl(value);
 
 export const validateLogicFunctionBearerTokenVerification = ({
   serverRouteTriggerSettings,
@@ -32,11 +24,11 @@ export const validateLogicFunctionBearerTokenVerification = ({
 
   if (
     isPlainObject(bearerTokenVerification) &&
-    isHttpsUrl(bearerTokenVerification.jwksUrl) &&
+    isHttpsUrlValue(bearerTokenVerification.jwksUrl) &&
     isNonEmptyString(bearerTokenVerification.issuer) &&
     isNonEmptyString(bearerTokenVerification.audienceServerVariable) &&
     (!isDefined(bearerTokenVerification.requiredKeyEndorsement) ||
-      isString(bearerTokenVerification.requiredKeyEndorsement))
+      isNonEmptyString(bearerTokenVerification.requiredKeyEndorsement))
   ) {
     return [];
   }

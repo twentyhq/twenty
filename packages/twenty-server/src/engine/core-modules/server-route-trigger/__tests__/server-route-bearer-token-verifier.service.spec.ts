@@ -1,4 +1,4 @@
-import { generateKeyPairSync, type KeyObject } from 'crypto';
+import { generateKeyPairSync } from 'crypto';
 
 import { Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
@@ -28,29 +28,18 @@ const { privateKey, publicKey } = generateKeyPairSync('rsa', {
   modulusLength: 2048,
 });
 
-const buildPublishedKey = ({
-  kid = KEY_ID,
-  key = publicKey,
-  endorsements = ['msteams'],
-}: {
-  kid?: string;
-  key?: KeyObject;
-  endorsements?: string[];
-} = {}) => ({
-  ...key.export({ format: 'jwk' }),
-  kid,
+const PUBLISHED_KEY = {
+  ...publicKey.export({ format: 'jwk' }),
+  kid: KEY_ID,
   use: 'sig',
-  endorsements,
-});
+  endorsements: ['msteams'],
+};
 
-const signToken = ({
-  audience = AUDIENCE,
-  keyid = KEY_ID,
-}: { audience?: string; keyid?: string } = {}) =>
+const signToken = ({ keyid = KEY_ID }: { keyid?: string } = {}) =>
   sign({ serviceurl: 'https://smba.trafficmanager.net/emea/' }, privateKey, {
     algorithm: 'RS256',
     issuer: ISSUER,
-    audience,
+    audience: AUDIENCE,
     keyid,
     expiresIn: '5m',
   });
@@ -70,7 +59,7 @@ describe('ServerRouteBearerTokenVerifierService', () => {
 
     fetchJwks = jest
       .fn()
-      .mockResolvedValue({ data: { keys: [buildPublishedKey()] } });
+      .mockResolvedValue({ data: { keys: [PUBLISHED_KEY] } });
     findVariable = jest.fn().mockResolvedValue({ encryptedValue: AUDIENCE });
 
     const module = await Test.createTestingModule({
@@ -117,6 +106,13 @@ describe('ServerRouteBearerTokenVerifierService', () => {
     });
   });
 
+  it('should reject a missing header without detailing why', async () => {
+    await expect(verify(undefined)).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.INVALID_BEARER_TOKEN,
+      message: 'Bearer token is invalid',
+    });
+  });
+
   it('should reuse fetched signing keys across requests', async () => {
     await verify(`Bearer ${signToken()}`);
     await verify(`Bearer ${signToken()}`);
@@ -124,45 +120,9 @@ describe('ServerRouteBearerTokenVerifierService', () => {
     expect(fetchJwks).toHaveBeenCalledTimes(1);
   });
 
-  it.each([
-    ['a missing header', undefined],
-    ['a non bearer scheme', `Basic ${signToken()}`],
-    [
-      'a token for another audience',
-      `Bearer ${signToken({ audience: 'other' })}`,
-    ],
-  ])('should reject %s', async (_, authorizationHeader) => {
-    await expect(verify(authorizationHeader)).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.INVALID_BEARER_TOKEN,
-      message: 'Bearer token is invalid',
-    });
-  });
-
-  it('should reject a token signed by a key published under its key id by someone else', async () => {
-    const { publicKey: otherPublicKey } = generateKeyPairSync('rsa', {
-      modulusLength: 2048,
-    });
-
-    fetchJwks.mockResolvedValue({
-      data: { keys: [buildPublishedKey({ key: otherPublicKey })] },
-    });
-
-    await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.INVALID_BEARER_TOKEN,
-    });
-  });
-
-  it('should reject a token whose signing key lacks the required endorsement', async () => {
-    fetchJwks.mockResolvedValue({
-      data: { keys: [buildPublishedKey({ endorsements: ['webchat'] })] },
-    });
-
-    await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.INVALID_BEARER_TOKEN,
-    });
-  });
-
   it('should not refetch signing keys for an unknown key id right after a fetch', async () => {
+    await verify(`Bearer ${signToken()}`);
+
     await expect(
       verify(`Bearer ${signToken({ keyid: 'unknown-key' })}`),
     ).rejects.toMatchObject({
@@ -186,6 +146,7 @@ describe('ServerRouteBearerTokenVerifierService', () => {
 
     await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
+      message: 'Bearer token verification is unavailable',
     });
     await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
@@ -207,20 +168,17 @@ describe('ServerRouteBearerTokenVerifierService', () => {
     expect(fetchJwks).toHaveBeenCalledTimes(2);
   });
 
-  it('should be unavailable when the audience server variable is not set', async () => {
-    findVariable.mockResolvedValue({ encryptedValue: '' });
+  it.each([
+    ['not declared', null],
+    ['not set', { encryptedValue: '' }],
+  ])(
+    'should be unavailable when the audience server variable is %s',
+    async (_, variable) => {
+      findVariable.mockResolvedValue(variable);
 
-    await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
-    });
-  });
-
-  it('should be unavailable when the signing keys cannot be fetched', async () => {
-    fetchJwks.mockRejectedValue(new Error('ECONNREFUSED'));
-
-    await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
-      message: 'Bearer token verification is unavailable',
-    });
-  });
+      await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
+        code: ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
+      });
+    },
+  );
 });

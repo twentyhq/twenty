@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServerRouteTrigger bearer token verification (integration) answers 503 when the audience server variable is not set 1`] = `
+{
+  "body": {
+    "code": "BEARER_TOKEN_VERIFICATION_UNAVAILABLE",
+    "error": "Error",
+    "messages": [
+      "Bearer token verification is unavailable",
+    ],
+    "statusCode": 503,
+  },
+  "status": 503,
+}
+`;
+
+exports[`ServerRouteTrigger bearer token verification (integration) rejects a request without a bearer token before running the resolver 1`] = `
+{
+  "body": {
+    "code": "INVALID_BEARER_TOKEN",
+    "error": "Error",
+    "messages": [
+      "Bearer token is invalid",
+    ],
+    "statusCode": 401,
+  },
+  "status": 401,
+}
+`;

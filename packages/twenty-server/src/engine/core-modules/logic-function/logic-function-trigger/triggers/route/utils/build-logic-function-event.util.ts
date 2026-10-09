@@ -144,12 +144,14 @@ export const buildLogicFunctionEvent = ({
   forwardedRequestHeaders,
   forwardAllHeaders = false,
   userWorkspaceId,
+  verifiedBearerTokenClaims,
 }: {
   request: Request;
   pathParameters: Record<string, string | string[] | undefined>;
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;
   userWorkspaceId: string | null;
+  verifiedBearerTokenClaims?: Record<string, unknown>;
 }): LogicFunctionEvent => {
   const rawBody = extractRawBody(request);
 
@@ -171,5 +173,8 @@ export const buildLogicFunctionEvent = ({
       },
     },
     userWorkspaceId,
+    ...(isDefined(verifiedBearerTokenClaims)
+      ? { verifiedBearerTokenClaims }
+      : {}),
   };
 };

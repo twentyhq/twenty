@@ -15,7 +15,6 @@ export type LogicFunctionEvent<TBody = object> = {
   // when the trigger fires without a user (cron, database events) or when
   // auth is disabled.
   userWorkspaceId: string | null;
-  // Populated for server routes with `bearerTokenVerification`; the token
-  // itself is never forwarded.
+  // Set on server routes declaring bearerTokenVerification; the token itself is never forwarded.
   verifiedBearerTokenClaims?: Record<string, unknown>;
 };

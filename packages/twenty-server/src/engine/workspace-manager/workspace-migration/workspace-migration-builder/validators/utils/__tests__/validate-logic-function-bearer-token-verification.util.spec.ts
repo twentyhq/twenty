@@ -40,6 +40,7 @@ describe('validateLogicFunctionBearerTokenVerification', () => {
     ['an empty issuer', { issuer: '' }],
     ['a missing audienceServerVariable', { audienceServerVariable: undefined }],
     ['a non string endorsement', { requiredKeyEndorsement: ['msteams'] }],
+    ['an empty endorsement', { requiredKeyEndorsement: '' }],
   ])('should reject %s', (_, override) => {
     expect(
       validate({ ...VALID_BEARER_TOKEN_VERIFICATION, ...override }),
