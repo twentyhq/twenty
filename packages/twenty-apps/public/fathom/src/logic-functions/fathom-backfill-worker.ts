@@ -14,9 +14,11 @@ import {
   FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type FathomBackfillWorkerPayload } from 'src/logic-functions/types/fathom-backfill-worker-payload.type';
+import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retryable-fathom-error.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { excludeDeletedFathomMeetings } from 'src/logic-functions/utils/exclude-deleted-fathom-meetings.util';
 import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fathom-jobs-or-throw.util';
+import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
 import { listFathomMeetingPage } from 'src/logic-functions/utils/list-fathom-meeting-page.util';
 import { reserveFathomImportSlots } from 'src/logic-functions/utils/reserve-fathom-import-slots.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
@@ -54,6 +56,15 @@ export const fathomBackfillWorkerHandler = async (
     fathomClient: createFathomClient(connection.accessToken),
     createdAfter,
     cursor: payload.cursor,
+  }).catch((error: unknown) => {
+    if (isTransientFathomError(error)) {
+      throw buildRetryableFathomError({
+        operation: `list meetings for connected account ${payload.connectedAccountId}`,
+        error,
+      });
+    }
+
+    throw error;
   });
   const serializedMeetings = meetingPage.meetings.map(serializeFathomMeeting);
   const importableMeetings = await excludeDeletedFathomMeetings({

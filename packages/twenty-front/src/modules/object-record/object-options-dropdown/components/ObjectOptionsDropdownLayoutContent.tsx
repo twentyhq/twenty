@@ -330,7 +330,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 >
                   <SettingsRow
                     focused={selectedItemId === 'Compact view'}
-                    startIcon={<IconBaselineDensitySmall />}
+                    startElement={<IconBaselineDensitySmall />}
                     onCheckedChange={() =>
                       setAndPersistIsCompactModeActive(
                         !isCompactModeActive,

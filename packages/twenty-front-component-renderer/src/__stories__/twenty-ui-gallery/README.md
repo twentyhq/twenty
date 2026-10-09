@@ -7,11 +7,13 @@ Preact stories need Preact 11, which passes `ref` to function components as a
 regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
 The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels and controlled multiline value updates in React and Preact.
-Textarea auto-resize remains a renderer limitation. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. Controlled multiline value updates and clearing are checked separately from textarea resizing. Standalone Textarea browser checks pass.
+Textarea auto-resize remains a renderer limitation. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. These stale reads can also produce cumulative height growth instead of fitting the current content. The field fixture verifies values, refs, events and accessibility without treating incidental height changes as resize acceptance. Standalone Textarea browser checks pass.
 
 Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused React/Preact cases check controlled trigger requests, native attributes, Button render composition, DOM refs and callback reasons. These checks do not establish popup visibility, geometry or dismissal support. The omitted-container popup still requires C04/C05/C07 renderer acceptance.
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
+
+Tag and Status retain their presentational span when a native click handler is supplied. Their focused React/Preact fixtures check explicit native button/link composition, keyboard activation, disabled owners, refs, caller-owned links and native handlers. Tag checks positive truncation and native padding styles; Status checks controlled loading, caller-owned busy state and a decorative loader without an implicit live region.
 
 Card composition checks native part props and DOM refs, customized anatomy, ordinary display semantics, independent nested controls, button keyboard activation and disabled state, and explicit link ownership in both runtimes.
 
@@ -43,6 +45,8 @@ effect within the interaction timeout.
 | `twenty-ui-display-helpers`      | Text                                                                                                                                    |
 | `twenty-ui-avatar-controls`      | Avatar (stable presentational root, compound fallback, refs, explicit button/link composition and native keyboard/disabled behavior)    |
 | `twenty-ui-avatar-group`         | AvatarGroup (derived and partial totals, custom overflow, keyed child state, native refs and explicit button/link composition)          |
+| `twenty-ui-tag-controls`         | Tag (stable presentational root, positive truncation, native spacing, node content, refs and explicit button/link composition)          |
+| `twenty-ui-status-controls`      | Status (stable presentational root, loading/busy state, node content, refs and explicit button/link composition)                        |
 | `twenty-ui-avatar-image`         | Avatar Root/Image/Fallback (image labels/attributes/refs, loading callbacks, decoded images, fallback, replacement and unmount/remount) |
 | `twenty-ui-image-input`          | ImageInput                                                                                                                              |
 | `twenty-ui-list-item`            | ListItem                                                                                                                                |
@@ -129,6 +133,17 @@ Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popov
 ## Known sandbox limitations
 
 An invisible popup is not a compatibility pass.
+
+SettingsRow's flat Switch props target the control. Its controlled composition
+uses `nativeButton` and an actual button through `render`, preserving one change
+callback for label and control activation. `labelRender` supplies native label
+attributes and handlers, and `labelRef` targets that label. Default span-based
+rows still cover label activation, uncontrolled state, read-only and disabled
+behavior. Directly
+clicking a span control inside its label can produce duplicate change callbacks
+because worker cancellation cannot stop the host label's default activation in
+time. Native validation attributes such as `required` are currently filtered by
+the renderer; standalone UI stories verify that form contract.
 
 These are compatibility regression stories, not assertions that the components
 work fully in the sandbox. Scenarios pin the current behavior exactly: a
@@ -226,3 +241,12 @@ levels, description line limits and optional focus, code semantics, native
 handlers, refs, and element/callback render composition. Description popup
 visibility and dismissal in the sandbox remain part of the existing portal and
 geometry acceptance work; standalone Section stories verify those behaviors.
+
+Chip controls check caller-owned empty, fallback and node content, stable default
+elements with native handlers, named icon-only buttons, explicit native button
+and link composition, DOM refs, keyboard activation and disabled owners in both
+runtimes. The same fixtures check intentional link content without automatic
+anchors, truncation and custom multiline tooltip content. Escape dismissal is
+checked from an explicit button owner with a native keyboard handler, which
+relays the event to the worker. General document-listener forwarding remains
+part of the renderer's dismissal work.
