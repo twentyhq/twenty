@@ -17950,7 +17950,7 @@ msgstr "Ruxsatlar · {objectLabelSingular}"
 #. js-lingui-id: JFI3iH
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Persian"
-msgstr ""
+msgstr "Forscha"
 
 #. js-lingui-id: qrGMTi
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
