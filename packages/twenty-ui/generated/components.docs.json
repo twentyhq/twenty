@@ -5585,6 +5585,13 @@
             "description": "Card sections or other content."
           },
           {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class merged with the part class."
+          },
+          {
             "name": "fullWidth",
             "type": "boolean",
             "required": false,
@@ -5592,11 +5599,32 @@
             "description": "Sets the card width to 100% of its container."
           },
           {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
             "name": "rounded",
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Compatibility styling flag. Cards already use the same rounded corners when omitted."
+            "description": "Cards already use the same rounded corners when omitted."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       },
@@ -5615,7 +5643,28 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "CSS class applied to the header."
+            "description": "CSS class merged with the part class."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       },
@@ -5634,7 +5683,7 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "CSS class applied to the body."
+            "description": "CSS class merged with the part class."
           },
           {
             "name": "divider",
@@ -5644,18 +5693,25 @@
             "description": "Adds a bottom border."
           },
           {
-            "name": "hasHoverHighlight",
-            "type": "boolean",
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
             "required": false,
             "defaultValue": null,
-            "description": "Changes the background on hover. Does not add an action."
+            "description": "Ref to the default div, or the element supplied through render."
           },
           {
-            "name": "isClickable",
-            "type": "boolean",
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
             "required": false,
             "defaultValue": null,
-            "description": "Shows a pointer cursor. Does not add button semantics or keyboard interaction."
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       },
@@ -5670,11 +5726,39 @@
             "description": "Footer content, such as actions or supporting text."
           },
           {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class merged with the part class."
+          },
+          {
             "name": "divider",
             "type": "boolean",
             "required": false,
             "defaultValue": "true",
             "description": "Shows the top border unless explicitly set to false."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       }

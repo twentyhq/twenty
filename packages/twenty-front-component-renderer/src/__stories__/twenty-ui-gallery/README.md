@@ -15,6 +15,8 @@ Typography composition checks constrained text, explicit links, semantic element
 
 ListItem keeps its default div presentational, including visual disabled, selected and focused state and caller-owned content. Its React/Preact cases check native button/link owners, actual root refs, pointer and keyboard activation, focus handlers, disabled native buttons, event bubbling and explicit propagation boundaries. URL text stays plain unless the caller supplies a link. Menu.Item checks visible pointer activation, disabled behavior and click-to-close. Popup keyboard navigation, outside dismissal and focus restoration remain outside this fixture. The retained overflow-tooltip check re-enters after renderer measurements arrive, so it does not establish first-hover geometry acceptance.
 
+Card composition checks native part props and DOM refs, customized anatomy, ordinary display semantics, independent nested controls, button keyboard activation and disabled state, and explicit link ownership in both runtimes.
+
 AvatarGroup checks derived counts, partially loaded totals, custom overflow and surviving keyed child state. Its native button and link (`target="_blank"`) verify refs, focus and pointer/keyboard activation in React and Preact.
 
 Scenarios share their checks between runtimes where behavior matches. The story
@@ -48,6 +50,7 @@ effect within the interaction timeout.
 | `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                      |
 | `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                          |
 | `twenty-ui-popover`              | Popover                                                                                                                                 |
+| `twenty-ui-card-composition`     | Card (native parts and refs, render composition, display semantics, button/link ownership and nested controls)                          |
 | `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                                 |
 | `twenty-ui-menu`                 | Menu                                                                                                                                    |
 | `twenty-ui-select`               | Select                                                                                                                                  |
