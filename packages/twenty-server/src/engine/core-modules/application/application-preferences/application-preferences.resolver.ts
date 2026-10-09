@@ -11,7 +11,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
-// Every member configures their own values, so no permission is required
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {

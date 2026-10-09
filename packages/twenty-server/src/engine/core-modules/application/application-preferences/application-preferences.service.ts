@@ -32,42 +32,38 @@ export class ApplicationPreferencesService {
         ]),
       ]);
 
-    // The cached applications come in row order, which the database does not guarantee
     const sortedInstalledFlatApplications = [...installedFlatApplications].sort(
       (flatApplicationA, flatApplicationB) =>
         flatApplicationA.name.localeCompare(flatApplicationB.name) ||
         flatApplicationA.id.localeCompare(flatApplicationB.id),
     );
 
-    const applicationPreferences = await Promise.all(
-      sortedInstalledFlatApplications.map(
-        async ({ id: applicationId }): Promise<ApplicationPreferencesDTO> => {
-          const [myApplicationVariables] =
-            await this.userApplicationVariableValueService.findUserApplicationVariableValues(
-              {
-                workspaceId,
-                applicationId,
-                requestUserWorkspaceId: userWorkspaceId,
-              },
-            );
-
-          return {
-            applicationId,
-            settingsMenuItems: findFlatEntitiesByApplicationId({
-              flatEntityMaps: flatSettingsMenuItemMaps,
-              applicationId,
-            })
-              .filter(({ scope }) => scope === 'USER')
-              .map(fromFlatSettingsMenuItemToSettingsMenuItemDto),
-            variables: myApplicationVariables?.variables ?? [],
-          };
+    const myUserApplicationVariableValuesByApplicationId =
+      await this.userApplicationVariableValueService.findMyUserApplicationVariableValuesByApplicationId(
+        {
+          workspaceId,
+          applicationIds: sortedInstalledFlatApplications.map(({ id }) => id),
+          userWorkspaceId,
         },
-      ),
-    );
+      );
 
-    return applicationPreferences.filter(
-      ({ settingsMenuItems, variables }) =>
-        isNonEmptyArray(settingsMenuItems) || isNonEmptyArray(variables),
-    );
+    return sortedInstalledFlatApplications
+      .map(
+        ({ id: applicationId }): ApplicationPreferencesDTO => ({
+          applicationId,
+          settingsMenuItems: findFlatEntitiesByApplicationId({
+            flatEntityMaps: flatSettingsMenuItemMaps,
+            applicationId,
+          })
+            .filter(({ scope }) => scope === 'USER')
+            .map(fromFlatSettingsMenuItemToSettingsMenuItemDto),
+          variables:
+            myUserApplicationVariableValuesByApplicationId[applicationId],
+        }),
+      )
+      .filter(
+        ({ settingsMenuItems, variables }) =>
+          isNonEmptyArray(settingsMenuItems) || isNonEmptyArray(variables),
+      );
   }
 }
