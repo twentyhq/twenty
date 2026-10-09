@@ -51,11 +51,15 @@ export const radioGroupTest: TwentyUiGalleryPlayFunction = async ({
   ).toBeVisible();
 
   await userEvent.keyboard('{ArrowDown}');
-  await waitFor(() => expect(weekly).toHaveFocus());
-  expect(weekly).toBeChecked();
+  await waitFor(() => {
+    expect(weekly).toHaveFocus();
+    expect(weekly).toBeChecked();
+  });
   await userEvent.keyboard('{ArrowDown}');
-  await waitFor(() => expect(quarterly).toHaveFocus());
-  expect(quarterly).toBeChecked();
+  await waitFor(() => {
+    expect(quarterly).toHaveFocus();
+    expect(quarterly).toBeChecked();
+  });
   expect(
     new FormData(
       canvas.getByRole('form', {
@@ -66,15 +70,19 @@ export const radioGroupTest: TwentyUiGalleryPlayFunction = async ({
   expect(monthly).not.toBeChecked();
   expect(canvas.getByText('Frequency: quarterly')).toBeVisible();
   await userEvent.keyboard('{ArrowDown}');
-  await waitFor(() => expect(daily).toHaveFocus());
-  expect(daily).toBeChecked();
+  await waitFor(() => {
+    expect(daily).toHaveFocus();
+    expect(daily).toBeChecked();
+  });
 
   const summary = canvas.getByRole('radio', { name: 'Summary' });
   const fullDetail = canvas.getByRole('radio', { name: 'Full detail' });
   await userEvent.click(summary);
   await userEvent.keyboard('{ArrowLeft}');
-  await waitFor(() => expect(fullDetail).toHaveFocus());
-  expect(fullDetail).toBeChecked();
+  await waitFor(() => {
+    expect(fullDetail).toHaveFocus();
+    expect(fullDetail).toBeChecked();
+  });
   await userEvent.keyboard('{ArrowRight}');
   await waitFor(() => expect(summary).toBeChecked());
 

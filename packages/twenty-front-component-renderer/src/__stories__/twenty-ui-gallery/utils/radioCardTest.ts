@@ -38,8 +38,10 @@ export const radioCardTest: TwentyUiGalleryPlayFunction = async ({
   ).toBe('pro');
 
   await userEvent.keyboard('{ArrowRight}');
-  await waitFor(() => expect(basic).toHaveFocus());
-  expect(basic).toBeChecked();
+  await waitFor(() => {
+    expect(basic).toHaveFocus();
+    expect(basic).toBeChecked();
+  });
   expect(pro).not.toBeChecked();
   expect(errorHandler).not.toHaveBeenCalled();
 };
