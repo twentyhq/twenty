@@ -83,10 +83,6 @@ export const fathomSyncCallHandler = async (
       continue;
     }
 
-    const hydratedMeeting = await hydrateFathomMeeting({
-      fathomClient,
-      serializedMeeting: serializeFathomMeeting(meeting),
-    });
     const coreApiClient = createFathomCoreApiClient();
     const callRecordingId = computeCallRecordingIdForFathomMeeting(recordingId);
     const callRecordingSyncStates = await findCallRecordingSyncStates({
@@ -106,10 +102,14 @@ export const fathomSyncCallHandler = async (
 
     const [syncResult] = await syncFathomMeetingsToCallRecordings({
       coreApiClient,
-      meetings: [hydratedMeeting],
+      meetings: [
+        await hydrateFathomMeeting({
+          fathomClient,
+          serializedMeeting: serializeFathomMeeting(meeting),
+        }),
+      ],
       connectedAccountId: connection.id,
       retryMedia: true,
-      callRecordingSyncStates,
     });
 
     if (!isDefined(syncResult) || 'skipped' in syncResult) {

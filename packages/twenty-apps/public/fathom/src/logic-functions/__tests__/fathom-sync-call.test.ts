@@ -120,8 +120,9 @@ describe('fathomSyncCallHandler', () => {
     });
     expect(mocks.query).toHaveBeenCalledOnce();
     expect(mocks.syncFathomMeetingsToCallRecordings).toHaveBeenCalledOnce();
-    expect(
-      mocks.syncFathomMeetingsToCallRecordings.mock.calls[0][0],
-    ).toMatchObject({ retryMedia: true, callRecordingSyncStates: new Map() });
+    const [syncInput] = mocks.syncFathomMeetingsToCallRecordings.mock.calls[0];
+
+    expect(syncInput).toMatchObject({ retryMedia: true });
+    expect(syncInput).not.toHaveProperty('callRecordingSyncStates');
   });
 });
