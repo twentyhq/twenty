@@ -1,4 +1,5 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { buildFrontComponentManifest } from 'test/integration/metadata/suites/application/utils/build-front-component-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { myApplicationPreferences } from 'test/integration/metadata/suites/application/utils/my-application-preferences.util';
@@ -9,8 +10,7 @@ import {
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { updateMyUserApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-user-application-variable.util';
-import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
-import { type FrontComponentManifest } from 'twenty-shared/application';
+import { uploadBuiltFrontComponentFile } from 'test/integration/metadata/suites/application/utils/upload-built-front-component-file.util';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type ApplicationPreferencesDTO } from 'src/engine/core-modules/application/application-preferences/dtos/application-preferences.dto';
@@ -24,34 +24,6 @@ const USER_SETTINGS_MENU_ITEM_UNIVERSAL_IDENTIFIER = uuidv4();
 const WORKSPACE_SETTINGS_MENU_ITEM_UNIVERSAL_IDENTIFIER = uuidv4();
 
 const APPLICATION_NAME = 'Application preferences A';
-
-const buildFrontComponent = (
-  universalIdentifier: string,
-  componentName: string,
-): FrontComponentManifest => ({
-  universalIdentifier,
-  name: componentName,
-  description: `The ${componentName} page of the application`,
-  sourceComponentPath: `src/front-components/${componentName}.tsx`,
-  builtComponentPath: `src/front-components/${componentName}.mjs`,
-  builtComponentChecksum: `${componentName}-checksum`,
-  componentName,
-  isHeadless: false,
-});
-
-// The migration runner refuses to create a front component whose built file is
-// not in storage, so every component an item points at needs one uploaded first.
-const uploadBuiltComponentFile = async (componentName: string) => {
-  await uploadApplicationFile({
-    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-    fileFolder: 'BuiltFrontComponent',
-    filePath: `src/front-components/${componentName}.mjs`,
-    fileBuffer: Buffer.from('dummy built component content'),
-    filename: `${componentName}.mjs`,
-    contentType: 'application/javascript',
-    expectToFail: false,
-  });
-};
 
 const findPreferencesOf = (
   applicationPreferences: ApplicationPreferencesDTO[],
@@ -78,8 +50,14 @@ describe('My application preferences should succeed', () => {
     // multipart upload never resolves.
     jest.useRealTimers();
 
-    await uploadBuiltComponentFile('UserSettings');
-    await uploadBuiltComponentFile('WorkspaceSettings');
+    await uploadBuiltFrontComponentFile({
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      componentName: 'UserSettings',
+    });
+    await uploadBuiltFrontComponentFile({
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      componentName: 'WorkspaceSettings',
+    });
 
     await syncApplication({
       manifest: buildBaseManifest({
@@ -111,14 +89,15 @@ describe('My application preferences should succeed', () => {
             yarnLockChecksum: null,
           },
           frontComponents: [
-            buildFrontComponent(
-              USER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-              'UserSettings',
-            ),
-            buildFrontComponent(
-              WORKSPACE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-              'WorkspaceSettings',
-            ),
+            buildFrontComponentManifest({
+              universalIdentifier: USER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+              componentName: 'UserSettings',
+            }),
+            buildFrontComponentManifest({
+              universalIdentifier:
+                WORKSPACE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+              componentName: 'WorkspaceSettings',
+            }),
           ],
           settingsMenuItems: [
             {
