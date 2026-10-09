@@ -1,13 +1,13 @@
 import { ConnectedAccountProvider } from '@/types';
-import { getMissingCreateEventScopes } from '@/utils/connectedAccount/getMissingCreateEventScopes';
+import { getMissingCreateCalendarEventScopes } from '@/utils/connectedAccount/getMissingCreateCalendarEventScopes';
 
 const GOOGLE_SCOPE = 'https://www.googleapis.com/auth/calendar.events';
 const MICROSOFT_SCOPE = 'Calendars.ReadWrite';
 
-describe('getMissingCreateEventScopes', () => {
+describe('getMissingCreateCalendarEventScopes', () => {
   it('returns no missing scope when Google has calendar.events', () => {
     expect(
-      getMissingCreateEventScopes({
+      getMissingCreateCalendarEventScopes({
         provider: ConnectedAccountProvider.GOOGLE,
         scopes: ['email', GOOGLE_SCOPE],
       }),
@@ -16,7 +16,7 @@ describe('getMissingCreateEventScopes', () => {
 
   it('reports the Google calendar.events scope when missing', () => {
     expect(
-      getMissingCreateEventScopes({
+      getMissingCreateCalendarEventScopes({
         provider: ConnectedAccountProvider.GOOGLE,
         scopes: ['email'],
       }),
@@ -25,7 +25,7 @@ describe('getMissingCreateEventScopes', () => {
 
   it('returns no missing scope when Microsoft has Calendars.ReadWrite', () => {
     expect(
-      getMissingCreateEventScopes({
+      getMissingCreateCalendarEventScopes({
         provider: ConnectedAccountProvider.MICROSOFT,
         scopes: [MICROSOFT_SCOPE],
       }),
@@ -34,7 +34,7 @@ describe('getMissingCreateEventScopes', () => {
 
   it('reports the Microsoft Calendars.ReadWrite scope when missing', () => {
     expect(
-      getMissingCreateEventScopes({
+      getMissingCreateCalendarEventScopes({
         provider: ConnectedAccountProvider.MICROSOFT,
         scopes: ['Calendars.Read'],
       }),
@@ -45,9 +45,9 @@ describe('getMissingCreateEventScopes', () => {
     [ConnectedAccountProvider.GOOGLE, GOOGLE_SCOPE],
     [ConnectedAccountProvider.MICROSOFT, MICROSOFT_SCOPE],
   ])('treats null scopes on %s as missing', (provider, scope) => {
-    expect(getMissingCreateEventScopes({ provider, scopes: null })).toEqual([
-      scope,
-    ]);
+    expect(
+      getMissingCreateCalendarEventScopes({ provider, scopes: null }),
+    ).toEqual([scope]);
   });
 
   it.each([
@@ -57,6 +57,8 @@ describe('getMissingCreateEventScopes', () => {
     ConnectedAccountProvider.OIDC,
     ConnectedAccountProvider.SAML,
   ])('does not require OAuth scopes for %s accounts', (provider) => {
-    expect(getMissingCreateEventScopes({ provider, scopes: null })).toEqual([]);
+    expect(
+      getMissingCreateCalendarEventScopes({ provider, scopes: null }),
+    ).toEqual([]);
   });
 });

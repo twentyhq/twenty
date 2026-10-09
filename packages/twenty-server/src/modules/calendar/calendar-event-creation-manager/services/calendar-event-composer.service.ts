@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import {
-  getMissingCreateEventScopes,
+  getMissingCreateCalendarEventScopes,
   isDefined,
   isValidUuid,
 } from 'twenty-shared/utils';
@@ -65,7 +65,7 @@ export class CalendarEventComposerService {
 
     const { connectedAccount, calendarChannel } = resolution;
 
-    const missingScopes = getMissingCreateEventScopes(connectedAccount);
+    const missingScopes = getMissingCreateCalendarEventScopes(connectedAccount);
 
     if (missingScopes.length > 0) {
       return {

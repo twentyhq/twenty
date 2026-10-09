@@ -6,7 +6,10 @@ import { useOpenComposeCalendarEventInSidePanel } from '@/side-panel/hooks/useOp
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
-import { getMissingCreateEventScopes, isDefined } from 'twenty-shared/utils';
+import {
+  getMissingCreateCalendarEventScopes,
+  isDefined,
+} from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useComposeCalendarEventForTargetRecord = (
@@ -31,7 +34,7 @@ export const useComposeCalendarEventForTargetRecord = (
 
   const preferredAccount =
     calendarAccounts.find(
-      (account) => getMissingCreateEventScopes(account).length === 0,
+      (account) => getMissingCreateCalendarEventScopes(account).length === 0,
     ) ?? calendarAccounts[0];
 
   const openComposer = () => {

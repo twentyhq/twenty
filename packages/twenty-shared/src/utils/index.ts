@@ -31,7 +31,7 @@ export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMe
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { getConnectedAccountPermissionScopes } from './connectedAccount/getConnectedAccountPermissionScopes';
-export { getMissingCreateEventScopes } from './connectedAccount/getMissingCreateEventScopes';
+export { getMissingCreateCalendarEventScopes } from './connectedAccount/getMissingCreateCalendarEventScopes';
 export { getMissingDraftEmailScopes } from './connectedAccount/getMissingDraftEmailScopes';
 export { formatValueForCSV } from './csv/formatValueForCSV';
 export { sanitizeValueForCSVExport } from './csv/sanitizeValueForCSVExport';

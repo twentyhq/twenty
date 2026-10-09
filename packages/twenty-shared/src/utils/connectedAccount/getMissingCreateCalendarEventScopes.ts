@@ -1,7 +1,7 @@
 import { type ConnectedAccountProvider } from '@/types';
 import { getConnectedAccountPermissionScopes } from '@/utils/connectedAccount/getConnectedAccountPermissionScopes';
 
-export const getMissingCreateEventScopes = (connectedAccount: {
+export const getMissingCreateCalendarEventScopes = (connectedAccount: {
   provider: ConnectedAccountProvider;
   scopes: string[] | null;
 }): string[] => {
