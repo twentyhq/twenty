@@ -8,6 +8,7 @@ import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/wor
 import { createMockIteratorStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { SendChatMessageWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message.workflow-action';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const WORKSPACE_ID = 'workspace-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
@@ -34,6 +35,7 @@ describe('SendChatMessageWorkflowAction', () => {
   const sendMessage = jest.fn();
   const findWorkflowRun = jest.fn();
   const findCoreWorkflowById = jest.fn();
+  const armStepWait = jest.fn();
   let action: SendChatMessageWorkflowAction;
 
   const execute = (input: Record<string, unknown>) =>
@@ -70,6 +72,7 @@ describe('SendChatMessageWorkflowAction', () => {
         } as unknown as WorkspaceOrmManager,
         { findCoreWorkflowById } as unknown as WorkflowCoreSyncService,
       ),
+      { arm: armStepWait } as unknown as WorkflowStepWaitWorkspaceService,
     );
   });
 
@@ -125,9 +128,38 @@ describe('SendChatMessageWorkflowAction', () => {
             type: 'WORKFLOW_STEP',
             ref: { workflowRunId: WORKFLOW_RUN_ID, stepId: 'step-1' },
           },
+          waitOnAnswer: expect.any(Function),
         },
       }),
     );
+  });
+
+  it('waits on the answer as the call is posted, before it can be answered', async () => {
+    sendMessage.mockImplementation(async ({ awaitedToolCall }) => {
+      await awaitedToolCall.waitOnAnswer({
+        threadId: 'thread-id',
+        toolCallId: 'call-id',
+      });
+
+      return {
+        status: 'AWAITING',
+        threadId: 'thread-id',
+        toolCallId: 'call-id',
+      };
+    });
+
+    await execute({
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+      text: 'Approve the update?',
+      toolCall: { toolName: 'update_one_company', arguments: { id: 'id' } },
+    });
+
+    expect(armStepWait).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      workflowRunId: WORKFLOW_RUN_ID,
+      stepId: 'step-1',
+      wait: { type: 'ANSWER', threadId: 'thread-id', toolCallId: 'call-id' },
+    });
   });
 
   it('sends each iteration once, even when two iterations say the same thing', async () => {
