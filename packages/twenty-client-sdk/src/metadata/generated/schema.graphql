@@ -975,10 +975,6 @@ type CalendarConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
-type CalendarEventParticipantsConfiguration {
-  configurationType: WidgetConfigurationType!
-}
-
 type CallRecordingSummaryConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -5706,13 +5702,12 @@ type Webhook {
   updatedAt: DateTime!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CalendarEventParticipantsConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 enum WidgetConfigurationType {
   AGGREGATE_CHART
   BAR_CHART
   CALENDAR
-  CALENDAR_EVENT_PARTICIPANTS
   CALL_RECORDING_SUMMARY
   CALL_RECORDING_TRANSCRIPT
   CHAT
@@ -5743,7 +5738,6 @@ enum WidgetConfigurationType {
 
 enum WidgetType {
   CALENDAR
-  CALENDAR_EVENT_PARTICIPANTS
   CALL_RECORDING_SUMMARY
   CALL_RECORDING_TRANSCRIPT
   CHAT
