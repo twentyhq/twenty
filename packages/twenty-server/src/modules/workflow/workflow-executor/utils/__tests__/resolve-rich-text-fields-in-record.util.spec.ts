@@ -92,6 +92,63 @@ describe('resolveRichTextFieldsInRecord', () => {
     });
   });
 
+  it('converts a TipTap body into BlockNote after resolving its variables', () => {
+    const tipTapBody = JSON.stringify([
+      {
+        type: 'paragraph',
+        content: [
+          { type: 'text', text: 'Amount', marks: [{ type: 'bold' }] },
+          { type: 'text', text: ': ' },
+          {
+            type: 'variableTag',
+            attrs: { variable: '{{trigger.body.amount}}' },
+          },
+        ],
+      },
+    ]);
+
+    const resolved = resolveRichTextFieldsInRecord(
+      { body: { blocknote: tipTapBody, markdown: null } },
+      objectMetadataInfo,
+      context,
+    );
+
+    const { blocknote, markdown } = resolved.body as {
+      blocknote: string;
+      markdown: string;
+    };
+
+    expect(markdown).toBe('**Amount**: 42');
+    expect(JSON.parse(blocknote)[0]).toMatchObject({
+      type: 'paragraph',
+      content: [
+        { type: 'text', text: 'Amount', styles: { bold: true } },
+        { type: 'text', text: ': 42' },
+      ],
+    });
+  });
+
+  it('keeps a BlockNote body untouched', () => {
+    const blocknoteBody = JSON.stringify([
+      {
+        id: 'b1',
+        type: 'paragraph',
+        props: {},
+        children: [],
+        content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
+      },
+      { id: 'b2', type: 'divider', props: {}, children: [] },
+    ]);
+
+    const resolved = resolveRichTextFieldsInRecord(
+      { body: { blocknote: blocknoteBody, markdown: null } },
+      objectMetadataInfo,
+      context,
+    );
+
+    expect(resolved.body).toEqual({ blocknote: blocknoteBody, markdown: null });
+  });
+
   it('leaves a value that is not a rich text object untouched', () => {
     const resolved = resolveRichTextFieldsInRecord(
       { body: 'legacy bare string {{trigger.body.amount}}', title: 'x' },

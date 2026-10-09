@@ -99,14 +99,11 @@ describe('convertTipTapBlocksToMarkdown', () => {
       ],
       markdown: 'First\nSecond',
     },
-  ])(
-    'should convert $name without any TipTap-only block',
-    ({ blocks, markdown }) => {
-      expect(convertTipTapBlocksToMarkdown(JSON.stringify(blocks))).toBe(
-        markdown,
-      );
-    },
-  );
+  ])('should convert $name', ({ blocks, markdown }) => {
+    expect(convertTipTapBlocksToMarkdown(JSON.stringify(blocks))).toBe(
+      markdown,
+    );
+  });
 
   it('should return undefined for invalid json', () => {
     expect(convertTipTapBlocksToMarkdown('not json')).toBeUndefined();
@@ -146,6 +143,21 @@ describe('convertTipTapBlocksToMarkdown', () => {
         children: [],
         content: [{ type: 'text', text: 'call the client', styles: {} }],
       },
+    ]);
+
+    expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
+  });
+
+  it('should leave a blocknote body with a divider alone', () => {
+    const blocknoteBody = JSON.stringify([
+      {
+        id: 'b1',
+        type: 'paragraph',
+        props: {},
+        children: [],
+        content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
+      },
+      { id: 'b2', type: 'divider', props: {}, children: [] },
     ]);
 
     expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();

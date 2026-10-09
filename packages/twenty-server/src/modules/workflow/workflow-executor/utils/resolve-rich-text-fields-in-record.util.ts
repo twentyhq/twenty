@@ -1,9 +1,13 @@
 import { isString } from '@sniptt/guards';
 import { richTextValueSchema } from 'twenty-shared/types';
 import {
+  convertTipTapBlocksToMarkdown,
+  isDefined,
   resolveRichTextVariables,
   resolveStringTemplate,
 } from 'twenty-shared/utils';
+
+import { convertMarkdownToBlocknoteBlocks } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-to-blocknote-blocks.util';
 
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
@@ -31,14 +35,24 @@ export const resolveRichTextFieldsInRecord = (
 
     const { blocknote, markdown } = parsedRichTextValue.data;
 
-    resolvedRecord[fieldName] = {
-      blocknote: isString(blocknote)
-        ? resolveRichTextVariables(blocknote, context)
-        : blocknote,
-      markdown: isString(markdown)
-        ? resolveStringTemplate(markdown, context)
-        : markdown,
-    };
+    const resolvedBlocknote = isString(blocknote)
+      ? resolveRichTextVariables(blocknote, context)
+      : blocknote;
+    const resolvedMarkdown = isString(markdown)
+      ? resolveStringTemplate(markdown, context)
+      : markdown;
+    const tipTapMarkdown = isString(resolvedBlocknote)
+      ? convertTipTapBlocksToMarkdown(resolvedBlocknote)
+      : undefined;
+
+    resolvedRecord[fieldName] = isDefined(tipTapMarkdown)
+      ? {
+          blocknote: JSON.stringify(
+            convertMarkdownToBlocknoteBlocks(tipTapMarkdown),
+          ),
+          markdown: resolvedMarkdown || tipTapMarkdown,
+        }
+      : { blocknote: resolvedBlocknote, markdown: resolvedMarkdown };
   }
 
   return resolvedRecord;
