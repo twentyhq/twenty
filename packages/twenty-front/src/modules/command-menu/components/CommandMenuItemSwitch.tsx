@@ -49,7 +49,7 @@ export const CommandMenuItemSwitch = ({
 
   return (
     <SettingsRow
-      className={className}
+      labelRender={<label className={className} />}
       focused={isSelectedItemId}
       startElement={
         isDefined(LeftIcon) && (
@@ -58,7 +58,10 @@ export const CommandMenuItemSwitch = ({
           </StyledIconContainer>
         )
       }
-      switchProps={{ disabled, checked, onCheckedChange, size }}
+      disabled={disabled}
+      checked={checked}
+      onCheckedChange={onCheckedChange}
+      size={size}
     >
       {text}
     </SettingsRow>

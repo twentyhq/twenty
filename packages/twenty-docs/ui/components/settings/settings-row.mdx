@@ -1,6 +1,6 @@
 ---
 title: SettingsRow
-description: A labeled switch row with separate label and control configuration.
+description: A labeled switch row with flat control props and native label composition.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
@@ -16,9 +16,9 @@ import SettingsRowReference from '/snippets/ui/generated/components/settings/set
 
 ## Configure the switch
 
-Pass the complete [Switch contract](/ui/primitives/input/switch) through `switchProps`. This includes checked state, event details, disabled and read-only behavior, size, native form configuration, handlers, refs, and render composition.
+Pass [Switch props](/ui/primitives/input/switch) directly to `SettingsRow`. Checked state, event details, disabled and read-only behavior, size, native form configuration, handlers, refs, and render composition configure the switch. `children` supplies the visible row label.
 
-Use `switchProps.checked` and `switchProps.onCheckedChange` when your application owns the value. The handler receives the next checked state and Base UI event details. Clicking the label or switch invokes it once. Call `eventDetails.cancel()` to reject a change, and keep your controlled value unchanged when the change is canceled.
+Use `checked` and `onCheckedChange` when your application owns the value. The handler receives the next checked state and Base UI event details. Clicking the label or switch invokes it once. Call `eventDetails.cancel()` to reject a change, and keep your controlled value unchanged when the change is canceled.
 
 ```tsx
 import { useState } from 'react';
@@ -31,7 +31,8 @@ export const NotificationSetting = () => {
   return (
     <SettingsRow
       startElement={<IconBell aria-hidden />}
-      switchProps={{ checked: enabled, onCheckedChange: setEnabled }}
+      checked={enabled}
+      onCheckedChange={setEnabled}
     >
       Notifications
     </SettingsRow>
@@ -39,15 +40,15 @@ export const NotificationSetting = () => {
 };
 ```
 
-Use `switchProps.defaultChecked` for an uncontrolled setting. Keyboard users focus the switch and press Space. `switchProps.disabled` disables the control and applies the row's disabled appearance. `switchProps.readOnly` prevents changes while keeping the switch focusable.
+Use `defaultChecked` for an uncontrolled setting. Keyboard users focus the switch and press Space. `disabled` disables the control and applies the row's disabled appearance. `readOnly` prevents changes while keeping the switch focusable.
 
 ```tsx
 import { SettingsRow } from 'twenty-ui/components/settings';
 
 export const WorkspaceSettings = () => (
   <>
-    <SettingsRow switchProps={{ disabled: true }}>Notifications</SettingsRow>
-    <SettingsRow switchProps={{ readOnly: true, defaultChecked: true }}>
+    <SettingsRow disabled>Notifications</SettingsRow>
+    <SettingsRow readOnly defaultChecked>
       Activity history
     </SettingsRow>
   </>
@@ -68,30 +69,27 @@ export const WorkspaceSettings = () => (
 import { SettingsRow } from 'twenty-ui/components/settings';
 
 export const WeeklyDigestSetting = () => (
-  <SettingsRow
-    description="Sent every Monday"
-    switchProps={{ defaultChecked: true, name: 'digest' }}
-  >
+  <SettingsRow defaultChecked description="Sent every Monday" name="digest">
     Weekly digest
   </SettingsRow>
 );
 ```
 
-Set `switchProps['aria-label']`, `switchProps['aria-labelledby']`, or `switchProps['aria-describedby']` to supply your own accessible text. An explicit `aria-label` replaces the generated name association; explicit `aria-labelledby` and `aria-describedby` values replace the corresponding generated associations.
+Set `aria-label`, `aria-labelledby`, or `aria-describedby` to supply your own accessible text for the switch. An explicit `aria-label` replaces the generated name association; explicit `aria-labelledby` and `aria-describedby` values replace the corresponding generated associations.
 
 ## Native targets and composition
 
-Label customization and control customization have separate targets:
+The ordinary native props configure the control. Label customization has two explicit names:
 
-| Props                                                                                | Target                                  |
-| ------------------------------------------------------------------------------------ | --------------------------------------- |
-| `SettingsRow` native attributes, handlers, `className`, `style`, `ref`, and `render` | The outer native label                  |
-| `switchProps` native attributes, handlers, `className`, `style`, `ref`, and `render` | The visible Switch root                 |
-| `switchProps.inputRef`, `name`, `value`, `uncheckedValue`, `required`, and `form`    | The Switch's underlying native checkbox |
+| Props                                                                                   | Target                                  |
+| --------------------------------------------------------------------------------------- | --------------------------------------- |
+| Native attributes, handlers, `className`, `style`, `ref`, and `render`                  | The visible Switch root                 |
+| `inputRef`, `name`, `value`, `uncheckedValue`, `required`, and `form`                   | The Switch's underlying native checkbox |
+| `labelRef` and attributes, handlers, classes, and styles supplied through `labelRender` | The outer native label                  |
 
-The label's `htmlFor` is managed internally and follows `switchProps.id`, or a generated control ID when no ID is supplied. With the default Switch composition, this ID identifies the underlying checkbox. With `switchProps.nativeButton`, it identifies the visible button. `switchProps.ref` targets the visible root in both cases. A root `id` identifies the label.
+The label's `htmlFor` is managed internally and follows `id`, or a generated control ID when no ID is supplied. With the default Switch composition, this ID identifies the underlying checkbox. With `nativeButton`, it identifies the visible button. `ref` targets the visible root in both cases.
 
-Preserve the native label when composing the row with `render`, and forward the render callback props to your element. Its `props.children` contains the complete row, including the switch.
+Use `labelRender` to customize the row's native label. Preserve a label element and forward the render callback props to your element. Its `props.children` contains the complete row, including the switch. Element composition merges its classes and styles with the row's defaults.
 
 ```tsx
 import { useRef } from 'react';
@@ -104,16 +102,13 @@ export const ComposedNotificationSetting = () => {
 
   return (
     <SettingsRow
-      id="notification-row"
-      ref={labelRef}
-      render={<label data-setting="notifications" />}
-      switchProps={{
-        id: 'notification-control',
-        ref: controlRef,
-        inputRef,
-        nativeButton: true,
-        render: <button />,
-      }}
+      id="notification-control"
+      ref={controlRef}
+      inputRef={inputRef}
+      nativeButton
+      render={<button />}
+      labelRef={labelRef}
+      labelRender={<label id="notification-row" data-setting="notifications" />}
     >
       Notifications
     </SettingsRow>
@@ -121,9 +116,9 @@ export const ComposedNotificationSetting = () => {
 };
 ```
 
-Native label handlers receive label events and bubbled control events. Calling `preventDefault()` on a label click prevents its native control activation. Use `switchProps.onCheckedChange` for preference updates, rather than inferring state from a label click.
+`onClick` receives control clicks. Native handlers supplied through `labelRender` receive label events and bubbled control events. Calling `preventDefault()` on a label click prevents its native control activation. Use `onCheckedChange` for preference updates, rather than inferring state from a label click.
 
-The switch defaults to `switchProps.size="sm"`; use `"md"` for a larger switch. The row height stays the same. `focused` applies the row's highlighted appearance without moving keyboard focus. Switch state-based `className`, `style`, and `render` callbacks remain available through `switchProps`.
+The switch defaults to `size="sm"`; use `"md"` for a larger switch. The row height stays the same. `focused` applies the row's highlighted appearance without moving keyboard focus. `className`, `style`, and `render` accept Switch state callbacks and customize the control. Supply label classes and styles through `labelRender` to customize the row.
 
 ## Front component renderer
 
@@ -133,7 +128,7 @@ Inside a front component, use the native button composition for a switch nested 
 import { SettingsRow } from 'twenty-ui/components/settings';
 
 export const FrontComponentNotificationSetting = () => (
-  <SettingsRow switchProps={{ nativeButton: true, render: <button /> }}>
+  <SettingsRow nativeButton render={<button />}>
     Notifications
   </SettingsRow>
 );
@@ -143,7 +138,7 @@ This composition activates once when clicking the label or control. The renderer
 
 ## Forms and reset
 
-`switchProps.name`, `value`, and `required` configure the underlying checkbox for form submission and validation. A checked switch submits its value. An unchecked switch omits the value unless `uncheckedValue` is supplied. Use `switchProps.form` to associate the input with a form outside the row's parent tree.
+`name`, `value`, and `required` configure the underlying checkbox for form submission and validation. A checked switch submits its value. An unchecked switch omits the value unless `uncheckedValue` is supplied. Use `form` to associate the input with a form outside the row's parent tree.
 
 For controlled form reset, restore the application-owned checked value in the form's `onReset` handler. Base UI 1.8 does not restore uncontrolled switch state on native form reset. `SettingsRow` preserves this upstream behavior.
 
@@ -158,13 +153,11 @@ export const NotificationPreferences = () => {
   return (
     <form onReset={() => setEnabled(true)}>
       <SettingsRow
-        switchProps={{
-          checked: enabled,
-          onCheckedChange: setEnabled,
-          name: 'notifications',
-          value: 'enabled',
-          uncheckedValue: 'disabled',
-        }}
+        checked={enabled}
+        onCheckedChange={setEnabled}
+        name="notifications"
+        value="enabled"
+        uncheckedValue="disabled"
       >
         Notifications
       </SettingsRow>

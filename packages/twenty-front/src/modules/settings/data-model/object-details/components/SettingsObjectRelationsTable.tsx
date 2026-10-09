@@ -224,10 +224,8 @@ export const SettingsObjectRelationsTable = ({
             <Dropdown.Section>
               <SettingsRow
                 startElement={<IconArchive />}
-                switchProps={{
-                  onCheckedChange: () => setShowInactive(!showInactive),
-                  checked: showInactive,
-                }}
+                onCheckedChange={() => setShowInactive(!showInactive)}
+                checked={showInactive}
               >{t`Inactive`}</SettingsRow>
             </Dropdown.Section>
           </DropdownContent>

@@ -108,17 +108,13 @@ export const SettingsRolesList = () => {
             <Dropdown.Section>
               <SettingsRow
                 startElement={<IconLego />}
-                switchProps={{
-                  onCheckedChange: () => setShowAgentRoles(!showAgentRoles),
-                  checked: showAgentRoles,
-                }}
+                onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
+                checked={showAgentRoles}
               >{t`Agent roles`}</SettingsRow>
               <SettingsRow
                 startElement={<IconKey />}
-                switchProps={{
-                  onCheckedChange: () => setShowApiKeyRoles(!showApiKeyRoles),
-                  checked: showApiKeyRoles,
-                }}
+                onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
+                checked={showApiKeyRoles}
               >{t`API key roles`}</SettingsRow>
             </Dropdown.Section>
           </DropdownContent>

@@ -143,18 +143,14 @@ export const SettingsAgentSkillsTab = () => {
                 <Dropdown.Section>
                   <SettingsRow
                     startElement={<IconArchive />}
-                    switchProps={{
-                      onCheckedChange: setShowDeactivated,
-                      checked: showDeactivated,
-                    }}
+                    onCheckedChange={setShowDeactivated}
+                    checked={showDeactivated}
                   >{t`Deactivated`}</SettingsRow>
                   {isAdvancedModeEnabled && (
                     <SettingsRow
                       startElement={<IconSettings />}
-                      switchProps={{
-                        onCheckedChange: setShowSystemSkills,
-                        checked: showSystemSkills,
-                      }}
+                      onCheckedChange={setShowSystemSkills}
+                      checked={showSystemSkills}
                     >{t`System skills`}</SettingsRow>
                   )}
                 </Dropdown.Section>

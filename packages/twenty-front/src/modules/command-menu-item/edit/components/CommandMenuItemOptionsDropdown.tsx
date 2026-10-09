@@ -53,11 +53,9 @@ export const CommandMenuItemOptionsDropdown = ({
         <Dropdown.Section>
           <SettingsRow
             startElement={<IconTag />}
-            switchProps={{
-              disabled: hasNoShortLabel,
-              checked: isLabelHidden || hasNoShortLabel,
-              onCheckedChange: handleHiddenLabelChange,
-            }}
+            disabled={hasNoShortLabel}
+            checked={isLabelHidden || hasNoShortLabel}
+            onCheckedChange={handleHiddenLabelChange}
           >{t`Hide label`}</SettingsRow>
           <Dropdown.ActionItem
             startIcon={<IconRefresh />}

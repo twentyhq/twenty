@@ -44,9 +44,7 @@ export const WithFilter: Story = {
         <Dropdown.Trigger render={filterButton} />
         <Dropdown.Content align="end">
           <Dropdown.Section>
-            <SettingsRow switchProps={{ defaultChecked: true }}>
-              Include inactive people
-            </SettingsRow>
+            <SettingsRow defaultChecked>Include inactive people</SettingsRow>
           </Dropdown.Section>
         </Dropdown.Content>
       </Dropdown.Root>

@@ -30,36 +30,33 @@ export const SettingsAdminChatsFilterDropdown = ({
         <Dropdown.Section>
           <SettingsRow
             startElement={<IconSparkles />}
-            switchProps={{
-              onCheckedChange: () =>
-                onFiltersChange({
-                  ...filters,
-                  onboardingOnly: !filters.onboardingOnly,
-                }),
-              checked: filters.onboardingOnly,
-            }}
+            onCheckedChange={() =>
+              onFiltersChange({
+                ...filters,
+                onboardingOnly: !filters.onboardingOnly,
+              })
+            }
+            checked={filters.onboardingOnly}
           >{t`Onboarding only`}</SettingsRow>
           <SettingsRow
             startElement={<IconAlertTriangle />}
-            switchProps={{
-              onCheckedChange: () =>
-                onFiltersChange({
-                  ...filters,
-                  hasErrorOnly: !filters.hasErrorOnly,
-                }),
-              checked: filters.hasErrorOnly,
-            }}
+            onCheckedChange={() =>
+              onFiltersChange({
+                ...filters,
+                hasErrorOnly: !filters.hasErrorOnly,
+              })
+            }
+            checked={filters.hasErrorOnly}
           >{t`Has error`}</SettingsRow>
           <SettingsRow
             startElement={<IconMessage />}
-            switchProps={{
-              onCheckedChange: () =>
-                onFiltersChange({
-                  ...filters,
-                  userNeverEngagedOnly: !filters.userNeverEngagedOnly,
-                }),
-              checked: filters.userNeverEngagedOnly,
-            }}
+            onCheckedChange={() =>
+              onFiltersChange({
+                ...filters,
+                userNeverEngagedOnly: !filters.userNeverEngagedOnly,
+              })
+            }
+            checked={filters.userNeverEngagedOnly}
           >{t`No user reply`}</SettingsRow>
         </Dropdown.Section>
       </DropdownContent>

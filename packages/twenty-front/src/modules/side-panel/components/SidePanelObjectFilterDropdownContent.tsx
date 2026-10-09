@@ -101,11 +101,10 @@ export const SidePanelObjectFilterDropdownContent = ({
       <Dropdown.Section>
         <SettingsRow
           startElement={<IconCube />}
-          switchProps={{
-            onCheckedChange: () =>
-              setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects),
-            checked: sidePanelShowHiddenObjects,
-          }}
+          onCheckedChange={() =>
+            setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
+          }
+          checked={sidePanelShowHiddenObjects}
         >{t`Show hidden objects`}</SettingsRow>
       </Dropdown.Section>
     </>

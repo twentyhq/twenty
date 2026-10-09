@@ -123,10 +123,12 @@ Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popov
 
 An invisible popup is not a compatibility pass.
 
-SettingsRow's controlled composition uses `switchProps.nativeButton: true` and
-an actual button through `switchProps.render`, preserving one change callback
-for label and control activation. Default span-based rows still cover label
-activation, uncontrolled state, read-only and disabled behavior. Directly
+SettingsRow's flat Switch props target the control. Its controlled composition
+uses `nativeButton` and an actual button through `render`, preserving one change
+callback for label and control activation. `labelRender` supplies native label
+attributes and handlers, and `labelRef` targets that label. Default span-based
+rows still cover label activation, uncontrolled state, read-only and disabled
+behavior. Directly
 clicking a span control inside its label can produce duplicate change callbacks
 because worker cancellation cannot stop the host label's default activation in
 time. Native validation attributes such as `required` are currently filtered by

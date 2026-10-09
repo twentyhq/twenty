@@ -205,11 +205,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             <SettingsRow
               focused={selectedItemId === 'HideEmptyGroups'}
               startElement={<IconCircleOff />}
-              switchProps={{
-                disabled: !canPersistChanges,
-                onCheckedChange: handleHideEmptyRecordGroupChange,
-                checked: shouldHideEmptyGroups,
-              }}
+              disabled={!canPersistChanges}
+              onCheckedChange={handleHideEmptyRecordGroupChange}
+              checked={shouldHideEmptyGroups}
             >{t`Hide empty groups`}</SettingsRow>
           </SelectableListItem>
         </SelectableList>

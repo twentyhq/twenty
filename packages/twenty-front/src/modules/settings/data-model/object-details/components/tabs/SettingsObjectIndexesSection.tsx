@@ -176,11 +176,10 @@ export const SettingsObjectIndexesSection = ({
               <Dropdown.Section>
                 <SettingsRow
                   startElement={<IconEyeOff />}
-                  switchProps={{
-                    onCheckedChange: () =>
-                      setHideSystemIndexes(!hideSystemIndexes),
-                    checked: hideSystemIndexes,
-                  }}
+                  onCheckedChange={() =>
+                    setHideSystemIndexes(!hideSystemIndexes)
+                  }
+                  checked={hideSystemIndexes}
                 >{t`Hide system indexes`}</SettingsRow>
               </Dropdown.Section>
             </DropdownContent>

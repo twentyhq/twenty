@@ -1,4 +1,3 @@
-import { mergeProps } from '@base-ui/react/merge-props';
 import { useId } from 'react';
 
 import { Switch } from '@ui/primitives/input/Switch/Switch';
@@ -14,46 +13,41 @@ export const SettingsRow = ({
   startElement,
   description,
   focused = false,
-  switchProps = {},
-  className,
-  style,
-  render,
-  ref,
-  ...labelProps
+  labelRender,
+  labelRef,
+  ...controlProps
 }: SettingsRowProps) => {
   const generatedSwitchId = useId();
-  const { id: switchId = generatedSwitchId, size = 'sm' } = switchProps;
+  const { id: switchId = generatedSwitchId, size = 'sm' } = controlProps;
   const labelId = `${generatedSwitchId}-label`;
   const descriptionId = `${generatedSwitchId}-description`;
   const hasDescription = isRenderableSlot(description);
-  const hasControlLabel = isDefined(switchProps['aria-label']);
+  const hasControlLabel = isDefined(controlProps['aria-label']);
 
   return (
     <ListItem
-      className={className}
-      style={style}
       startIcon={startElement}
       focused={focused}
-      data-disabled={switchProps.disabled || undefined}
+      data-disabled={controlProps.disabled || undefined}
       description={
         hasDescription && <span id={descriptionId}>{description}</span>
       }
       render={(renderProps) => (
         <SettingsRowLabel
-          {...mergeProps(renderProps, labelProps)}
+          {...renderProps}
           htmlFor={switchId}
-          render={render}
-          ref={ref}
+          render={labelRender}
+          ref={labelRef}
         />
       )}
       endIcon={
         <Switch
-          {...switchProps}
+          {...controlProps}
           aria-labelledby={
-            switchProps['aria-labelledby'] ?? (hasControlLabel ? '' : labelId)
+            controlProps['aria-labelledby'] ?? (hasControlLabel ? '' : labelId)
           }
           aria-describedby={
-            switchProps['aria-describedby'] ??
+            controlProps['aria-describedby'] ??
             (hasDescription ? descriptionId : undefined)
           }
           id={switchId}

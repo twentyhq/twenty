@@ -11,7 +11,6 @@ import {
 
 import { SettingsRow } from '../SettingsRow';
 import { type SettingsRowProps } from '../types/SettingsRowProps';
-import { SettingsRowCatalogExample } from './SettingsRowCatalogExample';
 
 const meta: Meta<typeof SettingsRow> = {
   id: 'ui-components-settingsrow',
@@ -25,17 +24,14 @@ export default meta;
 type Story = StoryObj<typeof SettingsRow>;
 
 export const Default: Story = { decorators: [ComponentDecorator] };
-export const Checked: Story = {
-  ...Default,
-  args: { switchProps: { defaultChecked: true } },
-};
+export const Checked: Story = { ...Default, args: { defaultChecked: true } };
 export const Disabled: Story = {
   ...Default,
-  args: { switchProps: { disabled: true, defaultChecked: true } },
+  args: { disabled: true, defaultChecked: true },
 };
 export const ReadOnly: Story = {
   ...Default,
-  args: { switchProps: { readOnly: true, defaultChecked: true } },
+  args: { readOnly: true, defaultChecked: true },
 };
 export const WithDescription: Story = {
   ...Default,
@@ -45,19 +41,15 @@ export const WithDescription: Story = {
 
 const STATE_PROPS = {
   off: {},
-  on: { switchProps: { defaultChecked: true } },
+  on: { defaultChecked: true },
   highlighted: { focused: true },
-  disabled: { switchProps: { disabled: true } },
-  'disabled on': { switchProps: { disabled: true, defaultChecked: true } },
-  'read only': { switchProps: { readOnly: true, defaultChecked: true } },
+  disabled: { disabled: true },
+  'disabled on': { disabled: true, defaultChecked: true },
+  'read only': { readOnly: true, defaultChecked: true },
 } satisfies Record<string, Partial<SettingsRowProps>>;
 
-export const Catalog: CatalogStory<
-  StoryObj<typeof SettingsRowCatalogExample>,
-  typeof SettingsRowCatalogExample
-> = {
+export const Catalog: CatalogStory<Story, typeof SettingsRow> = {
   decorators: [CatalogDecorator],
-  render: (args) => <SettingsRowCatalogExample {...args} />,
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
@@ -65,7 +57,7 @@ export const Catalog: CatalogStory<
         {
           name: 'size',
           values: ['sm', 'md'] satisfies SwitchSize[],
-          props: (switchSize: SwitchSize) => ({ switchSize }),
+          props: (size: SwitchSize) => ({ size }),
         },
         {
           name: 'state',

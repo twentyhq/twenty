@@ -6,14 +6,10 @@ import { SettingsRow } from '../SettingsRow';
 import { type SettingsRowProps } from '../types/SettingsRowProps';
 
 export const ControlledSettingsRowFormExample = ({
-  switchProps,
+  defaultChecked = false,
+  onCheckedChange,
   ...props
 }: SettingsRowProps) => {
-  const {
-    defaultChecked = false,
-    onCheckedChange,
-    ...controlProps
-  } = switchProps ?? {};
   const [checked, setChecked] = useState(defaultChecked);
 
   return (
@@ -23,18 +19,15 @@ export const ControlledSettingsRowFormExample = ({
     >
       <SettingsRow
         {...props}
-        switchProps={{
-          ...controlProps,
-          checked,
-          onCheckedChange: (nextChecked, eventDetails) => {
-            onCheckedChange?.(nextChecked, eventDetails);
+        checked={checked}
+        onCheckedChange={(nextChecked, eventDetails) => {
+          onCheckedChange?.(nextChecked, eventDetails);
 
-            if (eventDetails.isCanceled) {
-              return;
-            }
+          if (eventDetails.isCanceled) {
+            return;
+          }
 
-            setChecked(nextChecked);
-          },
+          setChecked(nextChecked);
         }}
       />
       <Button type="reset">Reset</Button>

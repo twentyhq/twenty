@@ -189,30 +189,26 @@ export const SettingsObjectFieldTable = ({
                 <Dropdown.Section>
                   <SettingsRow
                     startElement={<IconArchive />}
-                    switchProps={{
-                      onCheckedChange: () => setShowInactive(!showInactive),
-                      checked: showInactive,
-                    }}
+                    onCheckedChange={() => setShowInactive(!showInactive)}
+                    checked={showInactive}
                   >{t`Inactive`}</SettingsRow>
                   {(mostlyEmptyFieldMetadataIds.size > 0 ||
                     showOnlyMostlyEmpty) && (
                     <SettingsRow
                       startElement={<IconCircleDashed />}
-                      switchProps={{
-                        onCheckedChange: () =>
-                          setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty),
-                        checked: showOnlyMostlyEmpty,
-                      }}
+                      onCheckedChange={() =>
+                        setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
+                      }
+                      checked={showOnlyMostlyEmpty}
                     >{t`Mostly empty`}</SettingsRow>
                   )}
                   {isAdvancedModeEnabled && (
                     <SettingsRow
                       startElement={<IconSettings />}
-                      switchProps={{
-                        onCheckedChange: () =>
-                          setShowSystemFields(!showSystemFields),
-                        checked: showSystemFields,
-                      }}
+                      onCheckedChange={() =>
+                        setShowSystemFields(!showSystemFields)
+                      }
+                      checked={showSystemFields}
                     >{t`System fields`}</SettingsRow>
                   )}
                 </Dropdown.Section>

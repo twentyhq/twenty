@@ -1,4 +1,4 @@
-import { createElement, useState } from 'react';
+import { createElement, type MouseEvent, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconBell } from 'twenty-ui/icon';
@@ -17,18 +17,49 @@ const SettingsRowExample = () => {
   return (
     <TwentyUiGalleryCard title="SettingsRow">
       <SettingsRow
-        id="notifications-row"
-        data-testid="notifications-row"
-        title="Native label"
+        id="notifications-control"
+        title="Switch control"
+        name="notifications"
+        value="enabled"
+        uncheckedValue="disabled"
+        checked={notifications}
+        nativeButton
         ref={(element) => {
+          element?.setAttribute('data-ref-target', 'control');
+        }}
+        inputRef={(element) => {
+          element?.setAttribute('data-ref-target', 'input');
+        }}
+        render={(props, state) =>
+          createElement('button', {
+            ...props,
+            'data-active': String(state.checked),
+          })
+        }
+        onClick={(event) => {
+          setControlEvent(`${event.currentTarget.tagName}/${event.type}`);
+        }}
+        onCheckedChange={(checked, details) => {
+          setNotifications(checked);
+          setChanges((count) => count + 1);
+          setChangeEvent(`${details.event.type}/${typeof details.cancel}`);
+        }}
+        labelRef={(element) => {
           element?.setAttribute('data-ref-target', 'label');
         }}
-        render={(props) =>
+        labelRender={(props) =>
           createElement(
             'label',
             {
               ...props,
+              id: 'notifications-row',
+              title: 'Native label',
+              'data-testid': 'notifications-row',
               'data-label-render': 'true',
+              onClick: (event: MouseEvent<HTMLLabelElement>) => {
+                props.onClick?.(event);
+                setLabelEvent(`${event.currentTarget.tagName}/${event.type}`);
+              },
             },
             createElement(
               'span',
@@ -37,9 +68,6 @@ const SettingsRowExample = () => {
             ),
           )
         }
-        onClick={(event) => {
-          setLabelEvent(`${event.currentTarget.tagName}/${event.type}`);
-        }}
         startElement={
           <span data-testid="notifications-start">
             <IconBell aria-hidden />
@@ -51,64 +79,28 @@ const SettingsRowExample = () => {
             Updates <strong>by email</strong>
           </span>
         }
-        switchProps={{
-          id: 'notifications-control',
-          title: 'Switch control',
-          name: 'notifications',
-          value: 'enabled',
-          uncheckedValue: 'disabled',
-          checked: notifications,
-          nativeButton: true,
-          ref: (element) => {
-            element?.setAttribute('data-ref-target', 'control');
-          },
-          inputRef: (element) => {
-            element?.setAttribute('data-ref-target', 'input');
-          },
-          render: (props, state) =>
-            createElement('button', {
-              ...props,
-              'data-active': String(state.checked),
-            }),
-          onClick: (event) => {
-            setControlEvent(`${event.currentTarget.tagName}/${event.type}`);
-          },
-          onCheckedChange: (checked, details) => {
-            setNotifications(checked);
-            setChanges((count) => count + 1);
-            setChangeEvent(`${details.event.type}/${typeof details.cancel}`);
-          },
-        }}
       >
         Notifications
       </SettingsRow>
       <SettingsRow
-        switchProps={{
-          disabled: true,
-          onCheckedChange: () => setChanges((count) => count + 1),
-        }}
+        disabled
+        onCheckedChange={() => setChanges((count) => count + 1)}
       >
         Disabled notifications
       </SettingsRow>
-      <SettingsRow switchProps={{ defaultChecked: true }}>
-        Uncontrolled notifications
-      </SettingsRow>
+      <SettingsRow defaultChecked>Uncontrolled notifications</SettingsRow>
       <SettingsRow
-        switchProps={{
-          defaultChecked: true,
-          readOnly: true,
-          onCheckedChange: () => setChanges((count) => count + 1),
-        }}
+        defaultChecked
+        readOnly
+        onCheckedChange={() => setChanges((count) => count + 1)}
       >
         Read-only notifications
       </SettingsRow>
       <SettingsRow
-        switchProps={{
-          onCheckedChange: (_checked, details) => {
-            details.cancel();
-            setCancelledChanges((count) => count + 1);
-            setCancelledEvent(details.event.type);
-          },
+        onCheckedChange={(_checked, details) => {
+          details.cancel();
+          setCancelledChanges((count) => count + 1);
+          setCancelledEvent(details.event.type);
         }}
       >
         Cancelled notifications
