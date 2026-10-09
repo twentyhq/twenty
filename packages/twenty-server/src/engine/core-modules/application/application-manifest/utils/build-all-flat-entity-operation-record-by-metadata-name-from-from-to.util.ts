@@ -1,3 +1,4 @@
+import { getWorkflowCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import {
   ALL_METADATA_NAME,
   type AllMetadataName,
@@ -35,11 +36,13 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
   fromFlatEntityMaps,
   toFlatEntityMaps,
   buildOptions,
+  manifestGeneratedUniversalIdentifiers,
 }: {
   metadataName: T;
   fromFlatEntityMaps: MetadataUniversalFlatEntityMaps<T>;
   toFlatEntityMaps: MetadataUniversalFlatEntityMaps<T>;
   buildOptions: WorkspaceMigrationBuilderOptions;
+  manifestGeneratedUniversalIdentifiers: ReadonlySet<string>;
 }): FlatEntityOperationRecord<T> => {
   const fromByUniversalIdentifier = fromFlatEntityMaps.byUniversalIdentifier;
   const { byUniversalIdentifier: toByUniversalIdentifier } =
@@ -75,6 +78,7 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
           canManifestExpressFlatEntity({
             metadataName,
             flatEntity: fromFlatEntity,
+            manifestGeneratedUniversalIdentifiers,
           }),
         )
     : [];
@@ -122,6 +126,18 @@ export const buildAllFlatEntityOperationRecordByMetadataNameFromFromTo = ({
   const allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName =
     {};
 
+  const manifestGeneratedUniversalIdentifiers = new Set(
+    Object.values(fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .map((flatWorkflow) =>
+        getWorkflowCommandMenuItemUniversalIdentifier({
+          applicationUniversalIdentifier:
+            buildOptions.applicationUniversalIdentifier,
+          workflowUniversalIdentifier: flatWorkflow.universalIdentifier,
+        }),
+      ),
+  );
+
   for (const metadataName of Object.values(ALL_METADATA_NAME)) {
     const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
 
@@ -135,6 +151,7 @@ export const buildAllFlatEntityOperationRecordByMetadataNameFromFromTo = ({
           flatEntityMapsKey
         ] as unknown as MetadataUniversalFlatEntityMaps<typeof metadataName>,
         buildOptions,
+        manifestGeneratedUniversalIdentifiers,
       },
     );
 

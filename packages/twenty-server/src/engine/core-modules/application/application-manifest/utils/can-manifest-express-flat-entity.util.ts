@@ -25,12 +25,20 @@ type ProbedFlatEntity = {
 export const canManifestExpressFlatEntity = ({
   metadataName,
   flatEntity,
+  manifestGeneratedUniversalIdentifiers,
 }: {
   metadataName: AllMetadataName;
   flatEntity: ProbedFlatEntity;
+  manifestGeneratedUniversalIdentifiers: ReadonlySet<string>;
 }): boolean => {
   if (METADATA_NAMES_WITHOUT_MANIFEST_REPRESENTATION.includes(metadataName)) {
     return false;
+  }
+
+  if (
+    manifestGeneratedUniversalIdentifiers.has(flatEntity.universalIdentifier)
+  ) {
+    return true;
   }
 
   if (
