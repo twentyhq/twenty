@@ -2,13 +2,10 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 
 import { AgentChatToolIndexInvalidationEffect } from '@/ai/components/AgentChatToolIndexInvalidationEffect';
+import { TOOL_INDEX_INVALIDATION_DEBOUNCE_TIME_IN_MS } from '@/ai/constants/ToolIndexInvalidationDebounceTimeInMs';
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import { GetToolIndexDocument } from '~/generated-metadata/graphql';
-
-jest.mock('use-debounce', () => ({
-  useDebouncedCallback: (callback: () => void) => callback,
-}));
 
 const TOOL_LABEL = 'Find companies';
 
@@ -57,10 +54,15 @@ const buildChat = (toolStepCount: number) => (
   </MockedProvider>
 );
 
-const flushPendingRequests = () =>
+const wait = (durationInMs: number) =>
   act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, durationInMs));
   });
+
+const flushPendingRequests = () => wait(0);
+
+const waitPastInvalidationDebounce = () =>
+  wait(TOOL_INDEX_INVALIDATION_DEBOUNCE_TIME_IN_MS + 100);
 
 const dispatchMetadataUpdate = (metadataName: 'objectMetadata' | 'view') =>
   act(() => {
@@ -99,13 +101,31 @@ describe('useGetToolIndex', () => {
     expect(toolIndexResult).toHaveBeenCalledTimes(2);
   });
 
+  it('should fetch the tool index once after a burst of changes', async () => {
+    render(buildChat(2));
+
+    await screen.findAllByText(TOOL_LABEL);
+
+    dispatchMetadataUpdate('objectMetadata');
+    dispatchMetadataUpdate('objectMetadata');
+    dispatchMetadataUpdate('objectMetadata');
+    await flushPendingRequests();
+
+    expect(toolIndexResult).toHaveBeenCalledTimes(1);
+
+    await waitPastInvalidationDebounce();
+    await flushPendingRequests();
+
+    expect(toolIndexResult).toHaveBeenCalledTimes(2);
+  });
+
   it('should keep the cached tool index when unrelated metadata changes', async () => {
     render(buildChat(2));
 
     await screen.findAllByText(TOOL_LABEL);
 
     dispatchMetadataUpdate('view');
-    await flushPendingRequests();
+    await waitPastInvalidationDebounce();
 
     expect(toolIndexResult).toHaveBeenCalledTimes(1);
   });
