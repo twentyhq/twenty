@@ -592,7 +592,7 @@ export const DisabledLinkOption: Story = {
     await userEvent.click(link);
     await expect(onSelectDisabledOption).not.toHaveBeenCalled();
     await expect(document.URL).toBe(initialLocation);
-    await expect(body.getByRole('dialog')).toBeVisible();
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
