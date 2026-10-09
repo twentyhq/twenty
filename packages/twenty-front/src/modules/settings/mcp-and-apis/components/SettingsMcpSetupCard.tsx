@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type McpSetupCard } from '@/settings/mcp-and-apis/types/McpSetup';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { IconExternalLink } from 'twenty-ui/icon';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -151,7 +151,7 @@ export const SettingsMcpSetupCard = ({ card }: SettingsMcpSetupCardProps) => (
       <StyledBody>
         <StyledHeader>
           <StyledTitle>{card.title}</StyledTitle>
-          <Pill label={card.badge} />
+          <Badge>{card.badge}</Badge>
           <StyledActionSlot>
             <SettingsMcpSetupCardAction card={card} />
           </StyledActionSlot>

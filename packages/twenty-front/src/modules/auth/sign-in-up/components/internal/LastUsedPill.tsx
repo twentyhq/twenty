@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledPillContainer = styled.span`
@@ -24,13 +24,13 @@ export const LastUsedPill = () => {
 
   return (
     <StyledPillContainer>
-      <Pill
-        label={t({
+      <Badge>
+        {t({
           message: 'Last',
           comment:
             'Short label (keep brief) indicating the most recently used login method',
         })}
-      />
+      </Badge>
     </StyledPillContainer>
   );
 };

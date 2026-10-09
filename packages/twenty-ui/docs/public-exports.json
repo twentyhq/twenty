@@ -40,7 +40,6 @@
       "getIconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "JsonTree": "components/data-display/JsonTree/JsonTree",
       "MetricRow": "components/data-display/MetricRow/MetricRow",
-      "NotificationCounter": "components/data-display/NotificationCounter/NotificationCounter",
       "TintedIconTile": "components/data-display/TintedIconTile/TintedIconTile"
     },
     "types": {
@@ -721,9 +720,9 @@
     "values": {
       "Avatar": "primitives/data-display/Avatar/Avatar",
       "AVATAR_PROPERTIES_BY_SIZE": "primitives/data-display/Avatar/constants/AvatarPropertiesBySize",
+      "Badge": "primitives/data-display/Badge/Badge",
       "Chip": "primitives/data-display/Chip/Chip",
       "ColorSample": "primitives/data-display/ColorSample/ColorSample",
-      "Pill": "primitives/data-display/Pill/Pill",
       "Status": "primitives/data-display/Status/Status",
       "Tag": "primitives/data-display/Tag/Tag"
     },
@@ -738,6 +737,10 @@
       "AvatarRootState": "primitives/data-display/Avatar/types/AvatarRootState",
       "AvatarShape": "primitives/data-display/Avatar/types/AvatarShape",
       "AvatarSize": "primitives/data-display/Avatar/types/AvatarSize",
+      "BadgeColor": "primitives/data-display/Badge/types/BadgeColor",
+      "BadgeProps": "primitives/data-display/Badge/types/BadgeProps",
+      "BadgeShape": "primitives/data-display/Badge/types/BadgeShape",
+      "BadgeSize": "primitives/data-display/Badge/types/BadgeSize",
       "ChipProps": "primitives/data-display/Chip/types/ChipProps",
       "ChipSize": "primitives/data-display/Chip/types/ChipSize",
       "ChipVariant": "primitives/data-display/Chip/types/ChipVariant",

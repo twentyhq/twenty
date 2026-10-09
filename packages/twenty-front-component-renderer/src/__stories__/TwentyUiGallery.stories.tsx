@@ -1,3 +1,4 @@
+import { badgeTest } from '@/__stories__/twenty-ui-gallery/utils/badgeTest';
 import { currencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/currencyPickerTest';
 import { dropdownTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownTest';
 import { phoneCountryPickerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTest';
@@ -91,6 +92,18 @@ export const DataDisplayPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'preact',
   play: commandBlockTest,
+});
+
+export const BadgeReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-badge',
+  runtime: 'react',
+  play: badgeTest,
+});
+
+export const BadgePreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-badge',
+  runtime: 'preact',
+  play: badgeTest,
 });
 
 export const FeedbackReact: Story = createGalleryStory({

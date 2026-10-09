@@ -91,7 +91,9 @@ jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
   })),
 }));
 jest.mock('twenty-ui/primitives/data-display', () => ({
-  Pill: ({ label }: { label: string }) => <span>{label}</span>,
+  Badge: ({ children }: { children: React.ReactNode }) => (
+    <span>{children}</span>
+  ),
 }));
 jest.mock('twenty-ui/primitives/navigation', () => ({
   ListItem: ({

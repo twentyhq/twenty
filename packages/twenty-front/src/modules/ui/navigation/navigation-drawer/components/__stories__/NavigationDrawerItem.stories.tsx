@@ -95,11 +95,11 @@ export const Breadcrumb: Story = {
   ],
 };
 
-export const NewPill: Story = {
+export const NewBadge: Story = {
   decorators: [
     (Story) => (
       <StyledContainer>
-        <h1>New Pill Examples</h1>
+        <h1>New Badge Examples</h1>
         <Story
           args={{
             label: 'New Feature',
