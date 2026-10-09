@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { isDefined } from 'twenty-sdk/utils';
 import {
   type InputJsonSchema,
   type LogicFunctionExecutionContext,
@@ -11,11 +10,9 @@ import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TEAMS_LIST_ORGANIZER_TRANSCRIPTS_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { buildTeamsCalendarViewUrl } from 'src/features/transcripts/logic-functions/utils/build-teams-calendar-view-url';
-import { getMeetingByJoinUrl } from 'src/features/transcripts/logic-functions/utils/get-meeting-by-join-url';
 import { getTeamsConnectionForRequestOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request-or-throw';
-import { isTranscriptDuringOccurrence } from 'src/features/transcripts/logic-functions/utils/is-transcript-during-occurrence';
-import { listMeetingTranscripts } from 'src/features/transcripts/logic-functions/utils/list-meeting-transcripts';
 import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page';
+import { listTeamsOccurrenceTranscripts } from 'src/features/transcripts/logic-functions/utils/list-teams-occurrence-transcripts';
 import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
 import { resolveTeamsMeetingWindowOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-meeting-window-or-throw';
 import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
@@ -87,53 +84,26 @@ export const teamsListOrganizerTranscriptsHandler = async (
       accessToken: connection.accessToken,
       url: calendarPageUrl,
     });
-    const joinWebUrls = [
-      ...new Set(page.occurrences.map((occurrence) => occurrence.joinWebUrl)),
-    ];
-    const transcripts: ListedTranscript[] = [];
-
-    for (const joinWebUrl of joinWebUrls) {
-      const meeting = await getMeetingByJoinUrl({
-        accessToken: connection.accessToken,
-        joinWebUrl,
-      });
-
-      if (!isDefined(meeting)) {
-        continue;
-      }
-
-      const occurrences = page.occurrences.filter(
-        (occurrence) => occurrence.joinWebUrl === joinWebUrl,
-      );
-      const meetingTranscripts = await listMeetingTranscripts({
-        accessToken: connection.accessToken,
-        meetingId: meeting.id,
-      });
-
-      transcripts.push(
-        ...meetingTranscripts
-          .filter((transcript) =>
-            occurrences.some((occurrence) =>
-              isTranscriptDuringOccurrence({ transcript, occurrence }),
-            ),
-          )
-          .map((transcript) => ({
-            transcriptId: transcript.id,
-            meetingId: meeting.id,
-            subject: isNonEmptyString(meeting.subject)
-              ? meeting.subject
-              : undefined,
-            createdDateTime: isNonEmptyString(transcript.createdDateTime)
-              ? transcript.createdDateTime
-              : undefined,
-          })),
-      );
-    }
+    const transcripts = await listTeamsOccurrenceTranscripts({
+      accessToken: connection.accessToken,
+      occurrences: page.occurrences,
+    });
 
     return {
       success: true,
       connectedAccount: connection.handle,
-      transcripts,
+      transcripts: transcripts.map(
+        ({ meeting, transcript }): ListedTranscript => ({
+          transcriptId: transcript.id,
+          meetingId: meeting.id,
+          subject: isNonEmptyString(meeting.subject)
+            ? meeting.subject
+            : undefined,
+          createdDateTime: isNonEmptyString(transcript.createdDateTime)
+            ? transcript.createdDateTime
+            : undefined,
+        }),
+      ),
       nextPageUrl: page.nextPageUrl,
     };
   } catch (error) {
