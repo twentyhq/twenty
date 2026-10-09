@@ -1,8 +1,12 @@
 import { msg } from '@lingui/core/macro';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import {
+  type WorkflowManifestFieldReference,
+  type WorkflowManifestReferences,
+} from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util';
 import {
   ApplicationException,
@@ -17,6 +21,8 @@ import {
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 import { assertNever } from 'src/utils/assert';
 
 type WorkflowManifestReferenceResolvers = ReturnType<
@@ -110,6 +116,31 @@ const fromCronTriggerManifestOrThrow = (
   return cronTrigger;
 };
 
+const toWatchedFieldName = (field: WorkflowManifestFieldReference): string => {
+  if (
+    field.type !== FieldMetadataType.RELATION &&
+    field.type !== FieldMetadataType.MORPH_RELATION
+  ) {
+    return field.name;
+  }
+
+  if (
+    !isDefined(field.universalSettings) ||
+    !('relationType' in field.universalSettings) ||
+    field.universalSettings.relationType !== RelationType.MANY_TO_ONE
+  ) {
+    throw new ApplicationException(
+      `Workflow trigger: ${field.name} cannot be watched, only relations to a single record change on update`,
+      ApplicationExceptionCode.INVALID_INPUT,
+      {
+        userFriendlyMessage: msg`A record event can only watch relations that point to a single record.`,
+      },
+    );
+  }
+
+  return computeMorphOrRelationFieldJoinColumnName({ name: field.name });
+};
+
 const fromDatabaseEventTriggerManifest = ({
   trigger,
   resolvers,
@@ -121,16 +152,21 @@ const fromDatabaseEventTriggerManifest = ({
 
   const databaseEventSettings: WorkflowDatabaseEventTrigger['settings'] &
     Partial<UpdateEventTriggerSettings> = {
-    eventName: `${resolvers.objectName(settings.objectUniversalIdentifier)}.${settings.action}`,
+    eventName: computeEventName(
+      resolvers.objectName(settings.objectUniversalIdentifier),
+      settings.action,
+    ),
     outputSchema: {},
     ...(isNonEmptyArray(settings.fieldUniversalIdentifiers)
       ? {
           fields: settings.fieldUniversalIdentifiers.map(
             (fieldUniversalIdentifier) =>
-              resolvers.field(
-                fieldUniversalIdentifier,
-                settings.objectUniversalIdentifier,
-              ).name,
+              toWatchedFieldName(
+                resolvers.field(
+                  fieldUniversalIdentifier,
+                  settings.objectUniversalIdentifier,
+                ),
+              ),
           ),
         }
       : {}),

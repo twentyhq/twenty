@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  RelationType,
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
@@ -365,6 +366,61 @@ describe('application workflow definitions', () => {
         ]),
       }),
     ).toThrow('Workflow field does not belong to the referenced object');
+  });
+
+  describe('watched relations', () => {
+    const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+    const FIELD_ID = '88888888-8888-4888-8888-888888888888';
+    const watching = (relationType: RelationType) =>
+      convert({
+        ...options,
+        manifest: {
+          ...manifest,
+          version: {
+            ...manifest.version,
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'DATABASE_EVENT',
+              nextStepIds: [STEP_ID],
+              settings: {
+                objectUniversalIdentifier: OBJECT_ID,
+                action: 'updated',
+                fieldUniversalIdentifiers: [FIELD_ID],
+              },
+            },
+          },
+        },
+        objectByUniversalIdentifier: new Map([
+          [OBJECT_ID, { nameSingular: 'ticket' }],
+        ]),
+        fieldByUniversalIdentifier: new Map([
+          [
+            FIELD_ID,
+            {
+              id: 'company-field-id',
+              name: 'company',
+              objectUniversalIdentifier: OBJECT_ID,
+              type: FieldMetadataType.RELATION,
+              settings: null,
+              universalSettings: { relationType },
+              relationTargetObjectMetadataUniversalIdentifier:
+                '77777777-7777-4777-8777-777777777777',
+            },
+          ],
+        ]),
+      });
+
+    it('watches a relation to a single record through its join column', () => {
+      expect(
+        watching(RelationType.MANY_TO_ONE).version.triggers?.[0],
+      ).toMatchObject({ settings: { fields: ['companyId'] } });
+    });
+
+    it('refuses a relation to many records, which updates never report', () => {
+      expect(() => watching(RelationType.ONE_TO_MANY)).toThrow(
+        'Workflow trigger: company cannot be watched, only relations to a single record change on update',
+      );
+    });
   });
 
   it('refuses a trigger filter on a field from another object', () => {
