@@ -35,8 +35,6 @@ const requestMetadata = async (
   return response.json();
 };
 
-// Outside the engine the app's identity is only obtainable like any external
-// backend would: rotating its OAuth client secret and exchanging it.
 export const createGranolaApplicationAccessToken =
   async (): Promise<string> => {
     const registration = REGISTRATION_RESPONSE_SCHEMA.parse(
