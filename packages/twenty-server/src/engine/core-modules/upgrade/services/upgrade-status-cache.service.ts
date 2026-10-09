@@ -81,12 +81,18 @@ export class UpgradeStatusCacheService {
     ]);
   }
 
-  async tryAcquireRefreshLock(): Promise<boolean> {
-    return this.cacheStorage.acquireLock(REFRESH_LOCK_KEY, REFRESH_LOCK_TTL_MS);
+  async tryAcquireRefreshLock(): Promise<string | null> {
+    return this.cacheStorage.acquireLock({
+      key: REFRESH_LOCK_KEY,
+      ttl: REFRESH_LOCK_TTL_MS,
+    });
   }
 
-  async releaseRefreshLock(): Promise<void> {
-    await this.cacheStorage.releaseLock(REFRESH_LOCK_KEY);
+  async releaseRefreshLock(refreshLockOwnerToken: string): Promise<void> {
+    await this.cacheStorage.releaseLock({
+      key: REFRESH_LOCK_KEY,
+      ownerToken: refreshLockOwnerToken,
+    });
   }
 
   async invalidate(): Promise<void> {
@@ -95,7 +101,7 @@ export class UpgradeStatusCacheService {
       this.cacheStorage.del(FAILED_IDS_KEY),
       this.cacheStorage.del(UP_TO_DATE_COUNT_KEY),
       this.cacheStorage.del(COMPUTED_AT_KEY),
-      this.cacheStorage.releaseLock(REFRESH_LOCK_KEY),
+      this.cacheStorage.del(REFRESH_LOCK_KEY),
     ]);
   }
 }

@@ -31,14 +31,13 @@ export class HttpTool implements Tool {
     const { url, method, headers, body } = parameters as HttpRequestInput;
     const headersCopy = { ...headers };
     const isMethodForBody = ['POST', 'PUT', 'PATCH'].includes(method);
-    const timeoutSignal = AbortSignal.timeout(HTTP_TOOL_TIMEOUT_MS);
 
     try {
       const axiosConfig: AxiosRequestConfig = {
         url,
         method: method,
         headers: headersCopy,
-        signal: timeoutSignal,
+        timeout: HTTP_TOOL_TIMEOUT_MS,
         maxContentLength: HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES,
         maxBodyLength: HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES,
       };
@@ -72,7 +71,9 @@ export class HttpTool implements Tool {
       };
     } catch (error) {
       if (isAxiosError(error)) {
-        const errorMessage = timeoutSignal.aborted
+        const isTimeout =
+          error.code === 'ERR_CANCELED' || error.code === 'ECONNABORTED';
+        const errorMessage = isTimeout
           ? `Request timed out after ${HTTP_TOOL_TIMEOUT_MS / 1_000}s`
           : error.message;
 

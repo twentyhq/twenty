@@ -1,3 +1,5 @@
+import { CHECKBOX_PROP_DESCRIPTIONS } from './checkboxPropDescriptions';
+import { SWITCH_PROP_DESCRIPTIONS } from './switchPropDescriptions';
 import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
 import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
 import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
@@ -34,6 +36,7 @@ import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoa
 import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
 import { COLLAPSIBLE_PART_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
+import { AVATAR_PART_PROP_DESCRIPTIONS } from './avatarPartPropDescriptions';
 import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
 import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
@@ -74,6 +77,16 @@ import { POPOVER_PART_PROP_DESCRIPTIONS } from './popoverPartPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISUALLY_HIDDEN_PROP_DESCRIPTIONS } from './visuallyHiddenPropDescriptions';
+
+const CHECKBOX_PROP_DEFAULTS = {
+  size: 'sm',
+  variant: 'solid',
+  shape: 'square',
+  color: 'accent',
+  hoverable: 'true',
+};
+
+const SWITCH_PROP_DEFAULTS = { size: 'md' };
 
 export const DOCUMENTED_COMPONENTS = [
   {
@@ -240,6 +253,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/light-icon-button',
     propDescriptions: LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { variant: 'ghost', size: 'sm' },
   },
   {
     name: 'IconButton',
@@ -247,6 +261,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/icon-button',
     propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: {
+      variant: 'outline',
+      color: 'neutral',
+      size: 'md',
+      nativeButton: 'true (false for the built-in href anchor)',
+    },
   },
   {
     name: 'MainButton',
@@ -254,6 +274,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/main-button',
     propDescriptions: BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { variant: 'solid' },
   },
   {
     name: 'LightButton',
@@ -261,6 +282,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/light-button',
     propDescriptions: LIGHT_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { variant: 'ghost', size: 'sm' },
   },
   {
     name: 'Button',
@@ -268,6 +290,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/button',
     propDescriptions: BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: {
+      variant: 'outline',
+      color: 'neutral',
+      size: 'md',
+      nativeButton: 'true (false for the built-in href anchor)',
+    },
   },
   {
     name: 'ButtonGroup',
@@ -320,6 +348,11 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Checkbox/Checkbox.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/checkbox',
+    parts: ['Root', 'Indicator'],
+    propDescriptions: CHECKBOX_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Root: CHECKBOX_PROP_DESCRIPTIONS },
+    propDefaults: CHECKBOX_PROP_DEFAULTS,
+    partPropDefaults: { Root: CHECKBOX_PROP_DEFAULTS },
   },
   {
     name: 'Radio',
@@ -372,6 +405,11 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Switch/Switch.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/switch',
+    parts: ['Root', 'Thumb'],
+    propDescriptions: SWITCH_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Root: SWITCH_PROP_DESCRIPTIONS },
+    propDefaults: SWITCH_PROP_DEFAULTS,
+    partPropDefaults: { Root: SWITCH_PROP_DEFAULTS },
   },
   {
     name: 'Breadcrumb',
@@ -573,6 +611,15 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/data-display',
     slug: 'data-display/avatar',
     propDescriptions: AVATAR_PROP_DESCRIPTIONS,
+    propDefaults: {
+      size: 'md',
+      shape: 'square',
+      variant: 'soft',
+      pulsing: 'false',
+      ring: 'false',
+    },
+    parts: ['Root', 'Image', 'Fallback'],
+    partPropDescriptions: AVATAR_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'Chip',

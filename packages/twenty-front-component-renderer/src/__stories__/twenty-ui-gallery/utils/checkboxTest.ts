@@ -42,5 +42,12 @@ export const checkboxTest: TwentyUiGalleryPlayFunction = async ({
 
   await userEvent.click(uncontrolled);
   await waitFor(() => expect(uncontrolled).not.toBeChecked());
+  expect(canvas.getByRole('status')).toHaveTextContent(
+    /Composition: (click|change)\/true/,
+  );
+  expect(checkbox).toHaveAttribute('data-active', 'true');
+  const customPart = checkbox.querySelector('[data-active]');
+  expect(customPart).toHaveAttribute('data-active', 'true');
+  expect(canvas.getByText('Mixed selection')).toBeVisible();
   expect(errorHandler).not.toHaveBeenCalled();
 };

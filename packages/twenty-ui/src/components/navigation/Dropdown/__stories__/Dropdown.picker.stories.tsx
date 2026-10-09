@@ -729,6 +729,7 @@ export const CommandWithTrailingAction: Story = {
       within(canvasElement).getByRole('button', { name: 'Views' }),
     );
     const item = await body.findByRole('button', { name: 'Open overview' });
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
 
     const action = body.getByRole('button', { name: 'Edit view' });
 

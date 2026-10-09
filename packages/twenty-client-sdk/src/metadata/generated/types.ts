@@ -5944,19 +5944,6 @@ export default {
                     ]
                 }
             ],
-            "addAgentChatThreadParticipants": [
-                482,
-                {
-                    "threadId": [
-                        482,
-                        "UUID!"
-                    ],
-                    "workspaceMemberIds": [
-                        482,
-                        "[UUID!]!"
-                    ]
-                }
-            ],
             "addQueryToEventStream": [
                 4,
                 {

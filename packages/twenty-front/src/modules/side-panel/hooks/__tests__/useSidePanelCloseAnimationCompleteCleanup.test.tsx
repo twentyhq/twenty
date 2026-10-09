@@ -10,7 +10,8 @@ import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUs
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { SidePanelPages } from 'twenty-shared/types';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
 import { IconList } from 'twenty-ui/icon';
 
 const mockCloseDropdown = jest.fn();
@@ -124,4 +125,50 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
       SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID,
     );
   });
+
+  it.each([
+    {
+      targetObjectNameSingular: CoreObjectNameSingular.Dashboard,
+      expectedEditingWidgetId: null,
+    },
+    {
+      targetObjectNameSingular: CoreObjectNameSingular.Company,
+      expectedEditingWidgetId: 'widget-id',
+    },
+  ])(
+    'should clear the edited widget from the target of a closing $targetObjectNameSingular page layout page only for dashboards',
+    ({ targetObjectNameSingular, expectedEditingWidgetId }) => {
+      const editingWidgetIdAtom =
+        pageLayoutEditingWidgetIdComponentState.atomFamily({
+          instanceId: 'page-layout-id',
+        });
+
+      const { result } = renderHooks();
+
+      act(() => {
+        jotaiStore.set(editingWidgetIdAtom, 'widget-id');
+        jotaiStore.set(sidePanelNavigationStackState.atom, [
+          {
+            page: SidePanelPages.PageLayoutWidgetSettings,
+            pageTitle: 'Widget',
+            pageIcon: IconList,
+            pageId: 'widget-settings-page-id',
+            pageLayoutSidePanelTarget: {
+              pageLayoutId: 'page-layout-id',
+              targetRecordIdentifier: {
+                id: 'record-id',
+                targetObjectNameSingular,
+              },
+            },
+          },
+        ]);
+      });
+
+      act(() => {
+        result.current.sidePanelCloseAnimationCompleteCleanup();
+      });
+
+      expect(jotaiStore.get(editingWidgetIdAtom)).toBe(expectedEditingWidgetId);
+    },
+  );
 });

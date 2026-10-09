@@ -1,3 +1,5 @@
+import { MAX_REQUEST_BODY_SIZE } from 'src/engine/constants/max-request-body-size.constant';
+
 import { type Settings } from './interfaces/settings.interface';
 
 export const settings: Settings = {
@@ -7,7 +9,7 @@ export const settings: Settings = {
     maxDirectUploadFileSize: '1GB',
     maxCorePictureFileSize: '10MB',
   },
-  maxRequestBodySize: '100MB',
+  maxRequestBodySize: MAX_REQUEST_BODY_SIZE,
   minLengthOfStringForDuplicateCheck: 3,
   maxVisibleViewFields: 30,
 };
