@@ -1,8 +1,6 @@
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { useRecordCreationFormContextOrThrow } from '@/object-record/record-form/contexts/RecordCreationFormContext';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
-import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import {
   sidePanelNavigationStackState,
@@ -128,110 +126,23 @@ it('resolves with the error the server rejected the draft with and keeps the for
   expect(store.get(sidePanelNavigationStackState.atom)).toEqual([formPage]);
 });
 
-const pushSidePanelPages = (store: ReturnType<typeof createStore>) =>
-  mockNavigateSidePanelMenu.mockImplementation(
-    (page: SidePanelNavigationStackItem) => {
-      store.set(isSidePanelOpenedState.atom, true);
-      store.set(sidePanelNavigationStackState.atom, [
-        ...store.get(sidePanelNavigationStackState.atom),
-        page,
-      ]);
-    },
-  );
-
-it('replaces an untouched creation form with the new one', async () => {
-  const { result, store } = setup();
-  pushSidePanelPages(store);
-
-  let companyCreation: Promise<ObjectRecord | null> | undefined;
-  act(() => {
-    companyCreation = result.current.requestRecordCreation({
-      objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
-      createRecord: jest.fn(),
-    });
-  });
-  act(() => {
-    void result.current.requestRecordCreation({
-      objectMetadataItem: getMockObjectMetadataItemOrThrow('person'),
-      createRecord: jest.fn(),
-    });
-  });
-
-  const sidePanelPages = store.get(sidePanelNavigationStackState.atom);
-
-  expect(sidePanelPages).toHaveLength(1);
-  expect(
-    store.get(
-      recordCreationFormRequestComponentState.atomFamily({
-        instanceId: sidePanelPages[0].pageId,
-      }),
-    )?.objectMetadataId,
-  ).toBe(getMockObjectMetadataItemOrThrow('person').id);
-  await act(async () => {
-    await expect(companyCreation).resolves.toBeNull();
-  });
-});
-
-it('keeps an edited creation form of the same object instead of opening another', async () => {
-  const { result, store } = setup();
-  pushSidePanelPages(store);
-
+it('keeps the open creation form of the same object instead of stacking another', async () => {
+  const { result } = setup();
   act(() => {
     void result.current.requestRecordCreation({
       objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
       createRecord: jest.fn(),
     });
   });
-  const [formPage] = store.get(sidePanelNavigationStackState.atom);
-  act(() => {
-    store.set(
-      recordCreationFormDraftComponentState.atomFamily({
-        instanceId: formPage.pageId,
-      }),
-      { name: 'Acme' },
-    );
-  });
 
-  let secondCompanyCreation: Promise<ObjectRecord | null> | undefined;
+  let secondCreation: Promise<ObjectRecord | null> | undefined;
   act(() => {
-    secondCompanyCreation = result.current.requestRecordCreation({
+    secondCreation = result.current.requestRecordCreation({
       objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
       createRecord: jest.fn(),
     });
   });
 
-  expect(store.get(sidePanelNavigationStackState.atom)).toEqual([formPage]);
-  await expect(secondCompanyCreation).resolves.toBeNull();
-});
-
-it('stacks a new form over an edited creation form of another object', () => {
-  const { result, store } = setup();
-  pushSidePanelPages(store);
-
-  act(() => {
-    void result.current.requestRecordCreation({
-      objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
-      createRecord: jest.fn(),
-    });
-  });
-  const [formPage] = store.get(sidePanelNavigationStackState.atom);
-  act(() => {
-    store.set(
-      recordCreationFormDraftComponentState.atomFamily({
-        instanceId: formPage.pageId,
-      }),
-      { name: 'Acme' },
-    );
-  });
-  act(() => {
-    void result.current.requestRecordCreation({
-      objectMetadataItem: getMockObjectMetadataItemOrThrow('person'),
-      createRecord: jest.fn(),
-    });
-  });
-
-  const sidePanelPages = store.get(sidePanelNavigationStackState.atom);
-
-  expect(sidePanelPages).toHaveLength(2);
-  expect(sidePanelPages[0]).toEqual(formPage);
+  expect(mockNavigateSidePanelMenu).toHaveBeenCalledTimes(1);
+  await expect(secondCreation).resolves.toBeNull();
 });

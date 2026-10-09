@@ -5,10 +5,8 @@ import {
   RecordCreationFormContextProvider,
   type RecordCreationFormContextValue,
 } from '@/object-record/record-form/contexts/RecordCreationFormContext';
-import { getRecordCreationFormPlacement } from '@/object-record/record-form/utils/getRecordCreationFormPlacement';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -125,36 +123,20 @@ export const RecordCreationFormProvider = ({
         draftRecord: Partial<ObjectRecord>,
       ) => Promise<ObjectRecord>;
     }) => {
-      const isSidePanelShown =
+      const topSidePanelPage =
         store.get(isSidePanelOpenedState.atom) &&
-        !store.get(isSidePanelClosingState.atom);
-      const topSidePanelPage = isSidePanelShown
-        ? store.get(sidePanelNavigationStackState.atom).at(-1)
-        : undefined;
-      const openRecordCreationFormPageId =
-        topSidePanelPage?.page === SidePanelPages.RecordCreationForm
-          ? topSidePanelPage.pageId
+        !store.get(isSidePanelClosingState.atom)
+          ? store.get(sidePanelNavigationStackState.atom).at(-1)
           : undefined;
 
-      const recordCreationFormPlacement = getRecordCreationFormPlacement({
-        openRecordCreationFormRequest: isDefined(openRecordCreationFormPageId)
-          ? store.get(
-              recordCreationFormRequestComponentState.atomFamily({
-                instanceId: openRecordCreationFormPageId,
-              }),
-            )
-          : null,
-        openRecordCreationFormDraft: isDefined(openRecordCreationFormPageId)
-          ? store.get(
-              recordCreationFormDraftComponentState.atomFamily({
-                instanceId: openRecordCreationFormPageId,
-              }),
-            )
-          : null,
-        objectMetadataId: objectMetadataItem.id,
-      });
-
-      if (recordCreationFormPlacement === 'keep') {
+      if (
+        topSidePanelPage?.page === SidePanelPages.RecordCreationForm &&
+        store.get(
+          recordCreationFormRequestComponentState.atomFamily({
+            instanceId: topSidePanelPage.pageId,
+          }),
+        )?.objectMetadataId === objectMetadataItem.id
+      ) {
         return Promise.resolve(null);
       }
 
@@ -188,16 +170,9 @@ export const RecordCreationFormProvider = ({
           pageIcon: IconPlus,
           pageId: requestId,
         });
-
-        if (
-          recordCreationFormPlacement === 'replace' &&
-          isDefined(openRecordCreationFormPageId)
-        ) {
-          removePageFromSidePanelHistory(openRecordCreationFormPageId);
-        }
       });
     },
-    [navigateSidePanelMenu, removePageFromSidePanelHistory, store],
+    [navigateSidePanelMenu, store],
   );
 
   const cancelPendingRecordCreation = useCallback(
