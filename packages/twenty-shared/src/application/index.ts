@@ -151,6 +151,7 @@ export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get
 export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';
 export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-view-sort-universal-identifier.util';
 export { getViewUniversalIdentifier } from './deterministic-identifier/get-view-universal-identifier.util';
+export { getWorkflowCommandMenuItemUniversalIdentifier } from './deterministic-identifier/get-workflow-command-menu-item-universal-identifier.util';
 export { getWorkflowVersionUniversalIdentifier } from './deterministic-identifier/get-workflow-version-universal-identifier.util';
 export type {
   EnqueueJobOptions,
@@ -290,3 +291,8 @@ export type { WorkflowManifest } from './workflowManifestType';
 export { workflowManifestSchema } from './workflowManifestType';
 export type { WorkflowStepManifest } from './workflowStepManifestType';
 export { workflowStepManifestSchema } from './workflowStepManifestType';
+export type { WorkflowTriggerManifest } from './workflowTriggerManifestType';
+export {
+  APPLICATION_WORKFLOW_TRIGGER_TYPES,
+  workflowTriggerManifestSchema,
+} from './workflowTriggerManifestType';

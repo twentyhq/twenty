@@ -1331,7 +1331,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2193,8 +2193,13 @@ export interface Mutation {
     syncMarketplaceCatalog: Scalars['Boolean']
     trackAnalytics: Analytics
     transferApplicationRegistrationOwnership: ApplicationRegistration
+    triggerInstallApplication: TriggerInstallApplicationResult
+    /** @deprecated Use triggerInstallApplication instead */
     triggerInstallApplicationJob: TriggerInstallApplicationJobResult
+    triggerUninstallApplication: TriggerUninstallApplicationResult
+    /** @deprecated Use triggerUninstallApplication instead */
     triggerUninstallApplicationJob: TriggerUninstallApplicationJobResult
+    triggerUpgradeApplication: TriggerUpgradeApplicationResult
     uninstallApplication: Scalars['Boolean']
     updateAgentChatThreadInboxState: AgentChatThreadParticipant[]
     updateApiKey?: ApiKey
@@ -2743,6 +2748,7 @@ export interface Query {
     findOneApplicationRegistration: ApplicationRegistration
     findOneLogicFunction: LogicFunction
     findUninstallApplicationJobStatus?: JobStatus
+    findUpgradeApplicationJobStatus?: JobStatus
     findWorkspaceAiStats: WorkspaceAiStats
     findWorkspaceFromInviteHash: Workspace
     findWorkspaceInvitations: WorkspaceInvitation[]
@@ -3262,9 +3268,24 @@ export interface TriggerInstallApplicationJobResult {
     __typename: 'TriggerInstallApplicationJobResult'
 }
 
+export interface TriggerInstallApplicationResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerInstallApplicationResult'
+}
+
 export interface TriggerUninstallApplicationJobResult {
     jobId: Scalars['String']
     __typename: 'TriggerUninstallApplicationJobResult'
+}
+
+export interface TriggerUninstallApplicationResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerUninstallApplicationResult'
+}
+
+export interface TriggerUpgradeApplicationResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerUpgradeApplicationResult'
 }
 
 export interface TwoFactorAuthenticationMethodSummary {
@@ -6357,8 +6378,13 @@ export interface MutationGenqlSelection{
     syncMarketplaceCatalog?: boolean | number
     trackAnalytics?: (AnalyticsGenqlSelection & { __args: {event?: (Scalars['String'] | null), name?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null), type: AnalyticsType} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
+    triggerInstallApplication?: (TriggerInstallApplicationResultGenqlSelection & { __args: {input: TriggerInstallApplicationInput} })
+    /** @deprecated Use triggerInstallApplication instead */
     triggerInstallApplicationJob?: (TriggerInstallApplicationJobResultGenqlSelection & { __args: {input: TriggerInstallApplicationJobInput} })
+    triggerUninstallApplication?: (TriggerUninstallApplicationResultGenqlSelection & { __args: {input: TriggerUninstallApplicationInput} })
+    /** @deprecated Use triggerUninstallApplication instead */
     triggerUninstallApplicationJob?: (TriggerUninstallApplicationJobResultGenqlSelection & { __args: {input: TriggerUninstallApplicationJobInput} })
+    triggerUpgradeApplication?: (TriggerUpgradeApplicationResultGenqlSelection & { __args: {input: TriggerUpgradeApplicationInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     updateAgentChatThreadInboxState?: (AgentChatThreadParticipantGenqlSelection & { __args: {action: AgentChatInboxAction, snoozedUntil?: (Scalars['DateTime'] | null), threadIds: Scalars['UUID'][]} })
     updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
@@ -6948,6 +6974,7 @@ export interface QueryGenqlSelection{
     findOneApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
     findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
     findUninstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findUpgradeApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
@@ -7525,6 +7552,8 @@ export interface TransientTokenGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TriggerInstallApplicationInput {universalIdentifier: Scalars['String']}
+
 export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String']}
 
 export interface TriggerInstallApplicationJobResultGenqlSelection{
@@ -7533,9 +7562,31 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TriggerInstallApplicationResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TriggerUninstallApplicationInput {universalIdentifier: Scalars['String']}
+
 export interface TriggerUninstallApplicationJobInput {universalIdentifier: Scalars['String']}
 
 export interface TriggerUninstallApplicationJobResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TriggerUninstallApplicationResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TriggerUpgradeApplicationInput {targetVersion: Scalars['String'],universalIdentifier: Scalars['String']}
+
+export interface TriggerUpgradeApplicationResultGenqlSelection{
     jobId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -10602,10 +10653,34 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const TriggerInstallApplicationResult_possibleTypes: string[] = ['TriggerInstallApplicationResult']
+    export const isTriggerInstallApplicationResult = (obj?: { __typename?: any } | null): obj is TriggerInstallApplicationResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerInstallApplicationResult"')
+      return TriggerInstallApplicationResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const TriggerUninstallApplicationJobResult_possibleTypes: string[] = ['TriggerUninstallApplicationJobResult']
     export const isTriggerUninstallApplicationJobResult = (obj?: { __typename?: any } | null): obj is TriggerUninstallApplicationJobResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUninstallApplicationJobResult"')
       return TriggerUninstallApplicationJobResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TriggerUninstallApplicationResult_possibleTypes: string[] = ['TriggerUninstallApplicationResult']
+    export const isTriggerUninstallApplicationResult = (obj?: { __typename?: any } | null): obj is TriggerUninstallApplicationResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUninstallApplicationResult"')
+      return TriggerUninstallApplicationResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TriggerUpgradeApplicationResult_possibleTypes: string[] = ['TriggerUpgradeApplicationResult']
+    export const isTriggerUpgradeApplicationResult = (obj?: { __typename?: any } | null): obj is TriggerUpgradeApplicationResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUpgradeApplicationResult"')
+      return TriggerUpgradeApplicationResult_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11367,6 +11442,7 @@ export const enumFeatureFlagKey = {
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
    IS_AI_CHAT_SHARING_DROPDOWN_ENABLED: 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' as const,
    IS_APPLICATION_WORKFLOWS_ENABLED: 'IS_APPLICATION_WORKFLOWS_ENABLED' as const,
+   IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_ASYNC_CSV_EXPORT_ENABLED: 'IS_ASYNC_CSV_EXPORT_ENABLED' as const,
    IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED: 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,

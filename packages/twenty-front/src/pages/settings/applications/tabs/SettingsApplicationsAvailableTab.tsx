@@ -108,7 +108,7 @@ export const SettingsApplicationsAvailableTab = () => {
               >
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconSparkles />}
+                    startElement={<IconSparkles />}
                     onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
                     checked={showVettedOnly}
                   >{t`Vetted only`}</SettingsRow>

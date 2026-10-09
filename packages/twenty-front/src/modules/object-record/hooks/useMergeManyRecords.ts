@@ -10,7 +10,7 @@ import { useMergeManyRecordsMutation } from '@/object-record/hooks/useMergeManyR
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getMergeManyRecordsMutationResponseField } from '@/object-record/utils/getMergeManyRecordsMutationResponseField';
-import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { getOperationName } from '~/utils/getOperationName';
 
 export type MergeManySettings = {
@@ -19,7 +19,7 @@ export type MergeManySettings = {
 
 export type UseMergeManyRecordsProps = {
   objectNameSingular: string;
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  recordGqlFields?: RecordGqlFields;
 };
 
 export const useMergeManyRecords = <

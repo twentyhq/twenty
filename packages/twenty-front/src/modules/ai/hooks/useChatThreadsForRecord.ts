@@ -2,6 +2,7 @@ import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
+  type RecordGqlFields,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -36,7 +37,7 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
     workspaceMemberId: true,
     pendingQuestionMessageId: true,
   },
-};
+} satisfies RecordGqlFields;
 
 // Link events carry no conversation, so new links are read back.
 const LINK_OPERATION_TYPES: ObjectRecordOperation['type'][] = [

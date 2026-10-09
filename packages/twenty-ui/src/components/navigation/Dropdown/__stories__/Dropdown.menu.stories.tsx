@@ -12,6 +12,7 @@ import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 const TYPEAHEAD_PAUSE_IN_MS = 600;
 
 const onArchive = fn();
+const onItemRef = fn<(element: HTMLElement | null) => void>();
 const onDuplicate = fn();
 const onContactSupport = fn();
 const onExportRecords = fn();
@@ -103,6 +104,7 @@ const meta: Meta = {
   beforeEach: () => {
     for (const spy of [
       onArchive,
+      onItemRef,
       onDuplicate,
       onContactSupport,
       onExportRecords,
@@ -190,8 +192,17 @@ export const InitialFocusEdge: Story = {
 export const DisabledCommand: Story = {
   render: () => (
     <RecordActionsMenu>
-      <Dropdown.ActionItem disabled onClick={onArchive}>
+      <Dropdown.ActionItem ref={onItemRef} disabled onClick={onArchive}>
         Archive
+      </Dropdown.ActionItem>
+      <Dropdown.ActionItem
+        ref={onItemRef}
+        disabled
+        nativeButton
+        render={<Button />}
+        onClick={onArchive}
+      >
+        Export
       </Dropdown.ActionItem>
       <Dropdown.ActionItem onClick={onDuplicate}>Duplicate</Dropdown.ActionItem>
     </RecordActionsMenu>
@@ -200,11 +211,50 @@ export const DisabledCommand: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const menu = await openRecordActions(canvasElement);
 
-    await userEvent.click(body.getByRole('menuitem', { name: 'Archive' }));
+    const archive = body.getByRole('menuitem', { name: 'Archive' });
+
+    const exportCommand = body.getByRole('menuitem', { name: 'Export' });
+
+    await expect(archive).toBeDisabled();
+    await expect(exportCommand).toBeDisabled();
+    await expect(onItemRef).toHaveBeenCalledWith(archive);
+    await expect(onItemRef).toHaveBeenCalledWith(exportCommand);
+    await userEvent.click(archive);
+    await userEvent.click(exportCommand);
     expect(onArchive).not.toHaveBeenCalled();
     expect(menu).toBeVisible();
     await userEvent.click(body.getByRole('menuitem', { name: 'Duplicate' }));
     expect(onDuplicate).toHaveBeenCalledOnce();
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const FocusableDisabledCommand: Story = {
+  render: () => (
+    <RecordActionsMenu>
+      <Dropdown.ActionItem disabled focusableWhenDisabled onClick={onArchive}>
+        Archive
+      </Dropdown.ActionItem>
+      <Dropdown.ActionItem onClick={onDuplicate}>Duplicate</Dropdown.ActionItem>
+    </RecordActionsMenu>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const menu = await openRecordActions(canvasElement);
+    const archive = body.getByRole('menuitem', { name: 'Archive' });
+
+    await expect(archive).toHaveAttribute('aria-disabled', 'true');
+    await expect(archive).not.toBeDisabled();
+    archive.focus();
+    await expect(archive).toHaveFocus();
+    await userEvent.keyboard('{Enter} ');
+    await userEvent.click(archive);
+    await expect(onArchive).not.toHaveBeenCalled();
+    await expect(menu).toBeVisible();
+    await userEvent.click(body.getByRole('menuitem', { name: 'Duplicate' }));
+    await expect(onDuplicate).toHaveBeenCalledOnce();
     await waitFor(() =>
       expect(body.queryByRole('menu')).not.toBeInTheDocument(),
     );

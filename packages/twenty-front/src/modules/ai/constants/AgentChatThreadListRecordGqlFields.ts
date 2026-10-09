@@ -1,3 +1,5 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
+
 export const AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS = {
   id: true,
   title: true,
@@ -29,4 +31,4 @@ export const AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS = {
     lastMentionedAt: true,
     updatedAt: true,
   },
-};
+} satisfies RecordGqlFields;

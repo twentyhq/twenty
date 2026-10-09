@@ -52,7 +52,7 @@ export const CommandMenuItemOptionsDropdown = ({
       <DropdownContent align="end">
         <Dropdown.Section>
           <SettingsRow
-            startIcon={<IconTag />}
+            startElement={<IconTag />}
             disabled={hasNoShortLabel}
             checked={isLabelHidden || hasNoShortLabel}
             onCheckedChange={handleHiddenLabelChange}

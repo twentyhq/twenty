@@ -1,7 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fathom } from 'fathom-typescript';
 import { meetingFromJSON } from 'fathom-typescript/sdk/models/shared';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
@@ -9,7 +8,10 @@ import { isDefined } from 'src/utils/is-defined';
 import { FATHOM_WEBHOOK_CONNECTION_QUERY_PARAMETER } from 'src/constants/fathom.constant';
 import { FATHOM_WEBHOOK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
+import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
+import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
+import { listDeletedCallRecordingIds } from 'src/logic-functions/utils/list-deleted-call-recording-ids.util';
 import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
 
 type FathomWebhookResult =
@@ -86,8 +88,25 @@ export const fathomWebhookHandler = async (
     return { success: false, error: 'Invalid Fathom meeting payload' };
   }
 
+  const coreApiClient = createFathomCoreApiClient();
+  const callRecordingId = computeCallRecordingIdForFathomMeeting(
+    meetingParseResult.value.recordingId,
+  );
+  const deletedCallRecordingIds = await listDeletedCallRecordingIds({
+    coreApiClient,
+    callRecordingIds: [callRecordingId],
+  });
+
+  if (deletedCallRecordingIds.has(callRecordingId)) {
+    return {
+      success: true,
+      skipped: true,
+      reason: 'The call recording has been deleted',
+    };
+  }
+
   const syncResult = await syncFathomMeetingToCallRecording({
-    coreApiClient: new CoreApiClient({ runAs: 'application' }),
+    coreApiClient,
     meeting: meetingParseResult.value,
     connectedAccountId,
   });
@@ -100,6 +119,6 @@ export default defineLogicFunction({
   name: 'fathom-webhook',
   description:
     'Verifies Fathom meeting webhooks and upserts accessible recordings into CallRecording records.',
-  timeoutSeconds: 60,
+  timeoutSeconds: 300,
   handler: fathomWebhookHandler,
 });

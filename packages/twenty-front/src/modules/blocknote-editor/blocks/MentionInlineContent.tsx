@@ -54,7 +54,7 @@ const LegacyMentionRenderer = ({
     return (
       <Chip
         variant="ghost"
-        disabled
+        aria-disabled
         style={{ paddingInlineStart: 0 }}
       >{t`Unknown object`}</Chip>
     );
@@ -64,7 +64,7 @@ const LegacyMentionRenderer = ({
     return (
       <Chip
         variant="ghost"
-        disabled
+        aria-disabled
         style={{ paddingInlineStart: 0 }}
       >{t`Deleted record`}</Chip>
     );

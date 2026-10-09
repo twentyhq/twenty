@@ -1,5 +1,8 @@
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -22,7 +25,7 @@ export const usePreviewRecord = ({
 
   const skip = skipFromProps || !labelIdentifierFieldMetadataItem;
 
-  let recordGqlFields: Record<string, boolean> | undefined = undefined;
+  let recordGqlFields: RecordGqlFields | undefined = undefined;
   if (objectNameSingular === CoreObjectNameSingular.NoteTarget)
     recordGqlFields = { id: true, note: true };
   if (objectNameSingular === CoreObjectNameSingular.TaskTarget)

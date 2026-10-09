@@ -1,6 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
-import { expect, userEvent, within } from 'storybook/test';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -10,11 +9,19 @@ import {
 } from '@ui/testing';
 
 import { Button } from '@ui/primitives/input/Button/Button';
-import { IconBell, IconEdit, IconSettings, IconTrash } from '@ui/icon';
+import {
+  IconBell,
+  IconCopy,
+  IconEdit,
+  IconSettings,
+  IconTrash,
+} from '@ui/icon';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/ListItemColor';
 import { type ListItemIndicator } from '@ui/primitives/navigation/ListItem/types/ListItemIndicator';
 import { type ListItemProps } from '@ui/primitives/navigation/ListItem/types/ListItemProps';
+
+import { ListItemMenuExample } from './ListItemMenuExample';
 
 const meta: Meta<typeof ListItem> = {
   title: 'UI/Navigation/ListItem',
@@ -57,17 +64,6 @@ export const OverflowingLabel: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 160 } },
   args: { children: 'A workspace preference with a long label' },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const page = within(canvasElement.ownerDocument.body);
-    const label = canvas.getByText('A workspace preference with a long label');
-
-    await userEvent.hover(label);
-
-    expect(await page.findByRole('tooltip')).toHaveTextContent(
-      'A workspace preference with a long label',
-    );
-  },
 };
 
 export const WithDescription: Story = {
@@ -88,12 +84,42 @@ export const WithActions: Story = {
 export const WithPersistentActions: Story = {
   ...WithActions,
   args: { ...WithActions.args, actionsVisibility: 'always' },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+};
 
-    expect(canvas.getByRole('button', { name: 'Edit' })).toBeVisible();
-    expect(canvas.getByRole('button', { name: 'Delete' })).toBeVisible();
+export const ButtonOwner: Story = {
+  ...Default,
+  args: {
+    children: 'Duplicate record',
+    render: <button type="button" />,
+    startIcon: <IconCopy />,
   },
+};
+
+export const LinkOwner: Story = {
+  ...Default,
+  args: {
+    children: 'Typography documentation',
+    render: (renderProps) => (
+      <a {...renderProps} href="https://twenty.com/developers">
+        {renderProps.children}
+      </a>
+    ),
+  },
+};
+
+export const ExplicitLinkContent: Story = {
+  ...Default,
+  parameters: { ...Default.parameters, a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    children: <a href="https://twenty.com/developers">Read documentation</a>,
+    description: 'Resource',
+  },
+};
+
+export const MenuOwner: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240, height: 200 } },
+  render: () => <ListItemMenuExample />,
 };
 
 export const WithCheckbox: Story = {

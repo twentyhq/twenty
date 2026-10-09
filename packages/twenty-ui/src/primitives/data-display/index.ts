@@ -29,6 +29,8 @@ export type { ColorSampleVariant } from './ColorSample/types/ColorSampleVariant'
 export { Pill } from './Pill/Pill';
 export { Status } from './Status/Status';
 export type { StatusProps } from './Status/types/StatusProps';
+export type { StatusState } from './Status/types/StatusState';
 export { Tag } from './Tag/Tag';
 export type { TagColor } from './Tag/types/TagColor';
 export type { TagProps } from './Tag/types/TagProps';
+export type { TagState } from './Tag/types/TagState';

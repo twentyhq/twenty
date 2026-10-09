@@ -50924,6 +50924,7 @@ __metadata:
     sass-embedded: "npm:^1.83.0"
     size-limit: "npm:^12.1.0"
     slash: "npm:^5.1.0"
+    storybook: "npm:^10.4.6"
     storybook-addon-pseudo-states: "npm:^10.3.3"
     tsx: "npm:^4.19.3"
     type-fest: "npm:^4.10.1"

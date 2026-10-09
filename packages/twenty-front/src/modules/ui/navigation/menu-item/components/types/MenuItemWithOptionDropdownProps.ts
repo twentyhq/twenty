@@ -14,7 +14,7 @@ export type MenuItemWithOptionDropdownProps = {
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
   RightIcon?: IconComponent | null;
-  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
   testId?: string;

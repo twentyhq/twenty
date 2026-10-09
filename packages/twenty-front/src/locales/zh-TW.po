@@ -36,13 +36,13 @@ msgstr "—"
 #. js-lingui-id: Terfvz
 #: src/modules/ai/components/AiChatThreadSubtitle.tsx
 msgid ", assigned to {assigneeName}"
-msgstr ""
+msgstr ", 已指派給 {assigneeName}"
 
 #. js-lingui-id: /c8CZ4
 #: src/modules/ai/components/AiChatThreadTitle.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 msgid ", unread"
-msgstr ""
+msgstr ", 未讀"
 
 #. js-lingui-id: ypz2+E
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -180,13 +180,13 @@ msgstr "{0, plural, other {{years} 年}}"
 #. placeholder {0}: selectedThreads.length
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
-msgstr ""
+msgstr "{0, plural, other {已選取 # 個聊天}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
-msgstr ""
+msgstr "{0, plural, other {# 個聊天}}"
 
 #. js-lingui-id: XHO5F1
 #. placeholder {0}: failedResults.length
@@ -210,7 +210,7 @@ msgstr "{0, plural, other {# 個物件}}"
 #. placeholder {0}: agentChatQueuedMessages.length
 #: src/modules/ai/components/AiChatQueuedMessages.tsx
 msgid "{0, plural, one {# Queued} other {# Queued}}"
-msgstr ""
+msgstr "{0, plural, other {# 個已排入佇列}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
@@ -236,7 +236,7 @@ msgstr "{0, plural, other {行銷活動已取消，已停止 {2} 封待傳送電
 #. placeholder {0}: onboardingConfig.importContactsCreditsReward
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{0, plural, one {Connect your mailbox to earn {formattedImportContactsCreditsReward} free credit} other {Connect your mailbox to earn {formattedImportContactsCreditsReward} free credits}}"
-msgstr ""
+msgstr "{0, plural, other {連接您的信箱即可獲得 {formattedImportContactsCreditsReward} 免費點數}}"
 
 #. js-lingui-id: xEqptn
 #. placeholder {0}: item.includedCredits
@@ -248,7 +248,7 @@ msgstr "{0, plural, other {點數/期間}}"
 #. placeholder {0}: onboardingConfig.inviteTeamCreditsRewardPerUser
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{0, plural, one {Earn {formattedInviteTeamCreditsRewardPerUser} free credit per teammate who joins} other {Earn {formattedInviteTeamCreditsRewardPerUser} free credits per teammate who joins}}"
-msgstr ""
+msgstr "{0, plural, other {每有一位隊友加入，即可獲得 {formattedInviteTeamCreditsRewardPerUser} 免費點數}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
@@ -260,13 +260,13 @@ msgstr ""
 #. placeholder {0}: onboardingInviteTeamValidEmails.length
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "{0, plural, one {Send invite} other {Send # invites}}"
-msgstr ""
+msgstr "{0, plural, other {傳送 # 個邀請}}"
 
 #. js-lingui-id: 4jHYiZ
 #. placeholder {0}: onboardingConfig.upgradeCreditsReward
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{0, plural, one {Upgrade your trial to earn {formattedUpgradeCreditsReward} free credit} other {Upgrade your trial to earn {formattedUpgradeCreditsReward} free credits}}"
-msgstr ""
+msgstr "{0, plural, other {升級您的試用方案即可獲得 {formattedUpgradeCreditsReward} 免費點數}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -278,7 +278,7 @@ msgstr "{0, plural, other {您無法訪問 {fieldsList} 字段}}"
 #. placeholder {0}: onboardingInviteTeamValidEmails.length
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "{0, plural, one {Your invite isn't sent yet} other {Your # invites aren't sent yet}}"
-msgstr ""
+msgstr "{0, plural, other {您的 # 個邀請尚未傳送}}"
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -346,7 +346,7 @@ msgstr "{0}/{1}"
 #. placeholder {0}: formatNumber(audiencePreview.trackingRefused)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0} opted out of email tracking, their clicks are not recorded"
-msgstr ""
+msgstr "{0} 已選擇不接受電子郵件追蹤，因此不會記錄其點擊"
 
 #. js-lingui-id: BzvoVr
 #. placeholder {0}: formatNumber(counts.topicUnsubscribed)
@@ -401,7 +401,7 @@ msgstr "已使用 {0}"
 #. placeholder {1}: item.spenderName
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "{0} used by {1}"
-msgstr ""
+msgstr "{0} 由 {1} 使用"
 
 #. js-lingui-id: izNf/z
 #. placeholder {0}: view.name
@@ -435,7 +435,7 @@ msgstr "{0} 位工作區成員"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
-msgstr ""
+msgstr "{0}，返回欄位"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -479,6 +479,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} 個 API 金鑰} other {{apiKeyC
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} 想要："
 
+#. js-lingui-id: ST9xGf
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+msgid "{appName} preferences"
+msgstr "{appName} 偏好設定"
+
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
 msgid "{appName} would like to:"
@@ -503,7 +508,7 @@ msgstr "{operatingSystem} 上的 {browser}"
 #. js-lingui-id: p8aaxP
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "{callRecordingHours, plural, one {{formattedCallRecordingHours} hour} other {{formattedCallRecordingHours} hours}}"
-msgstr ""
+msgstr "{callRecordingHours, plural, other {{formattedCallRecordingHours} 小時}}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -528,12 +533,12 @@ msgstr "{count, plural, other {例如 {example}，適用於 # 位小數}}"
 #. js-lingui-id: JhJ5ks
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
 msgid "{creditsReward, plural, one {{label}, earn {formattedCreditsReward} free credit each} other {{label}, earn {formattedCreditsReward} free credits each}}"
-msgstr ""
+msgstr "{creditsReward, plural, other {{label}，每個可獲得 {formattedCreditsReward} 免費點數}}"
 
 #. js-lingui-id: r05RaJ
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
 msgid "{creditsReward, plural, one {{label}, earn {formattedCreditsReward} free credit} other {{label}, earn {formattedCreditsReward} free credits}}"
-msgstr ""
+msgstr "{creditsReward, plural, other {{label}，可獲得 {formattedCreditsReward} 免費點數}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -543,7 +548,7 @@ msgstr "{currentCreditAmountDisplay} 積分 "
 #. js-lingui-id: Btf16S
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
-msgstr ""
+msgstr "{currentStepCredits, plural, other {免費點數}}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -564,7 +569,7 @@ msgstr "{deletedCount, plural, other {成功刪除 {deletedCount} 個工作}}"
 #. js-lingui-id: toR3wC
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{formattedEarnedCredits} credits}}"
-msgstr ""
+msgstr "{earnedCredits, plural, other {{formattedEarnedCredits} 點數}}"
 
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -600,7 +605,7 @@ msgstr "已匯入 {formattedCreatedRecordsProgress} 筆資料，共 {formattedRe
 #. js-lingui-id: EjjpWm
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
-msgstr ""
+msgstr "已使用 {formattedPercentage}%，{formattedContextWindow} 個權杖中已使用 {formattedConversationSize} 個"
 
 #. js-lingui-id: iokIra
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -610,7 +615,7 @@ msgstr "{objectLabel} 的 {formattedType}"
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
-msgstr ""
+msgstr "{goalCredits, plural, other {免費點數}}"
 
 #. js-lingui-id: YF/a2j
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -645,17 +650,17 @@ msgstr "{hours, plural, other {{hours} 小時}}"
 #. js-lingui-id: /oqig9
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{hours}h"
-msgstr ""
+msgstr "{hours}小時"
 
 #. js-lingui-id: i3Frvq
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{hours}h {minutes}m"
-msgstr ""
+msgstr "{hours}小時 {minutes}分鐘"
 
 #. js-lingui-id: +RLs0P
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{importContactsCallRecordingHours, plural, one {{formattedImportContactsAiActions} AI actions, {formattedImportContactsEnrichments} enrichments or {formattedImportContactsCallRecordingHours} hour of call recording.} other {{formattedImportContactsAiActions} AI actions, {formattedImportContactsEnrichments} enrichments or {formattedImportContactsCallRecordingHours} hours of call recording.}}"
-msgstr ""
+msgstr "{importContactsCallRecordingHours, plural, other {{formattedImportContactsAiActions} 個 AI 動作、{formattedImportContactsEnrichments} 項資料豐富化，或 {formattedImportContactsCallRecordingHours} 小時通話錄音。}}"
 
 #. js-lingui-id: m+qcrh
 #. placeholder {0}: formatNumber(installCount)
@@ -697,7 +702,7 @@ msgstr "{label}（自動）"
 #. js-lingui-id: Qoi5Dj
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 msgid "{label} (default)"
-msgstr ""
+msgstr "{label}（預設）"
 
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
@@ -712,12 +717,12 @@ msgstr "{label} 清單"
 #. js-lingui-id: q8vaHD
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionsListItem.tsx
 msgid "{label}, {statusLabel}"
-msgstr ""
+msgstr "{label}，{statusLabel}"
 
 #. js-lingui-id: hr3CkB
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "{label}, unread"
-msgstr ""
+msgstr "{label}，未讀"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -737,12 +742,12 @@ msgstr "{minutes, plural, other {# 分鐘}}"
 #. js-lingui-id: ZOtn9F
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{minutes}m"
-msgstr ""
+msgstr "{minutes}分鐘"
 
 #. js-lingui-id: a5xsc/
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{minutes}m {seconds}s"
-msgstr ""
+msgstr "{minutes}分鐘 {seconds}秒"
 
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -753,12 +758,12 @@ msgstr "{morphRelationCount} 個物件"
 #. js-lingui-id: 430IKF
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits} free credit} other {You earned {formattedNewlyEarnedCredits} free credits}}"
-msgstr ""
+msgstr "{newlyEarnedCredits, plural, other {您獲得了 {formattedNewlyEarnedCredits} 免費點數}}"
 
 #. js-lingui-id: hKZAJk
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
-msgstr ""
+msgstr "無法將 {notAddedLabels} 加入此聊天，因為他們無法在其中回覆。"
 
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
@@ -773,12 +778,12 @@ msgstr "{numberOfSelectedItems} 位工作區成員"
 #. js-lingui-id: dKtfA2
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as a participant and get access to this chat"
-msgstr ""
+msgstr "{participantLabels} 將以參與者身分加入並取得此聊天的存取權"
 
 #. js-lingui-id: MDJKup
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as participants and get access to this chat"
-msgstr ""
+msgstr "{participantLabels} 將以參與者身分加入並取得此聊天的存取權"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -841,7 +846,7 @@ msgstr "{roleTargetName} 將被指派到 \"{newRoleName}\" 角色。"
 #. js-lingui-id: Mkqwbv
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
 msgid "{runCount, plural, one {# run} other {# runs}}"
-msgstr ""
+msgstr "{runCount, plural, other {# 次執行}}"
 
 #. js-lingui-id: UsskHt
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -881,7 +886,7 @@ msgstr "{selectedOptionCount} 個選項"
 #. js-lingui-id: tz1jJj
 #: src/modules/ai/utils/getAgentChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
-msgstr ""
+msgstr "{senderLabel}：{text}"
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -906,7 +911,7 @@ msgstr "{stepNumber}. 日曆"
 #. js-lingui-id: C1Cp3d
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "{storedToolName} (not available to you)"
-msgstr ""
+msgstr "{storedToolName}（您無法使用）"
 
 #. js-lingui-id: bI/mcH
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -921,12 +926,12 @@ msgstr "{totalFieldsCount} 個可見欄位"
 #. js-lingui-id: sQlMlH
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{totalSeconds}s"
-msgstr ""
+msgstr "{totalSeconds}秒"
 
 #. js-lingui-id: zLrD5y
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
 msgid "{typeLabel} field"
-msgstr ""
+msgstr "{typeLabel} 欄位"
 
 #. js-lingui-id: fzpQ2b
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
@@ -1032,7 +1037,7 @@ msgstr "+{estimatedInstallCount} 次安裝"
 #. js-lingui-id: 918EaY
 #: src/modules/onboarding/components/OnboardingCreditsRewardChip.tsx
 msgid "+{formattedCreditsReward} each"
-msgstr ""
+msgstr "+{formattedCreditsReward} 每個"
 
 #. js-lingui-id: SMgdEJ
 #. placeholder {0}: formatNumber( section.estimatedTokenCount, { abbreviate: true, decimals: 1, }, )
@@ -1077,7 +1082,7 @@ msgstr "0 */1 * * *"
 #. js-lingui-id: gPLARo
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "1 credit is enough for one of these on average"
-msgstr ""
+msgstr "平均而言，1 點數足以用於其中一項"
 
 #. js-lingui-id: 4pzLrc
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
@@ -1203,15 +1208,20 @@ msgstr "草案已存在"
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "該工作流程已有一份草案。您確定要刪除它嗎？"
 
+#. js-lingui-id: xk6SkO
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run."
+msgstr "系統會為啟動工作流程的人員開啟表單，並當場填寫。使用此觸發條件時，表單只會顯示於工作流程執行期間。"
+
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
-msgstr ""
+msgstr "啟動工作流程的人員會開啟表單，並當場填寫。使用此觸發條件時，表單只會顯示在工作流程執行中。若要在某人的收件匣中請求回答或核准，請改用「傳送至收件匣」步驟。"
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
-msgstr ""
+msgstr "每次執行步驟時建立新的項目"
 
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -1226,12 +1236,12 @@ msgstr "您的訂閱付款失敗。我們重試期間，您的進階功能將保
 #. js-lingui-id: Aiok04
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr ""
+msgstr "記錄可與任何人共用，即使其角色無法存取此物件的人員也可以。對方只能取得該記錄的檢視或編輯權限。"
 
 #. js-lingui-id: Yfxf0I
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "A record saves only when every active rule is true. Rules run on every write: forms, API, imports and workflows."
-msgstr ""
+msgstr "只有在每個啟用中的規則皆為真時，才能儲存記錄。規則會在每次寫入時執行：表單、API、匯入及工作流程。"
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1246,7 +1256,7 @@ msgstr "必須為 API 金鑰選擇一個角色"
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A summary could not be generated because no transcript is available."
-msgstr ""
+msgstr "由於沒有可用的逐字稿，因此無法產生摘要。"
 
 #. js-lingui-id: 4tQSH0
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1261,7 +1271,7 @@ msgstr "驗證電子郵件已發送至"
 #. js-lingui-id: DSFl3F
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "A won opportunity needs an amount"
-msgstr ""
+msgstr "已贏得的商機必須有金額"
 
 #. js-lingui-id: DqlQy+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -1344,7 +1354,7 @@ msgstr "存取金鑰 ID"
 #. js-lingui-id: 6hdTJw
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
-msgstr ""
+msgstr "{objectLabelPlural} 的存取權由角色設定，而非逐筆記錄設定。"
 
 #. js-lingui-id: CrjDqe
 #: src/pages/auth/Authorize.tsx
@@ -1358,13 +1368,14 @@ msgstr "透過您偏好的 MCP 用戶端（例如 Claude、Codex 或 Cursor）�
 
 #. js-lingui-id: AeXO77
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
-#: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Account"
 msgstr "帳戶"
 
@@ -1383,7 +1394,13 @@ msgstr "帳戶添加成功。同步開始。"
 msgid "Account Deletion"
 msgstr "刪除帳戶"
 
+#. js-lingui-id: T3FM0r
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+msgid "Account settings"
+msgstr "帳號設定"
+
 #. js-lingui-id: bPwFdf
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -1425,7 +1442,7 @@ msgstr "操作"
 #. js-lingui-id: 3B7Xla
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Action arguments"
-msgstr ""
+msgstr "動作引數"
 
 #. js-lingui-id: j6ogTf
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -1435,7 +1452,7 @@ msgstr "按一下時的動作"
 #. js-lingui-id: muKPyT
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Action to approve"
-msgstr ""
+msgstr "待核准的動作"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
@@ -1540,7 +1557,7 @@ msgstr "添加"
 #. js-lingui-id: ly4D79
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
-msgstr ""
+msgstr "將 \"{optionName}\" 添加到選項中"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -1593,7 +1610,7 @@ msgstr "請先為此公司新增有電子郵件地址的人員"
 #. js-lingui-id: YFSF0K
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Add a recipient to {label}"
-msgstr ""
+msgstr "新增收件者至 {label}"
 
 #. js-lingui-id: 4LAQbj
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
@@ -1626,16 +1643,17 @@ msgstr "新增視訊會議連結"
 #. js-lingui-id: 9ZokcY
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add a Workflow"
-msgstr ""
+msgstr "新增工作流程"
 
 #. js-lingui-id: OHMMfc
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Add a workflow step that sends a message, and optionally an action to approve, to a member's inbox."
-msgstr ""
+msgstr "新增一個工作流程步驟，將訊息以及可選的待核准動作傳送至成員的收件匣。"
 
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -1645,7 +1663,7 @@ msgstr "新增帳戶"
 #. js-lingui-id: haRzHN
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Add an Agent"
-msgstr ""
+msgstr "新增代理"
 
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
@@ -1686,7 +1704,7 @@ msgstr "新增密件副本"
 #. js-lingui-id: 4gCq8e
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 msgid "Add block"
-msgstr ""
+msgstr "新增區塊"
 
 #. js-lingui-id: We0vOO
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
@@ -1707,7 +1725,7 @@ msgstr "新增副本"
 #. js-lingui-id: AgvHni
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
 msgid "Add column"
-msgstr ""
+msgstr "新增欄"
 
 #. js-lingui-id: 3iIvQg
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -1761,7 +1779,7 @@ msgstr "新增電子郵件通道"
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
-msgstr ""
+msgstr "新增意見回饋"
 
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
@@ -1942,12 +1960,12 @@ msgstr "新增問題"
 #. js-lingui-id: sJqK1O
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Add recipient"
-msgstr ""
+msgstr "新增收件者"
 
 #. js-lingui-id: pCK4rY
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Add record trigger"
-msgstr ""
+msgstr "新增記錄觸發條件"
 
 #. js-lingui-id: AmiJYR
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdownOneToMany.tsx
@@ -1987,7 +2005,7 @@ msgstr "新增規則群組"
 #. js-lingui-id: pM+R6K
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Add schedule"
-msgstr ""
+msgstr "新增排程"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2006,7 +2024,7 @@ msgstr "添加 SSO 身份提供者"
 #. js-lingui-id: 3RqxtX
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "Add teammates"
-msgstr ""
+msgstr "新增隊友"
 
 #. js-lingui-id: FKGcEL
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -2121,12 +2139,12 @@ msgstr "添加您的第一個 {objectLabel}"
 #. js-lingui-id: dakTu+
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Add your first Agent"
-msgstr ""
+msgstr "新增您的第一個代理"
 
 #. js-lingui-id: fcbR/4
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add your first Workflow"
-msgstr ""
+msgstr "新增您的第一個工作流程"
 
 #. js-lingui-id: vLO+NG
 #: src/modules/settings/hooks/useGetAddedRelativeDateDescription.ts
@@ -2334,7 +2352,7 @@ msgstr "代理"
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
 msgid "Aggregate"
-msgstr ""
+msgstr "彙總"
 
 #. js-lingui-id: sPQ5qN
 #: src/modules/page-layout/utils/getWidgetTitle.ts
@@ -2368,7 +2386,7 @@ msgstr "AI 與自動化"
 #. js-lingui-id: VOc0Pn
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "AI actions"
-msgstr ""
+msgstr "AI 動作"
 
 #. js-lingui-id: HbXHSp
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -2383,7 +2401,7 @@ msgstr "AI 聊天"
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat inbox"
-msgstr ""
+msgstr "AI 聊天收件匣"
 
 #. js-lingui-id: /YYegB
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -2549,7 +2567,7 @@ msgstr "全部 ({relationRecordsCount})"
 #. js-lingui-id: cF7bEt
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "All actions"
-msgstr ""
+msgstr "所有動作"
 
 #. js-lingui-id: iKzPQM
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
@@ -2612,7 +2630,7 @@ msgstr "所有群組"
 #. js-lingui-id: 2o5c3R
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "All it takes is their email."
-msgstr ""
+msgstr "只需要他們的電子郵件地址。"
 
 #. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -2720,7 +2738,7 @@ msgstr "所有的自定義對象"
 #. js-lingui-id: Ub/mf+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow applications to install workflows and start new workflow runs."
-msgstr ""
+msgstr "允許應用程式安裝工作流程並啟動新的工作流程執行。"
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2990,7 +3008,7 @@ msgstr "任何字段"
 #. js-lingui-id: V38wzw
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "Anyone in the workspace"
-msgstr ""
+msgstr "工作區中的任何人"
 
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -3102,6 +3120,7 @@ msgstr "單引號與句點"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -3125,6 +3144,16 @@ msgstr "應用程式日誌"
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "App logs are kept {retentionInDays} days."
 msgstr "應用程式日誌會保留 {retentionInDays} 天。"
+
+#. js-lingui-id: MAyGac
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+msgid "App preferences"
+msgstr "應用程式偏好設定"
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -3161,6 +3190,7 @@ msgid "Applicability"
 msgstr "適用性"
 
 #. js-lingui-id: IrC12v
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -3215,7 +3245,7 @@ msgstr "應用程式變數"
 #. js-lingui-id: M/Fsre
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Application workflows"
-msgstr ""
+msgstr "應用程式工作流程"
 
 #. js-lingui-id: fL7WXr
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -3255,7 +3285,7 @@ msgstr "套用"
 #. js-lingui-id: d+6U9x
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Apply record sharing visibility rules when accessing records."
-msgstr ""
+msgstr "存取記錄時套用記錄共用可見性規則。"
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -3265,12 +3295,12 @@ msgstr "套用{progressText}"
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Approve"
-msgstr ""
+msgstr "核准"
 
 #. js-lingui-id: 7kb4LU
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved"
-msgstr ""
+msgstr "已核准"
 
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
@@ -3280,7 +3310,7 @@ msgstr "已驗證核准訪問域名"
 #. js-lingui-id: nfUdWT
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved but it failed"
-msgstr ""
+msgstr "已核准，但失敗了"
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -3390,13 +3420,13 @@ msgstr "您確定嗎？您當前的信息將不會被保存。"
 #. js-lingui-id: OgB1k4
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
 msgid "Arguments"
-msgstr ""
+msgstr "引數"
 
 #. js-lingui-id: qUFEtj
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Arguments must be a valid JSON object."
-msgstr ""
+msgstr "引數必須是有效的 JSON 物件。"
 
 #. js-lingui-id: AkeObK
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -3433,14 +3463,14 @@ msgstr "詢問與尋找"
 #. js-lingui-id: 5nEvjb
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the Sync Account permission to connect a calendar account."
-msgstr ""
+msgstr "請向工作區管理員要求「同步帳戶」權限，以連接日曆帳戶。"
 
 #. js-lingui-id: 0b3325
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Ask a workspace admin for the Sync Account permission to reconnect this account."
-msgstr ""
+msgstr "請向工作區管理員要求「同步帳戶」權限，以重新連接此帳戶。"
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
@@ -3464,12 +3494,12 @@ msgstr "詢問任何問題、@ 一筆記錄或 / 一項技能..."
 #. js-lingui-id: OF5WZ/
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask anything, @ a teammate or record, / a skill..."
-msgstr ""
+msgstr "提出任何問題、@ 隊友或記錄、/ 技能……"
 
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "Ask for human input"
-msgstr ""
+msgstr "要求人工輸入"
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -3479,7 +3509,7 @@ msgstr "正在提問..."
 #. js-lingui-id: kaEPzR
 #: src/modules/side-panel/hooks/useOpenAssignAiChatInSidePanel.ts
 msgid "Assign"
-msgstr ""
+msgstr "指派"
 
 #. js-lingui-id: OBqG7p
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
@@ -3524,7 +3554,7 @@ msgstr ""
 #. js-lingui-id: lXGdbb
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
-msgstr ""
+msgstr "已指派"
 
 #. js-lingui-id: 7qh2Hx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -3539,7 +3569,7 @@ msgstr "分配給"
 #. js-lingui-id: ArzUbT
 #: src/modules/ai/components/AiChatThreadSubtitle.tsx
 msgid "Assigned to {assigneeName}"
-msgstr ""
+msgstr "已指派給 {assigneeName}"
 
 #. js-lingui-id: TzM/0+
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -3549,7 +3579,7 @@ msgstr "指派給透過邀請連結、核准的網域或 SSO 加入的使用者�
 #. js-lingui-id: ojKCLU
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
-msgstr ""
+msgstr "受讓人"
 
 #. js-lingui-id: 0dtKl9
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -3644,22 +3674,22 @@ msgstr "附加檔案"
 #. js-lingui-id: 4xOjp/
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attached this conversation to a record"
-msgstr ""
+msgstr "已將此對話附加至記錄"
 
 #. js-lingui-id: DCyq1H
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attached this conversation to the {objectLabel}"
-msgstr ""
+msgstr "已將此對話附加至 {objectLabel}"
 
 #. js-lingui-id: e9I63P
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attaching this conversation to a record"
-msgstr ""
+msgstr "正在將此對話附加至記錄"
 
 #. js-lingui-id: 0/s5dI
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attaching this conversation to the {objectLabel}"
-msgstr ""
+msgstr "正在將此對話附加至 {objectLabel}"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -3807,6 +3837,7 @@ msgstr "自動為人員創建聯繫人。"
 
 #. js-lingui-id: RpExX0
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "接收或發送電子郵件時自動創建人員記錄"
 
@@ -3845,7 +3876,7 @@ msgstr "可用的應用程式詳細資料"
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
 #: src/modules/ui/field/display/utils/getAvatarButtonRender.tsx
 msgid "Avatar"
-msgstr ""
+msgstr "頭像"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -3883,7 +3914,7 @@ msgstr "返回內容"
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Back to inbox"
-msgstr ""
+msgstr "返回收件匣"
 
 #. js-lingui-id: 9aZHfH
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -4049,7 +4080,7 @@ msgstr "區塊"
 #. js-lingui-id: 32TndD
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
-msgstr ""
+msgstr "已封鎖"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -4121,12 +4152,12 @@ msgstr "退信"
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 msgid "Breadcrumb"
-msgstr ""
+msgstr "面包屑"
 
 #. js-lingui-id: 8mzNUs
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Breakdown"
-msgstr ""
+msgstr "明細"
 
 #. js-lingui-id: 1hGdwj
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -4260,7 +4291,7 @@ msgstr "繞過 SSO"
 #. js-lingui-id: RmEeKl
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "bytes"
-msgstr ""
+msgstr "位元組"
 
 #. js-lingui-id: 9z+1OD
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -4333,6 +4364,8 @@ msgstr "caldav.example.com"
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Calendar"
 msgstr "日曆"
 
@@ -4419,7 +4452,7 @@ msgstr "通話錄音程式"
 #. js-lingui-id: wYLT8I
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Call recording"
-msgstr ""
+msgstr "通話錄音"
 
 #. js-lingui-id: 9e+AU2
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -4451,11 +4484,6 @@ msgstr "行動呼籲按鈕"
 msgid "Calling Code"
 msgstr "國碼"
 
-#. js-lingui-id: 9rnFEa
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Calls"
-msgstr "通話"
-
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Camera"
@@ -4484,7 +4512,7 @@ msgstr "行銷活動已取消排程並返回您的草稿"
 #. js-lingui-id: n3fZtA
 #: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
 msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr ""
+msgstr "僅能檢視：其角色無法編輯 {objectLabelPlural}"
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -4541,7 +4569,7 @@ msgstr "取消點數套組切換？"
 #. js-lingui-id: D14fs0
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Cancel field selection"
-msgstr ""
+msgstr "取消欄位選取"
 
 #. js-lingui-id: dV4HC5
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
@@ -4601,7 +4629,7 @@ msgstr "取消於"
 #. js-lingui-id: vv7kpg
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 msgid "Cancelled"
-msgstr ""
+msgstr "已取消"
 
 #. js-lingui-id: y4uH7j
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -4797,7 +4825,7 @@ msgstr "聊天對話"
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Chat details"
-msgstr ""
+msgstr "聊天詳細資料"
 
 #. js-lingui-id: tDlhkF
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -4812,7 +4840,7 @@ msgstr "聊天工作階段"
 #. js-lingui-id: VGw5+N
 #: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "Chat stopped: no more available credits."
-msgstr ""
+msgstr "聊天已停止：沒有更多可用點數。"
 
 #. js-lingui-id: UxeiNP
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -4866,7 +4894,7 @@ msgstr "請檢查您的收件匣以驗證新的電子郵件地址。"
 #. js-lingui-id: w+pzSf
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
 msgid "Checked only when the record this rule belongs to is saved. Editing the related record does not check it again."
-msgstr ""
+msgstr "只有在儲存此規則所屬的記錄時才會檢查。編輯相關記錄不會再次檢查。"
 
 #. js-lingui-id: SxwQE8
 #: src/modules/settings/billing/hooks/useHandleCheckoutSession.ts
@@ -4939,7 +4967,7 @@ msgstr "選擇要同步的資料夾"
 #: src/modules/side-panel/components/SidePanelPageLayoutInfo.tsx
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Choose icon"
-msgstr ""
+msgstr "選擇圖示"
 
 #. js-lingui-id: SJ1Aum
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
@@ -5010,6 +5038,11 @@ msgstr "選擇搜尋記錄時使用哪些欄位。"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
 msgstr ""
+
+#. js-lingui-id: 22LF79
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
+msgid "Choose your preferences for the apps installed on your workspace by the admin"
+msgstr "選擇由管理員安裝於您工作區的應用程式偏好設定"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -5082,7 +5115,7 @@ msgstr "清除篩選條件"
 #. js-lingui-id: FBIuPX
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "Clear selection"
-msgstr ""
+msgstr "清除選取項目"
 
 #. js-lingui-id: wu0RfR
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -5109,7 +5142,7 @@ msgstr "點擊這裡"
 #. js-lingui-id: 80Rsvc
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Click on \"Add Field\" below to add the first input to your form. The form pops up for the person who launches the workflow manually. For workflows with other triggers, it is filled in from the workflow run."
-msgstr ""
+msgstr "點擊下方的 \"Add Field\"，以在表單中新增第一個輸入項目。表單會為手動啟動工作流程的人員彈出。對於使用其他觸發條件的工作流程，表單會從工作流程執行中填入。"
 
 #. js-lingui-id: q2R9+z
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -5160,7 +5193,7 @@ msgstr "未設定 ClickHouse"
 #. js-lingui-id: GhPnTR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Clicks only"
-msgstr ""
+msgstr "僅點擊"
 
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -5305,7 +5338,7 @@ msgstr "程式碼解譯器"
 #. placeholder {0}: beautifyExactDateTime(pendingRecoveryCodeExpiresAt)
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Code pending until {0}"
-msgstr ""
+msgstr "代碼待處理至 {0}"
 
 #. js-lingui-id: FXSsRm
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -5355,7 +5388,7 @@ msgstr "收合資料夾"
 #. js-lingui-id: q4bqvN
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 msgid "Collapse hidden fields"
-msgstr ""
+msgstr "摺疊隱藏欄位"
 
 #. js-lingui-id: mkMLq4
 #: src/modules/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTogglePresentation.ts
@@ -5386,7 +5419,7 @@ msgstr "欄位資料與多選不相容。所需格式為'[\\"
 #. js-lingui-id: DNkveC
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeader.tsx
 msgid "Column options"
-msgstr ""
+msgstr "欄選項"
 
 #. js-lingui-id: /xTbaM
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5430,7 +5463,7 @@ msgstr "指令選單"
 #. placeholder {0}: formatShortcut({ shortcut: ['Mod', 'K'] })
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Command menu | {0}"
-msgstr ""
+msgstr "指令選單 | {0}"
 
 #. js-lingui-id: Ngoldv
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -5518,6 +5551,7 @@ msgstr "投訴"
 
 #. js-lingui-id: 3WrMP5
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Complete setup"
 msgstr "完成設定"
 
@@ -5544,7 +5578,7 @@ msgstr "完成的工作保存 {completedDuration}，失敗的工作保存 {faile
 #. js-lingui-id: HBEnT7
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Complexity"
-msgstr ""
+msgstr "複雜度"
 
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -5565,7 +5599,7 @@ msgstr "計算時間"
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Condition"
-msgstr ""
+msgstr "條件"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -5668,7 +5702,7 @@ msgstr "配置 IMAP 設定以接收和同步您的電子郵件。"
 #. js-lingui-id: uUDe3+
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "Configure rule"
-msgstr ""
+msgstr "設定規則"
 
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5707,6 +5741,7 @@ msgstr "設定此小工具以顯示欄位"
 
 #. js-lingui-id: no/yG9
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Configure what emails should get synced"
 msgstr "設定應同步哪些電子郵件"
 
@@ -5818,16 +5853,19 @@ msgstr "請先連結 Google、Microsoft 或 CalDAV 並啟用日曆同步，然�
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "透過 IMAP/SMTP 連接"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "連接到 Google"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "連接到 Microsoft"
 
@@ -5843,7 +5881,7 @@ msgid "Connected"
 msgstr "已連接"
 
 #. js-lingui-id: 9TzudL
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Connected accounts"
 msgstr "已連接帳戶"
 
@@ -5871,6 +5909,7 @@ msgstr "連接提供者"
 
 #. js-lingui-id: W4Kgwq
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Connection settings"
 msgstr "連接設定"
 
@@ -5885,9 +5924,9 @@ msgid "Connection successfully updated"
 msgstr "連接成功更新"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/components/AgentChatStreamKeepAliveEffect.tsx
+#: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
-msgstr ""
+msgstr "與助理的連線已中斷。重新載入以查看回應。"
 
 #. js-lingui-id: JdGr7p
 #: src/modules/side-panel/pages/page-layout/components/ChartLimitInfoBanner.tsx
@@ -5907,6 +5946,7 @@ msgstr "聯絡管理員"
 #. js-lingui-id: Y2y0mC
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Contact auto-creation"
 msgstr "聯繫人自動創建"
 
@@ -5946,12 +5986,12 @@ msgstr "內容脈絡與使用量"
 #. js-lingui-id: uEf5Og
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context and usage, {formattedPercentage}% of context window used"
-msgstr ""
+msgstr "內容與使用量，已使用內容視窗的 {formattedPercentage}%"
 
 #. js-lingui-id: 4NJlEz
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context and usage, context window unavailable"
-msgstr ""
+msgstr "內容與使用量，內容視窗無法使用"
 
 #. js-lingui-id: LXIm4m
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -6030,12 +6070,12 @@ msgstr "對話"
 #. js-lingui-id: Ljx9HM
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Conversation key"
-msgstr ""
+msgstr "對話金鑰"
 
 #. js-lingui-id: 5RinAt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Conversation title"
-msgstr ""
+msgstr "對話標題"
 
 #. js-lingui-id: EnJuK0
 #: src/modules/ai/components/MobileHomeAiChatSection.tsx
@@ -6046,17 +6086,17 @@ msgstr "對話"
 #. js-lingui-id: 5dVEtZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Conversations linked to this record will appear here."
-msgstr ""
+msgstr "與此記錄連結的對話將顯示於此處。"
 
 #. js-lingui-id: SXWEJM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Conversations tab"
-msgstr ""
+msgstr "對話分頁"
 
 #. js-lingui-id: LMvWS1
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Conversations you can open will appear here."
-msgstr ""
+msgstr "您可以開啟的對話將顯示於此處。"
 
 #. js-lingui-id: HRGl1X
 #: src/modules/settings/members/components/MemberNameFields.tsx
@@ -6253,17 +6293,17 @@ msgstr "快取輸入的每 100 萬個權杖成本 (USD)"
 #. js-lingui-id: lvWtM4
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not attach this conversation to a record"
-msgstr ""
+msgstr "無法將此對話附加至記錄"
 
 #. js-lingui-id: 3KqAq7
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not attach this conversation to the {objectLabel}"
-msgstr ""
+msgstr "無法將此對話附加至 {objectLabel}"
 
 #. js-lingui-id: E/YqmF
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Could not be proposed"
-msgstr ""
+msgstr "無法提出"
 
 #. js-lingui-id: T8ACay
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -6299,7 +6339,7 @@ msgstr "無法授予媒體存取權。請再試一次。"
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Could not load runs"
-msgstr ""
+msgstr "無法載入執行項目"
 
 #. js-lingui-id: Tr0DHk
 #: src/modules/object-core/workflows/components/CoreWorkflowEditor.tsx
@@ -6438,7 +6478,7 @@ msgstr "計數依據"
 #. js-lingui-id: EEqRLn
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Count clicks by routing campaign links through Twenty before the original page."
-msgstr ""
+msgstr "在前往原始頁面前，透過 Twenty 轉送行銷活動連結以計算點擊次數。"
 
 #. js-lingui-id: vQJINq
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -6513,7 +6553,7 @@ msgstr "創建 {objectLabelSingular}"
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Create a few {0} to preview this rule on real records."
-msgstr ""
+msgstr "建立幾個 {0}，以在實際記錄上預覽此規則。"
 
 #. js-lingui-id: fQFALn
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -6565,7 +6605,7 @@ msgstr "創建工作流程並返回此處查看其版本"
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
-msgstr ""
+msgstr "建立工作流程以自動化您的工作。"
 
 #. js-lingui-id: Hn5erC
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
@@ -6575,7 +6615,7 @@ msgstr "建立工作區"
 #. js-lingui-id: bFIJZx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Create an Agent to automate your work."
-msgstr ""
+msgstr "建立代理程式以自動化您的工作。"
 
 #. js-lingui-id: dpwEnu
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -6752,7 +6792,7 @@ msgstr "建立於 {0}"
 #. js-lingui-id: esG9lm
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Created or updated"
-msgstr ""
+msgstr "已建立或已更新"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -6861,12 +6901,12 @@ msgstr "點數會加到方案額度之上，且僅在方案額度用盡後才會
 #. js-lingui-id: U9hjv1
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "Credits are added when they accept your invite."
-msgstr ""
+msgstr "當對方接受您的邀請時，將會加入點數。"
 
 #. js-lingui-id: ZSN5aF
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "Credits are added when your trial starts."
-msgstr ""
+msgstr "試用開始時將會加入點數。"
 
 #. js-lingui-id: 0o2LpE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -6913,7 +6953,7 @@ msgstr "計時器"
 #. js-lingui-id: 0KivXX
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Cron pattern"
-msgstr ""
+msgstr "Cron 模式"
 
 #. js-lingui-id: rV1+uS
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
@@ -6965,7 +7005,7 @@ msgstr "貨幣代碼"
 #. js-lingui-id: oXgwB7
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 msgid "Currency: {currencyCode}"
-msgstr ""
+msgstr "貨幣：{currencyCode}"
 
 #. js-lingui-id: Hp1l6f
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -7008,7 +7048,7 @@ msgstr "找不到當前工作區成員。"
 #. js-lingui-id: dUDTUc
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
 msgid "Currently:"
-msgstr ""
+msgstr "目前："
 
 #. js-lingui-id: mO0Peh
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -7163,7 +7203,7 @@ msgstr "客戶"
 #. js-lingui-id: lfE233
 #: src/modules/validation-rules/components/SettingsValidationRuleNameForm.tsx
 msgid "Customer deals need an amount"
-msgstr ""
+msgstr "客戶交易需要金額"
 
 #. js-lingui-id: AdXh0n
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -7449,7 +7489,7 @@ msgstr "天"
 #. js-lingui-id: 5w8B/7
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage.tsx
 msgid "Day & Time"
-msgstr ""
+msgstr "日期與時間"
 
 #. js-lingui-id: ahA8fy
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
@@ -7600,7 +7640,7 @@ msgstr "預設視圖"
 #. js-lingui-id: iDTUBO
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Defaults to the step name"
-msgstr ""
+msgstr "預設為步驟名稱"
 
 #. js-lingui-id: 6b8WDd
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7630,6 +7670,7 @@ msgstr "定義此工具的功能"
 #. js-lingui-id: bQkkFU
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
 msgstr "定義在您的工作區中對其他用戶可見的內容"
 
@@ -7711,7 +7752,7 @@ msgstr "刪除 {fieldLabel} 欄位？"
 #. js-lingui-id: DKQlby
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete {numberOfCoreWorkflows} workflows?"
-msgstr ""
+msgstr "刪除 {numberOfCoreWorkflows} 個工作流程？"
 
 #. js-lingui-id: j/OgnL
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -7747,16 +7788,19 @@ msgstr "刪除帳戶及所有相關數據或離開工作區"
 
 #. js-lingui-id: 452Oso
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and data"
 msgstr "刪除帳戶和資料"
 
 #. js-lingui-id: bwUbrT
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data"
 msgstr "刪除帳戶和同步的資料"
 
 #. js-lingui-id: nmosf7
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data?"
 msgstr "刪除帳戶和同步的資料？"
 
@@ -7891,7 +7935,7 @@ msgstr "刪除此角色並為其成員分配新角色"
 #. js-lingui-id: G3jMHs
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Delete this rule?"
-msgstr ""
+msgstr "刪除此規則？"
 
 #. js-lingui-id: UvEQr6
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -7937,7 +7981,7 @@ msgstr "刪除小工具"
 #. js-lingui-id: UA2IpC
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflow"
-msgstr ""
+msgstr "刪除工作流程"
 
 #. js-lingui-id: D+Bgvi
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -7947,12 +7991,12 @@ msgstr "刪除工作流程"
 #. js-lingui-id: JQPF/x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflow?"
-msgstr ""
+msgstr "刪除工作流程？"
 
 #. js-lingui-id: ABwG9x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflows"
-msgstr ""
+msgstr "刪除工作流程"
 
 #. js-lingui-id: Z299hR
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -8081,7 +8125,7 @@ msgstr "由應用程式提供的描述"
 #. js-lingui-id: f8fH8W
 #: src/modules/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel.ts
 msgid "Design"
-msgstr ""
+msgstr "設計"
 
 #. js-lingui-id: BBqGS9
 #: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
@@ -8209,7 +8253,7 @@ msgstr "方向"
 #. js-lingui-id: cO9+2L
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable"
-msgstr ""
+msgstr "停用"
 
 #. js-lingui-id: XDeNvP
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -8219,7 +8263,7 @@ msgstr "停用模擬"
 #. js-lingui-id: 8v3G2p
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable the rule to stop checking records against it."
-msgstr ""
+msgstr "停用規則以停止根據該規則檢查記錄。"
 
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
@@ -8244,6 +8288,9 @@ msgstr "中斷連接"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Disconnect account"
 msgstr "中斷帳戶連線"
 
@@ -8407,11 +8454,13 @@ msgstr "不要自動創建聯繫人。"
 
 #. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Don't create contacts from/to Gmail, Outlook emails"
 msgstr "不要從／向 Gmail、Outlook 電子郵件創建聯絡人"
 
 #. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Don't import emails from team@ support@ noreply@..."
 msgstr "不要匯入來自 team@、support@、noreply@ 的電子郵件..."
 
@@ -8425,7 +8474,7 @@ msgstr "完成"
 #. js-lingui-id: y+f/uY
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Done {doneTime}"
-msgstr ""
+msgstr "已完成 {doneTime}"
 
 #. js-lingui-id: Wm78zZ
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -8528,7 +8577,7 @@ msgstr "拖放到此處"
 #. js-lingui-id: T/PLYo
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 msgid "Drag to move, click for options"
-msgstr ""
+msgstr "拖曳以移動，點擊查看選項"
 
 #. js-lingui-id: VIbDgE
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
@@ -8675,7 +8724,7 @@ msgstr "最早日期"
 #. js-lingui-id: tmDUtT
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 msgid "Earn {formattedCurrentStepCredits}"
-msgstr ""
+msgstr "賺取 {formattedCurrentStepCredits}"
 
 #. js-lingui-id: +hvIFU
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -8784,7 +8833,7 @@ msgstr "編輯連結"
 #. js-lingui-id: WLw62E
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Edit linked records"
-msgstr ""
+msgstr "編輯連結的記錄"
 
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -8834,7 +8883,7 @@ msgstr "編輯關聯"
 #. js-lingui-id: 0doodQ
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Edit rule"
-msgstr ""
+msgstr "編輯規則"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -8933,7 +8982,7 @@ msgstr "電子郵件地址"
 #. js-lingui-id: M08Fhf
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Email addresses that opted out of campaign emails, a topic, or click tracking"
-msgstr ""
+msgstr "已選擇不接收行銷活動電子郵件、某個主題或點擊追蹤的電子郵件地址"
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -9013,11 +9062,16 @@ msgstr "透過電子郵件聯絡支援"
 msgid "Email the attendees an invitation"
 msgstr "向與會者寄送邀請電子郵件"
 
+#. js-lingui-id: ju58G/
+#: src/modules/activities/emails/components/EmailThreadPreview.tsx
+msgid "Email thread"
+msgstr "電子郵件串"
+
 #. js-lingui-id: +V3dhy
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Email tracking"
-msgstr ""
+msgstr "電子郵件追蹤"
 
 #. js-lingui-id: LimKOG
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -9060,9 +9114,10 @@ msgstr "電子郵件"
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Emails"
 msgstr "電子郵件"
 
@@ -9075,6 +9130,11 @@ msgstr "電子郵件與行事曆"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
 msgstr "已交給服務提供者的電子郵件無法撤回。這會停止所有仍在等待傳送的電子郵件。"
+
+#. js-lingui-id: USBKh+
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Emails from the blocklist will be ignored regardless of this setting."
+msgstr "無論此設定為何，阻止清單中的電子郵件都將被忽略。"
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -9168,7 +9228,7 @@ msgstr "空白分頁"
 #. js-lingui-id: PaQ3df
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Enable"
-msgstr ""
+msgstr "啟用"
 
 #. js-lingui-id: q11Dk2
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -9272,12 +9332,12 @@ msgstr "享有 30 天免費試用"
 #. js-lingui-id: zPfy+F
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Enough for one of these on average"
-msgstr ""
+msgstr "平均足以用於其中一項"
 
 #. js-lingui-id: oWbT1n
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Enrichments"
-msgstr ""
+msgstr "資料充實"
 
 #. js-lingui-id: T/N+2Z
 #: src/modules/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput.tsx
@@ -9289,7 +9349,7 @@ msgstr "輸入 JSON 物件"
 #. js-lingui-id: zXhNUj
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter a JSON value"
-msgstr ""
+msgstr "輸入 JSON 值"
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -9484,7 +9544,7 @@ msgstr ""
 #. js-lingui-id: 4E8Rhf
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter the arguments as a JSON object"
-msgstr ""
+msgstr "以 JSON 物件形式輸入引數"
 
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -9499,12 +9559,12 @@ msgstr "輸入信息以設置連接"
 #. js-lingui-id: 9qdYw8
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Enter the message to post"
-msgstr ""
+msgstr "輸入要發布的訊息"
 
 #. js-lingui-id: lZC0Js
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Enter the recovery code a workspace admin gave you. Your current authenticator for this workspace will be removed."
-msgstr ""
+msgstr "輸入工作區管理員提供給您的復原碼。系統將移除此工作區目前的驗證器。"
 
 #. js-lingui-id: 3EF9HN
 #: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
@@ -9519,7 +9579,7 @@ msgstr "輸入要將此應用程式轉移至的工作區子網域。您將失去
 #. js-lingui-id: JS1v0D
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter valid JSON."
-msgstr ""
+msgstr "輸入有效的 JSON。"
 
 #. js-lingui-id: pubQie
 #: src/modules/object-core/workflows/components/CoreWorkflowFilterValueInput.tsx
@@ -9857,7 +9917,7 @@ msgstr "所有人"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 msgid "Everyone with access to {objectLabelPlural}"
-msgstr ""
+msgstr "所有可存取 {objectLabelPlural} 的人員"
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -9868,11 +9928,13 @@ msgstr "所有內容"
 
 #. js-lingui-id: QQlMid
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Exclude group emails"
 msgstr "排除群組電子郵件"
 
 #. js-lingui-id: +tk2yZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Exclude non-professional emails"
 msgstr "排除非專業電子郵件"
 
@@ -10181,7 +10243,7 @@ msgstr "宣告所有權失敗。"
 #: src/modules/object-core/agents/hooks/useCreateCoreAgent.ts
 #: src/modules/object-core/agents/hooks/useCreateCoreAgent.ts
 msgid "Failed to create agent"
-msgstr ""
+msgstr "建立代理程式失敗"
 
 #. js-lingui-id: kzaVCK
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
@@ -10202,7 +10264,7 @@ msgstr "建立上限失敗。"
 #. js-lingui-id: jrwIEQ
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "Failed to create the rule."
-msgstr ""
+msgstr "建立規則失敗。"
 
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -10238,7 +10300,7 @@ msgstr "刪除上限失敗。"
 #. js-lingui-id: P52MKW
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Failed to delete the rule."
-msgstr ""
+msgstr "刪除規則失敗。"
 
 #. js-lingui-id: AUprM8
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -10286,7 +10348,7 @@ msgstr "完成標誌上傳失敗"
 #: src/modules/settings/admin-panel/components/SettingsAdminTwoFactorAuthenticationRecoveryCode.tsx
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to generate a recovery code."
-msgstr ""
+msgstr "產生復原碼失敗。"
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -10429,7 +10491,7 @@ msgstr "無法撤銷簽署金鑰。請稍後再試。"
 #. js-lingui-id: Px/B6S
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
-msgstr ""
+msgstr "撤銷復原碼失敗。"
 
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
@@ -10542,7 +10604,7 @@ msgstr "更新上限失敗。"
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Failed to update the rule."
-msgstr ""
+msgstr "更新規則失敗。"
 
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
@@ -10560,6 +10622,7 @@ msgid "Failed to upgrade credit plan."
 msgstr "點數方案升級失敗。"
 
 #. js-lingui-id: pBEL6J
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
 #: src/modules/marketplace/hooks/useUpgradeApplication.ts
 msgid "Failed to upgrade the application."
 msgstr "應用程式升級失敗。"
@@ -10644,7 +10707,7 @@ msgstr "功能啟用至"
 #. js-lingui-id: YirHq7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Feedback"
-msgstr ""
+msgstr "反饋"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -10733,7 +10796,7 @@ msgstr "字段"
 #. js-lingui-id: K0tSFR
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Fields (optional)"
-msgstr ""
+msgstr "欄位（選填）"
 
 #. js-lingui-id: oy3EF7
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
@@ -10780,7 +10843,7 @@ msgstr "要更新的欄位"
 #. js-lingui-id: Dgd3Oe
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Fields used in the condition show their values here."
-msgstr ""
+msgstr "條件中使用的欄位會在此顯示其值。"
 
 #. js-lingui-id: 9k2rvq
 #: src/modules/views/types/ViewType.ts
@@ -10849,12 +10912,12 @@ msgstr "檔案上傳失敗（{0}）。"
 #. js-lingui-id: 49BbAW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "files"
-msgstr ""
+msgstr "檔案"
 
 #. js-lingui-id: sER+bs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Files"
-msgstr ""
+msgstr "檔案"
 
 #. js-lingui-id: BZGmTs
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -10905,7 +10968,7 @@ msgstr "篩選上限"
 #. js-lingui-id: iSXrBT
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "Filter opt-outs"
-msgstr ""
+msgstr "篩選取消訂閱"
 
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -10968,7 +11031,7 @@ msgstr "完成版面配置編輯以開啟 AI"
 #. js-lingui-id: KstqNM
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open Inbox"
-msgstr ""
+msgstr "完成版面配置編輯以開啟收件匣"
 
 #. js-lingui-id: 6cOXRd
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
@@ -11082,7 +11145,7 @@ msgstr "資料夾"
 #. js-lingui-id: Ovfdx1
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Follow the guide for your email provider."
-msgstr ""
+msgstr "請依照您的電子郵件服務供應商指南操作。"
 
 #. js-lingui-id: I7Exsw
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -11092,7 +11155,7 @@ msgstr "在 X 上追蹤我們"
 #. js-lingui-id: y6sq5j
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Following"
-msgstr ""
+msgstr "追蹤中"
 
 #. js-lingui-id: M0vOQ6
 #: src/modules/ai/components/AiModelPicker.tsx
@@ -11143,12 +11206,12 @@ msgstr "表單資料"
 #. js-lingui-id: oiy48l
 #: src/modules/ai/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
-msgstr ""
+msgstr "已略過表單"
 
 #. js-lingui-id: 6vS9Zq
 #: src/modules/ai/components/AiChatFormStatusRenderer.tsx
 msgid "Form submitted"
-msgstr ""
+msgstr "已提交表單"
 
 #. js-lingui-id: kI1qVD
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -11179,7 +11242,7 @@ msgstr "前成員"
 #. js-lingui-id: r8HLKr
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Forms are meant for manual triggers"
-msgstr ""
+msgstr "表單適用於手動觸發程序"
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -11215,12 +11278,12 @@ msgstr "第四"
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Free credits"
-msgstr ""
+msgstr "免費點數"
 
 #. js-lingui-id: sCMpw5
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "Free credits earned"
-msgstr ""
+msgstr "已賺取的免費點數"
 
 #. js-lingui-id: nLC6tu
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -11387,6 +11450,7 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -11420,17 +11484,17 @@ msgstr "產生"
 #. js-lingui-id: GmwkF+
 #: src/modules/settings/admin-panel/components/SettingsAdminTwoFactorAuthenticationRecoveryCode.tsx
 msgid "Generate 2FA recovery code"
-msgstr ""
+msgstr "產生 2FA 復原碼"
 
 #. js-lingui-id: iFV2P6
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate a recovery code"
-msgstr ""
+msgstr "產生復原碼"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate code"
-msgstr ""
+msgstr "產生代碼"
 
 #. js-lingui-id: /Sq+WF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -11451,7 +11515,7 @@ msgstr "產生函式輸出"
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Generate recovery code"
-msgstr ""
+msgstr "產生復原碼"
 
 #. js-lingui-id: wu9eMO
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
@@ -11499,7 +11563,7 @@ msgstr "邀請您的團隊，充分利用您的工作區。"
 #. js-lingui-id: 7SwUXR
 #: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
 msgid "Gets this record only: their role can't access {objectLabelPlural}"
-msgstr ""
+msgstr "僅取得此記錄：其角色無法存取 {objectLabelPlural}"
 
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -11515,6 +11579,11 @@ msgstr "GitHub 授權失敗或遭到拒絕。請重新連結你的 GitHub 帳戶
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Global search"
 msgstr "全域搜尋"
+
+#. js-lingui-id: DSJEta
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Gmail"
+msgstr "Gmail"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -11566,6 +11635,11 @@ msgstr "三月事件後的善意補償"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Google"
 msgstr "Google"
+
+#. js-lingui-id: ebIDwV
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Google Calendar"
+msgstr "Google 日曆"
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -11885,7 +11959,7 @@ msgstr "隱藏"
 #. placeholder {0}: fieldMetadataItem.label
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 msgid "Hide {0}"
-msgstr ""
+msgstr "隱藏 {0}"
 
 #. js-lingui-id: MuEcPp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -11902,7 +11976,7 @@ msgstr "隱藏空組"
 #. js-lingui-id: zoo33+
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Hide empty optional arguments"
-msgstr ""
+msgstr "隱藏空白的選用引數"
 
 #. js-lingui-id: K+AYNB
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -12017,7 +12091,7 @@ msgstr "記錄、頁面與導覽的顯示方式"
 #. js-lingui-id: tdbxbk
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "How this rule appears in settings."
-msgstr ""
+msgstr "此規則在設定中的顯示方式。"
 
 #. js-lingui-id: e60vNl
 #: src/pages/onboarding/CreateProfile.tsx
@@ -12151,7 +12225,7 @@ msgstr "圖標和名稱"
 #. js-lingui-id: mcmuCe
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Icons"
-msgstr ""
+msgstr "圖標"
 
 #. js-lingui-id: S0kLOH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12235,6 +12309,11 @@ msgstr "圖片"
 #: src/modules/activities/emails/hooks/useUploadEmailImage.ts
 msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "圖片 \"{fileName}\" 超過 {maxUploadSize}"
+
+#. js-lingui-id: Grur3I
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "IMAP"
+msgstr "IMAP"
 
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -12334,6 +12413,7 @@ msgstr "實施合作夥伴"
 
 #. js-lingui-id: l3s5ri
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Import"
 msgstr "導入"
 
@@ -12345,7 +12425,7 @@ msgstr "匯入所有電子郵件"
 #. js-lingui-id: RQkDtT
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Import contacts"
-msgstr ""
+msgstr "匯入聯絡人"
 
 #. js-lingui-id: 2CeOI3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -12380,6 +12460,7 @@ msgstr "已匯入資料"
 #. js-lingui-id: RqSvT0
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing"
 msgstr "導入中"
 
@@ -12424,7 +12505,7 @@ msgstr ""
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 msgid "Inbox"
-msgstr ""
+msgstr "收件箱"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -12516,7 +12597,7 @@ msgstr "資訊"
 #. js-lingui-id: 0PXONM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Initial object views"
-msgstr ""
+msgstr "初始物件檢視"
 
 #. js-lingui-id: XP/nZ1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -12578,17 +12659,17 @@ msgstr "插入操作"
 #. js-lingui-id: CoIXZj
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdown.tsx
 msgid "Insert variable"
-msgstr ""
+msgstr "插入變數"
 
 #. js-lingui-id: 0sUvZZ
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Insert your billing details to get a {trialDuration}-day <0>free</0> trial and more AI credits"
-msgstr ""
+msgstr "輸入您的帳單資訊，以取得 {trialDuration} 天<0>免費</0>試用及更多 AI 點數"
 
 #. js-lingui-id: wNiyuI
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Insert your billing details to get a <0>free</0> trial and more AI credits"
-msgstr ""
+msgstr "輸入您的帳單資訊，以取得<0>免費</0>試用及更多 AI 點數"
 
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
@@ -12657,7 +12738,7 @@ msgstr "已安裝的應用程式"
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Installing {displayedInstallProgress}"
-msgstr ""
+msgstr "正在安裝 {displayedInstallProgress}"
 
 #. js-lingui-id: kc9VIS
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -12821,7 +12902,7 @@ msgstr "無效的數字"
 #. js-lingui-id: Mwwd+k
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Invalid or expired recovery code."
-msgstr ""
+msgstr "復原碼無效或已過期。"
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -13031,7 +13112,7 @@ msgstr "項目"
 #. js-lingui-id: BzfzPK
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
 msgid "Items"
-msgstr ""
+msgstr "項目"
 
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -13162,7 +13243,7 @@ msgstr "即使此節點失敗，仍繼續執行下一個節點"
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Keep tracking my clicks"
-msgstr ""
+msgstr "繼續追蹤我的點擊"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -13197,7 +13278,7 @@ msgstr "鍵盤快捷鍵"
 #. js-lingui-id: nhxAdQ
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
 msgid "Keyword"
-msgstr ""
+msgstr "關鍵字"
 
 #. js-lingui-id: h6S9Yz
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -13431,7 +13512,7 @@ msgstr "最後更新"
 #. js-lingui-id: p9uaTd
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
 msgid "Later today"
-msgstr ""
+msgstr "今天稍後"
 
 #. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -13611,7 +13692,7 @@ msgstr "小於或等於"
 #. js-lingui-id: EKKBiO
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins add conditions a record must meet to be saved, checked on every write."
-msgstr ""
+msgstr "允許管理員新增記錄儲存時必須符合的條件，並在每次寫入時檢查。"
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -13621,17 +13702,17 @@ msgstr "讓每位成員自行決定"
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
-msgstr ""
+msgstr "允許使用者限制及共用個別記錄。"
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Let this member sign in again if they lost their authenticator app"
-msgstr ""
+msgstr "若此成員遺失驗證器應用程式，允許其再次登入"
 
 #. js-lingui-id: RIWS8s
 #: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
-msgstr ""
+msgstr "讓我們依照您的工作方式進行設定。"
 
 #. js-lingui-id: vhRvfF
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
@@ -13809,7 +13890,7 @@ msgstr "連結標籤"
 #. js-lingui-id: 8uujEK
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Link to a record"
-msgstr ""
+msgstr "連結至記錄"
 
 #. js-lingui-id: roAe2K
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -13825,7 +13906,7 @@ msgstr "已連結一個 {objectLabel}"
 #. js-lingui-id: tjNkJN
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Linked to"
-msgstr ""
+msgstr "連結至"
 
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -14177,7 +14258,7 @@ msgstr "循環"
 #. js-lingui-id: B3teiJ
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator? Use a recovery code"
-msgstr ""
+msgstr "遺失驗證器了嗎？使用復原碼"
 
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -14242,6 +14323,12 @@ msgstr "管理帳單資訊"
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Manage connections used by this app to call {0}."
 msgstr "管理此應用程式用於呼叫 {0} 的連接。"
+
+#. js-lingui-id: bjuasY
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Manage events"
+msgstr "管理事件"
 
 #. js-lingui-id: Dt05oz
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -14314,7 +14401,7 @@ msgid "Manage workflows"
 msgstr "管理工作流程"
 
 #. js-lingui-id: FyFNsd
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Manage your internet accounts."
 msgstr "管理您的互聯網帳戶"
 
@@ -14360,7 +14447,7 @@ msgstr "將此應用程式標記為已審核並核准"
 #. js-lingui-id: OybNQG
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Marked as done {eventTime}"
-msgstr ""
+msgstr "已標示為完成 {eventTime}"
 
 #. js-lingui-id: Zt5PUS
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -14381,7 +14468,7 @@ msgstr "比對 {0}（未比對：{unmatchedCount}）"
 #. js-lingui-id: vzXvB4
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowRightDropdown.tsx
 msgid "Match {entry}"
-msgstr ""
+msgstr "比對 {entry}"
 
 #. js-lingui-id: gDLior
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -14502,7 +14589,7 @@ msgstr "我 (用戶 ID)"
 #. js-lingui-id: HVaz6o
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Measure engagement on the campaigns this workspace sends"
-msgstr ""
+msgstr "衡量此工作區傳送的行銷活動互動情況"
 
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -14571,7 +14658,7 @@ msgstr "成員與受邀者"
 #. js-lingui-id: /bZzdR
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Mentions"
-msgstr ""
+msgstr "提及"
 
 #. js-lingui-id: hFJP7z
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
@@ -14682,7 +14769,7 @@ msgstr "Microsoft"
 #. js-lingui-id: lWkKSO
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "min"
-msgstr ""
+msgstr "最小"
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -14721,6 +14808,11 @@ msgstr "分鐘"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Minutes between triggers"
 msgstr "觸發器之間的分鐘數"
+
+#. js-lingui-id: G40We3
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppStatusCell.tsx
+msgid "Missing account"
+msgstr "帳戶遺失"
 
 #. js-lingui-id: cOFpUq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -14907,6 +14999,7 @@ msgstr "更多動作"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
@@ -14992,7 +15085,7 @@ msgstr "已移至垃圾桶"
 #. js-lingui-id: TpHstq
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "ms"
-msgstr ""
+msgstr "毫秒"
 
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -15027,7 +15120,7 @@ msgstr "必須是一個有效的電子郵件數組"
 #. js-lingui-id: PS4GGg
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Must be true to save. A write that makes it false is rejected."
-msgstr ""
+msgstr "必須為 true 才能儲存。使其變為 false 的寫入將遭拒絕。"
 
 #. js-lingui-id: OJCJh9
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -15117,7 +15210,7 @@ msgstr "命名並描述您的功能"
 #. js-lingui-id: Ei0iwZ
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Name and description"
-msgstr ""
+msgstr "名稱與描述"
 
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -15149,7 +15242,7 @@ msgstr "導航"
 #. js-lingui-id: kBNHN1
 #: src/modules/side-panel/components/SidePanelBackButton.tsx
 msgid "Navigation history"
-msgstr ""
+msgstr "導覽歷程記錄"
 
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15180,7 +15273,7 @@ msgstr "需要一個選擇字段"
 #: src/modules/ai/components/AiChatThreadSubtitle.tsx
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Needs input"
-msgstr ""
+msgstr "需要輸入"
 
 #. js-lingui-id: wW3b68
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -15377,7 +15470,7 @@ msgstr "新的結轉上限"
 #. js-lingui-id: yBF5J5
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "New rule"
-msgstr ""
+msgstr "新增規則"
 
 #. js-lingui-id: MdpSC1
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -15444,7 +15537,7 @@ msgstr ""
 #. js-lingui-id: wxiEkK
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "New Workflow"
-msgstr ""
+msgstr "新工作流程"
 
 #. js-lingui-id: horr45
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -15472,7 +15565,7 @@ msgstr "下一次收費日期：{totalRenewDate}。若在期間內新增成員�
 #. js-lingui-id: vBiulE
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Next chat"
-msgstr ""
+msgstr "下一個聊天"
 
 #. js-lingui-id: LTn6w8
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -15492,12 +15585,12 @@ msgstr "下一個問題"
 #. js-lingui-id: vpyN3x
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Next record"
-msgstr ""
+msgstr "下一筆記錄"
 
 #. js-lingui-id: +VXdSO
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Next request"
-msgstr ""
+msgstr "下一個請求"
 
 #. js-lingui-id: tgnDjk
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
@@ -15513,7 +15606,7 @@ msgstr "下一步"
 #. js-lingui-id: IT903p
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
 msgid "Next week"
-msgstr ""
+msgstr "下週"
 
 #. js-lingui-id: ulck7h
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -15638,7 +15731,7 @@ msgstr "未找到應用程式"
 #. js-lingui-id: 3bvkPk
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "No assignee"
-msgstr ""
+msgstr "無受讓人"
 
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
@@ -15710,13 +15803,13 @@ msgstr "無內容"
 #. js-lingui-id: r1vGgi
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "No conversation selected"
-msgstr ""
+msgstr "未選取對話"
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "No conversations"
-msgstr ""
+msgstr "沒有對話"
 
 #. js-lingui-id: Zpgvun
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -15845,7 +15938,7 @@ msgstr ""
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "No fields found"
-msgstr ""
+msgstr "未找到欄位"
 
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -16003,7 +16096,7 @@ msgstr "未找到選項"
 #. js-lingui-id: UbbJ8j
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 msgid "No options found"
-msgstr ""
+msgstr "未找到選項"
 
 #. js-lingui-id: XRc1G9
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -16092,7 +16185,7 @@ msgstr "未找到任何關聯"
 #. js-lingui-id: laEyIC
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 msgid "No reply"
-msgstr ""
+msgstr "無回覆"
 
 #. js-lingui-id: YLozFb
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -16151,12 +16244,12 @@ msgstr "沒有錯誤的行"
 #. js-lingui-id: sndgwL
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 msgid "No rules yet"
-msgstr ""
+msgstr "目前沒有規則"
 
 #. js-lingui-id: eOvDHm
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "No runs yet"
-msgstr ""
+msgstr "目前沒有執行記錄"
 
 #. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -16198,7 +16291,7 @@ msgstr "此錄音中未偵測到語音。"
 #. js-lingui-id: Cs7AbK
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No speech was detected, so there is nothing to summarize."
-msgstr ""
+msgstr "未偵測到語音，因此沒有內容可摘要。"
 
 #. js-lingui-id: eeoVfm
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
@@ -16341,12 +16434,12 @@ msgstr "尚無工作流程版本"
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No Workflows found"
-msgstr ""
+msgstr "未找到工作流程"
 
 #. js-lingui-id: Le81Ct
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No Workflows match your filters. Try removing some of them."
-msgstr ""
+msgstr "沒有工作流程符合您的篩選條件。請嘗試移除其中一些。"
 
 #. js-lingui-id: 0R8Pxd
 #: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
@@ -16430,7 +16523,7 @@ msgstr "無"
 #. js-lingui-id: ixhAJF
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "None, only send the message"
-msgstr ""
+msgstr "無，僅傳送訊息"
 
 #. js-lingui-id: 1IipHp
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -16513,7 +16606,7 @@ msgstr "未錄音"
 #. js-lingui-id: gnnpkq
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed since it was proposed"
-msgstr ""
+msgstr "未執行：自提出後記錄已變更"
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -16544,6 +16637,7 @@ msgstr "未由 {notSharedByFullName} 分享"
 
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "未同步"
 
@@ -16574,7 +16668,7 @@ msgstr "沒有可顯示的內容"
 #. js-lingui-id: lGMk6n
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Nothing to suggest here."
-msgstr ""
+msgstr "這裡沒有可建議的內容。"
 
 #. js-lingui-id: iDNBZe
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
@@ -16608,7 +16702,7 @@ msgstr "數字"
 #. js-lingui-id: euEGx7
 #: src/modules/settings/components/SettingsCounter.tsx
 msgid "Number field"
-msgstr ""
+msgstr "數字欄位"
 
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -16827,7 +16921,7 @@ msgstr "在 {0} 上"
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "On a schedule"
-msgstr ""
+msgstr "依排程執行"
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -16914,7 +17008,7 @@ msgstr "一或多個篩選器參照了已停用或已刪除的欄位，儲存時
 #. js-lingui-id: mwvUSb
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "One per run"
-msgstr ""
+msgstr "每次執行一個"
 
 #. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -16988,22 +17082,22 @@ msgstr "僅在 {remainingDays} 和 {0}"
 #. js-lingui-id: k24ukM
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "Only people who can already access these records"
-msgstr ""
+msgstr "僅限已可存取這些記錄的人員"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
-msgstr ""
+msgstr "僅在其中一個欄位變更時執行"
 
 #. js-lingui-id: YSJayJ
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Only the creator of this record and people with full access to it can change who has access."
-msgstr ""
+msgstr "只有此記錄的建立者及擁有完整存取權的人員可以變更誰能存取。"
 
 #. js-lingui-id: afNmH6
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
-msgstr ""
+msgstr "只有此記錄的建立者、擁有完整存取權的人員及管理員可以變更誰能存取。"
 
 #. js-lingui-id: saaSLd
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
@@ -17013,7 +17107,7 @@ msgstr "僅分享主旨"
 #. js-lingui-id: 81b4+w
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Only write calendar events and participants that changed since the last sync."
-msgstr ""
+msgstr "僅寫入自上次同步以來已變更的行事曆活動和參與者。"
 
 #. js-lingui-id: y0Uyng
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -17042,7 +17136,7 @@ msgstr "開啟維護中的整合，或預先填入支援 MCP 安裝連結的用�
 #. js-lingui-id: DsW8lN
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailDesignPage.tsx
 msgid "Open an email editor to design it."
-msgstr ""
+msgstr "開啟電子郵件編輯器以設計它。"
 
 #. js-lingui-id: 650kGT
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -17052,7 +17146,7 @@ msgstr "開啟電子郵件編輯器以編輯區塊設定。"
 #. js-lingui-id: WsTGFR
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailPageStylePage.tsx
 msgid "Open an email editor to edit the page style."
-msgstr ""
+msgstr "開啟電子郵件編輯器以編輯頁面樣式。"
 
 #. js-lingui-id: JG4LoU
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -17064,7 +17158,7 @@ msgstr "作為連結開啟"
 #: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
 #: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
 msgid "Open chats in"
-msgstr ""
+msgstr "開啟聊天的方式"
 
 #. js-lingui-id: n0vVgf
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17074,7 +17168,7 @@ msgstr "開啟 Claude，並預先填入 Twenty 連接器名稱與 MCP URL。"
 #. js-lingui-id: uIKeEf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
 msgid "Open conversation"
-msgstr ""
+msgstr "開啟對話"
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17213,13 +17307,13 @@ msgstr "操作"
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Opt out of click tracking"
-msgstr ""
+msgstr "退出點擊追蹤"
 
 #. js-lingui-id: IclqIc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribe.tsx
 msgid "Opt-outs"
-msgstr ""
+msgstr "退出選項"
 
 #. js-lingui-id: fgY76O
 #. placeholder {0}: index + 1
@@ -17253,6 +17347,7 @@ msgstr "用於計算Webhook有效負載的HMAC簽名的可選密鑰"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/side-panel/components/SidePanelOptionsDropdown.tsx
@@ -17263,7 +17358,7 @@ msgstr "選項"
 #. js-lingui-id: BzEFor
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuItem.tsx
 msgid "or"
-msgstr ""
+msgstr "或"
 
 #. js-lingui-id: ZAVklK
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -17394,7 +17489,7 @@ msgstr "其他工作區"
 #. js-lingui-id: qxvgIJ
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
 msgid "Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here."
-msgstr ""
+msgstr "其他工作區依賴此應用程式的伺服器路由，該路由由此工作區提供服務。在此解除安裝之前，請將應用程式擁有權轉移至已安裝該應用程式的另一個工作區，或從所有其他工作區解除安裝該應用程式。"
 
 #. js-lingui-id: NuKR0h
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
@@ -17410,6 +17505,11 @@ msgstr "一次性密碼必須為 6 位數"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
 msgid "Outage"
 msgstr "中斷"
+
+#. js-lingui-id: gdC3cZ
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Outlook"
+msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -17726,7 +17826,7 @@ msgstr "我發送電子郵件的人。"
 #. js-lingui-id: XFoNbi
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "People you add get this record even if their role can't access {objectLabelPlural}. Field permissions still apply."
-msgstr ""
+msgstr "即使其角色無法存取 {objectLabelPlural}，您新增的人員仍可取得此記錄。欄位權限仍然適用。"
 
 #. js-lingui-id: VloFYI
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -17810,6 +17910,7 @@ msgid "permission flag"
 msgstr "權限旗標"
 
 #. js-lingui-id: 9cDpsw
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -17865,7 +17966,7 @@ msgstr "請選擇未來的發送時間。"
 #. js-lingui-id: BypbQt
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
 msgid "Pick a time in the future"
-msgstr ""
+msgstr "選擇未來的時間"
 
 #. js-lingui-id: rV71K7
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -18063,7 +18164,7 @@ msgstr "複數形"
 #. js-lingui-id: mtjKfB
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "points"
-msgstr ""
+msgstr "點數"
 
 #. js-lingui-id: trnWaw
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -18136,7 +18237,7 @@ msgstr "前綴"
 #. js-lingui-id: IHoyJS
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Preparing an action to approve..."
-msgstr ""
+msgstr "正在準備核准動作……"
 
 #. js-lingui-id: dVCM1s
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -18198,7 +18299,7 @@ msgstr "過去 7 天"
 #. js-lingui-id: RCsICd
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Previous chat"
-msgstr ""
+msgstr "上一個聊天"
 
 #. js-lingui-id: +Qcc/o
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -18213,12 +18314,12 @@ msgstr "上一個期間"
 #. js-lingui-id: gS9MCC
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Previous record"
-msgstr ""
+msgstr "上一筆記錄"
 
 #. js-lingui-id: ToM1t/
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Previous request"
-msgstr ""
+msgstr "上一個請求"
 
 #. js-lingui-id: k7xxm/
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
@@ -18419,7 +18520,7 @@ msgstr "將您的應用程式發佈到市集，讓其他人可以安裝"
 #. js-lingui-id: zZk9Yz
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Purchase"
-msgstr ""
+msgstr "購買"
 
 #. js-lingui-id: mF9LxA
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -18466,7 +18567,7 @@ msgstr "問題"
 #. js-lingui-id: pA8K5M
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
 msgid "Question skipped"
-msgstr ""
+msgstr "已略過問題"
 
 #. js-lingui-id: enzGAL
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
@@ -18476,7 +18577,7 @@ msgstr "問題"
 #. js-lingui-id: Wzbxi7
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
 msgid "Questions skipped"
-msgstr ""
+msgstr "已略過的問題"
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
@@ -18557,6 +18658,12 @@ msgstr "查看更新記錄"
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Read documentation"
 msgstr "閱讀說明文件"
+
+#. js-lingui-id: BksH/i
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Read emails"
+msgstr "讀取電子郵件"
 
 #. js-lingui-id: U26cMX
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -18640,7 +18747,7 @@ msgstr "接收包含密碼更新鏈接的電子郵件"
 #. js-lingui-id: CCTop/
 #: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
 msgid "Recent"
-msgstr ""
+msgstr "最近"
 
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -18686,6 +18793,7 @@ msgstr "推薦"
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect"
 msgstr "重新連接"
@@ -18735,12 +18843,12 @@ msgstr "記錄（ID）"
 #. js-lingui-id: fUbj63
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record (Optional)"
-msgstr ""
+msgstr "記錄（選用）"
 
 #. js-lingui-id: OhTdMH
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Record {displayedRecordNumber} of {recordCount}"
-msgstr ""
+msgstr "第 {displayedRecordNumber} 筆，共 {recordCount} 筆記錄"
 
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -18782,17 +18890,17 @@ msgstr "記錄圖像"
 #. js-lingui-id: wNysMp
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record is created"
-msgstr ""
+msgstr "記錄已建立"
 
 #. js-lingui-id: pTBjmd
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record is deleted"
-msgstr ""
+msgstr "記錄已刪除"
 
 #. js-lingui-id: rdLUKj
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record is updated"
-msgstr ""
+msgstr "記錄已更新"
 
 #. js-lingui-id: K6/7kH
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
@@ -18810,18 +18918,18 @@ msgstr "記錄頁面"
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
-msgstr ""
+msgstr "記錄選擇"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
-msgstr ""
+msgstr "記錄分享"
 
 #. js-lingui-id: ugcm0I
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record sharing visibility"
-msgstr ""
+msgstr "記錄分享可見性"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -18831,7 +18939,7 @@ msgstr "記錄表設定"
 #. js-lingui-id: CV/ZuS
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Record type"
-msgstr ""
+msgstr "記錄類型"
 
 #. js-lingui-id: kvxD0C
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
@@ -18848,7 +18956,7 @@ msgstr "記錄層級"
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "Record:"
-msgstr ""
+msgstr "紀錄:"
 
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -18879,7 +18987,7 @@ msgstr "已排定錄音"
 #. js-lingui-id: ECgtG5
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "records"
-msgstr ""
+msgstr "紀錄"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/ai/components/AiChatAddMenu.tsx
@@ -18903,17 +19011,17 @@ msgstr "已選取紀錄"
 #. js-lingui-id: sE6EHz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Records will no longer be checked against it. Existing records are not changed."
-msgstr ""
+msgstr "系統將不再依據此規則檢查記錄。現有記錄不會變更。"
 
 #. js-lingui-id: FFbqii
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 msgid "Recovery code copied to clipboard"
-msgstr ""
+msgstr "復原代碼已複製到剪貼簿"
 
 #. js-lingui-id: Vms4rv
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Recovery code revoked."
-msgstr ""
+msgstr "復原代碼已撤銷。"
 
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -18997,12 +19105,12 @@ msgstr "已註冊為開發環境執行個體。此執行個體不會產生計費
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Reject"
-msgstr ""
+msgstr "拒絕"
 
 #. js-lingui-id: ekCRTP
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
-msgstr ""
+msgstr "已拒絕"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -19105,7 +19213,12 @@ msgstr "要移除 {0} 個導覽選單項目嗎？"
 #. js-lingui-id: Q7qiJ+
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Remove {address}"
-msgstr ""
+msgstr "移除 {address}"
+
+#. js-lingui-id: boQErO
+#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+msgid "Remove {displayName}"
+msgstr "移除 {displayName}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19283,7 +19396,7 @@ msgstr "移除此供應商並斷開其所有模型"
 #. js-lingui-id: txqag8
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Remove trigger"
-msgstr ""
+msgstr "移除觸發條件"
 
 #. js-lingui-id: Kl3J3D
 #: src/modules/advanced-text-editor/extensions/variable-tag/VariableChip.tsx
@@ -19316,7 +19429,7 @@ msgstr "為所有語言重新命名"
 #. js-lingui-id: vtxT26
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
 msgid "Rename group"
-msgstr ""
+msgstr "重新命名群組"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19332,7 +19445,7 @@ msgstr "續約日期"
 #. placeholder {0}: tab.title
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
 msgid "Reorder {0} tab"
-msgstr ""
+msgstr "重新排序 {0} 分頁"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -19343,6 +19456,11 @@ msgstr "重新排序欄位"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent.tsx
 msgid "Reorder options"
 msgstr "重新排序選項"
+
+#. js-lingui-id: Jtm0TT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
+msgstr "以應用程式偏好設定取代帳戶設定，其設計核心為帳戶及使用這些帳戶的應用程式。"
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -19394,7 +19512,7 @@ msgstr "請求"
 #. js-lingui-id: tZ7Xci
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Request {requestNumber} of {requestCount}"
-msgstr ""
+msgstr "第 {requestNumber} 個請求，共 {requestCount} 個"
 
 #. js-lingui-id: /laZGZ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -19404,12 +19522,12 @@ msgstr "請求失敗"
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "requests"
-msgstr ""
+msgstr "請求"
 
 #. js-lingui-id: PWfg7v
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Requests"
-msgstr ""
+msgstr "請求"
 
 #. js-lingui-id: +gFBV8
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -19425,7 +19543,7 @@ msgstr "必填"
 #. js-lingui-id: tT28g5
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Required to run the action"
-msgstr ""
+msgstr "執行動作時必填"
 
 #. js-lingui-id: r38Vo4
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
@@ -19524,12 +19642,12 @@ msgstr "調整輸入大小"
 #. js-lingui-id: vGU/RI
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Resize log console"
-msgstr ""
+msgstr "調整日誌主控台大小"
 
 #. js-lingui-id: W99DI7
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Resize log details"
-msgstr ""
+msgstr "調整日誌詳細資料大小"
 
 #. js-lingui-id: w62xpE
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
@@ -19539,7 +19657,7 @@ msgstr "調整日誌大小"
 #. js-lingui-id: vkwEuj
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawer.tsx
 msgid "Resize navigation drawer"
-msgstr ""
+msgstr "調整導覽抽屜大小"
 
 #. js-lingui-id: UQyayN
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
@@ -19549,7 +19667,7 @@ msgstr "調整輸出大小"
 #. js-lingui-id: vTWEAa
 #: src/modules/side-panel/components/SidePanelForDesktop.tsx
 msgid "Resize side panel"
-msgstr ""
+msgstr "調整側邊面板大小"
 
 #. js-lingui-id: N0vrR6
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -19703,7 +19821,7 @@ msgstr "反向依字母順序"
 #. js-lingui-id: 35zlhZ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 msgid "Review this email before it goes out"
-msgstr ""
+msgstr "在寄出前檢閱此電子郵件"
 
 #. js-lingui-id: GXsAby
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
@@ -19892,27 +20010,27 @@ msgstr "紅寶石色"
 #. js-lingui-id: jXsttb
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "Rule created."
-msgstr ""
+msgstr "規則已建立。"
 
 #. js-lingui-id: Tz7o+/
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule deleted."
-msgstr ""
+msgstr "規則已刪除。"
 
 #. js-lingui-id: GOqDOz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule disabled."
-msgstr ""
+msgstr "規則已停用。"
 
 #. js-lingui-id: XdExw+
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule enabled."
-msgstr ""
+msgstr "規則已啟用。"
 
 #. js-lingui-id: sBTDyi
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule updated."
-msgstr ""
+msgstr "規則已更新。"
 
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -19937,12 +20055,12 @@ msgstr "儲存資料模型變更後，在背景執行較耗時的部分。"
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Run this agent on its own when records change or on a schedule. It runs with its role's permissions."
-msgstr ""
+msgstr "當記錄變更時或依排程自行執行此代理程式。它會使用其角色的權限執行。"
 
 #. js-lingui-id: RiQMUh
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 msgid "Running"
-msgstr ""
+msgstr "執行中"
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/buildGenericToolStatusMessage.ts
@@ -19974,17 +20092,17 @@ msgstr "運行"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Runs"
-msgstr ""
+msgstr "運行"
 
 #. js-lingui-id: RASTzS
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Runs appear here once a workflow or an app uses this agent"
-msgstr ""
+msgstr "工作流程或應用程式使用此代理程式後，執行記錄將顯示於此處"
 
 #. js-lingui-id: eo1n1s
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Runtime"
-msgstr ""
+msgstr "執行階段"
 
 #. js-lingui-id: nji0/X
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -20042,7 +20160,7 @@ msgstr "按年計費可節省 25%"
 #. js-lingui-id: 8tM8+a
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 msgid "Save as draft"
-msgstr ""
+msgstr "另存為草稿"
 
 #. js-lingui-id: apLRCm
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -20249,7 +20367,7 @@ msgstr "搜索類型"
 #. js-lingui-id: JVbOF1
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 msgid "Search activity types"
-msgstr ""
+msgstr "搜尋活動類型"
 
 #. js-lingui-id: ujLBwP
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
@@ -20409,7 +20527,7 @@ msgstr "搜索圖標"
 #. js-lingui-id: AaDUlx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
-msgstr ""
+msgstr "搜尋成員"
 
 #. js-lingui-id: two5rl
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
@@ -20463,7 +20581,7 @@ msgstr "搜尋步驟和欄位"
 #. js-lingui-id: rws5EE
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 msgid "Search workspace members"
-msgstr ""
+msgstr "搜尋工作區成員"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -20500,7 +20618,7 @@ msgstr "搜尋次數"
 #. js-lingui-id: bnmBb4
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Searches"
-msgstr ""
+msgstr "搜尋"
 
 #. js-lingui-id: EvDUJy
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -20722,12 +20840,12 @@ msgstr "選擇 1 個欄位"
 #. js-lingui-id: mY6oY7
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
 msgid "Select a block to edit its style."
-msgstr ""
+msgstr "選取區塊以編輯其樣式。"
 
 #. js-lingui-id: PWGE2B
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker.tsx
 msgid "Select a current user field"
-msgstr ""
+msgstr "選擇目前使用者欄位"
 
 #. js-lingui-id: OMoA3j
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -20760,7 +20878,7 @@ msgstr "選取要在此小工具中顯示的欄位"
 #. js-lingui-id: 0DL3XU
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect.tsx
 msgid "Select a filter field"
-msgstr ""
+msgstr "選擇篩選欄位"
 
 #. js-lingui-id: rHNnAT
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20848,7 +20966,7 @@ msgstr "選擇一個選項"
 #. js-lingui-id: 0yxhOL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 msgid "Select chat"
-msgstr ""
+msgstr "選取聊天"
 
 #. js-lingui-id: 21YIUv
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
@@ -20858,7 +20976,7 @@ msgstr "選擇欄位……"
 #. js-lingui-id: SJQM1I
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 msgid "Select date"
-msgstr ""
+msgstr "選取日期"
 
 #. js-lingui-id: U+WOF9
 #: src/modules/settings/components/SettingsDatePickerInput.tsx
@@ -20874,7 +20992,7 @@ msgstr "選擇實體"
 #. js-lingui-id: vljOfc
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButton.tsx
 msgid "Select field"
-msgstr ""
+msgstr "選擇欄位"
 
 #. js-lingui-id: PSqlgu
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -20946,7 +21064,7 @@ msgstr "選取要監聽的特定欄位"
 #. js-lingui-id: ypTnjb
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Select specific fields to wait for"
-msgstr ""
+msgstr "選取要等待的特定欄位"
 
 #. js-lingui-id: 8+U1XJ
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
@@ -20987,7 +21105,7 @@ msgstr "選擇一個值"
 #. js-lingui-id: W5z7K7
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 msgid "Select workspace members"
-msgstr ""
+msgstr "選取工作區成員"
 
 #. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -21040,6 +21158,12 @@ msgstr "發送電子郵件"
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send Email"
+msgstr "發送電子郵件"
+
+#. js-lingui-id: YUviZE
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Send emails"
 msgstr "發送電子郵件"
 
 #. js-lingui-id: CqsED8
@@ -21283,7 +21407,7 @@ msgstr "使用 AI 設定 DNS"
 #. js-lingui-id: nRVdl6
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Set up forwarding and DNS"
-msgstr ""
+msgstr "設定轉寄和 DNS"
 
 #. js-lingui-id: l6W1lM
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -21330,6 +21454,7 @@ msgstr "設定選單項目"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Setup incomplete"
 msgstr "設定未完成"
 
@@ -21362,12 +21487,12 @@ msgstr "分享"
 #. js-lingui-id: Mt/oXT
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share {objectLabel}"
-msgstr ""
+msgstr "分享 {objectLabel}"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 msgid "Share this code with {memberName} through a channel you trust. It works once and expires at {formattedExpiresAt}. You won't be able to see it again."
-msgstr ""
+msgstr "請透過您信任的管道與 {memberName} 分享此代碼。它只能使用一次，並將於 {formattedExpiresAt} 到期。您將無法再次查看它。"
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -21389,10 +21514,15 @@ msgstr "與工作區共用?"
 msgid "Share your app to other workspaces without pushing it on the marketplace"
 msgstr "在不發佈到市集的情況下，將您的應用程式分享到其他工作區"
 
+#. js-lingui-id: fX13zr
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Shared accounts between apps"
+msgstr "應用程式之間共用的帳戶"
+
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Shared by key, across runs"
-msgstr ""
+msgstr "依鍵共用，跨執行記錄共用"
 
 #. js-lingui-id: JTP6zD
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -21402,22 +21532,22 @@ msgstr "共用電子郵件"
 #. js-lingui-id: iZYfeB
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Shared inbox emails"
-msgstr ""
+msgstr "共用收件匣電子郵件"
 
 #. js-lingui-id: hkY6lZ
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Shared record"
-msgstr ""
+msgstr "已分享的記錄"
 
 #. js-lingui-id: k1qX20
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr ""
+msgstr "分享絕不會超出角色及其列篩選條件的範圍。請將其用於敏感物件。"
 
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
-msgstr ""
+msgstr "正在分享記錄"
 
 #. js-lingui-id: Z+MFnO
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -21459,17 +21589,17 @@ msgstr ""
 #. placeholder {0}: fieldMetadataItem.label
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 msgid "Show {0}"
-msgstr ""
+msgstr "顯示 {0}"
 
 #. js-lingui-id: gmYDKt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Show {hiddenOptionalCount} optional arguments"
-msgstr ""
+msgstr "顯示 {hiddenOptionalCount} 個選用引數"
 
 #. js-lingui-id: I2DNv8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show a Conversations tab listing the AI conversations attached to the record, on record pages of new workspaces."
-msgstr ""
+msgstr "在新工作區的記錄頁面上，顯示一個「對話」分頁，列出附加至該記錄的 AI 對話。"
 
 #. js-lingui-id: 3MO9Sa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -21499,7 +21629,7 @@ msgstr "顯示全部"
 #: src/modules/ui/field/display/components/LinksDisplay.tsx
 #: src/modules/ui/field/display/components/PhonesDisplay.tsx
 msgid "Show all items"
-msgstr ""
+msgstr "顯示所有項目"
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -21519,7 +21649,7 @@ msgstr "顯示群組 {0}"
 #. js-lingui-id: xTnLbK
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 msgid "Show hidden fields ({hiddenFieldsCount})"
-msgstr ""
+msgstr "顯示隱藏欄位（{hiddenFieldsCount}）"
 
 #. js-lingui-id: 1OVrop
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -21541,7 +21671,7 @@ msgstr "顯示更多"
 #. js-lingui-id: wdogIE
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Show on"
-msgstr ""
+msgstr "顯示於"
 
 #. js-lingui-id: qi+g0a
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -21563,7 +21693,7 @@ msgstr "在記錄時間軸中顯示此活動類型"
 #. placeholder {0}: formatShortcut({ shortcut: ['Mod', 'K'] })
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu ({0})."
-msgstr ""
+msgstr "在指令選單（{0}）中顯示此物件的記錄。"
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -21573,7 +21703,7 @@ msgstr ""
 #. js-lingui-id: nMqpRn
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Shown above the fields, for example what to fill in and why"
-msgstr ""
+msgstr "顯示在欄位上方，例如要填寫的內容及原因"
 
 #. js-lingui-id: P7rcbf
 #: src/modules/navigation/constants/OpenRecordInOptions.ts
@@ -21740,7 +21870,7 @@ msgstr "跳過"
 #. js-lingui-id: d70FL8
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
 msgid "Skip anyway"
-msgstr ""
+msgstr "仍要略過"
 
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -21755,7 +21885,7 @@ msgstr "跳過聯結物件（類似多對多關聯）"
 #. js-lingui-id: Jdqc8E
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip unchanged calendar records"
-msgstr ""
+msgstr "略過未變更的行事曆記錄"
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -21821,32 +21951,32 @@ msgstr "smtp.example.com"
 #. js-lingui-id: 7+i6oV
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
-msgstr ""
+msgstr "暫停"
 
 #. js-lingui-id: xKw3A1
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Snooze ended"
-msgstr ""
+msgstr "暫停已結束"
 
 #. js-lingui-id: e6uj9X
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snooze ended {eventTime}"
-msgstr ""
+msgstr "暫停已於 {eventTime} 結束"
 
 #. js-lingui-id: VkkXmS
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
 msgid "Snooze until {snoozedUntilLabel}"
-msgstr ""
+msgstr "暫停至 {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Snoozed"
-msgstr ""
+msgstr "已暫停"
 
 #. js-lingui-id: gbfQNt
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snoozed until {eventTime}"
-msgstr ""
+msgstr "已暫停至 {eventTime}"
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -21895,7 +22025,7 @@ msgstr "建立工作區時發生錯誤。請再試一次。"
 #. js-lingui-id: KzFgLR
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Something went wrong while fetching this record's conversations."
-msgstr ""
+msgstr "擷取此記錄的對話時發生錯誤。"
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -21912,8 +22042,6 @@ msgstr "載入此頁面時發生錯誤。"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Soon"
 msgstr "即將推出"
 
@@ -22035,7 +22163,7 @@ msgstr "分割多個值"
 #. js-lingui-id: /xCSTz
 #: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
 msgid "Split view"
-msgstr ""
+msgstr "分割檢視"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -22072,7 +22200,7 @@ msgstr ""
 #. js-lingui-id: x+vSk8
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Stacks on top of your plan and never expires"
-msgstr ""
+msgstr "可疊加至您的方案，且永不過期"
 
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -22116,7 +22244,7 @@ msgstr "開始聽寫"
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Start with your whole network"
-msgstr ""
+msgstr "從您的整個人脈網絡開始"
 
 #. js-lingui-id: s+K73L
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -22127,7 +22255,7 @@ msgstr "開始您的訂閱"
 #. js-lingui-id: JEGlfK
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Started"
-msgstr ""
+msgstr "已開始"
 
 #. js-lingui-id: hTX65V
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -22176,6 +22304,7 @@ msgstr "所有記錄頁面共用的靜態文字"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -22216,17 +22345,17 @@ msgstr "步驟篩選選項"
 #. js-lingui-id: 7Ilx5M
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "steps"
-msgstr ""
+msgstr "步驟"
 
 #. js-lingui-id: A9onc2
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Steps"
-msgstr ""
+msgstr "步驟"
 
 #. js-lingui-id: btg91h
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Steps of this workflow sharing a key write to the same conversation"
-msgstr ""
+msgstr "此工作流程中共用金鑰的步驟會寫入同一個對話"
 
 #. js-lingui-id: ygCKqB
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
@@ -22493,7 +22622,7 @@ msgstr "建議"
 #. js-lingui-id: 8J32PY
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
-msgstr ""
+msgstr "建議"
 
 #. js-lingui-id: AxQiPW
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -22635,6 +22764,7 @@ msgstr "同步每則訊息"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync failed"
 msgstr "同步失敗"
 
@@ -22650,11 +22780,13 @@ msgstr "與信箱 {mailboxHandle} 的同步已中斷。請重新連線以獲取�
 
 #. js-lingui-id: U6wmNc
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync paused"
 msgstr "同步已暫停"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Synced"
 msgstr "已同步"
 
@@ -22680,6 +22812,7 @@ msgstr "同步對象標籤和 API 名稱"
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr "同步將會停止，且此帳戶的憑證將被移除。重新連線後，您的電子郵件和活動仍會保留並可使用。"
 
@@ -22787,6 +22920,7 @@ msgstr "目標工作區子網域"
 
 #. js-lingui-id: R+s8S+
 #: src/modules/activities/tasks/components/TaskRow.tsx
+#: src/modules/activities/tasks/components/TaskRow.tsx
 msgid "Task title"
 msgstr "任務標題"
 
@@ -22809,12 +22943,12 @@ msgstr "團隊成員"
 #. js-lingui-id: g4mm2M
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
-msgstr ""
+msgstr "團隊成員"
 
 #. js-lingui-id: XpPpz7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Tell the agent what to change"
-msgstr ""
+msgstr "告訴代理要變更什麼"
 
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
@@ -22902,7 +23036,7 @@ msgstr "文本編輯器"
 #. js-lingui-id: Ldukks
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "That's about {formattedNewlyEarnedAiActions} AI actions. Credits never expire."
-msgstr ""
+msgstr "這約為 {formattedNewlyEarnedAiActions} 次 AI 動作。點數永不過期。"
 
 #. js-lingui-id: Z4WP0F
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
@@ -22957,12 +23091,12 @@ msgstr ""
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The boolean value false."
-msgstr ""
+msgstr "布林值 false。"
 
 #. js-lingui-id: ijFf+X
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The boolean value true."
-msgstr ""
+msgstr "布林值 true。"
 
 #. js-lingui-id: VsxjzF
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -22977,12 +23111,12 @@ msgstr "此通話錄音正在處理中…"
 #. js-lingui-id: ejqgDV
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "The code lets {memberName} sign in to this workspace once without their authenticator app. Using it removes their current authenticator and signs them out of their other sessions here. They will be notified by email."
-msgstr ""
+msgstr "此代碼可讓 {memberName} 無需使用其驗證器應用程式，即可登入此工作區一次。使用後會移除其目前的驗證器，並將其從此處的其他工作階段登出。系統將透過電子郵件通知他們。"
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
-msgstr ""
+msgstr "對話已壓縮"
 
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -22992,7 +23126,7 @@ msgstr "無法載入資料處理協議。請再試一次。"
 #. js-lingui-id: 0H+RG6
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The date and time of the write being checked."
-msgstr ""
+msgstr "正在檢查的寫入作業日期與時間。"
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -23104,7 +23238,7 @@ msgstr "收件人在您的地址旁邊看到的名稱。此名稱會在建立頻
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of items in the list, or 0 when it is not a list."
-msgstr ""
+msgstr "清單中的項目數量；若不是清單則為 0。"
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -23325,7 +23459,7 @@ msgstr "此動作無法復原。您的成員資格將被移除；已同步的電
 #. js-lingui-id: aIALnw
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "This action no longer takes this argument. Clear it to remove it."
-msgstr ""
+msgstr "此動作不再接受此引數。請清除以移除它。"
 
 #. js-lingui-id: muD0kr
 #. placeholder {0}: favoritesEdit.navigationMenuItemCount
@@ -23346,7 +23480,7 @@ msgstr "此地址已被使用"
 #. js-lingui-id: 4bI4er
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "This agent only runs when someone sends it a message."
-msgstr ""
+msgstr "此代理僅在有人向它傳送訊息時才會執行。"
 
 #. js-lingui-id: 9rY+8P
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -23418,7 +23552,7 @@ msgstr "此元件在沒有 UI 的情況下執行，且此處不會呈現任何�
 #. js-lingui-id: 2p+00J
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "This condition doesn't read any field."
-msgstr ""
+msgstr "此條件不會讀取任何欄位。"
 
 #. js-lingui-id: LqhE3c
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -23439,7 +23573,7 @@ msgstr "此對話已無法使用。"
 #. js-lingui-id: 4Rs3za
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "This cron pattern is not valid"
-msgstr ""
+msgstr "此 cron 模式無效"
 
 #. js-lingui-id: 5VD/sC
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -23459,7 +23593,7 @@ msgstr "此裝置"
 #. js-lingui-id: GyVWfy
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
 msgid "This evening"
-msgstr ""
+msgstr "今晚"
 
 #. js-lingui-id: i6mVT3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
@@ -23524,7 +23658,7 @@ msgstr "此會議未錄音。"
 #. js-lingui-id: w5ooxr
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "This member hasn't set up two-factor authentication."
-msgstr ""
+msgstr "此成員尚未設定雙因素驗證。"
 
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -23568,18 +23702,19 @@ msgstr "此頁面無法使用。"
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
 msgstr "這會永久刪除 {accountHandle} 及其所有已同步的電子郵件和活動。此動作無法復原。"
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "This permanently deletes these {numberOfCoreWorkflows} workflows and all their run history. This action cannot be undone."
-msgstr ""
+msgstr "這會永久刪除這 {numberOfCoreWorkflows} 個工作流程及其所有執行歷程記錄。此動作無法復原。"
 
 #. js-lingui-id: riRzbk
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "This permanently deletes this workflow and all its run history. This action cannot be undone."
-msgstr ""
+msgstr "這會永久刪除此工作流程及其所有執行歷程記錄。此動作無法復原。"
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -23589,7 +23724,7 @@ msgstr "此供應商尚無原生 SDK — 將使用與 OpenAI 相容的模式。�
 #. js-lingui-id: Wf1hgt
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "This record could not be loaded."
-msgstr ""
+msgstr "無法載入此記錄。"
 
 #. js-lingui-id: dWJTyU
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
@@ -23599,12 +23734,12 @@ msgstr "此記錄已被刪除"
 #. js-lingui-id: CS0+Ao
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "This record no longer exists or you cannot see it."
-msgstr ""
+msgstr "此記錄已不存在，或您無權檢視。"
 
 #. js-lingui-id: TG0qsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "This record will be deleted:"
-msgstr ""
+msgstr "此記錄將被刪除："
 
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -23624,12 +23759,12 @@ msgstr ""
 #. js-lingui-id: 9IqK24
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "This rule is disabled. Records are not checked against it."
-msgstr ""
+msgstr "此規則已停用。不會依據它檢查記錄。"
 
 #. js-lingui-id: Tz032x
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "This sender records which links you click in its emails. You can opt out for this email address."
-msgstr ""
+msgstr "此寄件者會記錄您在其電子郵件中點擊的連結。您可以針對此電子郵件地址選擇退出。"
 
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -23821,17 +23956,17 @@ msgstr "逾時"
 #. js-lingui-id: iXabD0
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Timeout days (Optional)"
-msgstr ""
+msgstr "逾時天數（選填）"
 
 #. js-lingui-id: tfdFT7
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Timeout hours (Optional)"
-msgstr ""
+msgstr "逾時小時數（選填）"
 
 #. js-lingui-id: 6+eCbH
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Timeout minutes (Optional)"
-msgstr ""
+msgstr "逾時分鐘數（選填）"
 
 #. js-lingui-id: 8TMaZI
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -23888,7 +24023,7 @@ msgstr "今天"
 #. js-lingui-id: TNXmKt
 #: src/modules/ai/hooks/useFormatAgentChatThreadDate.ts
 msgid "Today, {time}"
-msgstr ""
+msgstr "今天，{time}"
 
 #. js-lingui-id: L3b7Bm
 #. placeholder {0}: recordGroupDefinition.title
@@ -23924,7 +24059,7 @@ msgstr "詞元使用情況"
 #. js-lingui-id: WOr+hW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "tokens"
-msgstr ""
+msgstr "權杖"
 
 #. js-lingui-id: 6RDwJM
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -24028,7 +24163,7 @@ msgstr ""
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Total earned"
-msgstr ""
+msgstr "累計獲得"
 
 #. js-lingui-id: v7vAuj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -24045,17 +24180,17 @@ msgstr "在您的工作區中追蹤 AI 消耗量。"
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Track link clicks"
-msgstr ""
+msgstr "追蹤連結點擊"
 
 #. js-lingui-id: U0HZma
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Tracking"
-msgstr ""
+msgstr "追蹤"
 
 #. js-lingui-id: CVnZXW
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
 msgid "Tracking off"
-msgstr ""
+msgstr "追蹤已關閉"
 
 #. js-lingui-id: DDziIo
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
@@ -24114,7 +24249,7 @@ msgstr "翻译"
 #. js-lingui-id: R3UKip
 #: src/modules/ai/components/NavigationDrawerAiChatTriageSection.tsx
 msgid "Triage"
-msgstr ""
+msgstr "分類"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -24231,37 +24366,37 @@ msgstr "真"
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when a multi-select or array field contains the value, or when a text contains the given text. Letter case matters."
-msgstr ""
+msgstr "當多重選取或陣列欄位包含該值，或文字包含指定文字時為 true。英文字母大小寫會影響結果。"
 
 #. js-lingui-id: bRld7r
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "True when at least one side is true."
-msgstr ""
+msgstr "當至少一側為 true 時為 true。"
 
 #. js-lingui-id: KdPrHC
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "True when both sides are true."
-msgstr ""
+msgstr "當兩側皆為 true 時為 true。"
 
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is a text with at least one character."
-msgstr ""
+msgstr "當值為至少含一個字元的文字時為 true。"
 
 #. js-lingui-id: kRwBsc
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is not set, an empty text, an empty list, or a composite field with every part empty."
-msgstr ""
+msgstr "當值未設定、為空白文字、空白清單，或每個部分皆為空白的複合欄位時為 true。"
 
 #. js-lingui-id: SaqJTE
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "True when the value is one of the listed values."
-msgstr ""
+msgstr "當值為列出的值之一時為 true。"
 
 #. js-lingui-id: tgOmej
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is set, even to an empty text."
-msgstr ""
+msgstr "當值已設定時為 true，即使是空白文字也一樣。"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -24274,7 +24409,7 @@ msgstr "再試一次"
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Try again in a moment"
-msgstr ""
+msgstr "請稍後再試"
 
 #. js-lingui-id: 64tOpZ
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
@@ -24319,12 +24454,12 @@ msgstr "開啟開發人員模式"
 #. js-lingui-id: Ug9k2v
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, and let workflows route agent questions to a member."
-msgstr ""
+msgstr "將 AI 分頁轉換為收件匣，以分類、指派、暫停及追蹤對話，並讓工作流程將代理問題路由給成員。"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "Turns true into false and false into true."
-msgstr ""
+msgstr "將 true 轉為 false，並將 false 轉為 true。"
 
 #. js-lingui-id: EdHWDU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -24334,7 +24469,7 @@ msgstr "綠松石色"
 #. js-lingui-id: 8pmRvi
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Twenty adds the people you email and meet, and keeps them up to date without manual data entry."
-msgstr ""
+msgstr "Twenty 會新增您寄送電子郵件和會面的對象，並且無需手動輸入資料即可讓他們的資訊保持最新。"
 
 #. js-lingui-id: JnaRPe
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
@@ -24349,7 +24484,7 @@ msgstr "Twenty 會為每個層級配置最符合您需求的最佳模型"
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "Twenty works better with your team"
-msgstr ""
+msgstr "Twenty 與您的團隊搭配使用效果更佳"
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -24398,7 +24533,7 @@ msgstr "雙因素身份驗證設定成功完成！"
 #. js-lingui-id: VgBvkK
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Two-factor authentication was reset for this workspace. Set it up again from Settings, Profile."
-msgstr ""
+msgstr "此工作區的雙因素驗證已重設。請從「設定」的「個人資料」再次進行設定。"
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/ai/components/AgentOutputFieldTypeSelector.tsx
@@ -24433,7 +24568,7 @@ msgstr "輸入「/」以使用指令，輸入「@」以提及"
 #. js-lingui-id: XhqvGG
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 msgid "Type a field name or a function"
-msgstr ""
+msgstr "輸入欄位名稱或函式"
 
 #. js-lingui-id: qzD6hf
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
@@ -24542,7 +24677,7 @@ msgstr ""
 #. js-lingui-id: 9uI/rE
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
 msgid "Undo"
-msgstr ""
+msgstr "復原"
 
 #. js-lingui-id: fo0VXg
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
@@ -24564,7 +24699,7 @@ msgstr "在刪除之前，請先從所有工作區解除安裝此應用程式"
 #. js-lingui-id: v3XLn7
 #: src/modules/settings/applications/components/SettingsApplicationUninstallButton.tsx
 msgid "Uninstalling {displayedUninstallProgress}"
-msgstr ""
+msgstr "正在解除安裝 {displayedUninstallProgress}"
 
 #. js-lingui-id: wSXm5S
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -24588,7 +24723,7 @@ msgstr "單位"
 #. js-lingui-id: aSwfbR
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Unit"
-msgstr ""
+msgstr "單位"
 
 #. js-lingui-id: fMyWEp
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -24806,12 +24941,12 @@ msgstr "已退訂"
 #. js-lingui-id: v0c5Uz
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
-msgstr ""
+msgstr "已於 {eventTime} 取消訂閱。除非有人提及您，否則新訊息不會出現在您的收件匣中。"
 
 #. js-lingui-id: 7fkcOT
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Unsubscribed {unsubscribedTime}"
-msgstr ""
+msgstr "已於 {unsubscribedTime} 取消訂閱"
 
 #. js-lingui-id: uxfv+n
 #: src/modules/activities/emails/hooks/useUploadEmailImage.ts
@@ -24821,29 +24956,20 @@ msgstr "不支援的圖片格式"
 #. js-lingui-id: I9zMVO
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Until {snoozedUntilDay}"
-msgstr ""
+msgstr "至 {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadTitle.tsx
-#: src/modules/ai/components/ChatReferenceChip.tsx
-#: src/modules/ai/components/ChatReferenceChip.tsx
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
-#: src/modules/log-console/components/LogConsoleMemberChip.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
-#: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/object-core/components/cells/CoreObjectNameCell.tsx
-#: src/modules/object-record/components/RecordChip.tsx
-#: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
 #: src/modules/page-layout/hooks/usePageLayoutAddTabStrategy.ts
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/side-panel/components/SidePanelContextChip.tsx
-#: src/modules/ui/field/display/components/ActorDisplay.tsx
-#: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/modules/ui/field/display/utils/getChipLabel.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
@@ -24859,7 +24985,7 @@ msgstr "未命名的 {labelSingular}"
 #. js-lingui-id: yTvVot
 #: src/modules/object-core/agents/hooks/useCreateCoreAgent.ts
 msgid "Untitled agent"
-msgstr ""
+msgstr "未命名代理"
 
 #. js-lingui-id: zJsHrW
 #: src/modules/ai/components/AgentOutputSchemaFieldHeader.tsx
@@ -25116,7 +25242,7 @@ msgstr "升級至 Organization 以存取稽核日誌。"
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Organization to configure SSO."
-msgstr ""
+msgstr "升級至 Organization 以設定 SSO。"
 
 #. js-lingui-id: Ic7ooY
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
@@ -25131,22 +25257,22 @@ msgstr "升級您的免費試用"
 #. js-lingui-id: iDbC4C
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Upgrade your trial"
-msgstr ""
+msgstr "升級您的試用方案"
 
 #. js-lingui-id: T1mDWj
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Upgraded"
 msgstr "已升級"
 
+#. js-lingui-id: nDpDl0
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
+msgid "Upgrading {displayedUpgradeProgress}"
+msgstr "正在升級 {displayedUpgradeProgress}"
+
 #. js-lingui-id: 9gm/Oo
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
 msgid "Upgrading subscription..."
 msgstr "正在升級訂閱..."
-
-#. js-lingui-id: +Gi3x1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
-msgid "Upgrading..."
-msgstr "升級中..."
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/settings/components/SettingsImageInput.tsx
@@ -25335,12 +25461,12 @@ msgstr "建立記錄時使用專用表單。"
 #. js-lingui-id: 2DCFBo
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use a dedicated initial view for each object in navigation and the view picker."
-msgstr ""
+msgstr "在導覽列和檢視選擇器中，為每個物件使用專屬的初始檢視。"
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx
 msgid "Use a recovery code"
-msgstr ""
+msgstr "使用復原代碼"
 
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
@@ -25420,6 +25546,11 @@ msgstr "使用您的麥克風"
 msgid "Used"
 msgstr "已使用"
 
+#. js-lingui-id: xUOPoQ
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Used by"
+msgstr "使用者"
+
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Useful for pivot/junction tables"
@@ -25431,6 +25562,7 @@ msgstr "適用於樞紐／聯結表"
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -25438,6 +25570,7 @@ msgstr "適用於樞紐／聯結表"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -25531,7 +25664,7 @@ msgstr "使用默認值。設置自定義值來覆蓋。"
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "UTC is used when no time zone is selected"
-msgstr ""
+msgstr "未選取時區時會使用 UTC"
 
 #. js-lingui-id: b1dG47
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -25541,7 +25674,7 @@ msgstr "烏茲別克語"
 #. js-lingui-id: nfagfM
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Valid"
-msgstr ""
+msgstr "有效"
 
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -25551,13 +25684,13 @@ msgstr "驗證數據"
 #. js-lingui-id: 6N5/Xk
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "validation rule"
-msgstr ""
+msgstr "驗證規則"
 
 #. js-lingui-id: 8Dcl1Z
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Validation rules"
-msgstr ""
+msgstr "驗證規則"
 
 #. js-lingui-id: PWZBIT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -25890,6 +26023,7 @@ msgstr "紫羅蘭色"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
@@ -25965,7 +26099,7 @@ msgstr "等待的子項"
 #. js-lingui-id: 7YxIQV
 #: src/modules/ai/components/AiChatFormStatusRenderer.tsx
 msgid "Waiting for a form to be filled in"
-msgstr ""
+msgstr "正在等待填寫表單"
 
 #. js-lingui-id: TdQd9Q
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -25980,7 +26114,7 @@ msgstr "正在等待權限"
 #. js-lingui-id: /gO/m8
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Waiting for your approval"
-msgstr ""
+msgstr "正在等待您的核准"
 
 #. js-lingui-id: THYlSm
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -26061,7 +26195,7 @@ msgstr "我們目前遇到此應用程式的問題，在我們修復期間，功
 #. js-lingui-id: yIwCqY
 #: src/modules/object-core/components/CoreObjectIndexPageLayout.tsx
 msgid "We could not load your {labelPlural}. Please try again later."
-msgstr ""
+msgstr "無法載入您的 {labelPlural}。請稍後再試。"
 
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -26077,7 +26211,7 @@ msgstr "我們無法確認您的付款方式。請重試。"
 #. js-lingui-id: yL484l
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "We couldn't load the conversations"
-msgstr ""
+msgstr "我們無法載入對話"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -26278,7 +26412,7 @@ msgstr "各語言顯示的此物件標籤"
 #. js-lingui-id: R+bEwa
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "What people see when the condition is false, and where it shows."
-msgstr ""
+msgstr "當條件為 false 時，使用者會看到的內容及其顯示位置。"
 
 #. js-lingui-id: 51JeJw
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -26288,7 +26422,7 @@ msgstr "應分類什麼？"
 #. js-lingui-id: rmMbbz
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "What should the agent do when this trigger fires?"
-msgstr ""
+msgstr "觸發此觸發條件時，代理應執行什麼操作？"
 
 #. js-lingui-id: N0N49E
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -26306,11 +26440,6 @@ msgstr "此 API 能做什麼：選擇用戶角色以定義其權限。"
 msgid "What's installed and being used in your workspace"
 msgstr "你的工作區中已安裝並正在使用的內容"
 
-#. js-lingui-id: RlSr4h
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Whatsapp"
-msgstr "WhatsApp"
-
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
@@ -26324,7 +26453,7 @@ msgstr "當新建立的潛在客戶來源為 \"Website\" 時，將其指派給�
 #. js-lingui-id: 8bOffh
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "When a record changes"
-msgstr ""
+msgstr "當記錄變更時"
 
 #. js-lingui-id: haFWB2
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26339,7 +26468,7 @@ msgstr "關閉此選項時，事件會在沒有出席者的情況下建立，也
 #. js-lingui-id: E2I4La
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop."
-msgstr ""
+msgstr "代理應在何時停止並詢問您？例如，在傳送任何電子郵件或變更交易金額之前。留空則永不停止。"
 
 #. js-lingui-id: 7pDj1C
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
@@ -26387,12 +26516,12 @@ msgstr "此模型是否支援 Chain-of-Thought 推理"
 #. js-lingui-id: UbN9B0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Which conversation with the recipient this step writes to"
-msgstr ""
+msgstr "此步驟要寫入與收件者的哪一個對話"
 
 #. js-lingui-id: rfuOpl
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr ""
+msgstr "{objectLabel} 的記錄可與哪些人共用。角色仍會決定使用者預設可看到的內容。"
 
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -26402,7 +26531,7 @@ msgstr "整個清單"
 #. js-lingui-id: x6KwSw
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Whole record"
-msgstr ""
+msgstr "完整記錄"
 
 #. js-lingui-id: AHXN2z
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -26440,7 +26569,7 @@ msgstr "Windsurf／Cascade"
 #. js-lingui-id: tVV1AC
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "With the recipient, or the workflow creator when empty. It stays out of their inbox until the agent needs them."
-msgstr ""
+msgstr "與收件者進行，若留空則與工作流程建立者進行。在代理需要他們之前，對話不會出現在其收件匣中。"
 
 #. js-lingui-id: p9B1Re
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -26455,13 +26584,13 @@ msgstr "不使用信用卡"
 #. js-lingui-id: rZg70x
 #: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
 msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr ""
+msgstr "無法檢視：其角色無權存取 {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "Worked for {0}"
-msgstr ""
+msgstr "已執行 {0}"
 
 #. js-lingui-id: 3J7l5w
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -26504,7 +26633,7 @@ msgstr "工作流程執行"
 #. js-lingui-id: uMSeM4
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow inbox messages"
-msgstr ""
+msgstr "工作流程收件匣訊息"
 
 #. js-lingui-id: 91e2Af
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -26524,7 +26653,7 @@ msgstr "工作流程步驟結果"
 #. js-lingui-id: NOvOUq
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Workflow steps"
-msgstr ""
+msgstr "工作流程步驟"
 
 #. js-lingui-id: 2CydYH
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -26639,11 +26768,6 @@ msgstr "工作區"
 msgid "Workspace access is also managed by an application."
 msgstr "工作區存取權也由應用程式管理。"
 
-#. js-lingui-id: rxazlH
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Workspace communications"
-msgstr "工作區通訊"
-
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
 #: src/pages/onboarding/WorkspaceActivation.tsx
@@ -26653,7 +26777,7 @@ msgstr "工作區創建失敗"
 #. js-lingui-id: xM1hP9
 #: src/modules/object-core/agents/components/CoreAgentModelCell.tsx
 msgid "Workspace default"
-msgstr ""
+msgstr "工作區預設值"
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -26771,7 +26895,7 @@ msgstr "為此代理撰寫描述"
 #. js-lingui-id: P28Nzv
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 msgid "Write the email"
-msgstr ""
+msgstr "撰寫電子郵件"
 
 #. js-lingui-id: zeCIJi
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
