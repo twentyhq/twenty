@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
+msgstr "{actorName} genererte en gjenopprettingskode som lar deg logge på {workspaceDisplayName} uten autentiseringsappen din."
+
+#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
 msgstr "{actorName} oppdaterte serveradministrator-tilgang for {targetName} ({targetEmail})."
@@ -37,6 +42,11 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Vennligst bekreft dette domenet for
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
 msgstr "En påminnelse før prøveperioden din avsluttes"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
+msgstr "En gjenopprettingskode ble brukt til å logge på {workspaceDisplayName}. Autentiseringsappen din for dette arbeidsområdet ble fjernet, og de andre øktene dine der ble logget av."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -128,9 +138,19 @@ msgid "Hi {userName},"
 msgstr "Hei {userName},"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "If this was not you, contact your workspace administrator and change your password."
+msgstr "Hvis dette ikke var deg, kontakt arbeidsområdeadministratoren din og bytt passordet ditt."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
 msgstr "Hvis Twenty fungerer for deg, er alt klart — du trenger ikke å gjøre noe. Hvis det ikke er den rette løsningen, kan du avbryte med ett klikk før den tid, og du blir ikke belastet."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "If you did not ask for this, contact your workspace administrator and change your password."
+msgstr "Hvis du ikke ba om dette, kontakt arbeidsområdeadministratoren din og bytt passordet ditt."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -234,6 +254,11 @@ msgid "Set"
 msgstr "Angi"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "Set up two-factor authentication again under Settings, Profile."
+msgstr "Konfigurer to-faktorautentisering på nytt under Innstillinger, Profil."
+
+#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
 msgstr "Opprett ditt passord 🗝"
@@ -247,6 +272,11 @@ msgstr "Start et nytt arbeidsområde"
 #: src/emails/test.email.tsx
 msgid "Test email"
 msgstr "Test e-post"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
+msgstr "Koden kan brukes én gang og utløper {formattedExpiresAt}. Når du bruker den, fjernes den nåværende autentiseringsappen din for dette arbeidsområdet, og du logges ut av de andre øktene dine der."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -267,6 +297,16 @@ msgstr "For å beholde arbeidsområdet ditt og alt du har bygget, legg til en be
 #: src/components/Footer.tsx
 msgid "Twenty.com, Public Benefit Corporation"
 msgstr "Twenty.com, Offentlig Fordel Selskap"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "Two-factor authentication recovery code issued"
+msgstr "Gjenopprettingskode for to-faktorautentisering utstedt"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "Two-factor authentication reset"
+msgstr "Tilbakestilling av to-faktorautentisering"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { type CurrencyCode } from 'twenty-shared/constants';
 
 import { getCurrencyLabel } from '@/localization/utils/getCurrencyLabel';
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 
 export const useCurrencies = (): Currency[] => {

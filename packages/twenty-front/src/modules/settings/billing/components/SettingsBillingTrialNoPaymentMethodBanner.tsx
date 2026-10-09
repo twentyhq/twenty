@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   BillingPlanKey,
   BillingPortalSessionDocument,
@@ -65,14 +65,17 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     <>
       <ToastOnQueryErrorEffect error={error} />
       <InlineBanner
-        color="blue"
-        message={message}
-        button={{
-          title: t`Add card`,
-          hidden: !hasPermissionToManageBilling,
-          onClick: openPaymentMethodUpdate,
-        }}
-      />
+        status="info"
+        action={
+          hasPermissionToManageBilling && (
+            <InlineBanner.Action
+              onClick={openPaymentMethodUpdate}
+            >{t`Add card`}</InlineBanner.Action>
+          )
+        }
+      >
+        {message}
+      </InlineBanner>
     </>
   );
 };

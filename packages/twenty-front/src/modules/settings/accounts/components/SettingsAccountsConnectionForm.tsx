@@ -9,7 +9,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsAccountsPasswordController } from '@/settings/accounts/components/SettingsAccountsPasswordController';
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { type AccountType } from 'twenty-shared/constants';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormContainer = styled.div`

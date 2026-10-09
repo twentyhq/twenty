@@ -8,7 +8,7 @@ import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-a
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconSettingsAutomation, IconX } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 type WorkflowEditActionFormFieldSettingsProps = {

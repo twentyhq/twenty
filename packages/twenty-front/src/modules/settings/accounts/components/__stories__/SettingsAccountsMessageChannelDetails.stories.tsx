@@ -8,9 +8,9 @@ import {
   MessageFolderImportPolicy,
 } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { MessageChannelVisibility } from '~/generated/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 
 const mockedMessageChannel = {
   id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6a',

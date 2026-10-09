@@ -1,3 +1,8 @@
+import { CHECKBOX_PROP_DESCRIPTIONS } from './checkboxPropDescriptions';
+import { SWITCH_PROP_DESCRIPTIONS } from './switchPropDescriptions';
+import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
+import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
+import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
@@ -29,8 +34,9 @@ import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescription
 import { ILLUSTRATION_ICON_WRAPPER_PROP_DESCRIPTIONS } from './illustrationIconWrapperPropDescriptions';
 import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoaderIconPropDescriptions';
 import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
-import { COLLAPSIBLE_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
+import { COLLAPSIBLE_PART_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
+import { AVATAR_PART_PROP_DESCRIPTIONS } from './avatarPartPropDescriptions';
 import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
 import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
@@ -43,15 +49,19 @@ import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
 import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
+import { ALERT_DIALOG_PART_PROP_DESCRIPTIONS } from './alertDialogPartPropDescriptions';
 import { DIALOG_POPUP_PROP_DESCRIPTIONS } from './dialogPopupPropDescriptions';
+import { DIALOG_PORTAL_PROP_DESCRIPTIONS } from './dialogPortalPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { DROPDOWN_PART_PROP_DESCRIPTIONS } from './dropdownPartPropDescriptions';
+import { TEXT_PROP_DESCRIPTIONS } from './textPropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
-import { HORIZONTAL_SEPARATOR_PROP_DESCRIPTIONS } from './horizontalSeparatorPropDescriptions';
+import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
+import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
 import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
 import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
@@ -62,24 +72,35 @@ import { SEGMENTED_CONTROL_PROP_DESCRIPTIONS } from './segmentedControlPropDescr
 import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
-import { TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './textDirectionProviderPropDescriptions';
+import { DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './directionProviderPropDescriptions';
+import { POPOVER_PART_PROP_DESCRIPTIONS } from './popoverPartPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
-import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
+import { VISUALLY_HIDDEN_PROP_DESCRIPTIONS } from './visuallyHiddenPropDescriptions';
+
+const CHECKBOX_PROP_DEFAULTS = {
+  size: 'sm',
+  variant: 'solid',
+  shape: 'square',
+  color: 'accent',
+  hoverable: 'true',
+};
+
+const SWITCH_PROP_DEFAULTS = { size: 'md' };
 
 export const DOCUMENTED_COMPONENTS = [
   {
     name: 'CountrySelect',
     source: 'components/input/CountrySelect/CountrySelect.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/country-select',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/country-select',
     propDescriptions: COUNTRY_SELECT_PROP_DESCRIPTIONS,
   },
   {
     name: 'CurrencyPicker',
     source: 'components/input/CurrencyPicker/CurrencyPicker.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/currency-picker',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/currency-picker',
     parts: ['Trigger', 'Options'],
     partPropDescriptions: CURRENCY_PICKER_PART_PROP_DESCRIPTIONS,
   },
@@ -93,8 +114,8 @@ export const DOCUMENTED_COMPONENTS = [
   {
     name: 'MetricRow',
     source: 'components/data-display/MetricRow/MetricRow.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/metric-row',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/metric-row',
     propDescriptions: METRIC_ROW_PROP_DESCRIPTIONS,
   },
   {
@@ -116,11 +137,11 @@ export const DOCUMENTED_COMPONENTS = [
     },
   },
   {
-    name: 'VisibilityHidden',
-    source: 'primitives/accessibility/components/VisibilityHidden.tsx',
+    name: 'VisuallyHidden',
+    source: 'primitives/accessibility/components/VisuallyHidden.tsx',
     entryPoint: 'twenty-ui/primitives/accessibility',
-    slug: 'accessibility/visibility-hidden',
-    propDescriptions: VISIBILITY_HIDDEN_PROP_DESCRIPTIONS,
+    slug: 'accessibility/visually-hidden',
+    propDescriptions: VISUALLY_HIDDEN_PROP_DESCRIPTIONS,
   },
   {
     name: 'ColorSample',
@@ -142,6 +163,9 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/banner',
     propDescriptions: BANNER_PROP_DESCRIPTIONS,
+    propDefaults: { color: 'status palette', status: 'info', variant: 'solid' },
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
   },
   {
     name: 'Loader',
@@ -149,6 +173,13 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/loader',
     propDescriptions: LOADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Skeleton',
+    source: 'primitives/feedback/Skeleton/Skeleton.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/skeleton',
+    propDescriptions: SKELETON_PROP_DESCRIPTIONS,
   },
   {
     name: 'ProgressBar',
@@ -169,14 +200,21 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/layout/Collapsible/Collapsible.tsx',
     entryPoint: 'twenty-ui/primitives/layout',
     slug: 'layout/collapsible',
-    propDescriptions: COLLAPSIBLE_PROP_DESCRIPTIONS,
+    partPropDescriptions: COLLAPSIBLE_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Panel: {
+        dimension: 'height',
+        containAnimation: 'true',
+        duration: 'normal',
+      },
+    },
   },
   {
-    name: 'HorizontalSeparator',
-    source: 'primitives/layout/HorizontalSeparator/HorizontalSeparator.tsx',
+    name: 'Separator',
+    source: 'primitives/layout/Separator/Separator.tsx',
     entryPoint: 'twenty-ui/primitives/layout',
-    slug: 'layout/horizontal-separator',
-    propDescriptions: HORIZONTAL_SEPARATOR_PROP_DESCRIPTIONS,
+    slug: 'layout/separator',
+    propDescriptions: SEPARATOR_PROP_DESCRIPTIONS,
   },
   {
     name: 'ResizeHandle',
@@ -184,14 +222,22 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/layout',
     slug: 'layout/resize-handle',
     propDescriptions: RESIZE_HANDLE_PROP_DESCRIPTIONS,
-    propDefaults: { defaultValue: '150', min: '50', max: '500', step: '10' },
+    propDefaults: {
+      axis: 'y without edge',
+      defaultValue: '150',
+      dragThreshold: '5 with edge; 0 otherwise',
+      min: '50',
+      max: '500',
+      placement: 'edge with edge; inline otherwise',
+      step: '10',
+    },
   },
   {
-    name: 'TextDirectionProvider',
-    source: 'primitives/layout/TextDirectionProvider/TextDirectionProvider.tsx',
+    name: 'DirectionProvider',
+    source: 'primitives/layout/DirectionProvider/DirectionProvider.tsx',
     entryPoint: 'twenty-ui/primitives/layout',
-    slug: 'layout/text-direction-provider',
-    propDescriptions: TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
+    slug: 'layout/direction-provider',
+    propDescriptions: DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
   },
   {
     name: 'OverflowingTextWithTooltip',
@@ -204,30 +250,39 @@ export const DOCUMENTED_COMPONENTS = [
   {
     name: 'LightIconButton',
     source: 'components/input/LightIconButton/LightIconButton.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'input/light-icon-button',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/light-icon-button',
     propDescriptions: LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { variant: 'ghost', size: 'sm' },
   },
   {
     name: 'IconButton',
     source: 'components/input/IconButton/IconButton.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'input/icon-button',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/icon-button',
     propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: {
+      variant: 'outline',
+      color: 'neutral',
+      size: 'md',
+      nativeButton: 'true (false for the built-in href anchor)',
+    },
   },
   {
     name: 'MainButton',
     source: 'components/input/MainButton/MainButton.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'input/main-button',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/main-button',
     propDescriptions: BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { variant: 'solid' },
   },
   {
     name: 'LightButton',
     source: 'components/input/LightButton/LightButton.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'input/light-button',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/light-button',
     propDescriptions: LIGHT_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { variant: 'ghost', size: 'sm' },
   },
   {
     name: 'Button',
@@ -235,6 +290,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/button',
     propDescriptions: BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: {
+      variant: 'outline',
+      color: 'neutral',
+      size: 'md',
+      nativeButton: 'true (false for the built-in href anchor)',
+    },
   },
   {
     name: 'ButtonGroup',
@@ -259,12 +320,14 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Input/Input.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input',
+    propDescriptions: INPUT_PROP_DESCRIPTIONS,
   },
   {
     name: 'InputGroup',
     source: 'primitives/input/InputGroup/InputGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input-group',
+    propDescriptions: INPUT_GROUP_PROP_DESCRIPTIONS,
   },
   {
     name: 'NumberStepper',
@@ -278,12 +341,18 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Textarea/Textarea.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/textarea',
+    propDescriptions: TEXTAREA_PROP_DESCRIPTIONS,
   },
   {
     name: 'Checkbox',
     source: 'primitives/input/Checkbox/Checkbox.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/checkbox',
+    parts: ['Root', 'Indicator'],
+    propDescriptions: CHECKBOX_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Root: CHECKBOX_PROP_DESCRIPTIONS },
+    propDefaults: CHECKBOX_PROP_DEFAULTS,
+    partPropDefaults: { Root: CHECKBOX_PROP_DEFAULTS },
   },
   {
     name: 'Radio',
@@ -336,6 +405,11 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Switch/Switch.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/switch',
+    parts: ['Root', 'Thumb'],
+    propDescriptions: SWITCH_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Root: SWITCH_PROP_DESCRIPTIONS },
+    propDefaults: SWITCH_PROP_DEFAULTS,
+    partPropDefaults: { Root: SWITCH_PROP_DEFAULTS },
   },
   {
     name: 'Breadcrumb',
@@ -350,6 +424,15 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
     propDescriptions: {
+      ref: 'Ref to the actual DOM root, including a composed native button or link.',
+      selected:
+        'Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner.',
+      focused:
+        'Applies highlighted styling without moving DOM focus or handling keyboard navigation.',
+      disabled:
+        'Applies disabled styling only. Set native disabled behavior and accessible semantics on the button, link, or popup item owner.',
+      render:
+        'Composes the row with an element or render callback. The owner supplies interaction semantics, native attributes, and behavior.',
       shortcutJoinLabel:
         'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
@@ -386,9 +469,49 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Dialog/Dialog.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/dialog',
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Backdrop',
+      'Viewport',
+      'Popup',
+      'Title',
+      'Description',
+      'Close',
+      'Header',
+      'Body',
+      'Footer',
+    ],
     partPropDescriptions: {
+      Root: {
+        children:
+          'Parts or a render function receiving the active trigger payload. Root renders no DOM node.',
+        handle: 'Connects detached triggers and imperative dialog actions.',
+        onOpenChange:
+          'Receives the requested state and Base UI event details, including reason, event, trigger and cancel().',
+      },
+      Trigger: {
+        ref: 'Ref to the trigger button, or the element supplied through render.',
+      },
+      Portal: DIALOG_PORTAL_PROP_DESCRIPTIONS,
+      Backdrop: {
+        ref: 'Ref to the backdrop div, or the element supplied through render.',
+        forceRender: 'Renders the backdrop even when this dialog is nested.',
+      },
+      Viewport: {
+        ref: 'Ref to the viewport div, or the element supplied through render.',
+        children:
+          'Popup and any other content within the positioning viewport.',
+      },
       Popup: DIALOG_POPUP_PROP_DESCRIPTIONS,
       Title: DIALOG_TITLE_PROP_DESCRIPTIONS,
+      Description: {
+        ref: 'Ref to the description paragraph, or the element supplied through render.',
+      },
+      Close: {
+        ref: 'Ref to the close button, or the element supplied through render.',
+      },
     },
   },
   {
@@ -396,6 +519,22 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/AlertDialog/AlertDialog.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/alert-dialog',
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Backdrop',
+      'Viewport',
+      'Popup',
+      'Title',
+      'Description',
+      'Close',
+      'Header',
+      'Body',
+      'Footer',
+    ],
+    partPropDescriptions: ALERT_DIALOG_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: { Popup: { size: 'md' } },
   },
   {
     name: 'Menu',
@@ -427,13 +566,37 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Popover/Popover.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/popover',
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Positioner',
+      'Popup',
+      'Arrow',
+      'Backdrop',
+      'Title',
+      'Description',
+      'Close',
+      'Viewport',
+    ],
+    partPropDescriptions: POPOVER_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: { Positioner: { sideOffset: '8' } },
   },
   {
     name: 'Tooltip',
     source: 'primitives/surfaces/Tooltip/Tooltip.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/tooltip',
-    parts: ['Root', 'Trigger', 'Popup', 'Content', 'Provider'],
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Positioner',
+      'Popup',
+      'Arrow',
+      'Viewport',
+      'Provider',
+    ],
     propDescriptions: TOOLTIP_PROP_DESCRIPTIONS,
     propDefaults: { sideOffset: '10' },
     partPropDescriptions: TOOLTIP_PART_PROP_DESCRIPTIONS,
@@ -441,14 +604,15 @@ export const DOCUMENTED_COMPONENTS = [
   {
     name: 'Toast',
     source: 'components/feedback/Toast/Toast.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'feedback/toast',
+    entryPoint: 'twenty-ui/components/feedback',
+    slug: 'components/feedback/toast',
   },
   {
     name: 'Text',
     source: 'primitives/typography/Text/Text.tsx',
     entryPoint: 'twenty-ui/primitives/typography',
     slug: 'typography/text',
+    propDescriptions: TEXT_PROP_DESCRIPTIONS,
   },
   {
     name: 'Avatar',
@@ -456,6 +620,15 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/data-display',
     slug: 'data-display/avatar',
     propDescriptions: AVATAR_PROP_DESCRIPTIONS,
+    propDefaults: {
+      size: 'md',
+      shape: 'square',
+      variant: 'soft',
+      pulsing: 'false',
+      ring: 'false',
+    },
+    parts: ['Root', 'Image', 'Fallback'],
+    partPropDescriptions: AVATAR_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'Chip',
@@ -487,24 +660,25 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'SettingsRow',
-    source: 'components/input/SettingsRow/SettingsRow.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/settings-row',
+    source: 'components/settings/SettingsRow/SettingsRow.tsx',
+    entryPoint: 'twenty-ui/components/settings',
+    slug: 'components/settings/settings-row',
     propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
+    propDefaults: { size: 'sm' },
   },
   {
     name: 'PhoneCountryPicker',
     source: 'components/input/PhoneCountryPicker/PhoneCountryPicker.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/phone-country-picker',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/phone-country-picker',
     parts: ['Trigger', 'Options'],
     partPropDescriptions: PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'Dropdown',
     source: 'components/navigation/Dropdown/Dropdown.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/dropdown',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/dropdown',
     parts: [
       'Root',
       'Trigger',
@@ -543,15 +717,15 @@ export const DOCUMENTED_COMPONENTS = [
   {
     name: 'OverflowingList',
     source: 'components/layout/OverflowingList/OverflowingList.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/overflowing-list',
+    entryPoint: 'twenty-ui/components/layout',
+    slug: 'components/layout/overflowing-list',
     propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
   },
   {
     name: 'Section',
     source: 'components/layout/Section/Section.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/section',
+    entryPoint: 'twenty-ui/components/layout',
+    slug: 'components/layout/section',
     partPropDescriptions: {
       Root: SECTION_ROOT_PROP_DESCRIPTIONS,
       Header: SECTION_HEADER_PROP_DESCRIPTIONS,
@@ -561,21 +735,42 @@ export const DOCUMENTED_COMPONENTS = [
     name: 'CodeEditor',
     source: 'components/code-editor/CodeEditor/CodeEditor.tsx',
     entryPoint: 'twenty-ui/components/code-editor',
-    slug: 'components/code-editor',
+    slug: 'components/code-editor/code-editor',
     propDescriptions: CODE_EDITOR_PROP_DESCRIPTIONS,
   },
   {
     name: 'CodeEditorHeader',
     source: 'components/code-editor/CodeEditorHeader/CodeEditorHeader.tsx',
     entryPoint: 'twenty-ui/components/code-editor',
-    slug: 'components/code-editor-header',
+    slug: 'components/code-editor/code-editor-header',
     propDescriptions: CODE_EDITOR_HEADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ListItemButton',
+    source: 'components/navigation/ListItemButton/ListItemButton.tsx',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/list-item-button',
+    propDescriptions: {
+      ref: 'Ref to the native HTMLButtonElement.',
+      disabled: 'Disables activation and applies the matching row appearance.',
+      focusableWhenDisabled:
+        'Keeps a disabled button focusable with aria-disabled while preventing activation.',
+      selected:
+        'Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics.',
+      focused: 'Highlights the row without moving DOM focus.',
+      shortcut:
+        'Displays decorative shortcut hints. The caller registers the shortcuts.',
+      shortcutJoinLabel:
+        'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
+      hasSubmenu: 'Displays a decorative submenu indicator.',
+    },
+    propDefaults: { type: 'button', disabled: 'false' },
   },
   {
     name: 'TabButton',
     source: 'components/navigation/TabButton/TabButton.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/tab-button',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/tab-button',
     propDescriptions: {
       ...BUTTON_PROP_DESCRIPTIONS,
       active:
@@ -587,121 +782,142 @@ export const DOCUMENTED_COMPONENTS = [
   {
     name: 'AvatarGroup',
     source: 'components/data-display/AvatarGroup/AvatarGroup.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/avatar-group',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/avatar-group',
     propDescriptions: AVATAR_GROUP_PROP_DESCRIPTIONS,
   },
   {
     name: 'CommandBlock',
     source: 'components/data-display/CommandBlock/CommandBlock.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/command-block',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/command-block',
     propDescriptions: COMMAND_BLOCK_PROP_DESCRIPTIONS,
   },
   {
     name: 'JsonTree',
     source: 'components/data-display/JsonTree/JsonTree.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/json-tree',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/json-tree',
     propDescriptions: JSON_TREE_PROP_DESCRIPTIONS,
   },
   {
     name: 'NotificationCounter',
     source:
       'components/data-display/NotificationCounter/NotificationCounter.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/notification-counter',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/notification-counter',
     propDescriptions: NOTIFICATION_COUNTER_PROP_DESCRIPTIONS,
   },
   {
     name: 'TintedIconTile',
     source: 'components/data-display/TintedIconTile/TintedIconTile.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/tinted-icon-tile',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/tinted-icon-tile',
     propDescriptions: TINTED_ICON_TILE_PROP_DESCRIPTIONS,
   },
   {
     name: 'Callout',
+    nativeProps: 'div',
     source: 'components/feedback/Callout/Callout.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/callout',
+    entryPoint: 'twenty-ui/components/feedback',
+    slug: 'components/feedback/callout',
     propDescriptions: CALLOUT_PROP_DESCRIPTIONS,
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
+    propDefaults: {
+      closeLabel: 'Close',
+      color: 'status palette',
+      fullWidth: 'false',
+      icon: 'decorative help icon',
+      status: 'info',
+      variant: 'soft',
+    },
   },
   {
     name: 'InlineBanner',
     source: 'components/feedback/InlineBanner/InlineBanner.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/inline-banner',
+    entryPoint: 'twenty-ui/components/feedback',
+    slug: 'components/feedback/inline-banner',
     propDescriptions: INLINE_BANNER_PROP_DESCRIPTIONS,
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
+    propDefaults: {
+      color: 'status palette',
+      status: 'info',
+      variant: 'soft',
+      layout: 'standard',
+      embedded: 'false',
+      icon: 'decorative information icon',
+    },
   },
   {
     name: 'ToastProvider',
     source: 'components/feedback/Toast/ToastProvider.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/toast-provider',
+    entryPoint: 'twenty-ui/components/feedback',
+    slug: 'components/feedback/toast-provider',
     propDescriptions: TOAST_PROVIDER_PROP_DESCRIPTIONS,
   },
   {
     name: 'Toaster',
     source: 'components/feedback/Toaster/Toaster.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/toaster',
+    entryPoint: 'twenty-ui/components/feedback',
+    slug: 'components/feedback/toaster',
     propDescriptions: TOASTER_PROP_DESCRIPTIONS,
   },
   {
     name: 'ImageInput',
     source: 'components/input/ImageInput/ImageInput.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/image-input',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/image-input',
     propDescriptions: IMAGE_INPUT_PROP_DESCRIPTIONS,
   },
   {
     name: 'SearchInput',
     source: 'components/input/SearchInput/SearchInput.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/search-input',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/search-input',
     propDescriptions: SEARCH_INPUT_PROP_DESCRIPTIONS,
   },
   {
     name: 'AnimatedIconCrossfade',
     source: 'components/layout/AnimatedIconCrossfade/AnimatedIconCrossfade.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/animated-icon-crossfade',
+    entryPoint: 'twenty-ui/components/layout',
+    slug: 'components/layout/animated-icon-crossfade',
     propDescriptions: ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS,
   },
   {
     name: 'MenuItem',
     source: 'components/navigation/MenuItem/MenuItem.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/menu-item',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/menu-item',
     propDescriptions: MENU_ITEM_PROP_DESCRIPTIONS,
   },
   {
     name: 'MenuItemAvatar',
     source: 'components/navigation/MenuItemAvatar/MenuItemAvatar.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/menu-item-avatar',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/menu-item-avatar',
     propDescriptions: MENU_ITEM_AVATAR_PROP_DESCRIPTIONS,
   },
   {
     name: 'MenuItemDraggable',
     source: 'components/navigation/MenuItemDraggable/MenuItemDraggable.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/menu-item-draggable',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/menu-item-draggable',
     propDescriptions: MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS,
   },
   {
     name: 'MenuItemSuggestion',
     source: 'components/navigation/MenuItemSuggestion/MenuItemSuggestion.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/menu-item-suggestion',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/menu-item-suggestion',
     propDescriptions: MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS,
   },
   {
     name: 'MenuPicker',
     source: 'components/navigation/MenuPicker/MenuPicker.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/menu-picker',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/menu-picker',
     propDescriptions: MENU_PICKER_PROP_DESCRIPTIONS,
   },
   {

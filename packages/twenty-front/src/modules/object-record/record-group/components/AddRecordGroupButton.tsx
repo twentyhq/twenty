@@ -10,7 +10,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 
 type AddRecordGroupButtonProps = {

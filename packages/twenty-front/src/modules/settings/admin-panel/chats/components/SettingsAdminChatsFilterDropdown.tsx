@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type ReactElement } from 'react';
-import { Dropdown, SettingsRow } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 
 import { IconAlertTriangle, IconMessage, IconSparkles } from 'twenty-ui/icon';
 
@@ -28,7 +29,7 @@ export const SettingsAdminChatsFilterDropdown = ({
       <DropdownContent side="bottom" align="end" sideOffset={8} alignOffset={0}>
         <Dropdown.Section>
           <SettingsRow
-            startIcon={<IconSparkles />}
+            startElement={<IconSparkles />}
             onCheckedChange={() =>
               onFiltersChange({
                 ...filters,
@@ -38,7 +39,7 @@ export const SettingsAdminChatsFilterDropdown = ({
             checked={filters.onboardingOnly}
           >{t`Onboarding only`}</SettingsRow>
           <SettingsRow
-            startIcon={<IconAlertTriangle />}
+            startElement={<IconAlertTriangle />}
             onCheckedChange={() =>
               onFiltersChange({
                 ...filters,
@@ -48,7 +49,7 @@ export const SettingsAdminChatsFilterDropdown = ({
             checked={filters.hasErrorOnly}
           >{t`Has error`}</SettingsRow>
           <SettingsRow
-            startIcon={<IconMessage />}
+            startElement={<IconMessage />}
             onCheckedChange={() =>
               onFiltersChange({
                 ...filters,

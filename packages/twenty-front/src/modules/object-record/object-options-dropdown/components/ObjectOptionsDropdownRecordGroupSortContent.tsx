@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { RECORD_GROUP_SORT_LABELS } from '@/object-record/record-group/constants/RecordGroupSortLabels';
@@ -25,7 +26,6 @@ import {
   IconSortAZ,
   IconSortZA,
 } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   const { currentContentId, onContentChange, dropdownId } =
@@ -94,7 +94,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
             itemId={RecordGroupSort.Manual}
             onEnter={() => handleRecordGroupSortChange(RecordGroupSort.Manual)}
           >
-            <ListItem
+            <ListItemButton
               onClick={() =>
                 handleRecordGroupSortChange(RecordGroupSort.Manual)
               }
@@ -108,7 +108,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               startIcon={<SelectOptionIcon Icon={IconHandMove} />}
             >
               {t(RECORD_GROUP_SORT_LABELS[RecordGroupSort.Manual])}
-            </ListItem>
+            </ListItemButton>
           </SelectableListItem>
           {!isRelationGroupBy && (
             <>
@@ -118,7 +118,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                   handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
                 }
               >
-                <ListItem
+                <ListItemButton
                   onClick={() =>
                     handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
                   }
@@ -134,7 +134,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                   startIcon={<SelectOptionIcon Icon={IconSortAZ} />}
                 >
                   {t(RECORD_GROUP_SORT_LABELS[RecordGroupSort.Alphabetical])}
-                </ListItem>
+                </ListItemButton>
               </SelectableListItem>
               <SelectableListItem
                 itemId={RecordGroupSort.ReverseAlphabetical}
@@ -144,7 +144,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                   )
                 }
               >
-                <ListItem
+                <ListItemButton
                   onClick={() =>
                     handleRecordGroupSortChange(
                       RecordGroupSort.ReverseAlphabetical,
@@ -170,7 +170,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                       RecordGroupSort.ReverseAlphabetical
                     ],
                   )}
-                </ListItem>
+                </ListItemButton>
               </SelectableListItem>
             </>
           )}

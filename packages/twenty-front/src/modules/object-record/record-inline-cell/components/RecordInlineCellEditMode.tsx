@@ -1,3 +1,7 @@
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { FieldInputAnchorContextProvider } from '@/object-record/record-field/ui/contexts/FieldInputAnchorContext';
+import { getFieldInputAnchorPosition } from '@/object-record/record-field/ui/utils/getFieldInputAnchorPosition';
+import { isFieldInputRenderedAsDropdown } from '@/object-record/record-field/ui/utils/isFieldInputRenderedAsDropdown';
 import { getFloatingReferenceScale } from '@/ui/layout/overlay/utils/getFloatingReferenceScale';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
@@ -23,6 +27,11 @@ import {
 import { useContext } from 'react';
 import { createPortal } from 'react-dom';
 
+const INLINE_FIELD_INPUT_SIDE_OFFSET = -29;
+const INLINE_FIELD_INPUT_CENTERED_SIDE_OFFSET = -26;
+const INLINE_FIELD_INPUT_ALIGN_OFFSET = -5;
+const INLINE_FIELD_INPUT_COLLISION_PADDING = 8;
+
 const StyledInlineCellEditModeContainer = styled.div`
   align-items: center;
 
@@ -42,6 +51,10 @@ export const RecordInlineCellEditMode = ({
   children,
 }: RecordInlineCellEditModeProps) => {
   const { isCentered } = useContext(RecordInlineCellContext);
+  const sideOffset = isCentered
+    ? INLINE_FIELD_INPUT_CENTERED_SIDE_OFFSET
+    : INLINE_FIELD_INPUT_SIDE_OFFSET;
+  const alignOffset = isCentered ? 0 : INLINE_FIELD_INPUT_ALIGN_OFFSET;
 
   const recordFieldComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -72,6 +85,9 @@ export const RecordInlineCellEditMode = ({
     recordFieldInputIsFieldInErrorComponentState,
   );
 
+  const { fieldDefinition } = useContext(FieldContext);
+  const isDropdownFieldInput = isFieldInputRenderedAsDropdown(fieldDefinition);
+
   const { refs, floatingStyles } = useFloating({
     placement: isCentered ? 'bottom' : 'bottom-start',
     strategy: 'fixed',
@@ -81,11 +97,11 @@ export const RecordInlineCellEditMode = ({
         const referenceScale = getFloatingReferenceScale(state);
 
         return {
-          mainAxis: (isCentered ? -26 : -29) * referenceScale,
-          crossAxis: (isCentered ? 0 : -5) * referenceScale,
+          mainAxis: sideOffset * referenceScale,
+          crossAxis: alignOffset * referenceScale,
         };
       }),
-      shift({ padding: 8 }),
+      shift({ padding: INLINE_FIELD_INPUT_COLLISION_PADDING }),
       size({
         apply: ({ rects, elements }) => {
           elements.floating.style.setProperty(
@@ -104,8 +120,20 @@ export const RecordInlineCellEditMode = ({
       ref={refs.setReference}
       data-testid="inline-cell-edit-mode-container"
     >
-      <>
-        {createPortal(
+      {isDropdownFieldInput ? (
+        <FieldInputAnchorContextProvider
+          value={getFieldInputAnchorPosition({
+            anchorRef: refs.domReference,
+            sideOffset,
+            alignOffset,
+            align: isCentered ? 'center' : 'start',
+            collisionPadding: INLINE_FIELD_INPUT_COLLISION_PADDING,
+          })}
+        >
+          {children}
+        </FieldInputAnchorContextProvider>
+      ) : (
+        createPortal(
           <StyledOverlayPortalLayer
             data-floating-ui-viewport
             ref={refs.setFloating}
@@ -119,8 +147,8 @@ export const RecordInlineCellEditMode = ({
             </OverlayContainer>
           </StyledOverlayPortalLayer>,
           document.body,
-        )}
-      </>
+        )
+      )}
     </StyledInlineCellEditModeContainer>
   );
 };

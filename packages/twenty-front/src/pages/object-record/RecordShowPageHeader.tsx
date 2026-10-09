@@ -11,6 +11,7 @@ type RecordShowPageHeaderProps = {
   objectNameSingular: string;
   objectRecordId: string;
   titleMode?: RecordShowPageHeaderTitleMode;
+  titlePrefix?: React.ReactNode;
   titleAccessory?: React.ReactNode;
   children?: React.ReactNode;
 };
@@ -18,13 +19,14 @@ type RecordShowPageHeaderProps = {
 type RecordShowPageMainHeaderProps = RecordShowPageHeaderProps;
 type RecordShowPagePanelHeaderProps = Omit<
   RecordShowPageHeaderProps,
-  'children' | 'titleMode'
+  'children' | 'titleMode' | 'titlePrefix'
 >;
 
 const RecordShowPageMainHeader = ({
   objectNameSingular,
   objectRecordId,
   titleMode = 'breadcrumb',
+  titlePrefix,
   titleAccessory,
   children,
 }: RecordShowPageMainHeaderProps) => {
@@ -41,6 +43,7 @@ const RecordShowPageMainHeader = ({
       <PageCardHeader
         title={
           <>
+            {titlePrefix}
             <RecordShowPageHeaderRecordTitle
               objectNameSingular={objectNameSingular}
               objectRecordId={objectRecordId}
@@ -92,6 +95,7 @@ export const RecordShowPageHeader = ({
   objectNameSingular,
   objectRecordId,
   titleMode,
+  titlePrefix,
   titleAccessory,
   children,
 }: RecordShowPageHeaderProps) => {
@@ -108,6 +112,7 @@ export const RecordShowPageHeader = ({
       objectNameSingular={objectNameSingular}
       objectRecordId={objectRecordId}
       titleMode={titleMode}
+      titlePrefix={titlePrefix}
       titleAccessory={titleAccessory}
     >
       {children}

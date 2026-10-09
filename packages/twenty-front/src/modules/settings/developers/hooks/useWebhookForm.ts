@@ -17,7 +17,7 @@ import {
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   CreateWebhookDocument,
   DeleteWebhookDocument,
@@ -25,7 +25,7 @@ import {
   UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
+import { SETTINGS_API_WEBHOOKS_TABS } from '@/settings/developers/constants/SettingsApiWebhooksTabs';
 
 type UseWebhookFormProps = {
   webhookId?: string;

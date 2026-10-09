@@ -7,7 +7,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
-import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
+import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { logError } from '~/utils/logError';

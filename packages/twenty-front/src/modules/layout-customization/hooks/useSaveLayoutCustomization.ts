@@ -24,7 +24,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 

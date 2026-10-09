@@ -16,7 +16,7 @@ import { useCurrencies } from '@/ui/input/components/internal/hooks/useCurrencie
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { IconCheckbox, IconCurrencyDollar, IconDecimal } from 'twenty-ui/icon';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
+import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({

@@ -14,7 +14,9 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
+import { isCompositePropertySupportedInGroupBy } from 'twenty-shared/utils';
 
 type ChartGroupByFieldSelectionCompositeFieldViewProps = {
   compositeField: FieldMetadataItem;
@@ -42,9 +44,18 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
 
   const compositeFieldType = compositeField.type as CompositeFieldType;
 
+  const groupableSubFieldNames = new Set(
+    compositeTypeDefinitions
+      .get(compositeField.type)
+      ?.properties.filter(isCompositePropertySupportedInGroupBy)
+      .map((property) => property.name),
+  );
+
   const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
     compositeFieldType
-  ].subFields.map((subField) => subField.subFieldName);
+  ].subFields
+    .map((subField) => subField.subFieldName)
+    .filter((subFieldName) => groupableSubFieldNames.has(subFieldName));
 
   return (
     <>
@@ -72,7 +83,7 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
                 onSelectSubField(subFieldName);
               }}
             >
-              <ListItem
+              <ListItemButton
                 focused={selectedItemId === subFieldName}
                 onClick={() => {
                   onSelectSubField(subFieldName);
@@ -91,7 +102,7 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
                 }
               >
                 {getCompositeSubFieldLabel(compositeFieldType, subFieldName)}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           ))}
         </SelectableList>

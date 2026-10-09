@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconMessage, IconRobot, IconWand } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -11,8 +11,8 @@ import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
-import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
+import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
+import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { NestedSettingsRow } from '@/settings/components/SettingsOptions/NestedSettingsRow';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';

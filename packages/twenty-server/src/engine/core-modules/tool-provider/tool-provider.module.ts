@@ -22,7 +22,6 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -58,7 +57,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ViewSortModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    LogicFunctionModule,
     NavigationMenuItemModule,
     WebhookModule,
     RoleModule,

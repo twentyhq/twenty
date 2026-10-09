@@ -2,7 +2,7 @@ import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
-import { MenuItem } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
 
 type Action = {

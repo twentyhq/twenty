@@ -1,7 +1,7 @@
 import {
   LightIconButton,
   type LightIconButtonProps,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/input';
 import { type IconComponent } from 'twenty-ui/icon';
 
 type WidgetCardHeaderActionButtonProps = Omit<

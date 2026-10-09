@@ -14,7 +14,7 @@ import {
   IconCalendarMonth,
   IconCalendarWeek,
 } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 type RecordTableCalendarLayoutDropdownContentProps = {
@@ -72,7 +72,7 @@ export const RecordTableCalendarLayoutDropdownContent = ({
             itemId={value}
             onEnter={() => handleSelect(value)}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === value}
               onClick={() => handleSelect(value)}
               role="option"
@@ -82,7 +82,7 @@ export const RecordTableCalendarLayoutDropdownContent = ({
               startIcon={<SelectOptionIcon Icon={Icon} />}
             >
               {label}
-            </ListItem>
+            </ListItemButton>
           </SelectableListItem>
         ))}
       </SelectableList>

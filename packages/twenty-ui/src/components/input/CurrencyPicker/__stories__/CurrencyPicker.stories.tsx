@@ -1,14 +1,15 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { CurrencyPickerExample } from './CurrencyPickerExample';
 import { openCurrencyPicker } from './openCurrencyPicker';
 
 const meta: Meta<typeof CurrencyPickerExample> = {
-  title: 'UI/Input/CurrencyPicker',
+  id: 'ui-input-currencypicker',
+  title: 'UI/Components/Input/CurrencyPicker',
   component: CurrencyPickerExample,
   render: (args) => <CurrencyPickerExample key={args.defaultValue} {...args} />,
   decorators: [ComponentDecorator],
@@ -43,9 +44,9 @@ export const RightToLeft: Story = {
   args: { dir: 'rtl' },
   decorators: [
     (Story) => (
-      <TextDirectionProvider direction="rtl">
+      <DirectionProvider direction="rtl">
         <Story />
-      </TextDirectionProvider>
+      </DirectionProvider>
     ),
   ],
 };

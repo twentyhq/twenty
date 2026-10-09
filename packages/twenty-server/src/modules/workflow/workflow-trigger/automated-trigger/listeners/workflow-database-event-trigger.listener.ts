@@ -39,7 +39,7 @@ import {
   type BaseDatabaseEventTriggerSettings,
   type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
-import { resolveAutomationAdmittedRecordIds } from 'src/modules/workflow/workflow-trigger/automated-trigger/utils/resolve-automation-admitted-record-ids.util';
+import { resolveAutomationAdmittedRecordIds } from 'src/engine/core-modules/record-share/utils/resolve-automation-admitted-record-ids.util';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import {
   WorkflowTriggerJob,

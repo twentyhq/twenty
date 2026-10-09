@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`

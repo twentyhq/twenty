@@ -1,0 +1,93 @@
+name: CI CLI
+
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  changed-files-check:
+    if: github.event_name != 'merge_group'
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/twenty-cli/**
+        packages/twenty-shared/**
+        packages/twenty-sdk/**
+        packages/twenty-client-sdk/**
+        packages/twenty-apps/fixtures/**
+        packages/twenty-ui/**
+        packages/twenty-oxlint-rules/**
+        .github/actions/yarn-install/**
+        .github/actions/restore-cache/**
+        .github/actions/save-cache/**
+        .github/workflows/ci-cli.yaml
+        package.json
+        yarn.lock
+        nx.json
+        tsconfig.base.json
+        .yarnrc.yml
+        .yarn/**
+  cli-package-test:
+    needs: changed-files-check
+    if: >-
+      !cancelled() &&
+      (github.event_name == 'merge_group' || needs.changed-files-check.outputs.any_changed == 'true')
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build and test the CLI package
+        run: npx nx run twenty-cli:test:package
+  cli-test:
+    needs: changed-files-check
+    if: >-
+      !cancelled() &&
+      (github.event_name == 'merge_group' || needs.changed-files-check.outputs.any_changed == 'true')
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Restore CLI test cache
+        id: restore-cli-test-cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: cli-test
+      - name: Build the CLI and the SDK used by parity tests
+        run: npx nx run-many --target=build --projects=twenty-sdk,twenty-cli
+      - name: Lint
+        run: npx nx lint twenty-cli
+      - name: Typecheck
+        run: npx tsgo -p packages/twenty-cli/tsconfig.json --noEmit
+      - name: Unit tests
+        run: npx vitest run --maxWorkers=2
+        working-directory: packages/twenty-cli
+      - name: Save CLI test cache
+        uses: ./.github/actions/save-cache
+        with:
+          key: ${{ steps.restore-cli-test-cache.outputs.cache-primary-key }}
+  ci-cli-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [changed-files-check, cli-package-test, cli-test]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

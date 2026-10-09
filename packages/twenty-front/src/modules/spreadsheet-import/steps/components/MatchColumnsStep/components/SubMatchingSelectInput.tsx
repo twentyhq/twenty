@@ -1,10 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { createElement, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { type TagColor, Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 type SubMatchingSelectInputProps = {
   onOptionSelected: (selectedOption: SelectOption) => void;

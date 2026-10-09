@@ -3,7 +3,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -197,9 +198,9 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       onClose={handleClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           data-globally-prevent-click-outside
           style={{

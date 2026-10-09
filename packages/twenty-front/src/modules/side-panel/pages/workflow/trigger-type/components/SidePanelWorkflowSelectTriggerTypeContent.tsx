@@ -18,7 +18,7 @@ import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/g
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { MenuItem } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 

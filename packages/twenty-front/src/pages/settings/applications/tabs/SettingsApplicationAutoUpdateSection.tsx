@@ -2,7 +2,8 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateApplicationDocument } from '~/generated-metadata/graphql';

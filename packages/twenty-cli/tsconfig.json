@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "target": "es2024",
+    "lib": ["es2024"],
+    "types": ["node"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "vite.config.ts", "vitest.config.ts"]
+}

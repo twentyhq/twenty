@@ -44,6 +44,7 @@ export const PageLayoutTabListDroppableMoreButton = ({
         <TabMoreButton
           hiddenTabsCount={hiddenTabsCount}
           active={isActiveTabHidden}
+          isDropdownTrigger
         />
       </StyledTabMoreButtonWrapper>
     </div>

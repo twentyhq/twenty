@@ -1,7 +1,10 @@
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { StrictMode } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 
@@ -18,6 +21,13 @@ export default meta;
 type Story = StoryObj<typeof FormArrayFieldInput>;
 
 export const AddTwoItems: Story = {
+  decorators: [
+    (Story) => (
+      <StrictMode>
+        <Story />
+      </StrictMode>
+    ),
+  ],
   args: {
     label: 'Items',
     defaultValue: undefined,
@@ -93,31 +103,29 @@ export const EditExistingItem: Story = {
 
     await userEvent.click(firstItemChip);
 
-    const openSecondItemMenuButton = await waitFor(() => {
-      const button = canvasElement.ownerDocument.body.querySelector(
-        '[aria-controls$="-1-options"] > button',
-      );
-
-      if (!isDefined(button)) {
-        throw new Error('Button not found');
-      }
-
-      return button;
-    });
+    const body = within(canvasElement.ownerDocument.body);
+    const panel = await body.findByRole('dialog', { name: 'Items' });
+    await userEvent.click(within(panel).getByText('Second item'));
+    expect(body.queryByRole('menu')).not.toBeInTheDocument();
+    const openSecondItemMenuButton = within(panel).getAllByRole('button', {
+      name: 'More options',
+    })[1];
 
     await userEvent.click(openSecondItemMenuButton);
 
-    const editSecondItemButton = await within(
-      canvasElement.ownerDocument.body,
-    ).findByText('Edit');
+    const editSecondItemButton = await body.findByRole('menuitem', {
+      name: 'Edit',
+    });
 
     await userEvent.click(editSecondItemButton);
+    expect(panel).toBeVisible();
 
     const editSecondItemInput = await within(
       canvasElement.ownerDocument.body,
     ).findByRole('textbox');
 
     expect(editSecondItemInput).toHaveValue('Second item');
+    await waitFor(() => expect(editSecondItemInput).toHaveFocus());
 
     await userEvent.clear(editSecondItemInput);
     await userEvent.type(editSecondItemInput, 'Updated second item{enter}');
@@ -128,6 +136,8 @@ export const EditExistingItem: Story = {
         'Updated second item',
       ]);
     });
+    expect(panel).toBeVisible();
+    expect(within(panel).queryByRole('textbox')).not.toBeInTheDocument();
 
     const updatedSecondItemChip = await canvas.findByText(
       'Updated second item',
@@ -150,23 +160,17 @@ export const DeleteExistingItem: Story = {
 
     await userEvent.click(firstItemChip);
 
-    const openSecondItemMenuButton = await waitFor(() => {
-      const button = canvasElement.ownerDocument.body.querySelector(
-        '[aria-controls$="-1-options"] > button',
-      );
-
-      if (!isDefined(button)) {
-        throw new Error('Button not found');
-      }
-
-      return button;
-    });
+    const body = within(canvasElement.ownerDocument.body);
+    const panel = await body.findByRole('dialog', { name: 'Items' });
+    const openSecondItemMenuButton = within(panel).getAllByRole('button', {
+      name: 'More options',
+    })[1];
 
     await userEvent.click(openSecondItemMenuButton);
 
-    const deleteSecondItemButton = await within(
-      canvasElement.ownerDocument.body,
-    ).findByText('Delete');
+    const deleteSecondItemButton = await body.findByRole('menuitem', {
+      name: 'Delete',
+    });
 
     await userEvent.click(deleteSecondItemButton);
 
@@ -175,6 +179,148 @@ export const DeleteExistingItem: Story = {
     });
 
     expect(canvas.queryByText('Second item')).not.toBeInTheDocument();
+    expect(panel).toBeVisible();
+  },
+};
+
+export const ItemLimit: Story = {
+  args: {
+    label: 'Items',
+    defaultValue: ['First item'],
+    maxItemCount: 2,
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Items' }));
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Add item' }),
+    );
+    await userEvent.type(body.getByRole('textbox'), 'Second item{enter}');
+
+    expect(args.onChange).toHaveBeenLastCalledWith([
+      'First item',
+      'Second item',
+    ]);
+    expect(
+      body.queryByRole('button', { name: 'Add item' }),
+    ).not.toBeInTheDocument();
+
+    const panel = body.getByRole('dialog', { name: 'Items' });
+
+    await userEvent.click(
+      within(panel).getAllByRole('button', { name: 'More options' })[1],
+    );
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Delete' }),
+    );
+
+    expect(args.onChange).toHaveBeenLastCalledWith(['First item']);
+    expect(panel).toBeVisible();
+    expect(
+      within(panel).getByRole('button', { name: 'Add item' }),
+    ).toBeVisible();
+  },
+};
+
+export const EscapeDismissesOneLayer: Story = {
+  args: {
+    label: 'Items',
+    defaultValue: ['First item'],
+    onChange: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const initialFocusStack = jotaiStore.get(focusStackState.atom);
+
+    await userEvent.click(await canvas.findByRole('button', { name: 'Items' }));
+
+    const panel = await body.findByRole('dialog', { name: 'Items' });
+    const menuTrigger = within(panel).getByRole('button', {
+      name: 'More options',
+    });
+    const panelFocusStack = jotaiStore.get(focusStackState.atom);
+
+    await userEvent.click(menuTrigger);
+    await userEvent.keyboard('{escape}');
+
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    expect(panel).toBeVisible();
+    expect(jotaiStore.get(focusStackState.atom)).toEqual(panelFocusStack);
+    await waitFor(() => expect(menuTrigger).toHaveFocus());
+
+    await userEvent.keyboard('{escape}');
+
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    expect(jotaiStore.get(focusStackState.atom)).toEqual(initialFocusStack);
+  },
+};
+
+export const EscapeClearsUncommittedItem: Story = {
+  args: {
+    label: 'Items',
+    defaultValue: ['First item'],
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await canvas.findByRole('button', { name: 'Items' });
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Add item' }),
+    );
+    await userEvent.type(body.getByRole('textbox'), 'Uncommitted{escape}');
+
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    expect(args.onChange).not.toHaveBeenCalled();
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Add item' }),
+    );
+
+    expect(body.getByRole('textbox')).toHaveValue('');
+  },
+};
+
+export const TabOrderIncludesTrigger: Story = {
+  decorators: [
+    (Story) => (
+      <>
+        <Button>Before</Button>
+        <Story />
+        <Button>After</Button>
+      </>
+    ),
+  ],
+  args: {
+    label: 'Items',
+    defaultValue: ['First item'],
+    onChange: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Before' }),
+    );
+    await userEvent.tab();
+
+    expect(canvas.getByRole('button', { name: 'Items' })).toHaveFocus();
+
+    await userEvent.tab();
+
+    expect(canvas.getByRole('button', { name: 'After' })).toHaveFocus();
   },
 };
 

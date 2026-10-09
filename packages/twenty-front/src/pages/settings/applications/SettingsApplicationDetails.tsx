@@ -25,7 +25,7 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   IconAlertTriangle,
   IconDeviceFloppy,
@@ -122,10 +122,15 @@ export const SettingsApplicationDetails = () => {
     return undefined;
   };
 
-  const { upgrade, isUpgrading } = useUpgradeApplication();
+  const handleUpgradeCompleted = useCallback(() => {
+    void refetch();
+  }, [refetch]);
+  const { upgrade, isUpgrading, upgradeProgress } = useUpgradeApplication({
+    universalIdentifier: application?.universalIdentifier,
+    onCompleted: handleUpgradeCompleted,
+  });
 
   const sourceType = application?.applicationRegistration?.sourceType;
-  const registrationId = detail?.id ?? application?.applicationRegistration?.id;
   const currentVersion = application?.version;
   const latestAvailableVersion =
     detail?.latestAvailableVersion ??
@@ -138,14 +143,11 @@ export const SettingsApplicationDetails = () => {
     isNewerSemver(latestAvailableVersion, currentVersion);
 
   const handleUpgrade = async () => {
-    if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {
+    if (!isDefined(latestAvailableVersion)) {
       return;
     }
 
-    await upgrade({
-      appRegistrationId: registrationId,
-      targetVersion: latestAvailableVersion,
-    });
+    await upgrade(latestAvailableVersion);
   };
 
   const navigate = useNavigateSettings();
@@ -153,10 +155,11 @@ export const SettingsApplicationDetails = () => {
   const handleUninstallCompleted = useCallback(() => {
     navigate(SettingsPath.Applications);
   }, [navigate]);
-  const { uninstall, isUninstalling } = useUninstallApplication({
-    universalIdentifier: application?.universalIdentifier,
-    onCompleted: handleUninstallCompleted,
-  });
+  const { uninstall, isUninstalling, uninstallProgress } =
+    useUninstallApplication({
+      universalIdentifier: application?.universalIdentifier,
+      onCompleted: handleUninstallCompleted,
+    });
 
   const displayedApplicationVariables = getDisplayedApplicationVariables(
     application?.applicationVariables ?? [],
@@ -261,8 +264,10 @@ export const SettingsApplicationDetails = () => {
             latestAvailableVersion={latestAvailableVersion ?? undefined}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
+            upgradeProgress={upgradeProgress}
             onUninstall={uninstall}
             isUninstalling={isUninstalling}
+            uninstallProgress={uninstallProgress}
           />
         );
       case VARIABLES_TAB_ID:
@@ -361,10 +366,9 @@ export const SettingsApplicationDetails = () => {
           )}
           {isApplicationStopped && (
             <InlineBanner
-              color="danger"
-              LeftIcon={IconAlertTriangle}
-              message={t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}
-            />
+              status="warning"
+              icon={<IconAlertTriangle aria-hidden="true" />}
+            >{t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}</InlineBanner>
           )}
           {renderActiveTabContent()}
         </SettingsPageContainer>

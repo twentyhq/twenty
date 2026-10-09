@@ -24,7 +24,8 @@ import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner
 import { isWorkflowRunNotFoundError } from 'src/modules/workflow/workflow-runner/utils/is-workflow-run-not-found-error.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
-// Drains delays queued before delays became time waits; new ones resume through ResumeWaitingWorkflowStepJob
+// Drains delays 2.45 and earlier queued as delayed jobs; new ones are TIME waits resumed through
+// ResumePendingWakeUpJob. Remove once upgrades no longer start from 2.45
 @Processor({
   queueName: MessageQueue.delayedJobsQueue,
   scope: Scope.REQUEST,
