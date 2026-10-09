@@ -1203,6 +1203,11 @@ msgstr "یک پیش‌نویس از قبل وجود دارد"
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "یک پیش‌نویس از قبل برای این گردش کار وجود دارد. آیا مطمئن هستید که می‌خواهید آن را پاک کنید؟"
 
+#. js-lingui-id: xk6SkO
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run."
+msgstr "فرمی برای شخصی که گردش کار را اجرا می‌کند باز می‌شود و همان‌جا تکمیل می‌شود. با این راه‌انداز، فقط در اجرای گردش کار نمایش داده می‌شود."
+
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
@@ -9013,6 +9018,11 @@ msgstr "پشتیبانی ایمیلی"
 msgid "Email the attendees an invitation"
 msgstr "دعوت‌نامه را برای شرکت‌کنندگان ایمیل کنید"
 
+#. js-lingui-id: ju58G/
+#: src/modules/activities/emails/components/EmailThreadPreview.tsx
+msgid "Email thread"
+msgstr "رشته ایمیل"
+
 #. js-lingui-id: +V3dhy
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -10560,6 +10570,7 @@ msgid "Failed to upgrade credit plan."
 msgstr "ارتقای طرح اعتبار ناموفق بود."
 
 #. js-lingui-id: pBEL6J
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
 #: src/modules/marketplace/hooks/useUpgradeApplication.ts
 msgid "Failed to upgrade the application."
 msgstr "ارتقای برنامه ناموفق بود."
@@ -22792,6 +22803,7 @@ msgstr "زیردامنه فضای کاری مقصد"
 
 #. js-lingui-id: R+s8S+
 #: src/modules/activities/tasks/components/TaskRow.tsx
+#: src/modules/activities/tasks/components/TaskRow.tsx
 msgid "Task title"
 msgstr "عنوان وظیفه"
 
@@ -25150,15 +25162,15 @@ msgstr "نسخه آزمایشی خود را ارتقا دهید"
 msgid "Upgraded"
 msgstr "ارتقا یافت"
 
+#. js-lingui-id: nDpDl0
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
+msgid "Upgrading {displayedUpgradeProgress}"
+msgstr "در حال ارتقا {displayedUpgradeProgress}"
+
 #. js-lingui-id: 9gm/Oo
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
 msgid "Upgrading subscription..."
 msgstr "در حال ارتقای اشتراک..."
-
-#. js-lingui-id: +Gi3x1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
-msgid "Upgrading..."
-msgstr "در حال ارتقا..."
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/settings/components/SettingsImageInput.tsx
