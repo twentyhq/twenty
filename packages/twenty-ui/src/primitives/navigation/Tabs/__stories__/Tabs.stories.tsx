@@ -1,7 +1,7 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 import { IconInfoCircle } from '@ui/icon';
@@ -208,11 +208,13 @@ export const KeepMounted: Story = {
   render: (args) => <TabsExample tabProps={args} keepMounted />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const overviewPanel = canvas.getByRole('tabpanel', { name: 'Overview' });
     await userEvent.type(
       canvas.getByRole('textbox', { name: 'Draft note' }),
       'A saved draft',
     );
     await userEvent.click(canvas.getByRole('tab', { name: 'Activity' }));
+    await waitFor(() => expect(overviewPanel).not.toBeVisible());
     await userEvent.tab();
     await expect(
       canvas.getByRole('tabpanel', { name: 'Activity' }),
