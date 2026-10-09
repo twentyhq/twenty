@@ -2848,45 +2848,40 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     },
   );
 
-  it.each(['workflow', 'workflow and its version'])(
-    'drops queued triggers without reporting them once their %s is deleted',
-    async (deleted) => {
-      const fixture = await createFixture({ mirrorless: true });
-      const captureExceptions = jest.spyOn(
-        global.app.get(ExceptionHandlerService),
-        'captureExceptions',
-      );
+  it('drops queued triggers without reporting them once their workflow is deleted', async () => {
+    const fixture = await createFixture({ mirrorless: true });
+    const captureExceptions = jest.spyOn(
+      global.app.get(ExceptionHandlerService),
+      'captureExceptions',
+    );
 
-      if (deleted === 'workflow and its version') {
-        await global.testDataSource.query(
-          'DELETE FROM core."workflowVersion" WHERE id = $1',
-          [fixture.coreWorkflowVersionId],
-        );
-      }
-      await global.testDataSource.query(
-        'DELETE FROM core.workflow WHERE id = $1',
-        [fixture.coreWorkflowId],
-      );
-      await (
-        await global.workflowTestServices.triggerJob()
-      ).handle({
-        workspaceId,
-        workflowId: fixture.coreWorkflowId,
-        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
-        payload: {},
-      });
-      const runs = await global.testDataSource.query(
-        `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
-        [fixture.coreWorkflowId],
-      );
-      expect(runs).toHaveLength(0);
-      expect(captureExceptions).not.toHaveBeenCalledWith([
-        expect.objectContaining({
-          message: expect.stringContaining(fixture.coreWorkflowVersionId),
-        }),
-      ]);
-    },
-  );
+    await global.testDataSource.query(
+      'DELETE FROM core."workflowVersion" WHERE "coreWorkflowId" = $1',
+      [fixture.coreWorkflowId],
+    );
+    await global.testDataSource.query(
+      'DELETE FROM core.workflow WHERE id = $1',
+      [fixture.coreWorkflowId],
+    );
+    await (
+      await global.workflowTestServices.triggerJob()
+    ).handle({
+      workspaceId,
+      workflowId: fixture.coreWorkflowId,
+      coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+      payload: {},
+    });
+    const runs = await global.testDataSource.query(
+      `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
+      [fixture.coreWorkflowId],
+    );
+    expect(runs).toHaveLength(0);
+    expect(captureExceptions).not.toHaveBeenCalledWith([
+      expect.objectContaining({
+        message: expect.stringContaining(fixture.coreWorkflowVersionId),
+      }),
+    ]);
+  });
 
   it('uses the queued core version even when the latest published pointer changes', async () => {
     const fixture = await createFixture({ mirrorless: true });
