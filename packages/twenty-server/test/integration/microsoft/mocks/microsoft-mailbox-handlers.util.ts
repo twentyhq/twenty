@@ -14,6 +14,16 @@ export const microsoftMailboxHandlers = (
     mailFolderPageSize = Infinity,
   }: { unfetchableMessageIds?: string[]; mailFolderPageSize?: number } = {},
 ): MswHandler[] => [
+  http.get('*/me/mailFolders/:folderId/messages', ({ params, request }) => {
+    const top = Number(new URL(request.url).searchParams.get('$top') ?? 100);
+
+    return HttpResponse.json({
+      value: messages
+        .filter((message) => message.parentFolderId === params.folderId)
+        .slice(0, top)
+        .map((message) => ({ id: message.id })),
+    });
+  }),
   http.get('*/me/mailFolders', ({ request }) => {
     const { searchParams } = new URL(request.url);
     const top = Number(searchParams.get('$top') ?? 10);
