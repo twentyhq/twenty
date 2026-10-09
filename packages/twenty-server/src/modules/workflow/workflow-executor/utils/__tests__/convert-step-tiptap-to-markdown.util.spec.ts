@@ -46,7 +46,10 @@ const objectMetadataInfo = {
 };
 
 const context = {
-  trigger: { body: { amount: 42, currency: 'EUR', meta: { source: 'form' } } },
+  trigger: {
+    body: { amount: 42, currency: 'EUR', meta: { source: 'form' } },
+    url: 'https://twenty.com',
+  },
 };
 
 describe('convertStepTipTapToMarkdown', () => {
@@ -113,10 +116,75 @@ describe('convertStepTipTapToMarkdown', () => {
       context,
     );
 
+    expect(resolved.body).toEqual({ markdown: '**Amount**: 42' });
+  });
+
+  it('resolves a bold variable chip into a markdown string', () => {
+    const tipTapBody = JSON.stringify([
+      {
+        type: 'paragraph',
+        content: [
+          {
+            type: 'variableTag',
+            attrs: { variable: '{{trigger.body.amount}}' },
+            marks: [{ type: 'bold' }],
+          },
+        ],
+      },
+    ]);
+
+    const resolved = convertStepTipTapToMarkdown(
+      { body: { blocknote: tipTapBody, markdown: null } },
+      objectMetadataInfo,
+      context,
+    );
+
+    expect(resolved.body).toEqual({ markdown: '42' });
+  });
+
+  it('resolves a variable used as a link destination', () => {
+    const tipTapBody = JSON.stringify([
+      {
+        type: 'paragraph',
+        content: [
+          {
+            type: 'text',
+            text: 'Website',
+            marks: [{ type: 'link', attrs: { href: '{{trigger.url}}' } }],
+          },
+        ],
+      },
+    ]);
+
+    const resolved = convertStepTipTapToMarkdown(
+      { body: { blocknote: tipTapBody, markdown: null } },
+      objectMetadataInfo,
+      context,
+    );
+
     expect(resolved.body).toEqual({
-      markdown: '**Amount**: 42',
-      blocknote: null,
+      markdown: '[Website](https://twenty.com)',
     });
+  });
+
+  it('leaves a BlockNote body to the record write', () => {
+    const blocknoteBody = JSON.stringify([
+      {
+        id: 'b1',
+        type: 'paragraph',
+        props: {},
+        children: [],
+        content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
+      },
+    ]);
+
+    const resolved = convertStepTipTapToMarkdown(
+      { body: { blocknote: blocknoteBody, markdown: null } },
+      objectMetadataInfo,
+      context,
+    );
+
+    expect(resolved.body).toEqual({ blocknote: blocknoteBody, markdown: null });
   });
 
   it('keeps a blocknote variable for the input resolution', () => {

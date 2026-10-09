@@ -46,10 +46,7 @@ export const convertStepTipTapToMarkdown = (
       : undefined;
 
     const richTextValue: RichTextMetadata = isDefined(tipTapMarkdown)
-      ? {
-          markdown: tipTapMarkdown,
-          blocknote: null,
-        }
+      ? { markdown: resolveStringTemplate(tipTapMarkdown, context) }
       : {
           markdown: isString(stepMarkdown)
             ? resolveStringTemplate(stepMarkdown, context)

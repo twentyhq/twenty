@@ -116,4 +116,30 @@ describe('convertTipTapBlocksToMarkdown', () => {
   it('should return undefined when a block is not a TipTap node', () => {
     expect(convertTipTapBlocksToMarkdown('[{"foo":"bar"}]')).toBeUndefined();
   });
+
+  it('should leave a blocknote body with a divider alone', () => {
+    const blocknoteBody = JSON.stringify([
+      {
+        id: 'b1',
+        type: 'paragraph',
+        props: {},
+        children: [],
+        content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
+      },
+      { id: 'b2', type: 'divider', props: {}, children: [] },
+    ]);
+
+    expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
+  });
+
+  it('should leave a blocknote body without block ids alone', () => {
+    const blocknoteBody = JSON.stringify([
+      {
+        type: 'paragraph',
+        content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
+      },
+    ]);
+
+    expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
+  });
 });
