@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { type CallRecordingMediaState } from 'src/logic-functions/types/call-recording-media-state.type';
+import { type CallRecordingSyncState } from 'src/logic-functions/types/call-recording-sync-state.type';
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
 import { buildFathomCallRecordingUpsertFields } from 'src/logic-functions/utils/build-fathom-call-recording-upsert-fields.util';
 
@@ -9,7 +9,7 @@ const buildFields = ({
   retryMedia = false,
   sharedFields = { transcript: [] },
 }: {
-  existingCallRecording?: Partial<CallRecordingMediaState>;
+  existingCallRecording?: Partial<CallRecordingSyncState>;
   retryMedia?: boolean;
   sharedFields?: CallRecordingSyncFields;
 } = {}) =>

@@ -1,7 +1,7 @@
 import { isDefined } from 'src/utils/is-defined';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
-import { type CallRecordingMediaState } from 'src/logic-functions/types/call-recording-media-state.type';
+import { type CallRecordingSyncState } from 'src/logic-functions/types/call-recording-sync-state.type';
 import { type FathomRecordingImportFields } from 'src/logic-functions/types/fathom-recording-import-fields.type';
 
 export const buildFathomCallRecordingUpsertFields = ({
@@ -15,7 +15,7 @@ export const buildFathomCallRecordingUpsertFields = ({
   sharedFields: CallRecordingSyncFields;
   existingCallRecording:
     | Pick<
-        CallRecordingMediaState,
+        CallRecordingSyncState,
         | 'hasVideo'
         | 'hasAudio'
         | 'failureReason'

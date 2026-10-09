@@ -2,8 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'src/utils/is-defined';
 
+import { CALL_RECORDING_WITH_TRANSCRIPT_FILTER } from 'src/constants/call-recording-with-transcript-filter.constant';
 import { findCallRecordingMediaState } from 'src/logic-functions/utils/find-call-recording-media-state.util';
-import { isFathomCallRecordingImportComplete } from 'src/logic-functions/utils/is-fathom-call-recording-import-complete.util';
+import { isFathomMediaSettled } from 'src/logic-functions/utils/is-fathom-media-settled.util';
 
 export const completeFathomCallRecordingImport = async ({
   coreApiClient,
@@ -21,7 +22,7 @@ export const completeFathomCallRecordingImport = async ({
     !isDefined(callRecording) ||
     !isNonEmptyString(callRecording.fathomRecordingImportId) ||
     !isNonEmptyString(callRecording.fathomRecordingImportUpdatedAt) ||
-    !isFathomCallRecordingImportComplete(callRecording)
+    !isFathomMediaSettled(callRecording)
   ) {
     return false;
   }
@@ -33,6 +34,7 @@ export const completeFathomCallRecordingImport = async ({
           id: { eq: callRecordingId },
           updatedAt: { eq: callRecording.updatedAt },
           status: { eq: 'PROCESSING' },
+          ...CALL_RECORDING_WITH_TRANSCRIPT_FILTER,
           fathomRecordingImports: {
             id: { eq: callRecording.fathomRecordingImportId },
             updatedAt: {

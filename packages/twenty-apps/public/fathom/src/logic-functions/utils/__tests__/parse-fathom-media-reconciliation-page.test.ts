@@ -68,7 +68,6 @@ describe('parseFathomMediaReconciliationPage', () => {
             hasVideo: false,
             hasAudio: true,
             hasTranscript: false,
-            hasSummary: false,
             uploadCheckpoint: {
               downloadId: 'download-id',
               fileId: 'audio-file-id',

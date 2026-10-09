@@ -7,7 +7,6 @@ import {
   type FathomMediaReconciliationPlan,
 } from 'src/logic-functions/types/fathom-media-reconciliation-plan.type';
 import { buildFathomRecordingImportReference } from 'src/logic-functions/utils/build-fathom-recording-import-reference.util';
-import { isFathomCallRecordingImportComplete } from 'src/logic-functions/utils/is-fathom-call-recording-import-complete.util';
 import { isFathomMediaSettled } from 'src/logic-functions/utils/is-fathom-media-settled.util';
 
 export const buildFathomMediaReconciliationPlan = ({
@@ -44,15 +43,11 @@ export const buildFathomMediaReconciliationPlan = ({
       continue;
     }
 
-    if (
-      callRecording.status === 'PROCESSING' &&
-      isFathomCallRecordingImportComplete(callRecording)
-    ) {
-      callRecordingsToComplete.push(reference);
-      continue;
-    }
-
     if (isFathomMediaSettled(callRecording)) {
+      if (callRecording.status === 'PROCESSING') {
+        callRecordingsToComplete.push(reference);
+      }
+
       continue;
     }
 

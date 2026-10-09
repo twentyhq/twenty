@@ -80,11 +80,28 @@ const ROUTE_PAYLOAD = {
   rawBody: MEETING_BODY,
 } as unknown as Parameters<typeof fathomWebhookHandler>[0];
 
-const mockDeletedCallRecordingIds = (callRecordingIds: string[]) =>
+const COMPLETED_CALL_RECORDING_NODE = {
+  id: CALL_RECORDING_ID,
+  updatedAt: '2026-08-20T11:00:00.000Z',
+  status: 'COMPLETED',
+  recordingRequestStatus: 'REQUESTED',
+  startedAt: '2026-08-20T10:00:00.000Z',
+  endedAt: '2026-08-20T10:30:00.000Z',
+  video: [{ fileId: 'video-file-id' }],
+  transcript: [{ participant: { name: 'Owner' }, words: [] }],
+  summary: { markdown: 'Summary', blocknote: null },
+  fathomRecordingImports: {
+    edges: [
+      {
+        node: { id: CALL_RECORDING_ID, updatedAt: '2026-08-20T11:00:00.000Z' },
+      },
+    ],
+  },
+};
+
+const mockCallRecordingNodes = (nodes: Record<string, unknown>[]) =>
   mocks.query.mockResolvedValue({
-    callRecordings: {
-      edges: callRecordingIds.map((id) => ({ node: { id } })),
-    },
+    callRecordings: { edges: nodes.map((node) => ({ node })) },
   });
 
 describe('fathomWebhookHandler', () => {
@@ -103,7 +120,12 @@ describe('fathomWebhookHandler', () => {
   });
 
   it('acknowledges a recording the user deleted without recreating it', async () => {
-    mockDeletedCallRecordingIds([CALL_RECORDING_ID]);
+    mockCallRecordingNodes([
+      {
+        ...COMPLETED_CALL_RECORDING_NODE,
+        deletedAt: '2026-08-21T00:00:00.000Z',
+      },
+    ]);
 
     expect(await fathomWebhookHandler(ROUTE_PAYLOAD)).toEqual({
       success: true,
@@ -114,16 +136,35 @@ describe('fathomWebhookHandler', () => {
     expect(mocks.mutation).not.toHaveBeenCalled();
   });
 
-  it('syncs a recording that was never deleted', async () => {
-    mockDeletedCallRecordingIds([]);
+  it('acknowledges a replayed recording that is already complete with a single read', async () => {
+    mockCallRecordingNodes([COMPLETED_CALL_RECORDING_NODE]);
+
+    expect(await fathomWebhookHandler(ROUTE_PAYLOAD)).toEqual({
+      success: true,
+      skipped: true,
+      reason: 'The call recording is already up to date',
+    });
+    expect(mocks.query).toHaveBeenCalledOnce();
+    expect(mocks.syncFathomMeetingToCallRecording).not.toHaveBeenCalled();
+    expect(mocks.mutation).not.toHaveBeenCalled();
+  });
+
+  it('syncs a new recording without reading its state twice', async () => {
+    mockCallRecordingNodes([]);
 
     expect(await fathomWebhookHandler(ROUTE_PAYLOAD)).toEqual({
       success: true,
       callRecordingId: CALL_RECORDING_ID,
       created: true,
     });
-    expect(mocks.syncFathomMeetingToCallRecording).toHaveBeenCalledWith(
-      expect.objectContaining({ connectedAccountId: 'connection-1' }),
-    );
+    expect(mocks.query).toHaveBeenCalledOnce();
+    expect(mocks.syncFathomMeetingToCallRecording).toHaveBeenCalledOnce();
+    expect(
+      mocks.syncFathomMeetingToCallRecording.mock.calls[0][0],
+    ).toMatchObject({
+      connectedAccountId: 'connection-1',
+      meeting: expect.objectContaining({ recordingId: RECORDING_ID }),
+      callRecordingSyncStates: new Map(),
+    });
   });
 });

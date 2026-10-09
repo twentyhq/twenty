@@ -12,6 +12,7 @@ import {
 } from 'src/constants/fathom.constant';
 import { FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomBackfillBatchPayload } from 'src/logic-functions/types/fathom-backfill-batch-payload.type';
+import { type FathomMeetingSyncResult } from 'src/logic-functions/types/fathom-meeting-sync-result.type';
 import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retryable-fathom-error.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
@@ -28,10 +29,10 @@ export const fathomBackfillBatchHandler = async (
   const fathomClient = createFathomClient(connection.accessToken);
   const coreApiClient = createFathomCoreApiClient();
   const requeueAttempt = payload.requeueAttempt ?? 0;
-  const results: Awaited<
-    ReturnType<typeof syncFathomMeetingToCallRecording>
-  >[] = [];
+  const results: FathomMeetingSyncResult[] = [];
   let skippedMeetingCount = 0;
+  const countImportedMeetings = () =>
+    results.filter((result) => !('skipped' in result)).length;
 
   const requeueRemainingMeetings = async ({
     meetingIndex,
@@ -70,7 +71,7 @@ export const fathomBackfillBatchHandler = async (
 
     return {
       success: true,
-      importedMeetingCount: results.length,
+      importedMeetingCount: countImportedMeetings(),
       failedMeetingCount: skippedMeetingCount,
       requeuedMeetingCount: remainingMeetings.length,
       results,
@@ -131,7 +132,7 @@ export const fathomBackfillBatchHandler = async (
 
   return {
     success: true,
-    importedMeetingCount: results.length,
+    importedMeetingCount: countImportedMeetings(),
     failedMeetingCount: skippedMeetingCount,
     requeuedMeetingCount: 0,
     results,

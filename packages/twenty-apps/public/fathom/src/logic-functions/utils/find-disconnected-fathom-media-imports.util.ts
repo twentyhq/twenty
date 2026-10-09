@@ -34,6 +34,12 @@ export const findDisconnectedFathomMediaImports = async ({
         orderBy: [{ id: 'AscNullsLast' }],
       },
       ...FATHOM_MEDIA_RECONCILIATION_SELECTION,
+      edges: {
+        node: {
+          ...FATHOM_MEDIA_RECONCILIATION_SELECTION.edges.node,
+          transcript: true,
+        },
+      },
     },
   });
   return parseFathomMediaReconciliationPage(queryResult);

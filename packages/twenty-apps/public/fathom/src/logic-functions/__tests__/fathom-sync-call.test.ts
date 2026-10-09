@@ -62,7 +62,13 @@ const CONTEXT = buildLogicFunctionExecutionContext('user-workspace-1');
 const mockDeletedCallRecordingIds = (callRecordingIds: string[]) =>
   mocks.query.mockResolvedValue({
     callRecordings: {
-      edges: callRecordingIds.map((id) => ({ node: { id } })),
+      edges: callRecordingIds.map((id) => ({
+        node: {
+          id,
+          updatedAt: '2026-08-20T11:00:00.000Z',
+          deletedAt: '2026-08-21T00:00:00.000Z',
+        },
+      })),
     },
   });
 
@@ -112,6 +118,10 @@ describe('fathomSyncCallHandler', () => {
       callRecordingId: CALL_RECORDING_ID,
       created: false,
     });
-    expect(mocks.syncFathomMeetingToCallRecording).toHaveBeenCalledTimes(1);
+    expect(mocks.query).toHaveBeenCalledOnce();
+    expect(mocks.syncFathomMeetingToCallRecording).toHaveBeenCalledOnce();
+    expect(
+      mocks.syncFathomMeetingToCallRecording.mock.calls[0][0],
+    ).toMatchObject({ retryMedia: true, callRecordingSyncStates: new Map() });
   });
 });

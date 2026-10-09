@@ -11,7 +11,12 @@ export const enqueueFathomCallRecordingTitleGeneration = async (
     const result = await enqueueJobs({
       logicFunctionUniversalIdentifier:
         FATHOM_GENERATE_CALL_RECORDING_TITLE_UNIVERSAL_IDENTIFIER,
-      payloads: [payload],
+      jobs: [
+        {
+          payload,
+          jobId: `fathom-call-recording-title-${payload.callRecordingId}`,
+        },
+      ],
       retryLimit: 0,
     });
 
