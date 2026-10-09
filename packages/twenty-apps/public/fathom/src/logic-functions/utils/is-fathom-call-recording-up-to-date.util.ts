@@ -37,10 +37,7 @@ export const isFathomCallRecordingUpToDate = ({
 }: {
   meeting: Pick<
     SerializedFathomMeeting,
-    | 'meetingTitle'
-    | 'title'
-    | 'recordingStartTime'
-    | 'recordingEndTime'
+    'meetingTitle' | 'title' | 'recordingStartTime' | 'recordingEndTime'
   >;
   callRecording: Pick<
     CallRecordingSyncState,
