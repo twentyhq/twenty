@@ -386,7 +386,7 @@ describe('Wait for event workflow (e2e)', () => {
 
     // the step resumes through the run job its wake-up queued
     await expectEventually(async () => {
-      expect((await getWorkflowRun(createdWorkflowRunId))?.status).toBe(
+      expect((await getWorkflowRun(createdWorkflowRunId!))?.status).toBe(
         'COMPLETED',
       );
     });
