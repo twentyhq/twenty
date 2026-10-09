@@ -1,22 +1,22 @@
 import {
-  type TriggerUninstallApplicationJobFactoryInput,
-  triggerUninstallApplicationJobQueryFactory,
-} from 'test/integration/metadata/suites/application/utils/trigger-uninstall-application-job-query-factory.util';
+  type TriggerUninstallApplicationFactoryInput,
+  triggerUninstallApplicationQueryFactory,
+} from 'test/integration/metadata/suites/application/utils/trigger-uninstall-application-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-export const triggerUninstallApplicationJob = async ({
+export const triggerUninstallApplication = async ({
   input,
   gqlFields,
   expectToFail = false,
   token,
-}: PerformMetadataQueryParams<TriggerUninstallApplicationJobFactoryInput>): CommonResponseBody<{
-  triggerUninstallApplicationJob: { jobId: string };
+}: PerformMetadataQueryParams<TriggerUninstallApplicationFactoryInput>): CommonResponseBody<{
+  triggerUninstallApplication: { jobId: string };
 }> => {
-  const graphqlOperation = triggerUninstallApplicationJobQueryFactory({
+  const graphqlOperation = triggerUninstallApplicationQueryFactory({
     input,
     gqlFields,
   });
