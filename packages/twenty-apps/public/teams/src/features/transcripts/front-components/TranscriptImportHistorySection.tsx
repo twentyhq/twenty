@@ -77,10 +77,12 @@ export const TranscriptImportHistorySection = () => {
   const [pollCount, setPollCount] = useState(0);
 
   const days = parseTeamsTranscriptHistoryDays(daysDraft);
-  const isCounting = view?.kind === 'counting';
+  const hasLoadError = isDefined(loadErrorCode);
+  const isCounting = !hasLoadError && view?.kind === 'counting';
+  const isImporting = !hasLoadError && view?.kind === 'importing';
   const pollDelayMilliseconds = getTeamsTranscriptHistoryPollDelayMilliseconds({
     view,
-    hasLoadError: isDefined(loadErrorCode),
+    hasLoadError,
   });
 
   const loadHistory = async () => {
@@ -134,6 +136,7 @@ export const TranscriptImportHistorySection = () => {
       }
     } catch {
       enqueueSnackbar({ message: unknownErrorMessage, variant: 'error' });
+      await loadHistory();
     } finally {
       setIsSubmitting(false);
     }
@@ -182,7 +185,7 @@ export const TranscriptImportHistorySection = () => {
           'Import the transcripts of your past Teams meetings into Call Recordings. Recordings deleted in Twenty stay deleted.',
         )}
       </StyledSettingsText>
-      {isDefined(loadErrorCode) && (
+      {hasLoadError && (
         <>
           <p role="alert">
             {getTeamsTranscriptHistoryRouteErrorMessage({
@@ -224,7 +227,7 @@ export const TranscriptImportHistorySection = () => {
           onImport={() => handleImportClick(view.runId)}
         />
       )}
-      {view?.kind !== 'importing' && (
+      {!isImporting && (
         <>
           <StyledControl onSubmit={handleCountSubmit}>
             <StyledDaysInput

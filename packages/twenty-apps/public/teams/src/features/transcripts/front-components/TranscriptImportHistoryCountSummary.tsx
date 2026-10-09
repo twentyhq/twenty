@@ -57,10 +57,10 @@ export const TranscriptImportHistoryCountSummary = ({
           </StyledSettingsButton>
           <StyledSettingsHint>
             {view.importEstimate.unit === 'minute'
-              ? t('Up to {minutes} min', {
+              ? t('About {minutes} min', {
                   minutes: view.importEstimate.count,
                 })
-              : t('Up to {hours} h', { hours: view.importEstimate.count })}
+              : t('About {hours} h', { hours: view.importEstimate.count })}
           </StyledSettingsHint>
         </>
       ) : (
