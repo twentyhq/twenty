@@ -1,5 +1,6 @@
 import { createHash } from 'crypto';
 import { z } from 'zod';
+import { fromWorkflowManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-command-menu-item.util';
 import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
 import { fromWorkflowTriggerManifestToTriggerOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
@@ -71,6 +72,12 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     trigger: definition.version.trigger,
     references,
   });
+  const commandMenuItem = fromWorkflowManifestToUniversalFlatCommandMenuItem({
+    manifest: definition,
+    applicationUniversalIdentifier,
+    coreWorkflowVersionId: versionId,
+    now,
+  });
   return {
     id: workflowId,
     universalIdentifier: definition.universalIdentifier,
@@ -101,5 +108,8 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
       createdAt: existingVersion?.createdAt ?? now,
       updatedAt: now,
     },
+    ...(isDefined(commandMenuItem)
+      ? { flatUniversalCommandMenuItem: commandMenuItem }
+      : {}),
   };
 };

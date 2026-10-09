@@ -1,4 +1,3 @@
-import { getWorkflowCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import {
   CommandMenuItemAvailabilityType,
   NavigationMenuItemType,
@@ -15,9 +14,8 @@ import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-na
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
-import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 
-const APPLICATION_UNIVERSAL_IDENTIFIER = '66666666-6666-4666-8666-666666666666';
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
 
 const SYNCABLE = {
   applicationId: 'application-id',
@@ -181,19 +179,6 @@ const withCommandMenuItem =
     }),
   });
 
-const withWorkflow =
-  (workflowUniversalIdentifier: string) =>
-  (allFlatEntityMaps: AllFlatEntityMaps) => {
-    allFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier[
-      workflowUniversalIdentifier
-    ] = {
-      id: 'workflow-id',
-      universalIdentifier: workflowUniversalIdentifier,
-    } as FlatWorkflow;
-
-    return allFlatEntityMaps;
-  };
-
 const withNavigationMenuItem =
   (flatNavigationMenuItem: FlatNavigationMenuItem) =>
   (allFlatEntityMaps: AllFlatEntityMaps) => ({
@@ -263,29 +248,6 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
     );
 
     expect(result.commandMenuItem?.flatEntityToDelete).toBeUndefined();
-  });
-
-  it('deletes the trigger command the manifest generated for an application workflow', () => {
-    const workflowCommandMenuItemUniversalIdentifier =
-      getWorkflowCommandMenuItemUniversalIdentifier({
-        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        workflowUniversalIdentifier: 'workflow-universal-identifier',
-      });
-
-    const result = inferDeletionOf((allFlatEntityMaps) =>
-      withCommandMenuItem({
-        ...COMMAND_MENU_ITEM,
-        universalIdentifier: workflowCommandMenuItemUniversalIdentifier,
-        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
-        coreWorkflowVersionId: 'a-core-workflow-version-id',
-      })(withWorkflow('workflow-universal-identifier')(allFlatEntityMaps)),
-    );
-
-    expect(
-      result.commandMenuItem?.flatEntityToDelete?.[
-        workflowCommandMenuItemUniversalIdentifier
-      ],
-    ).toBeDefined();
   });
 
   it('does not delete a command without the front component its manifest requires', () => {

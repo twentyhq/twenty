@@ -2,6 +2,7 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 import { buildWorkflowVersionSideEffects } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/utils/build-workflow-version-side-effects.util';
 import { validateApplicationWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-workflow-version.util';
 import {
+  getWorkflowCommandMenuItemUniversalIdentifier,
   getWorkflowVersionUniversalIdentifier,
   type WorkflowManifest,
 } from 'twenty-shared/application';
@@ -9,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
@@ -69,10 +71,33 @@ const convert = (
   return { workflow, version };
 };
 
+const COMMAND_MENU_ITEM_ID = getWorkflowCommandMenuItemUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_ID,
+  workflowUniversalIdentifier: WORKFLOW_ID,
+});
+
 const persisted = ({ workflow, version }: ReturnType<typeof convert>) => {
   const maps = createEmptyAllFlatEntityMaps();
-  const { flatUniversalWorkflowVersion: _payload, ...storedWorkflow } =
-    workflow;
+  const {
+    flatUniversalWorkflowVersion: _payload,
+    flatUniversalCommandMenuItem: commandMenuItem,
+    ...storedWorkflow
+  } = workflow;
+  if (isDefined(commandMenuItem)) {
+    const storedCommandMenuItem: FlatCommandMenuItem = {
+      ...commandMenuItem,
+      id: '66666666-6666-4666-8666-666666666666',
+      workspaceId: APPLICATION_ID,
+      applicationId: APPLICATION_ID,
+      overrides: null,
+      frontComponentId: null,
+      availabilityObjectMetadataId: null,
+      navigationTargetObjectMetadataId: null,
+      pageLayoutId: null,
+    };
+    maps.flatCommandMenuItemMaps.byUniversalIdentifier[COMMAND_MENU_ITEM_ID] =
+      storedCommandMenuItem;
+  }
   maps.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID] = {
     ...storedWorkflow,
     workspaceId: APPLICATION_ID,
@@ -134,6 +159,7 @@ describe('application workflow version side effects', () => {
         flatEntity: workflow as FlatWorkflow,
       }),
     ).not.toHaveProperty('flatUniversalWorkflowVersion');
+    expect(operations.commandMenuItem).toBeUndefined();
   });
 
   it('updates the same version for a graph-only change without mutating the previous definition', () => {
@@ -198,6 +224,69 @@ describe('application workflow version side effects', () => {
         context: { buildOptions },
       }),
     ).toEqual({ status: 'noop' });
+  });
+});
+
+describe('application workflow command menu item side effects', () => {
+  const withAvailability = (icon: string) => {
+    const definition = structuredClone(manifest);
+    definition.version.trigger = {
+      ...manifest.version.trigger,
+      type: 'MANUAL',
+      settings: { availability: { type: 'GLOBAL' }, icon, isPinned: true },
+    };
+    return definition;
+  };
+
+  it('creates the command menu item next to its version, owned by the engine', () => {
+    const { workflow, version } = convert(withAvailability('IconBolt'));
+    const operations = expand(workflow);
+    expect(
+      operations.commandMenuItem?.flatEntityToCreate?.[COMMAND_MENU_ITEM_ID],
+    ).toMatchObject({
+      coreWorkflowVersionId: version.id,
+      icon: 'IconBolt',
+      isSystemSideEffect: true,
+    });
+    expect(
+      flatEntityToScalarFlatEntity({
+        metadataName: 'workflow',
+        flatEntity: workflow as FlatWorkflow,
+      }),
+    ).not.toHaveProperty('flatUniversalCommandMenuItem');
+  });
+
+  it('updates the command menu item in place and keeps what the workspace changed', () => {
+    const existing = persisted(convert(withAvailability('IconBolt')));
+    const storedCommandMenuItem =
+      existing.flatCommandMenuItemMaps.byUniversalIdentifier[
+        COMMAND_MENU_ITEM_ID
+      ]!;
+    storedCommandMenuItem.position = 7;
+    storedCommandMenuItem.universalOverrides = { isPinned: false };
+    const { workflow } = convert(withAvailability('IconRocket'), existing);
+    expect(
+      expand(workflow, existing).commandMenuItem?.flatEntityToUpdate?.[
+        COMMAND_MENU_ITEM_ID
+      ],
+    ).toMatchObject({
+      icon: 'IconRocket',
+      position: 7,
+      universalOverrides: { isPinned: false },
+    });
+  });
+
+  it('deletes the command menu item once the trigger no longer declares an availability', () => {
+    const existing = persisted(convert(withAvailability('IconBolt')));
+    const { workflow } = convert(manifest, existing);
+    expect(
+      expand(workflow, existing).commandMenuItem?.flatEntityToDelete,
+    ).toEqual({
+      [COMMAND_MENU_ITEM_ID]:
+        existing.flatCommandMenuItemMaps.byUniversalIdentifier[
+          COMMAND_MENU_ITEM_ID
+        ],
+    });
   });
 });
 

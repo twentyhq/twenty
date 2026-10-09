@@ -62,6 +62,7 @@ describe('application workflow definitions', () => {
     expect(version.coreWorkflowId).toBe(workflow.id);
     expect(workflow.workspaceWorkflowId).toBeNull();
     expect(workflow.isSystem).toBe(false);
+    expect(workflow.flatUniversalCommandMenuItem).toBeUndefined();
     expect(version.workspaceWorkflowVersionId).toBeNull();
     expect(version.status).toBe('ACTIVE');
     expect(version.steps?.[0].settings.input).toEqual({
@@ -140,7 +141,7 @@ describe('application workflow definitions', () => {
 
   it('resolves the manual trigger availability object to its name', () => {
     const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
-    const { version } = convert({
+    const { workflow, version } = convert({
       ...options,
       manifest: {
         ...manifest,
@@ -173,6 +174,11 @@ describe('application workflow definitions', () => {
         icon: 'IconBolt',
         isPinned: true,
       },
+    });
+    expect(workflow.flatUniversalCommandMenuItem).toMatchObject({
+      coreWorkflowVersionId: version.id,
+      availabilityObjectMetadataUniversalIdentifier: OBJECT_ID,
+      isSystemSideEffect: true,
     });
   });
 

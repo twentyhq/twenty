@@ -60,7 +60,7 @@ export const fromWorkflowManifestToUniversalFlatCommandMenuItem = ({
     coreWorkflowVersionId,
     pageLayoutUniversalIdentifier: null,
     isActive: true,
-    isSystemSideEffect: false,
+    isSystemSideEffect: true,
     universalOverrides: null,
     createdAt: now,
     updatedAt: now,

@@ -4,9 +4,7 @@ import {
   getWorkflowVersionUniversalIdentifier,
   type WorkflowManifest,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 
-import { fromWorkflowManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-command-menu-item.util';
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
 import { validateWorkflowManifestRecordFields } from 'src/engine/core-modules/application/application-manifest/utils/validate-workflow-manifest-record-fields.util';
@@ -91,21 +89,6 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
         universalFlatEntityMapsToMutate:
           toAllUniversalFlatEntityMaps.flatWorkflowMaps,
       });
-      const commandMenuItem = isDefined(workflow.flatUniversalWorkflowVersion)
-        ? fromWorkflowManifestToUniversalFlatCommandMenuItem({
-            manifest: workflowManifest,
-            applicationUniversalIdentifier,
-            coreWorkflowVersionId: workflow.flatUniversalWorkflowVersion.id,
-            now,
-          })
-        : null;
-      if (isDefined(commandMenuItem)) {
-        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity: commandMenuItem,
-          universalFlatEntityMapsToMutate:
-            toAllUniversalFlatEntityMaps.flatCommandMenuItemMaps,
-        });
-      }
     }
     if (recordFieldErrors.length > 0) {
       throw new ApplicationException(
