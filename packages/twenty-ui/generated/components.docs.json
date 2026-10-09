@@ -12268,7 +12268,35 @@
         "type": "string",
         "required": false,
         "defaultValue": "image/*",
-        "description": "Native file picker filter. Defaults to image/*. The application validates the selected file."
+        "description": "Native file picker filter. Defaults to image/*. The caller validates allowed formats."
+      },
+      {
+        "name": "aria-describedby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible description references for the hidden file input and selection buttons, combined with helperText and errorMessage."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name of the hidden file input. Defaults to uploadLabel."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name reference for the hidden file input."
+      },
+      {
+        "name": "capture",
+        "type": "boolean | \"user\" | \"environment\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native device capture hint for the file picker."
       },
       {
         "name": "className",
@@ -12276,6 +12304,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Class applied to the root element."
+      },
+      {
+        "name": "dir",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text direction applied to both the root and hidden file input."
       },
       {
         "name": "disabled",
@@ -12292,11 +12327,32 @@
         "description": "Application error, displayed as an alert and associated with the selection controls."
       },
       {
+        "name": "form",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native form identifier associated with the hidden file input."
+      },
+      {
         "name": "helperText",
         "type": "string",
         "required": false,
         "defaultValue": null,
         "description": "Application instructions, associated with the selection controls."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native identifier of the hidden file input."
+      },
+      {
+        "name": "inputRef",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the hidden single-file HTMLInputElement."
       },
       {
         "name": "isUploading",
@@ -12306,11 +12362,32 @@
         "description": "Marks the module busy. Selection and removal controls that would otherwise be enabled stay focusable but unavailable. Shows Abort when onAbort is supplied."
       },
       {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native name of the hidden file input."
+      },
+      {
         "name": "onAbort",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
         "description": "Shows an abort action while uploading. It can cancel the first upload before a src exists."
+      },
+      {
+        "name": "onChange",
+        "type": "ChangeEventHandler<HTMLInputElement, HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native file input change event, fired while the selected file is present and before the input resets. The input does not retain a file for form submission."
+      },
+      {
+        "name": "onFileSelect",
+        "type": "((file: File) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Fires when a file is selected and receives its usable File after the input resets. Empty and canceled selections do not call it. Selection is disabled when omitted. The caller owns validation and uploading."
       },
       {
         "name": "onRemove",
@@ -12320,18 +12397,11 @@
         "description": "Requests removal of the current image. Removal is disabled without this callback or a nonempty src."
       },
       {
-        "name": "onUpload",
-        "type": "((file: File) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Receives the selected File. Empty and canceled selections do not call it. Selection is disabled when omitted."
-      },
-      {
         "name": "ref",
         "type": "Ref<HTMLDivElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Ref to the root element."
+        "description": "Ref to the root div element."
       },
       {
         "name": "removeLabel",
@@ -12345,7 +12415,14 @@
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Custom root element or render function. Keep a non-interactive root."
+        "description": "Custom root element or render function. Supply root native attributes here and keep a non-interactive root."
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native file input requirement. The input resets after selection, so the caller validates completed uploads."
       },
       {
         "name": "src",
@@ -12362,11 +12439,18 @@
         "description": "Inline style applied to the root element."
       },
       {
+        "name": "title",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native title of the hidden file input."
+      },
+      {
         "name": "uploadLabel",
         "type": "string",
         "required": false,
         "defaultValue": "Upload",
-        "description": "Label for the preview and Upload action."
+        "description": "Label for the preview, Upload action, and hidden file input."
       }
     ]
   },
