@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
-msgstr ""
+msgstr "{actorName} đã tạo mã khôi phục cho phép bạn đăng nhập vào {workspaceDisplayName} mà không cần ứng dụng xác thực của bạn."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -46,7 +46,7 @@ msgstr "Thông báo trước khi bản dùng thử của bạn kết thúc"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
-msgstr ""
+msgstr "Một mã khôi phục đã được dùng để đăng nhập vào {workspaceDisplayName}. Trình xác thực của bạn cho không gian làm việc này đã bị xóa và các phiên khác của bạn tại đó đã bị đăng xuất."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -140,7 +140,7 @@ msgstr "Chào {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Nếu đây không phải là bạn, hãy liên hệ với quản trị viên không gian làm việc của bạn và thay đổi mật khẩu."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -150,7 +150,7 @@ msgstr "Nếu Twenty phù hợp với nhu cầu của bạn, mọi thứ đã s�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "If you did not ask for this, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Nếu bạn không yêu cầu điều này, hãy liên hệ với quản trị viên không gian làm việc của bạn và thay đổi mật khẩu."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -256,7 +256,7 @@ msgstr "Thiết lập"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "Thiết lập lại xác thực hai yếu tố trong Cài đặt, Hồ sơ."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "Kiểm tra email"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "Mã chỉ có thể được sử dụng một lần và hết hạn vào {formattedExpiresAt}. Việc sử dụng mã sẽ xóa trình xác thực hiện tại của bạn cho không gian làm việc này và đăng xuất bạn khỏi các phiên khác tại đó."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, Tập đoàn lợi ích công cộng"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "Đã cấp mã khôi phục xác thực hai yếu tố"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "Đặt lại xác thực hai yếu tố"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
-msgstr ""
+msgstr "{actorName} helyreállítási kódot hozott létre, amellyel a hitelesítő alkalmazás használata nélkül bejelentkezhet a {workspaceDisplayName} nevű munkaterületre."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -46,7 +46,7 @@ msgstr "Előzetes figyelmeztetés a próbaidőszak lejárta előtt"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
-msgstr ""
+msgstr "Helyreállítási kódot használtak a {workspaceDisplayName} nevű munkaterületre való bejelentkezéshez. Az ehhez a munkaterülethez tartozó hitelesítő alkalmazását eltávolították, és kijelentkeztették az ottani többi munkamenetből."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -140,7 +140,7 @@ msgstr "Szia {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Ha nem Ön volt az, lépjen kapcsolatba a munkaterület rendszergazdájával, és módosítsa jelszavát."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -150,7 +150,7 @@ msgstr "Ha a Twenty bevált számodra, minden rendben — nincs további teendő
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "If you did not ask for this, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Ha nem Ön kérte ezt, lépjen kapcsolatba a munkaterület rendszergazdájával, és módosítsa jelszavát."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -256,7 +256,7 @@ msgstr "Beállítás"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "Állítsa be újra a kétfaktoros hitelesítést a Beállítások, Profil menüpontban."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "Teszt e-mail"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "A kód egyszer használható fel, és {formattedExpiresAt} időpontban lejár. Használata eltávolítja az aktuális hitelesítőt ebből a munkaterületből, és kijelentkezteti az ottani többi munkamenetből."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, Közhasznú Vállalat"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "Kétfaktoros hitelesítés helyreállítási kód kiadva"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "Kétfaktoros hitelesítés visszaállítása"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

@@ -9,6 +9,7 @@ import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbou
 
 import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { getPropertyFromHeaders } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-property-from-headers.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
@@ -41,11 +42,39 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       },
     });
 
+    const gmailAssignedHeaderMessageId =
+      await this.getGmailAssignedHeaderMessageId(gmailClient, data.id);
+
     return {
-      headerMessageId: extractMessageIdFromBuffer(messageBuffer),
+      headerMessageId:
+        gmailAssignedHeaderMessageId ??
+        extractMessageIdFromBuffer(messageBuffer),
       messageExternalId: data.id ?? undefined,
       threadExternalId: data.threadId ?? undefined,
     };
+  }
+
+  private async getGmailAssignedHeaderMessageId(
+    gmailClient: gmail_v1.Gmail,
+    messageExternalId: string | null | undefined,
+  ) {
+    if (!isNonEmptyString(messageExternalId)) {
+      return;
+    }
+
+    return gmailClient.users.messages
+      .get({
+        userId: 'me',
+        id: messageExternalId,
+        format: 'metadata',
+        metadataHeaders: ['Message-ID'],
+      })
+      .then(({ data }) => getPropertyFromHeaders(data, 'Message-ID'))
+      .catch((error) =>
+        this.logger.warn(
+          `Failed to read Gmail Message-ID for sent message ${messageExternalId}: ${error}`,
+        ),
+      );
   }
 
   async createDraft(
