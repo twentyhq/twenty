@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
 import { getAiChatBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
 import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
-import { getValidationRuleBrowsingContext } from '@/ai/utils/getValidationRuleBrowsingContext';
+import { getValidationRuleBrowsingContext } from '@/validation-rules/utils/getValidationRuleBrowsingContext';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';

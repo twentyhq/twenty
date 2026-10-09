@@ -14,6 +14,8 @@ import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderS
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isEmptyReasoningPart } from '@/ai/utils/isEmptyReasoningPart';
 import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai/utils/isHiddenCompleteWorkspaceSetupToolPart';
+import { AiChatValidationRuleFormFillCard } from '@/validation-rules/components/AiChatValidationRuleFormFillCard';
+import { getValidationRuleFormFillFromToolPart } from '@/validation-rules/utils/getValidationRuleFormFillFromToolPart';
 import { styled } from '@linaria/react';
 import { getToolName, isToolUIPart } from 'ai';
 import {
@@ -92,6 +94,17 @@ const MessagePartRenderer = ({
           );
         }
 
+        const validationRuleFormFill =
+          getValidationRuleFormFillFromToolPart(part);
+
+        if (isDefined(validationRuleFormFill)) {
+          return (
+            <AiChatValidationRuleFormFillCard
+              validationRuleFormFill={validationRuleFormFill}
+            />
+          );
+        }
+
         const frontComponentId = frontComponentIdByToolName.get(
           getEffectiveToolName(part),
         );
@@ -144,10 +157,11 @@ export const AiChatAssistantMessageRenderer = ({
     filteredParts,
     (part) =>
       isToolUIPart(part) &&
-      shouldToolPartRenderStandalone(
+      (shouldToolPartRenderStandalone(
         part,
         frontComponentIdByToolName.get(getEffectiveToolName(part)),
-      ),
+      ) ||
+        isDefined(getValidationRuleFormFillFromToolPart(part))),
   );
   const renderItemsWithoutThinkingSteps = groupedRenderItems.filter(
     (renderItem) => renderItem.type !== 'thinking-steps',

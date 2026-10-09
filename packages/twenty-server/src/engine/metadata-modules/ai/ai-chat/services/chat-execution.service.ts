@@ -867,6 +867,6 @@ export class ChatExecutionService {
       ? `editing the validation rule ${validationRuleId} of ${objectDescription}`
       : `creating a validation rule on ${objectDescription}`;
 
-    return `The user is ${pageDescription} in settings. When they describe or change a rule, fill their form with fill_validation_rule_form instead of creating or updating the rule: they review it and save it.`;
+    return `The user is ${pageDescription} in settings. When they describe or change a rule, propose the values with fill_validation_rule_form instead of creating or updating the rule: they apply them to their form and save it.`;
   }
 }

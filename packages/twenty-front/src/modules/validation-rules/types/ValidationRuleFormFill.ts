@@ -4,7 +4,6 @@ export type ValidationRuleFormFill = Pick<
   ValidationRuleFormValues,
   'name' | 'expression' | 'message' | 'errorFieldMetadataId'
 > & {
-  toolCallId: string;
   objectMetadataId: string;
   validationRuleId: string | null;
 };

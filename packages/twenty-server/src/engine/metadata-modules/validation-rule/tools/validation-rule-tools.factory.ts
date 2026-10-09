@@ -88,7 +88,7 @@ export class ValidationRuleToolsFactory {
       },
       create_validation_rule: {
         description:
-          'Create a validation rule on an object. An invalid expression is rejected with the reason.',
+          'Create a validation rule on an object. An invalid expression is rejected with the reason. Do not use it when the user is on a validation rule page: propose the values with fill_validation_rule_form instead.',
         inputSchema: CreateValidationRuleInputSchema,
         execute: async (parameters: {
           objectMetadataId: string;
@@ -104,7 +104,7 @@ export class ValidationRuleToolsFactory {
       },
       update_validation_rule: {
         description:
-          'Update a validation rule. Only the provided properties change. An invalid expression is rejected with the reason.',
+          'Update a validation rule. Only the provided properties change. An invalid expression is rejected with the reason. Do not use it when the user is on a validation rule page: propose the values with fill_validation_rule_form instead.',
         inputSchema: UpdateValidationRuleInputSchema,
         execute: async ({
           id,
@@ -124,7 +124,7 @@ export class ValidationRuleToolsFactory {
       },
       fill_validation_rule_form: {
         description:
-          'Fill the validation rule form the user has open in settings, without saving it. When the user is on a validation rule page, use this instead of create_validation_rule or update_validation_rule: the user reviews the form and saves it. An invalid expression is rejected with the reason.',
+          'Propose values for the validation rule form the user has open in settings, without saving anything. When the user is on a validation rule page, use this instead of create_validation_rule or update_validation_rule: the user applies the values to their form from the chat, reviews them and saves. An invalid expression is rejected with the reason.',
         inputSchema: FillValidationRuleFormInputSchema,
         execute: async (parameters: {
           objectMetadataId: string;
@@ -143,7 +143,7 @@ export class ValidationRuleToolsFactory {
           return {
             success: true,
             message:
-              'The form is filled. Nothing is saved until the user clicks Save.',
+              'The values are shown in the chat with an Apply to form button. Nothing is saved until the user applies them and clicks Save.',
             result: parameters,
           };
         },

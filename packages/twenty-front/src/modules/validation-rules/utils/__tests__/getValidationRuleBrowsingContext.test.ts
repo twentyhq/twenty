@@ -1,4 +1,4 @@
-import { getValidationRuleBrowsingContext } from '@/ai/utils/getValidationRuleBrowsingContext';
+import { getValidationRuleBrowsingContext } from '@/validation-rules/utils/getValidationRuleBrowsingContext';
 
 const OBJECT_METADATA_ITEMS = [
   {
