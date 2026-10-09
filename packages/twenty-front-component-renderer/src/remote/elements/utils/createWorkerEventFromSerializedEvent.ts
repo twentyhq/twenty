@@ -1,4 +1,3 @@
-import { workerFileInputActivation } from '@/polyfills/file-input/states/workerFileInputActivation';
 import { resolveOwnerWindowOfNode } from '@/polyfills/dom/utils/resolveOwnerWindowOfNode';
 import { applySyntheticEventCompatibility } from '@/polyfills/events/utils/applySyntheticEventCompatibility';
 import { markEventAsHostOriginated } from '@/polyfills/events/utils/markEventAsHostOriginated';
@@ -46,10 +45,6 @@ export const createWorkerEventFromSerializedEvent = ({
   applySerializedEventProperties({ event, eventData });
   applySerializedEventRelatedTarget({ event, relatedTarget });
   markEventAsHostOriginated(event);
-  workerFileInputActivation.register({
-    event,
-    activationId: eventData.fileInputActivationId,
-  });
   setHostEventDispatchTarget({ event, dispatchTarget });
 
   return applySyntheticEventCompatibility(event);

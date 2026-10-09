@@ -5,7 +5,6 @@ import { FILE_INPUT_PICKER_METHOD } from '@/constants/FileInputPickerMethod';
 import { HtmlInputElement } from '@/remote/generated/remote-elements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
 import { markEventAsHostOriginated } from '@/polyfills/events/utils/markEventAsHostOriginated';
-import { workerFileInputActivation } from '@/polyfills/file-input/states/workerFileInputActivation';
 
 import { installInputClickActivationPolyfill } from '../installInputClickActivationPolyfill';
 import { installElementClickMethodPolyfill } from '../installElementClickMethodPolyfill';
@@ -48,22 +47,6 @@ const createConnectedFileInput = () => {
   remoteRoot.connect(connection);
 
   return { remoteRoot, input, connection };
-};
-
-const clickWithHostActivation = (click: () => void): void => {
-  const hostClickEvent = createClickEvent();
-
-  workerFileInputActivation.register({
-    event: hostClickEvent,
-    activationId: 'trusted-click',
-  });
-  workerFileInputActivation.dispatch({
-    event: hostClickEvent,
-    dispatch: () => {
-      click();
-      return true;
-    },
-  });
 };
 
 const recordEventTypes = (input: HTMLInputElement): string[] => {
@@ -193,30 +176,28 @@ describe('installInputClickActivationPolyfill', () => {
     expect(changeListener).not.toHaveBeenCalled();
   });
 
-  it('should open the file picker once with the host activation of a guest click', () => {
+  it('should ask the host to open the file picker after a guest click', () => {
     const { remoteRoot, input, connection } = createConnectedFileInput();
 
-    clickWithHostActivation(() => {
-      input.click();
-      input.click();
-    });
+    input.click();
 
     expect(connection.call).toHaveBeenCalledTimes(1);
     expect(connection.call).toHaveBeenCalledWith(
       remoteId(input),
       FILE_INPUT_PICKER_METHOD,
-      'trusted-click',
     );
 
     remoteRoot.remove();
   });
 
-  it('should not open the file picker without host activation or after a prevented click', () => {
+  it('should not ask the host to open the file picker after a prevented or host click', () => {
     const { remoteRoot, input, connection } = createConnectedFileInput();
+    const hostClickEvent = createClickEvent();
 
-    input.click();
+    markEventAsHostOriginated(hostClickEvent);
+    input.dispatchEvent(hostClickEvent);
     input.addEventListener('click', (event) => event.preventDefault());
-    clickWithHostActivation(() => input.click());
+    input.click();
 
     expect(connection.call).not.toHaveBeenCalled();
 

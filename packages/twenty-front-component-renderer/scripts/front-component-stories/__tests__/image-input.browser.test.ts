@@ -284,9 +284,14 @@ for (const runtime of ['react', 'preact']) {
   });
 
   test(`${runtime}: empty chooser result, disabled/uploading suppression and callback replacement`, async (t) => {
-    const { page, primary } = await mountFixture({ runtime });
+    const { page, primary, secondary } = await mountFixture({ runtime });
     t.after(() => page.close());
     const chooseButtons = getChooseButtons(primary);
+    await secondary.getByLabel('Image actions').click();
+    await expectNoChooser({
+      renderer: primary,
+      activate: () => chooseButtons.last().dispatchEvent('click'),
+    });
     const empty = await openChooser({ renderer: primary });
     await empty.setFiles([]);
     await expectUploadCount({ renderer: primary, uploads: 0 });
@@ -308,10 +313,6 @@ for (const runtime of ['react', 'preact']) {
     await primary
       .getByRole('button', { name: 'Cancel profile upload' })
       .click();
-    await expectNoChooser({
-      renderer: primary,
-      activate: () => chooseButtons.last().dispatchEvent('click'),
-    });
     const pending = await openChooser({ renderer: primary });
     await primary
       .getByRole('button', { name: 'Disconnect file callback' })

@@ -3,8 +3,8 @@ import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FileInputHost } from '@/host/file-input/types/FileInputHost';
 import { createFileInputAwareRemoteConnection } from '@/host/file-input/utils/createFileInputAwareRemoteConnection';
+import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
 import { type HostFocusController } from '@/host/focus/types/HostFocusController';
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/buildHostFetchPolicyFromFrontComponentUrls';
@@ -38,7 +38,6 @@ type FrontComponentWorkerEffectProps = {
   storageNamespace?: string;
   initialExecutionContext: FrontComponentExecutionContext;
   geometryTracker: GeometryTracker;
-  fileInputHost: FileInputHost;
   mediaSessionHost?: FrontComponentMediaSessionHost;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   hostFocusController: HostFocusController;
@@ -58,7 +57,6 @@ export const FrontComponentWorkerEffect = ({
   storageNamespace,
   initialExecutionContext,
   geometryTracker,
-  fileInputHost,
   mediaSessionHost,
   setReceiver,
   setThread,
@@ -90,6 +88,7 @@ export const FrontComponentWorkerEffect = ({
 
     const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
     const imageLoadingHost = createImageLoadingHost();
+    const fileInputHost = createFileInputHost({ geometryTracker });
 
     const thread = createFrontComponentHostThread({
       hostMessagePort: channel.port1,
@@ -191,7 +190,7 @@ export const FrontComponentWorkerEffect = ({
     return () => {
       isCancelled = true;
       imageLoadingHost.dispose();
-      fileInputHost.reset();
+      fileInputHost.dispose();
       hostFocusController.reset();
       window.removeEventListener('message', handleSandboxMessage);
       setThread(null);
@@ -210,7 +209,6 @@ export const FrontComponentWorkerEffect = ({
     storageNamespace,
     initialExecutionContext,
     geometryTracker,
-    fileInputHost,
     hostFocusController,
     mediaSessionHost,
     setError,

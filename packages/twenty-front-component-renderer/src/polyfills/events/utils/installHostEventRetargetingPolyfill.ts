@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { takeHostEventDispatchTarget } from '@/polyfills/events/utils/takeHostEventDispatchTarget';
-import { workerFileInputActivation } from '@/polyfills/file-input/states/workerFileInputActivation';
 
 export const installHostEventRetargetingPolyfill = (
   elementPrototype: EventTarget,
@@ -12,17 +11,14 @@ export const installHostEventRetargetingPolyfill = (
     value: function (this: EventTarget, event: Event): boolean {
       const hostEventDispatchTarget = takeHostEventDispatchTarget(event);
 
-      if (!isDefined(hostEventDispatchTarget)) {
-        return dispatchEventWithoutRetargeting.call(this, event);
+      if (
+        isDefined(hostEventDispatchTarget) &&
+        hostEventDispatchTarget !== this
+      ) {
+        return hostEventDispatchTarget.dispatchEvent(event);
       }
 
-      return workerFileInputActivation.dispatch({
-        event,
-        dispatch: () =>
-          hostEventDispatchTarget === this
-            ? dispatchEventWithoutRetargeting.call(this, event)
-            : hostEventDispatchTarget.dispatchEvent(event),
-      });
+      return dispatchEventWithoutRetargeting.call(this, event);
     },
     configurable: true,
     writable: true,

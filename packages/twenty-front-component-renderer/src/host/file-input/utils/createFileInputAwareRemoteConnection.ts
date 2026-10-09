@@ -13,10 +13,7 @@ export const createFileInputAwareRemoteConnection = ({
   mutate: connection.mutate,
   call: (remoteElementId, methodName, ...methodArguments) => {
     if (methodName === FILE_INPUT_PICKER_METHOD) {
-      fileInputHost.openFilePicker({
-        remoteElementId,
-        activationId: methodArguments[0],
-      });
+      fileInputHost.openFilePicker(remoteElementId);
       return;
     }
 

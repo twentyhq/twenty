@@ -124,10 +124,11 @@ outside this scope.
 Its stories are tagged `!test`, so the Vitest run skips them and the native
 Chromium tests below exercise them instead. These tests wait for a browser
 `filechooser` event after trusted pointer, Enter and Space activation on both
-selection buttons. A synchronous worker `input.click()` can consume its
-renderer's single-use activation while the browser still has transient user
-activation, within one second of the host click. Synthetic events and delayed
-calls do not grant activation.
+selection buttons. A worker `input.click()` on a file input asks the host to
+open the chooser. The host opens it once per trusted click inside the same
+renderer, within one second of that click and while the browser still has
+transient user activation. Synthetic events and clicks in another renderer do
+not count.
 
 Selected files cross the existing event transport as native `File` objects,
 including metadata, `text()` and `arrayBuffer()` contents. Reset clears both the

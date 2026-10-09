@@ -1050,7 +1050,7 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` elem
 
 ### File selection
 
-File inputs deliver native `File` objects with metadata and readable contents. Use `text()` or `arrayBuffer()` to read a selected file, or pass it to the `uploadFile` host function. Opening the native chooser requires a synchronous `input.click()` during a trusted user interaction while browser activation remains active. The SDK-built React and Preact flows are verified in Chromium.
+File inputs deliver native `File` objects with metadata and readable contents. Use `text()` or `arrayBuffer()` to read a selected file, or pass it to the `uploadFile` host function. Opening the native chooser requires calling `input.click()` within one second of a trusted click inside your component. The SDK-built React and Preact flows are verified in Chromium.
 
 Worker-created object URLs assigned to `img.src` support previews. Revoke your URLs when replacing the image or unmounting your component. Your application owns file validation, upload progress and cancellation.
 

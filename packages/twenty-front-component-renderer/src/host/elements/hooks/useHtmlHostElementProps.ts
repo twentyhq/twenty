@@ -1,7 +1,5 @@
 import { useContext } from 'react';
 
-import { FrontComponentFileInputHostContext } from '@/host/file-input/contexts/FrontComponentFileInputHostContext';
-
 import { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
@@ -33,7 +31,6 @@ export const useHtmlHostElementProps = ({
   htmlTag: string;
 }): HtmlHostElementProps => {
   const setEditableFocused = useContext(FrontComponentInputFocusContext);
-  const fileInputHost = useContext(FrontComponentFileInputHostContext);
   const geometryTracker = useContext(FrontComponentGeometryTrackerContext);
 
   const remoteElementId = getRemoteElementIdFromProps(props);
@@ -43,7 +40,6 @@ export const useHtmlHostElementProps = ({
       buildHostReactPropsFromRemoteProps({
         remoteProps: props,
         htmlTag,
-        fileInputHost,
         findRemoteElementIdContainingNode:
           geometryTracker?.findRemoteElementIdContainingNode,
       }),

@@ -4,9 +4,9 @@ import { type InputClickActivationContext } from '@/polyfills/dom/types/InputCli
 import { type NodeWithOwnerDocument } from '@/polyfills/dom/types/NodeWithOwnerDocument';
 import { resolveInputClickActivationType } from '@/polyfills/dom/utils/resolveInputClickActivationType';
 import { runCheckboxClickActivation } from '@/polyfills/dom/utils/runCheckboxClickActivation';
+import { runFileInputClickActivation } from '@/polyfills/dom/utils/runFileInputClickActivation';
 import { runRadioButtonClickActivation } from '@/polyfills/dom/utils/runRadioButtonClickActivation';
 import { isHostOriginatedEvent } from '@/polyfills/events/utils/isHostOriginatedEvent';
-import { runFileInputClickActivation } from '@/polyfills/file-input/utils/runFileInputClickActivation';
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
 
 type ActivatableInputElement = Element &

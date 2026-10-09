@@ -6,7 +6,6 @@ import { hasDangerousUrlScheme } from '@/host/elements/utils/hasDangerousUrlSche
 import { isNavigationUrlAttribute } from '@/host/elements/utils/isNavigationUrlAttribute';
 import { parseCssString } from '@/host/elements/utils/parseCssString';
 import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
-import { type FileInputHost } from '@/host/file-input/types/FileInputHost';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
@@ -15,12 +14,10 @@ export const buildHostReactPropsFromRemoteProps = ({
   remoteProps,
   htmlTag,
   findRemoteElementIdContainingNode,
-  fileInputHost,
 }: {
   remoteProps: Record<string, unknown>;
   htmlTag: string;
   findRemoteElementIdContainingNode?: FindRemoteElementIdContainingNode;
-  fileInputHost?: FileInputHost | null;
 }): Record<string, unknown> => {
   const hostReactProps: Record<string, unknown> = {};
 
@@ -44,7 +41,6 @@ export const buildHostReactPropsFromRemoteProps = ({
         remotePropName,
         remotePropValue,
         findRemoteElementIdContainingNode,
-        fileInputHost,
       });
 
       if (isDefined(hostReactEventHandlerProp)) {

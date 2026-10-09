@@ -1,6 +1,4 @@
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
-import { FrontComponentFileInputHostContext } from '@/host/file-input/contexts/FrontComponentFileInputHostContext';
-import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
 import { FrontComponentRemoteRootRenderer } from '@/host/components/FrontComponentRemoteRootRenderer';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
@@ -72,9 +70,6 @@ export const FrontComponentRenderer = ({
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);
   const [geometryTracker] = useState(() => createGeometryTracker());
-  const [fileInputHost] = useState(() =>
-    createFileInputHost({ geometryTracker }),
-  );
   const [hostFocusController] = useState(() =>
     createHostFocusController({ geometryTracker }),
   );
@@ -96,7 +91,6 @@ export const FrontComponentRenderer = ({
           storageNamespace={storageNamespace}
           initialExecutionContext={initialExecutionContext}
           geometryTracker={geometryTracker}
-          fileInputHost={fileInputHost}
           hostFocusController={hostFocusController}
           mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}
@@ -164,14 +158,10 @@ export const FrontComponentRenderer = ({
               <FrontComponentHostFocusControllerContext.Provider
                 value={hostFocusController}
               >
-                <FrontComponentFileInputHostContext.Provider
-                  value={fileInputHost}
-                >
-                  <FrontComponentRemoteRootRenderer
-                    receiver={receiver}
-                    components={fallbackComponentRegistry}
-                  />
-                </FrontComponentFileInputHostContext.Provider>
+                <FrontComponentRemoteRootRenderer
+                  receiver={receiver}
+                  components={fallbackComponentRegistry}
+                />
               </FrontComponentHostFocusControllerContext.Provider>
             </ErrorBoundary>
           </ThemeProvider>

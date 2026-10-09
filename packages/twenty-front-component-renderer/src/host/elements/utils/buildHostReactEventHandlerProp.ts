@@ -7,7 +7,6 @@ import { isRemoteEventListenerActive } from '@/host/elements/utils/isRemoteEvent
 import { LOWERCASE_EVENT_PROP_TO_DOM_EVENT_TYPE } from '@/host/events/constants/LowercaseEventPropToDomEventType';
 import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
 import { wrapEventHandler } from '@/host/events/utils/wrapEventHandler';
-import { type FileInputHost } from '@/host/file-input/types/FileInputHost';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
 export const buildHostReactEventHandlerProp = ({
@@ -15,13 +14,11 @@ export const buildHostReactEventHandlerProp = ({
   remotePropName,
   remotePropValue,
   findRemoteElementIdContainingNode,
-  fileInputHost,
 }: {
   remoteProps: Record<string, unknown>;
   remotePropName: string;
   remotePropValue: unknown;
   findRemoteElementIdContainingNode?: FindRemoteElementIdContainingNode;
-  fileInputHost?: FileInputHost | null;
 }): HostReactEventHandlerProp | undefined => {
   const domEventType =
     LOWERCASE_EVENT_PROP_TO_DOM_EVENT_TYPE[remotePropName.toLowerCase()];
@@ -39,7 +36,6 @@ export const buildHostReactEventHandlerProp = ({
     hostEventHandler: wrapEventHandler({
       remoteListener: remotePropValue as RemoteSerializedEventListener,
       findRemoteElementIdContainingNode,
-      fileInputHost,
     }),
   };
 };
