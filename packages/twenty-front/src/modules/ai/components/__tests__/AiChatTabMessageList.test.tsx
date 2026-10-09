@@ -5,7 +5,7 @@ import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { type AiChatSurface } from '@/ai/types/AiChatSurface';
 
-const mockUseAtomComponentSelectorValue = jest.fn();
+const mockUseAtomStateValue = jest.fn();
 const mockUseIsWorkspaceSetupChat = jest.fn(() => false);
 
 jest.mock('@/ai/hooks/useIsWorkspaceSetupChat', () => ({
@@ -16,15 +16,8 @@ jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
   WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
 }));
 
-jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue',
-  () => ({
-    useAtomComponentSelectorValue: () => mockUseAtomComponentSelectorValue(),
-  }),
-);
-
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: () => false,
+  useAtomStateValue: () => mockUseAtomStateValue(),
 }));
 
 jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
@@ -79,7 +72,7 @@ describe('AiChatTabMessageList', () => {
   });
 
   it('should render nothing with no messages and no preamble', () => {
-    mockUseAtomComponentSelectorValue.mockReturnValue(false);
+    mockUseAtomStateValue.mockReturnValue(false);
 
     const { container } = render(<AiChatTabMessageList />);
 
@@ -87,7 +80,7 @@ describe('AiChatTabMessageList', () => {
   });
 
   it('should render the preamble outside the scroll container with no messages', () => {
-    mockUseAtomComponentSelectorValue.mockReturnValue(false);
+    mockUseAtomStateValue.mockReturnValue(false);
 
     mockUseIsWorkspaceSetupChat.mockReturnValue(true);
 
@@ -98,7 +91,7 @@ describe('AiChatTabMessageList', () => {
   });
 
   it('should render the preamble inside the message list once messages exist', () => {
-    mockUseAtomComponentSelectorValue.mockReturnValue(true);
+    mockUseAtomStateValue.mockReturnValue(true);
 
     mockUseIsWorkspaceSetupChat.mockReturnValue(true);
 
@@ -110,7 +103,7 @@ describe('AiChatTabMessageList', () => {
   });
 
   it('should give each surface its own scroll wrapper instance id', () => {
-    mockUseAtomComponentSelectorValue.mockReturnValue(true);
+    mockUseAtomStateValue.mockReturnValue(true);
 
     const renderForSurface = (surface: AiChatSurface) =>
       render(

@@ -44307,12 +44307,12 @@ __metadata:
   linkType: hard
 
 "proxy-addr@npm:^2.0.7, proxy-addr@npm:~2.0.7":
-  version: 2.0.7
-  resolution: "proxy-addr@npm:2.0.7"
+  version: 2.0.8
+  resolution: "proxy-addr@npm:2.0.8"
   dependencies:
     forwarded: "npm:0.2.0"
     ipaddr.js: "npm:1.9.1"
-  checksum: 10c0/c3eed999781a35f7fd935f398b6d8920b6fb00bbc14287bc6de78128ccc1a02c89b95b56742bf7cf0362cc333c61d138532049c7dedc7a328ef13343eff81210
+  checksum: 10c0/58398f36e5b1f72b1011ca21844c0c41a9a3b6f2f0d101bcdb19abb3f3dd9626b27a96e53da777ded901eb67faed0304a4bc1d435b235e436f66f8e5e1fe1f5e
   languageName: node
   linkType: hard
 
@@ -47585,9 +47585,9 @@ __metadata:
   linkType: hard
 
 "shell-quote@npm:^1.7.3, shell-quote@npm:^1.8.1":
-  version: 1.10.0
-  resolution: "shell-quote@npm:1.10.0"
-  checksum: 10c0/46ee59bfd972ce6a45500c44ed130dff2d0a7d6fbac9841e59d548518cad8060a06393c9a5dcbc0cede294ad80b2a2cd8c904679e09265f53efc0a0879f30961
+  version: 1.12.0
+  resolution: "shell-quote@npm:1.12.0"
+  checksum: 10c0/1605a4ed6a758bf13de7cb8197a4184d8015f7a4dbdcd6cd4a717d5b30b3ae7666300cc4ae7f3155cf80ace9739e9e82061ee5aa1a648f53f5fab31a220816d0
   languageName: node
   linkType: hard
 
@@ -50601,7 +50601,6 @@ __metadata:
     tinyglobby: "npm:^0.2.15"
     ts-morph: "npm:^25.0.0"
     tsc-alias: "npm:^1.8.16"
-    tsx: "npm:^4.7.0"
     twenty-client-sdk: "workspace:*"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
@@ -51032,12 +51031,14 @@ __metadata:
   resolution: "twenty@workspace:packages/twenty-cli"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
+    "@types/lodash.startcase": "npm:^4"
     "@types/node": "npm:^24.0.0"
     "@types/semver": "npm:^7.5.8"
     chokidar: "npm:^3.6.0"
     cjs-module-lexer: "npm:^2.2.0"
     commander: "npm:^14.0.3"
     esbuild: "npm:^0.28.1"
+    lodash.startcase: "npm:^4.4.0"
     semver: "npm:7.6.3"
     tinyglobby: "npm:^0.2.15"
     twenty-client-sdk: "workspace:*"

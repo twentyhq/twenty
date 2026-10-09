@@ -3,6 +3,7 @@ import '@/remote/generated/remote-elements';
 import { remoteId } from '@remote-dom/core/elements';
 import { Window } from '@remote-dom/polyfill';
 
+import { serializeEvent } from '@/host/events/utils/serializeEvent';
 import { installEventConstructorPolyfills } from '@/polyfills/events/utils/installEventConstructorPolyfills';
 import { installHostEventRetargetingPolyfill } from '@/polyfills/events/utils/installHostEventRetargetingPolyfill';
 import { isHostOriginatedEvent } from '@/polyfills/events/utils/isHostOriginatedEvent';
@@ -107,6 +108,49 @@ describe('createWorkerEventFromSerializedEvent', () => {
     expect(event).toHaveProperty('isPropagationStopped', expect.any(Function));
     expect(event).toHaveProperty('persist', expect.any(Function));
     expect(isHostOriginatedEvent(event)).toBe(true);
+  });
+
+  it('should preserve the IME confirmation guard through host serialization and worker dispatch', () => {
+    const listeningElement = createListeningElement();
+    const confirmedValues: string[] = [];
+    const composingStates: boolean[] = [];
+    const keyboardCodes: number[] = [];
+
+    listeningElement.addEventListener('keydown', (event) => {
+      composingStates.push(event.isComposing);
+      keyboardCodes.push(event.keyCode);
+
+      if (event.which === 229) {
+        return;
+      }
+
+      if (event.key === 'Enter') {
+        confirmedValues.push('selected');
+      }
+    });
+
+    for (const keyboardState of [
+      { keyCode: 229, which: 229, isComposing: true },
+      { keyCode: 13, which: 13, isComposing: false },
+    ]) {
+      const event = createWorkerEventFromSerializedEvent({
+        listeningElement,
+        eventType: 'keydown',
+        eventData: serializeEvent({
+          type: 'keydown',
+          key: 'Enter',
+          keyCode: keyboardState.keyCode,
+          which: keyboardState.which,
+          nativeEvent: { isComposing: keyboardState.isComposing },
+        }),
+      });
+
+      listeningElement.dispatchEvent(event);
+    }
+
+    expect(confirmedValues).toEqual(['selected']);
+    expect(composingStates).toEqual([true, false]);
+    expect(keyboardCodes).toEqual([229, 13]);
   });
 
   it.each([

@@ -34,7 +34,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const COLLAPSED_MESSAGE_STACK_LINE_COUNT = 1;
@@ -251,7 +251,7 @@ export const LogConsoleDetailPanel = () => {
           <Section.Root>
             <Section.Header
               title={t`Message`}
-              adornment={
+              actions={
                 <LightButton
                   startIcon={<IconCopy />}
                   onClick={() => copyToClipboard(message)}
@@ -294,7 +294,7 @@ export const LogConsoleDetailPanel = () => {
         <Section.Root>
           <Section.Header
             title={t`Raw event`}
-            adornment={
+            actions={
               <LightButton
                 startIcon={<IconCopy />}
                 onClick={() =>

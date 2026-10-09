@@ -8,8 +8,8 @@ import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCu
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import CustomLogo from '~/pages/settings/applications/assets/custom-illustrations/custom-logo.webp';
-import StandardLogo from '~/pages/settings/applications/assets/standard-illustrations/standard-logo.webp';
+import CustomLogo from '@/applications/assets/custom-logo.webp';
+import StandardLogo from '@/applications/assets/standard-logo.webp';
 
 type UseApplicationChipDataArgs = {
   applicationId?: string | null;

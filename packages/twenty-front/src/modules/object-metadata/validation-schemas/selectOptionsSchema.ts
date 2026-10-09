@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { themeColorSchema } from 'twenty-ui/utilities';
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
+import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
 
 const selectOptionSchema = z
   .object({

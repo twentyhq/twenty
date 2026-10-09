@@ -26,6 +26,10 @@ import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/
 
 const MAX_ASK_ATTEMPTS = 10;
 
+const isThreadNotFoundError = (error: unknown) =>
+  error instanceof AiException &&
+  error.code === AiExceptionCode.THREAD_NOT_FOUND;
+
 type AgentCallerAwaitedToolCall = {
   toolName: string;
   arguments: Record<string, unknown>;
@@ -34,7 +38,7 @@ type AgentCallerAwaitedToolCall = {
 
 // The conversations a caller, such as a workflow step, holds with a member's inbox: the one its agent
 // run writes to, and the messages it sends itself, which may ask the member to approve a call. The
-// caller waits on that answer as on a suspended run, so it gets it through its handler
+// caller waits on that answer with an ANSWER wake-up, which the answer resolves
 @Injectable()
 export class AgentCallerConversationService {
   constructor(
@@ -70,11 +74,11 @@ export class AgentCallerConversationService {
     | { status: 'DELETED' }
   > {
     const openThreadUnderKey = async (key: string) => {
-      const openThread = (workspaceMemberId: string | null) =>
+      const openThread = (workspaceMemberIds: string[]) =>
         this.agentInboxService.openThread({
           workspaceId,
           sender,
-          workspaceMemberId,
+          workspaceMemberIds,
           threadKey: key,
           title,
           isArchivedOnCreate: true,
@@ -84,38 +88,43 @@ export class AgentCallerConversationService {
         isDefined(recipientWorkspaceMemberId) ||
         !isDefined(fallbackRecipientWorkspaceMemberId)
       ) {
-        return openThread(recipientWorkspaceMemberId);
+        return openThread(
+          isDefined(recipientWorkspaceMemberId)
+            ? [recipientWorkspaceMemberId]
+            : [],
+        );
       }
 
       // a fallback recipient who cannot have the conversation, such as one who cannot use AI,
       // leaves a conversation no inbox receives
       try {
-        return await openThread(fallbackRecipientWorkspaceMemberId);
+        return await openThread([fallbackRecipientWorkspaceMemberId]);
       } catch (error) {
-        if (
-          error instanceof AiException &&
-          error.code === AiExceptionCode.THREAD_NOT_FOUND
-        ) {
-          return openThread(null);
+        if (isThreadNotFoundError(error)) {
+          return openThread([]);
         }
 
         throw error;
       }
     };
 
-    const keyedConversation = await openThreadUnderKey(threadKey);
+    // a recipient who cannot join the keyed conversation, such as one no inbox receives, is given
+    // the fallback one, which fails in turn for a recipient who cannot have a conversation at all
+    const keyedConversation = await openThreadUnderKey(threadKey).catch(
+      (error: unknown) =>
+        isThreadNotFoundError(error) ? null : Promise.reject(error),
+    );
 
     // a conversation the recipient deleted is not written to again, and one already waiting on an answer
     // or holding a suspended run has no room for another, so this run starts its own
     const isKeyedConversationUnavailable =
+      !isDefined(keyedConversation) ||
       isDefined(keyedConversation.thread.deletedAt) ||
       isDefined(keyedConversation.thread.pendingQuestionMessageId) ||
-      isDefined(
-        await this.agentRunSuspensionService.findOne({
-          workspaceId,
-          where: { threadId: keyedConversation.thread.id },
-        }),
-      );
+      (await this.agentRunSuspensionService.isConversationWaiting({
+        workspaceId,
+        threadId: keyedConversation.thread.id,
+      }));
     const { thread, isCreated } = isKeyedConversationUnavailable
       ? await openThreadUnderKey(fallbackThreadKey)
       : keyedConversation;
@@ -131,27 +140,47 @@ export class AgentCallerConversationService {
     workspaceId,
     sender,
     message,
+    fallbackThreadKey,
     awaitedToolCall,
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
     message: Omit<SendInboxMessageInput, 'toolCall'>;
+    // where the message goes when its recipient cannot join the conversation its key names
+    fallbackThreadKey: string;
     awaitedToolCall?: AgentCallerAwaitedToolCall;
   }): Promise<
     | { status: 'DELIVERED'; threadId: string }
     // the member deleted the conversation, so the call can no longer be answered
     | { status: 'DISMISSED'; threadId: string }
-    // the caller waits, and gets the answer through its handler's onOutcome
-    | { status: 'AWAITING'; threadId: string }
+    // the caller waits on the call with an ANSWER wake-up, which the answer resolves
+    | { status: 'AWAITING'; threadId: string; toolCallId: string }
     // a message sent before already holds the answer
     | { status: 'ANSWERED'; threadId: string; answer: ProposedToolCallAnswer }
   > {
+    // as in openConversation, a recipient who cannot join the keyed conversation, such as one no inbox
+    // receives, is given the fallback one, which fails in turn for a recipient who cannot have one at all
+    const sendInboxMessage = (
+      args: Pick<
+        Parameters<AgentInboxService['sendMessage']>[0],
+        'input' | 'buildAwaitingToolCall'
+      >,
+    ) =>
+      this.agentInboxService
+        .sendMessage({ workspaceId, sender, ...args })
+        .catch((error: unknown) =>
+          isThreadNotFoundError(error)
+            ? this.agentInboxService.sendMessage({
+                workspaceId,
+                sender,
+                ...args,
+                input: { ...args.input, threadKey: fallbackThreadKey },
+              })
+            : Promise.reject(error),
+        );
+
     if (!isDefined(awaitedToolCall)) {
-      const { threadId } = await this.agentInboxService.sendMessage({
-        workspaceId,
-        sender,
-        input: message,
-      });
+      const { threadId } = await sendInboxMessage({ input: message });
 
       return { status: 'DELIVERED', threadId };
     }
@@ -171,10 +200,8 @@ export class AgentCallerConversationService {
     // one is reused so nothing runs twice, and one closed unanswered, such as by a run that ended and
     // was retried, is asked again in a new message
     for (let attempt = 0; attempt < MAX_ASK_ATTEMPTS; attempt++) {
-      const { threadId, isDismissed, awaitedToolOutput } =
-        await this.agentInboxService.sendMessage({
-          workspaceId,
-          sender,
+      const { threadId, toolCallId, isDismissed, awaitedToolOutput } =
+        await sendInboxMessage({
           input: {
             ...message,
             idempotencyKey:
@@ -196,13 +223,7 @@ export class AgentCallerConversationService {
       }
 
       if (status === 'pending' || status === 'running') {
-        await this.agentRunSuspensionService.awaitCallerCall({
-          workspaceId,
-          threadId,
-          caller: awaitedToolCall.caller,
-        });
-
-        return { status: 'AWAITING', threadId };
+        return { status: 'AWAITING', threadId, toolCallId };
       }
 
       const answer = readProposedToolCallAnswer(awaitedToolOutput);
@@ -288,10 +309,7 @@ export class AgentCallerConversationService {
     return {
       toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
       input,
-      output: {
-        ...buildProposeToolCallPendingOutput(resolution.proposal),
-        awaitedByCaller: true,
-      },
+      output: buildProposeToolCallPendingOutput(resolution.proposal),
     };
   }
 }

@@ -14,23 +14,19 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { TEMPLATE_PACKAGE_VERSION } from '@create-twenty-app/constants/template-package-version';
 import { isDefined } from 'twenty-shared/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { APP_TEMPLATE_PACKAGE_VERSION } from '@/app/constants/app-template-package-version.constant';
 import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
 import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
-import { getAppTemplateOverlayDirectory } from '@/app/get-app-template-overlay-directory';
+import { CLI_VERSION } from '@/constants/cli-version.constant';
 
 vi.mock('@/app/get-app-template-directory', () => ({
   getAppTemplateDirectory: vi.fn(),
-}));
-
-vi.mock('@/app/get-app-template-overlay-directory', () => ({
-  getAppTemplateOverlayDirectory: vi.fn(),
 }));
 
 vi.mock('node:fs/promises', async (importOriginal) => {
@@ -40,14 +36,7 @@ vi.mock('node:fs/promises', async (importOriginal) => {
 });
 
 const TEMPLATE_DIRECTORY = fileURLToPath(
-  new URL(
-    '../../../../../create-twenty-app/src/constants/template',
-    import.meta.url,
-  ),
-);
-
-const TEMPLATE_OVERLAY_DIRECTORY = fileURLToPath(
-  new URL('../../../../app-template-overlay', import.meta.url),
+  new URL('../../../../app-template', import.meta.url),
 );
 
 const UUID_PATTERN =
@@ -79,9 +68,6 @@ describe('app init', () => {
     await mkdir(join(root, 'home'));
     await mkdir(workDirectory);
     vi.mocked(getAppTemplateDirectory).mockReturnValue(TEMPLATE_DIRECTORY);
-    vi.mocked(getAppTemplateOverlayDirectory).mockReturnValue(
-      TEMPLATE_OVERLAY_DIRECTORY,
-    );
     vi.stubEnv('HOME', join(root, 'home'));
     vi.stubEnv('TWENTY_API_KEY', '');
     vi.stubEnv('TWENTY_API_URL', '');
@@ -111,21 +97,23 @@ describe('app init', () => {
         'package.json',
         'public',
         'src',
+        'yarn.lock',
       ]),
     );
+    expect(await readFile(join(appDirectory, 'yarn.lock'), 'utf8')).toBe('');
     expect(await readdir(appDirectory)).not.toContain('node_modules');
     expect(await readPackageJson(appDirectory)).toMatchObject({
       name: 'my-app',
       engines: {
         node: '^24.5.0',
         npm: 'please-use-yarn',
-        twenty: `>=${TEMPLATE_PACKAGE_VERSION}`,
+        twenty: `>=${APP_TEMPLATE_PACKAGE_VERSION}`,
         yarn: '>=4.0.2',
       },
       devDependencies: {
-        'twenty-client-sdk': TEMPLATE_PACKAGE_VERSION,
-        'twenty-sdk': TEMPLATE_PACKAGE_VERSION,
-        'twenty-ui': TEMPLATE_PACKAGE_VERSION,
+        'twenty-client-sdk': APP_TEMPLATE_PACKAGE_VERSION,
+        'twenty-sdk': APP_TEMPLATE_PACKAGE_VERSION,
+        'twenty-ui': APP_TEMPLATE_PACKAGE_VERSION,
       },
     });
 
@@ -168,7 +156,7 @@ describe('app init', () => {
     expect(globalSetup).not.toContain('twenty-sdk/cli');
     expect(await readFile(join(testsDirectory, 'run-twenty.ts'), 'utf8')).toBe(
       await readFile(
-        join(TEMPLATE_OVERLAY_DIRECTORY, 'src', '__tests__', 'run-twenty.ts'),
+        join(TEMPLATE_DIRECTORY, 'src', '__tests__', 'run-twenty.ts'),
         'utf8',
       ),
     );
@@ -178,6 +166,25 @@ describe('app init', () => {
       'run-twenty.ts',
       'schema.integration-test.ts',
     ]);
+  });
+
+  it('installs the generating CLI version in CI before running integration tests', async () => {
+    const result = await run(['my-app']);
+    const workflow = await readFile(
+      join(workDirectory, 'my-app', '.github', 'workflows', 'ci.yml'),
+      'utf8',
+    );
+    const installCommand = `run: npm install -g twenty@${CLI_VERSION}`;
+
+    expect(result.exitCode, result.stderr).toBe(0);
+    expect(workflow).toContain(installCommand);
+    expect(workflow).not.toContain('TO-BE-GENERATED');
+    expect(workflow.indexOf(installCommand)).toBeGreaterThan(
+      workflow.indexOf('uses: actions/setup-node@'),
+    );
+    expect(workflow.indexOf(installCommand)).toBeLessThan(
+      workflow.indexOf('run: yarn test\n'),
+    );
   });
 
   it('returns the app, its pins and the next steps as JSON, without a login step when a workspace is set', async () => {
@@ -202,9 +209,9 @@ describe('app init', () => {
         path: appDirectory,
       },
       packages: [
-        { name: 'twenty-client-sdk', version: TEMPLATE_PACKAGE_VERSION },
-        { name: 'twenty-sdk', version: TEMPLATE_PACKAGE_VERSION },
-        { name: 'twenty-ui', version: TEMPLATE_PACKAGE_VERSION },
+        { name: 'twenty-client-sdk', version: APP_TEMPLATE_PACKAGE_VERSION },
+        { name: 'twenty-sdk', version: APP_TEMPLATE_PACKAGE_VERSION },
+        { name: 'twenty-ui', version: APP_TEMPLATE_PACKAGE_VERSION },
       ],
       nextSteps: [
         { command: 'cd apps/billing', description: 'Enter the new app' },
@@ -419,5 +426,22 @@ describe('app init', () => {
       details: { unrenderedFiles: ['OWNERS.md'] },
     });
     expect(await readdir(workDirectory)).toEqual([]);
+  });
+
+  it('copies the template lockfile and leaves its root entry for yarn install to rename', async () => {
+    const template = join(root, 'template');
+    const lockfile =
+      '"TO-BE-GENERATED@workspace:.":\n  version: 0.0.0-use.local\n  resolution: "TO-BE-GENERATED@workspace:."\n';
+
+    await cp(TEMPLATE_DIRECTORY, template, { recursive: true });
+    await writeFile(join(template, 'yarn.lock'), lockfile);
+    vi.mocked(getAppTemplateDirectory).mockReturnValue(template);
+
+    const result = await runJson(['my-app']);
+
+    expect(result.exitCode).toBe(0);
+    expect(
+      await readFile(join(workDirectory, 'my-app', 'yarn.lock'), 'utf8'),
+    ).toBe(lockfile);
   });
 });

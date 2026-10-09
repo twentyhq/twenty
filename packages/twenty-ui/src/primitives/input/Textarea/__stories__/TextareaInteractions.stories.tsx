@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
+import { Button } from '@ui/primitives/input/Button/Button';
 import { Field } from '@ui/primitives/input/Field/Field';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
@@ -15,9 +16,9 @@ const ControlledTextareaExample = (props: TextareaProps) => {
   return (
     <>
       <Textarea {...props} value={value} />
-      <button type="button" onClick={() => setValue('a\nb\nc')}>
+      <Button type="button" onClick={() => setValue('a\nb\nc')}>
         Apply value
-      </button>
+      </Button>
     </>
   );
 };

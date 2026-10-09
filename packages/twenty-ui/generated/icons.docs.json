@@ -435,6 +435,7 @@
       "IconUser",
       "IconUserCircle",
       "IconUserCog",
+      "IconUserOff",
       "IconUserPin",
       "IconUserPlus",
       "IconUsers",
@@ -448,7 +449,9 @@
       "IconWindow",
       "IconWorld",
       "IconWorldWww",
-      "IconX"
+      "IconX",
+      "IconZzz",
+      "IconZzzOff"
     ],
     "props": [
       "color",

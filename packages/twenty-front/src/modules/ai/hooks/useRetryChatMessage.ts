@@ -6,7 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { getAgentChatThreadAtoms } from '@/ai/utils/getAgentChatThreadAtoms';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -28,8 +29,9 @@ export const useRetryChatMessage = () => {
       return;
     }
 
-    const { errorAtom, isAwaitingFirstChunkAtom } =
-      getAgentChatThreadAtoms(threadId);
+    const errorAtom = agentChatErrorFamilyState.atomFamily({ threadId });
+    const isAwaitingFirstChunkAtom =
+      agentChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
     const previousError = store.get(errorAtom);
 
     store.set(errorAtom, null);

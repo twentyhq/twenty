@@ -362,6 +362,9 @@ export class ClientConfig {
   @Field(() => String)
   frontDomain: string;
 
+  @Field(() => String)
+  serverUrl: string;
+
   @Field(() => String, { nullable: true })
   publicFunctionDomain: string | null;
 

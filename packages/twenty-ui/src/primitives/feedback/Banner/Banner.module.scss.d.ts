@@ -1,8 +1,6 @@
 declare const classNames: {
   readonly banner: 'banner';
-  readonly primaryBlue: 'primaryBlue';
-  readonly primaryDanger: 'primaryDanger';
-  readonly secondaryBlue: 'secondaryBlue';
-  readonly secondaryDanger: 'secondaryDanger';
+  readonly icon: 'icon';
+  readonly action: 'action';
 };
 export default classNames;

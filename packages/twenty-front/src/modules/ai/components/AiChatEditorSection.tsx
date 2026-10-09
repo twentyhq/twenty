@@ -28,10 +28,9 @@ import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedTex
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
-import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
+import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
@@ -171,9 +170,7 @@ const EditableAiChatEditorSection = () => {
       />
     </StyledInputBox>
   );
-  const hasMessages = useAtomComponentSelectorValue(
-    agentChatHasMessageComponentSelector,
-  );
+  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
 
   return (
     <>
@@ -186,7 +183,7 @@ const EditableAiChatEditorSection = () => {
         onInterimText={setDictationInterimText}
         onFinalText={insertDictatedText}
       />
-      {!hasMessages && (
+      {!agentChatHasMessage && (
         <StyledMessageListPlaceholder>
           <AiChatEmptyState isCentered={isComposerCentered} />
           <AiChatStandaloneError />
@@ -196,9 +193,7 @@ const EditableAiChatEditorSection = () => {
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
         {hasNoEnabledModels && (
-          <AiChatInlineBanner
-            message={t`No AI provider is configured on this instance.`}
-          />
+          <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>
         )}
         {hasReachedAiChatCreditsCap && <AiChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}

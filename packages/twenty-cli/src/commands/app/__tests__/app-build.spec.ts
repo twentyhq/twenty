@@ -28,6 +28,7 @@ import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
+import { CLI_VERSION } from '@/constants/cli-version.constant';
 
 const initializeModulePaths = () => {
   if (!('_initPaths' in Module) || !isFunction(Module._initPaths)) {
@@ -188,9 +189,9 @@ describe('app build and typecheck', () => {
     ]);
 
     expect(exitCode).toBe(0);
-    expect(stderr).toContain('Building fake-app with twenty 0.3.0');
+    expect(stderr).toContain(`Building fake-app with twenty ${CLI_VERSION}`);
     expect(stderr).toContain('A deprecated option is used.');
-    expect(stdout).toContain('Built Fake App with twenty 0.3.0');
+    expect(stdout).toContain(`Built Fake App with twenty ${CLI_VERSION}`);
     expect(stdout).toContain('2 files · 1.5 KB');
     expect(stdout).toContain('1 logic function · 1 source file');
     expect(stdout).toContain('Nothing was uploaded.');

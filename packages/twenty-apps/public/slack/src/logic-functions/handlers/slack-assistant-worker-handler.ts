@@ -3,7 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
+import { SLACK_ACCESS_DENIED_TEXT_BY_REASON } from 'src/logic-functions/constants/slack-access-denied-text-by-reason';
 import { SLACK_ACCESS_UNVERIFIABLE_ERROR } from 'src/logic-functions/constants/slack-access-unverifiable-error';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
@@ -24,7 +24,6 @@ import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slac
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
-import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-mode';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
@@ -133,7 +132,6 @@ export const slackAssistantWorkerHandler = async (
     }
 
     const accessDecision = await resolveSlackAccessDecision({
-      accessMode: await getSlackAccessMode(),
       client,
       slackClient,
       slackConnectionId,
@@ -153,9 +151,12 @@ export const slackAssistantWorkerHandler = async (
     if (accessDecision.status === 'DENIED') {
       await stopStatusUpdates();
 
+      const denialText =
+        SLACK_ACCESS_DENIED_TEXT_BY_REASON[accessDecision.reason];
+
       const denialDelivery = await sendSlackMessage({
         slackChannelId,
-        messageText: SLACK_ACCESS_DENIED_TEXT,
+        messageText: denialText,
         parentMessageTimestamp,
         messageFormat: 'markdown',
         unfurlLinks: false,
@@ -172,7 +173,7 @@ export const slackAssistantWorkerHandler = async (
       await updateSlackAssistantRequest(client, {
         id: record.id,
         status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
-        responseText: SLACK_ACCESS_DENIED_TEXT,
+        responseText: denialText,
       });
 
       return { done: true, declined: true };
@@ -224,7 +225,7 @@ export const slackAssistantWorkerHandler = async (
 
     const agentResult = await runSlackAssistantAgentWithDeadline({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
-      runAsWorkspaceMemberId,
+      runAsWorkspaceMemberId: accessDecision.runAsWorkspaceMemberId,
       thread: {
         key: `${slackChannelId}:${parentMessageTimestamp}`,
         title: buildSlackAssistantRequestName(requestText),
@@ -233,7 +234,7 @@ export const slackAssistantWorkerHandler = async (
         requestText: resolvedMentions.requestText,
         requesterName,
         conversationMessages: resolvedMentions.conversationMessages,
-        runAsWorkspaceMemberId,
+        runAsWorkspaceMemberId: accessDecision.runAsWorkspaceMemberId,
         timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
         hasMentionedUsers: resolvedMentions.hasMentionedUsers,

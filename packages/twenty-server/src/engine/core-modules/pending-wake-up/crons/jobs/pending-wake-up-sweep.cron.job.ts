@@ -8,7 +8,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
-import { type PendingWakeUpOwnerType } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-type.type';
 
 export const PENDING_WAKE_UP_SWEEP_CRON_PATTERN = '*/5 * * * *';
 
@@ -18,7 +17,7 @@ const OVERDUE_WAKE_UPS_BATCH_SIZE = 1000;
 type OverdueWakeUpRow = {
   id: string;
   workspaceId: string;
-  ownerType: PendingWakeUpOwnerType;
+  ownerType: string;
   ownerId: string;
 };
 

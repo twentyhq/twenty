@@ -1,5 +1,5 @@
 import { type NumberFormat } from '@/localization/constants/NumberFormat';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 export const formatOnboardingCredits = (
   credits: number,
