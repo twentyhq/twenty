@@ -60,7 +60,7 @@ import {
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
-import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -656,9 +656,16 @@ export class StreamAgentChatJob {
       usageTotals.conversationSize = part.usage?.inputTokens ?? 0;
     }
 
+    if (part.type === 'start') {
+      return { startedAt: new Date().toISOString() };
+    }
+
     if (part.type === 'finish') {
+      const finishedAt = new Date().toISOString();
+
       return {
-        createdAt: new Date().toISOString(),
+        createdAt: finishedAt,
+        finishedAt,
         usage: {
           inputTokens: usageTotals.inputTokens,
           outputTokens: usageTotals.outputTokens,

@@ -10,8 +10,7 @@ import {
 } from 'twenty-shared/types';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { capitalize } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const updateRecordFromCache = <T extends ObjectRecord>({
   objectMetadataItems,
@@ -31,7 +30,7 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
     ObjectPermissions & { objectMetadataId: string }
   >;
 }) => {
-  if (isUndefinedOrNull(objectMetadataItem)) {
+  if (!isDefined(objectMetadataItem)) {
     return null;
   }
 
@@ -60,7 +59,7 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
     record,
   });
 
-  if (isUndefinedOrNull(recordWithConnection)) {
+  if (!isDefined(recordWithConnection)) {
     return;
   }
 

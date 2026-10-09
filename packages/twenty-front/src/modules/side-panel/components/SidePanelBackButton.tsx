@@ -8,7 +8,8 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { t } from '@lingui/core/macro';
 import { Children, useRef, type MouseEvent } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown, IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconChevronLeft } from 'twenty-ui/icon';
 
 export const SidePanelBackButton = () => {

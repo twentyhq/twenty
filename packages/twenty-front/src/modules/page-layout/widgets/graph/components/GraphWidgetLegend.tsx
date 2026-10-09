@@ -1,6 +1,6 @@
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
-import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
+import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity';
 import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth';
 import { LEGEND_LABEL_MAX_WIDTH } from '@/page-layout/widgets/graph/constants/LegendLabelMaxWidth';
 import { LEGEND_PAGINATION_CONTROLS_WIDTH } from '@/page-layout/widgets/graph/constants/LegendPaginationControlsWidth';
@@ -14,7 +14,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';

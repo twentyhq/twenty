@@ -4,7 +4,7 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
-import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
+import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 
 export class AgentTurnWorkspaceEntity extends BaseWorkspaceEntity {

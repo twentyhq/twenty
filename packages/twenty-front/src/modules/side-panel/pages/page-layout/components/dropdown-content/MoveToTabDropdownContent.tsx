@@ -1,9 +1,10 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useMoveWidgetToTab } from '@/page-layout/hooks/useMoveWidgetToTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { canVerticalListAcceptWidget } from '@/page-layout/utils/canVerticalListAcceptWidget';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -12,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const MoveToTabDropdownContent = () => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
 
   const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
@@ -64,7 +65,7 @@ export const MoveToTabDropdownContent = () => {
   return (
     <DropdownMenuItemsContainer>
       {eligibleTabs.map((tab) => (
-        <ListItem
+        <ListItemButton
           key={tab.id}
           onClick={() => {
             moveWidgetToTab(pageLayoutEditingWidgetId, tab.id);
@@ -72,7 +73,7 @@ export const MoveToTabDropdownContent = () => {
           }}
         >
           {tab.title ?? ''}
-        </ListItem>
+        </ListItemButton>
       ))}
     </DropdownMenuItemsContainer>
   );

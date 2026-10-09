@@ -6,7 +6,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useMutation } from '@apollo/client/react';

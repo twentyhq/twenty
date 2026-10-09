@@ -5,7 +5,7 @@ import { useRef } from 'react';
 import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import {
   type IconComponent,
   IconPaint,

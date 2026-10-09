@@ -18,7 +18,12 @@ export const OverflowingListResizeExample = () => {
         style={{ width: isNarrow ? 100 : 360 }}
       >
         {['Customer', 'Partner', 'Priority', 'Renewal'].map((label) => (
-          <Tag key={label} color="blue" preventShrink>
+          <Tag
+            key={label}
+            color="blue"
+            truncate={false}
+            style={{ minWidth: 'fit-content' }}
+          >
             {hasLongLabels ? `${label} with a longer label` : label}
           </Tag>
         ))}

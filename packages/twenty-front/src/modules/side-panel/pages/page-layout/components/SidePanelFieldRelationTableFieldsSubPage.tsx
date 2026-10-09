@@ -1,6 +1,6 @@
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { RecordTableSettingsFieldVisibility } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFieldVisibility';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
 `;
 
 export const SidePanelFieldRelationTableFieldsSubPage = () => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   if (!isDefined(widgetInEditMode)) {

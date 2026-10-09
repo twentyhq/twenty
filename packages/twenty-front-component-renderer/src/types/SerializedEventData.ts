@@ -1,7 +1,11 @@
+import { type InputSelectionDirection } from '@/types/InputSelectionDirection';
 import { type SerializedFileData } from '@/types/SerializedFileData';
 
 export type SerializedEventData = {
   type: string;
+  bubbles?: boolean;
+  targetRemoteElementId?: string;
+  relatedTargetRemoteElementId?: string;
   altKey?: boolean;
   ctrlKey?: boolean;
   metaKey?: boolean;
@@ -20,6 +24,7 @@ export type SerializedEventData = {
   movementY?: number;
   button?: number;
   buttons?: number;
+  detail?: number;
   pointerId?: number;
   pointerType?: string;
   pressure?: number;
@@ -32,11 +37,17 @@ export type SerializedEventData = {
   isPrimary?: boolean;
   key?: string;
   code?: string;
+  which?: number;
+  keyCode?: number;
+  isComposing?: boolean;
   repeat?: boolean;
   inputType?: string;
   data?: string;
   clipboardText?: string;
   value?: string;
+  selectionStart?: number;
+  selectionEnd?: number;
+  selectionDirection?: InputSelectionDirection;
   checked?: boolean;
   selectedOptionIndexes?: number[];
   scrollTop?: number;

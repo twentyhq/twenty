@@ -3,12 +3,12 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { useAgentChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
-import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
   jotaiStore,
@@ -27,20 +27,13 @@ const disconnect = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ refreshAgentChatThreads }),
 }));
-const key = { instanceId: 'sharing-test', familyKey: { threadId: 'thread' } };
-const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily(key);
-const fetchedAtom =
-  agentChatFetchedMessagesComponentFamilyState.atomFamily(key);
-const queuedAtom = agentChatQueuedMessagesComponentFamilyState.atomFamily(key);
-const errorAtom = agentChatErrorComponentFamilyState.atomFamily(key);
+const key = { threadId: 'thread' };
+const messagesAtom = agentChatMessagesFamilyState.atomFamily(key);
+const fetchedAtom = agentChatFetchedMessagesFamilyState.atomFamily(key);
+const queuedAtom = agentChatQueuedMessagesFamilyState.atomFamily(key);
+const errorAtom = agentChatErrorFamilyState.atomFamily(key);
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: key.instanceId }}
-    >
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 const denial = [
   { message: 'Thread not found', extensions: { code: 'NOT_FOUND' } },
@@ -241,5 +234,49 @@ describe('Shared conversation access revocation', () => {
     act(() => subscribe.mock.calls[0][1].error(new Error('offline')));
     expect(jotaiStore.get(messagesAtom)).toHaveLength(1);
     expect(refreshAgentChatThreads).not.toHaveBeenCalled();
+  });
+});
+
+describe('Stream liveness', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers();
+    resetJotaiStore();
+    subscribe.mockReturnValue(disconnect);
+    jotaiStore.set(sseClientState.atom, { subscribe } as never);
+    jotaiStore.set(
+      agentChatIsAwaitingFirstChunkFamilyState.atomFamily(key),
+      true,
+    );
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('reports a lost connection when resubscribing only yields the initial keepalive, then clears it once broadcasts arrive', () => {
+    const keepalive = {
+      data: {
+        onAgentChatEvent: { threadId: 'thread', event: { type: 'keepalive' } },
+      },
+    };
+    subscribe.mockImplementation((_request, sink) => {
+      sink.next(keepalive);
+      return disconnect;
+    });
+    renderHook(() => useAgentChatSubscription('thread'), { wrapper: Wrapper });
+
+    for (let index = 0; index < 15; index++) {
+      act(() => jest.advanceTimersByTime(2_000));
+    }
+
+    expect(subscribe).toHaveBeenCalledTimes(4);
+    expect(jotaiStore.get(errorAtom)).toMatchObject({
+      code: 'CONNECTION_LOST',
+    });
+
+    act(() => subscribe.mock.calls[3][1].next(keepalive));
+
+    expect(jotaiStore.get(errorAtom)).toBeNull();
   });
 });

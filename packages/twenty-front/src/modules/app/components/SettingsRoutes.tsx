@@ -106,7 +106,7 @@ const SettingsNewObject = lazy(() =>
 );
 
 const SettingsNewImapSmtpCaldavConnection = lazy(() =>
-  import('@/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection').then(
+  import('~/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection').then(
     (module) => ({
       default: module.SettingsAccountsNewImapSmtpCaldavConnection,
     }),
@@ -114,7 +114,7 @@ const SettingsNewImapSmtpCaldavConnection = lazy(() =>
 );
 
 const SettingsEditImapSmtpCaldavConnection = lazy(() =>
-  import('@/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection').then(
+  import('~/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection').then(
     (module) => ({
       default: module.SettingsAccountsEditImapSmtpCaldavConnection,
     }),
@@ -122,7 +122,7 @@ const SettingsEditImapSmtpCaldavConnection = lazy(() =>
 );
 
 const SettingsNewEmailGroupChannel = lazy(() =>
-  import('@/settings/accounts/components/SettingsAccountsNewEmailGroupChannel').then(
+  import('~/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel').then(
     (module) => ({
       default: module.SettingsAccountsNewEmailGroupChannel,
     }),
@@ -411,6 +411,20 @@ const SettingsAccounts = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccounts').then((module) => ({
     default: module.SettingsAccounts,
   })),
+);
+
+const SettingsAccountDetail = lazy(() =>
+  import('~/pages/settings/accounts/SettingsAccountDetail').then((module) => ({
+    default: module.SettingsAccountDetail,
+  })),
+);
+
+const SettingsNativeAccountApp = lazy(() =>
+  import('~/pages/settings/accounts/SettingsNativeAccountApp').then(
+    (module) => ({
+      default: module.SettingsNativeAccountApp,
+    }),
+  ),
 );
 
 const SettingsAccountsEmails = lazy(() =>
@@ -754,6 +768,14 @@ const createSettingsRouteElements = ({
       }
     >
       <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
+      <Route
+        path={SettingsPath.AccountDetail}
+        element={<SettingsAccountDetail />}
+      />
+      <Route
+        path={SettingsPath.NativeAccountApp}
+        element={<SettingsNativeAccountApp />}
+      />
       <Route
         path={SettingsPath.AccountsEmails}
         element={<SettingsAccountsEmails />}

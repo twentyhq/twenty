@@ -135,18 +135,23 @@ export const OverflowingList = ({
             +{hiddenItemCount}
           </Popover.Trigger>
         )}
-        <Popover.Popup
-          anchor={containerRef}
-          align="start"
-          sideOffset={-9}
-          alignOffset={-7}
-          aria-label={overflowLabel}
-          className={styles.popup}
-          data-overflowing-list-popup=""
-          {...STOP_PROPAGATION_PROPS}
-        >
-          {children}
-        </Popover.Popup>
+        <Popover.Portal>
+          <Popover.Positioner
+            anchor={containerRef}
+            align="start"
+            sideOffset={-9}
+            alignOffset={-7}
+          >
+            <Popover.Popup
+              aria-label={overflowLabel}
+              className={styles.popup}
+              data-overflowing-list-popup=""
+              {...STOP_PROPAGATION_PROPS}
+            >
+              {children}
+            </Popover.Popup>
+          </Popover.Positioner>
+        </Popover.Portal>
       </div>
     </Popover.Root>
   );

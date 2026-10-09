@@ -13,7 +13,7 @@ import {
   type RecordGqlFields,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   type UpdateWorkflowRunStepInput,
   type UpdateWorkflowRunStepMutation,

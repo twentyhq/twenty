@@ -33,7 +33,7 @@
 </ParamField>
 
 <ParamField body="disabled" type="boolean" default="false">
-  Prevents clicks and applies the disabled style.
+  Applies disabled styling only. Set native disabled behavior and accessible semantics on the button, link, or popup item owner.
 </ParamField>
 
 <ParamField body="endIcon" type="ReactNode">
@@ -41,7 +41,7 @@
 </ParamField>
 
 <ParamField body="focused" type="boolean" default="false">
-  Applies the highlighted style, for example to the focused item of a list.
+  Applies highlighted styling without moving DOM focus or handling keyboard navigation.
 </ParamField>
 
 <ParamField body="hasSubmenu" type="boolean" default="false">
@@ -53,16 +53,16 @@
   it.
 </ParamField>
 
-<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ListItemState&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
+<ParamField body="ref" type="Ref&lt;HTMLElement&gt;">
+  Ref to the actual DOM root, including a composed native button or link.
+</ParamField>
 
-  Accepts a `ReactElement` or a function that returns the element to render.
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ListItemState&gt;">
+  Composes the row with an element or render callback. The owner supplies interaction semantics, native attributes, and behavior.
 </ParamField>
 
 <ParamField body="selected" type="boolean" default="false">
-  Whether the item is selected. Shows the check or checkbox indicator when
-  `indicator` is set.
+  Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner.
 </ParamField>
 
 <ParamField body="shortcut" type="ShortcutDefinition">

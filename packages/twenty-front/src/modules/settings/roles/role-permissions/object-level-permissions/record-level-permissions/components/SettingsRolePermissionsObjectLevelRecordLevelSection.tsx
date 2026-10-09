@@ -2,7 +2,7 @@
 
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconArrowUp, IconLock } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
@@ -15,7 +15,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 const StyledContent = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -47,7 +47,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
         <Section.Header
           title={t`Record-level`}
           description={t`Ability to filter the records a user can interact with`}
-          adornment={<OrganizationAdornment />}
+          actions={<OrganizationAdornment />}
         />
         <StyledCardContainer>
           <Card.Root rounded>

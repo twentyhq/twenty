@@ -9,8 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { capitalize, isEmptyObject } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { capitalize, isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 export type GetRecordFromCacheArgs = {
   cache: ApolloCache;
@@ -34,7 +33,7 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   recordGqlFields,
   objectPermissionsByObjectMetadataId,
 }: GetRecordFromCacheArgs) => {
-  if (isUndefinedOrNull(objectMetadataItem)) {
+  if (!isDefined(objectMetadataItem)) {
     return null;
   }
 
@@ -70,7 +69,7 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
     returnPartialData: true,
   });
 
-  if (isUndefinedOrNull(record) || isEmptyObject(record)) {
+  if (!isDefined(record) || isEmptyObject(record)) {
     return null;
   }
 

@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconAddressBook, IconPencil, IconReload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';

@@ -4,15 +4,15 @@ import React, { useMemo } from 'react';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SocialLink } from '@/ui/field/display/components/SocialLink/SocialLink';
-import { OverflowingList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components/layout';
 import {
   getAbsoluteUrlOrThrow,
   getUrlHostnameOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
-import { checkUrlType } from '~/utils/checkUrlType';
-import { isSocialLinkType } from '~/utils/isSocialLinkType';
+import { checkUrlType } from '@/ui/field/display/utils/checkUrlType';
+import { isSocialLinkType } from '@/ui/field/display/utils/isSocialLinkType';
 
 type LinksDisplayProps = {
   value?: FieldLinksValue;

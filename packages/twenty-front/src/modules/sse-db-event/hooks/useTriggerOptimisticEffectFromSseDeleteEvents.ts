@@ -1,7 +1,7 @@
 import { type RecordGqlFields } from 'twenty-shared/types';
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
@@ -9,6 +9,7 @@ import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode'
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -17,8 +18,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
+  const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
-  const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { refetchAggregateQueriesForObjectMetadataItem } =
     useRefetchAggregateQueriesForObjectMetadataItem();
@@ -35,6 +36,10 @@ export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
       objectRecordEvents: ObjectRecordEvent[];
       objectMetadataItem: EnrichedObjectMetadataItem;
     }) => {
+      const objectMetadataItems = store.get(
+        objectMetadataItemsWithFieldsSelector.atom,
+      );
+
       const deleteEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.DELETED;
       });
@@ -94,7 +99,7 @@ export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
     },
     [
       apolloCoreClient,
-      objectMetadataItems,
+      store,
       objectPermissionsByObjectMetadataId,
       debouncedRefetchAggregateQueriesForObjectMetadataItem,
       upsertRecordsInStore,

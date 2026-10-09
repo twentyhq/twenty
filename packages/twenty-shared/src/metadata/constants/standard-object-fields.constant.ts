@@ -71,6 +71,9 @@ export const STANDARD_OBJECT_FIELDS = {
     participants: {
       universalIdentifier: '2ede85e4-216b-4308-8556-b045971414e7',
     },
+    assignee: {
+      universalIdentifier: 'e77858ef-4b01-4a32-b921-8b88b1fd3020',
+    },
     lastActivityAt: {
       universalIdentifier: 'b3847509-8e98-4038-88de-dd891767d6fc',
     },
@@ -96,6 +99,12 @@ export const STANDARD_OBJECT_FIELDS = {
     archivedAt: { universalIdentifier: 'ee092c9d-f27e-4fbc-8dad-9ec950936216' },
     snoozedUntil: {
       universalIdentifier: '65bc5785-877d-4363-b65c-95175ba20fd0',
+    },
+    isSubscribed: {
+      universalIdentifier: '146b1d5e-6603-4493-944b-c3bd2817569b',
+    },
+    lastMentionedAt: {
+      universalIdentifier: '52a54602-633f-496a-966a-9a70437fa887',
     },
   },
   agentChatThreadTarget: {
@@ -1611,6 +1620,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     agentChatThreadParticipants: {
       universalIdentifier: 'd1de909f-a0eb-4e94-8903-abec012864c9',
+    },
+    assignedAgentChatThreads: {
+      universalIdentifier: 'a89c46f5-cdb7-40e9-9a87-a8ecf0818c3c',
     },
     timeZone: {
       universalIdentifier: '20202020-2d33-4c21-a86e-5943b050dd54',

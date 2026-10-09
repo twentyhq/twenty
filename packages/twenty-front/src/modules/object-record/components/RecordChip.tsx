@@ -1,3 +1,4 @@
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
@@ -5,15 +6,14 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
-import { type TriggerEventType } from '@/ui/navigation/utils/types/TriggerEventType';
-import { t } from '@lingui/core/macro';
+import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
 import { type MouseEvent } from 'react';
 import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, type ChipSize } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-export type RecordChipProps = {
+type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   className?: string;
@@ -49,6 +49,8 @@ export const RecordChip = ({
     record,
   });
 
+  const { text: label, content } = getChipLabel(recordChipData.name);
+
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
@@ -72,7 +74,6 @@ export const RecordChip = ({
   ) {
     return (
       <Chip
-        emptyLabel={t`Untitled`}
         weight={isBold ? 'medium' : 'regular'}
         size={size}
         maxWidth={maxWidth}
@@ -90,7 +91,7 @@ export const RecordChip = ({
         }
         style={{ paddingInlineStart: 0 }}
       >
-        {recordChipData.name}
+        {isLabelHidden ? undefined : content}
       </Chip>
     );
   }
@@ -99,9 +100,8 @@ export const RecordChip = ({
     <LinkChip
       size={size}
       maxWidth={maxWidth}
-      emptyLabel={t`Untitled`}
       weight={isBold ? 'medium' : 'regular'}
-      isLabelHidden={isLabelHidden}
+      aria-label={isLabelHidden ? label : undefined}
       startElement={
         isIconHidden ? null : (
           <AvatarOrIcon
@@ -120,7 +120,7 @@ export const RecordChip = ({
       onClick={handleCustomClick}
       triggerEvent={triggerEvent}
     >
-      {recordChipData.name}
+      {isLabelHidden ? undefined : content}
     </LinkChip>
   );
 };

@@ -32,12 +32,13 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.TOOL_CALL_NOT_PENDING:
       case AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED:
       case AiExceptionCode.INVALID_EVALUATION_REQUEST:
+      case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_REPLY:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
-      case AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT:
       case AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE:
       case AiExceptionCode.THREAD_AWAITING_ANSWER:
+      case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
         throw new ConflictError(error);
       case AiExceptionCode.AGENT_IS_STANDARD:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:

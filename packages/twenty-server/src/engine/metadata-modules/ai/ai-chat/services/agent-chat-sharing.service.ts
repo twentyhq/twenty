@@ -21,6 +21,8 @@ import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
 import {
   AiException,
   AiExceptionCode,
@@ -48,12 +50,10 @@ export class AgentChatSharingService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly upgradeFenceService: AgentHistoryUpgradeFenceService,
   ) {}
 
-  // Fence for the 2.46 cross-upgrade window: until
-  // upgrade:2-46:add-agent-chat-thread-participant-object has reached a
-  // workspace, it has neither the participant table nor the thread's
-  // lastActivityAt column. Remove once 2.46 leaves the window.
+  // Remove with AgentHistoryUpgradeFenceService once 2.46 leaves the window
   async hasInboxState(workspaceId: string): Promise<boolean> {
     return isDefined(await this.findParticipantObjectMetadataId(workspaceId));
   }
@@ -61,6 +61,12 @@ export class AgentChatSharingService {
   async findParticipantObjectMetadataId(
     workspaceId: string,
   ): Promise<string | undefined> {
+    if (
+      !(await this.upgradeFenceService.hasUpgradedAgentHistory(workspaceId))
+    ) {
+      return undefined;
+    }
+
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -210,7 +216,6 @@ export class AgentChatSharingService {
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
     const participantObjectMetadataId =
       await this.findParticipantObjectMetadataId(args.workspaceId);
-    const hasInboxState = isDefined(participantObjectMetadataId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -228,8 +233,8 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId"${hasInboxState ? ', "lastActivityAt"' : ''})
-           VALUES ($1, $2, $3, $4${hasInboxState ? ', clock_timestamp()' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId")
+           VALUES ($1, $2, $3, $4) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
@@ -256,29 +261,63 @@ export class AgentChatSharingService {
             AiExceptionCode.THREAD_NOT_FOUND,
           );
         }
-        if (hasInboxState) {
-          await manager.query(
-            `WITH participant AS (
-               INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt")
-               VALUES ($1, $2, $3, CASE WHEN $5::boolean THEN clock_timestamp() END)
-               RETURNING id, "workspaceMemberId"
-             )
-             ${buildAgentChatThreadParticipantOwnerShareInsert({
-               workspaceId: args.workspaceId,
-               participantSource: 'participant',
-               objectMetadataIdParameter: '$4',
-             })}`,
-            [
-              record.id,
-              authContext.workspaceMemberId,
-              record.lastActivityAt,
-              participantObjectMetadataId,
-              args.isArchived ?? false,
-            ],
-          );
-        }
-        return record;
+        const [setUpRecord] = await this.setUpCreatedThreadsInboxState({
+          manager,
+          table,
+          workspaceId: args.workspaceId,
+          workspaceMemberId: authContext.workspaceMemberId,
+          threadIds: [record.id],
+          participantObjectMetadataId,
+          isArchived: args.isArchived,
+        });
+        return setUpRecord ?? record;
       },
+    );
+  }
+
+  // A new thread sorts by its creation and starts read in its creator's
+  // inbox. Threads already set up keep their state, so an upsert of an
+  // existing thread through the record API cannot reset it.
+  async setUpCreatedThreadsInboxState({
+    manager,
+    table,
+    workspaceId,
+    workspaceMemberId,
+    threadIds,
+    participantObjectMetadataId,
+    isArchived = false,
+  }: AgentHistoryStorageContext & {
+    workspaceId: string;
+    workspaceMemberId: string;
+    threadIds: string[];
+    participantObjectMetadataId: string | undefined;
+    isArchived?: boolean;
+  }): Promise<AgentChatThreadWorkspaceEntity[]> {
+    if (!isDefined(participantObjectMetadataId)) {
+      return [];
+    }
+
+    return manager.query<AgentChatThreadWorkspaceEntity[]>(
+      `WITH thread AS (
+         UPDATE ${table('agentChatThread')}
+         SET "lastActivityAt" = clock_timestamp()
+         WHERE id = ANY($1::uuid[]) AND "lastActivityAt" IS NULL
+         RETURNING *
+       ), participant AS (
+         INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt")
+         SELECT thread.id, $2, thread."lastActivityAt", CASE WHEN $4::boolean THEN clock_timestamp() END
+         FROM thread
+         ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
+         RETURNING id, "workspaceMemberId"
+       ), owner_share AS (
+         ${buildAgentChatThreadParticipantOwnerShareInsert({
+           workspaceId,
+           participantSource: 'participant',
+           objectMetadataIdParameter: '$3',
+         })}
+       )
+       SELECT * FROM thread`,
+      [threadIds, workspaceMemberId, participantObjectMetadataId, isArchived],
     );
   }
 

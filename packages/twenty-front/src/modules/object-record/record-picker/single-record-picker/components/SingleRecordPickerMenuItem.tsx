@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
@@ -14,7 +15,6 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useMemo } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SingleRecordPickerMenuItemProps = {
@@ -80,7 +80,7 @@ export const SingleRecordPickerMenuItem = ({
         onMorphItemSelected(morphItem);
       }}
     >
-      <ListItem
+      <ListItemButton
         onClick={() => onMorphItemSelected(morphItem)}
         focused={isSelectedItemId}
         role="option"
@@ -104,7 +104,7 @@ export const SingleRecordPickerMenuItem = ({
         }
       >
         {searchRecordStore.label}
-      </ListItem>
+      </ListItemButton>
     </SelectableListItem>
   );
 };
