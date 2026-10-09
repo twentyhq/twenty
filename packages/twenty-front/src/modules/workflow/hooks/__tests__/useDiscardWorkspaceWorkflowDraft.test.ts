@@ -13,13 +13,15 @@ const DRAFT_VERSION_ID = '0b6b3c5e-8a0f-4d5e-9a64-6f0b7f7e3a01';
 const PUBLISHED_VERSION_ID = '5d1f2c4a-3b7e-4f8a-8c2d-1e9f0a6b7c02';
 
 let mockClient: ApolloClient;
+const mockEvictDiscardedDraftFromWorkflowCache = jest.fn();
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => mockClient,
 }));
 jest.mock('@/workflow/hooks/useEvictDiscardedDraftFromWorkflowCache', () => ({
   useEvictDiscardedDraftFromWorkflowCache: () => ({
-    evictDiscardedDraftFromWorkflowCache: jest.fn(),
+    evictDiscardedDraftFromWorkflowCache:
+      mockEvictDiscardedDraftFromWorkflowCache,
   }),
 }));
 
@@ -98,6 +100,10 @@ describe('useDiscardWorkspaceWorkflowDraft', () => {
       ).resolves.toBeUndefined();
     });
 
+    expect(mockEvictDiscardedDraftFromWorkflowCache).toHaveBeenCalledTimes(1);
+    expect(mockEvictDiscardedDraftFromWorkflowCache).toHaveBeenCalledWith(
+      DRAFT_VERSION_ID,
+    );
     expect(requestedContentIds).not.toContain(DRAFT_VERSION_ID);
     expect(requestedContentIds).toContain(PUBLISHED_VERSION_ID);
 
