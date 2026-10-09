@@ -234,8 +234,7 @@ export const RichTextFieldEditor = ({
       | { blocknote?: string | null }
       | undefined;
 
-    // Capture the old body before persisting; otherwise the attachment diff misses removals.
-    // Use the same body for the draft and optimistic state to avoid a save echo.
+    // Only after capturing the pre-edit body: persisting rewrites the record, so the diff would miss removed attachments.
     updateDraft({ blocknote: preparedBody });
 
     await syncAttachments(preparedBody, oldFieldValue?.blocknote);
