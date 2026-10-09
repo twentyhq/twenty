@@ -746,8 +746,10 @@
       "ColorSampleProps": "primitives/data-display/ColorSample/types/ColorSampleProps",
       "ColorSampleVariant": "primitives/data-display/ColorSample/types/ColorSampleVariant",
       "StatusProps": "primitives/data-display/Status/types/StatusProps",
+      "StatusState": "primitives/data-display/Status/types/StatusState",
       "TagColor": "primitives/data-display/Tag/types/TagColor",
-      "TagProps": "primitives/data-display/Tag/types/TagProps"
+      "TagProps": "primitives/data-display/Tag/types/TagProps",
+      "TagState": "primitives/data-display/Tag/types/TagState"
     }
   },
   "primitives/feedback": {

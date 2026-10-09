@@ -35,11 +35,9 @@ import {
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
-import {
-  statusControlsTest,
-  tagControlsTest,
-  chipControlsTest,
-} from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
+import { chipControlsTest } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
+import { statusControlsTest } from '@/__stories__/twenty-ui-gallery/utils/statusControlsTest';
+import { tagControlsTest } from '@/__stories__/twenty-ui-gallery/utils/tagControlsTest';
 import { PortalBoundsDecorator } from '@/__stories__/twenty-ui-gallery/components/PortalBoundsDecorator';
 import { portalBoundsTest } from '@/__stories__/twenty-ui-gallery/utils/portalBoundsTest';
 

@@ -9638,39 +9638,18 @@
         "description": "Theme color for the tag, or `transparent` for an unfilled label."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
+        "name": "onClick",
+        "type": "MouseEventHandler<HTMLSpanElement>",
         "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and prevents pointer and keyboard activation."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when a clickable tag uses `render` with an element other than a native button."
-      },
-      {
-        "name": "preventPadding",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Removes the tag padding."
-      },
-      {
-        "name": "preventShrink",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Keeps the tag from shrinking and disables string-label truncation and its tooltip."
+        "defaultValue": null,
+        "description": "Native click handler. Does not change the default span or add keyboard activation."
       },
       {
         "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TagState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Replaces the default span. Compose a button or link to provide explicit interaction semantics."
       },
       {
         "name": "startIcon",
@@ -9678,6 +9657,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Decorative icon before the label. Hidden from assistive technology."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Truncates constrained string labels and exposes the full text in a tooltip. Set to `false` to show the full label without a tooltip."
       },
       {
         "name": "variant",
@@ -9708,39 +9694,25 @@
         "description": "Theme color used for the status background, text, and loader."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and disables activation when `onClick` is supplied."
-      },
-      {
         "name": "loading",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Shows a loader after the label. Does not disable the control or announce a status change by itself."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when using `render` with an element other than a native button."
+        "description": "Shows a decorative loader after the label and defaults aria-busy to true. The caller owns announcements and disabled interaction."
       },
       {
         "name": "onClick",
-        "type": "MouseEventHandler<HTMLButtonElement> | MouseEventHandler<HTMLElement>",
+        "type": "MouseEventHandler<HTMLSpanElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Handles activation and renders a native button by default. Without it, the default element is a span."
+        "description": "Native click handler. Does not change the default span or add keyboard activation."
       },
       {
         "name": "render",
-        "type": "NonNullable<ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}> | undefined>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, StatusState>",
         "required": false,
         "defaultValue": null,
-        "description": "Replaces the default element. Required when `nativeButton` is `false`."
+        "description": "Replaces the default span. Compose a button or link to provide explicit interaction semantics."
       },
       {
         "name": "weight",
