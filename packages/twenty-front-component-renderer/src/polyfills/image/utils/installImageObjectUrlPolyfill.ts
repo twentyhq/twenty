@@ -18,7 +18,6 @@ export const installImageObjectUrlPolyfill = ({
   >();
   const imageReferences = new WeakMap<Element, WeakRef<Element>>();
   const imageSources = new WeakMap<Element, string>();
-  const imageUrls = new WeakMap<Element, string>();
 
   urlConstructor.createObjectURL = (blob) => {
     const url = createObjectURL(blob);
@@ -56,19 +55,18 @@ export const installImageObjectUrlPolyfill = ({
         reference = new WeakRef(this);
         imageReferences.set(this, reference);
       }
-      const previousUrl = imageUrls.get(this);
-      if (isDefined(previousUrl)) {
-        objectUrls.get(previousUrl)?.images.delete(reference);
+      const previousSrc = imageSources.get(this);
+      if (isDefined(previousSrc)) {
+        objectUrls.get(previousSrc)?.images.delete(reference);
       }
       const registration = objectUrls.get(src);
       registration?.images.add(reference);
-      imageUrls.set(this, src);
+      imageSources.set(this, src);
       updateRemoteElementProperty(
         this,
         IMAGE_OBJECT_URL_BLOB_PROPERTY,
         registration?.blob,
       );
-      imageSources.set(this, src);
       updateRemoteElementProperty(this, 'src', src);
     },
   });

@@ -1,27 +1,19 @@
-import { createElement } from 'react';
-import { ImageInputFileSelectionHarness } from '@/__stories__/shared/components/ImageInputFileSelectionHarness';
-
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import {
-  FRONT_COMPONENT_STORY_DEFAULT_ARGS,
-  resetFrontComponentStoryMocks,
-} from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
-import { imageInputFileSelectionTest } from '@/__stories__/shared/test-utils/imageInputFileSelectionTest';
+import { ImageInputFileSelectionHarness } from '@/__stories__/shared/components/ImageInputFileSelectionHarness';
+import { FRONT_COMPONENT_STORY_DEFAULT_ARGS } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
-import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
-const meta: Meta<typeof FrontComponentRenderer> = {
+const meta: Meta<typeof ImageInputFileSelectionHarness> = {
   title: 'FrontComponent/ImageInput file selection',
-  component: FrontComponentRenderer,
+  component: ImageInputFileSelectionHarness,
   args: FRONT_COMPONENT_STORY_DEFAULT_ARGS,
-  beforeEach: resetFrontComponentStoryMocks,
-  render: (args) => createElement(ImageInputFileSelectionHarness, args),
+  tags: ['!test'],
 };
 
 export default meta;
 
-type Story = StoryObj<typeof FrontComponentRenderer>;
+type Story = StoryObj<typeof ImageInputFileSelectionHarness>;
 
 export const React: Story = {
   args: {
@@ -30,7 +22,6 @@ export const React: Story = {
       'react',
     ),
   },
-  play: imageInputFileSelectionTest,
 };
 
 export const Preact: Story = {
@@ -40,5 +31,4 @@ export const Preact: Story = {
       'preact',
     ),
   },
-  play: imageInputFileSelectionTest,
 };

@@ -121,27 +121,38 @@ outside this scope.
 ## ImageInput file selection
 
 `ImageInputFileSelection.stories.tsx` mounts two independent SDK-built renderers.
-The native Chromium tests wait for a browser `filechooser` event after trusted
-pointer, Enter and Space activation on both selection buttons. A synchronous
-worker `input.click()` can consume its renderer's single-use activation while
-the browser still has transient user activation, within one second of the host
-click. Synthetic events and delayed calls do not grant activation.
+Its stories are tagged `!test`, so the Vitest run skips them and the native
+Chromium tests below exercise them instead. These tests wait for a browser
+`filechooser` event after trusted pointer, Enter and Space activation on both
+selection buttons. A synchronous worker `input.click()` can consume its
+renderer's single-use activation while the browser still has transient user
+activation, within one second of the host click. Synthetic events and delayed
+calls do not grant activation.
 
 Selected files cross the existing event transport as native `File` objects,
 including metadata, `text()` and `arrayBuffer()` contents. Reset clears both the
 native selection and the worker input's File references without invalidating a
-File retained by the callback, so the same file can be selected again. The tests cover disabled and
-uploading controls, empty chooser results, callback replacement, renderer
-isolation and teardown. Empty results are supplied through Playwright's
-intercepted chooser; operating-system dialog dismissal and other browser engines
-are not covered by these tests.
+File retained by the callback, so the same file can be selected again. The tests
+cover disabled and uploading controls, empty chooser results, callback
+replacement, renderer isolation and teardown. Empty results are supplied through
+Playwright's intercepted chooser; operating-system dialog dismissal and other
+browser engines are not covered by these tests.
 
 A worker-created object URL assigned to `img.src` carries its `Blob` to the host.
 Each mounted image owns a host URL and revokes it on source replacement,
 explicit worker URL revocation or unmount. Applications still revoke their
 worker URLs and own validation, upload, progress and cancellation. Other object
-URL consumers are outside this adapter's scope. The public callback remains
-`onUpload`; its API rename is separate.
+URL consumers are outside this adapter's scope.
+
+To run these tests, serve the built Storybook on port 6008 or set
+`STORYBOOK_URL`, then run from the repository root:
+
+```sh
+npx nx run twenty-front-component-renderer:storybook:test:file-selection
+```
+
+The renderer Storybook CI job runs this uncached target after the gallery
+checks. `userEvent.upload` in the gallery story covers selection handling only.
 
 ## Dialog policy
 
@@ -246,17 +257,3 @@ levels, description line limits and optional focus, code semantics, native
 handlers, refs, and element/callback render composition. Description popup
 visibility and dismissal in the sandbox remain part of the existing portal and
 geometry acceptance work; standalone Section stories verify those behaviors.
-
-For native chooser coverage, serve Storybook on port 6008 after the same prebuild,
-then run from the repository root:
-
-```sh
-npx nx run twenty-front-component-renderer:storybook:test:file-selection
-```
-
-The existing renderer Storybook CI job runs this uncached target against its
-served static build after the gallery checks.
-
-Set `STORYBOOK_URL` to use another running Storybook URL. These tests use
-Playwright's trusted browser input and chooser interception; `userEvent.upload`
-in the gallery story covers selection handling only.

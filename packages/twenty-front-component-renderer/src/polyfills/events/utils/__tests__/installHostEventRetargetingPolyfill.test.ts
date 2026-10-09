@@ -1,6 +1,7 @@
 import { Window } from '@remote-dom/polyfill';
 
 import { setHostEventDispatchTarget } from '@/polyfills/events/utils/setHostEventDispatchTarget';
+import { workerFileInputActivation } from '@/polyfills/file-input/states/workerFileInputActivation';
 
 import { installHostEventRetargetingPolyfill } from '../installHostEventRetargetingPolyfill';
 
@@ -62,6 +63,26 @@ describe('installHostEventRetargetingPolyfill', () => {
     container.dispatchEvent(event);
 
     expect(event.target).toBe(container);
+  });
+
+  it('should scope the file input activation of a host event to its retargeted dispatch', () => {
+    const { container, button, createEvent } = createNestedButton();
+    const event = createEvent('click', { bubbles: true });
+    const takenActivationIds: unknown[] = [];
+
+    button.addEventListener('click', () => {
+      takenActivationIds.push(workerFileInputActivation.takeActivationId());
+    });
+    workerFileInputActivation.register({
+      event,
+      activationId: 'trusted-click',
+    });
+    setHostEventDispatchTarget({ event, dispatchTarget: button });
+
+    container.dispatchEvent(event);
+
+    expect(takenActivationIds).toEqual(['trusted-click']);
+    expect(workerFileInputActivation.takeActivationId()).toBeUndefined();
   });
 
   it('should leave events without a host target untouched', () => {

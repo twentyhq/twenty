@@ -2,8 +2,8 @@ import React from 'react';
 
 import { IMAGE_OBJECT_URL_BLOB_PROPERTY } from '@/constants/ImageObjectUrlBlobProperty';
 import { useHtmlHostElementProps } from '@/host/elements/hooks/useHtmlHostElementProps';
+import { useImageObjectUrl } from '@/host/elements/hooks/useImageObjectUrl';
 import { createPlainHostElement } from '@/host/elements/utils/createPlainHostElement';
-import { useImageObjectUrl } from '@/host/file-input/hooks/useImageObjectUrl';
 
 type HostImageElementProps = { children?: React.ReactNode } & Record<
   string,

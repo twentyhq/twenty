@@ -23,15 +23,19 @@ export const createWorkerFileInputActivation = () => {
       event: Event;
       dispatch: () => boolean;
     }): boolean => {
-      const previousActivationId = currentActivationId;
-      currentActivationId =
-        activationIdByEvent.get(event) ?? previousActivationId;
+      const activationId = activationIdByEvent.get(event);
+
+      if (!isDefined(activationId)) {
+        return dispatch();
+      }
+
       activationIdByEvent.delete(event);
+      currentActivationId = activationId;
 
       try {
         return dispatch();
       } finally {
-        currentActivationId = previousActivationId;
+        currentActivationId = undefined;
       }
     },
     takeActivationId: (): string | undefined => {

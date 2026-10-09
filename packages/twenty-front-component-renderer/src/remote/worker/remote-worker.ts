@@ -15,6 +15,7 @@ import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/state
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installImageLoadingPolyfill } from '@/polyfills/image/utils/installImageLoadingPolyfill';
+import { installImageObjectUrlPolyfill } from '@/polyfills/image/utils/installImageObjectUrlPolyfill';
 import { workerActiveElementStore } from '@/polyfills/dom/states/workerActiveElementStore';
 import { installTextTreeWalkerPolyfill } from '@/polyfills/dom/utils/installTextTreeWalkerPolyfill';
 import { installInputSelectionPolyfill } from '@/polyfills/input-selection/utils/installInputSelectionPolyfill';
@@ -64,9 +65,6 @@ import { installErrorEventBridge } from '@/remote/worker/thread/utils/installErr
 import { renderFrontComponent } from '@/remote/worker/rendering/utils/renderFrontComponent';
 import { setFrontComponentExecutionContext } from '@/remote/worker/environment/utils/setFrontComponentExecutionContext';
 import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread';
-import { workerFileInputActivation } from '@/polyfills/file-input/states/workerFileInputActivation';
-import { installImageObjectUrlPolyfill } from '@/polyfills/file-input/utils/installImageObjectUrlPolyfill';
-import { installFileInputActivationPolyfill } from '@/polyfills/file-input/utils/installFileInputActivationPolyfill';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
 import { createClonableErrorThreadSerialization } from '@/utils/clonable-error/createClonableErrorThreadSerialization';
@@ -138,11 +136,6 @@ installActiveElementDetachmentHook({
 installHostEventRetargetingPolyfill(HTMLElement.prototype);
 installElementClickMethodPolyfill(HTMLElement.prototype);
 installInputClickActivationPolyfill(HtmlInputElement.prototype);
-installFileInputActivationPolyfill({
-  elementPrototype: HTMLElement.prototype,
-  inputElementPrototype: HtmlInputElement.prototype,
-  activation: workerFileInputActivation,
-});
 
 installGetComputedStyle(toGlobalScopeRecord(globalThis));
 

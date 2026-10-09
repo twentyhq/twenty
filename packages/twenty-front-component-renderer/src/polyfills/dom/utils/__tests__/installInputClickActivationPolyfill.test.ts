@@ -1,8 +1,11 @@
+import { remoteId } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FILE_INPUT_PICKER_METHOD } from '@/constants/FileInputPickerMethod';
 import { HtmlInputElement } from '@/remote/generated/remote-elements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
 import { markEventAsHostOriginated } from '@/polyfills/events/utils/markEventAsHostOriginated';
+import { workerFileInputActivation } from '@/polyfills/file-input/states/workerFileInputActivation';
 
 import { installInputClickActivationPolyfill } from '../installInputClickActivationPolyfill';
 import { installElementClickMethodPolyfill } from '../installElementClickMethodPolyfill';
@@ -34,6 +37,34 @@ const createInput = ({
 
 const createClickEvent = (): MouseEvent =>
   new MouseEvent('click', { bubbles: true, cancelable: true });
+
+const createConnectedFileInput = () => {
+  const remoteRoot = document.createElement('remote-root');
+  const input = createInput({ type: 'file' });
+  const connection = { mutate: jest.fn(), call: jest.fn() };
+
+  remoteRoot.append(input);
+  document.body.append(remoteRoot);
+  remoteRoot.connect(connection);
+
+  return { remoteRoot, input, connection };
+};
+
+const clickWithHostActivation = (click: () => void): void => {
+  const hostClickEvent = createClickEvent();
+
+  workerFileInputActivation.register({
+    event: hostClickEvent,
+    activationId: 'trusted-click',
+  });
+  workerFileInputActivation.dispatch({
+    event: hostClickEvent,
+    dispatch: () => {
+      click();
+      return true;
+    },
+  });
+};
 
 const recordEventTypes = (input: HTMLInputElement): string[] => {
   const eventTypes: string[] = [];
@@ -160,6 +191,36 @@ describe('installInputClickActivationPolyfill', () => {
 
     expect(checkbox.checked).toBe(false);
     expect(changeListener).not.toHaveBeenCalled();
+  });
+
+  it('should open the file picker once with the host activation of a guest click', () => {
+    const { remoteRoot, input, connection } = createConnectedFileInput();
+
+    clickWithHostActivation(() => {
+      input.click();
+      input.click();
+    });
+
+    expect(connection.call).toHaveBeenCalledTimes(1);
+    expect(connection.call).toHaveBeenCalledWith(
+      remoteId(input),
+      FILE_INPUT_PICKER_METHOD,
+      'trusted-click',
+    );
+
+    remoteRoot.remove();
+  });
+
+  it('should not open the file picker without host activation or after a prevented click', () => {
+    const { remoteRoot, input, connection } = createConnectedFileInput();
+
+    input.click();
+    input.addEventListener('click', (event) => event.preventDefault());
+    clickWithHostActivation(() => input.click());
+
+    expect(connection.call).not.toHaveBeenCalled();
+
+    remoteRoot.remove();
   });
 
   it('should not activate text inputs or non-click events', () => {

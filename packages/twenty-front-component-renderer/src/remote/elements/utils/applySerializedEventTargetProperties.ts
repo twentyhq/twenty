@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { SERIALIZED_EVENT_TARGET_PROPERTY_KEYS } from '@/remote/elements/constants/SerializedEventTargetPropertyKeys';
-import { applySerializedFileInputFiles } from '@/remote/elements/utils/applySerializedFileInputFiles';
 import { applySelectedOptionIndexes } from '@/remote/elements/utils/applySelectedOptionIndexes';
+import { installFilesResetOnValueClear } from '@/remote/elements/utils/installFilesResetOnValueClear';
 import { uncheckOtherRadioButtons } from '@/remote/elements/utils/uncheckOtherRadioButtons';
 import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
 import { readInputSelectionState } from '@/utils/readInputSelectionState';
@@ -16,14 +16,13 @@ export const applySerializedEventTargetProperties = ({
   eventData: SerializedEventData;
 }): void => {
   for (const key of SERIALIZED_EVENT_TARGET_PROPERTY_KEYS) {
-    if (!(key in eventData)) {
-      continue;
+    if (key in eventData) {
+      Reflect.set(element, key, eventData[key]);
     }
-    if (key === 'files') {
-      applySerializedFileInputFiles({ element, files: eventData.files });
-      continue;
-    }
-    Reflect.set(element, key, eventData[key]);
+  }
+
+  if (isDefined(eventData.files)) {
+    installFilesResetOnValueClear(element);
   }
 
   const selectionState = readInputSelectionState(eventData);

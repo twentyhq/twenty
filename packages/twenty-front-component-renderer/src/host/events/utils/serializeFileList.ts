@@ -16,6 +16,10 @@ export const serializeFileList = (
   const serialized: SerializedFileData[] = [];
   for (let index = 0; index < fileListLike.length; index++) {
     const file = fileListLike[index];
+    if (file instanceof File) {
+      serialized.push(file);
+      continue;
+    }
     if (!isObject(file)) {
       continue;
     }
@@ -29,7 +33,6 @@ export const serializeFileList = (
       continue;
     }
     serialized.push({
-      ...(file instanceof File && { file }),
       name: fileRecord.name,
       size: fileRecord.size,
       type: fileRecord.type,

@@ -100,6 +100,7 @@
       ],
       "inputs": [
         "{projectRoot}/scripts/front-component-stories/**/*",
+        "!{projectRoot}/scripts/front-component-stories/__tests__/**/*",
         "{projectRoot}/src/__stories__/html-tag/**/*",
         "{projectRoot}/src/__stories__/host-api/**/*",
         "{projectRoot}/src/__stories__/showcase/**/*",

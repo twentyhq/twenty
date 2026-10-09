@@ -1,3 +1,10 @@
-import { type createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
-
-export type FileInputHost = ReturnType<typeof createFileInputHost>;
+export type FileInputHost = {
+  reset: () => void;
+  captureActivation: (
+    event: Partial<Pick<Event, 'type' | 'isTrusted' | 'target'>>,
+  ) => string | undefined;
+  openFilePicker: (input: {
+    remoteElementId: string;
+    activationId: unknown;
+  }) => void;
+};

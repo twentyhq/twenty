@@ -3,10 +3,10 @@ import React from 'react';
 
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { useCaretPreservingElementRef } from '@/host/caret/hooks/useCaretPreservingElementRef';
+import { HostImageElement } from '@/host/components/HostImageElement';
 import { useHtmlHostElementProps } from '@/host/elements/hooks/useHtmlHostElementProps';
 import { createCaretPreservingElement } from '@/host/caret/utils/createCaretPreservingElement';
 import { createPlainHostElement } from '@/host/elements/utils/createPlainHostElement';
-import { HostImageElement } from '@/host/file-input/components/HostImageElement';
 import { isFileInputType } from '@/host/elements/utils/isFileInputType';
 import { isTextLikeInputType } from '@/utils/isTextLikeInputType';
 

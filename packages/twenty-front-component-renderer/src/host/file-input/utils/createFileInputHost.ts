@@ -1,6 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FileInputHost } from '@/host/file-input/types/FileInputHost';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
+import { generateRandomId } from '@/utils/generateRandomId';
 
 const FILE_INPUT_ACTIVATION_TIMEOUT_MS = 1000;
 
@@ -8,7 +10,7 @@ export const createFileInputHost = ({
   geometryTracker,
 }: {
   geometryTracker: GeometryTracker;
-}) => {
+}): FileInputHost => {
   let pendingActivationId: string | undefined;
   let activationTimeout: ReturnType<typeof setTimeout> | undefined;
 
@@ -19,34 +21,27 @@ export const createFileInputHost = ({
 
   return {
     reset,
-    captureActivation: (
-      event: Partial<Pick<Event, 'type' | 'isTrusted' | 'target'>>,
-    ): string | undefined => {
+    captureActivation: (event) => {
+      const isTrustedClick = event.type === 'click' && event.isTrusted;
+
+      if (!isTrustedClick || !navigator.userActivation?.isActive) {
+        return undefined;
+      }
+
       const isOwnedTarget = isDefined(
         geometryTracker.findRemoteElementIdContainingNode(event.target),
       );
-      const isTrustedClick = event.type === 'click' && event.isTrusted;
 
-      if (
-        !isTrustedClick ||
-        !isOwnedTarget ||
-        !navigator.userActivation?.isActive
-      ) {
+      if (!isOwnedTarget) {
         return undefined;
       }
 
       reset();
-      pendingActivationId = crypto.randomUUID();
+      pendingActivationId = generateRandomId();
       activationTimeout = setTimeout(reset, FILE_INPUT_ACTIVATION_TIMEOUT_MS);
       return pendingActivationId;
     },
-    openFilePicker: ({
-      remoteElementId,
-      activationId,
-    }: {
-      remoteElementId: string;
-      activationId: unknown;
-    }): void => {
+    openFilePicker: ({ remoteElementId, activationId }) => {
       const hasMatchingActivation =
         isDefined(pendingActivationId) && pendingActivationId === activationId;
 

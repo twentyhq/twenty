@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { FORM_CONTROL_STATE_SERIALIZED_EVENT_KEYS } from '@/host/events/constants/FormControlStateSerializedEventKeys';
 import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
 import { applyEventDispatchProperties } from '@/host/events/utils/applyEventDispatchProperties';
@@ -32,8 +34,12 @@ export const wrapEventHandler =
         !nativeHostEventsWithForwardedFormControlState.has(nativeHostEvent),
     });
 
-    serializedEvent.fileInputActivationId =
+    const fileInputActivationId =
       fileInputHost?.captureActivation(nativeHostEvent);
+
+    if (isDefined(fileInputActivationId)) {
+      serializedEvent.fileInputActivationId = fileInputActivationId;
+    }
 
     applyEventDispatchProperties({
       serializedEvent,

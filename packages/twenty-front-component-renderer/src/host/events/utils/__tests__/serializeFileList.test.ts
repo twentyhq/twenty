@@ -31,15 +31,8 @@ describe('serializeFileList', () => {
       type: 'image/png',
       lastModified: 1700000000000,
     });
-    expect(serializeFileList([file])).toEqual([
-      {
-        file,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        lastModified: file.lastModified,
-      },
-    ]);
+    const [serializedFile] = serializeFileList([file]) ?? [];
+    expect(serializedFile).toBe(file);
   });
 
   it('should skip entries missing required fields', () => {
