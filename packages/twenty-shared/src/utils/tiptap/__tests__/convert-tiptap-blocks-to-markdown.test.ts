@@ -163,6 +163,17 @@ describe('convertTipTapBlocksToMarkdown', () => {
     expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
   });
 
+  it('should leave a blocknote body without block ids alone', () => {
+    const blocknoteBody = JSON.stringify([
+      {
+        type: 'paragraph',
+        content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
+      },
+    ]);
+
+    expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
+  });
+
   it('should leave a blocknote table alone, whose content is not an array', () => {
     const blocknoteBody = JSON.stringify([
       {
