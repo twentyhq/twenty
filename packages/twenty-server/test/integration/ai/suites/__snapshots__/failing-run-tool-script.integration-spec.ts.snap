@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for a file read the type checker cannot see 1`] = `
+"Traceback (most recent call last):
+  File "<python-input-0>", line 2, in <module>
+    opener('/etc/passwd').read()
+    ~~~~~~~~~~~~~~~~~~~~~
+PermissionError: Permission denied: '/etc/passwd'"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for a file read through open 1`] = `
+"Type check failed, the script did not run:
+main.py:1:1: error[unresolved-reference] Name \`open\` used when not defined
+"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for a nested run_tool_script 1`] = `
+"Traceback (most recent call last):
+  File "<python-input-0>", line 1, in <module>
+    await call_tool("run_tool_script", {"code": "1"})
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RuntimeError: Tool "run_tool_script" is not available in scripts and cannot be called here"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for a syntax error 1`] = `
+"Type check failed, the script did not run:
+main.py:1:5: error[invalid-syntax] Expected an identifier
+main.py:1:6: error[invalid-syntax] Expected a parameter or the end of the parameter list
+main.py:1:7: error[invalid-syntax] unexpected EOF while parsing
+"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for a tool excluded from MCP 1`] = `
+"Traceback (most recent call last):
+  File "<python-input-0>", line 1, in <module>
+    await call_tool("http_request", {"url": "https://example.com"})
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RuntimeError: Tool "http_request" is not available in scripts and cannot be called here"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for a tool that supports approval 1`] = `
+"Traceback (most recent call last):
+  File "<python-input-0>", line 1, in <module>
+    await call_tool("create_one_task", {"title": "Should not exist"})
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RuntimeError: Tool "create_one_task" supports user approval and cannot be called from a script. Use the matching *_many_* tool, or call it with execute_tool"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for a type error 1`] = `
+"Type check failed, the script did not run:
+main.py:1:17: error[invalid-argument-type] Argument to function \`call_tool\` is incorrect: Expected \`str\`, found \`Literal[1]\`
+main.py:1:20: error[invalid-argument-type] Argument to function \`call_tool\` is incorrect: Expected \`dict[Unknown, Unknown]\`, found \`Literal[2]\`
+"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for an allocation over the memory limit 1`] = `
+"Traceback (most recent call last):
+  File "<python-input-0>", line 1, in <module>
+    x = 'a' * 10**9
+        ~~~~~~~~~~~
+MemoryError: memory limit exceeded: <n> bytes > <n> bytes"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for an endless loop 1`] = `"TimeoutError: feed time limit exceeded: <seconds>s > <seconds>s"`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for code_interpreter 1`] = `
+"Traceback (most recent call last):
+  File "<python-input-0>", line 1, in <module>
+    await call_tool("code_interpreter", {"code": "print(1)"})
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RuntimeError: Tool "code_interpreter" is not available in scripts and cannot be called here"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for importing socket 1`] = `
+"Type check failed, the script did not run:
+main.py:1:8: error[unresolved-import] Cannot resolve imported module \`socket\`
+"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for importing subprocess 1`] = `
+"Type check failed, the script did not run:
+main.py:1:8: error[unresolved-import] Cannot resolve imported module \`subprocess\`
+"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for importing through __import__ 1`] = `
+"Type check failed, the script did not run:
+main.py:1:1: error[unresolved-reference] Name \`__import__\` used when not defined
+"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for reading /proc/self/environ 1`] = `
+"Traceback (most recent call last):
+  File "<python-input-0>", line 2, in <module>
+    Path('/proc/self/environ').read_text()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PermissionError: Permission denied: '/proc/self/environ'"
+`;
+
+exports[`run_tool_script over MCP refusals and limits returns a tool error for reading the environment 1`] = `
+"Traceback (most recent call last):
+  File "<python-input-0>", line 2, in <module>
+    os.environ
+    ~~~~~~~~~~
+RuntimeError: 'os.environ' is not supported in this environment"
+`;
