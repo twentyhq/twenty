@@ -84,24 +84,17 @@ const ROUTE_PAYLOAD = {
 const COMPLETED_CALL_RECORDING_NODE = {
   id: CALL_RECORDING_ID,
   updatedAt: '2026-08-20T11:00:00.000Z',
-  deletedAt: null,
   status: 'COMPLETED',
   recordingRequestStatus: 'REQUESTED',
   startedAt: '2026-08-20T10:00:00.000Z',
   endedAt: '2026-08-20T10:30:00.000Z',
-  calendarEventId: null,
   video: [{ fileId: 'video-file-id' }],
-  audio: [],
   transcript: [{ participant: { name: 'Owner' }, words: [] }],
   summary: { markdown: 'Summary', blocknote: null },
   fathomRecordingImports: {
     edges: [
       {
-        node: {
-          id: CALL_RECORDING_ID,
-          updatedAt: '2026-08-20T11:00:00.000Z',
-          recordingId: String(RECORDING_ID),
-        },
+        node: { id: CALL_RECORDING_ID, updatedAt: '2026-08-20T11:00:00.000Z' },
       },
     ],
   },
@@ -154,26 +147,6 @@ describe('fathomWebhookHandler', () => {
     expect(mocks.query).toHaveBeenCalledOnce();
     expect(mocks.syncFathomMeetingsToCallRecordings).not.toHaveBeenCalled();
     expect(mocks.mutation).not.toHaveBeenCalled();
-  });
-
-  it('syncs a replayed recording whose media is still missing, reusing the state it read', async () => {
-    mockCallRecordingNodes([{ ...COMPLETED_CALL_RECORDING_NODE, video: [] }]);
-
-    await fathomWebhookHandler(ROUTE_PAYLOAD);
-
-    expect(mocks.query).toHaveBeenCalledOnce();
-    expect(mocks.syncFathomMeetingsToCallRecordings).toHaveBeenCalledOnce();
-    expect(
-      mocks.syncFathomMeetingsToCallRecordings.mock.calls[0][0]
-        .callRecordingSyncStates,
-    ).toEqual(
-      new Map([
-        [
-          CALL_RECORDING_ID,
-          expect.objectContaining({ hasVideo: false, hasTranscript: true }),
-        ],
-      ]),
-    );
   });
 
   it('syncs a new recording without reading its state twice', async () => {

@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
+import { createRecordsWithPerRecordFallback } from 'src/logic-functions/utils/create-records-with-per-record-fallback.util';
 import { upsertCallRecording } from 'src/logic-functions/utils/upsert-call-recording.util';
 
 export const createCallRecordings = async ({
@@ -11,40 +11,29 @@ export const createCallRecordings = async ({
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordings: Array<{ id: string; fields: CallRecordingSyncFields }>;
 }): Promise<Set<string>> => {
-  if (callRecordings.length > 1) {
-    try {
-      await coreApiClient.mutation({
+  const createdCallRecordings = await createRecordsWithPerRecordFallback({
+    records: callRecordings,
+    createRecords: (records) =>
+      coreApiClient.mutation({
         createCallRecordings: {
           __args: {
-            data: callRecordings.map(({ id, fields }) => ({ id, ...fields })),
+            data: records.map(({ id, fields }) => ({ id, ...fields })),
           },
           id: true,
         },
+      }),
+    createRecord: async ({ id, fields }) => {
+      const { created } = await upsertCallRecording({
+        coreApiClient,
+        callRecordingId: id,
+        createFields: fields,
+        updateFields: fields,
+        expectedUpdatedAt: undefined,
       });
 
-      return new Set(callRecordings.map(({ id }) => id));
-    } catch (error) {
-      if (error instanceof RetryableLogicFunctionError) {
-        throw error;
-      }
-    }
-  }
+      return created;
+    },
+  });
 
-  const createdCallRecordingIds = new Set<string>();
-
-  for (const { id, fields } of callRecordings) {
-    const { created } = await upsertCallRecording({
-      coreApiClient,
-      callRecordingId: id,
-      createFields: fields,
-      updateFields: fields,
-      expectedUpdatedAt: undefined,
-    });
-
-    if (created) {
-      createdCallRecordingIds.add(id);
-    }
-  }
-
-  return createdCallRecordingIds;
+  return new Set(createdCallRecordings.map(({ id }) => id));
 };

@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
 import { type FathomRecordingImportFields } from 'src/logic-functions/types/fathom-recording-import-fields.type';
+import { createRecordsWithPerRecordFallback } from 'src/logic-functions/utils/create-records-with-per-record-fallback.util';
 import { upsertFathomRecordingImport } from 'src/logic-functions/utils/upsert-fathom-recording-import.util';
 
 export const createFathomRecordingImports = async ({
@@ -14,34 +14,26 @@ export const createFathomRecordingImports = async ({
     fields: FathomRecordingImportFields & { recordingId: string };
   }>;
 }): Promise<void> => {
-  if (fathomRecordingImports.length > 1) {
-    try {
-      await coreApiClient.mutation({
+  await createRecordsWithPerRecordFallback({
+    records: fathomRecordingImports,
+    createRecords: (records) =>
+      coreApiClient.mutation({
         createFathomRecordingImports: {
           __args: {
-            data: fathomRecordingImports.map(({ id, fields }) => ({
-              id,
-              ...fields,
-            })),
+            data: records.map(({ id, fields }) => ({ id, ...fields })),
           },
           id: true,
         },
+      }),
+    createRecord: async ({ id, fields }) => {
+      await upsertFathomRecordingImport({
+        coreApiClient,
+        fathomRecordingImportId: id,
+        fields,
+        expectedUpdatedAt: undefined,
       });
 
-      return;
-    } catch (error) {
-      if (error instanceof RetryableLogicFunctionError) {
-        throw error;
-      }
-    }
-  }
-
-  for (const { id, fields } of fathomRecordingImports) {
-    await upsertFathomRecordingImport({
-      coreApiClient,
-      fathomRecordingImportId: id,
-      fields,
-      expectedUpdatedAt: undefined,
-    });
-  }
+      return true;
+    },
+  });
 };

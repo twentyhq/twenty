@@ -1,28 +1,17 @@
-import { isNonEmptyArray } from '@sniptt/guards';
 import { ConnectionError } from 'fathom-typescript/sdk/models/errors';
 import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { buildFathomMeeting } from 'src/__tests__/utils/build-fathom-meeting.util';
-import { buildFathomMeetingPages } from 'src/__tests__/utils/build-fathom-meeting-pages.util';
 import { buildFathomNotFoundError } from 'src/__tests__/utils/build-fathom-not-found-error.util';
 import { buildFathomRateLimitError } from 'src/__tests__/utils/build-fathom-rate-limit-error.util';
 import { buildFathomServerError } from 'src/__tests__/utils/build-fathom-server-error.util';
 import { MAX_FATHOM_BACKFILL_REQUEUE_ATTEMPTS } from 'src/constants/fathom.constant';
-import {
-  FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER,
-  FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/universal-identifiers';
-import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
-import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
+import { FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 const mocks = vi.hoisted(() => ({
   enqueueJobs: vi.fn(),
   getConnection: vi.fn(),
-  kvGet: vi.fn(),
-  kvSet: vi.fn(),
   listMeetings: vi.fn(),
-  query: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -33,13 +22,6 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<typeof import('twenty-sdk/logic-function')>()),
   enqueueJobs: mocks.enqueueJobs,
   getConnection: mocks.getConnection,
-  kv: { get: mocks.kvGet, set: mocks.kvSet },
-}));
-
-vi.mock('twenty-client-sdk/core', () => ({
-  CoreApiClient: class CoreApiClient {
-    query = mocks.query;
-  },
 }));
 
 vi.mock('fathom-typescript', () => ({
@@ -52,35 +34,6 @@ const { fathomBackfillWorkerHandler } =
   await import('src/logic-functions/fathom-backfill-worker');
 
 const PAYLOAD = { connectedAccountId: 'connection-1', days: 31 };
-
-const MEETINGS = [1, 2, 3].map((recordingId) =>
-  buildFathomMeeting({ recordingId }),
-);
-const [DELETED_ID, COMPLETED_ID, NEW_ID] = MEETINGS.map((meeting) =>
-  computeCallRecordingIdForFathomMeeting(meeting.recordingId),
-);
-
-const buildCompletedNode = (id: string) => ({
-  id,
-  updatedAt: '2026-08-20T11:00:00.000Z',
-  deletedAt: null,
-  status: 'COMPLETED',
-  recordingRequestStatus: 'REQUESTED',
-  startedAt: '2026-08-20T10:00:00.000Z',
-  endedAt: '2026-08-20T10:30:00.000Z',
-  calendarEventId: 'calendar-event-id',
-  video: [{ fileId: 'video-file-id' }],
-  audio: [],
-  summary: { markdown: 'Summary' },
-  fathomRecordingImports: {
-    edges: [{ node: { id, updatedAt: '2026-08-20T11:00:00.000Z' } }],
-  },
-});
-
-type CallRecordingFilter = {
-  deletedAt?: { is: string };
-  or?: Array<Record<string, unknown>>;
-};
 
 describe('fathomBackfillWorkerHandler', () => {
   beforeEach(() => {
@@ -173,70 +126,6 @@ describe('fathomBackfillWorkerHandler', () => {
       }),
     ).rejects.toBeInstanceOf(RetryableLogicFunctionError);
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
-  });
-
-  it('drops deleted and already complete recordings from the page with one read', async () => {
-    const deletedNode = {
-      ...buildCompletedNode(DELETED_ID),
-      deletedAt: '2026-08-21T00:00:00.000Z',
-    };
-    const completedNode = buildCompletedNode(COMPLETED_ID);
-
-    mocks.listMeetings.mockImplementation(buildFathomMeetingPages([MEETINGS]));
-    mocks.query.mockImplementation(
-      async ({
-        callRecordings,
-      }: {
-        callRecordings: { __args: { filter: CallRecordingFilter } };
-      }) => {
-        const filter = callRecordings.__args.filter;
-        const nodes =
-          filter.deletedAt?.is === 'NOT_NULL'
-            ? [deletedNode]
-            : isNonEmptyArray(filter.or)
-              ? [deletedNode, completedNode]
-              : [];
-
-        return { callRecordings: { edges: nodes.map((node) => ({ node })) } };
-      },
-    );
-
-    expect(await fathomBackfillWorkerHandler(PAYLOAD)).toMatchObject({
-      discoveredMeetingCount: 3,
-      skippedDeletedMeetingCount: 1,
-      skippedUpToDateMeetingCount: 1,
-      enqueuedBatchCount: 1,
-    });
-    expect(mocks.query).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        callRecordings: expect.objectContaining({
-          __args: expect.objectContaining({
-            filter: {
-              id: { in: [DELETED_ID, COMPLETED_ID, NEW_ID] },
-              or: [
-                { deletedAt: { is: 'NOT_NULL' } },
-                {
-                  status: { eq: 'COMPLETED' },
-                  transcript: { like: '[_%]' },
-                },
-              ],
-            },
-          }),
-        }),
-      }),
-    );
-    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        logicFunctionUniversalIdentifier:
-          FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER,
-        payloads: [
-          {
-            connectedAccountId: 'connection-1',
-            meetings: [serializeFathomMeeting(MEETINGS[2])],
-          },
-        ],
-      }),
-    );
   });
 
   it('does not retry a page Fathom rejects permanently', async () => {

@@ -1,15 +1,23 @@
 import { describe, expect, it } from 'vitest';
 
 import { type CallRecordingSyncState } from 'src/logic-functions/types/call-recording-sync-state.type';
-import { buildFathomCallRecordingTitle } from 'src/logic-functions/utils/build-fathom-call-recording-title.util';
 import { isFathomCallRecordingUpToDate } from 'src/logic-functions/utils/is-fathom-call-recording-up-to-date.util';
 
-const MEETING = {
+type MeetingFixture = Parameters<
+  typeof isFathomCallRecordingUpToDate
+>[0]['meeting'];
+
+const MEETING: MeetingFixture = {
   title: 'Customer call',
   meetingTitle: 'Customer call',
   meetingUrl: 'https://meet.google.com/abc-defg-hij',
   recordingStartTime: '2026-08-20T10:00:00.000Z',
   recordingEndTime: '2026-08-20T10:30:00.000Z',
+};
+const IMPROMPTU_MEETING: MeetingFixture = {
+  ...MEETING,
+  title: 'Impromptu Zoom Meeting',
+  meetingTitle: 'Impromptu Zoom Meeting',
 };
 
 const COMPLETE_CALL_RECORDING: CallRecordingSyncState = {
@@ -36,95 +44,61 @@ const COMPLETE_CALL_RECORDING: CallRecordingSyncState = {
 };
 
 describe('isFathomCallRecordingUpToDate', () => {
-  it('treats a completed recording holding everything a sync would write as up to date', () => {
+  it.each<[string, MeetingFixture, Partial<CallRecordingSyncState>]>([
+    ['holds everything a sync would write', MEETING, {}],
+    [
+      'has media Fathom could not provide',
+      MEETING,
+      { hasVideo: false, failureReason: 'no_downloadable_media' },
+    ],
+    [
+      'has no calendar link for a meeting without a URL',
+      { ...MEETING, meetingUrl: null },
+      { calendarEventId: undefined },
+    ],
+    [
+      'has its generated impromptu title',
+      IMPROMPTU_MEETING,
+      { title: 'Impromptu Zoom Meeting (Pricing discussion)' },
+    ],
+  ])('skips a recording that %s', (_, meeting, overrides) => {
     expect(
       isFathomCallRecordingUpToDate({
-        meeting: MEETING,
-        callRecording: COMPLETE_CALL_RECORDING,
+        meeting,
+        callRecording: { ...COMPLETE_CALL_RECORDING, ...overrides },
       }),
     ).toBe(true);
   });
 
-  it('treats a recording whose media Fathom could not provide as up to date', () => {
-    expect(
-      isFathomCallRecordingUpToDate({
-        meeting: MEETING,
-        callRecording: {
-          ...COMPLETE_CALL_RECORDING,
-          hasVideo: false,
-          failureReason: 'no_downloadable_media',
-        },
-      }),
-    ).toBe(true);
-  });
-
-  it('does not require a calendar link for a meeting without a meeting URL', () => {
-    expect(
-      isFathomCallRecordingUpToDate({
-        meeting: { ...MEETING, meetingUrl: null },
-        callRecording: {
-          ...COMPLETE_CALL_RECORDING,
-          calendarEventId: undefined,
-        },
-      }),
-    ).toBe(true);
-  });
-
-  describe('impromptu meetings', () => {
-    const IMPROMPTU_MEETING = {
-      ...MEETING,
-      title: 'Impromptu Zoom Meeting',
-      meetingTitle: 'Impromptu Zoom Meeting',
-    };
-    const PLACEHOLDER_TITLE = buildFathomCallRecordingTitle({
-      ...IMPROMPTU_MEETING,
-      recordingStartTime: new Date(IMPROMPTU_MEETING.recordingStartTime),
-    }).title;
-
-    it('syncs a completed recording still holding the placeholder title so its title job is queued', () => {
-      expect(
-        isFathomCallRecordingUpToDate({
-          meeting: IMPROMPTU_MEETING,
-          callRecording: {
-            ...COMPLETE_CALL_RECORDING,
-            title: PLACEHOLDER_TITLE,
-          },
-        }),
-      ).toBe(false);
-    });
-
-    it('treats a completed recording with its generated title as up to date', () => {
-      expect(
-        isFathomCallRecordingUpToDate({
-          meeting: IMPROMPTU_MEETING,
-          callRecording: {
-            ...COMPLETE_CALL_RECORDING,
-            title: 'Impromptu Zoom Meeting (Pricing discussion)',
-          },
-        }),
-      ).toBe(true);
-    });
-  });
-
-  it.each<[string, Partial<CallRecordingSyncState>]>([
-    ['deleted', { isDeleted: true }],
-    ['still processing', { status: 'PROCESSING' }],
-    ['failed', { status: 'FAILED' }],
-    ['not requested', { recordingRequestStatus: undefined }],
-    ['missing its import', { fathomRecordingImportId: undefined }],
-    ['missing its transcript', { hasTranscript: false }],
-    ['missing its summary', { hasSummary: false }],
-    ['waiting for media', { hasVideo: false }],
+  it.each<[string, MeetingFixture, Partial<CallRecordingSyncState>]>([
+    ['deleted', MEETING, { isDeleted: true }],
+    ['still processing', MEETING, { status: 'PROCESSING' }],
+    ['failed', MEETING, { status: 'FAILED' }],
+    ['not requested', MEETING, { recordingRequestStatus: undefined }],
+    ['missing its import', MEETING, { fathomRecordingImportId: undefined }],
+    ['missing its transcript', MEETING, { hasTranscript: false }],
+    ['missing its summary', MEETING, { hasSummary: false }],
+    ['waiting for media', MEETING, { hasVideo: false }],
     [
       'recorded at another start time',
+      MEETING,
       { startedAt: '2026-08-20T10:01:00.000Z' },
     ],
-    ['recorded at another end time', { endedAt: undefined }],
-    ['not linked to a calendar event yet', { calendarEventId: undefined }],
-  ])('syncs a recording that is %s', (_, overrides) => {
+    ['recorded at another end time', MEETING, { endedAt: undefined }],
+    [
+      'not linked to a calendar event yet',
+      MEETING,
+      { calendarEventId: undefined },
+    ],
+    [
+      'still holding the impromptu placeholder title',
+      IMPROMPTU_MEETING,
+      { title: 'Impromptu Zoom Meeting (20 Aug 2026, 10:00 UTC)' },
+    ],
+  ])('syncs a recording that is %s', (_, meeting, overrides) => {
     expect(
       isFathomCallRecordingUpToDate({
-        meeting: MEETING,
+        meeting,
         callRecording: { ...COMPLETE_CALL_RECORDING, ...overrides },
       }),
     ).toBe(false);
