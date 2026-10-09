@@ -5,9 +5,14 @@ import {
   RecordCreationFormContextProvider,
   type RecordCreationFormContextValue,
 } from '@/object-record/record-form/contexts/RecordCreationFormContext';
+import { getRecordCreationFormPlacement } from '@/object-record/record-form/utils/getRecordCreationFormPlacement';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
+import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -120,6 +125,39 @@ export const RecordCreationFormProvider = ({
         draftRecord: Partial<ObjectRecord>,
       ) => Promise<ObjectRecord>;
     }) => {
+      const isSidePanelShown =
+        store.get(isSidePanelOpenedState.atom) &&
+        !store.get(isSidePanelClosingState.atom);
+      const topSidePanelPage = isSidePanelShown
+        ? store.get(sidePanelNavigationStackState.atom).at(-1)
+        : undefined;
+      const openRecordCreationFormPageId =
+        topSidePanelPage?.page === SidePanelPages.RecordCreationForm
+          ? topSidePanelPage.pageId
+          : undefined;
+
+      const recordCreationFormPlacement = getRecordCreationFormPlacement({
+        openRecordCreationFormRequest: isDefined(openRecordCreationFormPageId)
+          ? store.get(
+              recordCreationFormRequestComponentState.atomFamily({
+                instanceId: openRecordCreationFormPageId,
+              }),
+            )
+          : null,
+        openRecordCreationFormDraft: isDefined(openRecordCreationFormPageId)
+          ? store.get(
+              recordCreationFormDraftComponentState.atomFamily({
+                instanceId: openRecordCreationFormPageId,
+              }),
+            )
+          : null,
+        objectMetadataId: objectMetadataItem.id,
+      });
+
+      if (recordCreationFormPlacement === 'keep') {
+        return Promise.resolve(null);
+      }
+
       const requestId = v4();
 
       store.set(
@@ -150,9 +188,16 @@ export const RecordCreationFormProvider = ({
           pageIcon: IconPlus,
           pageId: requestId,
         });
+
+        if (
+          recordCreationFormPlacement === 'replace' &&
+          isDefined(openRecordCreationFormPageId)
+        ) {
+          removePageFromSidePanelHistory(openRecordCreationFormPageId);
+        }
       });
     },
-    [navigateSidePanelMenu, store],
+    [navigateSidePanelMenu, removePageFromSidePanelHistory, store],
   );
 
   const cancelPendingRecordCreation = useCallback(
