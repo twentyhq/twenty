@@ -1391,7 +1391,7 @@ msgstr "Ștergerea contului"
 #. js-lingui-id: T3FM0r
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
-msgstr ""
+msgstr "Setările contului"
 
 #. js-lingui-id: bPwFdf
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -3144,7 +3144,7 @@ msgstr "Jurnalele de aplicație sunt păstrate timp de {retentionInDays} zile."
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "App preferences"
-msgstr ""
+msgstr "Preferințe aplicație"
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -11558,7 +11558,7 @@ msgstr "Căutare globală"
 #. js-lingui-id: DSJEta
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 msgid "Gmail"
-msgstr ""
+msgstr "Gmail"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -11614,7 +11614,7 @@ msgstr "Google"
 #. js-lingui-id: ebIDwV
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 msgid "Google Calendar"
-msgstr ""
+msgstr "Google Calendar"
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -17489,7 +17489,7 @@ msgstr "Întrerupere"
 #. js-lingui-id: gdC3cZ
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 msgid "Outlook"
-msgstr ""
+msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -19191,7 +19191,7 @@ msgstr "Elimină {address}"
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
-msgstr ""
+msgstr "Elimină {displayName}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19433,7 +19433,7 @@ msgstr "Reordonează opțiunile"
 #. js-lingui-id: Jtm0TT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
-msgstr ""
+msgstr "Înlocuiește setările Conturi cu Preferințe aplicație, organizate în jurul conturilor și al aplicațiilor care le folosesc."
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21484,7 +21484,7 @@ msgstr "Partajați aplicația în alte spații de lucru, fără a o publica în 
 #. js-lingui-id: fX13zr
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Shared accounts between apps"
-msgstr ""
+msgstr "Conturi partajate între aplicații"
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -25547,7 +25547,7 @@ msgstr "Utilizate"
 #. js-lingui-id: xUOPoQ
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Used by"
-msgstr ""
+msgstr "Folosit de"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx

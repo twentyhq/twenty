@@ -1391,7 +1391,7 @@ msgstr "حذف الحساب"
 #. js-lingui-id: T3FM0r
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
-msgstr ""
+msgstr "إعدادات الحساب"
 
 #. js-lingui-id: bPwFdf
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -3144,7 +3144,7 @@ msgstr "يتم الاحتفاظ بسجلات التطبيق لمدة {retentionI
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "App preferences"
-msgstr ""
+msgstr "تفضيلات التطبيق"
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -11558,7 +11558,7 @@ msgstr "بحث عام"
 #. js-lingui-id: DSJEta
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 msgid "Gmail"
-msgstr ""
+msgstr "جيميل"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -11614,7 +11614,7 @@ msgstr "Google"
 #. js-lingui-id: ebIDwV
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 msgid "Google Calendar"
-msgstr ""
+msgstr "تقويم Google"
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -17489,7 +17489,7 @@ msgstr "انقطاع"
 #. js-lingui-id: gdC3cZ
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 msgid "Outlook"
-msgstr ""
+msgstr "أوتلوك"
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -19191,7 +19191,7 @@ msgstr "إزالة {address}"
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
-msgstr ""
+msgstr "إزالة {displayName}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19433,7 +19433,7 @@ msgstr "إعادة ترتيب الخيارات"
 #. js-lingui-id: Jtm0TT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
-msgstr ""
+msgstr "استبدل إعدادات الحسابات بتفضيلات التطبيق، المبنية حول الحسابات والتطبيقات التي تستخدمها."
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21484,7 +21484,7 @@ msgstr "شارك تطبيقك مع مساحات عمل أخرى دون نشره 
 #. js-lingui-id: fX13zr
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Shared accounts between apps"
-msgstr ""
+msgstr "الحسابات المشتركة بين التطبيقات"
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -25547,7 +25547,7 @@ msgstr "مستخدم"
 #. js-lingui-id: xUOPoQ
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Used by"
-msgstr ""
+msgstr "يُستخدم بواسطة"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx

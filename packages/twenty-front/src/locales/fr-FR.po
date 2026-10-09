@@ -1391,7 +1391,7 @@ msgstr "Suppression de compte"
 #. js-lingui-id: T3FM0r
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
-msgstr ""
+msgstr "Paramètres du compte"
 
 #. js-lingui-id: bPwFdf
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -3144,7 +3144,7 @@ msgstr "Les journaux d'application sont conservés pendant {retentionInDays} jou
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "App preferences"
-msgstr ""
+msgstr "Préférences de l’application"
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -11558,7 +11558,7 @@ msgstr "Recherche globale"
 #. js-lingui-id: DSJEta
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 msgid "Gmail"
-msgstr ""
+msgstr "Gmail"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -11614,7 +11614,7 @@ msgstr "Google"
 #. js-lingui-id: ebIDwV
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 msgid "Google Calendar"
-msgstr ""
+msgstr "Google Agenda"
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -17489,7 +17489,7 @@ msgstr "Panne"
 #. js-lingui-id: gdC3cZ
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 msgid "Outlook"
-msgstr ""
+msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -19191,7 +19191,7 @@ msgstr "Supprimer {address}"
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
-msgstr ""
+msgstr "Supprimer {displayName}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19433,7 +19433,7 @@ msgstr "Réordonner les options"
 #. js-lingui-id: Jtm0TT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
-msgstr ""
+msgstr "Remplacer les paramètres des comptes par les préférences de l’application, basées sur les comptes et les applications qui les utilisent."
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21484,7 +21484,7 @@ msgstr "Partagez votre application avec d'autres espaces de travail sans la publ
 #. js-lingui-id: fX13zr
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Shared accounts between apps"
-msgstr ""
+msgstr "Comptes partagés entre les applications"
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -25549,7 +25549,7 @@ msgstr "Utilisés"
 #. js-lingui-id: xUOPoQ
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Used by"
-msgstr ""
+msgstr "Utilisé par"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
