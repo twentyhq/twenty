@@ -6,6 +6,7 @@ import { runComponentConformance } from '@test-utilities/conformance/runComponen
 
 import { SegmentedControl } from '../SegmentedControl';
 import styles from '../SegmentedControl.module.scss';
+import { type SegmentedControlProps } from '../types/SegmentedControlProps';
 
 const OPTIONS = [
   { label: 'Annual', value: 'annual' },
@@ -39,6 +40,7 @@ describe('SegmentedControl selection', () => {
     expect(screen.getByRole('radio', { name: 'Monthly' })).toBeChecked();
     expect(screen.getByRole('radio', { name: 'Annual' })).not.toBeChecked();
     expect(screen.queryByRole('tab')).toBeNull();
+    expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(onValueChange).toHaveBeenCalledWith(
       'monthly',
       expect.objectContaining({
@@ -64,6 +66,7 @@ describe('SegmentedControl selection', () => {
     await user.click(screen.getByRole('radio', { name: 'Monthly' }));
 
     expect(screen.getByRole('radio', { name: 'Annual' })).toBeChecked();
+    expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(onValueChange).toHaveBeenCalledWith('monthly', expect.anything());
 
     rerender(
@@ -76,17 +79,21 @@ describe('SegmentedControl selection', () => {
     );
 
     expect(screen.getByRole('radio', { name: 'Monthly' })).toBeChecked();
+    expect(onValueChange).toHaveBeenCalledTimes(1);
   });
 
   it('lets the caller cancel an uncontrolled selection', async () => {
     const user = userEvent.setup();
+    const onValueChange = vi.fn<
+      NonNullable<SegmentedControlProps['onValueChange']>
+    >((_value, eventDetails) => eventDetails.cancel());
 
     render(
       <SegmentedControl
         aria-label="Billing period"
         defaultValue="annual"
         options={OPTIONS}
-        onValueChange={(_value, eventDetails) => eventDetails.cancel()}
+        onValueChange={onValueChange}
       />,
     );
 
@@ -94,5 +101,6 @@ describe('SegmentedControl selection', () => {
 
     expect(screen.getByRole('radio', { name: 'Annual' })).toBeChecked();
     expect(screen.getByRole('radio', { name: 'Monthly' })).not.toBeChecked();
+    expect(onValueChange).toHaveBeenCalledTimes(1);
   });
 });
