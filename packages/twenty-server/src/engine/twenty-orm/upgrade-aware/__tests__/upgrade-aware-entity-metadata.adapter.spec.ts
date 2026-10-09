@@ -3,15 +3,20 @@ import 'reflect-metadata';
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { type DataSource } from 'typeorm';
+import { DataSource, EntitySchema } from 'typeorm';
+import { ConnectionMetadataBuilder } from 'typeorm/connection/ConnectionMetadataBuilder';
 import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 
+import { ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-is-system-to-agent-and-workflow-upgrade-command-name.constant';
+import { ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-triggers-to-agent-upgrade-command-name.constant';
+import { DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/drop-agent-evaluation-inputs-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 
 const RENAME_STEP = '2.6.0_Rename_1700000000000';
@@ -153,5 +158,77 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
     expect(visibleColumn.isUpdate).toBe(true);
 
     expect(metadata.columns).toEqual([visibleColumn]);
+  });
+
+  it('selects agent evaluation inputs until the 2.47 drop completes', async () => {
+    const dataSource = new DataSource({ type: 'postgres', schema: 'core' });
+    const agentSchema = new EntitySchema<AgentEntity>({
+      name: 'AgentEntity',
+      target: AgentEntity,
+      tableName: 'agent',
+      columns: {
+        id: { type: 'uuid', primary: true },
+        name: { type: 'varchar' },
+        evaluationInputs: { type: 'text', array: true },
+      },
+    });
+    const entityMetadatas = await new ConnectionMetadataBuilder(
+      dataSource,
+    ).buildEntityMetadatas([agentSchema]);
+
+    dataSource.entityMetadatas.push(...entityMetadatas);
+
+    for (const metadata of entityMetadatas) {
+      dataSource.entityMetadatasMap.set(metadata.target, metadata);
+    }
+
+    const getLastAttemptedInstanceCommand = jest.fn().mockResolvedValue({
+      name: ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME,
+      status: 'completed',
+    });
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        UpgradeAwareEntityMetadataAdapter,
+        {
+          provide: UpgradeMigrationService,
+          useValue: { getLastAttemptedInstanceCommand },
+        },
+        {
+          provide: UpgradeSequenceReaderService,
+          useValue: {
+            getUpgradeSequence: jest.fn().mockReturnValue([
+              {
+                name: ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME,
+              },
+              { name: ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME },
+              { name: DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME },
+            ]),
+          },
+        },
+        { provide: getDataSourceToken(), useValue: dataSource },
+      ],
+    }).compile();
+    const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+    const agentRepository = dataSource.getRepository(AgentEntity);
+
+    await adapter.onModuleInit();
+
+    expect(agentRepository.createQueryBuilder('agent').getSql()).toContain(
+      '"agent"."evaluationInputs"',
+    );
+
+    getLastAttemptedInstanceCommand.mockResolvedValue({
+      name: DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME,
+      status: 'completed',
+    });
+
+    await adapter.refresh();
+
+    const selectAfterDrop = agentRepository
+      .createQueryBuilder('agent')
+      .getSql();
+
+    expect(selectAfterDrop).not.toContain('evaluationInputs');
+    expect(selectAfterDrop).toContain('"agent"."name"');
   });
 });
