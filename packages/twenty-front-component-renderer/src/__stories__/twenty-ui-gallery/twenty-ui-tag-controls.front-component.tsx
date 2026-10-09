@@ -22,7 +22,15 @@ const TagControls = () => {
           {
             name: 'Tag',
             node: (
-              <>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  gap: 8,
+                  minWidth: 0,
+                }}
+              >
                 <Tag
                   color="blue"
                   onClick={handleClick}
@@ -107,7 +115,7 @@ const TagControls = () => {
                 >
                   A long tag label shown in full
                 </Tag>
-              </>
+              </div>
             ),
           },
         ]}

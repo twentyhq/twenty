@@ -22,7 +22,15 @@ const StatusControls = () => {
           {
             name: 'Status',
             node: (
-              <>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  gap: 8,
+                  minWidth: 0,
+                }}
+              >
                 <Status
                   color="green"
                   render={<button type="button" onClick={handleClick} />}
@@ -88,7 +96,7 @@ const StatusControls = () => {
                 <Status color="blue" loading aria-busy={false}>
                   Caller-owned busy state
                 </Status>
-              </>
+              </div>
             ),
           },
         ]}
