@@ -1,3 +1,4 @@
+import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { buildWorkflowVersionSideEffects } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/utils/build-workflow-version-side-effects.util';
 import { validateApplicationWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-workflow-version.util';
 import {
@@ -213,6 +214,17 @@ describe('managed workflow version validation', () => {
     invalid.version.steps[0].nextStepIds = [STEP_ID];
     const { version } = convert(invalid);
     expect(validate(version).errors.length).toBeGreaterThan(1);
+  });
+
+  it('refuses a trigger type applications cannot use', () => {
+    const { version } = convert();
+    const [trigger] = version.triggers ?? [];
+    expect(
+      validate({
+        ...version,
+        triggers: [{ ...trigger, type: WorkflowTriggerType.WEBHOOK }],
+      } as typeof version).errors[0]?.message,
+    ).toContain('Application workflows require one trigger of type MANUAL');
   });
 
   it('validates a managed definition but leaves API definitions unchanged', () => {

@@ -42,9 +42,8 @@ const workflowTriggerManifestOptions = [
   }),
 ] as const;
 
-const WORKFLOW_TRIGGER_MANIFEST_TYPES = workflowTriggerManifestOptions.map(
-  (option) => option.shape.type.value,
-);
+export const APPLICATION_WORKFLOW_TRIGGER_TYPES: readonly string[] =
+  workflowTriggerManifestOptions.map((option) => option.shape.type.value);
 
 export const workflowTriggerManifestSchema = z.discriminatedUnion(
   'type',
@@ -52,7 +51,7 @@ export const workflowTriggerManifestSchema = z.discriminatedUnion(
   {
     error: (issue) =>
       issue.code === 'invalid_union'
-        ? `Unsupported trigger type. Application workflows support: ${WORKFLOW_TRIGGER_MANIFEST_TYPES.join(', ')}`
+        ? `Unsupported trigger type. Application workflows support: ${APPLICATION_WORKFLOW_TRIGGER_TYPES.join(', ')}`
         : undefined,
   },
 );
