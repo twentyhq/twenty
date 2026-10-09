@@ -196,6 +196,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
+  if (isMatchingLocation(location, AppPath.Dpa)) {
+    return getSettingsPath(SettingsPath.LegalDpa);
+  }
+
   if (
     isMinimalMetadataReady &&
     isMatchingLocation(location, AppPath.RecordIndexPage) &&

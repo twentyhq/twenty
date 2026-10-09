@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { HttpResponse, graphql } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,10 +9,17 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
+import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
+import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
+import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+  CONNECTED_ACCOUNTS,
   GOOGLE_ACCOUNT_ID,
+  MICROSOFT_ACCOUNT_ID,
   deleteConnectedAccount,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
@@ -33,13 +41,13 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsAccounts>;
 
-const getAccountRow = (canvasElement: HTMLElement, handle: string) => {
+const getTableRow = (canvasElement: HTMLElement, text: string) => {
   const row = within(canvasElement)
-    .getByText(handle)
+    .getByText(text)
     .closest<HTMLElement>('[data-table-row]');
 
   if (!isDefined(row)) {
-    throw new Error(`No account row for ${handle}`);
+    throw new Error(`No table row for ${text}`);
   }
 
   return within(row);
@@ -77,7 +85,7 @@ export const AccountsGroupedByEmail: Story = {
     expect(canvas.getAllByText('App preferences').length).toBeGreaterThan(0);
     expect(canvas.queryByText('Connected accounts')).not.toBeInTheDocument();
 
-    const timRow = getAccountRow(canvasElement, 'tim@apple.dev');
+    const timRow = getTableRow(canvasElement, 'tim@apple.dev');
 
     expect(timRow.getByRole('img', { name: 'Gmail' })).toBeVisible();
     expect(timRow.getByRole('img', { name: 'Google Calendar' })).toBeVisible();
@@ -91,11 +99,11 @@ export const AccountsGroupedByEmail: Story = {
     );
     expect(canvas.queryByText('Tim@Apple.dev')).not.toBeInTheDocument();
 
-    const outlookRow = getAccountRow(canvasElement, 'tim@outlook.com');
+    const outlookRow = getTableRow(canvasElement, 'tim@outlook.com');
 
     expect(outlookRow.getAllByRole('img', { name: 'Outlook' })).toHaveLength(1);
 
-    const notesRow = getAccountRow(canvasElement, 'notes@apple.dev');
+    const notesRow = getTableRow(canvasElement, 'notes@apple.dev');
 
     expect(notesRow.getByRole('img', { name: 'Fathom' })).toBeVisible();
     expect(
@@ -113,6 +121,35 @@ export const AccountsGroupedByEmail: Story = {
   },
 };
 
+export const AppPreferencesListEnabledApps: Story = {
+  ...accountGroupsStory,
+  args: {
+    additionalRoutes: ['/settings/accounts/apps/outlook'],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      'Choose your preferences for the apps installed on your workspace by the admin',
+      undefined,
+      { timeout: 3000 },
+    );
+    await canvas.findByText('tim@apple.dev');
+
+    expect(canvas.getByRole('link', { name: 'Gmail' })).toBeVisible();
+    expect(canvas.getByRole('link', { name: 'Google Calendar' })).toBeVisible();
+    expect(canvas.queryByText('IMAP')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Missing account')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Blocklist')).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Outlook' }));
+
+    expect(
+      await canvas.findByText('Navigated to /settings/accounts/apps/outlook'),
+    ).toBeVisible();
+  },
+};
+
 export const RowOpensAccountPage: Story = {
   ...accountGroupsStory,
   play: async ({ canvasElement }) => {
@@ -120,7 +157,7 @@ export const RowOpensAccountPage: Story = {
 
     await canvas.findByText('Used by', undefined, { timeout: 3000 });
     await userEvent.click(
-      getAccountRow(canvasElement, 'tim@apple.dev').getByRole('img', {
+      getTableRow(canvasElement, 'tim@apple.dev').getByRole('img', {
         name: 'Gmail',
       }),
     );
@@ -143,7 +180,7 @@ export const DeleteKeepsAppConnections: Story = {
 
     const openDeleteDialog = async () => {
       await userEvent.click(
-        getAccountRow(canvasElement, 'tim@apple.dev').getByRole('button', {
+        getTableRow(canvasElement, 'tim@apple.dev').getByRole('button', {
           name: 'More options',
         }),
       );
@@ -164,7 +201,7 @@ export const DeleteKeepsAppConnections: Story = {
     );
 
     const remainingRow = await waitFor(() =>
-      getAccountRow(canvasElement, 'Tim@Apple.dev'),
+      getTableRow(canvasElement, 'Tim@Apple.dev'),
     );
 
     expect(remainingRow.getByRole('img', { name: 'Fathom' })).toBeVisible();
@@ -174,5 +211,71 @@ export const DeleteKeepsAppConnections: Story = {
     expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
     expect(deleteConnectedAccount.mock.calls).toEqual([[GOOGLE_ACCOUNT_ID]]);
     expect(canvas.queryByText(/Navigated to/)).not.toBeInTheDocument();
+  },
+};
+
+export const AppsWithoutAccountShowMissingAccount: Story = {
+  ...accountGroupsStory,
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', () =>
+          HttpResponse.json({
+            data: {
+              myConnectedAccounts: CONNECTED_ACCOUNTS.filter(
+                (account) =>
+                  account.id !== GOOGLE_ACCOUNT_ID &&
+                  account.id !== MICROSOFT_ACCOUNT_ID,
+              ),
+            },
+          }),
+        ),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      'Choose your preferences for the apps installed on your workspace by the admin',
+      undefined,
+      { timeout: 3000 },
+    );
+
+    expect(
+      await getTableRow(canvasElement, 'Outlook').findByText('Missing account'),
+    ).toBeVisible();
+    expect(
+      getTableRow(canvasElement, 'Google Calendar').getByText(
+        'Missing account',
+      ),
+    ).toBeVisible();
+    expect(
+      getTableRow(canvasElement, 'Gmail').queryByText('Missing account'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const BlocklistStaysWhenNoAppIsEnabled: Story = {
+  ...accountGroupsStory,
+  beforeEach: async () => {
+    await seedAccountGroupsStory();
+    jotaiStore.set(isGoogleMessagingEnabledState.atom, false);
+    jotaiStore.set(isGoogleCalendarEnabledState.atom, false);
+    jotaiStore.set(isMicrosoftMessagingEnabledState.atom, false);
+    jotaiStore.set(isMicrosoftCalendarEnabledState.atom, false);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Blocklist', undefined, { timeout: 3000 }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText(
+        'Choose your preferences for the apps installed on your workspace by the admin',
+      ),
+    ).not.toBeInTheDocument();
   },
 };
