@@ -49,8 +49,7 @@ export const computeMostlyEmptyFieldMetadataIds = ({
         return false;
       }
 
-      // A column missing from statistics (e.g. added after the last ANALYZE)
-      // means we don't know, and not knowing means no hint
+      // A column missing from statistics (e.g. added after the last ANALYZE) yields no hint
       return columnNames.every((columnName) => {
         const emptyFraction = emptyFractionByColumnName.get(columnName);
 

@@ -20,6 +20,30 @@ describe('isFieldTypeValidForAggregateOperation', () => {
     ).toBe(true);
   });
 
+  it('should allow min, max and avg but not sum for rating fields', () => {
+    expect(
+      (
+        [
+          AggregateOperations.MIN,
+          AggregateOperations.MAX,
+          AggregateOperations.AVG,
+        ] as const
+      ).every((operation) =>
+        isFieldTypeValidForAggregateOperation(
+          FieldMetadataType.RATING,
+          operation,
+        ),
+      ),
+    ).toBe(true);
+
+    expect(
+      isFieldTypeValidForAggregateOperation(
+        FieldMetadataType.RATING,
+        AggregateOperations.SUM,
+      ),
+    ).toBe(false);
+  });
+
   it('should return false for invalid field types', () => {
     expect(
       isFieldTypeValidForAggregateOperation(

@@ -164,7 +164,7 @@ export const StyledParagraph = styled.div`
 export const StyledSkeletonContainer = styled.div`
   max-width: 100%;
 
-  .react-loading-skeleton {
+  [data-skeleton] {
     max-width: 100%;
   }
 `;

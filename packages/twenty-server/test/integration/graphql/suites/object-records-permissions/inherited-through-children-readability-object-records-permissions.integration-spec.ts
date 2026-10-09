@@ -19,11 +19,9 @@ import { updateOneOperationFactory } from 'test/integration/graphql/utils/update
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
-  FeatureFlagKey,
   MetadataReadability,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -145,13 +143,6 @@ const reattachNoteOnBothToCompanyOperation = restoreManyOperationFactory({
   filter: { id: { eq: BOTH_COMPANY_NOTE_TARGET_ID } },
 });
 
-const setRecordSharingEnabled = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-    value,
-    expectToFail: false,
-  });
-
 const destroyRecords = ({
   objectMetadataSingularName,
   objectMetadataPluralName,
@@ -179,7 +170,6 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
   const sourceId = randomUUID();
 
   beforeAll(async () => {
-    await setRecordSharingEnabled(true);
     recordShareStorageService =
       getAppProviderByClassName<RecordShareStorageService>(
         'RecordShareStorageService',
@@ -314,7 +304,6 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(false);
     await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
@@ -440,6 +429,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
               WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
               memberRole.id,
             ],
+            canAccessAllRecords: false,
             isOwningApplication: () => false,
             resolveRowLevelPermissionRecordFilter: () => null,
           });
@@ -503,15 +493,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       expect(restoreResponse.body.errors).toBeDefined();
       expect(restoreResponse.body.errors[0].message).toContain('not writable');
 
-      await setRecordSharingEnabled(false);
-
       const reattachResponse = await makeGraphqlApiRequest(
         reattachNoteOnBothToCompanyOperation,
       );
 
       expect(reattachResponse.body.errors).toBeUndefined();
-
-      await setRecordSharingEnabled(true);
     });
 
     it('should not show a deleted note in the trash through a target detached before its deletion', async () => {
@@ -664,6 +650,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
               WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
               memberRole.id,
             ],
+            canAccessAllRecords: false,
             isOwningApplication: () => false,
             resolveRowLevelPermissionRecordFilter: () => null,
           });
@@ -830,6 +817,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
               WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
               memberRole.id,
             ],
+            canAccessAllRecords: false,
             isOwningApplication: () => false,
             resolveRowLevelPermissionRecordFilter: () => null,
           });
@@ -904,8 +892,6 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         }),
       );
 
-      await setRecordSharingEnabled(false);
-
       const deleteResponse = await makeGraphqlApiRequest(
         deleteManyOperationFactory({
           objectMetadataSingularName: 'note',
@@ -914,8 +900,6 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
           filter: noteOnCompanyFilter,
         }),
       );
-
-      await setRecordSharingEnabled(true);
 
       const trashedNotesResponse = await makeGraphqlApiRequestWithMemberRole(
         findManyOperationFactory({
@@ -928,8 +912,6 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
           },
         }),
       );
-
-      await setRecordSharingEnabled(false);
 
       const restoreNoteResponse = await makeGraphqlApiRequest(
         restoreManyOperationFactory({
@@ -947,8 +929,6 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
           filter: companyNoteTargetFilter,
         }),
       );
-
-      await setRecordSharingEnabled(true);
 
       expect(detachResponse.body.data.deleteNoteTargets).toEqual([
         { id: COMPANY_NOTE_TARGET_ID },

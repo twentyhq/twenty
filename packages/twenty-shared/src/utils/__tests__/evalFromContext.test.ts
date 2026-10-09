@@ -38,8 +38,6 @@ describe('evalFromContext', () => {
     expect(evalFromContext('{{step.[key.with.dots]}}', context)).toBe('dotted');
   });
 
-  // A path ending in a number or a keyword read it as a value rather than a
-  // key, so it never resolved; mid-path the same segment is an ordinary key
   it('should reject a trailing bare number but index through it mid-path', () => {
     expect(evalFromContext('{{list.[0]}}', context)).toBe('a');
     expect(evalFromContext('{{list.[1].x}}', context)).toBe('x1');
@@ -48,8 +46,7 @@ describe('evalFromContext', () => {
     expect(evalFromContext('{{list.0.length}}', context)).toBe(1);
   });
 
-  // Handlebars compiled each hop as `x != null ? x.key : x`, so walking through
-  // a null yields that null rather than undefined
+  // Handlebars compiled each hop as `x != null ? x.key : x`.
   it('should short-circuit to the nullish container it walks through', () => {
     expect(evalFromContext('{{nested.child.whatever}}', context)).toBeNull();
   });
@@ -66,8 +63,7 @@ describe('evalFromContext', () => {
     expect(evalFromContext('{{list.length}}', context)).toBe(2);
   });
 
-  // The value is JSON round-tripped, which is what the Handlebars `json` helper
-  // plus JSON.parse did, so these coercions are part of the contract
+  // The Handlebars `json` helper plus JSON.parse made these coercions part of the contract.
   it('should JSON round-trip the resolved value', () => {
     expect(evalFromContext('{{date}}', context)).toBe(
       '2020-01-02T03:04:05.000Z',
@@ -99,8 +95,7 @@ describe('evalFromContext', () => {
     expect(evalFromContext('not a token', context)).toBeUndefined();
   });
 
-  // `@root.` was a data lookup in Handlebars and compiled to a different guard
-  // from a bare path, so these two families are pinned separately
+  // `@root.` compiled to a different guard than a bare path in Handlebars.
   describe('context-prefixed paths', () => {
     const prefixContext = {
       zero: 0,
@@ -115,8 +110,6 @@ describe('evalFromContext', () => {
       expect(evalFromContext('{{this.obj.p}}', prefixContext)).toBe(1);
     });
 
-    // The guard is a plain truthiness test, so NaN short-circuits like any other
-    // falsy value and JSON round-trips to null
     it('should short-circuit an @root path on NaN', () => {
       expect(
         evalFromContext('{{@root.notANumber.missing}}', { notANumber: NaN }),
@@ -143,9 +136,6 @@ describe('evalFromContext', () => {
     });
   });
 
-  // A keyword read as a value rather than a key, which Handlebars only did
-  // where a value was expected: the whole expression, or the last segment of a
-  // path. Anywhere else it is an ordinary key, so `obj.true.length` resolves
   it('should not resolve a trailing bare keyword segment', () => {
     const keywordContext = { obj: { true: 'T', null: 'N' }, null: { x: 1 } };
 

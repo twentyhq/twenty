@@ -90,7 +90,6 @@ describe('detectCalendarStartDay', () => {
   });
 
   it('should handle Intl.Locale with weekInfo support', () => {
-    // Temporarily restore original and mock with weekInfo
     (global.Intl as any).Locale = jest.fn().mockImplementation(() => ({
       weekInfo: { firstDay: 1 }, // Monday
     }));
@@ -99,7 +98,6 @@ describe('detectCalendarStartDay', () => {
   });
 
   it('should handle Intl.Locale with Saturday firstDay', () => {
-    // Temporarily restore original and mock with weekInfo
     (global.Intl as any).Locale = jest.fn().mockImplementation(() => ({
       weekInfo: { firstDay: 6 }, // Saturday
     }));

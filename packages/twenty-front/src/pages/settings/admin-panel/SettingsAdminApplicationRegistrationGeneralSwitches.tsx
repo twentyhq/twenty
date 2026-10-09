@@ -1,4 +1,4 @@
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { IconArrowBarToDown, IconPinned, IconShield } from 'twenty-ui/icon';

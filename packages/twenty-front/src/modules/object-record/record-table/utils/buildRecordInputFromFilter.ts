@@ -30,8 +30,7 @@ export const buildRecordInputFromFilter = ({
       return;
     }
 
-    // A relation-traversal filter constrains a field of the related record,
-    // not a column of the record being created, so it cannot be prefilled.
+    // A relation-traversal filter constrains the related record, not a column to prefill.
     if (isDefined(filter.relationTargetFieldMetadataId)) {
       return;
     }

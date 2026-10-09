@@ -7,21 +7,6 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
 
-/**
- * Contract tests for the MCP tool catalog.
- *
- * 1. Catalog contract: every category advertised by get_tool_catalog must be
- *    dispatchable end to end through execute_tool. Dispatchable means the
- *    registry resolves and executes the tool: a structured business failure
- *    (e.g. a search tool rejecting empty arguments) still proves dispatch,
- *    only "not found" / "not available" outputs do not. Scales automatically:
- *    a newly registered provider is covered the moment it appears in the
- *    catalog, with no new test code.
- * 2. Permission gating: the catalog is role-dependent. An API key bound to a
- *    role without settings permissions must not see settings-gated tools
- *    (e.g. the ROLE category), while an admin-bound key must.
- */
-
 const baseUrl = `http://localhost:${APP_PORT}`;
 
 const postMcp = (body: object, bearer: string, path = '/mcp') =>
@@ -67,11 +52,8 @@ const getToolCatalog = async (
 
 const READ_ONLY_TOOL_NAME_PATTERN = /^(find_|list_|get_|search_)/;
 
-// Dispatch-layer failures come from execute_tool gating or the registry
-// (unknown or unavailable tool), not from the executed tool itself. Their
-// exact wording is pinned by the "should report unknown tools as dispatch
-// failures" control test below, so drift fails loudly instead of silently
-// weakening the catalog contract.
+// Dispatch failures come from execute_tool gating or the registry, not the tool itself; their exact wording is
+// pinned by the unknown-tools control test below, so drift fails loudly
 const DISPATCH_FAILURE_MESSAGE_PATTERN =
   /^Tool ".+" (not found|is not available)$/;
 
@@ -92,16 +74,23 @@ const isDispatchFailure = (result: {
   );
 };
 
-// Deliberate exceptions to the "every advertised category is dispatchable
-// through a read-only tool" contract. Currently none: every category the MCP
-// catalog advertises ships at least one read-only tool. Adding a category
-// here must be a conscious decision, not silent drift.
+// Adding a category here must be a conscious decision, not silent drift
 const EXPECTED_CATEGORIES_WITHOUT_READ_ONLY_TOOLS: string[] = [];
 
 const listMcpTools = async (
   bearer: string,
   path: string,
-): Promise<{ name: string; inputSchema: { type?: string } }[]> => {
+): Promise<
+  {
+    name: string;
+    inputSchema: { type?: string };
+    annotations?: {
+      readOnlyHint: boolean;
+      openWorldHint: boolean;
+      destructiveHint: boolean;
+    };
+  }[]
+> => {
   const response = await postMcp(
     { jsonrpc: '2.0', method: 'tools/list', id: '1' },
     bearer,
@@ -238,8 +227,7 @@ describe('MCP tool catalog (integration)', () => {
           .slice(0, 3);
 
         if (readOnlyCandidates.length === 0) {
-          // A write-only category has nothing safe to dispatch in CI; it is
-          // collected and checked against the deliberate exception list below.
+          // A write-only category has nothing safe to dispatch in CI
           categoriesWithoutReadOnlyTool.push(category);
           continue;
         }
@@ -252,10 +240,7 @@ describe('MCP tool catalog (integration)', () => {
             arguments: {},
           });
 
-          // Called with empty arguments, a resolved tool may legitimately
-          // return a structured failure (isError true since the MCP layer
-          // surfaces success: false); only a dispatch-layer failure means the
-          // category is advertised but not actually wired up.
+          // A tool may return a structured failure on empty arguments; only a dispatch failure means it is unwired
           if (!isDispatchFailure(result)) {
             dispatched = true;
             break;
@@ -268,8 +253,7 @@ describe('MCP tool catalog (integration)', () => {
         });
       }
 
-      // Exact equality fails in both directions, so gaining or losing a
-      // skipped category forces a deliberate update of the exception list.
+      // Exact equality so gaining or losing a skipped category forces updating the exception list
       expect([...categoriesWithoutReadOnlyTool].sort()).toEqual(
         EXPECTED_CATEGORIES_WITHOUT_READ_ONLY_TOOLS,
       );
@@ -310,8 +294,7 @@ describe('MCP tool catalog (integration)', () => {
 
       expect(allToolNames).not.toEqual(expect.arrayContaining(['create_role']));
 
-      // The restricted role still sees record read tools, proving the empty
-      // ROLE category is gating rather than a broken catalog.
+      // Proves the empty ROLE category is gating rather than a broken catalog
       expect(catalog[ToolCategory.DATABASE_CRUD]?.length).toBeGreaterThan(0);
     });
   });
@@ -371,6 +354,26 @@ describe('MCP tool catalog (integration)', () => {
 
       expect(result.isError).toBe(true);
       expect(isDispatchFailure(result)).toBe(true);
+    });
+
+    it('should mark database read tools read-only and keep execute hints on writes', async () => {
+      const annotationsByToolName = Object.fromEntries(
+        (await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)).map((tool) => [
+          tool.name,
+          tool.annotations,
+        ]),
+      );
+
+      expect(annotationsByToolName.find_many_people).toEqual({
+        readOnlyHint: true,
+        openWorldHint: false,
+        destructiveHint: false,
+      });
+      expect(annotationsByToolName.create_one_person).toEqual({
+        readOnlyHint: false,
+        openWorldHint: true,
+        destructiveHint: false,
+      });
     });
 
     it('should keep plain /mcp on the meta-tools', async () => {

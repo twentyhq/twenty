@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto';
 import { gql } from 'graphql-tag';
 import { type DataSource } from 'typeorm';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { v5 } from 'uuid';
@@ -101,7 +101,7 @@ type ThreadsResult = {
 
 describe('Admin panel global chat threads (integration)', () => {
   let dataSource: DataSource;
-  let storage: AgentHistoryStorageService;
+  let storage: AgentHistoryUpgradeStorageService;
   let userWorkspaceId: string;
   let workspaceMemberId: string;
   let userEmail: string;
@@ -131,30 +131,34 @@ describe('Admin panel global chat threads (integration)', () => {
   const insertThread = async ({
     id,
     title,
-    lastStreamError,
+    hasFailedTurn = false,
   }: {
     id: string;
     title: string;
-    lastStreamError?: object;
+    hasFailedTurn?: boolean;
   }): Promise<string> => {
     await insertHistory(
       'agentChatThread',
-      [
-        'id',
-        'workspaceMemberId',
-        'userWorkspaceId',
-        'title',
-        'lastStreamError',
-      ],
-      [
-        id,
-        workspaceMemberId,
-        userWorkspaceId,
-        title,
-        lastStreamError ? JSON.stringify(lastStreamError) : null,
-      ],
-      'ON CONFLICT (id) DO UPDATE SET "lastStreamError" = EXCLUDED."lastStreamError"',
+      ['id', 'workspaceMemberId', 'userWorkspaceId', 'title'],
+      [id, workspaceMemberId, userWorkspaceId, title],
+      'ON CONFLICT (id) DO NOTHING',
     );
+
+    if (hasFailedTurn) {
+      await insertHistory(
+        'agentTurn',
+        ['id', 'threadId', 'status', 'error'],
+        [
+          randomUUID(),
+          id,
+          'failed',
+          JSON.stringify({
+            code: 'STREAM_EXECUTION_FAILED',
+            message: 'stream failed',
+          }),
+        ],
+      );
+    }
 
     seededThreadIds.push(id);
 
@@ -168,7 +172,7 @@ describe('Admin panel global chat threads (integration)', () => {
     createdAt,
   }: {
     threadId: string;
-    role: 'user' | 'assistant';
+    role: 'system' | 'user' | 'assistant';
     isHidden?: boolean;
     createdAt: string;
   }): Promise<string> => {
@@ -260,7 +264,7 @@ describe('Admin panel global chat threads (integration)', () => {
 
   beforeAll(async () => {
     dataSource = global.testDataSource;
-    storage = getAppProviderByClassName<AgentHistoryStorageService>(
+    storage = getAppProviderByClassName<AgentHistoryUpgradeStorageService>(
       'AgentHistoryUpgradeStorageService',
     );
 
@@ -284,15 +288,14 @@ describe('Admin panel global chat threads (integration)', () => {
       id: randomUUID(),
       title: 'integration-onboarding-kickoff-thread',
     });
-    const hiddenKickoffMessageId = await insertMessage({
+    const kickoffContextMessageId = await insertMessage({
       threadId: kickoffThreadId,
-      role: 'user',
-      isHidden: true,
+      role: 'system',
       createdAt: '2026-01-01T00:00:00Z',
     });
 
     await insertPart({
-      messageId: hiddenKickoffMessageId,
+      messageId: kickoffContextMessageId,
       orderIndex: 0,
       type: 'text',
       textContent: 'kickoff prompt with company context',
@@ -337,7 +340,7 @@ describe('Admin panel global chat threads (integration)', () => {
     regularThreadId = await insertThread({
       id: randomUUID(),
       title: 'integration-regular-thread',
-      lastStreamError: { message: 'stream failed' },
+      hasFailedTurn: true,
     });
     const regularAssistantMessageId = await insertMessage({
       threadId: regularThreadId,
@@ -380,17 +383,17 @@ describe('Admin panel global chat threads (integration)', () => {
     await insertPart({
       messageId: answeredQuestionMessageId,
       orderIndex: 0,
-      type: 'tool-ask_questions',
-      toolName: 'ask_questions',
-      toolCallId: 'call-answered-questions',
-      toolInput: { questions: questionItems },
+      type: 'tool-ask_question',
+      toolName: 'ask_question',
+      toolCallId: 'call-answered-question',
+      toolInput: questionItems[0],
       toolOutput: {
         success: true,
-        message: 'User answered the questions.',
+        message: 'User answered the question.',
         result: {
-          questions: questionItems,
+          question: questionItems[0],
           status: 'answered',
-          answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+          answer: { selectedOptionIndices: [0] },
         },
       },
       state: 'output-available',
@@ -519,8 +522,7 @@ describe('Admin panel global chat threads (integration)', () => {
       ]);
     });
 
-    // A workflow run's conversation belongs to no member, and a null owner
-    // must not null out a non-null field and fail the whole list.
+    // Workflow-run conversations belong to no member; a null owner must not fail the whole list on a non-null field.
     it('lists a thread without an owner', async () => {
       const ownerlessThreadId = randomUUID();
 
@@ -704,7 +706,7 @@ describe('Admin panel global chat threads (integration)', () => {
   });
 
   describe('getAdminChatThreadMessages', () => {
-    it('returns the hidden kickoff first with enriched ordered parts', async () => {
+    it('returns the kickoff context first with enriched ordered parts', async () => {
       const response = await makeAdminPanelApiRequest({
         query: GET_ADMIN_CHAT_THREAD_MESSAGES,
         variables: { threadId: kickoffThreadId },
@@ -717,8 +719,8 @@ describe('Admin panel global chat threads (integration)', () => {
       expect(result.thread.messageCount).toBe(2);
       expect(result.messages).toHaveLength(3);
       expect(result.messages[0]).toMatchObject({
-        role: 'USER',
-        isHidden: true,
+        role: 'SYSTEM',
+        isHidden: false,
       });
       expect(result.messages[0].parts[0].textContent).toBe(
         'kickoff prompt with company context',

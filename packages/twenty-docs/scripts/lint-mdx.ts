@@ -6,9 +6,7 @@ import {
   SUPPORTED_LANGUAGES,
 } from '../navigation/supported-languages';
 
-// Crowdin parses `<foo>` in prose as a tag rather than literal text, so an angle
-// bracket placeholder is either dropped or mangled in every translated page.
-// Curly braces `{foo}` survive the round trip.
+// Crowdin parses `<foo>` in prose as a tag and mangles it in translations; `{foo}` survives.
 
 const DOCS_ROOT = path.resolve(__dirname, '..');
 
@@ -102,8 +100,7 @@ type Range = {
 
 const FENCE_LINE_PATTERN = /^\s*(`{3,})/;
 
-// A fence closes only on a run at least as long as the one that opened it, so a
-// block opened with ``` is not closed by the first ``` inside a ```` example.
+// A fence closes only on a run at least as long as its opener (CommonMark).
 const getFencedCodeRanges = (text: string): Range[] => {
   const ranges: Range[] = [];
   const lines = text.split('\n');
@@ -138,9 +135,7 @@ const getFencedCodeRanges = (text: string): Range[] => {
 const isInsideRange = (position: number, ranges: Range[]) =>
   ranges.some((range) => position >= range.start && position < range.end);
 
-// Backtick runs are paired within a line, never across one. A running parity
-// counter would let a single unpaired backtick silently suppress every finding
-// in the rest of the file.
+// Paired per line: a running counter would let one unpaired backtick suppress every later finding.
 const getInlineCodeRanges = (text: string, fencedRanges: Range[]): Range[] => {
   const ranges: Range[] = [];
   let lineStart = 0;

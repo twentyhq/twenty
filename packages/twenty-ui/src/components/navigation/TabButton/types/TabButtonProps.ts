@@ -3,7 +3,14 @@ import { type TabsTabProps } from '@ui/primitives/navigation/Tabs/types/TabsTabP
 
 export type TabButtonProps = Omit<
   ButtonProps,
-  'variant' | 'color' | 'fullWidth' | 'loading' | 'elevated' | 'hotkeys'
+  | 'variant'
+  | 'color'
+  | 'fullWidth'
+  | 'loading'
+  | 'loadingPosition'
+  | 'elevated'
+  | 'shortcut'
+  | 'shortcutJoinLabel'
 > &
   Pick<TabsTabProps, 'badge'> & {
     active?: boolean;

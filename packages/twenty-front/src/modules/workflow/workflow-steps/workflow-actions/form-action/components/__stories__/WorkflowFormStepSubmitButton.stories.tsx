@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
-import { Toaster } from 'twenty-ui/components';
+import { Toaster } from 'twenty-ui/components/feedback';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -18,7 +18,6 @@ import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 const WORKFLOW_RUN_ID = oneSucceededWorkflowRunQueryResult.workflowRun.id;
 const STEP_ID = '212a171a-f887-4213-8892-e39c2a3ecc30';
-const THREAD_ID = 'a19e36a1-e3bb-4fa0-8317-79c7e938849e';
 
 const FormSubmission = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -47,11 +46,11 @@ const FormSubmission = () => {
 };
 
 const createHandlers = ({
-  threadId,
   errorCode,
+  userFriendlyMessage = 'Unable to submit form',
 }: {
-  threadId?: string;
   errorCode?: string;
+  userFriendlyMessage?: string;
 } = {}) => [
   graphql.query('FindOneWorkflowRun', () =>
     HttpResponse.json({
@@ -68,36 +67,24 @@ const createHandlers = ({
           },
           state: {
             ...oneSucceededWorkflowRunQueryResult.workflowRun.state,
-            stepInfos: { [STEP_ID]: { status: 'PENDING', threadId } },
+            stepInfos: { [STEP_ID]: { status: 'PENDING' } },
           },
         },
       },
     }),
   ),
-  graphql.mutation(threadId ? 'AnswerToolCall' : 'SubmitFormStep', () =>
+  graphql.mutation('SubmitFormStep', () =>
     HttpResponse.json(
       errorCode
         ? {
             errors: [
               {
-                message: 'Unable to submit form',
-                extensions: {
-                  code: errorCode,
-                  userFriendlyMessage: 'Unable to submit form',
-                },
+                message: userFriendlyMessage,
+                extensions: { code: errorCode, userFriendlyMessage },
               },
             ],
           }
-        : {
-            data: threadId
-              ? {
-                  answerToolCall: {
-                    __typename: 'AnswerToolCallResult',
-                    streamId: null,
-                  },
-                }
-              : { submitFormStep: true },
-          },
+        : { data: { submitFormStep: true } },
     ),
   ),
   ...graphqlMocks.handlers,
@@ -125,7 +112,7 @@ const meta: Meta<typeof FormSubmission> = {
 export default meta;
 type Story = StoryObj<typeof FormSubmission>;
 
-export const WithoutConversation: Story = {
+export const Submitted: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -136,14 +123,14 @@ export const WithoutConversation: Story = {
   },
 };
 
-export const WithConversation: Story = {
-  parameters: { msw: { handlers: createHandlers({ threadId: THREAD_ID }) } },
-  play: WithoutConversation.play,
-};
-
 export const NoLongerPending: Story = {
   parameters: {
-    msw: { handlers: createHandlers({ errorCode: 'TOOL_CALL_NOT_PENDING' }) },
+    msw: {
+      handlers: createHandlers({
+        errorCode: 'BAD_USER_INPUT',
+        userFriendlyMessage: 'This form no longer waits for an answer.',
+      }),
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -153,7 +140,7 @@ export const NoLongerPending: Story = {
     );
     expect(
       await within(document.body).findByText(
-        'This form no longer waits for an answer',
+        'This form no longer waits for an answer.',
       ),
     ).toBeVisible();
     expect(canvas.queryByText('Form submitted')).not.toBeInTheDocument();
@@ -164,7 +151,7 @@ export const NoLongerPending: Story = {
 export const SubmissionError: Story = {
   parameters: {
     msw: {
-      handlers: createHandlers({ errorCode: 'TOOL_CALL_RESOLUTION_FORBIDDEN' }),
+      handlers: createHandlers({ errorCode: 'FORBIDDEN' }),
     },
   },
   play: async ({ canvasElement }) => {

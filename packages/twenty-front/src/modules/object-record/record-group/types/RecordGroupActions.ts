@@ -7,4 +7,5 @@ export type RecordGroupAction = {
   position: number;
   callback: () => void;
   condition?: boolean;
+  closeOnClick?: boolean;
 };

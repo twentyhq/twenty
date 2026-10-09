@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -55,7 +55,9 @@ export const FieldsWidgetGroupContainer = ({
           />
         </StyledChevronWrapper>
       </StyledHeader>
-      <Collapsible isExpanded={isExpanded}>{children}</Collapsible>
+      <Collapsible.Root open={isExpanded}>
+        <Collapsible.Panel>{children}</Collapsible.Panel>
+      </Collapsible.Root>
     </Section.Root>
   );
 };

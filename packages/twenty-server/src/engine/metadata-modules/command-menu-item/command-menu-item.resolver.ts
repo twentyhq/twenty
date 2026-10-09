@@ -202,9 +202,7 @@ export class CommandMenuItemResolver {
     return await this.commandMenuItemService.delete(id, workspace.id);
   }
 
-  // Activating a manual trigger writes a workspace-wide menu item, so the
-  // command menu announces a private workflow by name unless the list answers
-  // to the same rule as the workflow itself.
+  // manual trigger items are workspace-wide and would otherwise leak private workflow names
   private async withoutInaccessibleWorkflowItems({
     commandMenuItems,
     workspaceId,
@@ -214,21 +212,25 @@ export class CommandMenuItemResolver {
     workspaceId: string;
     userWorkspaceId: string | undefined;
   }): Promise<CommandMenuItemDTO[]> {
-    const inaccessibleWorkspaceWorkflowVersionIds =
-      await this.coreWorkflowAccessService.findInaccessibleWorkspaceWorkflowVersionIds(
-        {
-          workspaceId,
-          userWorkspaceId,
-          workspaceWorkflowVersionIds: commandMenuItems
-            .map(({ workflowVersionId }) => workflowVersionId)
-            .filter(isDefined),
-        },
-      );
+    const inaccessibleWorkflowVersionIds =
+      await this.coreWorkflowAccessService.findInaccessibleWorkflowVersionIds({
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionIds: commandMenuItems
+          .map(({ coreWorkflowVersionId }) => coreWorkflowVersionId)
+          .filter(isDefined),
+        workspaceWorkflowVersionIds: commandMenuItems
+          .map(({ workflowVersionId }) => workflowVersionId)
+          .filter(isDefined),
+      });
 
     return commandMenuItems.filter(
-      ({ workflowVersionId }) =>
-        !isDefined(workflowVersionId) ||
-        !inaccessibleWorkspaceWorkflowVersionIds.has(workflowVersionId),
+      ({ coreWorkflowVersionId, workflowVersionId }) =>
+        ![coreWorkflowVersionId, workflowVersionId].some(
+          (workflowVersionIdToCheck) =>
+            isDefined(workflowVersionIdToCheck) &&
+            inaccessibleWorkflowVersionIds.has(workflowVersionIdToCheck),
+        ),
     );
   }
 }

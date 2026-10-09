@@ -25,6 +25,7 @@ import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modu
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
@@ -62,11 +63,13 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => ApplicationRegistrationEntity)
@@ -80,6 +83,7 @@ import {
 export class ApplicationRegistrationResolver {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationRegistrationClaimService: ApplicationRegistrationClaimService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
@@ -109,15 +113,17 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     NoPermissionGuard,
+    ApplicationTargetGuard,
   )
   @Query(() => ApplicationRegistrationEntity, { nullable: true })
   async findApplicationRegistrationByUniversalIdentifier(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+    return this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
       universalIdentifier,
     );
   }
@@ -171,14 +177,18 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
   )
   @Query(() => ApplicationRegistrationEntity)
   async findOneApplicationRegistration(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: true,
+    })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationRegistrationService.findOneById({
+    return this.applicationRegistrationLookupService.findOneByIdOrThrow({
       applicationRegistrationId,
       ownerWorkspaceId: workspaceId,
     });
@@ -197,10 +207,14 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
   )
   @Query(() => ApplicationRegistrationStatsDTO)
   async findApplicationRegistrationStats(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: true,
+    })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationStatsDTO> {
@@ -220,7 +234,7 @@ export class ApplicationRegistrationResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
@@ -247,15 +261,17 @@ export class ApplicationRegistrationResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
   )
   @Mutation(() => ApplicationRegistrationEntity)
   async updateApplicationRegistration(
     @ApplicationTargetArg<UpdateApplicationRegistrationInput>('input', {
       kind: 'applicationRegistrationId',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: true,
     })
     input: UpdateApplicationRegistrationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -273,13 +289,17 @@ export class ApplicationRegistrationResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
   )
   @Mutation(() => Boolean)
   async deleteApplicationRegistration(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: true,
+    })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
@@ -299,14 +319,18 @@ export class ApplicationRegistrationResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
     SettingsPermissionGuard(PermissionFlagType.ROLES),
+    ApplicationTargetGuard,
   )
   @Mutation(() => RotateClientSecretDTO)
   async rotateApplicationRegistrationClientSecret(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: true,
+    })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<RotateClientSecretDTO> {
@@ -332,11 +356,13 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
   )
   @Query(() => [ApplicationRegistrationVariableDTO])
   async findApplicationRegistrationVariables(
     @ApplicationTargetArg('applicationRegistrationId', {
       kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: true,
     })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -356,7 +382,7 @@ export class ApplicationRegistrationResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
@@ -384,7 +410,7 @@ export class ApplicationRegistrationResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
@@ -409,7 +435,7 @@ export class ApplicationRegistrationResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
@@ -466,17 +492,22 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
   )
   @Query(() => String, { nullable: true })
   async applicationRegistrationTarballUrl(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: true,
+    })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<string | null> {
-    const registration = await this.applicationRegistrationService.findOneById({
-      applicationRegistrationId,
-      ownerWorkspaceId: workspaceId,
-    });
+    const registration =
+      await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+        applicationRegistrationId,
+        ownerWorkspaceId: workspaceId,
+      });
 
     if (
       registration.sourceType !== ApplicationRegistrationSourceType.TARBALL ||
@@ -560,10 +591,16 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
   )
   @Query(() => String)
   async githubClaimAuthorizationUrl(
-    @Args() { applicationRegistrationId }: ApplicationRegistrationClaimInput,
+    @ApplicationTargetArgs<ApplicationRegistrationClaimInput>({
+      kind: 'applicationRegistrationId',
+      idKey: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { applicationRegistrationId }: ApplicationRegistrationClaimInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @Context() context: { req: Request },
@@ -598,10 +635,15 @@ export class ApplicationRegistrationResolver {
       application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
   )
   @Mutation(() => ApplicationRegistrationEntity)
   async transferApplicationRegistrationOwnership(
-    @Args()
+    @ApplicationTargetArgs<TransferApplicationRegistrationOwnershipInput>({
+      kind: 'applicationRegistrationId',
+      idKey: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: true,
+    })
     {
       applicationRegistrationId,
       targetWorkspaceSubdomain,

@@ -11,10 +11,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-// Cursor encoding reads orderBy values from the hydrated record, so every column the
-// query is ordered by must be selected even when the client did not request it.
-// Otherwise the cursor silently degrades to an id-only cursor and pagination skips
-// records (see issue #24333).
+// Cursors read orderBy values from the record: an unselected one degrades to an id-only cursor that skips records (#24333)
 export const buildOrderByColumnsToSelect = ({
   orderBy,
   flatObjectMetadata,
@@ -31,8 +28,7 @@ export const buildOrderByColumnsToSelect = ({
     flatObjectMetadata,
     flatFieldMetadataMaps,
   }).filter(checkIfLeafCanCarryCursorValue)) {
-    // Relation orderBy values live on a joined alias, not on a root column:
-    // cursors read them from the ordering join's raw rows instead
+    // Cursors read relation values from the ordering join's raw rows, not a root column
     if (leaf.kind === 'relation') {
       continue;
     }

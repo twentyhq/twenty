@@ -1,35 +1,34 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { useAnswerToolCall } from '@/ai/hooks/useAnswerToolCall';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { findToolPartOutput } from '@/ai/utils/findToolPartOutput';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
+import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { AnswerToolCallDocument } from '~/generated/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useAnswerAgentChatToolCall = () => {
-  const { answerToolCall } = useAnswerToolCall();
+  const apolloCoreClient = useApolloCoreClient();
   const store = useStore();
   const { enqueueToast } = useToast();
   const { modelIdForRequest } = useAgentChatModelId();
 
-  // Returns whether the call was answered, so a card can keep itself disabled
-  // until the call is closed rather than invite a second answer.
+  // Returns whether answered, so a card stays disabled until the call closes.
   const answerAgentChatToolCall = useCallback(
     async ({
       toolCallId,
@@ -46,19 +45,12 @@ export const useAnswerAgentChatToolCall = () => {
         return false;
       }
 
-      const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily({
-        instanceId: AGENT_CHAT_INSTANCE_ID,
-        familyKey: { threadId },
+      const messagesAtom = agentChatMessagesFamilyState.atomFamily({
+        threadId,
       });
+      const errorAtom = agentChatErrorFamilyState.atomFamily({ threadId });
       const isAwaitingFirstChunkAtom =
-        agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
-          instanceId: AGENT_CHAT_INSTANCE_ID,
-          familyKey: { threadId },
-        });
-      const errorAtom = agentChatErrorComponentFamilyState.atomFamily({
-        instanceId: AGENT_CHAT_INSTANCE_ID,
-        familyKey: { threadId },
-      });
+        agentChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
 
       const previousToolOutput = findToolPartOutput({
         messages: store.get(messagesAtom),
@@ -78,15 +70,20 @@ export const useAnswerAgentChatToolCall = () => {
       store.set(isAwaitingFirstChunkAtom, true);
 
       try {
-        const { streamId } = await answerToolCall({
-          threadId,
-          toolCallId,
-          response,
-          modelId: modelIdForRequest,
+        const { data } = await apolloCoreClient.mutate({
+          mutation: AnswerToolCallDocument,
+          variables: {
+            input: {
+              threadId,
+              toolCallId,
+              response,
+              modelId: modelIdForRequest,
+            },
+          },
         });
+        const streamId = data?.answerToolCall.streamId;
 
-        // No chunk follows when a workflow run resumes in its own executor,
-        // or when other calls of the same step still wait on their answers.
+        // No chunk follows when a workflow run resumes in its own executor or other calls still wait.
         if (!isDefined(streamId)) {
           store.set(isAwaitingFirstChunkAtom, false);
         }
@@ -100,12 +97,7 @@ export const useAnswerAgentChatToolCall = () => {
         // The banner reads the workspace flag, then the thread error when no resource credit item carries that flag
         if (isAiChatCreditsExhaustedError(error)) {
           store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
-          store.set(
-            errorAtom,
-            CombinedGraphQLErrors.is(error) || error instanceof Error
-              ? error
-              : new Error('An unexpected error occurred'),
-          );
+          store.set(errorAtom, toAiChatError(error));
         }
 
         if (
@@ -127,7 +119,7 @@ export const useAnswerAgentChatToolCall = () => {
         return false;
       }
     },
-    [answerToolCall, store, enqueueToast, modelIdForRequest],
+    [apolloCoreClient, store, enqueueToast, modelIdForRequest],
   );
 
   return { answerAgentChatToolCall };

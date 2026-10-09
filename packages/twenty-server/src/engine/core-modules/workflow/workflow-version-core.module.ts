@@ -15,12 +15,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
-import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 
 @Module({
   imports: [
     ApplicationModule,
-    CacheStorageModule,
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     RecordPositionModule,
@@ -34,10 +32,6 @@ import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-
     WorkflowVersionCoreSyncService,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
   ],
-  exports: [
-    TypeOrmModule,
-    WorkspaceWorkflowAutomatedTriggerMapCacheService,
-    WorkflowVersionCoreSyncService,
-  ],
+  exports: [TypeOrmModule, WorkflowVersionCoreSyncService],
 })
 export class WorkflowVersionCoreModule {}

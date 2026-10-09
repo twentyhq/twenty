@@ -5,7 +5,7 @@ import { useUsageLimitSpenderOptions } from '@/settings/billing/hooks/useUsageLi
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
 type SettingsBillingLimitSpenderOptionListProps = {

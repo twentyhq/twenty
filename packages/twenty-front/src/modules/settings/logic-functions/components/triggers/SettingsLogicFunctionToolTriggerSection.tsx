@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ToolTriggerSettings } from 'twenty-shared/application';
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
-import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
+import { SettingsToolParameterTable } from '@/settings/ai/components/SettingsToolParameterTable';
 
 const DEFAULT_TOOL_TRIGGER_SETTINGS: ToolTriggerSettings = {
   inputSchema: DEFAULT_TOOL_INPUT_SCHEMA,

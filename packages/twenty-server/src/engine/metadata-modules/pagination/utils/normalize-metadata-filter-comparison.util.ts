@@ -77,9 +77,7 @@ export const normalizeMetadataFilterComparison = ({
       );
     }
 
-    // Postgres compares uuid columns canonically, but the in-memory matcher
-    // compares raw strings, so operands are lowercased to keep both paths
-    // agreeing on differently-cased but equal ids.
+    // Postgres compares uuids case-insensitively but the in-memory matcher compares raw strings
     return lowercaseComparisonOperands(normalizedComparison);
   }
 

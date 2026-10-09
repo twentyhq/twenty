@@ -6,6 +6,7 @@ import {
   toCoreWorkflowVersionStatus,
   toWorkspaceWorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/utils/workflow-version-status.util';
+import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -41,7 +42,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -124,8 +124,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<boolean> {
-    // this one reads the version straight from the repository rather than
-    // through the id resolver, so it needs the rule applied by hand
+    // Reads the version from the repository, not the id resolver, so the rule is applied by hand.
     await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
       {
         workspaceId,
@@ -226,9 +225,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
     let previousResolved: ResolvedCoreVersion | undefined;
 
-    // The workspace side keeps its transaction, locks and checks. The core side
-    // is collected here and applied by the migration runner once that
-    // transaction has committed, then reverted if it did not.
+    // The core side is applied by the migration runner after this transaction commits, and reverted if it does not.
     const pendingCoreStatuses = new Map<string, WorkflowVersionStatus>();
     const triggersToRestore: TriggerToRestore[] = [];
     const statusesToRestore = new Map<string, WorkflowVersionStatus>();
@@ -632,9 +629,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     return currentlyActiveCoreVersion?.id ?? null;
   }
 
-  // The core half of this write is collected and applied by the migration runner
-  // after the transaction, because the runner owns its own transaction and the
-  // events the surfaces listen to are derived from its actions.
+  // Applied after the transaction: the runner owns its own, and the surfaces' events derive from its actions.
   private async writeVersionStatusInTransaction({
     transactionScope,
     coreWorkflowVersionId,
@@ -780,8 +775,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
                 );
             }
 
-            // The trigger work committed with the mirror transaction, so leaving it
-            // would arm an automation on a version that is no longer active.
+            // The trigger work committed with the mirror transaction, so leaving it would arm an inactive version.
             for (const { resolved, action } of [
               ...triggersToRestore,
             ].reverse()) {
@@ -801,8 +795,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
         );
       }, buildSystemAuthContext(workspaceId));
 
-      // The forward disable dropped the cron cache entry after its commit, so a
-      // re-armed cron version would stay invisible to the scheduler without this.
+      // The forward disable dropped the cron cache entry after commit, so a re-armed version needs it rewritten.
       for (const { resolved, action } of triggersToRestore) {
         if (action === 'enable') {
           await this.writeCronTriggerCacheEntryAfterCommit({ resolved });

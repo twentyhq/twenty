@@ -2,7 +2,7 @@ import { getToolName, isToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
+import { findAwaitingPausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool.util';
 
 // A call whose input cannot be read cannot be answered.
 export type AwaitingPausingToolPart = {
@@ -11,8 +11,6 @@ export type AwaitingPausingToolPart = {
   isAnswerable: boolean;
 };
 
-// A step can call several pausing tools at once, and each waits on its own
-// answer.
 export const findAwaitingPausingToolParts = (
   parts: ExtendedUIMessagePart[],
 ): AwaitingPausingToolPart[] =>
@@ -22,9 +20,12 @@ export const findAwaitingPausingToolParts = (
     }
 
     const toolName = getToolName(part);
-    const pausingTool = PAUSING_TOOLS.get(toolName);
+    const pausingTool = findAwaitingPausingTool({
+      toolName,
+      toolOutput: part.output,
+    });
 
-    if (!isDefined(pausingTool) || !pausingTool.isAwaitingOutput(part.output)) {
+    if (!isDefined(pausingTool)) {
       return [];
     }
 
@@ -32,7 +33,7 @@ export const findAwaitingPausingToolParts = (
       {
         toolName,
         toolCallId: part.toolCallId,
-        isAnswerable: isDefined(pausingTool.parseCall(part.input)),
+        isAnswerable: isDefined(pausingTool.parseCall(part.input, part.output)),
       },
     ];
   });

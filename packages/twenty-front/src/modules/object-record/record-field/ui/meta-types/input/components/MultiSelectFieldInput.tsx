@@ -3,12 +3,11 @@ import { useAddSelectOption } from '@/object-record/record-field/ui/meta-types/h
 import { useCanAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useCanAddSelectOption';
 import { useFilteredSelectOptionsFromRLSPredicates } from '@/object-record/record-field/ui/meta-types/hooks/useFilteredSelectOptionsFromRLSPredicates';
 import { useMultiSelectField } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectField';
-import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/ui/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { FieldInputDropdown } from '@/object-record/record-field/ui/meta-types/input/components/FieldInputDropdown';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const MultiSelectFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useMultiSelectField();
@@ -19,7 +18,7 @@ export const MultiSelectFieldInput = () => {
     fieldDefinition.fieldMetadataId,
   );
 
-  const { onSubmit } = useContext(FieldInputEventContext);
+  const { onSubmit, onEnter } = useContext(FieldInputEventContext);
 
   const { filteredOptions: selectOptions } =
     useFilteredSelectOptionsFromRLSPredicates({
@@ -33,25 +32,28 @@ export const MultiSelectFieldInput = () => {
     setDraftValue(newDraftValue);
   };
 
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordFieldComponentInstanceContext,
-  );
-
   const handleCancel = () => {
     onSubmit?.({ newValue: draftValue });
   };
 
+  const handleEnter = () => {
+    if (!isDefined(onEnter)) {
+      handleCancel();
+      return;
+    }
+
+    onEnter({ newValue: draftValue });
+  };
+
   return (
-    <MultiSelectInput
-      selectableListComponentInstanceId={
-        SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
-      }
-      focusId={instanceId}
-      options={selectOptions}
-      onCancel={handleCancel}
-      onOptionSelected={handleOptionSelected}
-      values={draftValue}
-      onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
-    />
+    <FieldInputDropdown value={draftValue} onDismiss={handleCancel} multiple>
+      <MultiSelectInput
+        onEnter={handleEnter}
+        options={selectOptions}
+        onOptionSelected={handleOptionSelected}
+        values={draftValue}
+        onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
+      />
+    </FieldInputDropdown>
   );
 };

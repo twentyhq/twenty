@@ -94,8 +94,6 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Find a Twenty Partner — Certified Open Source CRM Experts`,
   },
   {
-    // The application form: noindex (a utility route, excluded from the
-    // sitemap by getIndexedWebsiteRoutes), reachable from the partner CTAs.
     changeFrequency: 'yearly',
     description: msg`Apply to join the Twenty partner ecosystem and grow your practice with the #1 open source CRM.`,
     id: 'partnersApply',
@@ -160,6 +158,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'yearly',
+    description: msg`Get help with Twenty, whether you run it on our cloud or host it yourself, including the Twenty app for Slack.`,
+    id: 'support',
+    indexed: true,
+    path: '/support',
+    priority: 0.3,
+    title: msg`Support | Twenty`,
+  },
+  {
+    changeFrequency: 'yearly',
     description: msg`The terms governing your use of Twenty and its open source CRM services.`,
     id: 'terms',
     indexed: true,
@@ -168,8 +175,7 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Terms of Service | Twenty`,
   },
   {
-    // Post-checkout license activation: noindex (a utility route reached only
-    // with a Stripe ?session_id=, excluded from the sitemap).
+    // Reached only with a Stripe ?session_id=.
     changeFrequency: 'yearly',
     description: msg`Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance.`,
     id: 'enterpriseActivate',
@@ -179,8 +185,7 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Organization Activation | Twenty`,
   },
   {
-    // The interactive halftone generator: an internal dev tool, noindex and
-    // excluded from the sitemap (getIndexedWebsiteRoutes). Mounted client-only.
+    // Internal dev tool, mounted client-only.
     changeFrequency: 'monthly',
     description: msg`Interactive halftone generator exported from Twenty.`,
     id: 'halftone',

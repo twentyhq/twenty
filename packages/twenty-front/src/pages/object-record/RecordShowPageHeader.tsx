@@ -11,19 +11,23 @@ type RecordShowPageHeaderProps = {
   objectNameSingular: string;
   objectRecordId: string;
   titleMode?: RecordShowPageHeaderTitleMode;
+  titlePrefix?: React.ReactNode;
+  titleAccessory?: React.ReactNode;
   children?: React.ReactNode;
 };
 
 type RecordShowPageMainHeaderProps = RecordShowPageHeaderProps;
 type RecordShowPagePanelHeaderProps = Omit<
   RecordShowPageHeaderProps,
-  'children' | 'titleMode'
+  'children' | 'titleMode' | 'titlePrefix'
 >;
 
 const RecordShowPageMainHeader = ({
   objectNameSingular,
   objectRecordId,
   titleMode = 'breadcrumb',
+  titlePrefix,
+  titleAccessory,
   children,
 }: RecordShowPageMainHeaderProps) => {
   const { objectMetadataItem } = useRecordShowPagePagination(
@@ -38,10 +42,14 @@ const RecordShowPageMainHeader = ({
     return (
       <PageCardHeader
         title={
-          <RecordShowPageHeaderRecordTitle
-            objectNameSingular={objectNameSingular}
-            objectRecordId={objectRecordId}
-          />
+          <>
+            {titlePrefix}
+            <RecordShowPageHeaderRecordTitle
+              objectNameSingular={objectNameSingular}
+              objectRecordId={objectRecordId}
+            />
+            {titleAccessory}
+          </>
         }
         actionButton={children}
       />
@@ -66,15 +74,19 @@ const RecordShowPageMainHeader = ({
 const RecordShowPagePanelHeader = ({
   objectNameSingular,
   objectRecordId,
+  titleAccessory,
 }: RecordShowPagePanelHeaderProps) => (
   <PageCardHeader
     title={
-      <RecordIdentifierBarTitle
-        objectNameSingular={objectNameSingular}
-        objectRecordId={objectRecordId}
-        variant="side-panel"
-        recordLinkSurface="main"
-      />
+      <>
+        <RecordIdentifierBarTitle
+          objectNameSingular={objectNameSingular}
+          objectRecordId={objectRecordId}
+          variant="side-panel"
+          recordLinkSurface="main"
+        />
+        {titleAccessory}
+      </>
     }
   />
 );
@@ -83,6 +95,8 @@ export const RecordShowPageHeader = ({
   objectNameSingular,
   objectRecordId,
   titleMode,
+  titlePrefix,
+  titleAccessory,
   children,
 }: RecordShowPageHeaderProps) => {
   const workspaceSurface = useWorkspaceSurface();
@@ -91,12 +105,15 @@ export const RecordShowPageHeader = ({
     <RecordShowPagePanelHeader
       objectNameSingular={objectNameSingular}
       objectRecordId={objectRecordId}
+      titleAccessory={titleAccessory}
     />
   ) : (
     <RecordShowPageMainHeader
       objectNameSingular={objectNameSingular}
       objectRecordId={objectRecordId}
       titleMode={titleMode}
+      titlePrefix={titlePrefix}
+      titleAccessory={titleAccessory}
     >
       {children}
     </RecordShowPageMainHeader>

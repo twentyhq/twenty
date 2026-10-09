@@ -5,7 +5,7 @@ description: Present lightweight actions with standard or subtle emphasis.
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
-import LightButtonReference from '/snippets/ui/generated/input/light-button.mdx';
+import LightButtonReference from '/snippets/ui/generated/components/input/light-button.mdx';
 
 Use the shared `LightButton` component for a lightweight action. It composes
 [Button](/ui/primitives/input/button) with a ghost surface, small size, regular
@@ -24,7 +24,7 @@ font weight, and no elevation.
 ## Usage
 
 ```tsx
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const FilterActions = () => (
@@ -40,7 +40,8 @@ surfaces. Semantic colors and solid surfaces retain their contrast treatment.
 
 Override `variant`, `color`, `size`, or `elevated` when needed.
 [ButtonGroup](/ui/primitives/input/button-group) can set a shared size, surface,
-and color; subtle emphasis does not replace the group's semantic color.
+and color. Explicit child appearance takes precedence over the group, followed by
+the component defaults. Subtle emphasis does not replace the semantic color.
 
 ## Interaction
 
@@ -48,8 +49,8 @@ and color; subtle emphasis does not replace the group's semantic color.
 slots, loading and disabled states, and render composition. Its native default
 is `type="button"`. Set `type="submit"` for submission or use `href` for a link.
 Supply `render` to choose a custom root, including an application-owned router
-link. The root must preserve a native button, or an anchor when `href` is set.
-Button derives the interaction behavior from `href`.
+link. Set `nativeButton={false}` and `role="link"` for a navigation renderer.
+Custom native buttons keep `nativeButton` true.
 
 ## Props
 

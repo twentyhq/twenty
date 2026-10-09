@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
+import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
@@ -131,7 +132,10 @@ export const TaskRow = ({ task }: { task: Task }) => {
           {task.title || <StyledPlaceholder>{t`Task title`}</StyledPlaceholder>}
         </StyledTaskTitle>
         <StyledTaskBody>
-          <OverflowingTextWithTooltip text={body} />
+          <OverflowingTextWithTooltip
+            text={<LinkifiedText text={body} />}
+            tooltipContent={body}
+          />
         </StyledTaskBody>
       </StyledLeftSideContainer>
       <StyledRightSideContainer>

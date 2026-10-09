@@ -218,6 +218,29 @@ export const ClickOutsideKeepsCentsWithCommasAndDot: Story = {
   },
 };
 
+export const CurrencyPickerReopensOnEnter: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByTestId('is-ready-marker');
+    const trigger = canvas.getByRole('button', { name: 'Currency: USD' });
+
+    await userEvent.click(trigger);
+    await body.findByRole('dialog', { name: 'Currency' });
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    await userEvent.keyboard('{Enter}');
+
+    const reopenedPopup = await body.findByRole('dialog', { name: 'Currency' });
+    await waitFor(() => expect(reopenedPopup).toBeVisible());
+    expect(handleEnterMocked).not.toHaveBeenCalled();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
 export const EscapeKeepsCents: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

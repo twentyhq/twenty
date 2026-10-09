@@ -12,7 +12,7 @@ import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -33,7 +33,7 @@ import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -72,9 +72,7 @@ export const RecordCalendarTopBar = () => {
     isRecordCalendarReadOnlyComponentState,
   );
 
-  // The layout switcher persists via updateCurrentView (an index-page write),
-  // so it must never render inside a dashboard widget; widget calendars drive
-  // their layout from the side-panel settings instead.
+  // The layout switcher writes the index view, so widget calendars must never render it.
   const widgetInstanceId = useAvailableComponentInstanceId(
     WidgetComponentInstanceContext,
   );

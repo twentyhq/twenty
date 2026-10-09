@@ -143,6 +143,16 @@ export class ConfigVariables {
   PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Duration for which an admin-issued two-factor authentication recovery code is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsPositiveDuration()
+  @IsOptional()
+  TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_EXPIRES_IN = '1h';
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GOOGLE_AUTH,
     description: 'Enable or disable the Google Calendar integration',
     type: ConfigVariableType.BOOLEAN,
@@ -581,10 +591,7 @@ export class ConfigVariables {
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.ENUM,
     options: Object.values(DpaRegion),
-    // Deployment-fixed: must mirror where data actually lives. Allowing a
-    // runtime DB/admin override could advertise a hosting location that does
-    // not match where data resides, so this is only configurable via
-    // environment variable.
+    // Env-only: a runtime override could advertise a hosting location that does not match where data lives.
     isEnvOnly: true,
   })
   @IsOptional()
@@ -1118,17 +1125,6 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Free credits granted for installing apps during the install-apps onboarding step, whatever the number of apps (in microCredits)',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  @IsInt()
-  @IsOptional()
-  ONBOARDING_INSTALL_APPS_CREDITS_REWARD = 500_000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BILLING_CONFIG,
-    description:
       'Credit reward tiers for workspaces enrichment matched to a real company, keyed by tier name, as {"midMarket":{"minEmployeeCount":20,"amountMicro":5000000}} (amounts in microCredits). The most generous matching tier wins; no tiers disables the reward. Independent of ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT, so credits and the book-a-call offer can target different companies.',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.JSON,
@@ -1485,6 +1481,17 @@ export class ConfigVariables {
     allow_underscores: true,
   })
   REDIS_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Optional prefix for cache-storage keys. Empty preserves existing key names. Use a Redis hash tag (e.g. "{twenty-cache}") to place all cache-storage keys in one hash slot and avoid CROSSSLOT errors. Changing it switches cache namespaces and requires all servers and workers to restart with the same value.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsString()
+  REDIS_CACHE_PREFIX: string = '';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1877,7 +1884,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  INVITATION_SENDING_BY_WORKSPACE_THROTTLE_TTL_IN_MS = 604_800_000; // 7 days
+  INVITATION_SENDING_BY_WORKSPACE_THROTTLE_TTL_IN_MS = 604_800_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -1895,7 +1902,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  INVITATION_SENDING_BY_EMAIL_THROTTLE_TTL_IN_MS = 604_800_000; // 7 days
+  INVITATION_SENDING_BY_EMAIL_THROTTLE_TTL_IN_MS = 604_800_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -2105,6 +2112,15 @@ export class ConfigVariables {
   AI_MODELS_DEFAULT_DISABLED: string[] = DEFAULT_DISABLED_MODELS;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Ask OpenAI and Azure reasoning models for reasoning summaries in AI chat. Disable it if your OpenAI organization is not verified, since OpenAI rejects these requests.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_OPENAI_REASONING_SUMMARY_ENABLED = true;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,
@@ -2189,7 +2205,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000; // 1 hour;
+  WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CAPTCHA_CONFIG,

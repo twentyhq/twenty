@@ -12,7 +12,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft, IconEye, useIcons } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';

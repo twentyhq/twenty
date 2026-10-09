@@ -52,6 +52,7 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { assertLoginTokenIsNotForImpersonation } from 'src/engine/core-modules/auth/utils/assert-login-token-is-not-for-impersonation.util';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
@@ -81,7 +82,10 @@ import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/imperson
 import { IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-log-message-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
+import { TwoFactorAuthenticationRecoveryCodeRedemptionDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-redemption.dto';
+import { TwoFactorAuthenticationRecoveryCodeVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-verification.input';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
+import { TwoFactorAuthenticationRecoveryService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
@@ -146,6 +150,7 @@ export class AuthResolver {
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly twoFactorAuthenticationRecoveryService: TwoFactorAuthenticationRecoveryService,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -235,10 +240,11 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.authService.validateLoginWithPassword(
-      getLoginTokenFromCredentialsInput,
-      workspace,
-    );
+    const user =
+      await this.authService.validateLoginWithPasswordAndJoinWorkspaceIfInvited(
+        getLoginTokenFromCredentialsInput,
+        workspace,
+      );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -416,13 +422,13 @@ export class AuthResolver {
     @Args('origin') origin: string,
     @Context() context: { req: Request },
   ): Promise<AuthTokens> {
-    const {
-      sub: email,
-      authProvider,
-      workspaceId,
-    } = await this.loginTokenService.verifyLoginToken(
+    const loginTokenPayload = await this.loginTokenService.verifyLoginToken(
       twoFactorAuthenticationVerificationInput.loginToken,
     );
+
+    assertLoginTokenIsNotForImpersonation(loginTokenPayload);
+
+    const { sub: email, authProvider, workspaceId } = loginTokenPayload;
 
     const workspace = await this.validateWorkspaceAccess(origin, workspaceId);
 
@@ -434,6 +440,8 @@ export class AuthResolver {
       workspace.id,
       TwoFactorAuthenticationStrategy.TOTP,
     );
+
+    await this.loginTokenService.consumeLoginTokenOrThrow(loginTokenPayload);
 
     const authTokens = await this.authService.verify(
       email,
@@ -448,6 +456,56 @@ export class AuthResolver {
     });
 
     return authTokens;
+  }
+
+  @Mutation(() => TwoFactorAuthenticationRecoveryCodeRedemptionDTO)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
+  @AllowSuspendedWorkspace()
+  async getAuthTokensFromTwoFactorAuthenticationRecoveryCode(
+    @Args()
+    recoveryCodeVerificationInput: TwoFactorAuthenticationRecoveryCodeVerificationInput,
+    @Args('origin') origin: string,
+    @Context() context: { req: Request },
+  ): Promise<TwoFactorAuthenticationRecoveryCodeRedemptionDTO> {
+    const loginTokenPayload = await this.loginTokenService.verifyLoginToken(
+      recoveryCodeVerificationInput.loginToken,
+    );
+
+    assertLoginTokenIsNotForImpersonation(loginTokenPayload);
+
+    const { sub: email, authProvider, workspaceId } = loginTokenPayload;
+
+    const workspace = await this.validateWorkspaceAccess(origin, workspaceId);
+
+    const user = await this.userService.findUserByEmailOrThrow(email);
+
+    const { provisioningUri } =
+      await this.twoFactorAuthenticationRecoveryService.redeemRecoveryCode({
+        userId: user.id,
+        userEmail: email,
+        workspace,
+        recoveryCode: recoveryCodeVerificationInput.recoveryCode,
+      });
+
+    if (isDefined(provisioningUri)) {
+      return { tokens: null, provisioningUri };
+    }
+
+    await this.loginTokenService.consumeLoginTokenOrThrow(loginTokenPayload);
+
+    const authTokens = await this.authService.verify(
+      email,
+      workspace.id,
+      authProvider,
+    );
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: authTokens.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return { tokens: authTokens.tokens, provisioningUri: null };
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
@@ -845,6 +903,8 @@ export class AuthResolver {
         user.email,
       );
 
+      await this.loginTokenService.consumeLoginTokenOrThrow(tokenPayload);
+
       authTokens =
         await this.authService.generateImpersonationAccessTokenAndRefreshToken({
           workspaceId,
@@ -855,6 +915,8 @@ export class AuthResolver {
         });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
+
+      await this.loginTokenService.consumeLoginTokenOrThrow(tokenPayload);
 
       authTokens = await this.authService.verify(
         user.email,
@@ -1128,8 +1190,7 @@ export class AuthResolver {
         refreshToken,
       });
     } finally {
-      // This mutation is public and SameSite=Lax keeps the cookie off cross-site
-      // POSTs, so clearing unconditionally would let any site sign a visitor out.
+      // Public, and SameSite=Lax keeps the cookie off cross-site POSTs: clearing unconditionally lets any site sign visitors out
       if (
         isDefined(context.req.res) &&
         this.userSessionCookieService.hasSessionCookie(context.req)

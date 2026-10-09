@@ -2,10 +2,10 @@ import { useDragDropMonitor } from '@dnd-kit/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
-import { TabButton } from 'twenty-ui/components';
+import { Dropdown, TabButton } from 'twenty-ui/components/navigation';
 
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -22,11 +22,9 @@ import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
-import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT } from '@/page-layout/constants/PageLayoutRecordIdentifierBarHeight';
 import { PAGE_LAYOUT_TAB_LIST_END_DROP_ZONE_WIDTH } from '@/page-layout/constants/PageLayoutTabListEndDropZoneWidth';
 import { PageLayoutTabListNewTabDropdownContent } from '@/page-layout/components/PageLayoutTabListNewTabDropdownContent';
@@ -42,7 +40,8 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { TabListDropdown } from '@/ui/layout/tab-list/components/TabListDropdown';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -57,9 +56,7 @@ const StyledNodeDimension = styled(NodeDimension)`
   min-width: 0;
 `;
 
-// In the identifier bar the wrapper must fill its grid track so tabs can
-// reappear when the track grows after an overflow. Standalone it sits in a
-// flex column, where growing would eat the tab content's height.
+// Fill the identifier bar's track so tabs reappear when it grows; standalone, growing would eat content height.
 const identifierBarTrackCssClass = css`
   flex: 1;
 `;
@@ -174,9 +171,9 @@ export const PageLayoutTabList = ({
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
   const addTabDropdownId = `tab-add-${componentInstanceId}`;
+  const tabListContainerRef = useRef<HTMLDivElement>(null);
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
-  const { toggleClickOutside } = useClickOutsideListener(dropdownId);
 
   const setIsPageLayoutTabDragging = useSetAtomComponentState(
     isPageLayoutTabDraggingComponentState,
@@ -247,9 +244,6 @@ export const PageLayoutTabList = ({
     closeDropdown(dropdownId);
   }, [closeDropdown, dropdownId]);
 
-  // The overflow dropdown must survive drops into itself: the dragging flag
-  // suppresses its close-on-click-outside while a tab drag is in flight, and a
-  // drop on the more button reopens it on the freshly appended tab.
   useDragDropMonitor({
     onDragStart: (event) => {
       const sourceData = event.operation.source?.data as
@@ -261,7 +255,6 @@ export const PageLayoutTabList = ({
       }
 
       setIsPageLayoutTabDragging(true);
-      toggleClickOutside(false);
     },
     onDragEnd: (event) => {
       const sourceData = event.operation.source?.data as
@@ -274,22 +267,7 @@ export const PageLayoutTabList = ({
 
       const target = event.operation.target;
       const targetData = target?.data as PageLayoutWidgetDndData | undefined;
-      const targetDroppableId = (
-        target?.data as { droppableId?: string } | undefined
-      )?.droppableId;
-
-      const droppedInOverflow =
-        !event.canceled &&
-        (targetDroppableId ===
-          PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS ||
-          String(target?.id) ===
-            `${PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}-end`);
-
-      if (!droppedInOverflow) {
-        setIsPageLayoutTabDragging(false);
-      }
-
-      toggleClickOutside(true);
+      requestAnimationFrame(() => setIsPageLayoutTabDragging(false));
 
       if (!event.canceled && targetData?.type === 'tab-more-button') {
         openDropdown({
@@ -309,8 +287,7 @@ export const PageLayoutTabList = ({
 
   const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
 
-  // The reorderable strip appends an end drop zone the tab measurement does
-  // not know about; reserve its width so visible tabs never get clipped.
+  // Reserve the strip's end drop zone, which the tab measurement doesn't know about.
   const handleContainerWidthChange = useCallback(
     (dimensions: { width: number; height: number }) => {
       onContainerWidthChange(
@@ -371,9 +348,8 @@ export const PageLayoutTabList = ({
   const handleSelectTabFromDropdown = useCallback(
     (tabId: string) => {
       handleSelectTab({ tabId, select: selectTabFromDropdown });
-      closeOverflowDropdown();
     },
-    [handleSelectTab, closeOverflowDropdown, selectTabFromDropdown],
+    [handleSelectTab, selectTabFromDropdown],
   );
 
   if (tabsWithIcons.length === 0) {
@@ -389,9 +365,7 @@ export const PageLayoutTabList = ({
   const shouldRenderStaticDropdown =
     hasHiddenTabs && !canReorderTabs && !shouldScrollTabs;
 
-  // Record pages accept widget drops on vertical-list tabs (dnd-kit drags);
-  // dashboards accept them on grid tabs (react-grid-layout drags bridged by
-  // pointer hit-testing).
+  // Record pages take widget drops on vertical-list tabs, dashboards on grid tabs (hit-tested).
   const widgetDropTargetWidgetsByTabId = new Map<string, PageLayoutWidget[]>(
     pageLayoutType === PageLayoutType.RECORD_PAGE
       ? tabs
@@ -437,6 +411,7 @@ export const PageLayoutTabList = ({
         onDimensionChange={handleContainerWidthChange}
       >
         <StyledContainer
+          ref={tabListContainerRef}
           className={className}
           isInIdentifierBar={isInIdentifierBar}
           centerTabs={centerTabs}
@@ -452,7 +427,10 @@ export const PageLayoutTabList = ({
             behaveAsLinks={behaveAsLinks}
             loading={loading}
             onChangeTab={onChangeTab}
-            onSelectTab={(tabId) => handleSelectTab({ tabId })}
+            onSelectTab={(tabId) => {
+              handleSelectTab({ tabId });
+              closeOverflowDropdown();
+            }}
             canReorder={canReorderTabs}
             widgetDropTargetWidgetsByTabId={widgetDropTargetWidgetsByTabId}
             firstHiddenTabId={
@@ -471,8 +449,8 @@ export const PageLayoutTabList = ({
                 loading={loading}
                 onSelect={handleSelectTabFromDropdown}
                 visibleTabCount={visibleTabCount}
-                onClose={closeOverflowDropdown}
                 pageLayoutType={pageLayoutType}
+                tabListContainerRef={tabListContainerRef}
               />
             </StyledDropdownContainer>
           )}
@@ -489,7 +467,6 @@ export const PageLayoutTabList = ({
                 activeTabId={activeTabId || ''}
                 loading={loading}
                 onTabSelect={handleSelectTabFromDropdown}
-                onClose={closeOverflowDropdown}
               />
             </StyledDropdownContainer>
           )}
@@ -506,19 +483,18 @@ export const PageLayoutTabList = ({
           )}
           {addTabStrategy?.mode === 'dropdown' && (
             <StyledAddButton>
-              <Dropdown
-                dropdownId={addTabDropdownId}
-                clickableComponent={
-                  <TabButton startIcon={<IconPlus />}>{t`New Tab`}</TabButton>
-                }
-                dropdownComponents={
+              <DropdownRoot dropdownId={addTabDropdownId} type="menu">
+                <Dropdown.Trigger
+                  render={
+                    <TabButton startIcon={<IconPlus />}>{t`New Tab`}</TabButton>
+                  }
+                />
+                <DropdownContent>
                   <PageLayoutTabListNewTabDropdownContent
                     onCreate={addTabStrategy.onCreate}
-                    dropdownId={addTabDropdownId}
                   />
-                }
-                dropdownPlacement="bottom-start"
-              />
+                </DropdownContent>
+              </DropdownRoot>
             </StyledAddButton>
           )}
         </StyledContainer>

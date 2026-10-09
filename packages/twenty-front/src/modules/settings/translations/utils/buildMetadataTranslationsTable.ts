@@ -1,7 +1,7 @@
 import { type MetadataTranslationRow } from '@/settings/translations/hooks/useMetadataTranslations';
 import { type MetadataTranslationLanguageRow } from '@/settings/translations/types/MetadataTranslationLanguageRow';
 import { isDefined } from 'twenty-shared/utils';
-import { type LocaleOption } from '~/localization/hooks/useLocaleOptions';
+import { type LocaleOption } from '@/localization/hooks/useLocaleOptions';
 
 const DESCRIPTION_PROPERTY = 'description';
 

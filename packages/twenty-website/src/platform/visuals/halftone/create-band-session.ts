@@ -187,7 +187,7 @@ function getMeshFootprintScale({
 
 // The band-variant model scene: transmission material (solid or glass),
 // breathe/float/rotate-preset/spring/parallax animation, per-frame mesh
-// footprint, blur chain, band dash composite. Ported from the old
+// footprint, band dash composite. Ported from the old
 // HalftoneCanvas shape mode.
 export async function createBandSession({
   container,

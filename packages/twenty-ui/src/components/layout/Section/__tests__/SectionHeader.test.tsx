@@ -1,6 +1,7 @@
 import { Section } from '@ui/components/layout/Section/Section';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import userEvent from '@testing-library/user-event';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
@@ -55,5 +56,48 @@ describe('Section.Header', () => {
 
     expect(screen.getByRole('heading')).not.toHaveAttribute('aria-describedby');
     expect(screen.queryByText('your team')).not.toBeInTheDocument();
+  });
+});
+
+describe('Section description composition', () => {
+  it('keeps string descriptions out of the tab order unless focus is requested', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <Section.Header
+        title={<span>Workspace</span>}
+        description="Details"
+        actions={<button>Edit</button>}
+      />,
+    );
+    expect(screen.getByText('Details')).not.toHaveAttribute('tabindex');
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'Edit' })).toHaveFocus();
+    rerender(
+      <Section.Header
+        title="Workspace"
+        description="Details"
+        isDescriptionFocusable
+      />,
+    );
+    await user.tab();
+    expect(screen.getByText('Details')).toHaveFocus();
+  });
+
+  it('renders full string descriptions without a tooltip or a tab stop when truncation is disabled', () => {
+    render(
+      <Section.Header
+        title="Workspace"
+        description={'First line\nSecond line'}
+        descriptionLineClamp={false}
+        isDescriptionFocusable
+      />,
+    );
+    const description = screen.getByText(/First line/);
+    expect(description).toHaveStyle({ whiteSpace: 'pre-wrap' });
+    expect(description).not.toHaveAttribute('tabindex');
+    expect(description).not.toHaveAttribute('data-content-overflowing');
+    expect(screen.getByRole('heading')).toHaveAccessibleDescription(
+      'First line\nSecond line',
+    );
   });
 });

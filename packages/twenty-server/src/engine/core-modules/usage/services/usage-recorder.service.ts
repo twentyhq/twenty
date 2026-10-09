@@ -65,8 +65,12 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     await this.flush();
   }
 
+  isEnabled(): boolean {
+    return this.eventLogEmitterService.isEnabled();
+  }
+
   async record(workspaceId: string, inputs: RecordUsageInput[]): Promise<void> {
-    if (!this.eventLogEmitterService.isEnabled() || inputs.length === 0) {
+    if (!this.isEnabled() || inputs.length === 0) {
       return;
     }
 
@@ -83,7 +87,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
   }
 
   accumulate(workspaceId: string, input: RecordUsageInput): void {
-    if (!this.eventLogEmitterService.isEnabled()) {
+    if (!this.isEnabled()) {
       return;
     }
 
@@ -153,10 +157,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
-  // Every recorded row funnels through here, so the credit invariant holds for
-  // any caller rather than each one clamping its own arithmetic. The event is
-  // still recorded, at zero credits, so the activity stays visible in the
-  // breakdown.
+  // Every row funnels through here so the credit invariant holds for all callers; the event still records at zero credits.
   private withDefaults(input: RecordUsageInput): UsageEvent {
     const creditsUsedMicro = input.creditsUsedMicro ?? 0;
 

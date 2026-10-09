@@ -7,7 +7,8 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
-import { Dropdown, IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical } from 'twenty-ui/icon';
 
 type SidePanelOptionsDropdownProps = {

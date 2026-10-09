@@ -1,3 +1,4 @@
+import { formatShortcut } from 'twenty-ui/primitives/typography';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -18,7 +19,9 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconEye,
   IconPlus,
@@ -185,7 +188,7 @@ export const SettingsObjectSearchSection = ({
           <SettingsOptionCardContentSwitch
             Icon={IconEye}
             title={t`Global search`}
-            description={t`Show this object's records in the command menu (⌘K).`}
+            description={t`Show this object's records in the command menu (${formatShortcut({ shortcut: ['Mod', 'K'] })}).`}
             checked={isSearchable}
             advancedMode
             onChange={handleToggleSearchable}

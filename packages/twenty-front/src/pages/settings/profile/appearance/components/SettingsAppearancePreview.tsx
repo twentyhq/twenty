@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { type CSSProperties } from 'react';
 
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import {
   GRAY_SCALE_DARK,
   GRAY_SCALE_LIGHT,
   themeCssVariables,
 } from 'twenty-ui/theme';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
 const StyledPreview = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -26,6 +26,16 @@ const StyledSegment = styled.div`
   min-width: 0;
   padding-inline-start: ${themeCssVariables.spacing[6]};
   padding-top: ${themeCssVariables.spacing[6]};
+
+  &:first-child {
+    border-end-start-radius: ${themeCssVariables.border.radius.md};
+    border-start-start-radius: ${themeCssVariables.border.radius.md};
+  }
+
+  &:last-child {
+    border-end-end-radius: ${themeCssVariables.border.radius.md};
+    border-start-end-radius: ${themeCssVariables.border.radius.md};
+  }
 `;
 
 const StyledContent = styled.div`

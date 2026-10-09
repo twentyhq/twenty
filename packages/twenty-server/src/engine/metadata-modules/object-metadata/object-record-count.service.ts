@@ -17,8 +17,7 @@ export class ObjectRecordCountService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  // reltuples is the planner's row estimate, refreshed by autovacuum's
-  // ANALYZE; never-analyzed tables report -1, clamped to 0 here
+  // Never-analyzed tables report reltuples as -1
   async getApproximateRecordCountByTableName(
     workspaceId: string,
   ): Promise<Map<string, number>> {

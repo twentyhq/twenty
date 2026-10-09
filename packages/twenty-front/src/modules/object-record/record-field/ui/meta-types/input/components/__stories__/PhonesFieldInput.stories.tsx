@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesField';
@@ -161,6 +161,37 @@ export const TrimInput: Story = {
   },
 };
 
+export const CountryPickerReopensOnEnter: Story = {
+  args: {
+    value: {
+      primaryPhoneCountryCode: 'FR',
+      primaryPhoneNumber: '642646272',
+      primaryPhoneCallingCode: '+33',
+      additionalPhones: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByText('Add Phone'));
+    const trigger = await canvas.findByRole('button', { name: 'Country' });
+
+    await userEvent.click(trigger);
+    await body.findByRole('dialog', { name: 'Country' });
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    await userEvent.keyboard('{Enter}');
+
+    const reopenedPopup = await body.findByRole('dialog', { name: 'Country' });
+    await waitFor(() => expect(reopenedPopup).toBeVisible());
+    expect(canvas.getByPlaceholderText('Phone')).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
 export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
   args: {
     value: {
@@ -179,19 +210,20 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     await userEvent.hover(primaryPhone);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
+      name: 'More options',
       expanded: false,
     });
     await userEvent.click(openDropdownButtons[0]);
 
     const editOption = await within(
       canvasElement.ownerDocument.body,
-    ).findByText('Edit');
+    ).findByRole('menuitem', { name: 'Edit' });
 
     expect(editOption).toBeVisible();
 
     const setPrimaryOption = within(
       canvasElement.ownerDocument.body,
-    ).queryByText('Set as Primary');
+    ).queryByRole('menuitem', { name: 'Set as Primary' });
 
     expect(setPrimaryOption).not.toBeInTheDocument();
   },

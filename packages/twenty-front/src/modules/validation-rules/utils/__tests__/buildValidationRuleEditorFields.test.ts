@@ -1,5 +1,6 @@
 import { resolveValidationRuleIdentifierPath } from 'twenty-shared/utils';
 
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildValidationRuleEditorFields } from '@/validation-rules/utils/buildValidationRuleEditorFields';
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -65,5 +66,74 @@ describe('buildValidationRuleEditorFields', () => {
     expect(
       editorFields.find(({ path }) => path === 'company')?.readsRelatedRecord,
     ).toBe(true);
+  });
+
+  describe('when icons are empty', () => {
+    const company = getMockObjectMetadataItemOrThrow('company');
+
+    const withEmptyFieldIcons = (
+      objectMetadataItem: EnrichedObjectMetadataItem,
+      fieldNames: string[],
+    ): EnrichedObjectMetadataItem => ({
+      ...objectMetadataItem,
+      fields: objectMetadataItem.fields.map((field) =>
+        fieldNames.includes(field.name) ? { ...field, icon: '' } : field,
+      ),
+    });
+
+    it('should fall back to the default field icon', () => {
+      const fields = buildValidationRuleEditorFields({
+        objectMetadataItem: withEmptyFieldIcons(opportunity, ['amount']),
+        objectMetadataItems,
+      });
+
+      expect(fields.find(({ path }) => path === 'amount')?.iconName).toBe(
+        'IconListSearch',
+      );
+      expect(
+        fields.find(({ path }) => path === 'amount.amountMicros')?.iconName,
+      ).toBe('IconListSearch');
+    });
+
+    it('should fall back to the target object icon on a relation field', () => {
+      const fields = buildValidationRuleEditorFields({
+        objectMetadataItem: withEmptyFieldIcons(opportunity, ['company']),
+        objectMetadataItems,
+      });
+
+      expect(fields.find(({ path }) => path === 'company')?.iconName).toBe(
+        company.icon,
+      );
+    });
+
+    it('should fall back to the default icons when object icons are empty', () => {
+      const companyWithEmptyIcons = {
+        ...withEmptyFieldIcons(company, ['employees']),
+        icon: '',
+      };
+
+      const fields = buildValidationRuleEditorFields({
+        objectMetadataItem: {
+          ...withEmptyFieldIcons(opportunity, ['company']),
+          icon: '',
+        },
+        objectMetadataItems: objectMetadataItems.map((objectMetadataItem) =>
+          objectMetadataItem.id === company.id
+            ? companyWithEmptyIcons
+            : objectMetadataItem,
+        ),
+      });
+
+      expect(fields.find(({ path }) => path === 'company')).toMatchObject({
+        iconName: 'IconBox',
+        objectIconName: 'IconBox',
+      });
+      expect(
+        fields.find(({ path }) => path === 'company.employees'),
+      ).toMatchObject({
+        iconName: 'IconListSearch',
+        objectIconName: 'IconBox',
+      });
+    });
   });
 });

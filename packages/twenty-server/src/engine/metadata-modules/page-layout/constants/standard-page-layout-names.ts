@@ -1,9 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-// This file exists solely for Lingui string extraction.
-// The strings defined here correspond to standard page layout names
-// so they appear in the .po catalogs and can be translated at resolve time
-// via generateMessageId hash lookups.
+// Exists solely so Lingui extracts these into the .po catalogs for resolve-time translation
 export const getStandardPageLayoutNames = () => [
   msg({ message: `Default Blocklist Layout`, context: 'pageLayout.name' }),
   msg({

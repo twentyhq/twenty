@@ -35,6 +35,7 @@ import {
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @Controller(`${ApiPath.Rest}/front-components`)
 @AllowSuspendedWorkspace()
@@ -64,12 +65,13 @@ export class FrontComponentController {
   constructor(private readonly frontComponentService: FrontComponentService) {}
 
   @Get([':frontComponentId', ':frontComponentId/:cacheKey'])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
   async getBuiltJs(
     @Res() res: Response,
     @ApplicationTargetParam('frontComponentId', {
       kind: 'applicationOwnedEntity',
       metadataName: 'frontComponent',
+      requireApplicationRegistrationOwnership: false,
     })
     frontComponentId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

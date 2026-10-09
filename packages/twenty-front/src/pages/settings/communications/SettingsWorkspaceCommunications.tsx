@@ -12,7 +12,7 @@ import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconBrandWhatsapp,
   IconMail,

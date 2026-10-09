@@ -1,4 +1,4 @@
-import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -18,18 +18,16 @@ const StyledRecordDragMultiDragStackCard = styled.div<{ offset: number }>`
 `;
 
 export const RecordDragMultiDragStack = () => {
-  const originalDragSelection = useAtomComponentStateValue(
-    originalDragSelectionComponentState,
+  const draggedRecordIds = useAtomComponentStateValue(
+    draggedRecordIdsComponentState,
   );
 
-  const shouldShow = originalDragSelection.length > 1;
-
-  if (!shouldShow) {
+  if (draggedRecordIds.length <= 1) {
     return null;
   }
 
   return Array.from({
-    length: Math.min(MAX_STACK_CARDS, originalDragSelection.length - 1),
+    length: Math.min(MAX_STACK_CARDS, draggedRecordIds.length - 1),
   }).map((_, index) => (
     <StyledRecordDragMultiDragStackCard key={index} offset={index + 1} />
   ));

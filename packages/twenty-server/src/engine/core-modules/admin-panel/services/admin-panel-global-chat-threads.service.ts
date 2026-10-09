@@ -3,7 +3,10 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
+import {
+  ASK_QUESTION_TOOL_NAME,
+  ASK_QUESTIONS_TOOL_NAME,
+} from 'twenty-shared/ai';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { ADMIN_CHAT_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/admin-panel/constants/admin-chat-threads-max-page-size.constant';
@@ -12,6 +15,7 @@ import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/
 import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
 import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
 import { WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-thread-id-namespace.constant';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 type GlobalChatThreadsArgs = {
   scope: AdminChatThreadScope;
@@ -96,7 +100,23 @@ export class AdminPanelGlobalChatThreadsService {
     await this.historyStorage.runReadOnlyReport(
       workspaces.map((workspace) => workspace.id),
       async ({ manager, partitions }) => {
-        // Bound each statement's size and keep only the global page candidates.
+        // Fence for the 2.46 cross-upgrade window: turns only have a status
+        // once the 2.46 commands reached their workspace. Remove once 2.46
+        // leaves the window.
+        const schemasWithTurnStatus = new Set(
+          (
+            await manager.query<{ schemaName: string }[]>(
+              `SELECT table_schema AS "schemaName" FROM information_schema.columns
+               WHERE table_name = 'agentTurn' AND column_name = 'status' AND table_schema = ANY($1::text[])`,
+              [
+                partitions.map(({ workspaceIds }) =>
+                  getWorkspaceSchemaName(workspaceIds[0]),
+                ),
+              ],
+            )
+          ).map(({ schemaName }) => schemaName),
+        );
+
         for (
           let offsetIndex = 0;
           offsetIndex < partitions.length;
@@ -107,17 +127,22 @@ export class AdminPanelGlobalChatThreadsService {
             .slice(offsetIndex, offsetIndex + 25)
             .map(({ workspaceIds, table }, partitionIndex) => {
               const search = args.searchTerm?.trim().replace(/[\\%_]/g, '\\$&');
+              const hasErrorSql = schemasWithTurnStatus.has(
+                getWorkspaceSchemaName(workspaceIds[0]),
+              )
+                ? `COALESCE((SELECT turn.status = '${AgentTurnStatus.FAILED}' FROM ${table('agentTurn')} turn WHERE turn."threadId" = thread.id ORDER BY turn."createdAt" DESC, turn.id DESC LIMIT 1), false)`
+                : 'false';
               const query = `
           WITH candidates AS (
             SELECT thread.id, thread.title, workspace.id AS "workspaceId", workspace."displayName" AS "workspaceDisplayName",
               membership.id AS "userWorkspaceId", owner.email AS "userEmail", owner."firstName" AS "userFirstName", owner."lastName" AS "userLastName",
-              thread."deletedAt", thread."createdAt", thread."updatedAt", thread."lastStreamError" IS NOT NULL AS "hasError",
-              (EXISTS (SELECT 1 FROM ${table('agentMessage')} hidden WHERE hidden."threadId" = thread.id AND hidden."isHidden" = true)
+              thread."deletedAt", thread."createdAt", thread."updatedAt", ${hasErrorSql} AS "hasError",
+              (EXISTS (SELECT 1 FROM ${table('agentMessage')} context WHERE context."threadId" = thread.id AND (context.role = 'system' OR context."isHidden" = true))
                 OR (membership.id IS NOT NULL AND thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || membership.id::text))) AS "isOnboardingThread",
-              (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false) AS "messageCount",
+              (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role <> 'system') AS "messageCount",
               ((SELECT COUNT(*) FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role = 'user')
                 + (SELECT COUNT(*) FROM ${table('agentMessagePart')} part JOIN ${table('agentMessage')} message ON message.id = part."messageId"
-                   WHERE message."threadId" = thread.id AND message."isHidden" = false AND part."toolName" = $3 AND part."toolOutput"->'result'->>'status' = 'answered'))::int AS "userReplyCount"
+                   WHERE message."threadId" = thread.id AND message."isHidden" = false AND part."toolName" = ANY($3::text[]) AND part."toolOutput"->'result'->>'status' = 'answered'))::int AS "userReplyCount"
             FROM ${table('agentChatThread')} thread
             JOIN core.workspace workspace ON workspace.id = ANY($1::uuid[]) AND workspace."allowImpersonation" = true AND workspace."deletedAt" IS NULL
             LEFT JOIN ${escapeIdentifier(getWorkspaceSchemaName(workspaceIds[0]))}."workspaceMember" member ON member.id = thread."workspaceMemberId"
@@ -133,7 +158,7 @@ export class AdminPanelGlobalChatThreadsService {
               parameters.push(
                 workspaceIds,
                 WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
-                ASK_QUESTIONS_TOOL_NAME,
+                [ASK_QUESTION_TOOL_NAME, ASK_QUESTIONS_TOOL_NAME],
                 search ? `%${search}%` : null,
                 args.scope === AdminChatThreadScope.ONBOARDING,
                 args.hasErrorOnly,
