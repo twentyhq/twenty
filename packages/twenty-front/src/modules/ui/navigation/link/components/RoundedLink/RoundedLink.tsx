@@ -13,11 +13,11 @@ const StyledLink = styled.a`
   corner-shape: round;
   cursor: pointer;
   display: inline-flex;
+  flex-shrink: 0;
   font-weight: var(--t-font-size-md);
   gap: var(--t-spacing-1);
   height: 10px;
   justify-content: center;
-  flex-shrink: 0;
   max-width: calc(100% - 2 * var(--t-spacing-2) - 2px);
   overflow: hidden;
   padding: var(--t-spacing-1) var(--t-spacing-2);
