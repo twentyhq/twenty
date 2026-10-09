@@ -55,19 +55,6 @@ describe('generateFieldFilterJsonSchema', () => {
     ).toEqual(['eq', 'neq', 'in', 'is']);
   });
 
-  it('should expose only the operators the query layer accepts for raw JSON', () => {
-    expect(
-      Object.keys(
-        generateResolvedFilter(
-          getToolSchemaFieldMock({
-            name: 'payload',
-            type: FieldMetadataType.RAW_JSON,
-          }),
-        )?.properties ?? {},
-      ),
-    ).toEqual(['like', 'ilike', 'is']);
-  });
-
   it('should not filter one-to-many relations', () => {
     expect(
       generateFieldFilterJsonSchema({

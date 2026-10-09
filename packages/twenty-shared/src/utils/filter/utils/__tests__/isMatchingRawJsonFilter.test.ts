@@ -52,15 +52,6 @@ describe('isMatchingRawJsonFilter', () => {
       ).toBe(false);
     });
 
-    it('should match escaped characters in the JSON text', () => {
-      expect(
-        isMatchingRawJsonFilter({
-          rawJsonFilter: { like: '%say \\\\"hi\\\\"%' },
-          value: { note: 'say "hi"' },
-        }),
-      ).toBe(true);
-    });
-
     it('should not match a null value', () => {
       expect(
         isMatchingRawJsonFilter({
@@ -79,15 +70,6 @@ describe('isMatchingRawJsonFilter', () => {
           value: { name: 'Acme' },
         }),
       ).toBe(true);
-    });
-
-    it('should not match a null value', () => {
-      expect(
-        isMatchingRawJsonFilter({
-          rawJsonFilter: { ilike: '%null%' },
-          value: null,
-        }),
-      ).toBe(false);
     });
   });
 

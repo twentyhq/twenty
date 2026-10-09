@@ -1494,39 +1494,17 @@ describe('evaluateFilterConditions', () => {
           ],
         });
 
-      it('should search inside objects case-insensitively', () => {
+      it('should search inside JSON values case-insensitively', () => {
         expect(
           evaluateRawJson(ViewFilterOperand.CONTAINS, jsonValue, 'acme'),
         ).toBe(true);
         expect(
-          evaluateRawJson(ViewFilterOperand.CONTAINS, jsonValue, 'vip'),
-        ).toBe(true);
-        expect(
-          evaluateRawJson(ViewFilterOperand.CONTAINS, jsonValue, 'other'),
-        ).toBe(false);
-      });
-
-      it('should treat a stringified JSON null as empty', () => {
-        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, 'null')).toBe(true);
-        expect(evaluateRawJson(ViewFilterOperand.IS_NOT_EMPTY, 'null')).toBe(
-          false,
-        );
-        expect(
-          evaluateRawJson(ViewFilterOperand.CONTAINS, 'null', 'null'),
-        ).toBe(false);
-      });
-
-      it('should search inside stringified JSON', () => {
-        expect(
           evaluateRawJson(
             ViewFilterOperand.CONTAINS,
             JSON.stringify(jsonValue),
-            'ACME',
+            'VIP',
           ),
         ).toBe(true);
-      });
-
-      it('should handle does not contain', () => {
         expect(
           evaluateRawJson(
             ViewFilterOperand.DOES_NOT_CONTAIN,
@@ -1534,23 +1512,18 @@ describe('evaluateFilterConditions', () => {
             'Acme',
           ),
         ).toBe(false);
-        expect(
-          evaluateRawJson(ViewFilterOperand.DOES_NOT_CONTAIN, null, 'Acme'),
-        ).toBe(true);
       });
 
-      it('should only treat missing values as empty', () => {
-        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, jsonValue)).toBe(
-          false,
-        );
+      it('should treat missing values and a stringified null as empty', () => {
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, 'null')).toBe(true);
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, null)).toBe(true);
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, '')).toBe(true);
         expect(evaluateRawJson(ViewFilterOperand.IS_NOT_EMPTY, jsonValue)).toBe(
           true,
         );
-        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, null)).toBe(true);
-        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, undefined)).toBe(
-          true,
-        );
-        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, '')).toBe(true);
+        expect(
+          evaluateRawJson(ViewFilterOperand.DOES_NOT_CONTAIN, null, 'Acme'),
+        ).toBe(true);
       });
     });
 

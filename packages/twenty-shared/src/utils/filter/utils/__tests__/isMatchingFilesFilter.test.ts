@@ -119,10 +119,8 @@ describe('isMatchingFilesFilter', () => {
         }),
       ).toBe(false);
     });
-  });
 
-  describe('ilike filter', () => {
-    it('should be case insensitive', () => {
+    it('should be case insensitive with ilike', () => {
       expect(
         isMatchingFilesFilter({
           filesFilter: { ilike: '%FILE.PDF%' },
@@ -137,9 +135,7 @@ describe('isMatchingFilesFilter', () => {
         }),
       ).toBe(true);
     });
-  });
 
-  describe('like filter', () => {
     it('should match partial file names', () => {
       expect(
         isMatchingFilesFilter({
