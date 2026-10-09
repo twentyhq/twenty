@@ -129,6 +129,11 @@ const SidePanelRecordCreationFormSettings = ({
           {configurableRecordFormFields.map((recordFormField) => {
             const { fieldMetadataItem } = recordFormField;
             const isVisible = isRecordFormFieldVisible(recordFormField);
+            const fieldTypeLabel = isFieldTypeSupportedInSettings(
+              fieldMetadataItem.type,
+            )
+              ? getSettingsFieldTypeConfig(fieldMetadataItem.type)?.label
+              : undefined;
 
             return (
               <MenuItem
@@ -137,9 +142,7 @@ const SidePanelRecordCreationFormSettings = ({
                 withIconContainer
                 text={fieldMetadataItem.label}
                 contextualText={
-                  isFieldTypeSupportedInSettings(fieldMetadataItem.type)
-                    ? getSettingsFieldTypeConfig(fieldMetadataItem.type)?.label
-                    : undefined
+                  isDefined(fieldTypeLabel) ? t(fieldTypeLabel) : undefined
                 }
                 isIconDisplayedOnHoverOnly={false}
                 onClick={() => handleToggleVisibility(recordFormField)}

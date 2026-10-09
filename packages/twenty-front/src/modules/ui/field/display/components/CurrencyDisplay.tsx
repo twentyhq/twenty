@@ -11,7 +11,6 @@ import {
   type FieldCurrencyMetadata,
   type FieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { CURRENCY_CODE_LABELS } from 'twenty-shared/constants';
 import { CURRENCY_CODE_ICONS } from '@/ui/input/components/internal/currency/constants/CurrencyCodeIcons';
 import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -38,10 +37,6 @@ export const CurrencyDisplay = ({
   const CurrencyIcon = isDefined(currencyCode)
     ? CURRENCY_CODE_ICONS[currencyCode]
     : null;
-  const currencyLabel = isDefined(currencyCode)
-    ? CURRENCY_CODE_LABELS[currencyCode]?.label
-    : undefined;
-
   const amountToDisplay = !isDefined(currencyValue?.amountMicros)
     ? null
     : currencyValue?.amountMicros / 1000000;
@@ -51,10 +46,9 @@ export const CurrencyDisplay = ({
   const decimalsToUse = decimals ?? DEFAULT_DECIMAL_VALUE;
 
   const { formatNumber } = useNumberFormat();
-  const currencyLabel =
-    isDefined(currencyCode) && isDefined(currencyMetadata)
-      ? getCurrencyLabel({ currencyCode, locale: i18n.locale })
-      : undefined;
+  const currencyLabel = isDefined(currencyCode)
+    ? getCurrencyLabel({ currencyCode, locale: i18n.locale })
+    : undefined;
   const currencyTooltipContent = isDefined(currencyCode)
     ? `${currencyCode}${isDefined(currencyLabel) ? ` - ${currencyLabel}` : ''}`
     : undefined;
