@@ -15,7 +15,7 @@ describe('buildCallRecordingTranscriptSettingsUpdate', () => {
     },
   );
 
-  it.each([true, false, null])(
+  it.each([true, false])(
     'preserves an existing loading property: %p',
     (isValueLoadedOnOpen) => {
       expect(
@@ -30,6 +30,19 @@ describe('buildCallRecordingTranscriptSettingsUpdate', () => {
       ).toBeUndefined();
     },
   );
+
+  it('replaces a null loading property the validator would reject', () => {
+    expect(
+      buildCallRecordingTranscriptSettingsUpdate({
+        settings: { legacySetting: 'preserved', isValueLoadedOnOpen: null },
+      }),
+    ).toEqual({
+      universalSettings: {
+        legacySetting: 'preserved',
+        isValueLoadedOnOpen: true,
+      },
+    });
+  });
 
   it.each([
     { settings: 'legacy settings' },

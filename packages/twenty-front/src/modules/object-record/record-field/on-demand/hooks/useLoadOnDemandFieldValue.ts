@@ -19,6 +19,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { logError } from '~/utils/logError';
 
@@ -69,7 +70,10 @@ export const useLoadOnDemandFieldValue = () => {
         const isRequestCurrent = () =>
           store.get(currentWorkspaceState.atom)?.id === workspace.id &&
           store.get(currentWorkspaceMemberState.atom)?.id === member.id &&
-          store.get(currentUserWorkspaceState.atom) === userWorkspace &&
+          isDeeplyEqual(
+            store.get(currentUserWorkspaceState.atom),
+            userWorkspace,
+          ) &&
           getSessionGeneration() === sessionGeneration;
 
         return await runOnDemandFieldRequest({
@@ -172,6 +176,7 @@ export const useLoadOnDemandFieldValue = () => {
                     [fieldMetadata.name]: responseRecord[fieldMetadata.name],
                   },
                 ],
+                recordGqlFields: { [fieldMetadata.name]: true },
               });
 
               return 'loaded';
