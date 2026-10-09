@@ -486,6 +486,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     );
 
     expect(runs).toHaveLength(0);
+    expect(captureExceptions).toHaveBeenCalledTimes(1);
     expect(captureExceptions).toHaveBeenCalledWith([
       expect.objectContaining({
         message: expect.stringContaining(
@@ -2876,11 +2877,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       [fixture.coreWorkflowId],
     );
     expect(runs).toHaveLength(0);
-    expect(captureExceptions).not.toHaveBeenCalledWith([
-      expect.objectContaining({
-        message: expect.stringContaining(fixture.coreWorkflowVersionId),
-      }),
-    ]);
+    expect(captureExceptions).not.toHaveBeenCalled();
   });
 
   it('uses the queued core version even when the latest published pointer changes', async () => {
