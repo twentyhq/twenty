@@ -1,9 +1,10 @@
-import { ensureAbsoluteUrl, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type NavigationMenuItem,
   type UpdateOneNavigationMenuItemInput,
 } from '~/generated-metadata/graphql';
 
+import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 
@@ -76,7 +77,9 @@ export const buildUpdateInputsFromDraft = ({
     }
     if (linkChanged && isNavigationMenuItemLink(draftItem)) {
       const linkUrl = (draftItem.link ?? '').trim();
-      updatePayload.link = linkUrl ? ensureAbsoluteUrl(linkUrl) : null;
+      updatePayload.link = linkUrl
+        ? getLinkNavigationMenuItemComputedLink({ link: linkUrl })
+        : null;
     }
     if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
       updatePayload.icon = draftItem.icon ?? null;
