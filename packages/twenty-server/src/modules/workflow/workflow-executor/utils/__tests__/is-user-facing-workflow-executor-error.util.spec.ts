@@ -52,6 +52,7 @@ describe('isUserFacingWorkflowExecutorError', () => {
     WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
     WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
     WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+    WorkflowStepExecutorExceptionCode.FORBIDDEN,
   ])('returns true for user-facing workflow step executor code %s', (code) => {
     const error = new WorkflowStepExecutorException('User error', code);
 
@@ -69,6 +70,7 @@ describe('isUserFacingWorkflowExecutorError', () => {
 
   it.each([
     AiExceptionCode.API_KEY_NOT_CONFIGURED,
+    AiExceptionCode.INVALID_AGENT_INPUT,
     AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
     AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
     AiExceptionCode.INVALID_EVALUATION_REQUEST,

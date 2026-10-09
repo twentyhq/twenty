@@ -1,7 +1,7 @@
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useCreditUpgradeAction } from '@/settings/billing/hooks/useCreditUpgradeAction';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -19,8 +19,9 @@ const INFORMATION_BANNER_UPGRADE_CREDIT_PLAN_MODAL_ID =
 export const InformationBannerNoMoreCredits = () => {
   const { t } = useLingui();
 
-  const { [PermissionFlagType.BILLING]: hasPermissionToUpdateCreditPlan } =
-    usePermissionFlagMap();
+  const hasPermissionToUpdateCreditPlan = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
 
   const navigateSettings = useNavigateSettings();
   const { openDialog } = useDialog();
@@ -52,8 +53,8 @@ export const InformationBannerNoMoreCredits = () => {
     <>
       <InformationBanner
         componentInstanceId={COMPONENT_INSTANCE_ID}
-        color="danger"
-        variant="secondary"
+        status="error"
+        variant="soft"
         message={
           hasPermissionToUpdateCreditPlan
             ? t`Credit limit reached. Update your credit plan to keep workflows, AI, and apps running.`

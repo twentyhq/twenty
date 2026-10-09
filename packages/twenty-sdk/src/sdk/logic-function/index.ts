@@ -1,8 +1,8 @@
 // Only what may reach the Lambda runtime; build-time define* factories stay in twenty-sdk/define.
 // Logic functions import types from here, never directly from twenty-shared/*.
 
+export type { LogicFunctionConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export type {
-  LogicFunctionConfig,
   LogicFunctionHandler,
   ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';
@@ -67,6 +67,10 @@ export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app
 
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
+
+export { sendInboxMessage } from '@/sdk/logic-function/inbox/send-inbox-message';
+export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
+export type { SendInboxMessageResult } from 'twenty-shared/application';
 
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
 export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';

@@ -56,7 +56,7 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       pageLayoutWidgetManifest: {
         universalIdentifier: 'widget-uuid-2',
         title: 'Iframe Widget',
-        type: 'IFRAME',
+        type: WidgetType.IFRAME,
         position: {
           layoutMode: PageLayoutTabLayoutMode.GRID,
           row: 0,

@@ -1,3 +1,7 @@
+import { randomUUID } from 'node:crypto';
+
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -18,11 +22,14 @@ const RUN_ON_WORKSPACE_ARGS = {
   total: 1,
 };
 
+// 2.46 dropped the run link this command recorded conversations on, so a
+// workspace upgrading past 2.44 keeps answering its forms from their runs.
 describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsCommand (integration)', () => {
   let command: RecordPendingFormConversationsCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
-  let workflowRun: Pick<WorkflowRunWorkspaceEntity, 'id' | 'state'>;
+  let workflowRunId: string;
   let formStepId: string;
+  let originalState: WorkflowRunWorkspaceEntity['state'];
 
   const inWorkspace = <TResult>(work: () => Promise<TResult>) =>
     workspaceOrmManager.executeInWorkspaceContext(
@@ -30,39 +37,10 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
       buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
     );
 
-  const repository = (objectName: string) =>
-    workspaceOrmManager.getRepository(objectName, {
-      shouldBypassPermissionChecks: true,
-    });
-
-  const runCommand = (options: { dryRun?: boolean } = {}) =>
-    inWorkspace(() =>
-      command.runOnWorkspace({ ...RUN_ON_WORKSPACE_ARGS, options }),
-    );
-
-  const findFormThreadId = async () => {
-    const { state } = await inWorkspace(() =>
-      repository('workflowRun').findOneOrFail({
-        where: { id: workflowRun.id },
-        select: { state: true },
-      }),
-    );
-
-    return state?.stepInfos?.[formStepId]?.threadId;
-  };
-
-  // A form step pending since before this release, with no recorded conversation.
-  const forgetFormConversation = () =>
-    inWorkspace(() =>
-      repository('workflowRun').update(workflowRun.id, {
-        state: {
-          ...workflowRun.state,
-          stepInfos: {
-            ...workflowRun.state?.stepInfos,
-            [formStepId]: { status: StepStatus.PENDING },
-          },
-        },
-      }),
+  const workflowRunRepository = () =>
+    workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+      'workflowRun',
+      { shouldBypassPermissionChecks: true },
     );
 
   beforeAll(async () => {
@@ -73,42 +51,72 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
       'WorkspaceOrmManager',
     );
 
-    const runningWorkflowRuns = (await inWorkspace(() =>
-      repository('workflowRun').find({
+    const [runningWorkflowRun] = await inWorkspace(() =>
+      workflowRunRepository().find({
         where: { status: WorkflowRunStatus.RUNNING },
         select: { id: true, state: true },
+        take: 1,
       }),
-    )) as Pick<WorkflowRunWorkspaceEntity, 'id' | 'state'>[];
+    );
 
-    for (const runningWorkflowRun of runningWorkflowRuns) {
-      const formStep = runningWorkflowRun.state?.flow?.steps.find(
-        (step) =>
-          step.type === WorkflowActionType.FORM &&
-          runningWorkflowRun.state?.stepInfos[step.id]?.status ===
-            StepStatus.PENDING,
-      );
-
-      if (formStep !== undefined) {
-        workflowRun = runningWorkflowRun;
-        formStepId = formStep.id;
-        break;
-      }
+    if (!isDefined(runningWorkflowRun?.state)) {
+      throw new Error('The seed has no running workflow run to add a form to');
     }
+
+    workflowRunId = runningWorkflowRun.id;
+    originalState = runningWorkflowRun.state;
+    formStepId = randomUUID();
+
+    // a form step waiting since before 2.44, with no recorded conversation
+    await inWorkspace(() =>
+      workflowRunRepository().update(workflowRunId, {
+        state: {
+          ...originalState,
+          flow: {
+            ...originalState.flow,
+            steps: [
+              ...originalState.flow.steps,
+              {
+                id: formStepId,
+                name: 'Approve the discount',
+                type: WorkflowActionType.FORM,
+                valid: true,
+                settings: {
+                  input: [
+                    {
+                      id: randomUUID(),
+                      name: 'discount',
+                      label: 'Discount',
+                      type: FieldMetadataType.NUMBER,
+                    },
+                  ],
+                  outputSchema: {},
+                  errorHandlingOptions: {
+                    retryOnFailure: { value: 0 },
+                    continueOnFailure: { value: false },
+                  },
+                },
+                nextStepIds: [],
+              },
+            ],
+          },
+          stepInfos: {
+            ...originalState.stepInfos,
+            [formStepId]: { status: StepStatus.PENDING },
+          },
+        },
+      }),
+    );
   });
 
-  afterEach(async () => {
-    const threadId = await findFormThreadId();
-    const seededThreadId = workflowRun.state?.stepInfos[formStepId]?.threadId;
+  afterAll(async () => {
+    if (!isDefined(workflowRunId) || !isDefined(originalState)) {
+      return;
+    }
 
-    await inWorkspace(async () => {
-      if (threadId !== undefined && threadId !== seededThreadId) {
-        await repository('agentChatThread').delete({ id: threadId });
-      }
-
-      await repository('workflowRun').update(workflowRun.id, {
-        state: workflowRun.state,
-      });
-    });
+    await inWorkspace(() =>
+      workflowRunRepository().update(workflowRunId, { state: originalState }),
+    );
   });
 
   it('is registered in the 2.44 bundle', () => {
@@ -123,54 +131,32 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
     );
   });
 
-  it('records nothing on a dry run', async () => {
-    await forgetFormConversation();
+  it('records no conversation once threads no longer name a run', async () => {
+    const countThreads = () =>
+      inWorkspace(() =>
+        workspaceOrmManager
+          .getRepository('agentChatThread', {
+            shouldBypassPermissionChecks: true,
+          })
+          .count({ withDeleted: true }),
+      );
+    const threadCountBefore = await countThreads();
 
-    await runCommand({ dryRun: true });
+    await inWorkspace(() =>
+      command.runOnWorkspace({ ...RUN_ON_WORKSPACE_ARGS, options: {} }),
+    );
 
-    expect(await findFormThreadId()).toBeUndefined();
-  });
+    expect(await countThreads()).toBe(threadCountBefore);
 
-  it('records a pending request_form call named after the step, that the conversation waits on', async () => {
-    await forgetFormConversation();
-
-    await runCommand();
-
-    const threadId = await findFormThreadId();
-
-    const thread = await inWorkspace(() =>
-      repository('agentChatThread').findOneOrFail({
-        where: { id: threadId },
-        select: { workflowRunId: true, pendingQuestionMessageId: true },
+    const { state } = await inWorkspace(() =>
+      workflowRunRepository().findOneOrFail({
+        where: { id: workflowRunId },
+        select: { state: true },
       }),
     );
 
-    expect(thread.workflowRunId).toBe(workflowRun.id);
-
-    const parts = await inWorkspace(() =>
-      repository('agentMessagePart').find({
-        where: { messageId: thread.pendingQuestionMessageId },
-        select: { toolName: true, toolCallId: true, toolOutput: true },
-      }),
-    );
-
-    expect(parts).toEqual([
-      {
-        toolName: 'request_form',
-        toolCallId: formStepId,
-        toolOutput: expect.objectContaining({
-          result: { status: 'pending' },
-        }),
-      },
-    ]);
-  });
-
-  it('leaves a form whose conversation is recorded alone', async () => {
-    const seededThreadId = workflowRun.state?.stepInfos[formStepId]?.threadId;
-
-    await runCommand();
-
-    expect(seededThreadId).toBeDefined();
-    expect(await findFormThreadId()).toBe(seededThreadId);
+    expect(state?.stepInfos?.[formStepId]).toEqual({
+      status: StepStatus.PENDING,
+    });
   });
 });

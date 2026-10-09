@@ -13,6 +13,7 @@ import {
   compileValidationRuleExpression,
   isDefined,
 } from 'twenty-shared/utils';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
@@ -35,7 +36,7 @@ import { insertValidationRuleHelperItem } from '@/validation-rules/utils/insertV
 
 const SingleParagraphDocument = Document.extend({ content: 'paragraph' });
 
-const StyledContainer = styled.div`
+const StyledEditorContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
@@ -128,7 +129,7 @@ export const SettingsValidationRuleExpressionEditor = ({
       }),
     );
   const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const [hasNavigatedHelper, setHasNavigatedHelper] = useState(false);
+  const [isHelperFocused, setIsHelperFocused] = useState(false);
 
   const getFieldNodeAttributes = (
     path: string,
@@ -152,7 +153,7 @@ export const SettingsValidationRuleExpressionEditor = ({
       }),
     );
     setHighlightedIndex(0);
-    setHasNavigatedHelper(false);
+    setIsHelperFocused(false);
   };
 
   const initialContent: JSONContent = {
@@ -223,7 +224,7 @@ export const SettingsValidationRuleExpressionEditor = ({
   };
 
   const handleEditorKeyDown = (event: KeyboardEvent): boolean => {
-    const { items, replaceFromOffset } = helperContext;
+    const { items } = helperContext;
 
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       if (items.length === 0) {
@@ -232,10 +233,14 @@ export const SettingsValidationRuleExpressionEditor = ({
 
       const step = event.key === 'ArrowDown' ? 1 : -1;
 
-      setHighlightedIndex(
-        (index) => (index + step + items.length) % items.length,
-      );
-      setHasNavigatedHelper(true);
+      if (isHelperFocused) {
+        setHighlightedIndex(
+          (index) => (index + step + items.length) % items.length,
+        );
+      } else {
+        setHighlightedIndex(step === 1 ? 0 : items.length - 1);
+        setIsHelperFocused(true);
+      }
 
       return true;
     }
@@ -245,18 +250,8 @@ export const SettingsValidationRuleExpressionEditor = ({
     }
 
     const highlightedItem = items[highlightedIndex];
-    const isWordBeingTyped =
-      isDefined(editor) &&
-      replaceFromOffset <
-        getValidationRuleEditorText(
-          editor.state.doc,
-          editor.state.selection.from,
-        ).length;
 
-    if (
-      isDefined(highlightedItem) &&
-      (hasNavigatedHelper || isWordBeingTyped)
-    ) {
+    if (isHelperFocused && isDefined(highlightedItem)) {
       insertHelperItem(highlightedItem);
     }
 
@@ -273,20 +268,25 @@ export const SettingsValidationRuleExpressionEditor = ({
       : null;
 
   return (
-    <StyledContainer>
-      <StyledEditor hasError={isDefined(errorMessage)}>
-        <EditorContent editor={editor} />
-      </StyledEditor>
-      {isDefined(errorMessage) && (
-        <StyledError role="alert">{errorMessage}</StyledError>
-      )}
+    <>
+      <Card.Content divider>
+        <StyledEditorContent>
+          <StyledEditor hasError={isDefined(errorMessage)}>
+            <EditorContent editor={editor} />
+          </StyledEditor>
+          {isDefined(errorMessage) && (
+            <StyledError role="alert">{errorMessage}</StyledError>
+          )}
+        </StyledEditorContent>
+      </Card.Content>
       <SettingsValidationRuleHelperPanel
         items={helperContext.items}
         highlightedIndex={highlightedIndex}
+        isFocused={isHelperFocused}
         editorFields={editorFields}
         onHighlight={setHighlightedIndex}
         onSelect={insertHelperItem}
       />
-    </StyledContainer>
+    </>
   );
 };

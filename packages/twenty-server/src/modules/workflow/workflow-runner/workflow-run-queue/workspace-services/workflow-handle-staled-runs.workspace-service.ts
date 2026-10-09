@@ -154,10 +154,14 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     for (const [workflowRunId, detectedAt] of Object.entries(flaggedRuns)) {
       try {
         const workflowRun =
-          await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+          await this.workflowRunWorkspaceService.getWorkflowRun({
             workflowRunId,
             workspaceId,
           });
+
+        if (!isDefined(workflowRun)) {
+          continue;
+        }
 
         if (
           workflowRun.status !== WorkflowRunStatus.RUNNING ||

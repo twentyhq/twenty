@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type ReactElement } from 'react';
-import { Dropdown, SettingsRow } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 
 import { IconAlertTriangle, IconMessage, IconSparkles } from 'twenty-ui/icon';
 

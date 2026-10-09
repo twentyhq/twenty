@@ -2,10 +2,10 @@
 export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   agentChatThread: 'fab0fff8-0c90-4116-9bb0-7dbc07392633',
   agentChatThreadTarget: '9f2a5bf4-3a57-4e61-b561-eaf5a5b86973',
+  agentChatThreadParticipant: 'a043622a-48ef-426f-b55d-3fdcf4ae52f2',
   agentTurn: '63697477-8606-415e-86cb-be078d7fcf7e',
   agentMessage: '62d0354c-3b99-4769-b0f5-4e2651c2ca7d',
   agentMessagePart: '214bacb0-df89-494e-be42-e5b11c99cff6',
-  agentTurnEvaluation: '73741409-7835-426f-8425-9de13af22302',
   campaignDelivery: '0c76066d-26f7-4f57-b0bd-0eb61465fb1a',
   messageSuppression: '41410724-723c-48ab-8312-9b85131b4d84',
   timelineActivity: '20202020-6736-4337-b5c4-8b39fae325a5',

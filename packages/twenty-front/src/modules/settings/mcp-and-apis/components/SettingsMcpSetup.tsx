@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 
-import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import ModelContextProtocolLogo from '@/settings/mcp-and-apis/assets/model-context-protocol-logo.svg?react';
 import { SettingsMcpSetupCard } from '@/settings/mcp-and-apis/components/SettingsMcpSetupCard';
 import { buildMcpSetupCategories } from '@/settings/mcp-and-apis/utils/buildMcpSetupCategories';
@@ -11,7 +11,7 @@ import {
   buildMcpServerUrl,
   isHttpsUrl,
 } from '@/settings/mcp-and-apis/utils/mcpSetup';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -76,18 +76,13 @@ export const SettingsMcpSetup = () => {
                 description={t`Access your workspace data from your favorite MCP client like Claude, Codex or Cursor.`}
               />
               <CodeEditorHeader
-                leftNodes={[
-                  <StyledMcpEditorHeaderTitle key="mcp-editor-header-title">
+                startElement={
+                  <StyledMcpEditorHeaderTitle>
                     <StyledMcpIcon aria-hidden />
                     <span>{t`MCP client configuration`}</span>
-                  </StyledMcpEditorHeaderTitle>,
-                ]}
-                rightNodes={[
-                  <LightCopyIconButton
-                    key="mcp-config-copy-button"
-                    copyText={mcpConfig}
-                  />,
-                ]}
+                  </StyledMcpEditorHeaderTitle>
+                }
+                endElement={<LightCopyIconButton copyText={mcpConfig} />}
               />
               <CodeEditor
                 value={mcpConfig}

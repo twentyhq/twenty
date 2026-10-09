@@ -1,10 +1,9 @@
 import { isFunction, isNonEmptyString, isNumber } from '@sniptt/guards';
 import React from 'react';
 
+import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
-
-type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
 
 const resolveInitialValue = (candidate: unknown): string | undefined => {
   if (isNonEmptyString(candidate)) {

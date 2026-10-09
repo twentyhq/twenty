@@ -8,6 +8,7 @@ export const GET_CORE_WORKFLOWS_WITH_CURRENT_VERSIONS = gql`
       workflow {
         id
         name
+        applicationId
         statuses
         lastPublishedCoreWorkflowVersionId
       }

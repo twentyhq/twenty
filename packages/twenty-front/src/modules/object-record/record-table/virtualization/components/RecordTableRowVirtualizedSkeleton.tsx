@@ -13,7 +13,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 export const RecordTableRowVirtualizedSkeleton = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
-  const { hasUserSelectedAllRows } = useRecordTableBodyContextOrThrow();
+  const { hasUserSelectedAllRecords } = useRecordTableBodyContextOrThrow();
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
@@ -34,18 +34,18 @@ export const RecordTableRowVirtualizedSkeleton = () => {
         <RecordTableCellLoading
           key={recordField.fieldMetadataItemId}
           recordFieldIndex={index}
-          isSelected={hasUserSelectedAllRows}
+          isSelected={hasUserSelectedAllRecords}
         />
       ))}
       <RecordTableCellStyleWrapper
         hasRightBorder={false}
         widthClassName={RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME}
-        isSelected={hasUserSelectedAllRows}
+        isSelected={hasUserSelectedAllRecords}
       />
       <RecordTableCellStyleWrapper
         hasRightBorder={false}
         widthClassName={RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME}
-        isSelected={hasUserSelectedAllRows}
+        isSelected={hasUserSelectedAllRecords}
       />
     </RecordTableRowDiv>
   );

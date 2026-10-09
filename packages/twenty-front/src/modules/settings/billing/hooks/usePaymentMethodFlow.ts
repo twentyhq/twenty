@@ -1,6 +1,6 @@
 import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
@@ -14,8 +14,9 @@ export const usePaymentMethodFlow = (modalInstanceId: string) => {
     billingHasPaymentMethodSelector,
   );
 
-  const { [PermissionFlagType.BILLING]: hasPermissionToManageBilling } =
-    usePermissionFlagMap();
+  const hasPermissionToManageBilling = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
 
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.Billing));

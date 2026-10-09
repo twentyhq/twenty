@@ -43,6 +43,32 @@ describe('normalizeToolOutputToJsonValues', () => {
       },
     });
   });
+
+  it('strips NUL characters from string values', () => {
+    expect(
+      normalizeToolOutputToJsonValues({
+        success: true,
+        message: 'Request successful',
+        result: { body: 'PK\u0003\u0004\u0000\u0000', rows: [['A\u0000']] },
+      }),
+    ).toEqual({
+      success: true,
+      message: 'Request successful',
+      result: { body: 'PK\u0003\u0004', rows: [['A']] },
+    });
+  });
+
+  it('keeps a literal backslash followed by u0000', () => {
+    const literalEscapeOutput = {
+      success: true,
+      message: 'Code executed',
+      result: { code: 'split("\\u0000")' },
+    };
+
+    expect(normalizeToolOutputToJsonValues(literalEscapeOutput)).toEqual(
+      literalEscapeOutput,
+    );
+  });
 });
 
 describe('tool output reaching the model', () => {

@@ -13,7 +13,7 @@ import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBilli
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
@@ -23,7 +23,7 @@ import { t } from '@lingui/core/macro';
 import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconChartBar,
   IconCoins,
@@ -37,6 +37,7 @@ import {
   PermissionFlagType,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE = 4;
 
@@ -155,8 +156,9 @@ export const SettingsBillingCreditsSection = ({
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
   const shouldUpdatePayment = isSubscriptionPaymentOverdue(subscriptionStatus);
-  const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
-    usePermissionFlagMap();
+  const hasPermissionToEndTrialPeriod = useHasPermissionFlag(
+    PermissionFlagType.WORKSPACE,
+  );
 
   const { getResourceCreditUsage } = useGetResourceCreditUsage();
 
@@ -313,13 +315,7 @@ export const SettingsBillingCreditsSection = ({
         <Button
           startIcon={<IconExternalLink />}
           size="sm"
-          onClick={() =>
-            window.open(
-              creditsDocumentationUrl,
-              '_blank',
-              'noopener,noreferrer',
-            )
-          }
+          onClick={() => openUrlInNewTab(creditsDocumentationUrl)}
           variant="outline"
         >{t`How credits work`}</Button>
       </StyledCreditUsageFooterActions>

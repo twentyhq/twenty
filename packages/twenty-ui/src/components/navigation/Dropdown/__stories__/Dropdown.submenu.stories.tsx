@@ -1,14 +1,14 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Dropdown } from '../Dropdown';
 import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 
 const ExportSubmenu = ({ direction }: { direction: 'ltr' | 'rtl' }) => (
-  <TextDirectionProvider direction={direction}>
+  <DirectionProvider direction={direction}>
     <Dropdown.Root type="menu">
       <Dropdown.Trigger>Record actions</Dropdown.Trigger>
       <Dropdown.Content aria-label="Record actions">
@@ -21,7 +21,7 @@ const ExportSubmenu = ({ direction }: { direction: 'ltr' | 'rtl' }) => (
         </Dropdown.Submenu>
       </Dropdown.Content>
     </Dropdown.Root>
-  </TextDirectionProvider>
+  </DirectionProvider>
 );
 
 const playHoverThenKeyboard =
@@ -51,7 +51,8 @@ const playHoverThenKeyboard =
   };
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Submenu',
+  id: 'ui-components-dropdown-interactions-submenu',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Submenu',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },

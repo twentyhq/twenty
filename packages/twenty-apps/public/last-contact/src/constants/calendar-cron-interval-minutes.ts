@@ -1,1 +1,0 @@
-export const CALENDAR_CRON_INTERVAL_MINUTES = 5;

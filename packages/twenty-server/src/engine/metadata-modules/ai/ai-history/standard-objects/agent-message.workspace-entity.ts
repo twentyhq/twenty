@@ -4,10 +4,8 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import {
-  type AgentMessageRole,
-  type AgentMessageStatus,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { type AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { type AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 
 export class AgentMessageWorkspaceEntity extends BaseWorkspaceEntity {
   thread: EntityRelation<AgentChatThreadWorkspaceEntity>;
@@ -23,6 +21,7 @@ export class AgentMessageWorkspaceEntity extends BaseWorkspaceEntity {
   senderApplicationId: string | null;
   role: AgentMessageRole;
   status: AgentMessageStatus;
+  // only contexts the 2.46 upgrade has not turned into system messages yet
   isHidden: boolean;
   processedAt: string | null;
 }

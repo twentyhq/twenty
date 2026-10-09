@@ -20,7 +20,7 @@ import {
 } from 'twenty-ui/icon';
 import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
+import { useGetLogicFunctionHttpUrl } from '@/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const HTTP_METHOD_OPTIONS: Array<{
@@ -102,7 +102,7 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
             label={t`Method`}
             fullWidth
             disabled={readonly}
-            value={value.httpMethod as HTTPMethod}
+            value={value.httpMethod}
             options={HTTP_METHOD_OPTIONS}
             onChange={(newMethod) => updateField('httpMethod', newMethod)}
             dropdownSideOffset={4}

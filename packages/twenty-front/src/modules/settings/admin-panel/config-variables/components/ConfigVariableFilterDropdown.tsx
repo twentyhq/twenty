@@ -3,7 +3,7 @@ import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-v
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconSettings } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { ConfigVariableOptionsDropdownContent } from './ConfigVariableOptionsDropdownContent';

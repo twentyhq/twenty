@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   definePageLayoutWidget,
-  PageLayoutTabLayoutMode,
   type StandalonePageLayoutWidgetManifest,
 } from '@/sdk/define';
 
@@ -11,7 +10,7 @@ const WIDGET_CONFIG: StandalonePageLayoutWidgetManifest = {
   pageLayoutTabUniversalIdentifier: '22222222-2222-4222-8222-222222222222',
   title: 'Docs',
   type: 'IFRAME',
-  position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1000 },
+  position: { layoutMode: 'VERTICAL_LIST', index: 1000 },
   configuration: {
     configurationType: 'IFRAME',
     url: 'https://example.com/docs',

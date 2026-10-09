@@ -6,6 +6,8 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
+import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
+import { preallocateWorkflowReferenceIds } from 'src/engine/core-modules/application/application-manifest/utils/preallocate-workflow-reference-ids.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
@@ -112,10 +114,6 @@ export class ApplicationManifestMigrationService {
         manifest: preInstallOnlyManifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
-        isLogicFunctionPrebuiltModeEnabled:
-          featureFlagsMap[
-            FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
-          ],
         now,
         workspaceId,
       });
@@ -206,13 +204,29 @@ export class ApplicationManifestMigrationService {
         manifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
-        isLogicFunctionPrebuiltModeEnabled:
-          featureFlagsMap[
-            FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
-          ],
         now,
         workspaceId,
       });
+
+    const idByUniversalIdentifierByMetadataName =
+      (manifest.workflows ?? []).length > 0
+        ? preallocateWorkflowReferenceIds({
+            fromAllFlatEntityMaps,
+            toAllUniversalFlatEntityMaps,
+          })
+        : {};
+
+    addWorkflowManifestsToFlatEntityMapsOrThrow({
+      workflows: manifest.workflows ?? [],
+      ownerFlatApplication,
+      fromAllFlatEntityMaps,
+      toAllUniversalFlatEntityMaps,
+      existingAllFlatEntityMaps,
+      idByUniversalIdentifierByMetadataName,
+      isApplicationWorkflowsEnabled:
+        featureFlagsMap[FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED],
+      now,
+    });
 
     const allFlatEntityOperationRecordByMetadataName =
       buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
@@ -237,6 +251,7 @@ export class ApplicationManifestMigrationService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName,
           dryRun,
         },
       );
