@@ -30,8 +30,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-// Phone numbers read left to right in every locale; without an explicit
-// direction, an RTL page reorders their digit groups.
 export const PhonesDisplay = ({
   value,
   isFocused,

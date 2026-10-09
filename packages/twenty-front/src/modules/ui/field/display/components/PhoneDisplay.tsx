@@ -11,8 +11,6 @@ type PhoneDisplayValueProps = {
   callingCode: string | null | undefined;
 };
 
-// Phone numbers read left to right in every locale; without an explicit
-// direction, an RTL page reorders their digit groups.
 export const PhoneDisplay = ({
   value: { number, callingCode },
 }: PhoneDisplayProps) => {
