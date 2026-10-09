@@ -206,6 +206,10 @@ export type ChatConfiguration = {
   configurationType: 'CHAT';
 };
 
+export type CalendarEventParticipantsConfiguration = {
+  configurationType: 'CALENDAR_EVENT_PARTICIPANTS';
+};
+
 export type PageLayoutWidgetConfiguration =
   | AggregateChartConfiguration
   | PieChartConfiguration
@@ -235,4 +239,5 @@ export type PageLayoutWidgetConfiguration =
   | CallRecordingSummaryConfiguration
   | CallRecordingTranscriptConfiguration
   | ChatThreadsConfiguration
-  | ChatConfiguration;
+  | ChatConfiguration
+  | CalendarEventParticipantsConfiguration;

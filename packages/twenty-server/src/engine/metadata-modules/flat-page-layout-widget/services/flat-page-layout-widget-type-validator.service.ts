@@ -107,6 +107,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       CHAT: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.CHAT,
       ),
+      CALENDAR_EVENT_PARTICIPANTS: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.CALENDAR_EVENT_PARTICIPANTS,
+      ),
       MESSAGE_CAMPAIGN_BODY: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
       ),
@@ -181,6 +184,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       ),
       CHAT: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.CHAT,
+      ),
+      CALENDAR_EVENT_PARTICIPANTS: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.CALENDAR_EVENT_PARTICIPANTS,
       ),
       MESSAGE_CAMPAIGN_BODY: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,

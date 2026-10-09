@@ -6,4 +6,6 @@ export const WORKSPACE_CREATION_ONLY_WIDGET_TYPES: WidgetType[] = [
   // Both added to the enum in 2.44
   WidgetType.CHAT_THREADS,
   WidgetType.CHAT,
+  // Added to the enum in 2.46
+  WidgetType.CALENDAR_EVENT_PARTICIPANTS,
 ];

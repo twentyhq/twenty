@@ -435,6 +435,7 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         title: 'Home',
         widgets: {
           fields: 'Fields',
+          participants: 'Participants',
         },
       },
       timeline: {

@@ -34,6 +34,7 @@ export enum WidgetConfigurationType {
   FORM_FIELD = 'FORM_FIELD',
   CHAT_THREADS = 'CHAT_THREADS',
   CHAT = 'CHAT',
+  CALENDAR_EVENT_PARTICIPANTS = 'CALENDAR_EVENT_PARTICIPANTS',
 }
 export type AllGraphWidgetConfigurationType =
   | WidgetConfigurationType.AGGREGATE_CHART

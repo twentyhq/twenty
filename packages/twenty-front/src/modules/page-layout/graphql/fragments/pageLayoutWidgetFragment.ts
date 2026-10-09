@@ -171,6 +171,9 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on ChatConfiguration {
         configurationType
       }
+      ... on CalendarEventParticipantsConfiguration {
+        configurationType
+      }
       ... on MessageCampaignBodyConfiguration {
         configurationType
       }

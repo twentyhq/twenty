@@ -1,4 +1,5 @@
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
+import { CalendarEventParticipantsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/calendar-event-participants-configuration.dto';
 import { CallRecordingSummaryConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-summary-configuration.dto';
 import { CallRecordingTranscriptConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-transcript-configuration.dto';
 import { ChatConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/chat-configuration.dto';
@@ -46,6 +47,7 @@ export const ALL_WIDGET_CONFIGURATION_TYPE_VALIDATOR_BY_WIDGET_CONFIGURATION_TYP
     CALL_RECORDING_TRANSCRIPT: CallRecordingTranscriptConfigurationDTO,
     CHAT_THREADS: ChatThreadsConfigurationDTO,
     CHAT: ChatConfigurationDTO,
+    CALENDAR_EVENT_PARTICIPANTS: CalendarEventParticipantsConfigurationDTO,
     MESSAGE_CAMPAIGN_BODY: MessageCampaignBodyConfigurationDTO,
     MESSAGE_CAMPAIGN_DETAILS: MessageCampaignDetailsConfigurationDTO,
     FIELD: FieldConfigurationDTO,
