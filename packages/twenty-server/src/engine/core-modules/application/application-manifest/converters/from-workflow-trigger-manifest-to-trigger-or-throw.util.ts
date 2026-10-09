@@ -51,7 +51,7 @@ const DATABASE_EVENT_TRIGGER_NAME_BY_ACTION: Record<
   upserted: 'Record is created or updated',
 };
 
-const fromManualTriggerManifest = ({
+const fromManualTriggerManifestOrThrow = ({
   trigger,
   resolvers,
 }: {
@@ -116,7 +116,9 @@ const fromCronTriggerManifestOrThrow = (
   return cronTrigger;
 };
 
-const toWatchedFieldName = (field: WorkflowManifestFieldReference): string => {
+const toWatchedFieldNameOrThrow = (
+  field: WorkflowManifestFieldReference,
+): string => {
   if (
     field.type !== FieldMetadataType.RELATION &&
     field.type !== FieldMetadataType.MORPH_RELATION
@@ -141,7 +143,7 @@ const toWatchedFieldName = (field: WorkflowManifestFieldReference): string => {
   return computeMorphOrRelationFieldJoinColumnName({ name: field.name });
 };
 
-const fromDatabaseEventTriggerManifest = ({
+const fromDatabaseEventTriggerManifestOrThrow = ({
   trigger,
   resolvers,
 }: {
@@ -161,7 +163,7 @@ const fromDatabaseEventTriggerManifest = ({
       ? {
           fields: settings.fieldUniversalIdentifiers.map(
             (fieldUniversalIdentifier) =>
-              toWatchedFieldName(
+              toWatchedFieldNameOrThrow(
                 resolvers.field(
                   fieldUniversalIdentifier,
                   settings.objectUniversalIdentifier,
@@ -208,11 +210,11 @@ export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
 
   switch (trigger.type) {
     case 'MANUAL':
-      return fromManualTriggerManifest({ trigger, resolvers });
+      return fromManualTriggerManifestOrThrow({ trigger, resolvers });
     case 'CRON':
       return fromCronTriggerManifestOrThrow(trigger);
     case 'DATABASE_EVENT':
-      return fromDatabaseEventTriggerManifest({ trigger, resolvers });
+      return fromDatabaseEventTriggerManifestOrThrow({ trigger, resolvers });
     default:
       return assertNever(trigger);
   }
