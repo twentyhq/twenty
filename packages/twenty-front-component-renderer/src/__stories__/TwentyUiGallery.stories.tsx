@@ -68,6 +68,7 @@ import { avatarControlsTest } from '@/__stories__/twenty-ui-gallery/utils/avatar
 import { commandBlockTest } from '@/__stories__/twenty-ui-gallery/utils/commandBlockTest';
 import { calloutTest } from '@/__stories__/twenty-ui-gallery/utils/calloutTest';
 import { chipControlsTest } from '@/__stories__/twenty-ui-gallery/utils/chipControlsTest';
+import { cardCompositionTest } from '@/__stories__/twenty-ui-gallery/utils/cardCompositionTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -215,6 +216,17 @@ export const SurfacesPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-surfaces-gallery',
   runtime: 'preact',
   play: galleryRenderTest,
+});
+
+export const CardCompositionReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-card-composition',
+  runtime: 'react',
+  play: cardCompositionTest,
+});
+export const CardCompositionPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-card-composition',
+  runtime: 'preact',
+  play: cardCompositionTest,
 });
 
 export const DialogReact: Story = createGalleryStory({
