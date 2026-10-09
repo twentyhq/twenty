@@ -17,3 +17,11 @@ export {
   createLoadSkillTool,
   loadSkillInputSchema,
 } from './load-skill.tool';
+
+export {
+  RUN_TOOL_SCRIPT_TOOL_NAME,
+  createRunToolScriptTool,
+  runToolScriptInputSchema,
+  type RunToolScriptInput,
+  type RunToolScriptOutput,
+} from './run-tool-script.tool';
