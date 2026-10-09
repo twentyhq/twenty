@@ -3,6 +3,7 @@ import '@remote-dom/react/polyfill';
 
 import {
   HtmlInputElement,
+  HtmlImgElement,
   HtmlTextareaElement,
 } from '../generated/remote-elements';
 
@@ -14,6 +15,7 @@ import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/state
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installImageLoadingPolyfill } from '@/polyfills/image/utils/installImageLoadingPolyfill';
+import { installImageObjectUrlPolyfill } from '@/polyfills/image/utils/installImageObjectUrlPolyfill';
 import { workerActiveElementStore } from '@/polyfills/dom/states/workerActiveElementStore';
 import { installTextTreeWalkerPolyfill } from '@/polyfills/dom/utils/installTextTreeWalkerPolyfill';
 import { installInputSelectionPolyfill } from '@/polyfills/input-selection/utils/installInputSelectionPolyfill';
@@ -66,6 +68,11 @@ import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread'
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
 import { createClonableErrorThreadSerialization } from '@/utils/clonable-error/createClonableErrorThreadSerialization';
+
+installImageObjectUrlPolyfill({
+  urlConstructor: URL,
+  imageElementPrototype: HtmlImgElement.prototype,
+});
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
