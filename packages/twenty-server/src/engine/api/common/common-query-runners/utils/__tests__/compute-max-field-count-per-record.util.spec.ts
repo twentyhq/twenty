@@ -28,6 +28,7 @@ const peopleField = getFlatFieldMetadataMock({
   name: 'people',
   settings: { relationType: RelationType.ONE_TO_MANY },
   relationTargetObjectMetadataId: 'person',
+  relationTargetFieldMetadataId: 'person-company',
 });
 
 const companyField = getFlatFieldMetadataMock({
@@ -37,6 +38,7 @@ const companyField = getFlatFieldMetadataMock({
   name: 'company',
   settings: { relationType: RelationType.MANY_TO_ONE },
   relationTargetObjectMetadataId: 'company',
+  relationTargetFieldMetadataId: 'company-people',
 });
 
 const company = getFlatObjectMetadataMock({

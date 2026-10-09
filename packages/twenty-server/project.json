@@ -234,7 +234,7 @@
         "cwd": "packages/twenty-server",
         "commands": [
           "node dist/database/scripts/setup-db.js",
-          "nx database:migrate -- --include-slow"
+          "nx database:migrate --excludeTaskDependencies -- --include-slow"
         ],
         "parallel": false
       }
@@ -267,7 +267,7 @@
           "commands": [
             "node dist/database/scripts/truncate-clickhouse.js",
             "node dist/database/scripts/truncate-db.js",
-            "nx database:init",
+            "nx database:init --excludeTaskDependencies",
             "nx command-no-deps -- cache:flush"
           ],
           "parallel": false
@@ -277,7 +277,7 @@
           "commands": [
             "node dist/database/scripts/truncate-clickhouse.js",
             "node dist/database/scripts/truncate-db.js",
-            "nx database:init",
+            "nx database:init --excludeTaskDependencies",
             "nx command-no-deps -- cache:flush",
             "nx command-no-deps -- workspace:seed:dev"
           ],

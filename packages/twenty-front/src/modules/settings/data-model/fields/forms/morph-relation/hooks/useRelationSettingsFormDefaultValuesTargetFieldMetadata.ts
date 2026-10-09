@@ -10,10 +10,7 @@ export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
   objectMetadataItem,
   relationType,
 }: {
-  fieldMetadataItem?: Pick<
-    FieldMetadataItem,
-    'type' | 'morphRelations' | 'relation' | 'settings'
-  >;
+  fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'relation' | 'settings'>;
   objectMetadataItem?: Pick<
     EnrichedObjectMetadataItem,
     'id' | 'namePlural' | 'nameSingular' | 'icon'

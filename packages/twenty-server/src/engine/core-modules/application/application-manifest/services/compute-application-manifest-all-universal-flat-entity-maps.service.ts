@@ -65,12 +65,17 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest,
     ownerFlatApplication,
     fromAllFlatEntityMaps,
+    existingAllFlatEntityMaps = fromAllFlatEntityMaps,
     now,
     workspaceId,
   }: {
     manifest: Manifest;
-    ownerFlatApplication: FlatApplication;
+    ownerFlatApplication: Pick<
+      FlatApplication,
+      'universalIdentifier' | 'sourceType'
+    >;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
+    existingAllFlatEntityMaps?: AllFlatEntityMaps;
     now: string;
     workspaceId: string;
   }): AllFlatEntityMaps {
@@ -142,9 +147,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    addMorphFieldsForLegacyManifest({
+    const legacyMorphFieldIdentifiers = addMorphFieldsForLegacyManifest({
       manifestMaps: allUniversalFlatEntityMaps,
-      existingMaps: fromAllFlatEntityMaps,
+      existingMaps: existingAllFlatEntityMaps,
     });
 
     const indexCountByObjectUniversalIdentifier = new Map<string, number>();
@@ -697,6 +702,16 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatSettingsMenuItemMaps,
       });
+    }
+
+    for (const viewField of Object.values(
+      allUniversalFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
+    )) {
+      if (!isDefined(viewField)) continue;
+      viewField.fieldMetadataUniversalIdentifier =
+        legacyMorphFieldIdentifiers.get(
+          viewField.fieldMetadataUniversalIdentifier,
+        ) ?? viewField.fieldMetadataUniversalIdentifier;
     }
 
     return allUniversalFlatEntityMaps;

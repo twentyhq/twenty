@@ -17,7 +17,12 @@ import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
-import { AppPath, RelationType, SettingsPath } from 'twenty-shared/types';
+import {
+  AppPath,
+  FieldMetadataType,
+  RelationType,
+  SettingsPath,
+} from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Callout, useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
@@ -32,6 +37,7 @@ import {
 } from '@/settings/data-model/indexes/forms/validation-schemas/settingsObjectNewIndexFormSchema';
 
 const isFieldIndexable = (field: FieldMetadataItem): boolean => {
+  if (field.type === FieldMetadataType.MORPH_RELATION) return false;
   if (field.name === SEARCH_VECTOR_FIELD_NAME) return false;
   if (field.isSystem === true) return false;
   if (field.isActive !== true) return false;

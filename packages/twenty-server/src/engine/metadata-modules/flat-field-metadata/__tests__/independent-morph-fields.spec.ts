@@ -1,7 +1,14 @@
+import { validateMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util';
+import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { filterMorphRelationTargetFields } from 'src/engine/dataloaders/utils/filter-morph-relation-target-fields.util';
+import { computeFlatIndexFieldColumnNames } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { getSystemViewFieldUniversalIdentifier } from 'twenty-shared/application';
 import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -212,6 +219,10 @@ describe('independent morph fields', () => {
         role: [
           {
             id: 'role',
+            canAccessAllTools: false,
+            canUpdateAllSettings: false,
+            canSoftDeleteAllObjectRecords: true,
+            canDestroyAllObjectRecords: true,
             canReadAllObjectRecords: true,
             canUpdateAllObjectRecords: true,
           },
@@ -219,14 +230,16 @@ describe('independent morph fields', () => {
         objectMetadata: [{ ...object, isSystem: false }],
         fieldMetadata: [group, ...targets, newTarget],
         permissionFlag: [],
-        objectPermission: { byRoleId: new Map() },
-        rolePermissionFlag: { byRoleId: new Map() },
+        objectPermission: { rows: [], byRoleId: new Map() },
+        rolePermissionFlag: { rows: [], byRoleId: new Map() },
         fieldPermission: {
+          rows: [],
           byRoleId: new Map([
             [
               'role',
               [
                 {
+                  roleId: 'role',
                   objectMetadataId: object.id,
                   fieldMetadataId: group.id,
                   canReadFieldValue: false,
@@ -236,10 +249,10 @@ describe('independent morph fields', () => {
             ],
           ]),
         },
-        rowLevelPermissionPredicate: { byRoleId: new Map() },
-        rowLevelPermissionPredicateGroup: { byRoleId: new Map() },
+        rowLevelPermissionPredicate: { rows: [], byRoleId: new Map() },
+        rowLevelPermissionPredicateGroup: { rows: [], byRoleId: new Map() },
       },
-    } as never);
+    });
     for (const field of [group, ...targets, newTarget]) {
       expect(result.role[object.id].restrictedFields[field.id]).toEqual({
         canRead: false,
@@ -531,6 +544,145 @@ describe('independent morph fields', () => {
       ],
     ).toEqual(renamedGroup);
   });
+
+  it.each([false, true])(
+    'allows missing owners only for internal standard migrations (system build: %s)',
+    (isSystemBuild) => {
+      const maps = fixture();
+      const target = maps.targets[0];
+      if (!isFlatFieldMetadataOfType(target, FieldMetadataType.MORPH_RELATION))
+        throw new Error('Expected morph target');
+      const errors = validateMorphRelationFlatFieldMetadata({
+        flatEntityToValidate: target,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+          ...maps,
+          flatFieldMetadataMaps: createMaps(
+            maps.fields.filter((field) => !isMorphRelationGroup(field)),
+          ),
+        },
+        remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
+        additionalCacheDataMaps: {
+          featureFlagsMap: {} as Record<FeatureFlagKey, boolean>,
+        },
+        workspaceId: maps.group.workspaceId,
+        buildOptions: {
+          isSystemBuild,
+          applicationUniversalIdentifier:
+            maps.group.applicationUniversalIdentifier,
+        },
+      });
+      expect(
+        errors.some(
+          (error) =>
+            error.message ===
+            'Morph target must belong to a persisted morph field on the same object',
+        ),
+      ).toBe(!isSystemBuild);
+    },
+  );
+
+  it('refuses incomplete metadata until the owner backfill finishes', () => {
+    const { fields, group } = fixture();
+    expect(() =>
+      filterMorphRelationTargetFields(
+        fields.filter((field) => field.id !== group.id),
+      ),
+    ).toThrow('Workspace metadata upgrade is still pending');
+    expect(filterMorphRelationTargetFields(fields)).toContain(group);
+    expect(filterMorphRelationTargetFields([group])).toEqual([group]);
+  });
+
+  it('rejects an index on the logical field while indexing physical targets', () => {
+    const { group, targets, flatFieldMetadataMaps } = fixture();
+    const compute = (fieldMetadataId: string) =>
+      computeFlatIndexFieldColumnNames({
+        flatFieldMetadataMaps,
+        flatIndexFieldMetadatas: [
+          {
+            fieldMetadataId,
+            indexMetadataId: 'index',
+            order: 0,
+            subFieldName: null,
+            id: 'index-field',
+            workspaceId: group.workspaceId,
+            createdAt: group.createdAt,
+            updatedAt: group.updatedAt,
+          },
+        ],
+      });
+    expect(() => compute(group.id)).toThrow(
+      'Cannot index a relation field that has no join column',
+    );
+    expect(compute(targets[0].id)).toEqual([`${targets[0].name}Id`]);
+  });
+
+  it.each([false, true])(
+    'keeps legacy saved columns when importing targets on existing objects (existing owner: %s)',
+    async (hasExistingOwner) => {
+      const maps = fixture();
+      const module = await Test.createTestingModule({
+        providers: [
+          ComputeApplicationManifestAllUniversalFlatEntityMapsService,
+          { provide: SecretEncryptionService, useValue: {} },
+        ],
+      }).compile();
+      const service = module.get(
+        ComputeApplicationManifestAllUniversalFlatEntityMapsService,
+      );
+      const owner = { ...maps.group, name: 'renamedTarget' };
+      const existingAllFlatEntityMaps = {
+        ...createEmptyAllFlatEntityMaps(),
+        ...maps,
+        flatFieldMetadataMaps: createMaps(
+          maps.fields
+            .filter((field) => !isMorphRelationGroup(field))
+            .concat(hasExistingOwner ? [owner] : []),
+        ),
+      };
+      const columns = maps.targets.map((target, index) => ({
+        universalIdentifier: `column-${index}`,
+        fieldMetadataUniversalIdentifier: target.universalIdentifier,
+        viewUniversalIdentifier: 'view',
+        position: index,
+        isVisible: true,
+        size: 150,
+      }));
+      const manifest = buildBaseManifest({
+        appId: maps.group.applicationUniversalIdentifier,
+        roleId: 'role',
+        overrides: {
+          fields: maps.targets.map((flatFieldMetadata) =>
+            fromFlatFieldMetadataToFieldManifest({ flatFieldMetadata }),
+          ),
+          viewFields: columns,
+        },
+      });
+      const result = service.compute({
+        manifest,
+        ownerFlatApplication: {
+          universalIdentifier: maps.group.applicationUniversalIdentifier,
+          sourceType: ApplicationRegistrationSourceType.LOCAL,
+        },
+        fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
+        existingAllFlatEntityMaps,
+        now: maps.group.createdAt,
+        workspaceId: maps.group.workspaceId,
+      });
+      for (const column of columns) {
+        expect(
+          result.flatViewFieldMaps.byUniversalIdentifier[
+            column.universalIdentifier
+          ]?.fieldMetadataUniversalIdentifier,
+        ).toBe(maps.group.universalIdentifier);
+      }
+      expect(
+        result.flatFieldMetadataMaps.byUniversalIdentifier[
+          maps.group.universalIdentifier
+        ]?.name,
+      ).toBe(hasExistingOwner ? owner.name : 'target');
+      await module.close();
+    },
+  );
 
   it('creates form inputs for logical morph fields rather than physical targets', () => {
     const { group, targets } = fixture();

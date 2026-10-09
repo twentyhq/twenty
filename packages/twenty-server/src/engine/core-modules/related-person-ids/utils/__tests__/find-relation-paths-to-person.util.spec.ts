@@ -106,6 +106,18 @@ const buildGraphFixtures = (
         universalSettings: { relationType: spec.relationType },
       } as unknown as FlatFieldMetadata;
       flatFieldMetadataMaps.universalIdentifierById[id] = id;
+      if (isDefined(spec.morphId)) {
+        flatFieldMetadataMaps.byUniversalIdentifier[spec.morphId] = {
+          ...flatFieldMetadataMaps.byUniversalIdentifier[id],
+          id: spec.morphId,
+          universalIdentifier: spec.morphId,
+          name: spec.morphId,
+          relationTargetFieldMetadataId: null,
+          relationTargetObjectMetadataId: null,
+        } as FlatFieldMetadata;
+        flatFieldMetadataMaps.universalIdentifierById[spec.morphId] =
+          spec.morphId;
+      }
     }
   }
 

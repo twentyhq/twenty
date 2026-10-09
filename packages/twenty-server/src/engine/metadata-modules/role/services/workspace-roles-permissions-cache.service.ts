@@ -28,7 +28,15 @@ const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.workspaceMember.universalIdentifier;
 
 const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
-  role: true,
+  role: [
+    'id',
+    'canUpdateAllSettings',
+    'canAccessAllTools',
+    'canReadAllObjectRecords',
+    'canUpdateAllObjectRecords',
+    'canSoftDeleteAllObjectRecords',
+    'canDestroyAllObjectRecords',
+  ],
   fieldMetadata: [
     'id',
     'type',
@@ -39,7 +47,15 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
   objectPermission: { columns: true, groupBy: ['roleId'] },
   rolePermissionFlag: { columns: true, groupBy: ['roleId'] },
   permissionFlag: true,
-  fieldPermission: { columns: true, groupBy: ['roleId'] },
+  fieldPermission: {
+    columns: [
+      'objectMetadataId',
+      'fieldMetadataId',
+      'canReadFieldValue',
+      'canUpdateFieldValue',
+    ],
+    groupBy: ['roleId'],
+  },
   rowLevelPermissionPredicate: {
     columns: true,
     groupBy: ['roleId'],
@@ -79,19 +95,27 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       objectMetadata: workspaceObjectMetadataCollection,
     } = rows;
 
+    const morphTargetIdsByObjectAndMorphId = new Map<string, string[]>();
+    for (const fieldMetadata of rows.fieldMetadata) {
+      if (
+        !isDefined(fieldMetadata.morphId) ||
+        isMorphRelationGroup(fieldMetadata)
+      ) {
+        continue;
+      }
+      const key = `${fieldMetadata.objectMetadataId}:${fieldMetadata.morphId}`;
+      const targetIds = morphTargetIdsByObjectAndMorphId.get(key) ?? [];
+      targetIds.push(fieldMetadata.id);
+      morphTargetIdsByObjectAndMorphId.set(key, targetIds);
+    }
     const morphTargetIdsByGroupId = new Map<string, string[]>();
     for (const fieldMetadata of rows.fieldMetadata) {
       if (isMorphRelationGroup(fieldMetadata)) {
         morphTargetIdsByGroupId.set(
           fieldMetadata.id,
-          rows.fieldMetadata
-            .filter(
-              (target) =>
-                target.objectMetadataId === fieldMetadata.objectMetadataId &&
-                target.morphId === fieldMetadata.morphId &&
-                target.id !== fieldMetadata.id,
-            )
-            .map((target) => target.id),
+          morphTargetIdsByObjectAndMorphId.get(
+            `${fieldMetadata.objectMetadataId}:${fieldMetadata.morphId}`,
+          ) ?? [],
         );
       }
     }

@@ -81,14 +81,16 @@ export const validateMorphRelationFlatFieldMetadata = (
       universalFlatFieldMetadataToValidate.morphId
     ];
 
+  // Historical standard migrations create targets before the owner backfill.
   if (
-    !isDefined(group) ||
-    !isMorphRelationGroup(group) ||
-    group.objectMetadataUniversalIdentifier !==
-      universalFlatFieldMetadataToValidate.objectMetadataUniversalIdentifier ||
-    (isFlatFieldMetadataOfType(group, FieldMetadataType.MORPH_RELATION) &&
-      group.universalSettings.relationType !==
-        universalFlatFieldMetadataToValidate.universalSettings.relationType)
+    (isDefined(group) || !args.buildOptions.isSystemBuild) &&
+    (!isDefined(group) ||
+      !isMorphRelationGroup(group) ||
+      group.objectMetadataUniversalIdentifier !==
+        universalFlatFieldMetadataToValidate.objectMetadataUniversalIdentifier ||
+      (isFlatFieldMetadataOfType(group, FieldMetadataType.MORPH_RELATION) &&
+        group.universalSettings.relationType !==
+          universalFlatFieldMetadataToValidate.universalSettings.relationType))
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

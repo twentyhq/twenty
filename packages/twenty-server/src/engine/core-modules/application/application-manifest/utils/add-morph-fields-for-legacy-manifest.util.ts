@@ -17,13 +17,29 @@ export const addMorphFieldsForLegacyManifest = ({
 }: {
   manifestMaps: AllFlatEntityMaps;
   existingMaps: AllFlatEntityMaps;
-}): void => {
-  for (const field of Object.values(
+}): Map<string, string> => {
+  const logicalIdentifierByTargetIdentifier = new Map<string, string>();
+  const legacyFields = Object.values(
     manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-  )) {
+  )
+    .filter(isDefined)
+    .filter((field) =>
+      isFlatFieldMetadataOfType(field, FieldMetadataType.MORPH_RELATION),
+    )
+    .filter(
+      (field) =>
+        !isDefined(
+          manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+            field.morphId
+          ],
+        ),
+    );
+  for (const field of legacyFields) {
+    logicalIdentifierByTargetIdentifier.set(
+      field.universalIdentifier,
+      field.morphId,
+    );
     if (
-      !isDefined(field) ||
-      !isFlatFieldMetadataOfType(field, FieldMetadataType.MORPH_RELATION) ||
       isDefined(
         manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier[field.morphId],
       )
@@ -93,4 +109,5 @@ export const addMorphFieldsForLegacyManifest = ({
       universalFlatEntityMapsToMutate: manifestMaps.flatFieldMetadataMaps,
     });
   }
+  return logicalIdentifierByTargetIdentifier;
 };
