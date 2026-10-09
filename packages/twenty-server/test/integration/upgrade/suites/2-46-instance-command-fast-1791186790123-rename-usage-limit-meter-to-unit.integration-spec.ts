@@ -1,9 +1,12 @@
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+
 import { RenameUsageLimitMeterToUnitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791186790123-rename-usage-limit-meter-to-unit';
 import { RestoreUsageLimitMeterCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791538680877-restore-usage-limit-meter-compatibility';
 import { UsageLimitsCacheService } from 'src/engine/core-modules/usage-limit/services/usage-limits-cache.service';
+import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -397,8 +400,11 @@ describe('2-46 fast instance command 1791186790123 - RenameUsageLimitMeterToUnit
       value: UsageUnit.TOKEN,
     });
     const provider = new UsageLimitsCacheService();
+    const usageLimitRepository = queryRunner.manager.withRepository(
+      getCoreRepository<UsageLimitEntity>(UsageLimitEntity),
+    );
     const loader = new WorkspaceCacheRowsBatchLoader(
-      queryRunner.manager,
+      { getRepository: () => usageLimitRepository },
       SEED_APPLE_WORKSPACE_ID,
     );
 
