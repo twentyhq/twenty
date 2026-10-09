@@ -6734,6 +6734,10 @@
       "destination": "/ui/primitives/layout/collapsible"
     },
     {
+      "source": "/ui/primitives/input/number-stepper",
+      "destination": "/ui/components/input/number-stepper"
+    },
+    {
       "source": "/twenty-ui/input/checkbox",
       "destination": "/ui/primitives/input/checkbox"
     },

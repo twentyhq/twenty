@@ -35,6 +35,9 @@ export const NumberFieldFormInteractionExample = (
           >
             <NumberField.Input
               ref={visibleInputRef}
+              className={(state) =>
+                state.value === null ? 'empty-control' : 'filled-control'
+              }
               render={(inputProps, state) => (
                 <input {...inputProps} data-quantity={state.value ?? 'empty'} />
               )}

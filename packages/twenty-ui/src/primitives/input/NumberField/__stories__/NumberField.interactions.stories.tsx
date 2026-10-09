@@ -263,6 +263,7 @@ export const NativeFormRefsAndComposition: Story = {
     });
 
     await expect(input).toBeRequired();
+    await expect(input).toHaveClass('empty-control');
     await expect(input).toHaveAccessibleDescription(
       'Enter the amount to save.',
     );
@@ -271,6 +272,7 @@ export const NativeFormRefsAndComposition: Story = {
     await expect(input).toHaveFocus();
     await userEvent.type(input, '12,5');
     await expect(form.checkValidity()).toBe(true);
+    await expect(input).toHaveClass('filled-control');
     await expect(input).toHaveAttribute('data-quantity', '12.5');
     await expect(
       canvas.getByRole('group', { name: 'Quantity controls' }).parentElement,

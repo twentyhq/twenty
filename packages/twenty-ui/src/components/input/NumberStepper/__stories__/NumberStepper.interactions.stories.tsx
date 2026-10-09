@@ -328,19 +328,68 @@ export const GroupedInput: Story = {
 };
 
 export const UneditedPrecision: Story = {
-  args: { defaultValue: 0.1 + 0.2 },
+  args: {
+    defaultValue: 0.1 + 0.2,
+    onValueChange: fn<NonNullable<NumberStepperProps['onValueChange']>>(
+      (_nextValue, eventDetails) => eventDetails.cancel(),
+    ),
+    onValueCommitted: fn(),
+  },
   render: (args) => <ControlledNumberStepperExample {...args} />,
   play: async ({ canvasElement, args }) => {
-    const input = within(canvasElement).getByRole('textbox', {
-      name: 'Quantity',
-    });
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('textbox', { name: 'Quantity' });
+    const increase = canvas.getByRole('button', { name: 'Increase value' });
+    const pointerInteraction = userEvent.setup();
 
     await expect(input).toHaveValue('0.3');
     await userEvent.click(input);
     await userEvent.tab();
     await expect(input).toHaveValue('0.3');
     await expect(args.onValueChange).not.toHaveBeenCalled();
+    await expect(args.onValueCommitted).not.toHaveBeenCalled();
+
+    await pointerInteraction.pointer({
+      target: increase,
+      keys: '[MouseLeft>]',
+    });
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      1.3,
+      expect.objectContaining({
+        reason: 'increment-press',
+        isCanceled: true,
+        event: expect.objectContaining({ type: 'pointerdown' }),
+      }),
+    );
+    await expect(args.onValueCommitted).not.toHaveBeenCalled();
+    await pointerInteraction.pointer({
+      target: increase,
+      keys: '[/MouseLeft]',
+    });
+    await expect(input).toHaveValue('0.3');
+    await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
+    await expect(args.onValueCommitted).toHaveBeenLastCalledWith(
+      0.1 + 0.2,
+      expect.objectContaining({
+        reason: 'increment-press',
+        event: expect.objectContaining({ type: 'pointerup' }),
+      }),
+    );
+    await expect(args.onValueCommitted).not.toHaveBeenCalledWith(
+      0.3,
+      expect.anything(),
+    );
+    await userEvent.tab();
+    await expect(input).toHaveValue('0.3');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
   },
+};
+
+export const UneditedUncontrolledPrecision: Story = {
+  ...UneditedPrecision,
+  render: (args) => <NumberStepper {...args} />,
 };
 
 export const CanceledChange: Story = {
@@ -352,33 +401,114 @@ export const CanceledChange: Story = {
         }
       },
     ),
+    onValueCommitted: fn(),
   },
   render: (args) => <ControlledNumberStepperExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('textbox', { name: 'Quantity' });
+    const increase = canvas.getByRole('button', { name: 'Increase value' });
+    const pointerInteraction = userEvent.setup();
 
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Increase value' }),
-    );
+    await pointerInteraction.pointer({
+      target: increase,
+      keys: '[MouseLeft>]',
+    });
     await expect(input).toHaveValue('1');
     await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await expect(args.onValueChange).toHaveBeenLastCalledWith(
       2,
-      expect.objectContaining({ isCanceled: true }),
+      expect.objectContaining({
+        reason: 'increment-press',
+        isCanceled: true,
+        direction: 1,
+        event: expect.objectContaining({ type: 'pointerdown' }),
+      }),
     );
+    await expect(args.onValueCommitted).not.toHaveBeenCalled();
+    await pointerInteraction.pointer({
+      target: increase,
+      keys: '[/MouseLeft]',
+    });
+    await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
+    await expect(args.onValueCommitted).toHaveBeenLastCalledWith(
+      1,
+      expect.objectContaining({
+        reason: 'increment-press',
+        event: expect.objectContaining({ type: 'pointerup' }),
+      }),
+    );
+    await userEvent.tab();
+    await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
     await userEvent.click(input);
     await userEvent.keyboard('{ArrowUp}');
     await expect(input).toHaveValue('1');
     await expect(args.onValueChange).toHaveBeenCalledTimes(2);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      2,
+      expect.objectContaining({
+        reason: 'keyboard',
+        isCanceled: true,
+        event: expect.objectContaining({ type: 'keydown', key: 'ArrowUp' }),
+      }),
+    );
+    await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
     await userEvent.keyboard('{ArrowDown}');
     await expect(input).toHaveValue('0');
     await expect(args.onValueChange).toHaveBeenCalledTimes(3);
     await expect(args.onValueChange).toHaveBeenLastCalledWith(
       0,
-      expect.objectContaining({ isCanceled: false }),
+      expect.objectContaining({
+        reason: 'keyboard',
+        isCanceled: false,
+        event: expect.objectContaining({ type: 'keydown', key: 'ArrowDown' }),
+      }),
+    );
+    await expect(args.onValueCommitted).toHaveBeenCalledTimes(2);
+    await expect(args.onValueCommitted).toHaveBeenLastCalledWith(
+      0,
+      expect.objectContaining({
+        reason: 'keyboard',
+        event: expect.objectContaining({ type: 'keydown', key: 'ArrowDown' }),
+      }),
+    );
+    await userEvent.tab();
+    await expect(args.onValueCommitted).toHaveBeenCalledTimes(2);
+
+    await userEvent.tripleClick(input);
+    await userEvent.keyboard('2');
+    await expect(input).toHaveValue('2');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(4);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      2,
+      expect.objectContaining({
+        reason: 'input-change',
+        isCanceled: true,
+        event: expect.objectContaining({ type: 'input' }),
+      }),
+    );
+    await expect(args.onValueCommitted).toHaveBeenCalledTimes(2);
+    await userEvent.tab();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(5);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      2,
+      expect.objectContaining({
+        reason: 'input-blur',
+        isCanceled: true,
+        event: expect.objectContaining({ type: 'focusout' }),
+      }),
+    );
+    await expect(args.onValueCommitted).toHaveBeenCalledTimes(2);
+    await expect(args.onValueCommitted).not.toHaveBeenCalledWith(
+      2,
+      expect.anything(),
     );
   },
+};
+
+export const CanceledUncontrolledChange: Story = {
+  ...CanceledChange,
+  render: (args) => <NumberStepper {...args} />,
 };
 
 export const ValueCommit: Story = {
