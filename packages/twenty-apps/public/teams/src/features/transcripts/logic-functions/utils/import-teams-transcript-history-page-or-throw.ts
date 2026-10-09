@@ -38,6 +38,33 @@ const downloadAvailableTranscriptContentOrThrow = async ({
   }
 };
 
+const findSoftDeletedCallRecordingIdsOrThrow = async ({
+  coreApiClient,
+  callRecordingIds,
+}: {
+  coreApiClient: Pick<CoreApiClient, 'query'>;
+  callRecordingIds: string[];
+}): Promise<Set<string>> => {
+  const result: {
+    callRecordings?: { edges?: { node: { id: string } }[] };
+  } = await coreApiClient.query({
+    callRecordings: {
+      __args: {
+        filter: {
+          id: { in: callRecordingIds },
+          deletedAt: { is: 'NOT_NULL' },
+        },
+        first: callRecordingIds.length,
+      },
+      edges: { node: { id: true } },
+    },
+  });
+
+  return new Set(
+    result.callRecordings?.edges?.map((edge) => edge.node.id) ?? [],
+  );
+};
+
 export const importTeamsTranscriptHistoryPageOrThrow = async ({
   accessToken,
   coreApiClient,
@@ -73,6 +100,7 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
       .filter(isDefined),
   });
   const unavailableCallRecordingIds: string[] = [];
+  const deletedDuringImportCallRecordingIds: string[] = [];
 
   for (const transcriptBatch of chunkIntoBatches(
     importableTranscripts,
@@ -116,10 +144,25 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
       });
     }
 
-    if (callRecordings.length > 0) {
+    if (callRecordings.length === 0) {
+      continue;
+    }
+
+    const softDeletedCallRecordingIds =
+      await findSoftDeletedCallRecordingIdsOrThrow({
+        coreApiClient,
+        callRecordingIds: callRecordings.map(({ id }) => id),
+      });
+    const upsertableCallRecordings = callRecordings.filter(
+      ({ id }) => !softDeletedCallRecordingIds.has(id),
+    );
+
+    deletedDuringImportCallRecordingIds.push(...softDeletedCallRecordingIds);
+
+    if (upsertableCallRecordings.length > 0) {
       await coreApiClient.mutation({
         createCallRecordings: {
-          __args: { data: callRecordings, upsert: true },
+          __args: { data: upsertableCallRecordings, upsert: true },
           id: true,
         },
       });
@@ -131,8 +174,13 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
     alreadyImportedCount: 0,
     deletedCount: 0,
     importedCount:
-      importableTranscripts.length - unavailableCallRecordingIds.length,
-    skippedCount: transcripts.length - importableTranscripts.length,
+      importableTranscripts.length -
+      unavailableCallRecordingIds.length -
+      deletedDuringImportCallRecordingIds.length,
+    skippedCount:
+      transcripts.length -
+      importableTranscripts.length +
+      deletedDuringImportCallRecordingIds.length,
     unavailableCount: unavailableCallRecordingIds.length,
   };
 };

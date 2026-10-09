@@ -10,7 +10,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Twenty Microsoft Teams tools role',
   description:
-    'Reads calendar events and their calendar channel associations to match Teams meetings and writes imported transcripts to Call Recordings. Tracks assistant requests received from Teams. Chat tools only forward requests to Microsoft Teams using the configured bot credentials.',
+    'Reads calendar events and their calendar channel associations to match Teams meetings and writes imported transcripts to Call Recordings. Tracks assistant requests received from Teams and reads workspace members to match a Teams sender by email. Chat tools only forward requests to Microsoft Teams using the configured bot credentials.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -42,6 +42,15 @@ export default defineApplicationRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording.universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
+          .universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
