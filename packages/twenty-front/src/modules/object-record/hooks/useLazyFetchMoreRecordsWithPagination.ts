@@ -20,7 +20,7 @@ import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindMan
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import {
-  type RecordGqlOperationGqlRecordFields,
+  type RecordGqlFields,
   type RecordGqlOperationVariables,
 } from 'twenty-shared/types';
 
@@ -38,7 +38,7 @@ export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
     onCompleted?: OnFindManyRecordsCompleted<T>;
     skip?: boolean;
-    recordGqlFields?: RecordGqlOperationGqlRecordFields;
+    recordGqlFields?: RecordGqlFields;
     fetchPolicy?: WatchQueryFetchPolicy;
   };
 
