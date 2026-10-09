@@ -2,7 +2,7 @@ import { type ObjectRecordUpsertEvent } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { EntityEventsToDbListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/entity-events-to-db.listener';
-import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { type WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CallAgentDatabaseEventTriggersJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/call-agent-database-event-triggers.job';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -56,7 +56,7 @@ const buildListener = (triggerEventName: string) => {
     {
       getOrRecompute: jest.fn().mockResolvedValue({ flatAgentMaps }),
     } as unknown as WorkspaceCacheService,
-    {} as BillingSubscriptionService,
+    { isEnabled: () => true } as unknown as WorkspaceEventSinkService,
   );
 
   return { listener, triggerQueueService, otherQueueService };
