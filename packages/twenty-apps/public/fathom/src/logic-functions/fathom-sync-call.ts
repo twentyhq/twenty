@@ -15,7 +15,7 @@ import { hydrateFathomMeeting } from 'src/logic-functions/utils/hydrate-fathom-m
 import { listFathomConnectionsForRequest } from 'src/logic-functions/utils/list-fathom-connections-for-request.util';
 import { listFathomMeetings } from 'src/logic-functions/utils/list-fathom-meetings.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
-import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
+import { syncFathomMeetingsToCallRecordings } from 'src/logic-functions/utils/sync-fathom-meetings-to-call-recordings.util';
 
 const fathomSyncCallInputSchema: InputJsonSchema = {
   type: 'object',
@@ -100,23 +100,25 @@ export const fathomSyncCallHandler = async (
       };
     }
 
-    const syncResult = await syncFathomMeetingToCallRecording({
+    const [syncResult] = await syncFathomMeetingsToCallRecordings({
       coreApiClient,
-      meeting: await hydrateFathomMeeting({
-        fathomClient,
-        serializedMeeting: serializeFathomMeeting(meeting),
-      }),
+      meetings: [
+        await hydrateFathomMeeting({
+          fathomClient,
+          serializedMeeting: serializeFathomMeeting(meeting),
+        }),
+      ],
       connectedAccountId: connection.id,
       retryMedia: true,
     });
 
-    if ('skipped' in syncResult) {
+    if (!isDefined(syncResult) || 'skipped' in syncResult) {
       return {
         success: true,
         recordingId,
         callRecordingId,
         skipped: true,
-        reason: syncResult.reason,
+        reason: syncResult?.reason ?? 'The call recording was not synced',
       };
     }
 

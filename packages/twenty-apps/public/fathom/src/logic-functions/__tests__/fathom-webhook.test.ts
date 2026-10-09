@@ -7,7 +7,7 @@ const mocks = vi.hoisted(() => ({
   kvGet: vi.fn(),
   mutation: vi.fn(),
   query: vi.fn(),
-  syncFathomMeetingToCallRecording: vi.fn(),
+  syncFathomMeetingsToCallRecordings: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -32,9 +32,10 @@ vi.mock('twenty-client-sdk/core', () => ({
 }));
 
 vi.mock(
-  'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util',
+  'src/logic-functions/utils/sync-fathom-meetings-to-call-recordings.util',
   () => ({
-    syncFathomMeetingToCallRecording: mocks.syncFathomMeetingToCallRecording,
+    syncFathomMeetingsToCallRecordings:
+      mocks.syncFathomMeetingsToCallRecordings,
   }),
 );
 
@@ -113,10 +114,9 @@ describe('fathomWebhookHandler', () => {
       isActive: true,
       isInitialBackfillEnqueued: true,
     });
-    mocks.syncFathomMeetingToCallRecording.mockResolvedValue({
-      callRecordingId: CALL_RECORDING_ID,
-      created: true,
-    });
+    mocks.syncFathomMeetingsToCallRecordings.mockResolvedValue([
+      { callRecordingId: CALL_RECORDING_ID, created: true },
+    ]);
   });
 
   it('acknowledges a recording the user deleted without recreating it', async () => {
@@ -132,7 +132,7 @@ describe('fathomWebhookHandler', () => {
       skipped: true,
       reason: 'The call recording has been deleted',
     });
-    expect(mocks.syncFathomMeetingToCallRecording).not.toHaveBeenCalled();
+    expect(mocks.syncFathomMeetingsToCallRecordings).not.toHaveBeenCalled();
     expect(mocks.mutation).not.toHaveBeenCalled();
   });
 
@@ -145,7 +145,7 @@ describe('fathomWebhookHandler', () => {
       reason: 'The call recording is already up to date',
     });
     expect(mocks.query).toHaveBeenCalledOnce();
-    expect(mocks.syncFathomMeetingToCallRecording).not.toHaveBeenCalled();
+    expect(mocks.syncFathomMeetingsToCallRecordings).not.toHaveBeenCalled();
     expect(mocks.mutation).not.toHaveBeenCalled();
   });
 
@@ -158,12 +158,12 @@ describe('fathomWebhookHandler', () => {
       created: true,
     });
     expect(mocks.query).toHaveBeenCalledOnce();
-    expect(mocks.syncFathomMeetingToCallRecording).toHaveBeenCalledOnce();
+    expect(mocks.syncFathomMeetingsToCallRecordings).toHaveBeenCalledOnce();
     expect(
-      mocks.syncFathomMeetingToCallRecording.mock.calls[0][0],
+      mocks.syncFathomMeetingsToCallRecordings.mock.calls[0][0],
     ).toMatchObject({
       connectedAccountId: 'connection-1',
-      meeting: expect.objectContaining({ recordingId: RECORDING_ID }),
+      meetings: [expect.objectContaining({ recordingId: RECORDING_ID })],
       callRecordingSyncStates: new Map(),
     });
   });

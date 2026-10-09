@@ -11,7 +11,7 @@ import { completeFathomCallRecordingImport } from 'src/logic-functions/utils/com
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
 import { filterImportableFathomMeetings } from 'src/logic-functions/utils/filter-importable-fathom-meetings.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
-import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
+import { syncFathomMeetingsToCallRecordings } from 'src/logic-functions/utils/sync-fathom-meetings-to-call-recordings.util';
 
 const CONNECTED_ACCOUNT_ID = '9f7e3c1a-5b2d-4e8f-a6c9-0d1b2e3f4a5b';
 
@@ -80,16 +80,16 @@ export const createCallRecordingSyncTestContext = () => {
       },
     });
 
-  const syncMeeting = ({
-    meeting,
+  const syncMeetings = ({
+    meetings,
     callRecordingSyncStates,
   }: {
-    meeting: Meeting;
+    meetings: Meeting[];
     callRecordingSyncStates?: Map<string, CallRecordingSyncState>;
   }) =>
-    syncFathomMeetingToCallRecording({
+    syncFathomMeetingsToCallRecordings({
       coreApiClient: syncClient,
-      meeting,
+      meetings,
       connectedAccountId: CONNECTED_ACCOUNT_ID,
       callRecordingSyncStates,
     });
@@ -171,7 +171,21 @@ export const createCallRecordingSyncTestContext = () => {
         ).toBe(true);
       }
     },
-    syncMeeting,
+    syncMeetings,
+    syncMeeting: async ({
+      meeting,
+      callRecordingSyncStates,
+    }: {
+      meeting: Meeting;
+      callRecordingSyncStates?: Map<string, CallRecordingSyncState>;
+    }) => {
+      const [result] = await syncMeetings({
+        meetings: [meeting],
+        callRecordingSyncStates,
+      });
+
+      return result;
+    },
     syncPage: async (meetings: Meeting[]) => {
       const filterResult = await filterImportableFathomMeetings({
         coreApiClient: syncClient,
@@ -181,11 +195,11 @@ export const createCallRecordingSyncTestContext = () => {
         filterResult.importableMeetings.map(({ recordingId }) => recordingId),
       );
 
-      for (const meeting of meetings) {
-        if (importableRecordingIds.has(meeting.recordingId)) {
-          await syncMeeting({ meeting });
-        }
-      }
+      await syncMeetings({
+        meetings: meetings.filter((meeting) =>
+          importableRecordingIds.has(meeting.recordingId),
+        ),
+      });
 
       return filterResult;
     },

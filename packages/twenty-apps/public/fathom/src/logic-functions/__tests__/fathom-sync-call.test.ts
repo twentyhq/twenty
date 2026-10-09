@@ -12,7 +12,7 @@ const mocks = vi.hoisted(() => ({
   listMeetings: vi.fn(),
   mutation: vi.fn(),
   query: vi.fn(),
-  syncFathomMeetingToCallRecording: vi.fn(),
+  syncFathomMeetingsToCallRecordings: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -46,9 +46,10 @@ vi.mock(
 );
 
 vi.mock(
-  'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util',
+  'src/logic-functions/utils/sync-fathom-meetings-to-call-recordings.util',
   () => ({
-    syncFathomMeetingToCallRecording: mocks.syncFathomMeetingToCallRecording,
+    syncFathomMeetingsToCallRecordings:
+      mocks.syncFathomMeetingsToCallRecordings,
   }),
 );
 
@@ -85,10 +86,9 @@ describe('fathomSyncCallHandler', () => {
     );
     mocks.getRecordingTranscript.mockResolvedValue({ transcript: [] });
     mocks.getRecordingSummary.mockResolvedValue({ summary: null });
-    mocks.syncFathomMeetingToCallRecording.mockResolvedValue({
-      callRecordingId: CALL_RECORDING_ID,
-      created: false,
-    });
+    mocks.syncFathomMeetingsToCallRecordings.mockResolvedValue([
+      { callRecordingId: CALL_RECORDING_ID, created: false },
+    ]);
   });
 
   it('reports a recording the user deleted as skipped without recreating it', async () => {
@@ -103,7 +103,7 @@ describe('fathomSyncCallHandler', () => {
       skipped: true,
       reason: 'The call recording has been deleted',
     });
-    expect(mocks.syncFathomMeetingToCallRecording).not.toHaveBeenCalled();
+    expect(mocks.syncFathomMeetingsToCallRecordings).not.toHaveBeenCalled();
     expect(mocks.mutation).not.toHaveBeenCalled();
   });
 
@@ -119,8 +119,8 @@ describe('fathomSyncCallHandler', () => {
       created: false,
     });
     expect(mocks.query).toHaveBeenCalledOnce();
-    expect(mocks.syncFathomMeetingToCallRecording).toHaveBeenCalledOnce();
-    const [syncInput] = mocks.syncFathomMeetingToCallRecording.mock.calls[0];
+    expect(mocks.syncFathomMeetingsToCallRecordings).toHaveBeenCalledOnce();
+    const [syncInput] = mocks.syncFathomMeetingsToCallRecordings.mock.calls[0];
 
     expect(syncInput).toMatchObject({ retryMedia: true });
     expect(syncInput).not.toHaveProperty('callRecordingSyncStates');

@@ -6,6 +6,7 @@ import {
   MAX_CALENDAR_EVENT_PAGES,
 } from 'src/constants/fathom.constant';
 import { type CalendarEventCandidate } from 'src/logic-functions/types/calendar-event-candidate.type';
+import { type CalendarEventWindow } from 'src/logic-functions/types/calendar-event-window.type';
 
 type CalendarEventsPage = {
   calendarEvents?: {
@@ -16,14 +17,12 @@ type CalendarEventsPage = {
 
 // Matching is only conservative when every event in the window was compared,
 // so a window that cannot be read to the end yields undefined, not a partial list.
-export const listCalendarEventsInWindow = async ({
+export const listCalendarEventsInWindows = async ({
   coreApiClient,
-  earliestStart,
-  latestStart,
+  windows,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
-  earliestStart: string;
-  latestStart: string;
+  windows: CalendarEventWindow[];
 }): Promise<CalendarEventCandidate[] | undefined> => {
   const calendarEvents: CalendarEventCandidate[] = [];
   let cursor: string | undefined = undefined;
@@ -34,11 +33,13 @@ export const listCalendarEventsInWindow = async ({
         __args: {
           // The API applies one operator per field filter, so a range is two and-ed entries.
           filter: {
-            and: [
-              { startsAt: { gte: earliestStart } },
-              { startsAt: { lte: latestStart } },
-              { isCanceled: { eq: false } },
-            ],
+            isCanceled: { eq: false },
+            or: windows.map(({ earliestStart, latestStart }) => ({
+              and: [
+                { startsAt: { gte: earliestStart } },
+                { startsAt: { lte: latestStart } },
+              ],
+            })),
           },
           first: CALENDAR_EVENT_PAGE_SIZE,
           ...(cursor === undefined ? {} : { after: cursor }),

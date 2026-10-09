@@ -14,7 +14,7 @@ import { findCallRecordingSyncStates } from 'src/logic-functions/utils/find-call
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
 import { isFathomCallRecordingUpToDate } from 'src/logic-functions/utils/is-fathom-call-recording-up-to-date.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
-import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
+import { syncFathomMeetingsToCallRecordings } from 'src/logic-functions/utils/sync-fathom-meetings-to-call-recordings.util';
 
 type FathomWebhookResult =
   | {
@@ -122,15 +122,19 @@ export const fathomWebhookHandler = async (
     };
   }
 
-  const syncResult = await syncFathomMeetingToCallRecording({
+  const [syncResult] = await syncFathomMeetingsToCallRecordings({
     coreApiClient,
-    meeting: meetingParseResult.value,
+    meetings: [meetingParseResult.value],
     connectedAccountId,
     callRecordingSyncStates,
   });
 
-  if ('skipped' in syncResult) {
-    return { success: true, skipped: true, reason: syncResult.reason };
+  if (!isDefined(syncResult) || 'skipped' in syncResult) {
+    return {
+      success: true,
+      skipped: true,
+      reason: syncResult?.reason ?? 'The call recording was not synced',
+    };
   }
 
   return { success: true, ...syncResult };
