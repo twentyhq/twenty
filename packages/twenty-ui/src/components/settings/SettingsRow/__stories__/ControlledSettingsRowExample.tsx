@@ -15,8 +15,13 @@ export const ControlledSettingsRowExample = ({
       {...props}
       checked={checked}
       onCheckedChange={(nextChecked, eventDetails) => {
-        setChecked(nextChecked);
         onCheckedChange?.(nextChecked, eventDetails);
+
+        if (eventDetails.isCanceled) {
+          return;
+        }
+
+        setChecked(nextChecked);
       }}
     />
   );

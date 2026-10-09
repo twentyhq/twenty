@@ -12,53 +12,110 @@
  */}
 
 <ParamField body="checked" type="boolean">
-  Controlled checked state of the switch.
+  Whether the switch is currently active.
+
+  To render an uncontrolled switch, use the `defaultChecked` prop instead.
 </ParamField>
 
 <ParamField body="children" type="ReactNode" required>
-  Visible label and accessible name of the switch. Use non-interactive content.
+  Visible label and default accessible name of the switch. Use non-interactive node content.
+</ParamField>
+
+<ParamField body="className" type="string | ((state: SwitchRootState) =&gt; string | undefined)">
+  Customizes the visible Switch root and accepts a Switch state callback.
 </ParamField>
 
 <ParamField body="defaultChecked" type="boolean" default="false">
-  Initial checked state when uncontrolled.
+  Whether the switch is initially active.
+
+  To render a controlled switch, use the `checked` prop instead.
 </ParamField>
 
 <ParamField body="description" type="ReactNode">
-  Non-interactive supporting content, associated with the switch as its accessible description.
+  Non-interactive supporting node content, used as the default accessible description of the switch.
 </ParamField>
 
 <ParamField body="disabled" type="boolean" default="false">
-  Disables both the row and its switch.
+  Whether the component should ignore user interaction.
 </ParamField>
 
 <ParamField body="focused" type="boolean" default="false">
   Applies the highlighted row style without moving keyboard focus.
 </ParamField>
 
+<ParamField body="form" type="string">
+  Identifies the form that owns the hidden input.
+  Useful when the switch is rendered outside the form.
+</ParamField>
+
+<ParamField body="id" type="string">
+  Identifies the associated checkbox, or the visible root with nativeButton. The label association follows this ID.
+</ParamField>
+
+<ParamField body="inputRef" type="Ref&lt;HTMLInputElement&gt;">
+  Targets the underlying native checkbox.
+</ParamField>
+
+<ParamField body="labelRef" type="Ref&lt;HTMLLabelElement&gt;">
+  Targets the outer native label.
+</ParamField>
+
+<ParamField body="labelRender" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Customizes the outer native label with its complete composed row children. Preserve a label element and forward its props to retain control association.
+</ParamField>
+
 <ParamField body="name" type="string">
-  Name of the hidden checkbox used in form submission.
+  Identifies the field when a form is submitted.
+</ParamField>
+
+<ParamField body="nativeButton" type="boolean" default="false">
+  Whether the component renders a native `<button>` element when replacing it
+  via the `render` prop.
+  Set to `true` if the rendered element is a native button.
 </ParamField>
 
 <ParamField body="onCheckedChange" type="((checked: boolean, eventDetails: { reason: &quot;none&quot;; event: Event; cancel: () =&gt; void; allowPropagation: () =&gt; void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) =&gt; void)">
-  Called when the switch value changes, with the next checked state and Base UI event details.
+  Receives the next checked value and Base UI event details. Controlled callers own accepted state updates; cancellation prevents a change.
+</ParamField>
+
+<ParamField body="onClick" type="((event: BaseUIEvent&lt;MouseEvent&lt;HTMLSpanElement, MouseEvent&gt;&gt;) =&gt; void)">
+  Native click handler for the visible Switch root.
 </ParamField>
 
 <ParamField body="readOnly" type="boolean" default="false">
-  Keeps the switch focusable while preventing changes.
+  Whether the user should be unable to activate or deactivate the switch.
+</ParamField>
+
+<ParamField body="ref" type="Ref&lt;HTMLSpanElement&gt;">
+  Targets the visible Switch root, which defaults to a span.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, SwitchRootState&gt;">
+  Customizes the visible Switch root with control props and Switch state. Use nativeButton when composing a button.
 </ParamField>
 
 <ParamField body="required" type="boolean" default="false">
-  Requires the switch to be checked for form submission.
+  Whether the user must activate the switch before submitting a form.
 </ParamField>
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="sm">
-  Visual size of the switch. The row height stays the same.
+  Visual size of the switch. Defaults to sm.
 </ParamField>
 
-<ParamField body="startIcon" type="ReactNode">
-  Decorative content before the label.
+<ParamField body="startElement" type="ReactNode">
+  Non-interactive node content before the label.
+</ParamField>
+
+<ParamField body="style" type="CSSProperties | ((state: SwitchRootState) =&gt; CSSProperties | undefined)">
+  Customizes the visible Switch root and accepts a Switch state callback.
+</ParamField>
+
+<ParamField body="uncheckedValue" type="string">
+  The value submitted with the form when the switch is off.
+  By default, unchecked switches do not submit any value, matching native checkbox behavior.
 </ParamField>
 
 <ParamField body="value" type="string">
-  Value submitted when the switch is checked.
+  The value submitted with the form when the switch is on.
+  By default, switch submits the "on" value, matching native checkbox behavior.
 </ParamField>

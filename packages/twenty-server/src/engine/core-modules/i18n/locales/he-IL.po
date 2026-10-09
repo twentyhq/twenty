@@ -12721,7 +12721,7 @@ msgstr "יישום זה מותקן. יש להמתין לסיום ההתקנה ל
 #. js-lingui-id: O3pUuN
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being installed. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "יישום זה נמצא בהתקנה. יש להמתין לסיום ההתקנה לפני השדרוג שלו."
 
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
@@ -12731,17 +12731,17 @@ msgstr "יישום זה מוסר. יש להמתין לסיום ההסרה לפנ
 #. js-lingui-id: rfbjZb
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "יישום זה נמצא בהסרה. יש להמתין לסיום ההסרה לפני השדרוג שלו."
 
 #. js-lingui-id: Kepc2n
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before installing it."
-msgstr ""
+msgstr "יישום זה נמצא בשדרוג. יש להמתין לסיום השדרוג לפני ההתקנה שלו."
 
 #. js-lingui-id: XBHpg5
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
-msgstr ""
+msgstr "יישום זה נמצא בשדרוג. יש להמתין לסיום השדרוג לפני ההסרה שלו."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
