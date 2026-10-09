@@ -1,3 +1,5 @@
+import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+
 import { isTipTapNode } from './parse-tiptap-json-document';
 import { type TipTapDocument } from './tiptap-document';
 import { tipTapDocumentToMarkdown } from './tiptap-document-to-markdown';
@@ -6,7 +8,7 @@ import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
 const BLOCKNOTE_ONLY_KEYS = ['id', 'props', 'children', 'styles'];
 
 const isBlockNoteContent = (value: unknown): boolean => {
-  if (typeof value !== 'object' || value === null) {
+  if (!isPlainObject(value)) {
     return false;
   }
 
@@ -14,9 +16,7 @@ const isBlockNoteContent = (value: unknown): boolean => {
     return true;
   }
 
-  const content = (value as { content?: unknown }).content;
-
-  return Array.isArray(content) && content.some(isBlockNoteContent);
+  return Array.isArray(value.content) && value.content.some(isBlockNoteContent);
 };
 
 export const convertTipTapBlocksToMarkdown = (
