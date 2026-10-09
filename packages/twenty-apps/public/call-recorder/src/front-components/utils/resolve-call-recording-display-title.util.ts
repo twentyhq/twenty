@@ -7,6 +7,6 @@ export const resolveCallRecordingDisplayTitle = (
   callRecording: Pick<CallRecordingNode, 'title' | 'calendarEvent'>,
 ): string =>
   getFirstNonEmptyString([
-    callRecording.title,
+    stripRestrictedFieldValue(callRecording.title ?? undefined),
     stripRestrictedFieldValue(callRecording.calendarEvent?.title ?? undefined),
   ]) ?? UNTITLED_CALL_RECORDING_TITLE;

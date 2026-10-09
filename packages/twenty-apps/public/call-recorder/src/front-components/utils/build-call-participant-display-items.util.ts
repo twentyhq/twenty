@@ -5,6 +5,7 @@ import { type CallParticipantDisplayItem } from 'src/front-components/types/call
 import { type CallParticipantNode } from 'src/front-components/types/call-participant-node.type';
 import { getFirstNonEmptyString } from 'src/front-components/utils/get-first-non-empty-string.util';
 import { getFullName } from 'src/front-components/utils/get-full-name.util';
+import { stripRestrictedFieldValue } from 'src/logic-functions/data/strip-restricted-field-value.util';
 
 const UNNAMED_PARTICIPANT_LABEL = 'Unnamed participant';
 
@@ -46,10 +47,13 @@ const toDisplayItem = (
   areRelationsLoaded: boolean,
 ): CallParticipantDisplayItem | undefined => {
   const isOrganizer = participant.isOrganizer === true;
-  const attendeeLabel = getFirstNonEmptyString([
-    participant.displayName,
-    participant.handle,
+  const handle = getFirstNonEmptyString([
+    stripRestrictedFieldValue(participant.handle ?? undefined),
   ]);
+  const attendeeLabel =
+    getFirstNonEmptyString([
+      stripRestrictedFieldValue(participant.displayName ?? undefined),
+    ]) ?? handle;
 
   // A matched person wins over a workspace member: it has a record page.
   const personId = getMatchedRecordId({
@@ -100,8 +104,6 @@ const toDisplayItem = (
   if (!isNonEmptyString(attendeeLabel)) {
     return undefined;
   }
-
-  const handle = getFirstNonEmptyString([participant.handle]);
 
   return {
     kind: 'unmatched',

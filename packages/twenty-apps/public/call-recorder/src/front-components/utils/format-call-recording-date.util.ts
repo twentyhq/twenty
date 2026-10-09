@@ -8,6 +8,8 @@ const CALL_RECORDING_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
   day: 'numeric',
 };
 
+const dateTimeFormatByLocale = new Map<string, Intl.DateTimeFormat>();
+
 const createDateTimeFormat = (locale: string | undefined) => {
   try {
     return new Intl.DateTimeFormat(locale, CALL_RECORDING_DATE_FORMAT_OPTIONS);
@@ -18,6 +20,21 @@ const createDateTimeFormat = (locale: string | undefined) => {
       CALL_RECORDING_DATE_FORMAT_OPTIONS,
     );
   }
+};
+
+const getDateTimeFormat = (locale: string | undefined) => {
+  const localeKey = locale ?? '';
+  const cachedDateTimeFormat = dateTimeFormatByLocale.get(localeKey);
+
+  if (!isUndefined(cachedDateTimeFormat)) {
+    return cachedDateTimeFormat;
+  }
+
+  const dateTimeFormat = createDateTimeFormat(locale);
+
+  dateTimeFormatByLocale.set(localeKey, dateTimeFormat);
+
+  return dateTimeFormat;
 };
 
 export const formatCallRecordingDate = ({
@@ -33,5 +50,5 @@ export const formatCallRecordingDate = ({
     return undefined;
   }
 
-  return createDateTimeFormat(locale).format(timestamp);
+  return getDateTimeFormat(locale).format(timestamp);
 };

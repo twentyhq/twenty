@@ -25,6 +25,16 @@ const buildParticipantConnection = (
   },
 });
 
+const buildPermissionDeniedError = () =>
+  Object.assign(new Error('Permission denied'), {
+    errors: [
+      {
+        message: 'Permission denied',
+        extensions: { code: 'FORBIDDEN', subCode: 'PERMISSION_DENIED' },
+      },
+    ],
+  });
+
 describe('fetchCallParticipants', () => {
   it('reports a missing recording', async () => {
     const query = vi
@@ -109,7 +119,7 @@ describe('fetchCallParticipants', () => {
           calendarEventId: 'calendar-event',
         }),
       )
-      .mockRejectedValueOnce(new Error('Forbidden'))
+      .mockRejectedValueOnce(buildPermissionDeniedError())
       .mockResolvedValueOnce(buildParticipantConnection(['participant-1']));
 
     const result = await fetchCallParticipants({ query } as never, {
@@ -142,14 +152,33 @@ describe('fetchCallParticipants', () => {
           calendarEventId: 'calendar-event',
         }),
       )
-      .mockRejectedValueOnce(new Error('Forbidden'))
-      .mockRejectedValueOnce(new Error('Forbidden'));
+      .mockRejectedValueOnce(buildPermissionDeniedError())
+      .mockRejectedValueOnce(buildPermissionDeniedError());
 
     await expect(
       fetchCallParticipants({ query } as never, {
         callRecordingId: 'call-recording',
       }),
-    ).rejects.toThrow('Forbidden');
+    ).rejects.toThrow('Permission denied');
     expect(query).toHaveBeenCalledTimes(3);
+  });
+
+  it('rethrows an error that is not a permission error without retrying', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection({
+          id: 'call-recording',
+          calendarEventId: 'calendar-event',
+        }),
+      )
+      .mockRejectedValueOnce(new Error('Network failure'));
+
+    await expect(
+      fetchCallParticipants({ query } as never, {
+        callRecordingId: 'call-recording',
+      }),
+    ).rejects.toThrow('Network failure');
+    expect(query).toHaveBeenCalledTimes(2);
   });
 });

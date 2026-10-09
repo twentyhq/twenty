@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { RESTRICTED_FIELD_PLACEHOLDER } from 'src/logic-functions/constants/restricted-field-placeholder';
 import { type CallParticipantNode } from 'src/front-components/types/call-participant-node.type';
 import { buildCallParticipantDisplayItems } from 'src/front-components/utils/build-call-participant-display-items.util';
 
@@ -320,5 +321,33 @@ describe('buildCallParticipantDisplayItems', () => {
 
     expect(items.map((item) => item.kind)).toEqual(['workspaceMember']);
     expect(hiddenUnmatchedCount).toBe(1);
+  });
+
+  it('ignores a restricted placeholder in the attendee name or email', () => {
+    const { items } = buildCallParticipantDisplayItems({
+      participants: [
+        buildParticipant({
+          id: 'participant-restricted-name',
+          displayName: RESTRICTED_FIELD_PLACEHOLDER,
+          handle: 'linus@example.org',
+        }),
+        buildParticipant({
+          id: 'participant-restricted-both',
+          displayName: RESTRICTED_FIELD_PLACEHOLDER,
+          handle: RESTRICTED_FIELD_PLACEHOLDER,
+        }),
+      ],
+      areRelationsLoaded: true,
+      showUnmatchedAttendees: true,
+    });
+
+    expect(items).toEqual([
+      {
+        kind: 'unmatched',
+        key: 'handle:linus@example.org',
+        label: 'linus@example.org',
+        isOrganizer: false,
+      },
+    ]);
   });
 });

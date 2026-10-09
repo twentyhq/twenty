@@ -2,10 +2,12 @@ import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CALL_RECORDINGS_WIDGET_MAX_CALENDAR_EVENT_TARGETS } from 'src/front-components/constants/call-recordings-widget-max-calendar-event-targets.constant';
+import { CALL_RECORDINGS_WIDGET_MAX_CALL_RECORDINGS_PER_BATCH } from 'src/front-components/constants/call-recordings-widget-max-call-recordings-per-batch.constant';
 import { LISTED_CALL_RECORDING_STATUSES } from 'src/front-components/constants/listed-call-recording-statuses.constant';
 import { type CalendarEventTargetFieldName } from 'src/front-components/types/calendar-event-target-field-name.type';
 import { type CallRecordingNode } from 'src/front-components/types/call-recording-node.type';
 import { getMostRecentCallRecordings } from 'src/front-components/utils/get-most-recent-call-recordings.util';
+import { isPermissionDeniedError } from 'src/front-components/utils/is-permission-denied-error.util';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import {
   fetchAllNodes,
@@ -18,13 +20,18 @@ type CalendarEventTargetNode = {
   calendarEventId?: string | null;
 };
 
+type CalendarEventIdsForRecord = {
+  calendarEventIds: string[];
+  isCalendarEventReadable: boolean;
+};
+
 const BY_MEETING_DATE_ORDER_BY = [
   { calendarEvent: { startsAt: 'DescNullsLast' } },
 ];
 
 const BY_TARGET_CREATION_ORDER_BY = [{ createdAt: 'DescNullsLast' }];
 
-const fetchCalendarEventIdsForRecord = async (
+const fetchCalendarEventIds = async (
   client: CoreApiClient,
   {
     calendarEventTargetFieldName,
@@ -83,108 +90,124 @@ const fetchCalendarEventIdsForRecord = async (
   ];
 };
 
-const fetchCalendarEventIdsByMeetingDate = async (
+const fetchCalendarEventIdsForRecord = async (
   client: CoreApiClient,
   params: {
     calendarEventTargetFieldName: CalendarEventTargetFieldName;
     recordId: string;
   },
-): Promise<string[]> => {
+): Promise<CalendarEventIdsForRecord> => {
   try {
-    return await fetchCalendarEventIdsForRecord(client, {
-      ...params,
-      orderBy: BY_MEETING_DATE_ORDER_BY,
-    });
-  } catch {
+    return {
+      calendarEventIds: await fetchCalendarEventIds(client, {
+        ...params,
+        orderBy: BY_MEETING_DATE_ORDER_BY,
+      }),
+      isCalendarEventReadable: true,
+    };
+  } catch (error) {
+    if (!isPermissionDeniedError(error)) {
+      throw error;
+    }
+
     // Ordering through the meeting needs read access to it; without it, fall
     // back to target creation order, which only roughly follows meeting dates.
-    return fetchCalendarEventIdsForRecord(client, {
-      ...params,
-      orderBy: BY_TARGET_CREATION_ORDER_BY,
-    });
+    return {
+      calendarEventIds: await fetchCalendarEventIds(client, {
+        ...params,
+        orderBy: BY_TARGET_CREATION_ORDER_BY,
+      }),
+      isCalendarEventReadable: false,
+    };
   }
 };
 
-const fetchMostRecentCallRecordingsForCalendarEventIds = async (
+const fetchListedCallRecordingsForCalendarEventIds = async (
   client: CoreApiClient,
   {
     calendarEventIds,
-    maxCount,
     isCalendarEventLoaded,
   }: {
     calendarEventIds: string[];
-    maxCount: number;
     isCalendarEventLoaded: boolean;
   },
 ): Promise<CallRecordingNode[]> => {
-  const queryResult = await client.query({
-    callRecordings: {
-      __args: {
-        filter: {
-          calendarEventId: { in: calendarEventIds },
-          status: { in: LISTED_CALL_RECORDING_STATUSES },
+  let fetchedCallRecordingCount = 0;
+
+  return fetchAllNodes<CallRecordingNode>(
+    async (afterCursor) => {
+      const queryResult = await client.query({
+        callRecordings: {
+          __args: {
+            filter: {
+              calendarEventId: { in: calendarEventIds },
+              status: { in: LISTED_CALL_RECORDING_STATUSES },
+            },
+            orderBy: [
+              { startedAt: 'DescNullsFirst' },
+              { createdAt: 'DescNullsLast' },
+            ],
+            first: TWENTY_PAGE_SIZE,
+            ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
+          },
+          pageInfo: {
+            hasNextPage: true,
+            endCursor: true,
+          },
+          edges: {
+            node: {
+              id: true,
+              title: true,
+              startedAt: true,
+              createdAt: true,
+              calendarEventId: true,
+              ...(isCalendarEventLoaded
+                ? { calendarEvent: { id: true, title: true, startsAt: true } }
+                : {}),
+            },
+          },
         },
-        orderBy: [
-          { startedAt: 'DescNullsLast' },
-          { createdAt: 'DescNullsLast' },
-        ],
-        first: maxCount,
-      },
-      edges: {
-        node: {
-          id: true,
-          title: true,
-          startedAt: true,
-          createdAt: true,
-          calendarEventId: true,
-          ...(isCalendarEventLoaded
-            ? { calendarEvent: { id: true, title: true, startsAt: true } }
-            : {}),
-        },
-      },
+      });
+
+      const connection = queryResult.callRecordings as
+        | ConnectionPage<CallRecordingNode>
+        | undefined;
+
+      fetchedCallRecordingCount += connection?.edges?.length ?? 0;
+
+      return connection;
     },
-  });
-
-  const connection = queryResult.callRecordings as
-    | ConnectionPage<CallRecordingNode>
-    | undefined;
-
-  return (connection?.edges ?? []).map((edge) => edge.node);
+    () =>
+      fetchedCallRecordingCount <
+      CALL_RECORDINGS_WIDGET_MAX_CALL_RECORDINGS_PER_BATCH,
+  );
 };
 
-const fetchMostRecentCallRecordings = async (
+const fetchListedCallRecordings = async (
   client: CoreApiClient,
   {
     calendarEventIds,
-    maxCount,
     isCalendarEventLoaded,
   }: {
     calendarEventIds: string[];
-    maxCount: number;
     isCalendarEventLoaded: boolean;
   },
 ): Promise<CallRecordingNode[]> => {
-  const callRecordings: CallRecordingNode[] = [];
-
-  // Listed recordings have started, so startedAt is normally set and the
-  // server order matches the displayed date: each batch's top results then
-  // hold the overall top, which the final sort and cap pick out.
-  for (const calendarEventIdBatch of getBatches(
-    calendarEventIds,
-    TWENTY_PAGE_SIZE,
-  )) {
-    callRecordings.push(
-      ...(await fetchMostRecentCallRecordingsForCalendarEventIds(client, {
+  const callRecordingBatches = await Promise.all(
+    getBatches(calendarEventIds, TWENTY_PAGE_SIZE).map((calendarEventIdBatch) =>
+      fetchListedCallRecordingsForCalendarEventIds(client, {
         calendarEventIds: calendarEventIdBatch,
-        maxCount,
         isCalendarEventLoaded,
-      })),
-    );
-  }
+      }),
+    ),
+  );
 
-  return getMostRecentCallRecordings({ callRecordings, maxCount });
+  return callRecordingBatches.flat();
 };
 
+// Every listed recording of the record's meetings is fetched, then sorted and
+// capped client-side by the date the widget shows; a server-side cap would
+// order by startedAt and could drop a live call that has none yet.
 export const fetchCallRecordingsForRecord = async (
   client: CoreApiClient,
   {
@@ -197,28 +220,40 @@ export const fetchCallRecordingsForRecord = async (
     maxCount: number;
   },
 ): Promise<CallRecordingNode[]> => {
-  const calendarEventIds = await fetchCalendarEventIdsByMeetingDate(client, {
-    calendarEventTargetFieldName,
-    recordId,
-  });
+  const { calendarEventIds, isCalendarEventReadable } =
+    await fetchCalendarEventIdsForRecord(client, {
+      calendarEventTargetFieldName,
+      recordId,
+    });
 
   if (calendarEventIds.length === 0) {
     return [];
   }
 
-  try {
-    return await fetchMostRecentCallRecordings(client, {
-      calendarEventIds,
+  const fetchMostRecentCallRecordings = async (
+    isCalendarEventLoaded: boolean,
+  ) =>
+    getMostRecentCallRecordings({
+      callRecordings: await fetchListedCallRecordings(client, {
+        calendarEventIds,
+        isCalendarEventLoaded,
+      }),
       maxCount,
-      isCalendarEventLoaded: true,
     });
-  } catch {
+
+  if (!isCalendarEventReadable) {
+    return fetchMostRecentCallRecordings(false);
+  }
+
+  try {
+    return await fetchMostRecentCallRecordings(true);
+  } catch (error) {
+    if (!isPermissionDeniedError(error)) {
+      throw error;
+    }
+
     // A viewer who cannot read calendar events fails the whole query; the
     // recordings still list without the meeting title fallback.
-    return fetchMostRecentCallRecordings(client, {
-      calendarEventIds,
-      maxCount,
-      isCalendarEventLoaded: false,
-    });
+    return fetchMostRecentCallRecordings(false);
   }
 };

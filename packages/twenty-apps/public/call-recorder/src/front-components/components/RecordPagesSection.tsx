@@ -15,6 +15,7 @@ export const RecordPagesSection = () => {
 
   const { saveImmediately } = useAutosaveApplicationVariable({
     variableKey: CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_ROW.variableKey,
+    onSaveError: (value) => setIsShowUnmatchedAttendees(value !== 'true'),
   });
 
   const handleShowUnmatchedAttendeesChange = (checked: boolean) => {

@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { CALL_PARTICIPANTS_WIDGET_MAX_PARTICIPANTS } from 'src/front-components/constants/call-participants-widget-max-participants.constant';
 import { type CallParticipantNode } from 'src/front-components/types/call-participant-node.type';
 import { type CallParticipantsResult } from 'src/front-components/types/call-participants-result.type';
+import { isPermissionDeniedError } from 'src/front-components/utils/is-permission-denied-error.util';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import {
   fetchAllNodes,
@@ -141,7 +142,11 @@ export const fetchCallParticipants = async (
       }),
       areRelationsLoaded: true,
     };
-  } catch {
+  } catch (error) {
+    if (!isPermissionDeniedError(error)) {
+      throw error;
+    }
+
     // A viewer who cannot read people or workspace members fails the whole
     // query; the participants' own fields still give names and ids.
     return {

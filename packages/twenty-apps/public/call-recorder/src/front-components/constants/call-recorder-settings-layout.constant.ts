@@ -5,11 +5,11 @@ import {
   IconDoorEnter,
   IconHourglassHigh,
   IconLanguage,
+  IconMail,
   IconMessage,
   IconPhoto,
   IconPlayerStop,
   IconSparkles,
-  IconUser,
   type IconComponent,
 } from 'twenty-ui/icon';
 
@@ -118,7 +118,10 @@ export const CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_ROW = {
   title: 'Show unmatched attendees',
   description:
     'List attendees who are not a person in your workspace, by name or email.',
-  Icon: IconUser,
+  // The icon dictionary has no attendee concept and reserves IconUser for CRM
+  // people and IconUsers for members, which these attendees are not; they are
+  // known only by an email address.
+  Icon: IconMail,
 };
 
 export const CALL_RECORDER_NAME_FIELD = {

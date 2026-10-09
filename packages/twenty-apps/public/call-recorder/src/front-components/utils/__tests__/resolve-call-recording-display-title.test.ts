@@ -36,4 +36,13 @@ describe('resolveCallRecordingDisplayTitle', () => {
       resolveCallRecordingDisplayTitle({ title: null, calendarEvent: null }),
     ).toBe('Untitled call');
   });
+
+  it('ignores a recording title copied from a restricted meeting', () => {
+    expect(
+      resolveCallRecordingDisplayTitle({
+        title: RESTRICTED_FIELD_PLACEHOLDER,
+        calendarEvent: { id: 'event', title: 'Calendar title' },
+      }),
+    ).toBe('Calendar title');
+  });
 });
