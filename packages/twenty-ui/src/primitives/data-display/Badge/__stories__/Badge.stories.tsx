@@ -29,6 +29,15 @@ type Story = StoryObj<typeof Badge>;
 
 export const Default: Story = {
   decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    const badge = within(canvasElement).getByText('Soon');
+
+    await expect(badge).toBeVisible();
+    await expect(badge).toHaveAttribute('data-badge-size', 'sm');
+    await expect(badge).toHaveAttribute('data-badge-color', 'tertiary');
+    await expect(badge).toHaveAttribute('data-badge-shape', 'pill');
+    await expect(badge).toHaveStyle({ height: '16px' });
+  },
 };
 
 export const Catalog: CatalogStory<Story, typeof Badge> = {
