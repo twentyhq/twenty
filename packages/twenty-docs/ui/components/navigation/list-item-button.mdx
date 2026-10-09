@@ -1,0 +1,120 @@
+---
+title: ListItemButton
+description: Native action buttons with the shared list row appearance.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ListItemButtonReference from '/snippets/ui/generated/components/navigation/list-item-button.mdx';
+
+Use `ListItemButton` for action rows and standalone selection buttons. It combines [ListItem](/ui/primitives/navigation/list-item) layout with a native button, including Enter and Space activation, focus, and disabled behavior. It defaults to `type="button"`.
+
+<StoryEmbed
+  storyId="ui-components-listitembutton--default"
+  title="ListItemButton example"
+  height={180}
+/>
+
+## Actions and disabled state
+
+Pass `onClick` and `disabled` directly. Disabled buttons use the matching row appearance, prevent activation, and leave the tab order.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
+
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    onClick={onDuplicate}
+    startIcon={<IconCopy />}
+    description="Create a copy"
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+<StoryEmbed
+  storyId="ui-components-listitembutton--disabled"
+  title="Disabled action row"
+  height={180}
+/>
+
+Set `focusableWhenDisabled` to keep a disabled button focusable. It uses `aria-disabled` and continues to block activation. Native button attributes, events, styles, class names, and an `HTMLButtonElement` ref reach the button. Events bubble normally; callers supply any `stopPropagation()` or `preventDefault()` policy.
+
+## Selection and visual slots
+
+Your application owns selection. Pair `selected` with the appropriate accessible state, such as `aria-pressed` for a toggle button. `focused` highlights the row without moving DOM focus. Indicators and shortcut hints are decorative; your application registers shortcuts and handles navigation.
+
+```tsx
+import { useState } from 'react';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItemButton
+      aria-pressed={selected}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItemButton>
+  );
+};
+```
+
+<StoryEmbed
+  storyId="ui-components-listitembutton--selected"
+  title="Selected action row"
+  height={180}
+/>
+
+Use `startIcon`, `endIcon`, `description`, and `descriptionPlacement` for supporting content. `color="danger"` marks a destructive action. `shortcutJoinLabel` controls the text between sequential shortcuts, and `hasSubmenu` displays a submenu indicator.
+
+## Independent controls
+
+Keep independent buttons beside `ListItemButton` so each retains its own focus and activation. The component has no `actions` slot. Use a passive `ListItem` with `actions` when the row itself does not act.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+type ContactActionsProps = {
+  onOpen: () => void;
+  onDetails: () => void;
+};
+
+export const ContactActions = ({ onOpen, onDetails }: ContactActionsProps) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ListItemButton onClick={onOpen} description="Account owner">
+      Alex Morgan
+    </ListItemButton>
+    <Button onClick={onDetails} aria-label="Open Alex Morgan's details">
+      Details
+    </Button>
+  </div>
+);
+```
+
+<StoryEmbed
+  storyId="ui-components-listitembutton--independent-action"
+  title="Sibling action controls"
+  height={180}
+/>
+
+Use `ListItem` for passive content, links, or custom semantic owners. Use the existing [Menu](/ui/primitives/surfaces/menu), [Dropdown](/ui/components/navigation/dropdown), and [Select](/ui/primitives/input/select) item parts within their popup owners, which supply roles and keyboard navigation.
+
+## Props
+
+<ListItemButtonReference />

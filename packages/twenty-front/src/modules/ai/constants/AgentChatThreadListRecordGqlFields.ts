@@ -1,3 +1,5 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
+
 export const AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS = {
   id: true,
   title: true,
@@ -9,6 +11,7 @@ export const AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS = {
   lastMessageSenderWorkspaceMemberId: true,
   writerWorkspaceMemberIds: true,
   workspaceMemberId: true,
+  assigneeId: true,
   pendingQuestionMessageId: true,
   totalInputTokens: true,
   totalOutputTokens: true,
@@ -17,4 +20,15 @@ export const AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS = {
   conversationSize: true,
   totalInputCredits: true,
   totalOutputCredits: true,
-};
+  participants: {
+    id: true,
+    threadId: true,
+    workspaceMemberId: true,
+    lastReadAt: true,
+    archivedAt: true,
+    snoozedUntil: true,
+    isSubscribed: true,
+    lastMentionedAt: true,
+    updatedAt: true,
+  },
+} satisfies RecordGqlFields;

@@ -5,10 +5,12 @@ import { JobsModule } from 'src/engine/core-modules/message-queue/jobs.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { TwentyOrmModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { ModulesModule } from 'src/modules/modules.module';
 
 @Module({
   imports: [
     CoreEngineModule,
+    ModulesModule,
     MessageQueueModule.registerExplorer(),
     WorkspaceEventEmitterModule,
     JobsModule,

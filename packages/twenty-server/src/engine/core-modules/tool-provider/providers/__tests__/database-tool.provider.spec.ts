@@ -46,6 +46,7 @@ type ExplicitPermissionRow = {
 type GenerateDescriptorsTestOptions = {
   requireExplicitObjectGrants?: boolean;
   explicitPermissionRows?: ExplicitPermissionRow[];
+  composedObjectPermissions?: Partial<ObjectPermissions>;
 };
 
 describe('DatabaseToolProvider', () => {
@@ -76,7 +77,13 @@ describe('DatabaseToolProvider', () => {
       getOrRecompute: jest.fn().mockResolvedValue({
         rolesPermissions: {
           [roleId]: Object.fromEntries(
-            objects.map((object) => [object.id, allObjectPermissions]),
+            objects.map((object) => [
+              object.id,
+              {
+                ...allObjectPermissions,
+                ...options?.composedObjectPermissions,
+              },
+            ]),
           ),
         },
         flatObjectPermissionMaps: {
@@ -356,6 +363,20 @@ describe('DatabaseToolProvider', () => {
             canSoftDeleteObjectRecords: false,
           },
         ],
+      });
+
+      expect(descriptorNames).toContain('find_many_people');
+      expect(descriptorNames).not.toContain('create_one_person');
+      expect(descriptorNames).not.toContain('delete_one_person');
+    });
+
+    it('drops the verbs the composed permissions deny even with an explicit row', async () => {
+      const descriptorNames = await generateDescriptorNames([personObject], {
+        requireExplicitObjectGrants: true,
+        composedObjectPermissions: {
+          canUpdateObjectRecords: false,
+          canSoftDeleteObjectRecords: false,
+        },
       });
 
       expect(descriptorNames).toContain('find_many_people');

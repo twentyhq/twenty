@@ -14,15 +14,15 @@ export enum AiExceptionCode {
   RECORD_NOT_FOUND = 'RECORD_NOT_FOUND',
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
   CONTEXT_WINDOW_EXCEEDED = 'CONTEXT_WINDOW_EXCEEDED',
-  INVALID_CHAT_THREAD_TITLE = 'INVALID_CHAT_THREAD_TITLE',
   INVALID_CHAT_THREAD_SNOOZE_TIME = 'INVALID_CHAT_THREAD_SNOOZE_TIME',
   CHAT_THREAD_INBOX_STATE_UNAVAILABLE = 'CHAT_THREAD_INBOX_STATE_UNAVAILABLE',
+  CHAT_THREAD_ASSIGNEE_CANNOT_REPLY = 'CHAT_THREAD_ASSIGNEE_CANNOT_REPLY',
+  CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE = 'CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
   INVALID_TOOL_CALL_OUTPUT = 'INVALID_TOOL_CALL_OUTPUT',
   TOOL_CALL_NOT_FOUND = 'TOOL_CALL_NOT_FOUND',
   TOOL_CALL_NOT_PENDING = 'TOOL_CALL_NOT_PENDING',
   API_KEY_NOT_CONFIGURED = 'API_KEY_NOT_CONFIGURED',
-  USER_WORKSPACE_ID_NOT_FOUND = 'USER_WORKSPACE_ID_NOT_FOUND',
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
   ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS = 'ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS',
   RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED = 'RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED',
@@ -34,7 +34,6 @@ export enum AiExceptionCode {
   EVALUATION_QUESTION_UNSUPPORTED = 'EVALUATION_QUESTION_UNSUPPORTED',
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
   TOOL_CALL_RESOLUTION_FORBIDDEN = 'TOOL_CALL_RESOLUTION_FORBIDDEN',
-  THREAD_AWAITING_WORKFLOW_INPUT = 'THREAD_AWAITING_WORKFLOW_INPUT',
   THREAD_AWAITING_ANSWER = 'THREAD_AWAITING_ANSWER',
 }
 
@@ -58,12 +57,14 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Workspace not found.`;
     case AiExceptionCode.CONTEXT_WINDOW_EXCEEDED:
       return msg`This conversation is too long for the model. Start a new thread to continue.`;
-    case AiExceptionCode.INVALID_CHAT_THREAD_TITLE:
-      return msg`Chat thread title cannot be empty.`;
     case AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME:
       return msg`Snooze time must be in the future.`;
     case AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE:
       return msg`Read, archive and snooze are not available yet. Try again in a few minutes.`;
+    case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_REPLY:
+      return msg`This member can't reply in this chat, so it can't be assigned to them.`;
+    case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
+      return msg`Unassign yourself before unsubscribing from this chat.`;
     case AiExceptionCode.MESSAGE_NOT_FOUND:
       return msg`Chat message not found.`;
     case AiExceptionCode.INVALID_TOOL_CALL_OUTPUT:
@@ -74,8 +75,6 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This request is no longer waiting for an answer.`;
     case AiExceptionCode.API_KEY_NOT_CONFIGURED:
       return msg`API key is not configured.`;
-    case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
-      return msg`User workspace not found.`;
     case AiExceptionCode.ROLE_NOT_FOUND:
       return msg`Role not found.`;
     case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
@@ -98,10 +97,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Invalid classification request.`;
     case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
       return msg`You are not allowed to answer this request.`;
-    case AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT:
-      return msg`This workflow is waiting for an answer. Answer it before sending a message.`;
     case AiExceptionCode.THREAD_AWAITING_ANSWER:
-      return msg`This conversation is waiting for an answer to an earlier request.`;
+      return msg`This conversation is waiting on an earlier request. Send your message once it is answered or done.`;
     default:
       assertUnreachable(code);
   }

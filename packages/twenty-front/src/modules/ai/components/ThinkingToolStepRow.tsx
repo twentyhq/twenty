@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { getToolName, type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
-import { JsonTree } from 'twenty-ui/components';
+import { JsonTree } from 'twenty-ui/components/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Tabs } from 'twenty-ui/primitives/navigation';
@@ -242,55 +242,59 @@ export const ThinkingToolStepRow = ({
       </StyledToolRowButton>
 
       {isExpandable && (
-        <Collapsible isExpanded={isExpanded}>
-          <StyledToolDetailsContainer>
-            {isNonEmptyArray(recordReferences) && (
-              <StyledToolRecordsContainer>
-                <ToolRecordsWidget
-                  message={recordsMessage ?? ''}
-                  recordReferences={recordReferences}
-                />
-              </StyledToolRecordsContainer>
-            )}
-            {hasError ? (
-              <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
-            ) : (
-              <TabListRoot componentInstanceId={toolTabListComponentInstanceId}>
-                <StyledToolDetailsContent>
-                  <StyledToolTabListContainer>
-                    <TabList
-                      aria-label={t`Tool details: ${displayMessage}`}
-                      tabs={toolTabs}
-                      behaveAsLinks={false}
-                      componentInstanceId={toolTabListComponentInstanceId}
-                    />
-                  </StyledToolTabListContainer>
-                  <Tabs.Panel
-                    value={activeTab}
-                    render={<StyledToolJsonContent />}
-                  >
-                    <StyledJsonTreeContainer>
-                      <JsonTree
-                        value={
-                          (activeTab === 'output'
-                            ? toolOutput
-                            : toolInput) as JsonValue
-                        }
-                        shouldExpandNodeInitially={() => false}
-                        emptyArrayLabel={t`Empty Array`}
-                        emptyObjectLabel={t`Empty Object`}
-                        emptyStringLabel={t`[empty string]`}
-                        arrowButtonCollapsedLabel={t`Expand`}
-                        arrowButtonExpandedLabel={t`Collapse`}
-                        onNodeValueClick={copyToClipboard}
+        <Collapsible.Root open={isExpanded}>
+          <Collapsible.Panel>
+            <StyledToolDetailsContainer>
+              {isNonEmptyArray(recordReferences) && (
+                <StyledToolRecordsContainer>
+                  <ToolRecordsWidget
+                    message={recordsMessage ?? ''}
+                    recordReferences={recordReferences}
+                  />
+                </StyledToolRecordsContainer>
+              )}
+              {hasError ? (
+                <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
+              ) : (
+                <TabListRoot
+                  componentInstanceId={toolTabListComponentInstanceId}
+                >
+                  <StyledToolDetailsContent>
+                    <StyledToolTabListContainer>
+                      <TabList
+                        aria-label={t`Tool details: ${displayMessage}`}
+                        tabs={toolTabs}
+                        behaveAsLinks={false}
+                        componentInstanceId={toolTabListComponentInstanceId}
                       />
-                    </StyledJsonTreeContainer>
-                  </Tabs.Panel>
-                </StyledToolDetailsContent>
-              </TabListRoot>
-            )}
-          </StyledToolDetailsContainer>
-        </Collapsible>
+                    </StyledToolTabListContainer>
+                    <Tabs.Panel
+                      value={activeTab}
+                      render={<StyledToolJsonContent />}
+                    >
+                      <StyledJsonTreeContainer>
+                        <JsonTree
+                          value={
+                            (activeTab === 'output'
+                              ? toolOutput
+                              : toolInput) as JsonValue
+                          }
+                          shouldExpandNodeInitially={() => false}
+                          emptyArrayLabel={t`Empty Array`}
+                          emptyObjectLabel={t`Empty Object`}
+                          emptyStringLabel={t`[empty string]`}
+                          arrowButtonCollapsedLabel={t`Expand`}
+                          arrowButtonExpandedLabel={t`Collapse`}
+                          onNodeValueClick={copyToClipboard}
+                        />
+                      </StyledJsonTreeContainer>
+                    </Tabs.Panel>
+                  </StyledToolDetailsContent>
+                </TabListRoot>
+              )}
+            </StyledToolDetailsContainer>
+          </Collapsible.Panel>
+        </Collapsible.Root>
       )}
     </StyledToolRowContainer>
   );

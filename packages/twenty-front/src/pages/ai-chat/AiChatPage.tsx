@@ -8,6 +8,7 @@ import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getDisplayedAiChatThreadId } from '@/ai/utils/getDisplayedAiChatThreadId';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
@@ -28,10 +29,12 @@ const StyledChatContainer = styled.div`
 export const AiChatPage = () => {
   const { threadId } = useParams();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
   const isMobile = useIsMobile();
   const displayedThreadId = getDisplayedAiChatThreadId({
     urlThreadId: threadId,
     currentAiChatThread,
+    isOnNewAiChatSlot,
   });
 
   return (

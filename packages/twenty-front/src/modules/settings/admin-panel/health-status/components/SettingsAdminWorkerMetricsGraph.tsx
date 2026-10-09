@@ -6,7 +6,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   GetQueueMetricsDocument,
@@ -207,7 +207,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
             items={Object.entries(metricsDetails)
               .filter(([key]) => key !== '__typename')
               .map(([key, value]) => ({
-                label: key.charAt(0).toUpperCase() + key.slice(1),
+                label: capitalize(key),
                 value:
                   typeof value === 'number'
                     ? value

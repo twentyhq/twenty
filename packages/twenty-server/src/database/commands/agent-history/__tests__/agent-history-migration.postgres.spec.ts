@@ -42,7 +42,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
 import { AgentHistoryMigrationService } from 'src/database/commands/agent-history/agent-history-migration.service';
-import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { AGENT_HISTORY_TEST_SCHEMA } from 'src/database/commands/agent-history/__tests__/agent-history-test-schema.constant';
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { AGENT_HISTORY_MIGRATION_STORAGE_KEY } from 'src/database/commands/agent-history/agent-history-migration-storage-key.constant';
@@ -214,6 +214,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         }),
       } as never,
     );
+    const upgradeFence = {
+      hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true),
+    };
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
@@ -227,8 +230,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         new AgentConversationWriterService(
           turns as never,
           new AgentHistoryTransactionService(workspaceStorage, orm as never),
+          upgradeFence as never,
         ),
         chatThreadService,
+        upgradeFence as never,
       );
 
     const createActorService = (messageRepository: typeof messages) =>
@@ -310,7 +315,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const runner = dataSource.createQueryRunner();
       await runner.connect();
       try {
-        for (const table of AGENT_HISTORY_TABLES) {
+        for (const table of ACTIVE_AGENT_HISTORY_TABLES) {
           const object = Object.values(
             metadata.flatObjectMetadataMaps.byUniversalIdentifier,
           )
@@ -343,7 +348,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             .filter(isDefined)
             .find((object) => object.id === index.objectMetadataId)!;
           if (
-            !AGENT_HISTORY_TABLES.some(
+            !ACTIVE_AGENT_HISTORY_TABLES.some(
               (table) => table.name === object.nameSingular,
             )
           )
@@ -368,7 +373,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           ['agentMessage', 'threadId', 'agentChatThread'],
           ['agentMessage', 'turnId', 'agentTurn'],
           ['agentMessagePart', 'messageId', 'agentMessage'],
-          ['agentTurnEvaluation', 'turnId', 'agentTurn'],
         ]) {
           await runner.query(
             `ALTER TABLE "${SCHEMA}"."${child}" ADD FOREIGN KEY ("${column}") REFERENCES "${SCHEMA}"."${parent}" (id) ON DELETE CASCADE`,
@@ -499,7 +503,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       }
     });
 
-    it('copies all five tables, exact credits and archive state before changing the route', async () => {
+    it('copies every history table, exact credits and archive state before changing the route', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
@@ -511,7 +515,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(rows[0].totalInputCredits).toBe('9007199254740993');
       expect(rows[0].archivedAt).toEqual(new Date('2026-01-01T00:00:00.000Z'));
       expect(await readRoute()).toBe('workspace');
-      for (const table of AGENT_HISTORY_TABLES) {
+      for (const table of ACTIVE_AGENT_HISTORY_TABLES) {
         expect(
           (
             await dataSource.query(
@@ -583,7 +587,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await dataSource.query(
         `UPDATE "${SCHEMA}"."agentChatThread" SET title = 'Updated after cutover'`,
       );
-      await dataSource.query(`DELETE FROM "${SCHEMA}"."agentTurnEvaluation"`);
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'core',
@@ -776,7 +779,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
     });
 
-    it('persists senders for normal, queued and hidden kickoff messages after schema expansion', async () => {
+    it('persists senders for normal and queued messages after schema expansion, and runs agent-opened turns as the owner', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
@@ -787,11 +790,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         userWorkspaceId: OWNER_ID,
         workspaceMemberId: MEMBER_ID,
       });
-      const kickoff = await chat.ensureHiddenKickoffMessage({
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: OWNER_ID,
+      const openingTurn = await turns.insertAndReturnOne(WORKSPACE_ID, {
         threadId: thread.id,
-        text: 'Setup after upgrade',
       });
       const message = await chat.addMessage({
         workspaceId: WORKSPACE_ID,
@@ -814,7 +814,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         threadId: thread.id,
         messageId: queued.id,
       });
-      for (const messageId of [kickoff.id, message.id, queued.id]) {
+      for (const messageId of [message.id, queued.id]) {
         await expect(
           actors.resolveMessage({
             workspaceId: WORKSPACE_ID,
@@ -825,6 +825,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           sender: { userWorkspaceId: OWNER_ID, applicationId: null },
         });
       }
+      await expect(
+        actors.resolveMessage({
+          workspaceId: WORKSPACE_ID,
+          threadId: thread.id,
+          turnId: openingTurn.id,
+        }),
+      ).resolves.toMatchObject({
+        message: null,
+        sender: { userWorkspaceId: OWNER_ID, applicationId: null },
+      });
       const saved = await messages.findOneOrFail(WORKSPACE_ID, {
         where: { id: message.id },
         relations: { parts: true },
@@ -833,10 +843,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(
         await dataSource.query(
           `SELECT "senderWorkspaceMemberId" FROM "${SCHEMA}"."agentMessage" WHERE id = ANY($1::uuid[])`,
-          [[kickoff.id, message.id, queued.id]],
+          [[message.id, queued.id]],
         ),
       ).toEqual([
-        { senderWorkspaceMemberId: MEMBER_ID },
         { senderWorkspaceMemberId: MEMBER_ID },
         { senderWorkspaceMemberId: MEMBER_ID },
       ]);

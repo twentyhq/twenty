@@ -1,14 +1,8 @@
-import { styled } from '@linaria/react';
 import { type ComponentProps, useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { DropdownClickOutsideListenerExclusion } from '@/ui/layout/dropdown/components/DropdownClickOutsideListenerExclusion';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
-
-const StyledClickOutsideListenerExclusion = styled.div`
-  display: contents;
-`;
 
 type DropdownContentProps = Pick<
   ComponentProps<typeof Dropdown.Content>,
@@ -20,6 +14,8 @@ type DropdownContentProps = Pick<
   | 'anchor'
   | 'collisionPadding'
   | 'width'
+  | 'onKeyDown'
+  | 'onClick'
   | 'initialFocus'
   | 'finalFocus'
   | 'className'
@@ -36,6 +32,8 @@ export const DropdownContent = ({
   anchor,
   collisionPadding,
   width,
+  onKeyDown,
+  onClick,
   initialFocus,
   finalFocus,
   className,
@@ -43,7 +41,6 @@ export const DropdownContent = ({
   ref,
 }: DropdownContentProps) => {
   const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
 
   return (
     <Dropdown.Content
@@ -56,20 +53,16 @@ export const DropdownContent = ({
       anchor={anchor}
       collisionPadding={collisionPadding}
       width={width}
+      onKeyDown={onKeyDown}
+      onClick={onClick}
       initialFocus={initialFocus}
       finalFocus={finalFocus}
       className={className}
       aria-label={ariaLabel}
     >
-      {isDefined(excludedClickOutsideId) ? (
-        <StyledClickOutsideListenerExclusion
-          data-click-outside-id={excludedClickOutsideId}
-        >
-          {children}
-        </StyledClickOutsideListenerExclusion>
-      ) : (
-        children
-      )}
+      <DropdownClickOutsideListenerExclusion>
+        {children}
+      </DropdownClickOutsideListenerExclusion>
     </Dropdown.Content>
   );
 };

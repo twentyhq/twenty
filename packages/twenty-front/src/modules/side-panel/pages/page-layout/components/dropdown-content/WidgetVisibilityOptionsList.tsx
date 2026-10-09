@@ -7,7 +7,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 
 type WidgetVisibilityOptionsListProps = {
   currentOptionId: string;
@@ -44,7 +44,7 @@ export const WidgetVisibilityOptionsList = ({
               onSelectVisibility(option.id);
             }}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === option.id}
               onClick={() => {
                 onSelectVisibility(option.id);
@@ -55,7 +55,7 @@ export const WidgetVisibilityOptionsList = ({
               indicator="check"
             >
               {visibilityLabels[option.id]}
-            </ListItem>
+            </ListItemButton>
           </SelectableListItem>
         ))}
       </SelectableList>

@@ -4,11 +4,13 @@ import { type ReactNode } from 'react';
 
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
 const queryMock = jest.fn();
 const mockApolloCoreClient = { query: queryMock };
@@ -40,14 +42,6 @@ const refreshAgentChatThreadPermissions = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
   useRefreshAgentChatThreadPermissions: () => ({
     refreshAgentChatThreadPermissions,
-  }),
-}));
-
-const refreshAgentChatThreadParticipants = jest.fn();
-
-jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
-  useAgentChatThreadParticipants: () => ({
-    refreshAgentChatThreadParticipants,
   }),
 }));
 
@@ -126,7 +120,6 @@ describe('useRefreshAgentChatThreads', () => {
         fetchPolicy: 'network-only',
       }),
     );
-    expect(refreshAgentChatThreadParticipants).toHaveBeenCalled();
     expect(store.get(agentChatThreadListState.atom)).toEqual({
       threadIds: ['thread-1'],
       hasNextPage: true,
@@ -135,6 +128,103 @@ describe('useRefreshAgentChatThreads', () => {
     expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
       { id: 'thread-1', title: 'Loaded thread' },
     ]);
+  });
+
+  it("keeps the member's own inbox state from the page, and newer streamed rows", async () => {
+    const store = buildStore();
+    store.set(currentWorkspaceMemberState.atom, {
+      id: 'member-id',
+    } as never);
+    const buildParticipant = (
+      threadId: string,
+      workspaceMemberId: string,
+      updatedAt: string,
+    ) => ({
+      __typename: 'AgentChatThreadParticipant',
+      id: `${threadId}-${workspaceMemberId}`,
+      threadId,
+      workspaceMemberId,
+      lastReadAt: '2026-10-01T10:00:00.000Z',
+      archivedAt: null,
+      snoozedUntil: null,
+      isSubscribed: true,
+      lastMentionedAt: null,
+      updatedAt,
+    });
+    const streamedParticipant = {
+      id: 'thread-2-member-id',
+      threadId: 'thread-2',
+      lastReadAt: null,
+      archivedAt: null,
+      snoozedUntil: null,
+      isSubscribed: true,
+      lastMentionedAt: null,
+      updatedAt: '2026-10-01T10:05:00.000Z',
+    };
+    store.set(agentChatThreadStreamedParticipantsState.atom, {
+      'thread-2': streamedParticipant,
+    });
+    queryMock.mockResolvedValue(
+      buildPage([
+        {
+          ...buildThread('thread-1', 'First'),
+          participants: {
+            edges: [
+              {
+                node: buildParticipant(
+                  'thread-1',
+                  'member-id',
+                  '2026-10-01T10:00:00.000Z',
+                ),
+              },
+              {
+                node: buildParticipant(
+                  'thread-1',
+                  'other-member-id',
+                  '2026-10-01T10:00:00.000Z',
+                ),
+              },
+            ],
+          },
+        } as AgentChatThreadRecord,
+        {
+          ...buildThread('thread-2', 'Second'),
+          participants: {
+            edges: [
+              {
+                node: buildParticipant(
+                  'thread-2',
+                  'member-id',
+                  '2026-10-01T10:00:00.000Z',
+                ),
+              },
+            ],
+          },
+        } as AgentChatThreadRecord,
+      ]),
+    );
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      await result.current.refreshAgentChatThreads();
+    });
+
+    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+      'thread-1': {
+        id: 'thread-1-member-id',
+        threadId: 'thread-1',
+        lastReadAt: '2026-10-01T10:00:00.000Z',
+        archivedAt: null,
+        snoozedUntil: null,
+        isSubscribed: true,
+        lastMentionedAt: null,
+        updatedAt: '2026-10-01T10:00:00.000Z',
+      },
+      'thread-2': streamedParticipant,
+    });
+    expect(store.get(agentChatThreadsSelector.atom)[0]).not.toHaveProperty(
+      'participants',
+    );
   });
 
   it('orders by last change on a workspace the 2.46 upgrade has not reached', async () => {
@@ -398,10 +488,7 @@ describe('useRefreshAgentChatThreads', () => {
 
     expect(
       store.get(
-        agentChatUsageComponentFamilyState.atomFamily({
-          instanceId: AGENT_CHAT_INSTANCE_ID,
-          familyKey: { threadId: 'old-thread' },
-        }),
+        agentChatUsageFamilyState.atomFamily({ threadId: 'old-thread' }),
       ),
     ).toMatchObject({ inputTokens: 42 });
   });

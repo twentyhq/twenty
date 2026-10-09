@@ -38,6 +38,7 @@ export const APPLICATION_FRAGMENT = gql`
       isRequired
       type
       options
+      scope
     }
     agents {
       ...AgentFields

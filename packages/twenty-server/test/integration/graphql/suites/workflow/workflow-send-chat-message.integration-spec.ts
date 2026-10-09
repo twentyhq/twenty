@@ -13,7 +13,9 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { type AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -74,8 +76,8 @@ describe('Send chat message workflow step', () => {
       });
       expect(messages).toEqual([
         {
-          role: 'user',
-          isHidden: true,
+          role: 'system',
+          isHidden: false,
           textContent:
             'The "Welcome new deal owners" workflow started this conversation. Its messages follow.',
         },
@@ -120,7 +122,7 @@ describe('Send chat message workflow step', () => {
       await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
       const [{ threadId }] = await global.testDataSource.query(
-        `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+        `SELECT condition->>'threadId' AS "threadId" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1 AND "ownerKey" = $2 AND condition->>'type' = 'ANSWER'`,
         [workflowRunId, stepId],
       );
 
@@ -226,6 +228,100 @@ describe('Send chat message workflow step', () => {
       expect(await readEmployees()).toBe(30);
     }, 120000);
 
+    it('keeps waiting when the step posts its call again, then reads the answer', async () => {
+      const toolCall = {
+        toolName: 'update_one_company',
+        arguments: { id: companyId, employees: 25 },
+      };
+      let postAgain: () => ReturnType<
+        AgentCallerConversationService['sendMessage']
+      > = () => Promise.reject(new Error('The step has not posted yet'));
+
+      const { status, stepResult } = await runWorkflowActionStep({
+        name: 'Post a headcount check twice',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Headcount check',
+          text: 'Raise the headcount to 25?',
+          toolCall,
+        },
+        whileRunning: async ({ workflowRunId, stepId }) => {
+          await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
+
+          const [{ threadId }] = await global.testDataSource.query(
+            `SELECT condition->>'threadId' AS "threadId" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1 AND "ownerKey" = $2 AND condition->>'type' = 'ANSWER'`,
+            [workflowRunId, stepId],
+          );
+
+          postedThreadId = threadId;
+
+          // the step posts again as a retry of it would, with the same keys; the sender is read while
+          // the run exists, since the run is removed once it completes
+          const sender =
+            await getAppProviderByClassName<WorkflowRunInboxSenderWorkspaceService>(
+              'WorkflowRunInboxSenderWorkspaceService',
+            ).findRunSenderOrThrow({
+              workflowRunId,
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+            });
+
+          postAgain = () =>
+            getAppProviderByClassName<AgentCallerConversationService>(
+              'AgentCallerConversationService',
+            ).sendMessage({
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+              sender,
+              message: {
+                workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+                threadKey: workflowRunId,
+                idempotencyKey: stepId,
+                title: 'Headcount check',
+                text: 'Raise the headcount to 25?',
+              },
+              fallbackThreadKey: `${workflowRunId}:${workflowRunId}:${stepId}`,
+              awaitedToolCall: {
+                ...toolCall,
+                caller: {
+                  type: 'WORKFLOW_STEP',
+                  ref: { workflowRunId, stepId },
+                },
+                // the message was already written, so the call is not built again
+                waitOnAnswer: async () => {},
+              },
+            });
+
+          expect(await postAgain()).toEqual({
+            status: 'AWAITING',
+            threadId,
+            toolCallId: expect.any(String),
+          });
+
+          await answerPostedCall({
+            workflowRunId,
+            stepId,
+            response: { decision: 'approve' },
+          });
+        },
+      });
+
+      expect(status).toBe('COMPLETED');
+      expect(stepResult).toMatchObject({ outcome: 'executed' });
+      expect(await readEmployees()).toBe(25);
+      expect(await postAgain()).toEqual({
+        status: 'ANSWERED',
+        threadId: postedThreadId,
+        answer: {
+          outcome: 'executed',
+          toolName: 'update_one_company',
+          arguments: { id: companyId, employees: 25 },
+          output: expect.anything(),
+          feedback: null,
+          error: null,
+        },
+      });
+    }, 120000);
+
     it('runs nothing when the recipient rejects the action', async () => {
       const { status, stepResult } = await runWorkflowActionStep({
         name: 'Reject a headcount change',
@@ -320,7 +416,7 @@ describe('Send chat message workflow step', () => {
             );
 
             const [{ threadId }] = await global.testDataSource.query(
-              `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+              `SELECT condition->>'threadId' AS "threadId" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1 AND "ownerKey" = $2 AND condition->>'type' = 'ANSWER'`,
               [workflowRunId, stepId],
             );
 
@@ -381,7 +477,7 @@ describe('Send chat message workflow step', () => {
           await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
           const [{ threadId }] = await global.testDataSource.query(
-            `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+            `SELECT condition->>'threadId' AS "threadId" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1 AND "ownerKey" = $2 AND condition->>'type' = 'ANSWER'`,
             [workflowRunId, stepId],
           );
 
@@ -444,7 +540,7 @@ describe('Send chat message workflow step', () => {
           await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
           const [{ threadId }] = await global.testDataSource.query(
-            `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+            `SELECT condition->>'threadId' AS "threadId" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1 AND "ownerKey" = $2 AND condition->>'type' = 'ANSWER'`,
             [workflowRunId, stepId],
           );
 

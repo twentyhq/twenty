@@ -11,7 +11,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useContext } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown, useDropdownPage } from 'twenty-ui/components';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
 
 type AdvancedFilterFieldSelectMenuProps = {

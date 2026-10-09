@@ -186,7 +186,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     switch (type) {
       case WorkflowActionType.CODE: {
-        const logicFunctionId = id ?? v4();
+        // Step ids are shared across versions of a workflow and kept on a type
+        // change, so a logic function keyed on the step id could collide
+        const logicFunctionId = v4();
 
         const newLogicFunction =
           await this.codeStepBuildService.createCodeStepLogicFunction({
@@ -579,7 +581,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               'You are a helpful AI assistant. Complete the task based on the workflow context.',
             modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
             responseFormat: { type: 'text' },
-            isCustom: true,
+            isSystem: true,
           },
           workspaceId,
         );
@@ -708,6 +710,26 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                   minutes: 0,
                   seconds: 0,
                 },
+              },
+            },
+          },
+        };
+      }
+      case WorkflowActionType.WAIT_FOR_EVENT: {
+        const activeObjectMetadataItem =
+          await this.findFirstActiveObjectMetadata(workspaceId);
+
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Wait for Event',
+            type: WorkflowActionType.WAIT_FOR_EVENT,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                eventName: `${activeObjectMetadataItem?.nameSingular ?? 'company'}.updated`,
+                recordId: null,
+                timeout: null,
               },
             },
           },
@@ -946,7 +968,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             modelId: existingAgent.modelId,
             responseFormat: existingAgent.responseFormat ?? undefined,
             modelConfiguration: existingAgent.modelConfiguration ?? undefined,
-            isCustom: true,
+            isSystem: true,
           },
           workspaceId,
         );

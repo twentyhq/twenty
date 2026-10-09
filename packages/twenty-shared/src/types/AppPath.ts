@@ -8,7 +8,6 @@ export enum AppPath {
   WorkspaceActivation = '/workspace-activation',
   CreateProfile = '/create/profile',
   SyncEmails = '/sync/emails',
-  InstallApps = '/install-apps',
   InviteTeam = '/invite-team',
   PlanRequired = '/plan-required',
   PlanRequiredSuccess = '/plan-required/payment-success',
@@ -26,6 +25,8 @@ export enum AppPath {
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',
   PageLayoutPage = '/page/:pageLayoutId',
   WorkflowCoreShowPage = '/workflow/:coreWorkflowId',
+  AgentIndexPage = '/agents',
+  AgentShowPage = '/agent/:agentId',
 
   Settings = `settings`,
   SettingsCatchAll = `/${Settings}/*`,

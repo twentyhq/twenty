@@ -4,8 +4,8 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
+import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -44,13 +44,20 @@ export const AgentChatThreadRecordOperationsEffect = () => {
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
   const { leaveRemovedAiChatThread } = useLeaveRemovedAiChatThread();
   const store = useStore();
+  const { refreshAgentChatOpenThreadsSummary } =
+    useRefreshAgentChatOpenThreadsSummary();
   const isEnabled = isDefined(chatObjectMetadataItem);
 
   // The removal check looks the chat up itself, so it runs even if the reload fails.
   const reloadAgentChatThreads = useCallback(async () => {
+    refreshAgentChatOpenThreadsSummary();
     await refreshAgentChatThreads();
     await leaveRemovedAiChatThread();
-  }, [leaveRemovedAiChatThread, refreshAgentChatThreads]);
+  }, [
+    leaveRemovedAiChatThread,
+    refreshAgentChatOpenThreadsSummary,
+    refreshAgentChatThreads,
+  ]);
 
   useListenToEventsForQuery({
     queryId: 'agent-chat-thread-record-operations',
@@ -61,6 +68,9 @@ export const AgentChatThreadRecordOperationsEffect = () => {
 
   const handleRecordOperation = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
+      // Activity, assignment, questions and deletion all move the counts
+      refreshAgentChatOpenThreadsSummary();
+
       const applyUpdates = (
         updates: (Partial<AgentChatThreadRecord> & { id: string })[],
       ) => {
@@ -74,14 +84,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
           const createdThread =
             operation.createdRecord as AgentChatThreadRecord;
 
-          // a workflow run's conversation is listed only for the member it is routed to
-          if (
-            !isDefined(createdThread.workflowRunId) ||
-            createdThread.workspaceMemberId ===
-              store.get(currentWorkspaceMemberState.atom)?.id
-          ) {
-            addAgentChatThread(createdThread);
-          }
+          addAgentChatThread(createdThread);
           return;
         }
         case 'update-one':
@@ -93,7 +96,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
 
           applyUpdates(updateInputs.map(toThreadUpdate));
 
-          // An updated chat past the loaded pages moves to the top; reloading keeps workflow run chats out.
+          // An updated chat past the loaded pages moves to the top
           const listedThreadIds =
             store.get(agentChatThreadListState.atom)?.threadIds ?? [];
 
@@ -137,6 +140,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
     [
       addAgentChatThread,
       applyAgentChatThreadUpdate,
+      refreshAgentChatOpenThreadsSummary,
       refreshAgentChatThreads,
       reloadAgentChatThreads,
       store,

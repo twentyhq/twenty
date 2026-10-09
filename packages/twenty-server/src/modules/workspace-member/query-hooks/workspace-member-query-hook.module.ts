@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
@@ -36,8 +34,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceMemberUpdateOnePostQueryHook,
   ],
   imports: [
-    CoreEntityCacheModule,
-    FeatureFlagModule,
     UserWorkspaceModule,
     ConnectedAccountMetadataModule,
     RecordShareOwnershipTransferModule,

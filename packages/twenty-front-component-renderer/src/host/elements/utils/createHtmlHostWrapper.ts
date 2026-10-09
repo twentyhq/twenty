@@ -1,11 +1,14 @@
 import { isArray } from '@sniptt/guards';
 import React from 'react';
 
+import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { useCaretPreservingElementRef } from '@/host/caret/hooks/useCaretPreservingElementRef';
+import { HostImageElement } from '@/host/components/HostImageElement';
 import { useHtmlHostElementProps } from '@/host/elements/hooks/useHtmlHostElementProps';
 import { createCaretPreservingElement } from '@/host/caret/utils/createCaretPreservingElement';
 import { createPlainHostElement } from '@/host/elements/utils/createPlainHostElement';
-import { isTextLikeInputType } from '@/host/caret/utils/isTextLikeInputType';
+import { isFileInputType } from '@/host/elements/utils/isFileInputType';
+import { isTextLikeInputType } from '@/utils/isTextLikeInputType';
 
 const VOID_ELEMENTS = new Set([
   'area',
@@ -28,6 +31,10 @@ const CARET_PRESERVING_TAGS = new Set(['input', 'textarea']);
 type WrapperProps = { children?: React.ReactNode } & Record<string, unknown>;
 
 export const createHtmlHostWrapper = (htmlTag: string) => {
+  if (htmlTag === 'img') {
+    return HostImageElement;
+  }
+
   const isVoid = VOID_ELEMENTS.has(htmlTag);
 
   if (!CARET_PRESERVING_TAGS.has(htmlTag)) {
@@ -57,7 +64,12 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
   const caretPreservingTag = htmlTag as 'input' | 'textarea';
 
-  return ({ children, ...props }: WrapperProps) => {
+  return ({
+    children,
+    [INPUT_SELECTION_BRIDGE_PROPERTIES.request]: selectionCommands,
+    [INPUT_SELECTION_BRIDGE_PROPERTIES.update]: onSelectionUpdate,
+    ...props
+  }: WrapperProps) => {
     const {
       setEditableFocused,
       reactBindableProps,
@@ -65,10 +77,18 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       composedElementRef,
     } = useHtmlHostElementProps({ props, htmlTag });
 
-    const caretPreservingElementRef = useCaretPreservingElementRef(
+    const { value, ...reactBindablePropsWithoutValue } = reactBindableProps;
+
+    const isFileInput = isFileInputType(reactBindableProps.type);
+
+    const shouldClearFileInputSelection = isFileInput && value === '';
+
+    const caretPreservingElementRef = useCaretPreservingElementRef({
       composedElementRef,
-      reactBindableProps.value,
-    );
+      value: isFileInput && !shouldClearFileInputSelection ? undefined : value,
+      selectionCommands,
+      onSelectionUpdate,
+    });
 
     if (
       caretPreservingTag === 'textarea' ||
@@ -86,9 +106,13 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
     return createPlainHostElement({
       htmlTag,
       isVoid,
-      reactBindableProps,
+      reactBindableProps: isFileInput
+        ? reactBindablePropsWithoutValue
+        : reactBindableProps,
       hostEnforcedProps,
-      composedElementRef,
+      composedElementRef: isFileInput
+        ? caretPreservingElementRef
+        : composedElementRef,
       children,
     });
   };

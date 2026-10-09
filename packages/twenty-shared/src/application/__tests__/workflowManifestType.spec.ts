@@ -140,3 +140,66 @@ describe('workflow manifest step types', () => {
     },
   );
 });
+
+describe('workflow manifest manual trigger', () => {
+  const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+
+  const withTrigger = (trigger: Record<string, unknown>) => ({
+    ...workflow,
+    version: {
+      ...workflow.version,
+      trigger: { ...workflow.version.trigger, ...trigger },
+    },
+  });
+
+  it('accepts where the workflow can be launched from', () => {
+    for (const availability of [
+      { type: 'GLOBAL' },
+      { type: 'SINGLE_RECORD', objectUniversalIdentifier: OBJECT_ID },
+      { type: 'BULK_RECORDS', objectUniversalIdentifier: OBJECT_ID },
+    ]) {
+      expect(
+        workflowManifestSchema.safeParse(
+          withTrigger({ settings: { availability, icon: 'IconBolt' } }),
+        ).success,
+      ).toBe(true);
+    }
+  });
+
+  it('requires the object a record availability runs on', () => {
+    const result = workflowManifestSchema.safeParse(
+      withTrigger({ settings: { availability: { type: 'SINGLE_RECORD' } } }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'availability',
+      'objectUniversalIdentifier',
+    ]);
+  });
+
+  it('needs an availability before an icon or pin can show in the command menu', () => {
+    const result = workflowManifestSchema.safeParse(
+      withTrigger({ settings: { isPinned: true } }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'availability',
+    ]);
+  });
+
+  it('names the supported trigger types when the type is unknown', () => {
+    const result = workflowManifestSchema.safeParse(
+      withTrigger({ type: 'WEBHOOK' }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toBe(
+      'Unsupported trigger type. Application workflows support: MANUAL',
+    );
+  });
+});

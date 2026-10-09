@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
@@ -124,16 +125,16 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {isRecordGroupingOptionalForViewType(viewType) && (
-          <ListItem
+          <ListItemButton
             onClick={handleResetRecordGroupField}
             role="option"
             aria-selected={!isDefined(recordIndexGroupFieldMetadataItem)}
             selected={!isDefined(recordIndexGroupFieldMetadataItem)}
             indicator="check"
-          >{t`None`}</ListItem>
+          >{t`None`}</ListItemButton>
         )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
-          <ListItem
+          <ListItemButton
             key={fieldMetadataItem.id}
             onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
             role="option"
@@ -149,7 +150,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             }
           >
             {fieldMetadataItem.label}
-          </ListItem>
+          </ListItemButton>
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />

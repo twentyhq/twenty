@@ -40,6 +40,7 @@ import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/bil
 import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
 import { isResourceCreditPriceForSubscription } from 'src/engine/core-modules/billing/utils/is-resource-credit-price-for-subscription.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
+import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
@@ -408,15 +409,29 @@ export class BillingSubscriptionUpdateService {
     const diffInCents =
       Number(newPrice.unitAmount) - Number(currentPrice.unitAmount);
 
-    if (diffInCents > 0) {
-      await this.stripeInvoiceService.createImmediateUpgradeInvoice({
-        stripeCustomerId: subscription.stripeCustomerId,
-        stripeSubscriptionId: subscription.stripeSubscriptionId,
-        diffAmountInCents: diffInCents,
-        description: `Resource usage - Upgrade resource credit price from $${Number(currentPrice.unitAmount) / 100} to $${Number(newPrice.unitAmount) / 100}`,
-        currency: newPrice.currency,
-      });
+    if (diffInCents <= 0) {
+      return;
     }
+
+    const upgradeInvoiceItem = {
+      stripeCustomerId: subscription.stripeCustomerId,
+      stripeSubscriptionId: subscription.stripeSubscriptionId,
+      diffAmountInCents: diffInCents,
+      description: `Resource usage - Upgrade resource credit price from $${Number(currentPrice.unitAmount) / 100} to $${Number(newPrice.unitAmount) / 100}`,
+      currency: newPrice.currency,
+    };
+
+    if (isSendInvoiceSubscription(subscription)) {
+      await this.stripeInvoiceService.createPendingUpgradeInvoiceItem(
+        upgradeInvoiceItem,
+      );
+
+      return;
+    }
+
+    await this.stripeInvoiceService.createImmediateUpgradeInvoice(
+      upgradeInvoiceItem,
+    );
   }
 
   private async getProductKeyByPriceId(
@@ -510,6 +525,7 @@ export class BillingSubscriptionUpdateService {
       {
         currentSeats: currentPrices.seats,
         isTrialing: subscription.status === SubscriptionStatus.Trialing,
+        isSendInvoice: isSendInvoiceSubscription(subscription),
       },
     );
 

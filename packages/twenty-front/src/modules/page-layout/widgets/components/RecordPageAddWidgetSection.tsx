@@ -8,7 +8,7 @@ import { type WidgetInsertionContext } from '@/page-layout/states/widgetInsertio
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { MenuItem } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import {
   IconListDetails,
   IconListSearch,

@@ -4,6 +4,8 @@ import { type ReactNode } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
+import { sleep } from '~/utils/sleep';
+
 import { useUpdateStreamingPartsWithDiff } from '@/ai/hooks/useUpdateStreamingPartsWithDiff';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import {
@@ -11,12 +13,15 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const processUIToolCallMessage = jest.fn();
+const openRecordTarget = jest.fn();
+const openViewTarget = jest.fn();
 const processWorkspaceSetupCompletion = jest.fn();
 
-jest.mock('@/ai/hooks/useProcessUIToolCallMessage', () => ({
-  useProcessUIToolCallMessage: () => ({ processUIToolCallMessage }),
+jest.mock('@/ai/hooks/useChatTargetNavigation', () => ({
+  useChatTargetNavigation: () => ({ openRecordTarget, openViewTarget }),
 }));
+
+jest.mock('~/utils/sleep', () => ({ sleep: jest.fn() }));
 
 jest.mock('@/ai/hooks/useProcessWorkspaceSetupCompletion', () => ({
   useProcessWorkspaceSetupCompletion: () => ({
@@ -63,17 +68,16 @@ describe('useUpdateStreamingPartsWithDiff', () => {
     const streamingMessage = buildMessage('streaming', 'Hel');
 
     updateStreamingPartsWithDiff([settledMessage, streamingMessage]);
-    expect(processUIToolCallMessage).toHaveBeenCalledTimes(2);
+    expect(processWorkspaceSetupCompletion).toHaveBeenCalledTimes(2);
 
     const nextStreamingMessage = buildMessage('streaming', 'Hello');
 
     updateStreamingPartsWithDiff([settledMessage, nextStreamingMessage]);
 
-    expect(processUIToolCallMessage).toHaveBeenCalledTimes(3);
-    expect(processUIToolCallMessage).toHaveBeenLastCalledWith(
+    expect(processWorkspaceSetupCompletion).toHaveBeenCalledTimes(3);
+    expect(processWorkspaceSetupCompletion).toHaveBeenLastCalledWith(
       nextStreamingMessage,
     );
-    expect(processWorkspaceSetupCompletion).toHaveBeenCalledTimes(3);
   });
 
   it('does not process again a refetched message whose content did not change', () => {
@@ -82,7 +86,7 @@ describe('useUpdateStreamingPartsWithDiff', () => {
     updateStreamingPartsWithDiff([buildMessage('answer', 'Done')]);
     updateStreamingPartsWithDiff([buildMessage('answer', 'Done')]);
 
-    expect(processUIToolCallMessage).toHaveBeenCalledTimes(1);
+    expect(processWorkspaceSetupCompletion).toHaveBeenCalledTimes(1);
   });
 
   it('leaves messages written before this session alone', () => {
@@ -92,7 +96,52 @@ describe('useUpdateStreamingPartsWithDiff', () => {
       buildMessage('earlier', 'Done', '2026-01-01T09:59:59.000Z'),
     ]);
 
-    expect(processUIToolCallMessage).not.toHaveBeenCalled();
     expect(processWorkspaceSetupCompletion).not.toHaveBeenCalled();
   });
+
+  it.each(['direct', 'execute_tool'] as const)(
+    'does not navigate or wait when streaming or replaying a legacy %s navigation result',
+    (format) => {
+      const updateStreamingPartsWithDiff = renderUpdateStreamingPartsWithDiff();
+      const message: ExtendedUIMessage = {
+        ...buildMessage('legacy-navigation', 'Open this record'),
+        parts: [
+          {
+            type:
+              format === 'direct' ? 'tool-navigate_app' : 'tool-execute_tool',
+            toolCallId: 'navigate-record',
+            state: 'output-available',
+            input: { toolName: 'navigate_app' },
+            output: {
+              success: true,
+              result: {
+                action: 'navigateToRecord',
+                objectNameSingular: 'company',
+                recordId: '11111111-1111-4111-8111-111111111111',
+              },
+            },
+          },
+          {
+            type:
+              format === 'direct' ? 'tool-navigate_app' : 'tool-execute_tool',
+            toolCallId: 'wait',
+            state: 'output-available',
+            input: { toolName: 'navigate_app' },
+            output: {
+              success: true,
+              result: { action: 'wait', durationMs: 3000 },
+            },
+          },
+        ],
+      };
+
+      updateStreamingPartsWithDiff([message]);
+      updateStreamingPartsWithDiff([]);
+      updateStreamingPartsWithDiff([{ ...message, parts: [...message.parts] }]);
+
+      expect(openRecordTarget).not.toHaveBeenCalled();
+      expect(openViewTarget).not.toHaveBeenCalled();
+      expect(sleep).not.toHaveBeenCalled();
+    },
+  );
 });

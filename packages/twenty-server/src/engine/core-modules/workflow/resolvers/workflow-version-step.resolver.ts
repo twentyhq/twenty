@@ -3,6 +3,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -14,6 +15,7 @@ import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow
 import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step.input';
 import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request.input';
 import { TestHttpRequestDTO } from 'src/engine/core-modules/workflow/dtos/test-http-request.dto';
+import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step.input';
 import { UpdateWorkflowRunStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-run-step.input';
 import { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-step.input';
 import { UpdateWorkflowVersionTriggerInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-trigger.input';
@@ -38,6 +40,7 @@ import {
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { canUpdateWorkflowRunStep } from 'src/modules/workflow/workflow-runner/utils/can-update-workflow-run-step.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @CoreResolver()
@@ -67,6 +70,7 @@ export class WorkflowVersionStepResolver {
   constructor(
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly httpTool: HttpTool,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
@@ -217,6 +221,39 @@ export class WorkflowVersionStepResolver {
     });
 
     return step;
+  }
+
+  @Mutation(() => Boolean)
+  async submitFormStep(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('input') { workflowRunId, stepId, response }: SubmitFormStepInput,
+  ): Promise<boolean> {
+    if (!isPlainObject(response)) {
+      throw new WorkflowVersionStepException(
+        'A form response must be an object',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      );
+    }
+
+    if (
+      !(await this.workflowRunWorkspaceService.isWorkflowRunReadableByRequester(
+        workflowRunId,
+      ))
+    ) {
+      throw new WorkflowVersionStepException(
+        'Workflow run not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    await this.workflowRunnerWorkspaceService.submitFormStep({
+      workspaceId,
+      workflowRunId,
+      stepId,
+      response,
+    });
+
+    return true;
   }
 
   @Mutation(() => WorkflowVersionStepChangesDTO)

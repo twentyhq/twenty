@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -10,10 +10,7 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { getAiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/getAiChatSuggestedPrompts';
 import { useAiChatSuggestedPromptsContext } from '@/ai/hooks/useAiChatSuggestedPromptsContext';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type SuggestedPrompt } from '@/ai/types/SuggestedPrompt';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div<{ isCentered: boolean }>`
   align-items: ${({ isCentered }) => (isCentered ? 'center' : 'stretch')};
@@ -63,7 +60,6 @@ export const AiChatSuggestedPrompts = ({
 }: AiChatSuggestedPromptsProps) => {
   const { t: resolveMessage } = useLingui();
   const { stageAiChatPreprompt } = useStageAiChatPreprompt();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const aiChatSuggestedPromptsContext = useAiChatSuggestedPromptsContext();
 
   const suggestedPrompts = getAiChatSuggestedPrompts(
@@ -76,7 +72,6 @@ export const AiChatSuggestedPrompts = ({
         resolveMessage(pickRandom(suggestedPrompt.prompts)),
       ),
       mode: suggestedPrompt.mode ?? 'PREFILL',
-      draftKey: currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
     });
   };
 

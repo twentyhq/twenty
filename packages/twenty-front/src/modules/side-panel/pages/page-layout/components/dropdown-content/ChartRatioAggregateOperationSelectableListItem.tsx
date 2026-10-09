@@ -1,4 +1,4 @@
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio';
@@ -8,7 +8,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 
 export const ChartRatioAggregateOperationSelectableListItem = ({
   label,
@@ -17,7 +17,7 @@ export const ChartRatioAggregateOperationSelectableListItem = ({
   label: string;
   onSelect: () => void;
 }) => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
@@ -42,7 +42,7 @@ export const ChartRatioAggregateOperationSelectableListItem = ({
       itemId={DASHBOARD_AGGREGATE_OPERATION_RATIO}
       onEnter={onSelect}
     >
-      <ListItem
+      <ListItemButton
         focused={isFocused}
         onClick={onSelect}
         role="option"
@@ -52,7 +52,7 @@ export const ChartRatioAggregateOperationSelectableListItem = ({
         hasSubmenu={true}
       >
         {label}
-      </ListItem>
+      </ListItemButton>
     </SelectableListItem>
   );
 };

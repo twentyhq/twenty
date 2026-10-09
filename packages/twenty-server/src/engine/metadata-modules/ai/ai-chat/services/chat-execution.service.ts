@@ -1,4 +1,5 @@
 import { injectChatMessageSenders } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-chat-message-senders.util';
+import { splitContextInstructions } from 'src/engine/metadata-modules/ai/ai-chat/utils/split-context-instructions.util';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { Injectable, Logger } from '@nestjs/common';
@@ -55,7 +56,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
-import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
+import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
 import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
@@ -75,7 +76,7 @@ import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
-import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
+import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
@@ -93,13 +94,12 @@ import {
   getCacheProviderOptions,
   getCallLevelProviderOptions,
   injectCacheBreakpoint,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
-import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
+import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
 import { tagAiChatExecutionScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-execution-scope.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import {
@@ -149,7 +149,6 @@ export class ChatExecutionService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
     private readonly metricsService: MetricsService,
     private readonly chatActorService: AgentChatActorService,
@@ -254,10 +253,13 @@ export class ChatExecutionService {
     const nativeCapabilities = getNativeModelCapabilities(
       registeredModel.sdkPackage,
     );
-    const nativeTools = this.nativeToolBinder.bind(registeredModel, {
-      webSearch: nativeCapabilities?.webSearch === true,
-      twitterSearch: nativeCapabilities?.twitterSearch === true,
-    });
+    const nativeTools = this.aiModelConfigService.getNativeModelTools(
+      registeredModel,
+      {
+        webSearch: nativeCapabilities?.webSearch === true,
+        twitterSearch: nativeCapabilities?.twitterSearch === true,
+      },
+    );
 
     const isWorkspaceSetupConversation =
       threadId ===
@@ -414,6 +416,7 @@ export class ChatExecutionService {
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
       userContext,
       userWorkspaceId,
+      workspaceId: workspace.id,
       isWorkspaceSetupThread,
       canAttachConversationToRecords,
     });
@@ -433,11 +436,13 @@ export class ChatExecutionService {
       new Set(Object.keys(activeTools)),
     );
 
-    const rawModelMessages = await convertToModelMessages(sanitizedMessages);
+    const { contexts, conversation } = splitContextInstructions(
+      await convertToModelMessages(sanitizedMessages),
+    );
 
     const pruningResult =
       this.messagePruningService.pruneIfOverContextWindowLimit(
-        rawModelMessages,
+        conversation,
         modelConfig.contextWindowTokens,
         conversationSizeTokens,
       );
@@ -532,7 +537,7 @@ export class ChatExecutionService {
 
     const stream = streamText({
       model: registeredModel.model,
-      instructions: systemMessage,
+      instructions: [systemMessage, ...contexts],
       messages: modelMessages,
       tools: activeTools,
       // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first pausing tool call.
@@ -695,6 +700,7 @@ export class ChatExecutionService {
             modelId: registeredModel.modelId,
             workspaceId: workspace.id,
             userWorkspaceId,
+            agentId: null,
             operationType: UsageOperationType.AI_CHAT_TOKEN,
           },
         });

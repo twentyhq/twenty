@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
@@ -8,16 +8,13 @@ import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/util
 import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
-import {
-  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-  agentChatDraftsByThreadIdState,
-} from '@/ai/states/agentChatDraftsByThreadIdState';
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME } from '@/ai/constants/AgentChatEnsureThreadForDraftEventName';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
-import { WORKSPACE_MEMBER_MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/WorkspaceMemberMentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { useWorkspaceMemberMentionSearch } from '@/mention/hooks/useWorkspaceMemberMentionSearch';
 import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
@@ -28,24 +25,33 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 export const useAiChatEditor = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
     useAtomState(agentChatDraftsByThreadIdState);
   const { searchMentionRecords } = useMentionSearch();
   const { searchWorkspaceMembers } = useWorkspaceMemberMentionSearch();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const { searchSkills } = useSkillSuggestionSearch();
+  const { uploadFiles } = useAiChatFileUpload();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const draftKey = currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+  const draftKey = currentAiChatThread ?? newAiChatThreadId;
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
-    placeholder: t`Ask anything, # a record, @ a teammate or / a skill...`,
+    placeholder: isAiChatInboxEnabled
+      ? t`Ask anything, @ a teammate or record, / a skill...`
+      : t`Ask anything, @ a record or / a skill...`,
     readonly: false,
     defaultValue: initialDraft,
     editorProps: {
@@ -53,7 +59,6 @@ export const useAiChatEditor = () => {
         if (event.key === 'Enter' && !event.shiftKey) {
           const isSuggestionMenuOpen = [
             MENTION_SUGGESTION_PLUGIN_KEY,
-            WORKSPACE_MEMBER_MENTION_SUGGESTION_PLUGIN_KEY,
             SKILL_SUGGESTION_PLUGIN_KEY,
           ].some(
             (pluginKey) => pluginKey.getState(view.state)?.active === true,
@@ -71,6 +76,25 @@ export const useAiChatEditor = () => {
         }
         return false;
       },
+      handlePaste: (_view, event) => {
+        const clipboardData = event.clipboardData;
+
+        if (
+          !isDefined(clipboardData) ||
+          clipboardData.types.includes('text/plain')
+        ) {
+          return false;
+        }
+
+        const pastedFiles = Array.from(clipboardData.files);
+
+        if (!isNonEmptyArray(pastedFiles)) {
+          return false;
+        }
+
+        uploadFiles(pastedFiles);
+        return true;
+      },
     },
     onUpdate: (currentEditor) => {
       const text = turnIntoEmptyStringIfWhitespacesOnly(
@@ -83,9 +107,6 @@ export const useAiChatEditor = () => {
         ...prev,
         [draftKey]: serializedDraft,
       }));
-      if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY && text.trim() !== '') {
-        dispatchBrowserEvent(AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME);
-      }
     },
     onFocus: () => {
       pushFocusItemToFocusStack({
@@ -112,16 +133,12 @@ export const useAiChatEditor = () => {
     >;
     const mentionStorage = storage['mention-suggestion'] as {
       searchMentionRecords: typeof searchMentionRecords;
-    };
-    mentionStorage.searchMentionRecords = searchMentionRecords;
-
-    const workspaceMemberMentionStorage = storage[
-      'workspace-member-mention-suggestion'
-    ] as {
       searchWorkspaceMembers: typeof searchWorkspaceMembers;
     };
-    workspaceMemberMentionStorage.searchWorkspaceMembers =
-      searchWorkspaceMembers;
+    mentionStorage.searchMentionRecords = searchMentionRecords;
+    mentionStorage.searchWorkspaceMembers = isAiChatInboxEnabled
+      ? searchWorkspaceMembers
+      : () => [];
 
     const skillStorage = storage['skill-suggestion'] as {
       searchSkills: typeof searchSkills;

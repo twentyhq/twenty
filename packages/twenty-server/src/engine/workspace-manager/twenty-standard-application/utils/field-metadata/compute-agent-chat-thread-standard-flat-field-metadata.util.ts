@@ -363,6 +363,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  // Failed turns hold their error now; the 2.42 history move and the 2.46 backfill still read it
   lastStreamError: {
     ...createStandardFieldFlatMetadata({
       ...args,
@@ -632,31 +633,33 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  workflowRun: {
+  // Set through the assign mutation, which also lets the assignee reply and
+  // brings the chat to their inbox
+  assignee: {
     ...createStandardRelationFieldFlatMetadata({
       ...args,
       context: {
-        fieldName: 'workflowRun',
+        fieldName: 'assignee',
         type: FieldMetadataType.RELATION,
         label: i18nLabel(
-          msg({ message: 'Workflow Run', context: 'fieldMetadata.label' }),
+          msg({ message: 'Assignee', context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
-            message: 'Workflow run whose agent step held this conversation',
+            message: 'Workspace member responsible for the thread',
             context: 'fieldMetadata.description',
           }),
         ),
-        icon: 'IconHistoryToggle',
+        icon: 'IconUsers',
         isUIEditable: false,
         isNullable: true,
-        targetObjectName: 'workflowRun',
-        targetFieldName: 'agentChatThreads',
+        targetObjectName: 'workspaceMember',
+        targetFieldName: 'assignedAgentChatThreads',
         morphId: null,
         settings: {
           relationType: RelationType.MANY_TO_ONE,
-          onDelete: RelationOnDeleteAction.CASCADE,
-          joinColumnName: 'workflowRunId',
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'assigneeId',
         },
       },
     }),

@@ -1,11 +1,12 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   AvatarGroup,
-  CommandBlock,
   NotificationCounter,
-  TintedIconTile,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/data-display';
 import { IconStar } from 'twenty-ui/icon';
+
+import { CommandBlockExample } from './command-block-example';
+import { TintedIconTileExample } from './tinted-icon-tile-example';
 import {
   Avatar,
   Chip,
@@ -14,6 +15,8 @@ import {
   Status,
   Tag,
 } from 'twenty-ui/primitives/data-display';
+import { isDefined } from 'twenty-shared/utils';
+import 'twenty-ui/style.css';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
@@ -43,11 +46,40 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'ColorSample',
-    node: <ColorSample colorName="blue" />,
+    node: (
+      <ColorSample
+        colorName="blue"
+        role="img"
+        aria-label="Brand blue"
+        className="custom-swatch"
+        style={{ width: 24 }}
+        render={<span data-composed="true" />}
+        ref={(element) => {
+          if (isDefined(element)) {
+            element.dataset.refTag = element.tagName;
+          }
+        }}
+      />
+    ),
+  },
+  {
+    name: 'DecorativeColorSample',
+    node: <ColorSample colorName="red" aria-hidden="true" />,
+  },
+  {
+    name: 'CircleColorSample',
+    node: (
+      <ColorSample
+        colorName="green"
+        variant="circle"
+        role="img"
+        aria-label="Green"
+      />
+    ),
   },
   {
     name: 'CommandBlock',
-    node: <CommandBlock commands={['npm install', 'npm run start']} />,
+    node: <CommandBlockExample />,
   },
   {
     name: 'NotificationCounter',
@@ -67,7 +99,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'TintedIconTile',
-    node: <TintedIconTile Icon={IconStar} />,
+    node: <TintedIconTileExample />,
   },
 ];
 

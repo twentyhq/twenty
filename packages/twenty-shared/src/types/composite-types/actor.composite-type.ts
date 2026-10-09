@@ -65,5 +65,6 @@ export type ActorMetadata = {
   context: {
     provider?: ConnectedAccountProvider;
     applicationId?: string;
+    agentId?: string;
   };
 };

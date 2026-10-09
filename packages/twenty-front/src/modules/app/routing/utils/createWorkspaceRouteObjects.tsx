@@ -1,7 +1,5 @@
 import { lazy } from 'react';
-import { Navigate } from 'react-router-dom';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { AppPath } from 'twenty-shared/types';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
 import {
@@ -10,6 +8,18 @@ import {
 } from '@/app/components/SettingsRoutes';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
+
+const AgentCoreIndexPage = lazy(() =>
+  import('~/pages/object-core/AgentCoreIndexPage').then((module) => ({
+    default: module.AgentCoreIndexPage,
+  })),
+);
+
+const AgentCoreShowPage = lazy(() =>
+  import('~/pages/object-core/AgentCoreShowPage').then((module) => ({
+    default: module.AgentCoreShowPage,
+  })),
+);
 
 const WorkflowCoreShowPage = lazy(() =>
   import('~/pages/object-core/WorkflowCoreShowPage').then((module) => ({
@@ -87,6 +97,22 @@ export const createWorkspaceRouteObjects = ({
       },
     },
     {
+      path: AppPath.AgentIndexPage,
+      element: (
+        <LazyRoute fallback={<RecordIndexSkeletonLoader />}>
+          <AgentCoreIndexPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.AgentShowPage,
+      element: (
+        <LazyRoute>
+          <AgentCoreShowPage />
+        </LazyRoute>
+      ),
+    },
+    {
       path: AppPath.Index,
       element: <RecordIndexSkeletonLoader />,
     },
@@ -150,7 +176,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.Dpa,
-      element: <Navigate to={getSettingsPath(SettingsPath.LegalDpa)} replace />,
+      element: null,
     },
     {
       path: AppPath.NotFoundWildcard,

@@ -1,3 +1,4 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -20,14 +21,6 @@ jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({
   useListenToEventsForQuery: jest.fn(),
 }));
 
-const mockRefreshAgentChatThreadParticipants = jest.fn();
-
-jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
-  useAgentChatThreadParticipants: () => ({
-    refreshAgentChatThreadParticipants: mockRefreshAgentChatThreadParticipants,
-  }),
-}));
-
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue',
   () => ({
@@ -47,6 +40,8 @@ const READ_PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   lastReadAt: '2026-10-01T10:00:00.000Z',
   archivedAt: null,
   snoozedUntil: null,
+  isSubscribed: true,
+  lastMentionedAt: null,
   updatedAt: '2026-10-01T10:00:00.000Z',
 };
 
@@ -62,7 +57,9 @@ const renderEffect = (
 
   render(
     <JotaiProvider store={store}>
-      <AgentChatThreadParticipantOperationsEffect />
+      <MockedProvider>
+        <AgentChatThreadParticipantOperationsEffect />
+      </MockedProvider>
     </JotaiProvider>,
   );
 
@@ -87,8 +84,7 @@ const receiveCreatedParticipant = (
   );
 
 const receiveParticipantUpdate = (
-  recordId: string,
-  updatedFields: Partial<AgentChatThreadParticipantFieldsFragment>,
+  participant: AgentChatThreadParticipantFieldsFragment,
 ) =>
   act(() =>
     dispatchObjectRecordOperationBrowserEvent({
@@ -97,10 +93,12 @@ const receiveParticipantUpdate = (
         type: 'update-one',
         result: {
           updateInput: {
-            recordId,
-            updatedFields: Object.entries(updatedFields).map(
-              ([fieldName, value]) => ({ [fieldName]: value }),
-            ),
+            recordId: participant.id,
+            updatedFields: [{ updatedAt: participant.updatedAt }],
+            updatedRecord: {
+              ...participant,
+              workspaceMemberId: 'workspace-member-id',
+            },
           },
         },
       },
@@ -108,10 +106,6 @@ const receiveParticipantUpdate = (
   );
 
 describe('AgentChatThreadParticipantOperationsEffect', () => {
-  beforeEach(() => {
-    mockRefreshAgentChatThreadParticipants.mockClear();
-  });
-
   it('adds a row the member created elsewhere', () => {
     const { store } = renderEffect({});
 
@@ -130,7 +124,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T10:05:00.000Z',
     };
 
-    receiveParticipantUpdate(PARTICIPANT_ID, change);
+    receiveParticipantUpdate({ ...READ_PARTICIPANT, ...change });
 
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: { ...READ_PARTICIPANT, ...change },
@@ -142,6 +136,8 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       ...READ_PARTICIPANT,
       archivedAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
+      isSubscribed: true,
+      lastMentionedAt: null,
     };
     const { store } = renderEffect({ [THREAD_ID]: snoozedParticipant });
 
@@ -150,14 +146,14 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-02T09:00:00.000Z',
     };
 
-    receiveParticipantUpdate(PARTICIPANT_ID, change);
+    receiveParticipantUpdate({ ...snoozedParticipant, ...change });
 
     expect(
       store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
     ).toEqual({ ...snoozedParticipant, ...change });
   });
 
-  it('keeps a change for a load already on its way, with its new version', () => {
+  it('keeps a change for a page already on its way, with its new version', () => {
     // Archived through an earlier change, so its version is still T0
     const { store } = renderEffect({
       [THREAD_ID]: {
@@ -171,12 +167,13 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T10:01:00.000Z',
     };
 
-    receiveParticipantUpdate(PARTICIPANT_ID, {
+    receiveParticipantUpdate({
+      ...READ_PARTICIPANT,
       archivedAt: null,
       updatedAt: '2026-10-01T10:02:00.000Z',
     });
 
-    // A load that read the archived row (T1) merges this change (T2) over it
+    // A page that read the archived row (T1) merges this change (T2) over it
     expect(
       mergeAgentChatThreadParticipants(
         { [THREAD_ID]: loadedArchivedParticipant },
@@ -192,7 +189,8 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
   it('ignores a change older than the version it has', () => {
     const { store } = renderEffect({ [THREAD_ID]: READ_PARTICIPANT });
 
-    receiveParticipantUpdate(PARTICIPANT_ID, {
+    receiveParticipantUpdate({
+      ...READ_PARTICIPANT,
       archivedAt: '2026-10-01T09:58:00.000Z',
       updatedAt: '2026-10-01T09:59:00.000Z',
     });
@@ -202,14 +200,32 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     });
   });
 
-  it('reloads the rows when a change is for a row it does not have', () => {
-    const { store } = renderEffect({ [THREAD_ID]: READ_PARTICIPANT });
+  it('applies a change to a row it has not loaded', () => {
+    const { store } = renderEffect({});
 
-    receiveParticipantUpdate('another-participant-id', { lastReadAt: null });
+    receiveParticipantUpdate(READ_PARTICIPANT);
 
-    expect(mockRefreshAgentChatThreadParticipants).toHaveBeenCalledTimes(1);
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
+    });
+  });
+
+  it('applies a change to a row that arrived before the first page', () => {
+    const { store } = renderEffect(null);
+
+    receiveCreatedParticipant(READ_PARTICIPANT);
+    receiveParticipantUpdate({
+      ...READ_PARTICIPANT,
+      lastReadAt: null,
+      updatedAt: '2026-10-01T10:05:00.000Z',
+    });
+
+    expect(store.get(agentChatThreadStreamedParticipantsState.atom)).toEqual({
+      [THREAD_ID]: {
+        ...READ_PARTICIPANT,
+        lastReadAt: null,
+        updatedAt: '2026-10-01T10:05:00.000Z',
+      },
     });
   });
 
@@ -227,7 +243,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     });
   });
 
-  it('keeps a row that arrives before the first load for that load', () => {
+  it('keeps a row that arrives before the first page for that page', () => {
     const { store } = renderEffect(null);
 
     receiveCreatedParticipant(READ_PARTICIPANT);

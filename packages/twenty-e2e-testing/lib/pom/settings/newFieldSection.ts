@@ -68,12 +68,10 @@ export class NewFieldSection {
     this.multiSelectFieldLink = page.getByRole('link', {
       name: 'Multi-select',
     });
-    this.setAsDefaultOptionButton = page
-      .getByTestId('tooltip')
-      .getByText('Set as default');
-    this.removeOptionButton = page
-      .getByTestId('tooltip')
-      .getByText('Remove option');
+    this.setAsDefaultOptionButton = page.getByText('Set as default', {
+      exact: true,
+    });
+    this.removeOptionButton = page.getByText('Remove option', { exact: true });
     this.addOptionButton = page.getByRole('button', { name: 'Add option' });
     this.ratingFieldLink = page.getByRole('link', { name: 'Rating' });
     this.JSONFieldLink = page.getByRole('link', { name: 'JSON' });
@@ -103,7 +101,7 @@ export class NewFieldSection {
 
   async selectDefaultUnit(name: string) {
     await this.currencyDefaultUnitSelect.click();
-    await this.page.getByTestId('tooltip').filter({ hasText: name }).click();
+    await this.page.getByText(name, { exact: true }).click();
   }
 
   async clickEmailsType() {
@@ -148,7 +146,7 @@ export class NewFieldSection {
 
   async selectDefaultBooleanValue(value: string) {
     await this.defaultBooleanSelect.click();
-    await this.page.getByTestId('tooltip').filter({ hasText: value }).click();
+    await this.page.getByText(value, { exact: true }).click();
   }
 
   async clickDateTimeType() {
@@ -215,12 +213,12 @@ export class NewFieldSection {
 
   async selectRelationType(name: string) {
     await this.relationTypeSelect.click();
-    await this.page.getByTestId('tooltip').filter({ hasText: name }).click();
+    await this.page.getByText(name, { exact: true }).click();
   }
 
   async selectObjectDestination(name: string) {
     await this.objectDestinationSelect.click();
-    await this.page.getByTestId('tooltip').filter({ hasText: name }).click();
+    await this.page.getByText(name, { exact: true }).click();
   }
 
   async selectRelationIcon(name: string) {

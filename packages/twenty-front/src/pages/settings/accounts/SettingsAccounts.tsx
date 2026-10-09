@@ -1,48 +1,37 @@
-import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
-import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
-import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
-import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
+import { SettingsAccountsLegacySections } from '@/settings/accounts/components/SettingsAccountsLegacySections';
+import { SettingsAppPreferencesSections } from '@/settings/app-preferences/components/SettingsAppPreferencesSections';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const SettingsAccounts = () => {
   const { t } = useLingui();
 
-  const { accounts: allAccounts, loading } = useMyConnectedAccounts();
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
+  const pageTitle = isAppPreferencesEnabled ? t`App preferences` : t`Account`;
 
   return (
     <SettingsPageLayout
-      title={t`Account`}
+      title={pageTitle}
       links={[
         {
           children: t`User`,
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
-        { children: t`Account` },
+        { children: pageTitle },
       ]}
     >
       <SettingsPageContainer>
-        {loading ? (
-          <SettingsSectionSkeletonLoader />
+        {isAppPreferencesEnabled ? (
+          <SettingsAppPreferencesSections />
         ) : (
-          <>
-            <Section.Root>
-              <Section.Header
-                title={t`Connected accounts`}
-                description={t`Manage your internet accounts.`}
-              />
-              <SettingsAccountsConnectedAccountsListCard
-                accounts={allAccounts}
-              />
-            </Section.Root>
-            <SettingsAccountsBlocklistSection />
-            <SettingsAccountsSettingsSection />
-          </>
+          <SettingsAccountsLegacySections />
         )}
       </SettingsPageContainer>
     </SettingsPageLayout>

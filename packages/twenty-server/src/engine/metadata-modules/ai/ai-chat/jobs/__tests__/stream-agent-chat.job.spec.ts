@@ -8,6 +8,7 @@ import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/a
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 type PublishedEvent = { type: string } & Record<string, unknown>;
 
@@ -217,10 +218,11 @@ describe('StreamAgentChatJob', () => {
   } = {}) => {
     const publishedEvents: PublishedEvent[] = [];
 
-    const threadUsageQuery = jest.fn(async () =>
-      Array.from({ length: totalsUpdateAffected }, () => ({
-        id: 'thread-id',
-      })),
+    const threadUsageQuery = jest.fn(
+      async (_sql?: string, _parameters?: unknown[]) =>
+        Array.from({ length: totalsUpdateAffected }, () => ({
+          id: 'thread-id',
+        })),
     );
     const threadRepository = {
       findOne: jest.fn().mockResolvedValue({
@@ -309,7 +311,13 @@ describe('StreamAgentChatJob', () => {
       userWorkspaceId: 'user-workspace-id',
       applicationId: null,
     };
-    const authorization = { authContext: { workspaceMemberId: 'member' } };
+    const authorization = {
+      authContext: {
+        type: 'user',
+        workspaceMemberId: 'member',
+        workspaceMember: { name: { firstName: 'Tim', lastName: 'Apple' } },
+      },
+    };
     const actorService = {
       authorizeJob: jest.fn().mockResolvedValue({
         sender,
@@ -317,6 +325,21 @@ describe('StreamAgentChatJob', () => {
         message: { id: 'user-message-id', turnId: 'turn-id' },
       }),
     };
+    const turnRecorderService = {
+      markRunning: jest.fn().mockResolvedValue(true),
+      recordUsage: jest.fn().mockResolvedValue(undefined),
+      finish: jest.fn().mockResolvedValue(true),
+    };
+    const claimReleases = () =>
+      threadUsageQuery.mock.calls
+        .filter(([sql]) => String(sql).includes('"activeStreamId" = NULL'))
+        .map(([, parameters]) => {
+          const turnError = (parameters as unknown[])[3] as string | null;
+
+          return {
+            turnError: turnError === null ? null : JSON.parse(turnError),
+          };
+        });
     const job = new StreamAgentChatJob(
       threadRepository as never,
       workspaceRepository as never,
@@ -331,12 +354,14 @@ describe('StreamAgentChatJob', () => {
         streamHeartbeatService as never,
         eventPublisherService as never,
         metricsService as never,
+        { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
       ),
       threadService as never,
       metricsService as never,
       aiModelRegistryService as never,
       actorService as never,
       sharingService as never,
+      turnRecorderService as never,
     );
 
     const turnCounts = (key: string) =>
@@ -347,6 +372,8 @@ describe('StreamAgentChatJob', () => {
     return {
       job,
       actorService,
+      turnRecorderService,
+      claimReleases,
       chatExecutionService,
       publishedEvents,
       threadRepository,
@@ -380,13 +407,59 @@ describe('StreamAgentChatJob', () => {
           userWorkspaceId: 'user-workspace-id',
         }),
         authorization: expect.objectContaining({
-          authContext: { workspaceMemberId: 'member' },
+          authContext: expect.objectContaining({ workspaceMemberId: 'member' }),
         }),
       }),
     );
     expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
       expect.objectContaining({ turnId: 'turn-id' }),
     );
+  });
+
+  it('runs the turn as its sender before streaming', async () => {
+    const { job, turnRecorderService, chatExecutionService } = buildJob();
+
+    await job.handle(jobData);
+
+    expect(turnRecorderService.markRunning).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      turnId: 'turn-id',
+      modelId: 'openai/gpt-5.6-luna',
+      createdBy: expect.objectContaining({
+        source: 'MANUAL',
+        workspaceMemberId: 'member',
+        name: 'Tim Apple',
+      }),
+      streamClaim: { threadId: 'thread-id', streamId: 'stream-id' },
+    });
+    expect(
+      turnRecorderService.markRunning.mock.invocationCallOrder[0],
+    ).toBeLessThan(chatExecutionService.streamChat.mock.invocationCallOrder[0]);
+  });
+
+  it('does not stream a turn whose stream was stopped while starting', async () => {
+    const { job, turnRecorderService, chatExecutionService } = buildJob();
+
+    turnRecorderService.markRunning.mockResolvedValue(false);
+
+    await job.handle(jobData);
+
+    expect(chatExecutionService.streamChat).not.toHaveBeenCalled();
+  });
+
+  it('finishes the turn as completed when the reply is saved', async () => {
+    const { job, turnRecorderService } = buildJob();
+
+    await job.handle(jobData);
+
+    expect(turnRecorderService.finish).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      turnId: 'turn-id',
+      status: AgentTurnStatus.COMPLETED,
+      error: null,
+      modelId: 'openai/gpt-5.6-luna',
+      streamClaim: { threadId: 'thread-id', streamId: 'stream-id' },
+    });
   });
 
   it('runs a job queued before sender attribution with only its turn', async () => {
@@ -413,7 +486,9 @@ describe('StreamAgentChatJob', () => {
     actorService.authorizeJob.mockResolvedValue({
       message: { id: 'user-message-id', turnId: null },
     } as never);
-    await expect(job.handle(jobData)).rejects.toMatchObject({
+    await expect(
+      job.handle({ ...jobData, existingTurnId: undefined }),
+    ).rejects.toMatchObject({
       code: 'MESSAGE_NOT_FOUND',
     });
     expect(chatExecutionService.streamChat).not.toHaveBeenCalled();
@@ -431,18 +506,14 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('does not invoke the model when the saved sender lost access before execution', async () => {
-    const { job, actorService, chatExecutionService, threadRepository } =
+    const { job, actorService, chatExecutionService, claimReleases } =
       buildJob();
     actorService.authorizeJob.mockRejectedValue(
       new Error('Sender access revoked'),
     );
     await expect(job.handle(jobData)).rejects.toThrow('Sender access revoked');
     expect(chatExecutionService.streamChat).not.toHaveBeenCalled();
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      { activeStreamId: null },
-    );
+    expect(claimReleases()).toContainEqual({ turnError: null });
   });
 
   it('publishes all chunks in order with message-persisted last on success', async () => {
@@ -452,6 +523,7 @@ describe('StreamAgentChatJob', () => {
       threadRepository,
       agentChatService,
       agentChatStreamingService,
+      claimReleases,
     } = buildJob();
 
     await job.handle(jobData);
@@ -479,11 +551,7 @@ describe('StreamAgentChatJob', () => {
       'workspace-id',
       expect.any(Function),
     );
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      { activeStreamId: null },
-    );
+    expect(claimReleases()).toContainEqual({ turnError: null });
     expect(agentChatStreamingService.flushNextQueuedMessage).toHaveBeenCalled();
   });
 
@@ -527,7 +595,7 @@ describe('StreamAgentChatJob', () => {
       outputTokenDetails: { textTokens: 2_000, reasoningTokens: 0 },
       totalTokens: 302_000,
     };
-    const { job, threadUsageQuery } = buildJob({
+    const { job, turnRecorderService } = buildJob({
       chatStream: createFakeChatStream({
         parts: [
           ...START_PARTS,
@@ -554,8 +622,12 @@ describe('StreamAgentChatJob', () => {
 
     await job.handle(jobData);
 
-    const [, [, , inputTokens, outputTokens, inputCredits, outputCredits]] =
-      threadUsageQuery.mock.calls[0] as unknown as [string, number[]];
+    expect(turnRecorderService.recordUsage).toHaveBeenCalledTimes(1);
+
+    const [{ usage }] = turnRecorderService.recordUsage.mock.calls[0] as [
+      { usage: Record<string, number> },
+    ];
+    const { inputTokens, outputTokens, inputCredits, outputCredits } = usage;
 
     expect({ inputTokens, outputTokens, inputCredits, outputCredits }).toEqual({
       inputTokens: 300_000,
@@ -591,7 +663,7 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('rejects, persists the error, and unblocks the thread when the model stream fails mid-stream', async () => {
-    const { job, publishedEvents, threadRepository } = buildJob({
+    const { job, publishedEvents, claimReleases } = buildJob({
       chatStream: createFakeChatStream({
         midStreamError: new Error('provider exploded'),
       }),
@@ -615,26 +687,17 @@ describe('StreamAgentChatJob', () => {
     expect(publishedEvents.map((event) => event.type)).not.toContain(
       'message-persisted',
     );
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      {
-        activeStreamId: null,
-        lastStreamError: expect.objectContaining({
-          code: 'STREAM_EXECUTION_FAILED',
-          message: 'provider exploded',
-        }),
-      },
-    );
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      { activeStreamId: null },
-    );
+    expect(claimReleases()).toContainEqual({
+      turnError: expect.objectContaining({
+        code: 'STREAM_EXECUTION_FAILED',
+        message: 'provider exploded',
+      }),
+    });
+    expect(claimReleases()).toContainEqual({ turnError: null });
   });
 
   it('rejects promptly when execution setup throws instead of hanging until the queue lock expires', async () => {
-    const { job, publishedEvents, threadRepository } = buildJob({
+    const { job, publishedEvents, claimReleases } = buildJob({
       streamChatRejection: new Error('model resolution failed'),
     });
 
@@ -649,11 +712,7 @@ describe('StreamAgentChatJob', () => {
     expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
       type: 'queue-updated',
     });
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      { activeStreamId: null },
-    );
+    expect(claimReleases()).toContainEqual({ turnError: null });
   });
 
   it('terminates the stream with an error when assistant persistence fails after draining chunks', async () => {
@@ -680,7 +739,7 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('persists the error and unblocks the thread when the workspace is missing', async () => {
-    const { job, publishedEvents, threadRepository } = buildJob({
+    const { job, publishedEvents, claimReleases } = buildJob({
       workspaceFound: false,
     });
 
@@ -695,21 +754,12 @@ describe('StreamAgentChatJob', () => {
     expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
       type: 'queue-updated',
     });
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      {
-        activeStreamId: null,
-        lastStreamError: expect.objectContaining({
-          code: AiExceptionCode.WORKSPACE_NOT_FOUND,
-        }),
-      },
-    );
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      { activeStreamId: null },
-    );
+    expect(claimReleases()).toContainEqual({
+      turnError: expect.objectContaining({
+        code: AiExceptionCode.WORKSPACE_NOT_FOUND,
+      }),
+    });
+    expect(claimReleases()).toContainEqual({ turnError: null });
   });
 
   it('bails out without streaming when the thread no longer holds the claim for this stream', async () => {
@@ -753,16 +803,12 @@ describe('StreamAgentChatJob', () => {
   it('persists the interrupted error and publishes the terminal sequence when aborted by a worker shutdown', async () => {
     let triggerShutdown: (() => void) | undefined;
 
-    const {
-      job,
-      publishedEvents,
-      threadRepository,
-      agentChatStreamingService,
-    } = buildJob({
-      chatStream: createFakeChatStream({
-        onFirstPart: () => triggerShutdown?.(),
-      }),
-    });
+    const { job, publishedEvents, agentChatStreamingService, claimReleases } =
+      buildJob({
+        chatStream: createFakeChatStream({
+          onFirstPart: () => triggerShutdown?.(),
+        }),
+      });
 
     const shutdownController = new AbortController();
 
@@ -782,21 +828,12 @@ describe('StreamAgentChatJob', () => {
     });
     expect(queueUpdatedIndex).toBeGreaterThan(streamErrorIndex);
     expect(eventTypes).not.toContain('message-persisted');
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      {
-        activeStreamId: null,
-        lastStreamError: expect.objectContaining({
-          code: AiExceptionCode.STREAM_INTERRUPTED,
-        }),
-      },
-    );
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      { activeStreamId: null },
-    );
+    expect(claimReleases()).toContainEqual({
+      turnError: expect.objectContaining({
+        code: AiExceptionCode.STREAM_INTERRUPTED,
+      }),
+    });
+    expect(claimReleases()).toContainEqual({ turnError: null });
     expect(
       agentChatStreamingService.flushNextQueuedMessage,
     ).not.toHaveBeenCalled();
@@ -912,7 +949,7 @@ describe('StreamAgentChatJob', () => {
   });
 
   const pendingQuestionMessageIdOf = (threadUsageQuery: jest.Mock) =>
-    (threadUsageQuery.mock.calls[0] as unknown as [string, unknown[]])[1][10];
+    (threadUsageQuery.mock.calls[0] as unknown as [string, unknown[]])[1][4];
 
   it('marks the conversation as waiting on the message that paused, in the totals write, and leaves the queue waiting', async () => {
     const { job, threadUsageQuery, agentChatStreamingService } = buildJob({
@@ -1001,7 +1038,7 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('adds the steps an aborted turn completed to the thread totals', async () => {
-    const { job, threadUsageQuery } = buildJob({
+    const { job, turnRecorderService } = buildJob({
       chatStream: createFakeChatStream({
         parts: [
           ...START_PARTS,
@@ -1016,8 +1053,10 @@ describe('StreamAgentChatJob', () => {
 
     await job.handle(jobData);
 
-    const [, [, , inputTokens, outputTokens]] = threadUsageQuery.mock
-      .calls[0] as unknown as [string, number[]];
+    const [{ usage }] = turnRecorderService.recordUsage.mock.calls[0] as [
+      { usage: Record<string, number> },
+    ];
+    const { inputTokens, outputTokens } = usage;
 
     expect({ inputTokens, outputTokens }).toEqual({
       inputTokens: 12,

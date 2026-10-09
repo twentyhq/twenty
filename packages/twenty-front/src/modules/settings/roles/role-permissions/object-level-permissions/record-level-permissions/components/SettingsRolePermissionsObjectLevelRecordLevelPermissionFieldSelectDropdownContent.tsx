@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu';

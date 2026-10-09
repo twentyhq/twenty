@@ -14,7 +14,6 @@ import {
   type LogicFunctionExecutionContext,
   type LogicFunctionRetryContext,
 } from 'twenty-shared/logic-function';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -28,8 +27,9 @@ import {
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
+import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
-import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
+import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -40,10 +40,8 @@ import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-log
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/compute-logic-function-execution-credits-micro.util';
-import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
+import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import {
@@ -55,8 +53,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
+import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -110,13 +107,12 @@ export class LogicFunctionExecutorService {
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
+    private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly usageRecorderService: UsageRecorderService,
     private readonly billingUsageService: BillingUsageService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
     private readonly applicationStopService: ApplicationStopService,
@@ -147,7 +143,7 @@ export class LogicFunctionExecutorService {
     retry?: LogicFunctionRetryContext;
     shouldEnforceUsageLimits?: boolean;
   }): Promise<LogicFunctionExecuteResult> {
-    const { flatApplication, flatLogicFunction, applicationVariableMaps } =
+    const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
         workspaceId,
         logicFunctionId,
@@ -169,7 +165,7 @@ export class LogicFunctionExecutorService {
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
       flatApplication,
-      applicationVariableMaps,
+      flatApplicationVariableMaps,
       userId,
       userWorkspaceId,
       workspaceDeletionRequestTimestamp,
@@ -184,11 +180,8 @@ export class LogicFunctionExecutorService {
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
-    const effectiveExecutionMode = await this.resolveEffectiveExecutionMode({
-      workspaceId,
-      flatLogicFunction,
-      callerOverride: executionMode,
-    });
+    const effectiveExecutionMode =
+      executionMode ?? flatLogicFunction.executionMode;
 
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
       await this.logicFunctionPrebuiltWarmUpService.ensurePrebuiltBundleInstalled(
@@ -235,32 +228,6 @@ export class LogicFunctionExecutorService {
     return resultLogicFunction;
   }
 
-  private async resolveEffectiveExecutionMode({
-    workspaceId,
-    flatLogicFunction,
-    callerOverride,
-  }: {
-    workspaceId: string;
-    flatLogicFunction: FlatLogicFunction;
-    callerOverride?: LogicFunctionExecutionMode;
-  }): Promise<LogicFunctionExecutionMode> {
-    if (isDefined(callerOverride)) {
-      return callerOverride;
-    }
-
-    const isPrebuiltModeEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
-        workspaceId,
-      );
-
-    if (!isPrebuiltModeEnabled) {
-      return LogicFunctionExecutionMode.LIVE;
-    }
-
-    return flatLogicFunction.executionMode ?? LogicFunctionExecutionMode.LIVE;
-  }
-
   async transpile(
     params: LogicFunctionTranspileParams,
   ): Promise<LogicFunctionTranspileResult> {
@@ -294,16 +261,6 @@ export class LogicFunctionExecutorService {
     flatLogicFunction: FlatLogicFunction;
   }): Promise<void> {
     if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
-      return;
-    }
-
-    const isExecutionQuotaEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
-        workspaceId,
-      );
-
-    if (!isExecutionQuotaEnabled) {
       return;
     }
 
@@ -355,11 +312,11 @@ export class LogicFunctionExecutorService {
     const {
       flatLogicFunctionMaps,
       flatApplicationMaps,
-      applicationVariableMaps,
+      flatApplicationVariableMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatLogicFunctionMaps',
       'flatApplicationMaps',
-      'applicationVariableMaps',
+      'flatApplicationVariableMaps',
     ]);
 
     const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
@@ -388,7 +345,7 @@ export class LogicFunctionExecutorService {
       );
     }
 
-    return { flatApplication, flatLogicFunction, applicationVariableMaps };
+    return { flatApplication, flatLogicFunction, flatApplicationVariableMaps };
   }
 
   private async buildExecutionContext({
@@ -430,14 +387,14 @@ export class LogicFunctionExecutorService {
   private async getExecutionEnvVariables({
     workspaceId,
     flatApplication,
-    applicationVariableMaps,
+    flatApplicationVariableMaps,
     userId,
     userWorkspaceId,
     workspaceDeletionRequestTimestamp,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
-    applicationVariableMaps: ApplicationVariableCacheMaps;
+    flatApplicationVariableMaps: FlatApplicationVariableMaps;
     userId?: string;
     userWorkspaceId?: string;
     workspaceDeletionRequestTimestamp?: string;
@@ -481,12 +438,23 @@ export class LogicFunctionExecutorService {
       await this.applicationVariableService.getServerEnvVariables({
         workspaceId,
         applicationId: flatApplication.id,
-        applicationVariableMaps,
+        flatApplicationVariableMaps,
+      });
+    const userVariables =
+      await this.userApplicationVariableValueService.getServerEnvVariables({
+        workspaceId,
+        applicationId: flatApplication.id,
+        flatApplicationVariableMaps,
+        userWorkspaceId:
+          hasTriggeringPerson && !isDefined(workspaceDeletionRequestTimestamp)
+            ? userWorkspaceId
+            : undefined,
       });
 
     return {
       ...serverVariables,
       ...workspaceVariables,
+      ...userVariables,
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
       // Falls back to the application so cron schedules and install hooks work with nobody triggering.
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: (
@@ -649,50 +617,19 @@ export class LogicFunctionExecutorService {
       });
 
     // Billing-exempt apps skip the invocation charge; their explicit chargeCredits and AI usage are still billed.
-    const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
-      computeLogicFunctionExecutionCreditsMicro({
+    await this.usageLimitQuotaService.charge({
+      workspaceId,
+      events: buildLogicFunctionExecutionUsage({
         durationMs: result.billedDurationMs,
         isBillingExempt: isBillingExemptApplication(
           flatApplication.universalIdentifier,
         ),
-      });
-
-    const totalCreditsMicro = invocationCreditsMicro + durationCreditsMicro;
-
-    const spenders = {
-      logicFunctionId: flatLogicFunction.id,
-      applicationId: flatApplication.id,
-    };
-
-    if (totalCreditsMicro > 0) {
-      await this.usageLimitQuotaService.consumeQuota({
-        workspaceId,
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        spenders,
-        cost: { creditsUsedMicro: totalCreditsMicro, quantity: 1 },
-      });
-    }
-
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        creditsUsedMicro: invocationCreditsMicro,
-        quantity: 1,
-        unit: UsageUnit.INVOCATION,
         resourceId: flatLogicFunction.id,
-        spenders,
-      },
-      {
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        creditsUsedMicro: durationCreditsMicro,
-        quantity: billedDurationMs,
-        unit: UsageUnit.MILLISECOND,
-        resourceId: flatLogicFunction.id,
-        spenders,
-      },
-    ]);
+        spenders: {
+          logicFunctionId: flatLogicFunction.id,
+          applicationId: flatApplication.id,
+        },
+      }),
+    });
   }
 }

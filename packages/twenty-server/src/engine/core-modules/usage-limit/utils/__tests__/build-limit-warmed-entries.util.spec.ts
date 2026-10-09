@@ -15,7 +15,7 @@ const buildCounter = (
   isDefault: false,
   key: 'counter-key',
   limitValue: 1_000,
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   resourceType: UsageResourceType.AI,
   periodUnit: 'month',
   periodStart: new Date('2026-08-01T00:00:00.000Z'),

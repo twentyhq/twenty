@@ -6,7 +6,7 @@ import {
   isDefined,
   resolveCanvasTheme,
 } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconTrash } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 

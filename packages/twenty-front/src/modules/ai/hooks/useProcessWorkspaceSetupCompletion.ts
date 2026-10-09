@@ -4,11 +4,10 @@ import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
-import { useClaimUnprocessedToolCallParts } from '@/ai/hooks/useClaimUnprocessedToolCallParts';
+import { processedWorkspaceSetupCompletionIdsState } from '@/ai/states/processedWorkspaceSetupCompletionIdsState';
 import { extractCompletedWorkspaceSetupToolParts } from '@/ai/utils/extractCompletedWorkspaceSetupToolParts';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
@@ -22,18 +21,30 @@ export const useProcessWorkspaceSetupCompletion = () => {
     destinationPath: defaultHomePagePath,
   });
 
-  const { claimUnprocessedToolCallParts } = useClaimUnprocessedToolCallParts();
-
   const store = useStore();
 
   const processWorkspaceSetupCompletion = (
     message: Pick<ExtendedUIMessage, 'parts'>,
   ) => {
-    const claimedParts = claimUnprocessedToolCallParts(
-      extractCompletedWorkspaceSetupToolParts(message.parts),
+    const processedCompletionIds = store.get(
+      processedWorkspaceSetupCompletionIdsState.atom,
     );
+    const completionIds = new Set([
+      ...processedCompletionIds,
+      ...extractCompletedWorkspaceSetupToolParts(message.parts).map(
+        (part) => part.toolCallId,
+      ),
+    ]);
 
-    if (!isNonEmptyArray(claimedParts) || !isWorkspaceSetupChat) {
+    if (completionIds.size === processedCompletionIds.length) {
+      return;
+    }
+
+    store.set(processedWorkspaceSetupCompletionIdsState.atom, [
+      ...completionIds,
+    ]);
+
+    if (!isWorkspaceSetupChat) {
       return;
     }
 

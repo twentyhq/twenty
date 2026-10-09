@@ -1,22 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
-
-import {
-  ASK_QUESTION_TOOL_NAME,
-  REQUEST_FORM_TOOL_NAME,
-} from 'twenty-shared/ai';
-import { isDefined, resolveInput } from 'twenty-shared/utils';
-import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
+import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
-import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
-import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
-import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
-import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
+import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -27,28 +16,27 @@ import {
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { buildWorkflowStepCaller } from 'src/modules/workflow/workflow-executor/utils/build-workflow-step-caller.util';
+import { buildStepExecutionKey } from 'src/modules/workflow/workflow-executor/utils/build-step-execution-key.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import { WORKFLOW_AGENT_HUMAN_INPUT_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-human-input-prompt.constant';
-import {
-  type RecordedConversation,
-  WorkflowAgentConversationWorkspaceService,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
-import { mergeAiAgentStepLogs } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/merge-ai-agent-step-logs.util';
-import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
+import { resolveConversationThreadKey } from 'src/modules/workflow/workflow-executor/utils/resolve-conversation-thread-key.util';
+import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import { type WorkflowAiAgentActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-input.type';
+import { buildWorkflowAgentRunExecutionContext } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-execution-context.util';
+import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
 import { isWorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/guards/is-workflow-ai-agent-action.guard';
 
+// Starts the step's agent and hands it to the engine: an agent that pauses is continued by the
+// engine, which calls the step back with its outcome
 @Injectable()
 export class AiAgentWorkflowAction implements WorkflowAction {
-  private readonly logger = new Logger(AiAgentWorkflowAction.name);
-
   constructor(
-    private readonly aiAgentExecutionService: AgentAsyncExecutorService,
+    private readonly agentRunnerService: AgentRunnerService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
-    private readonly conversationReaderService: AgentConversationReaderService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -58,8 +46,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     steps,
     context,
     runInfo,
-    resumedThreadId,
-    previousStepLog,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = findStepOrThrow({
       stepId: currentStepId,
@@ -73,8 +59,33 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { agentId, prompt, humanInputInstructions } = step.settings.input;
+    const { agentId, prompt } = step.settings.input;
     const workspaceId = runInfo.workspaceId;
+    const {
+      workspaceMemberId: recipientWorkspaceMemberId,
+      conversation: conversationSettings,
+    } = resolveInput(
+      {
+        workspaceMemberId: step.settings.input.workspaceMemberId,
+        conversation: step.settings.input.conversation,
+      },
+      context,
+    ) as Pick<WorkflowAiAgentActionInput, 'workspaceMemberId' | 'conversation'>;
+
+    // a variable can resolve to any value, so anything but a member id or nothing is refused
+    if (
+      isDefined(recipientWorkspaceMemberId) &&
+      recipientWorkspaceMemberId !== '' &&
+      !(
+        isString(recipientWorkspaceMemberId) &&
+        isValidUuid(recipientWorkspaceMemberId)
+      )
+    ) {
+      throw new WorkflowStepExecutorException(
+        'Recipient must be a workspace member',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     let agent: AgentEntity | null = null;
 
@@ -107,153 +118,70 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const userWorkspaceId =
-      executionContext.authContext.type === 'user'
-        ? executionContext.authContext.userWorkspaceId
-        : null;
-
-    const resolvedPrompt = resolveInput(prompt, context) as string;
-
-    // A record of the step, not its outcome, so a write failure must not fail the step
-    const recordConversation = (
-      executionResult: AgentExecutionResult,
-    ): Promise<RecordedConversation | null> =>
-      (isDefined(resumedThreadId)
-        ? this.workflowAgentConversationService.recordContinuation({
-            workspaceId,
-            threadId: resumedThreadId,
-            title: step.name,
-            agentId: agent?.id ?? null,
-            executionResult,
-          })
-        : this.workflowAgentConversationService.recordExecution({
-            workspaceId,
-            workflowRunId: runInfo.workflowRunId,
+    const conversation =
+      await this.workflowAgentConversationService.openConversation({
+        runInfo,
+        stepId: currentStepId,
+        title: step.name,
+        recipientWorkspaceMemberId: isNonEmptyString(recipientWorkspaceMemberId)
+          ? recipientWorkspaceMemberId
+          : null,
+        threadKey: resolveConversationThreadKey({
+          conversation: conversationSettings,
+          defaultScope: 'STEP',
+          workflowRunId: runInfo.workflowRunId,
+          stepExecutionKey: buildStepExecutionKey({
             stepId: currentStepId,
-            title: step.name,
-            agentId: agent?.id ?? null,
-            prompt: resolvedPrompt,
-            initiatorUserWorkspaceId: userWorkspaceId,
-            executionResult,
-          })
-      ).catch((error: unknown) => {
-        this.logger.warn(
-          `Failed to record the conversation for workflowRun=${runInfo.workflowRunId} step=${currentStepId}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-
-        return null;
+            steps,
+            context,
+          }),
+        }),
       });
 
-    const trimmedHumanInputInstructions = humanInputInstructions?.trim();
-    const canAskForHumanInput = isNonEmptyString(trimmedHumanInputInstructions);
+    const agentExecutionContext = buildWorkflowAgentRunExecutionContext({
+      executionContext,
+      turnCreatedBy:
+        await this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
+    });
+    const resolvedPrompt = resolveInput(prompt, context) as string | undefined;
 
-    const startedAtMs = Date.now();
-
-    const executionResult = await this.aiAgentExecutionService.executeAgent({
-      agent,
-      ...(isDefined(resumedThreadId)
-        ? {
-            messages: [],
-            priorMessages: await this.conversationReaderService.loadMessages({
-              workspaceId,
-              threadId: resumedThreadId,
-            }),
-          }
-        : { messages: [{ role: 'user', content: resolvedPrompt }] }),
-      baseSystemPrompt: canAskForHumanInput
-        ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
-        : WORKFLOW_BASE_SYSTEM_PROMPT,
-      pausingTools: canAskForHumanInput
-        ? {
-            [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
-              isWorkspaceSetupThread: false,
-            }),
-            [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
-          }
-        : {},
-      canProposeToolCalls: canAskForHumanInput,
-      actorContext: executionContext.isActingOnBehalfOfUser
-        ? executionContext.initiator
-        : undefined,
-      authContext: executionContext.authContext,
+    const { threadId, outcome, summary } = await this.agentRunnerService.run({
       workspaceId,
-      userWorkspaceId,
+      conversation,
+      caller: buildWorkflowStepCaller({
+        workflowRunId: runInfo.workflowRunId,
+        stepId: currentStepId,
+      }),
+      spec: buildWorkflowAgentRunSpec({
+        step,
+        isApplicationBound: isDefined(application),
+      }),
+      agent,
+      prompt: isDefined(resolvedPrompt)
+        ? {
+            messages: [{ role: 'user', content: resolvedPrompt }],
+            senderUserWorkspaceId: agentExecutionContext.userWorkspaceId,
+            senderApplicationId: null,
+          }
+        : null,
+      executionContext: agentExecutionContext,
     });
 
-    const durationMs = Date.now() - startedAtMs;
-
-    // Only executions that ask get a conversation, saving a thread per execution for looping agents
-    const recordedConversation =
-      isDefined(resumedThreadId) || executionResult.isPaused
-        ? await recordConversation(executionResult)
-        : null;
-
-    await this.persistStepLog({
+    await this.workflowRunStepLogService.setAiAgentStepLog({
       workflowRunId: runInfo.workflowRunId,
       workspaceId,
       stepId: currentStepId,
-      executionResult,
-      durationMs,
-      previousStepLog,
+      summary,
+      threadId,
     });
 
-    if (executionResult.hasNoMoreAvailableCredits) {
-      return {
-        error: 'Agent stopped: no more available credits.',
-      };
-    }
-
-    if (executionResult.isPaused) {
-      // Without the conversation nobody could answer, so the run would wait forever
-      if (recordedConversation?.isAwaitingAnswer !== true) {
-        return {
-          error: 'Agent asked a question that could not be recorded.',
-        };
-      }
-
-      return { pendingEvent: true };
-    }
-
-    return {
-      result: executionResult.result,
-    };
-  }
-
-  private async persistStepLog({
-    workflowRunId,
-    workspaceId,
-    stepId,
-    executionResult,
-    durationMs,
-    previousStepLog,
-  }: {
-    workflowRunId: string;
-    workspaceId: string;
-    stepId: string;
-    executionResult: AgentExecutionResult;
-    durationMs: number;
-    previousStepLog?: WorkflowRunStepLog;
-  }): Promise<void> {
-    const stepLog = buildAiAgentStepLog({ executionResult, durationMs });
-
-    try {
-      await this.workflowRunStepLogService.setStepLog({
-        workflowRunId,
-        workspaceId,
-        stepId,
-        stepLog: mergeAiAgentStepLogs({
-          previousStepLog,
-          nextStepLog: stepLog,
-        }),
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to persist step log for workflowRun=${workflowRunId} step=${stepId}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
+    switch (outcome.status) {
+      case 'COMPLETED':
+        return { result: outcome.result };
+      case 'SUSPENDED':
+        return { wait: { type: 'CALLBACK' } };
+      case 'FAILED':
+        return { error: outcome.error };
     }
   }
 }

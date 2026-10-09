@@ -4,25 +4,24 @@ import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFu
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
+import { useNavigationDrawerTogglePresentation } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTogglePresentation';
 import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
-import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
+import { useToggleNavigationDrawer } from '@/ui/navigation/navigation-drawer/hooks/useToggleNavigationDrawer';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
-import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useColorScheme } from '@/workspace-member/hooks/useColorScheme';
+import { normalizeSearchText, useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconCode, IconCopy, IconTerminal } from 'twenty-ui/icon';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
 export const useCommandMenuAppActions = () => {
   const { t } = useLingui();

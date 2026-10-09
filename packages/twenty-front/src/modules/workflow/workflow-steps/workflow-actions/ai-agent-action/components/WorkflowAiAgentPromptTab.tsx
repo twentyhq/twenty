@@ -5,10 +5,13 @@ import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchem
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
 import { fieldsToSchema } from '@/ai/utils/fieldsToSchema';
 import { schemaToFields } from '@/ai/utils/schemaToFields';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
-import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder';
+import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields';
+import { AgentOutputSchemaBuilder } from '@/ai/components/AgentOutputSchemaBuilder';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useMutation } from '@apollo/client/react';
@@ -18,8 +21,11 @@ import {
   type AgentResponseSchema,
   type ModelConfiguration,
 } from 'twenty-shared/ai';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { type WorkflowConversation } from 'twenty-shared/workflow';
 import { useDebouncedCallback } from 'use-debounce';
 import {
+  FeatureFlagKey,
   UpdateOneAgentDocument,
   type UpdateOneAgentMutationVariables,
 } from '~/generated-metadata/graphql';
@@ -31,6 +37,10 @@ type WorkflowAiAgentPromptTabProps = {
   onPromptChange: (value: string) => void;
   humanInputInstructions: string;
   onHumanInputInstructionsChange: (value: string) => void;
+  recipientWorkspaceMemberId: string | undefined;
+  onRecipientChange: (workspaceMemberId: string | undefined) => void;
+  conversation: WorkflowConversation | undefined;
+  onConversationChange: (conversation: WorkflowConversation) => void;
   onActionUpdate?: (action: WorkflowAiAgentAction) => void;
 };
 
@@ -41,11 +51,18 @@ export const WorkflowAiAgentPromptTab = ({
   onPromptChange,
   humanInputInstructions,
   onHumanInputInstructionsChange,
+  recipientWorkspaceMemberId,
+  onRecipientChange,
+  conversation,
+  onConversationChange,
   onActionUpdate,
 }: WorkflowAiAgentPromptTabProps) => {
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
 
   const [outputSchemaFields, setOutputSchemaFields] = useState<
     OutputSchemaField[]
@@ -161,6 +178,31 @@ export const WorkflowAiAgentPromptTab = ({
         readonly={readonly}
       />
 
+      {isAiChatInboxEnabled && (
+        <>
+          <FormSingleRecordPicker
+            label={t`Recipient`}
+            objectNameSingulars={[CoreObjectNameSingular.WorkspaceMember]}
+            defaultValue={recipientWorkspaceMemberId}
+            onChange={(workspaceMemberId) =>
+              onRecipientChange(workspaceMemberId ?? undefined)
+            }
+            disabled={readonly}
+            testId="workflow-edit-action-ai-agent-recipient"
+            VariablePicker={WorkflowVariablePicker}
+          />
+
+          <WorkflowConversationFields
+            dropdownId={`workflow-ai-agent-conversation-${action.id}`}
+            conversation={conversation}
+            defaultScope="STEP"
+            description={t`With the recipient, or the workflow creator when empty. It stays out of their inbox until the agent needs them.`}
+            readonly={readonly}
+            onChange={onConversationChange}
+          />
+        </>
+      )}
+
       <SettingsAgentModelCapabilities
         selectedModelId={agent.modelId}
         modelConfiguration={agent.modelConfiguration || {}}
@@ -168,7 +210,7 @@ export const WorkflowAiAgentPromptTab = ({
         disabled={readonly}
       />
 
-      <WorkflowOutputSchemaBuilder
+      <AgentOutputSchemaBuilder
         fields={outputSchemaFields}
         onChange={handleOutputSchemaChange}
         readonly={readonly}

@@ -1,26 +1,45 @@
-import { type ReactElement } from 'react';
+import { useRender } from '@base-ui/react/use-render';
+import { clsx } from 'clsx';
+
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
+import { type CommandBlockProps } from './types/CommandBlockProps';
 
 import styles from './CommandBlock.module.scss';
 
-type CommandBlockProps = {
-  commands: string[];
-  button?: ReactElement;
-};
-
-export const CommandBlock = ({ commands, button }: CommandBlockProps) => {
-  return (
-    <div className={styles.container}>
-      <div className={styles.commandContain}>
+export const CommandBlock = ({
+  commands,
+  actions,
+  render,
+  ref,
+  className,
+  ...props
+}: CommandBlockProps) =>
+  useRender({
+    render,
+    ref,
+    props: {
+      ...props,
+      className: clsx(styles.container, className),
+      children: (
         <>
-          {commands.map((line, i) => (
-            <div key={i}>
-              <span className={styles.lineStartSpan}>{'> '}</span>
-              <span className={styles.lineSpan}>{line}</span>
-            </div>
-          ))}
+          <pre className={styles.commands}>
+            <code>
+              {commands.map((line, index) => (
+                <span key={index}>
+                  {index > 0 && '\n'}
+                  <span className={styles.prompt} aria-hidden="true">
+                    {'> '}
+                  </span>
+                  {line}
+                </span>
+              ))}
+            </code>
+          </pre>
+          {isDefined(actions) && (
+            <div className={styles.actions}>{actions}</div>
+          )}
         </>
-      </div>
-      {button && <div className={styles.buttonContainer}>{button}</div>}
-    </div>
-  );
-};
+      ),
+    },
+  });

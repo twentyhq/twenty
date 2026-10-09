@@ -7,6 +7,8 @@ import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownSubmenuTriggerProps } from '../types/DropdownSubmenuTriggerProps';
+import { DropdownItemOwner } from './DropdownItemOwner';
+import { getNativeDisabled } from './getNativeDisabled';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
@@ -33,12 +35,21 @@ export const DropdownSubmenuTrigger = ({
   ...props
 }: DropdownSubmenuTriggerProps) => {
   const direction = useDirection();
-  const { type, parentType, open, setOpen, setFocusOnOpen, registerTrigger } =
-    useDropdownContext();
+  const {
+    type,
+    rootType,
+    parentType,
+    open,
+    setOpen,
+    setFocusOnOpen,
+    registerTrigger,
+  } = useDropdownContext();
+  const triggerType = open ? type : rootType;
   const generatedId = useId();
   const itemId = id ?? generatedId;
   const itemFocus = useDropdownItemFocus({
     id: itemId,
+    disabled,
     isSubmenuTrigger: true,
   });
   const registerTriggerElement =
@@ -54,7 +65,7 @@ export const DropdownSubmenuTrigger = ({
       nativeButton={nativeButton}
       openOnHover={openOnHover}
       role={parentType === 'menu' ? 'menuitem' : undefined}
-      aria-haspopup={type === 'menu' ? 'menu' : 'dialog'}
+      aria-haspopup={triggerType === 'menu' ? 'menu' : 'dialog'}
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
         itemFocus.activate();
@@ -88,23 +99,32 @@ export const DropdownSubmenuTrigger = ({
           setOpen(true);
         }
       }}
-      render={(renderProps) => (
-        <ListItem
-          {...renderProps}
-          render={render ?? <button type="button" />}
-          disabled={disabled}
-          color={color}
-          startIcon={startIcon}
-          endIcon={endIcon}
-          description={description}
-          descriptionPlacement={descriptionPlacement}
-          shortcut={shortcut}
-          shortcutJoinLabel={shortcutJoinLabel}
-          hasSubmenu={hasSubmenu}
-        >
-          {children}
-        </ListItem>
-      )}
+      render={(renderProps) => {
+        const nativeDisabled = getNativeDisabled({
+          nativeButton,
+          renderProps,
+        });
+
+        return (
+          <ListItem
+            {...renderProps}
+            render={
+              <DropdownItemOwner render={render} disabled={nativeDisabled} />
+            }
+            disabled={disabled}
+            color={color}
+            startIcon={startIcon}
+            endIcon={endIcon}
+            description={description}
+            descriptionPlacement={descriptionPlacement}
+            shortcut={shortcut}
+            shortcutJoinLabel={shortcutJoinLabel}
+            hasSubmenu={hasSubmenu}
+          >
+            {children}
+          </ListItem>
+        );
+      }}
     />
   );
 };

@@ -47,6 +47,7 @@ import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billin
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -80,6 +81,7 @@ export class AgentChatResolver {
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   @Query(() => AgentChatThreadDTO)
@@ -128,14 +130,16 @@ export class AgentChatResolver {
     const { chunks, maxSeq } =
       await this.eventPublisherService.getAccumulatedChunks(threadId);
 
+    const turnError = await this.turnRecorderService.findLatestTurnError({
+      workspaceId,
+      threadId,
+    });
+
     return {
       chunks,
       maxSeq,
-      error: thread.lastStreamError
-        ? {
-            code: thread.lastStreamError.code,
-            message: thread.lastStreamError.message,
-          }
+      error: turnError
+        ? { code: turnError.code, message: turnError.message }
         : null,
     };
   }
@@ -165,10 +169,65 @@ export class AgentChatResolver {
       nullable: true,
     })
     fileAttachments: FileAttachmentInput[] | null,
+    @Args('mentionedWorkspaceMemberIds', {
+      type: () => [UUIDScalarType],
+      nullable: true,
+    })
+    mentionedWorkspaceMemberIds: string[] | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
+    await this.threadService.createThreadIfMissing({
+      threadId,
+      workspaceMemberId,
+      workspaceId: workspace.id,
+    });
+
+    const sentMessage = await this.sendChatMessageToThread({
+      threadId,
+      text,
+      messageId,
+      browsingContext,
+      modelId,
+      fileAttachments,
+      userWorkspaceId,
+      workspaceMemberId,
+      workspace,
+    });
+
+    const mentionedParticipantWorkspaceMemberIds =
+      await this.threadService.addMentionedParticipants({
+        threadId,
+        workspaceMemberId,
+        workspaceId: workspace.id,
+        mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
+      });
+
+    return { ...sentMessage, mentionedParticipantWorkspaceMemberIds };
+  }
+
+  private async sendChatMessageToThread({
+    threadId,
+    text,
+    messageId,
+    browsingContext,
+    modelId,
+    fileAttachments,
+    userWorkspaceId,
+    workspaceMemberId,
+    workspace,
+  }: {
+    threadId: string;
+    text: string;
+    messageId: string;
+    browsingContext: BrowsingContextType | null;
+    modelId: string | undefined;
+    fileAttachments: FileAttachmentInput[] | null;
+    userWorkspaceId: string;
+    workspaceMemberId: string;
+    workspace: WorkspaceEntity;
+  }): Promise<SendChatMessageResultDTO> {
     const thread = await this.turnPreflightService.assertCanStartChatTurn({
       threadId,
       modelId,
@@ -377,7 +436,7 @@ export class AgentChatResolver {
     return toDisplayCredits(Number(thread.totalOutputCredits));
   }
 
-  // the caller reads the thread after this, so it sees the reaped stream as failed
+  // the caller reads the thread after this, so it sees the reaped stream as released
   private async reapDeadStream(
     thread: AgentChatThreadWorkspaceEntity,
     workspaceId: string,
@@ -389,7 +448,6 @@ export class AgentChatResolver {
 
     if (isDefined(interruptedError)) {
       thread.activeStreamId = null;
-      thread.lastStreamError = interruptedError;
     }
   }
 }

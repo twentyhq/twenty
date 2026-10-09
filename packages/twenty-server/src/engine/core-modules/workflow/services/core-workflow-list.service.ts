@@ -42,6 +42,7 @@ type CoreWorkflowRow = {
   lastPublishedCoreWorkflowVersionId: string | null;
   applicationId: string | null;
   workspaceWorkflowId: string | null;
+  isSystem: boolean;
   visibility: WorkflowVisibility;
   canChangeVisibility: boolean;
   updatedAt: Date;
@@ -88,6 +89,7 @@ const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c.name,
          c."lastPublishedVersionId", c."lastPublishedCoreWorkflowVersionId",
          c."applicationId",
+         c."isSystem",
          c."visibility",
          ${canChangeCoreWorkflowVisibilitySelectExpression({ tableAlias: 'c', userWorkspaceIdParameter: READER_PARAMETER })} AS "canChangeVisibility",
          c."createdAt",
@@ -108,6 +110,7 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
   lastPublishedCoreWorkflowVersionId: row.lastPublishedCoreWorkflowVersionId,
   applicationId: row.applicationId,
   workspaceWorkflowId: row.workspaceWorkflowId,
+  isSystem: row.isSystem,
   visibility: row.visibility,
   canChangeVisibility: row.canChangeVisibility,
   createdAt: row.createdAt.toISOString(),
@@ -116,6 +119,9 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
 
 const CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE = `LEFT JOIN core."workflowVersion" v
      ON v."coreWorkflowId" = c.id AND v."workspaceId" = $1`;
+
+const buildSystemWorkflowPredicate = (includeSystem: boolean): string =>
+  includeSystem ? '' : 'AND c."isSystem" = false';
 
 const GROUP_BY_CLAUSE = `${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId", c."workspaceWorkflowId"`;
 
@@ -271,6 +277,7 @@ export class CoreWorkflowListService {
               workflow.lastPublishedCoreWorkflowVersionId,
             applicationId: workflow.applicationId,
             workspaceWorkflowId: workflow.workspaceWorkflowId,
+            isSystem: workflow.isSystem,
             visibility: workflow.visibility,
             canChangeVisibility: canChangeCoreWorkflowVisibility({
               createdByUserWorkspaceId: workflow.createdByUserWorkspaceId,
@@ -294,6 +301,7 @@ export class CoreWorkflowListService {
     orderBy,
     orderByDirection,
     filter,
+    includeSystem,
   }: CoreWorkflowsArgs & {
     workspaceId: string;
     userWorkspaceId: string | undefined;
@@ -355,6 +363,7 @@ export class CoreWorkflowListService {
        ${CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE}
        WHERE c."workspaceId" = $1
          AND ${VISIBILITY_PREDICATE}
+         ${buildSystemWorkflowPredicate(includeSystem)}
        ${keysetCondition}
        GROUP BY ${GROUP_BY_CLAUSE}
        ${havingClause}
@@ -368,6 +377,7 @@ export class CoreWorkflowListService {
       userWorkspaceId,
       filterPredicate,
       filterParameters,
+      includeSystem,
     });
 
     const hasNextPage = rows.length > first;
@@ -465,11 +475,13 @@ export class CoreWorkflowListService {
     userWorkspaceId,
     filterPredicate,
     filterParameters,
+    includeSystem,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     filterPredicate?: string;
     filterParameters: unknown[];
+    includeSystem: boolean;
   }): Promise<number> {
     const parameters: unknown[] = [workspaceId, userWorkspaceId ?? null];
 
@@ -479,7 +491,8 @@ export class CoreWorkflowListService {
           `SELECT count(*)::int AS "totalCount"
            FROM core."workflow" c
            WHERE c."workspaceId" = $1
-             AND ${VISIBILITY_PREDICATE}`,
+             AND ${VISIBILITY_PREDICATE}
+             ${buildSystemWorkflowPredicate(includeSystem)}`,
           parameters,
         );
 
@@ -497,6 +510,7 @@ export class CoreWorkflowListService {
            ${CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE}
            WHERE c."workspaceId" = $1
              AND ${VISIBILITY_PREDICATE}
+             ${buildSystemWorkflowPredicate(includeSystem)}
            GROUP BY ${GROUPED_WORKFLOW_COLUMNS}
            HAVING ${filterPredicate}
          ) filtered`,

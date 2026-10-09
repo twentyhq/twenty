@@ -4,11 +4,9 @@ import { msg } from '@lingui/core/macro';
 import { FeatureFlagKey } from '~/generated-admin/graphql';
 
 // Public flags use server-provided client config metadata to stay consistent with the lab.
-export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
-  Record<
-    FeatureFlagKey,
-    { label: MessageDescriptor; description: MessageDescriptor }
-  >
+export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
+  FeatureFlagKey,
+  { label: MessageDescriptor; description: MessageDescriptor }
 > = {
   [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
     label: msg`Async CSV export`,
@@ -30,10 +28,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Direct REST metadata responses`,
     description: msg`Return metadata directly instead of wrapping it in the legacy response envelope.`,
   },
-  [FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED]: {
-    label: msg`Prebuilt logic functions`,
-    description: msg`Run logic functions from prebuilt application bundles.`,
-  },
   [FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED]: {
     label: msg`Application workflows`,
     description: msg`Allow applications to install workflows and start new workflow runs.`,
@@ -46,21 +40,21 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`AI chat sharing dropdown`,
     description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
   },
+  [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: {
+    label: msg`Initial object views`,
+    description: msg`Use a dedicated initial view for each object in navigation and the view picker.`,
+  },
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED]: {
-    label: msg`Webhook rate limits`,
-    description: msg`Limit the rate of outgoing webhook deliveries.`,
+  [FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED]: {
+    label: msg`Record sharing visibility`,
+    description: msg`Apply record sharing visibility rules when accessing records.`,
   },
   [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
     label: msg`Deferred workspace migration actions`,
     description: msg`Run the slow parts of data model changes in the background after they are saved.`,
-  },
-  [FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED]: {
-    label: msg`Execution quotas`,
-    description: msg`Enforce usage quotas on workflow node runs and logic function executions.`,
   },
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,
@@ -85,5 +79,13 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
   [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: {
     label: msg`Skip unchanged calendar records`,
     description: msg`Only write calendar events and participants that changed since the last sync.`,
+  },
+  [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: {
+    label: msg`AI chat inbox`,
+    description: msg`Turn the AI tab into an inbox to triage, assign, snooze and follow chats, and let workflows route agent questions to a member.`,
+  },
+  [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
+    label: msg`App preferences`,
+    description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
   },
 };

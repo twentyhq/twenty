@@ -52,16 +52,22 @@ export class RestApiDeleteManyHandler extends RestApiBaseHandler {
           },
         );
 
-      return this.formatRestResponse(records, flatObjectMetadata.namePlural);
+      return this.formatRestResponse({
+        records,
+        objectNamePlural: flatObjectMetadata.namePlural,
+      });
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(
-    records: ObjectRecord[],
-    objectNamePlural: string,
-  ) {
+  private formatRestResponse({
+    records,
+    objectNamePlural,
+  }: {
+    records: ObjectRecord[];
+    objectNamePlural: string;
+  }) {
     return {
       data: {
         [`delete${capitalize(objectNamePlural)}`]: records,

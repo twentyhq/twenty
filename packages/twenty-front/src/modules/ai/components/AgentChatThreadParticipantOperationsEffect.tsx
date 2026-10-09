@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
+import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
@@ -21,6 +21,8 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 // devices, and snoozes the server ends
 export const AgentChatThreadParticipantOperationsEffect = () => {
   const store = useStore();
+  const { refreshAgentChatOpenThreadsSummary } =
+    useRefreshAgentChatOpenThreadsSummary();
   const participantObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -31,8 +33,6 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
   const currentWorkspaceMemberId = useAtomStateValue(
     currentWorkspaceMemberState,
   )?.id;
-  const { refreshAgentChatThreadParticipants } =
-    useAgentChatThreadParticipants();
   const isEnabled =
     isDefined(participantObjectMetadataItem) &&
     isDefined(currentWorkspaceMemberId);
@@ -57,7 +57,7 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
 
   const handleRecordOperation = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
-      // Also kept aside, so a load already on its way cannot undo them
+      // Also kept aside, for when the member's rows have not loaded yet
       const applyParticipants = (
         participants: AgentChatThreadParticipantFieldsFragment[],
       ) => {
@@ -74,6 +74,7 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
             ? mergeAgentChatThreadParticipants(loadedParticipants, participants)
             : loadedParticipants,
         );
+        refreshAgentChatOpenThreadsSummary();
       };
 
       switch (operation.type) {
@@ -89,41 +90,18 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
             operation.type === 'update-one'
               ? [operation.result.updateInput]
               : operation.result.updateInputs;
-          const participants = store.get(agentChatThreadParticipantsState.atom);
-          const participantsById = new Map(
-            Object.values(participants ?? {}).map((participant) => [
-              participant.id,
-              participant,
-            ]),
+
+          applyParticipants(
+            updateInputs
+              .map(({ updatedRecord }) => updatedRecord)
+              .filter(isDefined)
+              .map(getAgentChatThreadParticipantFromRecord),
           );
-          const updatedParticipants = updateInputs.map(
-            ({ recordId, updatedFields }) => {
-              const participant = participantsById.get(recordId);
-
-              return isDefined(participant)
-                ? { ...participant, ...Object.assign({}, ...updatedFields) }
-                : undefined;
-            },
-          );
-
-          // Updates only carry what changed, so a row not loaded yet is
-          // read again whole
-          if (
-            !isDefined(participants) ||
-            !updatedParticipants.every(isDefined)
-          ) {
-            void refreshAgentChatThreadParticipants();
-            return;
-          }
-
-          applyParticipants(updatedParticipants);
           return;
         }
-        default:
-          void refreshAgentChatThreadParticipants();
       }
     },
-    [refreshAgentChatThreadParticipants, store],
+    [refreshAgentChatOpenThreadsSummary, store],
   );
 
   useListenToObjectRecordOperationBrowserEvent({
