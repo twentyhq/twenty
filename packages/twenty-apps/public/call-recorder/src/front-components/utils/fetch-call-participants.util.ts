@@ -1,5 +1,6 @@
-import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { CALL_PARTICIPANTS_WIDGET_MAX_PARTICIPANTS } from 'src/front-components/constants/call-participants-widget-max-participants.constant';
 import { type CallParticipantNode } from 'src/front-components/types/call-participant-node.type';
@@ -40,9 +41,7 @@ const fetchCallRecordingCalendarEventNode = async (
       | undefined
   )?.edges?.[0]?.node;
 
-  return isUndefined(callRecordingNode) || isNull(callRecordingNode)
-    ? undefined
-    : callRecordingNode;
+  return isDefined(callRecordingNode) ? callRecordingNode : undefined;
 };
 
 export const fetchCallParticipants = async (
