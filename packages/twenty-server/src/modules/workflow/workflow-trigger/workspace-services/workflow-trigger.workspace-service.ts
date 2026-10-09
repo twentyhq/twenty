@@ -41,6 +41,7 @@ import { type WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { type DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
+import { publishCronTriggerCacheEntry } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/publish-cron-trigger-cache-entry.util';
 import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
 import {
   WorkflowTriggerException,
@@ -682,28 +683,12 @@ export class WorkflowTriggerWorkspaceService {
           }),
         };
 
-        const publishCronCache = async () => {
-          try {
-            await this.cacheStorageService.hashSetIfExists({
-              key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-              field: workflowVersion.workflowId,
-              value: JSON.stringify(cachedTrigger),
-            });
-          } catch (error) {
-            this.logger.error(
-              `Cron trigger cache entry not published for workflow ${workflowVersion.workflowId}, dropping the cron cache so the next tick rebuilds it from the database`,
-              error,
-            );
-
-            try {
-              await this.cacheStorageService.del(
-                WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-              );
-            } catch (invalidationError) {
-              this.logger.error(invalidationError);
-            }
-          }
-        };
+        const publishCronCache = () =>
+          publishCronTriggerCacheEntry({
+            cacheStorageService: this.cacheStorageService,
+            cachedTrigger,
+            logger: this.logger,
+          });
 
         if (isDefined(transactionContext)) {
           transactionContext.transactionScope.afterCommit(publishCronCache);
