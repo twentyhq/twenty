@@ -482,7 +482,7 @@ msgstr "{appDisplayName}-ը ցանկանում է՝"
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "{appName} preferences"
-msgstr ""
+msgstr "{appName}-ի նախընտրանքներ"
 
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
@@ -1397,7 +1397,7 @@ msgstr "Հաշվի ջնջում"
 #. js-lingui-id: T3FM0r
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
-msgstr ""
+msgstr "Հաշվի կարգավորումներ"
 
 #. js-lingui-id: bPwFdf
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -3153,7 +3153,7 @@ msgstr "Հավելվածի մատյանները պահվում են {retentionIn
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "App preferences"
-msgstr ""
+msgstr "Հավելվածի նախընտրանքներ"
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -5047,7 +5047,7 @@ msgstr "Ընտրեք, թե պրոֆիլի որ դաշտերը կարող են խ
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 msgid "Choose your preferences for the apps installed on your workspace by the admin"
-msgstr ""
+msgstr "Ընտրեք ձեր նախընտրությունները ադմինիստրատորի կողմից ձեր աշխատանքային տարածքում տեղադրված հավելվածների համար"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -9140,7 +9140,7 @@ msgstr "Մատակարարին արդեն փոխանցված էլ. նամակն�
 #. js-lingui-id: USBKh+
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Emails from the blocklist will be ignored regardless of this setting."
-msgstr ""
+msgstr "Արգելափակման ցանկի էլ. նամակները կանտեսվեն՝ անկախ այս կարգավորումից։"
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -11589,7 +11589,7 @@ msgstr "Համընդհանուր որոնում"
 #. js-lingui-id: DSJEta
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Gmail"
-msgstr ""
+msgstr "Gmail"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -11645,7 +11645,7 @@ msgstr "Google"
 #. js-lingui-id: ebIDwV
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Google Calendar"
-msgstr ""
+msgstr "Google Օրացույց"
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -12342,7 +12342,7 @@ msgstr "\"{fileName}\" պատկերը գերազանցում է {maxUploadSize}-
 #. js-lingui-id: Grur3I
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "IMAP"
-msgstr ""
+msgstr "IMAP"
 
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -14357,7 +14357,7 @@ msgstr "Կառավարել այս հավելվածի կողմից {0}-ին զա�
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Manage events"
-msgstr ""
+msgstr "Կառավարել իրադարձությունները"
 
 #. js-lingui-id: Dt05oz
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -14841,7 +14841,7 @@ msgstr "Րոպեները գործարկումների միջև"
 #. js-lingui-id: G40We3
 #: src/modules/settings/app-preferences/components/SettingsNativeAccountAppStatusCell.tsx
 msgid "Missing account"
-msgstr ""
+msgstr "Հաշիվը բացակայում է"
 
 #. js-lingui-id: cOFpUq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -17538,7 +17538,7 @@ msgstr "Խափանում"
 #. js-lingui-id: gdC3cZ
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Outlook"
-msgstr ""
+msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -18692,7 +18692,7 @@ msgstr "Կարդալ փաստաթղթավորումը"
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Read emails"
-msgstr ""
+msgstr "Կարդալ էլ. նամակները"
 
 #. js-lingui-id: U26cMX
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -19247,7 +19247,7 @@ msgstr "Հեռացնել {address}"
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
-msgstr ""
+msgstr "Հեռացնել {displayName}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19489,7 +19489,7 @@ msgstr "Փոխել ընտրանքների կարգը"
 #. js-lingui-id: Jtm0TT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
-msgstr ""
+msgstr "Փոխարինել Հաշիվների կարգավորումները Հավելվածի նախընտրանքներով, որոնք կառուցված են հաշիվների և դրանք օգտագործող հավելվածների շուրջ։"
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21193,7 +21193,7 @@ msgstr "Ուղարկել էլ․ նամակ"
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Send emails"
-msgstr ""
+msgstr "Ուղարկել էլ. նամակներ"
 
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -21546,7 +21546,7 @@ msgstr "Կիսեք ձեր հավելվածը այլ աշխատանքային տ�
 #. js-lingui-id: fX13zr
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Shared accounts between apps"
-msgstr ""
+msgstr "Հավելվածների միջև համօգտագործվող հաշիվներ"
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -25610,7 +25610,7 @@ msgstr "Օգտագործված"
 #. js-lingui-id: xUOPoQ
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Used by"
-msgstr ""
+msgstr "Օգտագործվում է"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx

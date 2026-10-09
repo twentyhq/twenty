@@ -1,5 +1,7 @@
+import { remoteId } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FILE_INPUT_PICKER_METHOD } from '@/constants/FileInputPickerMethod';
 import { HtmlInputElement } from '@/remote/generated/remote-elements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
 import { markEventAsHostOriginated } from '@/polyfills/events/utils/markEventAsHostOriginated';
@@ -34,6 +36,18 @@ const createInput = ({
 
 const createClickEvent = (): MouseEvent =>
   new MouseEvent('click', { bubbles: true, cancelable: true });
+
+const createConnectedFileInput = () => {
+  const remoteRoot = document.createElement('remote-root');
+  const input = createInput({ type: 'file' });
+  const connection = { mutate: jest.fn(), call: jest.fn() };
+
+  remoteRoot.append(input);
+  document.body.append(remoteRoot);
+  remoteRoot.connect(connection);
+
+  return { remoteRoot, input, connection };
+};
 
 const recordEventTypes = (input: HTMLInputElement): string[] => {
   const eventTypes: string[] = [];
@@ -160,6 +174,34 @@ describe('installInputClickActivationPolyfill', () => {
 
     expect(checkbox.checked).toBe(false);
     expect(changeListener).not.toHaveBeenCalled();
+  });
+
+  it('should ask the host to open the file picker after a guest click', () => {
+    const { remoteRoot, input, connection } = createConnectedFileInput();
+
+    input.click();
+
+    expect(connection.call).toHaveBeenCalledTimes(1);
+    expect(connection.call).toHaveBeenCalledWith(
+      remoteId(input),
+      FILE_INPUT_PICKER_METHOD,
+    );
+
+    remoteRoot.remove();
+  });
+
+  it('should not ask the host to open the file picker after a prevented or host click', () => {
+    const { remoteRoot, input, connection } = createConnectedFileInput();
+    const hostClickEvent = createClickEvent();
+
+    markEventAsHostOriginated(hostClickEvent);
+    input.dispatchEvent(hostClickEvent);
+    input.addEventListener('click', (event) => event.preventDefault());
+    input.click();
+
+    expect(connection.call).not.toHaveBeenCalled();
+
+    remoteRoot.remove();
   });
 
   it('should not activate text inputs or non-click events', () => {
