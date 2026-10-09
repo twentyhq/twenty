@@ -27,13 +27,15 @@ export const upsertCallRecordingOrThrow = async ({
   }
 
   if (isDefined(syncState)) {
-    await updateCallRecordingOrThrow({
+    const isUpdated = await updateCallRecordingOrThrow({
       coreApiClient,
       callRecordingId,
       fields,
     });
 
-    return { callRecordingId, created: false };
+    return isUpdated
+      ? { callRecordingId, created: false }
+      : { callRecordingId, created: false, skipped: true };
   }
 
   try {
@@ -66,12 +68,14 @@ export const upsertCallRecordingOrThrow = async ({
       return { callRecordingId, created: false, skipped: true };
     }
 
-    await updateCallRecordingOrThrow({
+    const isUpdated = await updateCallRecordingOrThrow({
       coreApiClient,
       callRecordingId,
       fields,
     });
 
-    return { callRecordingId, created: false };
+    return isUpdated
+      ? { callRecordingId, created: false }
+      : { callRecordingId, created: false, skipped: true };
   }
 };

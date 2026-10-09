@@ -35,7 +35,9 @@ const SYNC_STATE_QUERY = {
 
 const buildCoreApiClient = (): Pick<CoreApiClient, 'query' | 'mutation'> => ({
   query: vi.fn().mockResolvedValue(EMPTY_RECORDINGS),
-  mutation: vi.fn().mockResolvedValue({}),
+  mutation: vi
+    .fn()
+    .mockResolvedValue({ updateCallRecordings: [{ id: CALL_RECORDING_ID }] }),
 });
 
 describe('upsertCallRecordingOrThrow', () => {
@@ -52,11 +54,36 @@ describe('upsertCallRecordingOrThrow', () => {
     ).resolves.toEqual({ callRecordingId: CALL_RECORDING_ID, created: false });
     expect(coreApiClient.query).not.toHaveBeenCalled();
     expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
-      updateCallRecording: {
-        __args: { id: CALL_RECORDING_ID, data: { title: 'Customer call' } },
+      updateCallRecordings: {
+        __args: {
+          filter: { id: { eq: CALL_RECORDING_ID }, deletedAt: { is: 'NULL' } },
+          data: { title: 'Customer call' },
+        },
         id: true,
       },
     });
+  });
+
+  it('skips a recording deleted after its lookup instead of updating it', async () => {
+    const coreApiClient = buildCoreApiClient();
+
+    vi.mocked(coreApiClient.mutation).mockResolvedValueOnce({
+      updateCallRecordings: [],
+    });
+
+    await expect(
+      upsertCallRecordingOrThrow({
+        coreApiClient,
+        callRecordingId: CALL_RECORDING_ID,
+        syncState: LIVE_SYNC_STATE,
+        fields: { title: 'Customer call' },
+      }),
+    ).resolves.toEqual({
+      callRecordingId: CALL_RECORDING_ID,
+      created: false,
+      skipped: true,
+    });
+    expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
   });
 
   it('creates a missing recording with one write and no lookup', async () => {
@@ -102,8 +129,11 @@ describe('upsertCallRecordingOrThrow', () => {
       SYNC_STATE_QUERY,
     );
     expect(coreApiClient.mutation).toHaveBeenNthCalledWith(2, {
-      updateCallRecording: {
-        __args: { id: CALL_RECORDING_ID, data: { title: 'Customer call' } },
+      updateCallRecordings: {
+        __args: {
+          filter: { id: { eq: CALL_RECORDING_ID }, deletedAt: { is: 'NULL' } },
+          data: { title: 'Customer call' },
+        },
         id: true,
       },
     });
@@ -188,10 +218,16 @@ describe('upsertCallRecordingOrThrow', () => {
         created: !isExisting,
       });
       const mutationName = isExisting
-        ? 'updateCallRecording'
+        ? 'updateCallRecordings'
         : 'createCallRecording';
       const argumentsForMutation = isExisting
-        ? { id: CALL_RECORDING_ID, data: { transcript } }
+        ? {
+            filter: {
+              id: { eq: CALL_RECORDING_ID },
+              deletedAt: { is: 'NULL' },
+            },
+            data: { transcript },
+          }
         : { data: { id: CALL_RECORDING_ID, transcript } };
 
       expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({

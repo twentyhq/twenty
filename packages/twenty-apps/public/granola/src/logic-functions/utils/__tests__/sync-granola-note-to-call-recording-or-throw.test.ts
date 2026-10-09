@@ -81,7 +81,9 @@ const syncNote = async ({
             },
           },
     ),
-    mutation: vi.fn().mockResolvedValue({}),
+    mutation: vi
+      .fn()
+      .mockResolvedValue({ updateCallRecordings: [{ id: CALL_RECORDING_ID }] }),
   };
   const client = {
     getNote: vi.fn().mockResolvedValue(note),
@@ -131,9 +133,9 @@ describe('syncGranolaNoteToCallRecordingOrThrow', () => {
       SYNC_STATE_QUERY,
     );
     expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
-      updateCallRecording: {
+      updateCallRecordings: {
         __args: {
-          id: CALL_RECORDING_ID,
+          filter: { id: { eq: CALL_RECORDING_ID }, deletedAt: { is: 'NULL' } },
           data: expect.objectContaining({
             status: 'COMPLETED',
             granolaNoteUpdatedAt: '2026-09-06T09:00:00Z',
@@ -205,9 +207,9 @@ describe('syncGranolaNoteToCallRecordingOrThrow', () => {
     });
 
     expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
-      updateCallRecording: {
+      updateCallRecordings: {
         __args: {
-          id: CALL_RECORDING_ID,
+          filter: { id: { eq: CALL_RECORDING_ID }, deletedAt: { is: 'NULL' } },
           data: expect.objectContaining({
             granolaNoteUpdatedAt: NOTE_UPDATED_AT,
           }),
@@ -228,9 +230,9 @@ describe('syncGranolaNoteToCallRecordingOrThrow', () => {
     });
 
     expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
-      updateCallRecording: {
+      updateCallRecordings: {
         __args: {
-          id: CALL_RECORDING_ID,
+          filter: { id: { eq: CALL_RECORDING_ID }, deletedAt: { is: 'NULL' } },
           data: expect.objectContaining({
             calendarEventId: CALENDAR_EVENT_ID,
             granolaNoteUpdatedAt: EDITED_NOTE_UPDATED_AT,
@@ -260,9 +262,12 @@ describe('syncGranolaNoteToCallRecordingOrThrow', () => {
       });
 
       expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
-        updateCallRecording: {
+        updateCallRecordings: {
           __args: {
-            id: CALL_RECORDING_ID,
+            filter: {
+              id: { eq: CALL_RECORDING_ID },
+              deletedAt: { is: 'NULL' },
+            },
             data: expect.objectContaining({ granolaNoteUpdatedAt: null }),
           },
           id: true,
@@ -282,9 +287,9 @@ describe('syncGranolaNoteToCallRecordingOrThrow', () => {
     });
 
     expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
-      updateCallRecording: {
+      updateCallRecordings: {
         __args: {
-          id: CALL_RECORDING_ID,
+          filter: { id: { eq: CALL_RECORDING_ID }, deletedAt: { is: 'NULL' } },
           data: expect.not.objectContaining({ summary: expect.anything() }),
         },
         id: true,
