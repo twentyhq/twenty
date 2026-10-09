@@ -81,4 +81,13 @@ describe('fromWorkflowManifestToUniversalFlatCommandMenuItem', () => {
       isPinned: false,
     });
   });
+
+  it('hides the command while the core workflows index is off, since only the core path can start it', () => {
+    expect(
+      build(manifestWithTriggerSettings({ availability: { type: 'GLOBAL' } })),
+    ).toMatchObject({
+      conditionalAvailabilityExpression:
+        'featureFlags.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
+    });
+  });
 });
