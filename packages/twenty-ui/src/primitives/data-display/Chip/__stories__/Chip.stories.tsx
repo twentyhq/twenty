@@ -3,6 +3,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconUser, IconX } from '@ui/icon';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { Text } from '@ui/primitives/typography/Text/Text';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -29,17 +31,9 @@ export const Default: Story = {
     size: 'sm',
     variant: 'soft',
     color: 'primary',
-    disabled: false,
     maxWidth: 200,
   },
   decorators: [ComponentDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
-    await expect(
-      getComputedStyle(canvas.getByText('Chip test')).cursor,
-    ).not.toBe('pointer');
-  },
 };
 
 export const WithLeftAvatar: Story = {
@@ -64,10 +58,14 @@ export const WithLeftIcon: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const EmptyLabel: Story = {
+export const CallerFallback: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
-    children: '',
+    children: (
+      <Text render={<span />} style={{ color: 'var(--t-font-color-tertiary)' }}>
+        Untitled
+      </Text>
+    ),
     clickable: true,
     variant: 'ghost',
     startElement: <Avatar name="?" colorSeed="empty" size="sm" />,
@@ -81,7 +79,6 @@ export const Catalog: CatalogStory<Story, typeof Chip> = {
     size: { control: false },
     variant: { control: false },
     color: { control: false },
-    disabled: { control: false },
     className: { control: false },
     endElement: { control: false },
     startElement: { control: false },
@@ -111,7 +108,7 @@ export const Catalog: CatalogStory<Story, typeof Chip> = {
               case 'active':
                 return { className: state };
               case 'disabled':
-                return { disabled: true };
+                return { render: <button type="button" disabled /> };
               default:
                 return {};
             }
@@ -135,7 +132,6 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof Chip> = {
     size: { control: false },
     variant: { control: false },
     color: { control: false },
-    disabled: { control: false },
     className: { control: false },
     endElement: { control: false },
     startElement: { control: false },
@@ -165,7 +161,7 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof Chip> = {
               case 'active':
                 return { className: state };
               case 'disabled':
-                return { disabled: true };
+                return { render: <button type="button" disabled /> };
               default:
                 return {};
             }
@@ -198,7 +194,11 @@ export const CatalogDark: typeof Catalog = {
 
 export const PointerAndKeyboard: Story = {
   decorators: [ComponentDecorator],
-  args: { children: 'Open details', onClick: fn() },
+  args: {
+    children: 'Open details',
+    render: <button type="button" />,
+    onClick: fn(),
+  },
   play: async ({ canvasElement, args }) => {
     const control = within(canvasElement).getByRole('button', {
       name: 'Open details',
@@ -217,7 +217,11 @@ export const PointerAndKeyboard: Story = {
 
 export const Disabled: Story = {
   decorators: [ComponentDecorator],
-  args: { children: 'Unavailable', disabled: true, onClick: fn() },
+  args: {
+    children: 'Unavailable',
+    render: <button type="button" disabled />,
+    onClick: fn(),
+  },
   play: async ({ canvasElement, args }) => {
     const control = within(canvasElement).getByRole('button', {
       name: 'Unavailable',
@@ -244,5 +248,97 @@ export const ContentAndSlots: Story = {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Rich content')).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'Remove' }));
+  },
+};
+
+export const StableDefault: Story = {
+  decorators: [ComponentDecorator],
+  args: { children: 'Presentational chip', onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const chip = canvas.getByText('Presentational chip').parentElement;
+    await expect(chip?.tagName).toBe('DIV');
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByText('Presentational chip'));
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const IconOnly: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    render: <button type="button" />,
+    'aria-label': 'Open profile',
+    startElement: <IconUser size={14} aria-hidden />,
+    onClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const control = canvas.getByRole('button', { name: 'Open profile' });
+    await expect(canvas.queryByText('Untitled')).not.toBeInTheDocument();
+    control.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+    await expect(control).toHaveFocus();
+  },
+};
+
+export const ExplicitLink: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    render: <a href="#chip-link" aria-label="https://twenty.com" />,
+    children: 'https://twenty.com',
+    clickable: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const link = canvas.getByRole('link', { name: 'https://twenty.com' });
+    await expect(link).toHaveAttribute('href', '#chip-link');
+    await expect(link.querySelector('a')).toBeNull();
+    link.focus();
+    await expect(link).toHaveFocus();
+  },
+};
+
+export const TruncationAndTooltip: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    children: <strong>Quarterly customer research findings.pdf</strong>,
+    variant: 'soft',
+    maxWidth: 150,
+    tooltipContent: 'Research findings\nPDF document',
+    tooltipDelay: 0,
+    isTooltipMultiline: true,
+    tooltipPlace: 'top',
+  },
+  play: async ({ canvasElement }) => {
+    const content = within(canvasElement).getByText(
+      'Quarterly customer research findings.pdf',
+    ).parentElement;
+    if (!isDefined(content)) {
+      throw new Error('Chip content must have a text container');
+    }
+    await expect(content.scrollWidth).toBeGreaterThan(content.clientWidth);
+    await expect(getComputedStyle(content).textOverflow).toBe('ellipsis');
+    await userEvent.hover(content);
+    await expect(
+      await within(document.body).findByRole('tooltip'),
+    ).toHaveTextContent('Research findings PDF document');
+    await userEvent.unhover(content);
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const WithoutTruncation: Story = {
+  decorators: [ComponentDecorator],
+  args: { children: 'Unconstrained content', truncate: false },
+  play: async ({ canvasElement }) => {
+    const content = within(canvasElement).getByText('Unconstrained content');
+    await expect(getComputedStyle(content).textOverflow).not.toBe('ellipsis');
+    const chip = content.parentElement;
+    if (!isDefined(chip)) {
+      throw new Error('Chip content must have a root');
+    }
+    await expect(getComputedStyle(chip).overflow).not.toBe('hidden');
   },
 };

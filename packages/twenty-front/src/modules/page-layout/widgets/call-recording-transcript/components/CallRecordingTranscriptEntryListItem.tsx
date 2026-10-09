@@ -1,3 +1,4 @@
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { CallRecordingTranscriptEntryWords } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryWords';
 import { type CallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptEntryPlaybackPhase';
 import { formatCallRecordingTranscriptTimestamp } from '@/page-layout/widgets/call-recording-transcript/utils/formatCallRecordingTranscriptTimestamp';
@@ -136,7 +137,7 @@ export const CallRecordingTranscriptEntryListItem = ({
           }
           style={{ paddingInlineStart: 0 }}
         >
-          {speakerName}
+          {getChipLabel(speakerName).content}
         </Chip>
         {isDefined(formattedStartTimestamp) && (
           <StyledTimestamp
