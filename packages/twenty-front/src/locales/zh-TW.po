@@ -479,6 +479,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} 個 API 金鑰} other {{apiKeyC
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} 想要："
 
+#. js-lingui-id: ST9xGf
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+msgid "{appName} preferences"
+msgstr ""
+
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
 msgid "{appName} would like to:"
@@ -1370,6 +1375,7 @@ msgstr "透過您偏好的 MCP 用戶端（例如 Claude、Codex 或 Cursor）�
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Account"
 msgstr "帳戶"
 
@@ -3114,6 +3120,7 @@ msgstr "單引號與句點"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -3140,9 +3147,11 @@ msgstr "應用程式日誌會保留 {retentionInDays} 天。"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "App preferences"
 msgstr ""
 
@@ -3828,6 +3837,7 @@ msgstr "自動為人員創建聯繫人。"
 
 #. js-lingui-id: RpExX0
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "接收或發送電子郵件時自動創建人員記錄"
 
@@ -4353,9 +4363,9 @@ msgstr "caldav.example.com"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Calendar"
 msgstr "日曆"
 
@@ -5032,6 +5042,11 @@ msgstr "選擇搜尋記錄時使用哪些欄位。"
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
+msgstr ""
+
+#. js-lingui-id: 22LF79
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
+msgid "Choose your preferences for the apps installed on your workspace by the admin"
 msgstr ""
 
 #. js-lingui-id: 3wV73y
@@ -5731,6 +5746,7 @@ msgstr "設定此小工具以顯示欄位"
 
 #. js-lingui-id: no/yG9
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Configure what emails should get synced"
 msgstr "設定應同步哪些電子郵件"
 
@@ -5842,16 +5858,19 @@ msgstr "請先連結 Google、Microsoft 或 CalDAV 並啟用日曆同步，然�
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "透過 IMAP/SMTP 連接"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "連接到 Google"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "連接到 Microsoft"
 
@@ -5932,6 +5951,7 @@ msgstr "聯絡管理員"
 #. js-lingui-id: Y2y0mC
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Contact auto-creation"
 msgstr "聯繫人自動創建"
 
@@ -7655,6 +7675,7 @@ msgstr "定義此工具的功能"
 #. js-lingui-id: bQkkFU
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
 msgstr "定義在您的工作區中對其他用戶可見的內容"
 
@@ -8438,11 +8459,13 @@ msgstr "不要自動創建聯繫人。"
 
 #. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Don't create contacts from/to Gmail, Outlook emails"
 msgstr "不要從／向 Gmail、Outlook 電子郵件創建聯絡人"
 
 #. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Don't import emails from team@ support@ noreply@..."
 msgstr "不要匯入來自 team@、support@、noreply@ 的電子郵件..."
 
@@ -9093,13 +9116,13 @@ msgstr "電子郵件"
 
 #. js-lingui-id: BXEcos
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "電子郵件"
@@ -9113,6 +9136,11 @@ msgstr "電子郵件與行事曆"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
 msgstr "已交給服務提供者的電子郵件無法撤回。這會停止所有仍在等待傳送的電子郵件。"
+
+#. js-lingui-id: USBKh+
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Emails from the blocklist will be ignored regardless of this setting."
+msgstr ""
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -9906,11 +9934,13 @@ msgstr "所有內容"
 
 #. js-lingui-id: QQlMid
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Exclude group emails"
 msgstr "排除群組電子郵件"
 
 #. js-lingui-id: +tk2yZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Exclude non-professional emails"
 msgstr "排除非專業電子郵件"
 
@@ -11426,6 +11456,7 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -11556,7 +11587,7 @@ msgid "Global search"
 msgstr "全域搜尋"
 
 #. js-lingui-id: DSJEta
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Gmail"
 msgstr ""
 
@@ -11612,7 +11643,7 @@ msgid "Google"
 msgstr "Google"
 
 #. js-lingui-id: ebIDwV
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Google Calendar"
 msgstr ""
 
@@ -12285,6 +12316,11 @@ msgstr "圖片"
 msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "圖片 \"{fileName}\" 超過 {maxUploadSize}"
 
+#. js-lingui-id: Grur3I
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "IMAP"
+msgstr ""
+
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Configuration"
@@ -12383,6 +12419,7 @@ msgstr "實施合作夥伴"
 
 #. js-lingui-id: l3s5ri
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Import"
 msgstr "導入"
 
@@ -14293,6 +14330,12 @@ msgstr "管理帳單資訊"
 msgid "Manage connections used by this app to call {0}."
 msgstr "管理此應用程式用於呼叫 {0} 的連接。"
 
+#. js-lingui-id: bjuasY
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Manage events"
+msgstr ""
+
 #. js-lingui-id: Dt05oz
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Manage feature flags for this workspace"
@@ -14771,6 +14814,11 @@ msgstr "分鐘"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Minutes between triggers"
 msgstr "觸發器之間的分鐘數"
+
+#. js-lingui-id: G40We3
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppStatusCell.tsx
+msgid "Missing account"
+msgstr ""
 
 #. js-lingui-id: cOFpUq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -17305,6 +17353,7 @@ msgstr "用於計算Webhook有效負載的HMAC簽名的可選密鑰"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/side-panel/components/SidePanelOptionsDropdown.tsx
@@ -17464,7 +17513,7 @@ msgid "Outage"
 msgstr "中斷"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Outlook"
 msgstr ""
 
@@ -17867,6 +17916,7 @@ msgid "permission flag"
 msgstr "權限旗標"
 
 #. js-lingui-id: 9cDpsw
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -18614,6 +18664,12 @@ msgstr "查看更新記錄"
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Read documentation"
 msgstr "閱讀說明文件"
+
+#. js-lingui-id: BksH/i
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Read emails"
+msgstr ""
 
 #. js-lingui-id: U26cMX
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -21110,6 +21166,12 @@ msgstr "發送電子郵件"
 msgid "Send Email"
 msgstr "發送電子郵件"
 
+#. js-lingui-id: YUviZE
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Send emails"
+msgstr ""
+
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
@@ -22250,6 +22312,7 @@ msgstr "所有記錄頁面共用的靜態文字"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -25515,6 +25578,7 @@ msgstr "適用於樞紐／聯結表"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -25967,6 +26031,7 @@ msgstr "紫羅蘭色"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx

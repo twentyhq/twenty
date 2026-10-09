@@ -479,6 +479,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount}개 API 키} other {{apiKeyCount
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName}이(가) 다음 권한을 요청합니다:"
 
+#. js-lingui-id: ST9xGf
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+msgid "{appName} preferences"
+msgstr ""
+
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
 msgid "{appName} would like to:"
@@ -1370,6 +1375,7 @@ msgstr "Claude, Codex 또는 Cursor와 같은 선호하는 MCP 클라이언트�
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Account"
 msgstr "계정"
 
@@ -3114,6 +3120,7 @@ msgstr "아포스트로피와 마침표"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -3140,9 +3147,11 @@ msgstr "앱 로그는 {retentionInDays}일 동안 보관됩니다."
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "App preferences"
 msgstr ""
 
@@ -3828,6 +3837,7 @@ msgstr "사람들에 대한 연락처를 자동으로 생성합니다."
 
 #. js-lingui-id: RpExX0
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "이메일을 받거나 보낼 때 사람 레코드를 자동으로 생성"
 
@@ -4353,9 +4363,9 @@ msgstr "caldav.example.com"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Calendar"
 msgstr "캘린더"
 
@@ -5032,6 +5042,11 @@ msgstr "레코드 검색 시 사용할 필드를 선택합니다."
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
+msgstr ""
+
+#. js-lingui-id: 22LF79
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
+msgid "Choose your preferences for the apps installed on your workspace by the admin"
 msgstr ""
 
 #. js-lingui-id: 3wV73y
@@ -5731,6 +5746,7 @@ msgstr "필드를 표시하도록 이 위젯을 구성하세요"
 
 #. js-lingui-id: no/yG9
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Configure what emails should get synced"
 msgstr "동기화할 이메일을 구성하세요"
 
@@ -5842,16 +5858,19 @@ msgstr "이벤트를 만들기 전에 Google, Microsoft 또는 CalDAV를 연결�
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "IMAP/SMTP로 연결"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Google과 연결"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Microsoft와 연결"
 
@@ -5932,6 +5951,7 @@ msgstr "관리자에게 문의"
 #. js-lingui-id: Y2y0mC
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Contact auto-creation"
 msgstr "연락처 자동 생성"
 
@@ -7655,6 +7675,7 @@ msgstr "이 도구의 기능을 정의하세요"
 #. js-lingui-id: bQkkFU
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
 msgstr "워크스페이스에서 다른 사용자에게 표시될 내용을 정의합니다"
 
@@ -8438,11 +8459,13 @@ msgstr "연락처를 자동 생성하지 않음."
 
 #. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Don't create contacts from/to Gmail, Outlook emails"
 msgstr "Gmail, Outlook 이메일에서 연락처를 생성하지 마십시오."
 
 #. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Don't import emails from team@ support@ noreply@..."
 msgstr "team@, support@, noreply@...에서 이메일을 가져오지 마세요"
 
@@ -9093,13 +9116,13 @@ msgstr "이메일"
 
 #. js-lingui-id: BXEcos
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "이메일"
@@ -9113,6 +9136,11 @@ msgstr "이메일 및 캘린더"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
 msgstr "이미 제공업체에 전달된 이메일은 회수할 수 없습니다. 이렇게 하면 아직 전송 대기 중인 모든 이메일의 전송이 중지됩니다."
+
+#. js-lingui-id: USBKh+
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Emails from the blocklist will be ignored regardless of this setting."
+msgstr ""
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -9906,11 +9934,13 @@ msgstr "모두"
 
 #. js-lingui-id: QQlMid
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Exclude group emails"
 msgstr "그룹 이메일 제외"
 
 #. js-lingui-id: +tk2yZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Exclude non-professional emails"
 msgstr "비업무용 이메일 제외"
 
@@ -11426,6 +11456,7 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -11556,7 +11587,7 @@ msgid "Global search"
 msgstr "전역 검색"
 
 #. js-lingui-id: DSJEta
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Gmail"
 msgstr ""
 
@@ -11612,7 +11643,7 @@ msgid "Google"
 msgstr "구글"
 
 #. js-lingui-id: ebIDwV
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Google Calendar"
 msgstr ""
 
@@ -12308,6 +12339,11 @@ msgstr "이미지"
 msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "이미지 \"{fileName}\"이(가) {maxUploadSize}를 초과합니다"
 
+#. js-lingui-id: Grur3I
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "IMAP"
+msgstr ""
+
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Configuration"
@@ -12406,6 +12442,7 @@ msgstr "구현 파트너"
 
 #. js-lingui-id: l3s5ri
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Import"
 msgstr "가져오기"
 
@@ -14316,6 +14353,12 @@ msgstr "청구 정보를 관리하세요"
 msgid "Manage connections used by this app to call {0}."
 msgstr "이 애플리케이션의 {0} 호출에 사용되는 연결을 관리합니다."
 
+#. js-lingui-id: bjuasY
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Manage events"
+msgstr ""
+
 #. js-lingui-id: Dt05oz
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Manage feature flags for this workspace"
@@ -14794,6 +14837,11 @@ msgstr "분"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Minutes between triggers"
 msgstr "트리거 간의 분"
+
+#. js-lingui-id: G40We3
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppStatusCell.tsx
+msgid "Missing account"
+msgstr ""
 
 #. js-lingui-id: cOFpUq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -17328,6 +17376,7 @@ msgstr "Webhook 페이로드에 대한 HMAC 서명을 계산하는 데 사용되
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/side-panel/components/SidePanelOptionsDropdown.tsx
@@ -17487,7 +17536,7 @@ msgid "Outage"
 msgstr "장애"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Outlook"
 msgstr ""
 
@@ -17890,6 +17939,7 @@ msgid "permission flag"
 msgstr "권한 플래그"
 
 #. js-lingui-id: 9cDpsw
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -18637,6 +18687,12 @@ msgstr "변경 로그 보기"
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Read documentation"
 msgstr "문서 읽기"
+
+#. js-lingui-id: BksH/i
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Read emails"
+msgstr ""
 
 #. js-lingui-id: U26cMX
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -21133,6 +21189,12 @@ msgstr "이메일 보내기"
 msgid "Send Email"
 msgstr "이메일 보내기"
 
+#. js-lingui-id: YUviZE
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Send emails"
+msgstr ""
+
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
@@ -22273,6 +22335,7 @@ msgstr "모든 레코드 페이지에서 공유되는 정적 텍스트"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -25568,6 +25631,7 @@ msgstr "피벗/정션 테이블에 유용합니다"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -26020,6 +26084,7 @@ msgstr "바이올렛"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
