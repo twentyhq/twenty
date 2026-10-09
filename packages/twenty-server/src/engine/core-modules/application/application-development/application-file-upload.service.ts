@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import bytes from 'bytes';
+import { createHash } from 'node:crypto';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -14,6 +15,8 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { settings } from 'src/engine/constants/settings';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
@@ -32,6 +35,7 @@ const APPLICATION_FILE_SETTINGS = {
 @Injectable()
 export class ApplicationFileUploadService {
   constructor(
+    private readonly fileStorageService: FileStorageService,
     private readonly applicationLookupService: ApplicationLookupService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
@@ -57,6 +61,7 @@ export class ApplicationFileUploadService {
 
     const result: CreateApplicationFileUploadsResultDTO = {
       targets: [],
+      unchangedFiles: [],
       errors: [],
     };
 
@@ -77,7 +82,43 @@ export class ApplicationFileUploadService {
       validFiles.push(file);
     }
 
-    const requests: BatchUploadTargetRequest[] = validFiles.map((file) => ({
+    const reusableFiles = validFiles.filter((file) => isDefined(file.sha256));
+    const uploadedFiles =
+      reusableFiles.length > 0
+        ? await this.fileRepository.find(workspaceId, {
+            where: {
+              applicationId: application.id,
+              status: FILE_STATUS.UPLOADED,
+              path: In(
+                reusableFiles.map(
+                  (file) => `${file.fileFolder}/${file.filePath}`,
+                ),
+              ),
+            },
+          })
+        : [];
+    const uploadedPaths = new Set(uploadedFiles.map((file) => file.path));
+    const filesToUpload: ApplicationFileUploadRequestInput[] = [];
+
+    for (const file of validFiles) {
+      if (
+        uploadedPaths.has(`${file.fileFolder}/${file.filePath}`) &&
+        (await this.isFileUnchanged({
+          workspaceId,
+          applicationUniversalIdentifier,
+          file,
+        }))
+      ) {
+        result.unchangedFiles.push({
+          fileFolder: file.fileFolder,
+          filePath: file.filePath,
+        });
+      } else {
+        filesToUpload.push(file);
+      }
+    }
+
+    const requests: BatchUploadTargetRequest[] = filesToUpload.map((file) => ({
       workspaceId,
       applicationUniversalIdentifier,
       applicationId: application.id,
@@ -91,7 +132,7 @@ export class ApplicationFileUploadService {
       await this.fileUploadTargetService.createUploadTargetsBatch(requests);
 
     batchResults.forEach((batchResult, index) => {
-      const file = validFiles[index];
+      const file = filesToUpload[index];
 
       if (batchResult.success) {
         result.targets.push({
@@ -165,6 +206,64 @@ export class ApplicationFileUploadService {
     });
 
     return result;
+  }
+
+  private async isFileUnchanged({
+    workspaceId,
+    applicationUniversalIdentifier,
+    file,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    file: ApplicationFileUploadRequestInput;
+  }): Promise<boolean> {
+    if (!isDefined(file.sha256)) {
+      return false;
+    }
+
+    const location = {
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: file.fileFolder,
+      resourcePath: file.filePath,
+    };
+
+    try {
+      const metadata = await this.fileStorageService.getFileMetadata(location);
+
+      if (metadata?.size !== file.size || !isDefined(metadata.checksum)) {
+        return false;
+      }
+
+      const stream = await this.fileStorageService.readFile(location);
+      const hash = createHash('sha256');
+      let size = 0;
+
+      for await (const chunk of stream) {
+        size += chunk.length;
+        if (size > file.size) {
+          return false;
+        }
+        hash.update(chunk);
+      }
+
+      if (
+        size !== file.size ||
+        hash.digest('hex') !== file.sha256.toLowerCase()
+      ) {
+        return false;
+      }
+
+      const currentMetadata =
+        await this.fileStorageService.getFileMetadata(location);
+
+      return (
+        currentMetadata?.size === file.size &&
+        currentMetadata.checksum === metadata.checksum
+      );
+    } catch {
+      return false;
+    }
   }
 
   private getFileValidationError(

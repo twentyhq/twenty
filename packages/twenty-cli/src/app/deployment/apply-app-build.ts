@@ -198,9 +198,7 @@ export const applyAppBuild = async ({
     );
   }
 
-  output.progress(
-    `Uploading ${build.files.length} ${build.files.length === 1 ? 'file' : 'files'}…`,
-  );
+  output.progress('Checking files…');
   await runPhase('upload', () =>
     uploadAppFiles({
       build,
@@ -208,6 +206,12 @@ export const applyAppBuild = async ({
       target,
       signal,
       progress: upload,
+      onFilesToUpload: (count) =>
+        output.progress(
+          count === 0
+            ? 'Files already up to date.'
+            : `Uploading ${count} ${count === 1 ? 'file' : 'files'}…`,
+        ),
     }),
   );
   output.progress('Synchronizing the app…');

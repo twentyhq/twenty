@@ -1118,6 +1118,7 @@ export interface ConnectedImapSmtpCaldavAccount {
 export interface CreateApplicationFileUploadsResult {
     errors: ApplicationFileUploadError[]
     targets: ApplicationFileUploadTarget[]
+    unchangedFiles: UnchangedApplicationFile[]
     __typename: 'CreateApplicationFileUploadsResult'
 }
 
@@ -3314,6 +3315,12 @@ export interface TwoFactorAuthenticationRecoveryStatus {
     __typename: 'TwoFactorAuthenticationRecoveryStatus'
 }
 
+export interface UnchangedApplicationFile {
+    fileFolder: FileFolder
+    filePath: Scalars['String']
+    __typename: 'UnchangedApplicationFile'
+}
+
 export type UnsubscribeHostnameStatus = 'ACTIVE' | 'FAILED' | 'PENDING'
 
 export interface UnsubscribeTopic {
@@ -4325,7 +4332,7 @@ export interface ApplicationFileUploadErrorGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ApplicationFileUploadRequestInput {fileFolder: FileFolder,filePath: Scalars['String'],size: Scalars['Int']}
+export interface ApplicationFileUploadRequestInput {fileFolder: FileFolder,filePath: Scalars['String'],sha256?: (Scalars['String'] | null),size: Scalars['Int']}
 
 export interface ApplicationFileUploadTargetGenqlSelection{
     contentType?: boolean | number
@@ -5104,6 +5111,7 @@ export interface CreateAppMessageChannelInput {connectedAccountId: Scalars['UUID
 export interface CreateApplicationFileUploadsResultGenqlSelection{
     errors?: ApplicationFileUploadErrorGenqlSelection
     targets?: ApplicationFileUploadTargetGenqlSelection
+    unchangedFiles?: UnchangedApplicationFileGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7623,6 +7631,13 @@ export interface TwoFactorAuthenticationRecoveryStatusGenqlSelection{
 }
 
 export interface UUIDFilterComparison {eq?: (Scalars['UUID'] | null),gt?: (Scalars['UUID'] | null),gte?: (Scalars['UUID'] | null),iLike?: (Scalars['UUID'] | null),in?: (Scalars['UUID'][] | null),is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null),like?: (Scalars['UUID'] | null),lt?: (Scalars['UUID'] | null),lte?: (Scalars['UUID'] | null),neq?: (Scalars['UUID'] | null),notILike?: (Scalars['UUID'] | null),notIn?: (Scalars['UUID'][] | null),notLike?: (Scalars['UUID'] | null)}
+
+export interface UnchangedApplicationFileGenqlSelection{
+    fileFolder?: boolean | number
+    filePath?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface UnsubscribeTopicGenqlSelection{
     createdAt?: boolean | number
@@ -10715,6 +10730,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       return TwoFactorAuthenticationRecoveryStatus_possibleTypes.includes(obj.__typename)
     }
     
+
+
+    const UnchangedApplicationFile_possibleTypes: string[] = ['UnchangedApplicationFile']
+    export const isUnchangedApplicationFile = (obj?: { __typename?: any } | null): obj is UnchangedApplicationFile => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUnchangedApplicationFile"')
+      return UnchangedApplicationFile_possibleTypes.includes(obj.__typename)
+    }
+
 
 
     const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']

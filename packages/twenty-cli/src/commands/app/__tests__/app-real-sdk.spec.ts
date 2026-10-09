@@ -134,6 +134,7 @@ const server = await startTestServer((request, response) => {
             uploadUrl: `${server.url}/upload/file-${index}`,
             contentType: 'application/octet-stream',
           })),
+          unchangedFiles: [],
           errors: [],
         },
       },

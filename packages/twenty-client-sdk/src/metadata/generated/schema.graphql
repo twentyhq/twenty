@@ -463,6 +463,7 @@ type ApplicationFileUploadError {
 input ApplicationFileUploadRequestInput {
   fileFolder: FileFolder!
   filePath: String!
+  sha256: String
   size: Int!
 }
 
@@ -1266,6 +1267,7 @@ input CreateAppMessageChannelInput {
 type CreateApplicationFileUploadsResult {
   errors: [ApplicationFileUploadError!]!
   targets: [ApplicationFileUploadTarget!]!
+  unchangedFiles: [UnchangedApplicationFile!]!
 }
 
 type CreateApplicationRegistration {
@@ -4551,6 +4553,11 @@ input UUIDFilterComparison {
   notILike: UUID
   notIn: [UUID!]
   notLike: UUID
+}
+
+type UnchangedApplicationFile {
+  fileFolder: FileFolder!
+  filePath: String!
 }
 
 enum UnsubscribeHostnameStatus {

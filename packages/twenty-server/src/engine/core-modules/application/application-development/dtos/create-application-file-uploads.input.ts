@@ -6,6 +6,8 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsInt,
+  IsHash,
+  IsOptional,
   IsNotEmpty,
   Min,
   ValidateNested,
@@ -26,6 +28,11 @@ export class ApplicationFileUploadRequestInput {
   @IsInt()
   @Min(1)
   size: number;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsHash('sha256')
+  sha256?: string;
 }
 
 @ArgsType()
