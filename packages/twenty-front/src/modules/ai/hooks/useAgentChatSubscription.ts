@@ -405,6 +405,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
       // Resubscribing clears the pending flags, so a started recovery runs until a broadcast arrives or it gives up
       if (
+        accessDenied ||
         (!isPending && recoveryAttempts === 0) ||
         Date.now() - lastBroadcastAt <= AGENT_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS
       ) {
