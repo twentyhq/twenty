@@ -1,12 +1,14 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { type RichTextMetadata } from 'twenty-shared/types';
+import {
+  type RichTextMetadata,
+  richTextValueSchema,
+} from 'twenty-shared/types';
 import {
   convertTipTapBlocksToMarkdown,
   isDefined,
   resolveRichTextVariables,
   resolveStringTemplate,
 } from 'twenty-shared/utils';
-import { z } from 'zod';
 
 import { convertMarkdownToBlocknote } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
 
@@ -14,10 +16,7 @@ import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-s
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
 
 // The step editor is TipTap but saves its JSON under a key named blocknote
-const workflowStepTipTapValueSchema = z.object({
-  blocknote: z.string().nullable().optional(),
-  markdown: z.string().nullable(),
-});
+const workflowStepTipTapValueSchema = richTextValueSchema;
 
 export const convertStepTipTapToRichText = (
   stepObjectRecord: Record<string, unknown>,
