@@ -102,7 +102,11 @@ export const ImageInput = ({
                 {...fileInputProps}
                 ref={mergedFileInputRef}
                 className={clsx(styles.fileInput, fileInputProps.className)}
+                children={undefined}
                 type="file"
+                multiple={false}
+                value={undefined}
+                defaultValue={undefined}
                 accept={fileInputProps.accept ?? DEFAULT_IMAGE_ACCEPT}
                 disabled={isUploadDisabled}
                 aria-describedby={

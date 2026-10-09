@@ -157,6 +157,81 @@ describe('ImageInput', () => {
     );
   });
 
+  it('keeps single-file selection when a broader props object enables multiple files', async () => {
+    const user = userEvent.setup();
+    const onFileSelect = vi.fn();
+    const onFileChange = vi.fn(
+      (event: ChangeEvent<HTMLInputElement>) =>
+        event.currentTarget.files?.length,
+    );
+    const broaderInputProps = {
+      accept: 'image/png',
+      multiple: true,
+      onChange: onFileChange,
+    };
+
+    render(
+      <ImageInput
+        onFileSelect={onFileSelect}
+        fileInputProps={broaderInputProps}
+      />,
+    );
+
+    const fileInput = screen.getByLabelText<HTMLInputElement>('Upload', {
+      selector: 'input',
+    });
+    const firstFile = new File(['first'], 'first.png', { type: 'image/png' });
+    const secondFile = new File(['second'], 'second.png', {
+      type: 'image/png',
+    });
+
+    expect(fileInput).not.toHaveAttribute('multiple');
+
+    await user.upload(fileInput, [firstFile, secondFile]);
+
+    expect(onFileChange).toHaveReturnedWith(1);
+    expect(onFileSelect).toHaveBeenCalledOnce();
+    expect(onFileSelect).toHaveBeenCalledWith(firstFile);
+    expect(fileInput).toHaveValue('');
+  });
+
+  it('keeps a hidden empty file control when broader props include component-owned options', async () => {
+    const user = userEvent.setup();
+    const onFileSelect = vi.fn();
+    const broaderInputProps = {
+      accept: 'image/png',
+      children: <span>Unexpected input content</span>,
+      type: 'text',
+      hidden: false,
+      value: 'controlled-file.png',
+      defaultValue: 'initial-file.png',
+    };
+
+    render(
+      <ImageInput
+        onFileSelect={onFileSelect}
+        fileInputProps={broaderInputProps}
+      />,
+    );
+
+    const fileInput = screen.getByLabelText<HTMLInputElement>('Upload', {
+      selector: 'input',
+    });
+    const file = new File(['image'], 'workspace.png', { type: 'image/png' });
+
+    expect(fileInput).toHaveAttribute('type', 'file');
+    expect(fileInput).toHaveAttribute('hidden');
+    expect(fileInput).toHaveValue('');
+    expect(
+      screen.queryByText('Unexpected input content'),
+    ).not.toBeInTheDocument();
+
+    await user.upload(fileInput, file);
+
+    expect(onFileSelect).toHaveBeenCalledWith(file);
+    expect(fileInput).toHaveValue('');
+  });
+
   it('does not select a file after cancellation or an empty change event', () => {
     const onFileSelect = vi.fn();
     const onFileChange = vi.fn();
