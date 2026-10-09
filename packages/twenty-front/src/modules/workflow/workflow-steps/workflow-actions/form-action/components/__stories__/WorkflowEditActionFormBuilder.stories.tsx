@@ -1,4 +1,6 @@
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
@@ -10,6 +12,8 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const DEFAULT_ACTION = {
@@ -98,7 +102,43 @@ export const NonManualTrigger: Story = {
     expect(
       await canvas.findByText('Forms are meant for manual triggers'),
     ).toBeVisible();
+    expect(
+      await canvas.findByText(/it only shows in the workflow run\./),
+    ).toBeVisible();
     expect(canvas.queryByText(/Send to Inbox/)).not.toBeInTheDocument();
+  },
+};
+
+export const NonManualTriggerWithSendToInbox: Story = {
+  args: {
+    triggerType: 'DATABASE_EVENT',
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  beforeEach: () => {
+    const previousWorkspace = jotaiStore.get(currentWorkspaceState.atom);
+
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        {
+          key: FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+          value: true,
+        },
+      ],
+    });
+
+    return () => {
+      jotaiStore.set(currentWorkspaceState.atom, previousWorkspace);
+    };
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(/use a Send to Inbox step instead\./),
+    ).toBeVisible();
   },
 };
 
