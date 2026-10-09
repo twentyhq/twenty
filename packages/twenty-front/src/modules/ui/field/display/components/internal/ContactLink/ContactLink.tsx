@@ -42,6 +42,7 @@ export const ContactLink = ({
         } as React.CSSProperties
       }
       target="_blank"
+      dir="ltr"
       onClick={onClick}
       href={getSafeUrl(href)}
     >

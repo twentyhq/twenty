@@ -131,4 +131,14 @@ export const imageInputTest: TwentyUiGalleryPlayFunction = async ({
   await expect(canvas.getByLabelText('Selected image')).toHaveTextContent(
     'profile.png; image/png; 5 bytes',
   );
+  await waitFor(() => {
+    expect(canvas.getByLabelText('File contents')).toHaveTextContent(
+      '"isFile":true',
+    );
+    expect(canvas.getByLabelText('File contents')).toHaveTextContent(
+      '"text":"image","bytes":[105,109,97,103,101]',
+    );
+    expect(fileInput.value).toBe('');
+    expect(fileInput.files).toHaveLength(0);
+  });
 };

@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "Ish jarayonining avtomatlashtirilgan ishga tushirgich turi"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "Ish jarayoni maydoni havola qilingan obyektga tegishli emas."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "Ish jarayoni yozuv tanlagichi obyektga havola qilishi kerak."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Ish jarayoni ushbu ilova uchun mavjud bo‘lmagan metama’lumotlarga havola qiladi."
 

@@ -18,6 +18,10 @@ export const useRefetchAggregateQueries = () => {
 
     await apolloCoreClient.refetchQueries({
       include: [queryName, groupByAggregateQueryName],
+      // Matching by name also picks up skipped (standby) queries, such as the
+      // footer cell of every table column that has no aggregate operation
+      onQueryUpdated: (observableQuery) =>
+        observableQuery.options.fetchPolicy !== 'standby',
     });
   };
 

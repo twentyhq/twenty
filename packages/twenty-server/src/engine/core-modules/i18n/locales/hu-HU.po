@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "A munkafolyamat automatizált indítási típusa"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "A munkafolyamat-mező nem tartozik a hivatkozott objektumhoz."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "A munkafolyamat rekordválasztójának objektumra kell hivatkoznia."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "A munkafolyamat olyan metaadatokra hivatkozik, amelyek nem érhetők el ehhez az alkalmazáshoz."
 
