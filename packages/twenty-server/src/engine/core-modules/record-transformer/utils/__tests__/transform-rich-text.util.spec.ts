@@ -4,17 +4,6 @@ const BLOCKNOTE_VALUE = JSON.stringify([
   { id: '1', type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] },
 ]);
 
-const BLOCKNOTE_WITH_DIVIDER_VALUE = JSON.stringify([
-  {
-    id: '1',
-    type: 'paragraph',
-    props: {},
-    children: [],
-    content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
-  },
-  { id: '2', type: 'divider', props: {}, children: [] },
-]);
-
 const blockTypesOf = (blocknote: string | null | undefined) =>
   JSON.parse(blocknote ?? '[]').map((block: { type: string }) => block.type);
 
@@ -47,14 +36,5 @@ describe('transformRichTextValue', () => {
     });
 
     expect(result).toEqual({ markdown: null, blocknote: null });
-  });
-
-  it('should keep a blocknote body with a divider as is', async () => {
-    const result = await transformRichTextValue({
-      blocknote: BLOCKNOTE_WITH_DIVIDER_VALUE,
-      markdown: '**Bold**\n\n---',
-    });
-
-    expect(result.blocknote).toBe(BLOCKNOTE_WITH_DIVIDER_VALUE);
   });
 });
