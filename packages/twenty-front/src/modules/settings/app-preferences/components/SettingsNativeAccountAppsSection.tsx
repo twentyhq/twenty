@@ -12,10 +12,6 @@ export const SettingsNativeAccountAppsSection = () => {
   const navigateSettings = useNavigateSettings();
   const { enabledNativeAccountApps } = useEnabledNativeAccountApps();
 
-  if (enabledNativeAccountApps.length === 0) {
-    return null;
-  }
-
   return (
     <SettingsTableListSection<NativeAccountApp>
       title={t`App preferences`}

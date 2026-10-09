@@ -45,22 +45,16 @@ export const SettingsNativeAccountApp = () => {
     .map((group) => group.nativeAccount)
     .filter(isDefined)
     .filter((account) => account.provider === app?.provider);
-  const emailAccounts =
-    app?.hasEmails === true
-      ? providerAccounts.filter((account) =>
-          isDefined(
-            getConnectedAccountSettingsChannels(account).messageChannel,
-          ),
-        )
-      : [];
-  const calendarAccounts =
-    app?.hasCalendar === true
-      ? providerAccounts.filter((account) =>
-          isDefined(
-            getConnectedAccountSettingsChannels(account).calendarChannel,
-          ),
-        )
-      : [];
+  const emailAccounts = app?.hasEmails
+    ? providerAccounts.filter((account) =>
+        isDefined(getConnectedAccountSettingsChannels(account).messageChannel),
+      )
+    : [];
+  const calendarAccounts = app?.hasCalendar
+    ? providerAccounts.filter((account) =>
+        isDefined(getConnectedAccountSettingsChannels(account).calendarChannel),
+      )
+    : [];
 
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconSettings },

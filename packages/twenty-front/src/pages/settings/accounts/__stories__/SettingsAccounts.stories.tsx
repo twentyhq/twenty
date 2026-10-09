@@ -9,6 +9,11 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
+import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
+import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
+import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
@@ -248,6 +253,29 @@ export const AppsWithoutAccountShowMissingAccount: Story = {
     ).toBeVisible();
     expect(
       getTableRow(canvasElement, 'Gmail').queryByText('Missing account'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const BlocklistStaysWhenNoAppIsEnabled: Story = {
+  ...accountGroupsStory,
+  beforeEach: async () => {
+    await seedAccountGroupsStory();
+    jotaiStore.set(isGoogleMessagingEnabledState.atom, false);
+    jotaiStore.set(isGoogleCalendarEnabledState.atom, false);
+    jotaiStore.set(isMicrosoftMessagingEnabledState.atom, false);
+    jotaiStore.set(isMicrosoftCalendarEnabledState.atom, false);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Blocklist', undefined, { timeout: 3000 }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText(
+        'Choose your preferences for the apps installed on your workspace by the admin',
+      ),
     ).not.toBeInTheDocument();
   },
 };
