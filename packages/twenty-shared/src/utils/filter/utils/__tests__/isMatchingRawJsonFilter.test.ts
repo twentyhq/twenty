@@ -43,24 +43,6 @@ describe('isMatchingRawJsonFilter', () => {
       ).toBe(false);
     });
 
-    it('should match against the Postgres jsonb text representation', () => {
-      const value = { tags: ['a', 'b'], name: 'Acme', ok: true };
-
-      expect(
-        isMatchingRawJsonFilter({
-          rawJsonFilter: { like: '{"ok": true, "name": "Acme", %}' },
-          value,
-        }),
-      ).toBe(true);
-
-      expect(
-        isMatchingRawJsonFilter({
-          rawJsonFilter: { like: '%"tags": ["a", "b"]%' },
-          value,
-        }),
-      ).toBe(true);
-    });
-
     it('should be case sensitive', () => {
       expect(
         isMatchingRawJsonFilter({
@@ -70,7 +52,7 @@ describe('isMatchingRawJsonFilter', () => {
       ).toBe(false);
     });
 
-    it('should match escaped characters as Postgres renders them', () => {
+    it('should match escaped characters in the JSON text', () => {
       expect(
         isMatchingRawJsonFilter({
           rawJsonFilter: { like: '%say \\\\"hi\\\\"%' },

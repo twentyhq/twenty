@@ -1,6 +1,5 @@
 import { type RawJsonFilter } from '@/types';
 import { isDefined } from '@/utils';
-import { convertJsonValueToPostgresJsonbText } from '@/utils/filter/utils/convertJsonValueToPostgresJsonbText';
 import { convertLikePatternToRegexOrThrow } from '@/utils/filter/utils/convertLikePatternToRegexOrThrow';
 
 const isMatchingLikePattern = ({
@@ -19,7 +18,7 @@ const isMatchingLikePattern = ({
   return convertLikePatternToRegexOrThrow({
     pattern,
     isCaseInsensitive,
-  }).test(convertJsonValueToPostgresJsonbText(value));
+  }).test(JSON.stringify(value));
 };
 
 export const isMatchingRawJsonFilter = ({

@@ -13,7 +13,6 @@ import {
   type ViewFilterOperandDeprecated,
 } from 'twenty-shared/types';
 import {
-  convertJsonValueToPostgresJsonbText,
   convertViewFilterOperandToCoreOperand as convertViewFilterOperandDeprecated,
   isDefined,
   isMatchingMultiSelectFilter,
@@ -222,7 +221,7 @@ function evaluateRawJsonFilter(filter: ResolvedFilter): boolean {
 
   const containsSearchValue = () =>
     !isEmpty &&
-    convertJsonValueToPostgresJsonbText(jsonValue)
+    JSON.stringify(jsonValue)
       .toLowerCase()
       .includes(String(filter.rightOperand ?? '').toLowerCase());
 
