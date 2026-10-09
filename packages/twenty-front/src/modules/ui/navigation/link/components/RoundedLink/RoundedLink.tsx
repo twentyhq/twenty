@@ -43,6 +43,7 @@ type RoundedLinkProps = {
   href: string;
   label?: string;
   color?: 'primary' | 'secondary';
+  dir?: 'ltr' | 'rtl' | 'auto';
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
   className?: string;
 };
@@ -51,6 +52,7 @@ export const RoundedLink = ({
   label,
   href,
   color = 'primary',
+  dir,
   onClick,
   className,
 }: RoundedLinkProps) => {
@@ -68,6 +70,7 @@ export const RoundedLink = ({
       href={getSafeUrl(href)}
       target="_blank"
       rel="noreferrer"
+      dir={dir}
       onClick={handleClick}
       data-color={color}
       className={className}

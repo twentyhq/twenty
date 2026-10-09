@@ -35,7 +35,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -325,7 +325,7 @@ export const FieldWidgetFieldDropdownContent = () => {
                 itemId={fieldMetadataItem.id}
                 onEnter={handleClick}
               >
-                <ListItem
+                <ListItemButton
                   focused={selectedItemId === fieldMetadataItem.id}
                   onClick={handleClick}
                   role="option"
@@ -350,7 +350,7 @@ export const FieldWidgetFieldDropdownContent = () => {
                   }
                 >
                   {fieldMetadataItem.label}
-                </ListItem>
+                </ListItemButton>
               </SelectableListItem>
             );
           })}

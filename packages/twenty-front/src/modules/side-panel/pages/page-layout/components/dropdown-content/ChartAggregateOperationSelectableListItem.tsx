@@ -13,7 +13,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 
 const isExtendedAggregateOperation = (
   operation: AggregateChartOperation,
@@ -81,7 +81,7 @@ export const ChartAggregateOperationSelectableListItem = ({
 
   return (
     <SelectableListItem itemId={operation} onEnter={handleClick}>
-      <ListItem
+      <ListItemButton
         focused={isFocused}
         onClick={handleClick}
         role="option"
@@ -90,7 +90,7 @@ export const ChartAggregateOperationSelectableListItem = ({
         indicator="check"
       >
         {label}
-      </ListItem>
+      </ListItemButton>
     </SelectableListItem>
   );
 };

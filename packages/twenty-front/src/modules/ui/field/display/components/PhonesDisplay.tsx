@@ -62,6 +62,7 @@ export const PhonesDisplay = ({
           <RoundedLink
             key={index}
             href={URI || ''}
+            dir="ltr"
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
@@ -82,6 +83,7 @@ export const PhonesDisplay = ({
           <RoundedLink
             key={index}
             href={URI || ''}
+            dir="ltr"
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }

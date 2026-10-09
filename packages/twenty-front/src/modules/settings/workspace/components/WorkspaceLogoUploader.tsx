@@ -85,7 +85,7 @@ export const WorkspaceLogoUploader = () => {
   return (
     <SettingsImageInput
       picture={currentWorkspace?.logo}
-      onUpload={onUpload}
+      onFileSelect={onUpload}
       onRemove={onRemove}
       isUploading={isUploading || isRemoving}
       errorMessage={errorMessage}
