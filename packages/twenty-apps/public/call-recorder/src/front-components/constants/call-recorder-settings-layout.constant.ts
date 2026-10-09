@@ -9,6 +9,7 @@ import {
   IconPhoto,
   IconPlayerStop,
   IconSparkles,
+  IconUser,
   type IconComponent,
 } from 'twenty-ui/icon';
 
@@ -22,6 +23,7 @@ import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/log
 import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
 import { CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH } from 'src/logic-functions/constants/call-recorder-recording-notice-max-length';
 import { CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-message-env-var-name';
+import { CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-show-unmatched-attendees-env-var-name';
 import { CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-summary-enabled-env-var-name';
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-transcript-provider-env-var-name';
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-use-workspace-logo-env-var-name';
@@ -111,6 +113,14 @@ export const CALL_RECORDER_TILE_BACKGROUND_ROW = {
   Icon: IconColorSwatch,
 };
 
+export const CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_ROW = {
+  variableKey: CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_ENV_VAR_NAME,
+  title: 'Show unmatched attendees',
+  description:
+    'List attendees who are not a person in your workspace, by name or email.',
+  Icon: IconUser,
+};
+
 export const CALL_RECORDER_NAME_FIELD = {
   variableKey: CALL_RECORDER_NAME_ENV_VAR_NAME,
   label: 'Recorder name',
@@ -136,4 +146,5 @@ export const CALL_RECORDER_MAPPED_VARIABLE_KEYS: string[] = [
   CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
   CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
   CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
+  CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_ROW.variableKey,
 ];

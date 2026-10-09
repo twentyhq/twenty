@@ -1,0 +1,218 @@
+import { describe, expect, it } from 'vitest';
+
+import { type CallParticipantNode } from 'src/front-components/types/call-participant-node.type';
+import { buildCallParticipantDisplayItems } from 'src/front-components/utils/build-call-participant-display-items.util';
+
+const buildParticipant = (
+  participant: Partial<CallParticipantNode> & { id: string },
+): CallParticipantNode => ({
+  handle: null,
+  displayName: null,
+  isOrganizer: false,
+  personId: null,
+  workspaceMemberId: null,
+  person: null,
+  workspaceMember: null,
+  ...participant,
+});
+
+const matchedPerson = buildParticipant({
+  id: 'participant-person',
+  handle: 'ada@example.com',
+  displayName: 'Ada from the invite',
+  personId: 'person-ada',
+  person: {
+    id: 'person-ada',
+    name: { firstName: 'Ada', lastName: 'Lovelace' },
+    avatarUrl: 'https://example.com/legacy-avatar.png',
+    avatarFile: [{ url: 'https://example.com/avatar.png' }],
+  },
+});
+
+const workspaceMember = buildParticipant({
+  id: 'participant-member',
+  handle: 'grace@acme.com',
+  workspaceMemberId: 'member-grace',
+  workspaceMember: {
+    id: 'member-grace',
+    name: { firstName: 'Grace', lastName: 'Hopper' },
+    avatarUrl: 'https://example.com/grace.png',
+  },
+});
+
+const unmatchedWithName = buildParticipant({
+  id: 'participant-unmatched-named',
+  handle: 'linus@example.org',
+  displayName: 'Linus',
+});
+
+const unmatchedWithHandleOnly = buildParticipant({
+  id: 'participant-unmatched-handle',
+  handle: 'margaret@example.org',
+});
+
+describe('buildCallParticipantDisplayItems', () => {
+  it('renders a matched participant as a person with its record name and avatar', () => {
+    const { items } = buildCallParticipantDisplayItems({
+      participants: [matchedPerson],
+      showUnmatchedAttendees: false,
+    });
+
+    expect(items).toEqual([
+      {
+        kind: 'person',
+        key: 'person:person-ada',
+        personId: 'person-ada',
+        label: 'Ada Lovelace',
+        avatarUrl: 'https://example.com/avatar.png',
+        isOrganizer: false,
+      },
+    ]);
+  });
+
+  it('falls back to the attendee name when the person has no name', () => {
+    const { items } = buildCallParticipantDisplayItems({
+      participants: [
+        buildParticipant({
+          id: 'participant',
+          handle: 'nameless@example.com',
+          personId: 'person-nameless',
+          person: { id: 'person-nameless', name: { firstName: ' ' } },
+        }),
+      ],
+      showUnmatchedAttendees: false,
+    });
+
+    expect(items).toMatchObject([
+      { kind: 'person', label: 'nameless@example.com', avatarUrl: undefined },
+    ]);
+  });
+
+  it('prefers the matched person over the workspace member', () => {
+    const { items } = buildCallParticipantDisplayItems({
+      participants: [
+        {
+          ...matchedPerson,
+          workspaceMemberId: 'member-ada',
+          workspaceMember: {
+            id: 'member-ada',
+            name: { firstName: 'Ada (member)' },
+          },
+        },
+      ],
+      showUnmatchedAttendees: false,
+    });
+
+    expect(items).toMatchObject([
+      { kind: 'person', personId: 'person-ada', label: 'Ada Lovelace' },
+    ]);
+  });
+
+  it('shows workspace members by name even when unmatched attendees are hidden', () => {
+    const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
+      participants: [workspaceMember],
+      showUnmatchedAttendees: false,
+    });
+
+    expect(hiddenUnmatchedCount).toBe(0);
+    expect(items).toEqual([
+      {
+        kind: 'workspaceMember',
+        key: 'workspaceMember:member-grace',
+        workspaceMemberId: 'member-grace',
+        label: 'Grace Hopper',
+        avatarUrl: 'https://example.com/grace.png',
+        isOrganizer: false,
+      },
+    ]);
+  });
+
+  it('hides unmatched attendees by default and counts them', () => {
+    const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
+      participants: [matchedPerson, unmatchedWithName, unmatchedWithHandleOnly],
+      showUnmatchedAttendees: false,
+    });
+
+    expect(items.map((item) => item.kind)).toEqual(['person']);
+    expect(hiddenUnmatchedCount).toBe(2);
+  });
+
+  it('shows unmatched attendees by display name, then handle, when enabled', () => {
+    const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
+      participants: [unmatchedWithName, unmatchedWithHandleOnly],
+      showUnmatchedAttendees: true,
+    });
+
+    expect(hiddenUnmatchedCount).toBe(0);
+    expect(items).toEqual([
+      {
+        kind: 'unmatched',
+        key: 'handle:linus@example.org',
+        label: 'Linus',
+        isOrganizer: false,
+      },
+      {
+        kind: 'unmatched',
+        key: 'handle:margaret@example.org',
+        label: 'margaret@example.org',
+        isOrganizer: false,
+      },
+    ]);
+  });
+
+  it('skips unmatched attendees with neither a name nor a handle', () => {
+    const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
+      participants: [buildParticipant({ id: 'empty', displayName: '  ' })],
+      showUnmatchedAttendees: true,
+    });
+
+    expect(items).toEqual([]);
+    expect(hiddenUnmatchedCount).toBe(0);
+  });
+
+  it('keeps one chip per person and per email address', () => {
+    const { items } = buildCallParticipantDisplayItems({
+      participants: [
+        matchedPerson,
+        { ...matchedPerson, id: 'participant-person-other-handle' },
+        unmatchedWithHandleOnly,
+        {
+          ...unmatchedWithHandleOnly,
+          id: 'participant-unmatched-handle-uppercase',
+          handle: 'MARGARET@example.org',
+        },
+      ],
+      showUnmatchedAttendees: true,
+    });
+
+    expect(items.map((item) => item.key)).toEqual([
+      'person:person-ada',
+      'handle:margaret@example.org',
+    ]);
+  });
+
+  it('lists the organizer first, then people, workspace members and unmatched attendees', () => {
+    const { items } = buildCallParticipantDisplayItems({
+      participants: [
+        unmatchedWithName,
+        workspaceMember,
+        buildParticipant({
+          id: 'participant-zoe',
+          personId: 'person-zoe',
+          person: { id: 'person-zoe', name: { firstName: 'Zoe' } },
+        }),
+        matchedPerson,
+        { ...unmatchedWithHandleOnly, isOrganizer: true },
+      ],
+      showUnmatchedAttendees: true,
+    });
+
+    expect(items.map((item) => item.label)).toEqual([
+      'margaret@example.org',
+      'Ada Lovelace',
+      'Zoe',
+      'Grace Hopper',
+      'Linus',
+    ]);
+  });
+});

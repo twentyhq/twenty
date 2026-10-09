@@ -11,7 +11,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default role`,
   description:
-    'Reads calendar events to decide whether the call recorder should attend a meeting; writes the resulting CallRecording records, uploads recording media, and fills transcripts and summaries.',
+    'Reads calendar events to decide whether the call recorder should attend a meeting; writes the resulting CallRecording records, uploads recording media, and fills transcripts and summaries. Also reads meeting participants and targets so record pages can show who was on a call and which calls involved a record.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -32,6 +32,18 @@ export default defineApplicationRole({
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant
+          .universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    // The call recordings widget finds a record's meetings through their
+    // targets; front components only read what both this role and the
+    // viewer's role allow.
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget
           .universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
