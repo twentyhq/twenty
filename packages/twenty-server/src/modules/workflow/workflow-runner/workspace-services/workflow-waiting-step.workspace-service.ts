@@ -27,7 +27,6 @@ import { buildWorkflowAgentRunExecutionContext } from 'src/modules/workflow/work
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
-import { isWorkflowRunNotFoundError } from 'src/modules/workflow/workflow-runner/utils/is-workflow-run-not-found-error.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils/build-default-wait-result.util';
@@ -187,6 +186,8 @@ export class WorkflowWaitingStepWorkspaceService
     });
   }
 
+  // The run job claims the step, so the wake-up is removed only once the job is queued: a resolution
+  // interrupted before then is tried again, and a job queued twice resumes the step once
   async resolve({
     wakeUp,
     outcome,
@@ -198,68 +199,42 @@ export class WorkflowWaitingStepWorkspaceService
   }): Promise<void> {
     const { workspaceId, ownerId: workflowRunId, ownerKey: stepId } = wakeUp;
 
-    if (
-      !isDefined(
-        await this.pendingWakeUpService.claim({
-          workspaceId,
-          wakeUpId: wakeUp.id,
-        }),
-      ) ||
-      isOwnerGone
-    ) {
-      return;
-    }
-
-    // the claimed wait is gone, so a step that cannot resume would wait forever
-    try {
-      // an answered call ends the step through the executor's usual path, so a failure is retried
-      // or continues on failure like any failed step
-      if (outcome.type === 'ANSWERED') {
+    if (!isOwnerGone) {
+      // the step ends through the executor's usual path, so a failure is retried or continues on
+      // failure like any failed step
+      try {
         await this.messageQueueService.add<RunWorkflowJobData>(
           RUN_WORKFLOW_JOB_NAME,
           {
             workspaceId,
             workflowRunId,
-            awaitedStepOutput: { stepId, actionOutput: outcome.answer },
+            awaitedStepOutput: {
+              stepId,
+              actionOutput:
+                outcome.type === 'ANSWERED'
+                  ? outcome.answer
+                  : { result: buildDefaultWaitResult(outcome) },
+            },
           },
           buildRunWorkflowJobOptions(workflowRunId),
         );
-
-        return;
-      }
-
-      const hasCompletedStep =
-        await this.workflowRunWorkspaceService.updateStepInfoIfPending({
-          stepId,
-          stepInfo: {
-            status: StepStatus.SUCCESS,
-            result: buildDefaultWaitResult(outcome),
-          },
+      } catch (error) {
+        // nothing delivers an answered call again, so a step that cannot resume fails its run
+        await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,
           workspaceId,
+          status: WorkflowRunStatus.FAILED,
+          error: `A waiting step could not resume: ${error instanceof Error ? error.message : String(error)}`,
+          isSystemError: true,
         });
 
-      if (hasCompletedStep) {
-        await this.messageQueueService.add<RunWorkflowJobData>(
-          RUN_WORKFLOW_JOB_NAME,
-          { workspaceId, workflowRunId, lastExecutedStepId: stepId },
-          buildRunWorkflowJobOptions(workflowRunId),
-        );
+        throw error;
       }
-    } catch (error) {
-      if (isWorkflowRunNotFoundError(error)) {
-        return;
-      }
-
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: `A waiting step could not resume: ${error instanceof Error ? error.message : String(error)}`,
-        isSystemError: true,
-      });
-
-      throw error;
     }
+
+    await this.pendingWakeUpService.claim({
+      workspaceId,
+      wakeUpId: wakeUp.id,
+    });
   }
 }

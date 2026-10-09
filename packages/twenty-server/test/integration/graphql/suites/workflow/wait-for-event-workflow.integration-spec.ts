@@ -4,6 +4,7 @@ import {
   getWorkflowRun,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { v4 } from 'uuid';
 
@@ -383,17 +384,15 @@ describe('Wait for event workflow (e2e)', () => {
       event,
     });
 
-    await (
-      await global.workflowTestServices.runJob()
-    ).handle({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workflowRunId: createdWorkflowRunId,
-      lastExecutedStepId: waitStepId!,
+    // the step resumes through the run job its wake-up queued
+    await expectEventually(async () => {
+      expect((await getWorkflowRun(createdWorkflowRunId))?.status).toBe(
+        'COMPLETED',
+      );
     });
 
     const completedRun = await getWorkflowRun(createdWorkflowRunId);
 
-    expect(completedRun?.status).toBe('COMPLETED');
     expect(completedRun?.state?.stepInfos?.[waitStepId!]).toMatchObject({
       status: 'SUCCESS',
       result: {
