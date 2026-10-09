@@ -83,6 +83,10 @@ export const fathomSyncCallHandler = async (
       continue;
     }
 
+    const hydratedMeeting = await hydrateFathomMeeting({
+      fathomClient,
+      serializedMeeting: serializeFathomMeeting(meeting),
+    });
     const coreApiClient = createFathomCoreApiClient();
     const callRecordingId = computeCallRecordingIdForFathomMeeting(recordingId);
     const callRecordingSyncStates = await findCallRecordingSyncStates({
@@ -102,12 +106,7 @@ export const fathomSyncCallHandler = async (
 
     const [syncResult] = await syncFathomMeetingsToCallRecordings({
       coreApiClient,
-      meetings: [
-        await hydrateFathomMeeting({
-          fathomClient,
-          serializedMeeting: serializeFathomMeeting(meeting),
-        }),
-      ],
+      meetings: [hydratedMeeting],
       connectedAccountId: connection.id,
       retryMedia: true,
       callRecordingSyncStates,
