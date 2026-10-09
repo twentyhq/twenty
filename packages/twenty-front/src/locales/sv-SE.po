@@ -482,7 +482,7 @@ msgstr "{appDisplayName} vill göra följande:"
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "{appName} preferences"
-msgstr ""
+msgstr "Inställningar för {appName}"
 
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
@@ -1397,7 +1397,7 @@ msgstr "Kontoradering"
 #. js-lingui-id: T3FM0r
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
-msgstr ""
+msgstr "Kontoinställningar"
 
 #. js-lingui-id: bPwFdf
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -3153,7 +3153,7 @@ msgstr "Apploggar sparas i {retentionInDays} dagar."
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "App preferences"
-msgstr ""
+msgstr "Appinställningar"
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -4484,11 +4484,6 @@ msgstr "Uppmaningsknapp"
 msgid "Calling Code"
 msgstr "Uppringningskod"
 
-#. js-lingui-id: 9rnFEa
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Calls"
-msgstr "Samtal"
-
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Camera"
@@ -5047,7 +5042,7 @@ msgstr ""
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 msgid "Choose your preferences for the apps installed on your workspace by the admin"
-msgstr ""
+msgstr "Välj dina inställningar för de appar som administratören har installerat på din arbetsyta"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -9123,7 +9118,6 @@ msgstr "e-post"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "E-postmeddelanden"
 
@@ -9140,7 +9134,7 @@ msgstr "E-postmeddelanden som redan har överlämnats till leverantören kan int
 #. js-lingui-id: USBKh+
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Emails from the blocklist will be ignored regardless of this setting."
-msgstr ""
+msgstr "E-post från blockeringslistan ignoreras oavsett denna inställning."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -11589,7 +11583,7 @@ msgstr "Global sökning"
 #. js-lingui-id: DSJEta
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Gmail"
-msgstr ""
+msgstr "Gmail"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -11645,7 +11639,7 @@ msgstr "Google"
 #. js-lingui-id: ebIDwV
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Google Calendar"
-msgstr ""
+msgstr "Google Kalender"
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -12342,7 +12336,7 @@ msgstr "Bilden \"{fileName}\" överskrider {maxUploadSize}"
 #. js-lingui-id: Grur3I
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "IMAP"
-msgstr ""
+msgstr "IMAP"
 
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -14357,7 +14351,7 @@ msgstr "Hantera anslutningar som används av den här appen för att anropa {0}.
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Manage events"
-msgstr ""
+msgstr "Hantera händelser"
 
 #. js-lingui-id: Dt05oz
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -14841,7 +14835,7 @@ msgstr "Minuter mellan triggers"
 #. js-lingui-id: G40We3
 #: src/modules/settings/app-preferences/components/SettingsNativeAccountAppStatusCell.tsx
 msgid "Missing account"
-msgstr ""
+msgstr "Saknat konto"
 
 #. js-lingui-id: cOFpUq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -17540,7 +17534,7 @@ msgstr "Avbrott"
 #. js-lingui-id: gdC3cZ
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Outlook"
-msgstr ""
+msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -18694,7 +18688,7 @@ msgstr "Läs dokumentationen"
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Read emails"
-msgstr ""
+msgstr "Läs e-post"
 
 #. js-lingui-id: U26cMX
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -19249,7 +19243,7 @@ msgstr "Ta bort {address}"
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
-msgstr ""
+msgstr "Ta bort {displayName}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19491,7 +19485,7 @@ msgstr "Ändra ordning på alternativen"
 #. js-lingui-id: Jtm0TT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
-msgstr ""
+msgstr "Ersätt kontoinställningarna med Appinställningar, byggda kring konton och apparna som använder dem."
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21197,7 +21191,7 @@ msgstr "Skicka e-post"
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Send emails"
-msgstr ""
+msgstr "Skicka e-post"
 
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -21550,7 +21544,7 @@ msgstr "Dela din app med andra arbetsytor utan att publicera den på marknadspla
 #. js-lingui-id: fX13zr
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Shared accounts between apps"
-msgstr ""
+msgstr "Delade konton mellan appar"
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -22075,8 +22069,6 @@ msgstr "Något gick fel när den här sidan laddades."
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Soon"
 msgstr "Snart"
 
@@ -25618,7 +25610,7 @@ msgstr "Använt"
 #. js-lingui-id: xUOPoQ
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Used by"
-msgstr ""
+msgstr "Används av"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -26509,11 +26501,6 @@ msgstr "Vad denna API kan göra: Välj en användarroll för att definiera dess 
 msgid "What's installed and being used in your workspace"
 msgstr "Vad som är installerat och används på din arbetsyta"
 
-#. js-lingui-id: RlSr4h
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Whatsapp"
-msgstr "WhatsApp"
-
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
@@ -26841,11 +26828,6 @@ msgstr "Arbetsyta"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Workspace access is also managed by an application."
 msgstr "Åtkomst till arbetsytan hanteras också av en applikation."
-
-#. js-lingui-id: rxazlH
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Workspace communications"
-msgstr "Kommunikation för arbetsytan"
 
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts

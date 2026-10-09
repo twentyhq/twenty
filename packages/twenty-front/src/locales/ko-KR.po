@@ -482,7 +482,7 @@ msgstr "{appDisplayName}이(가) 다음 권한을 요청합니다:"
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "{appName} preferences"
-msgstr ""
+msgstr "{appName} 환경설정"
 
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
@@ -1397,7 +1397,7 @@ msgstr "계정 삭제"
 #. js-lingui-id: T3FM0r
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
-msgstr ""
+msgstr "계정 설정"
 
 #. js-lingui-id: bPwFdf
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -3153,7 +3153,7 @@ msgstr "앱 로그는 {retentionInDays}일 동안 보관됩니다."
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "App preferences"
-msgstr ""
+msgstr "앱 환경설정"
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -4484,11 +4484,6 @@ msgstr "행동 유도 버튼"
 msgid "Calling Code"
 msgstr "국가 번호"
 
-#. js-lingui-id: 9rnFEa
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Calls"
-msgstr "통화"
-
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Camera"
@@ -5047,7 +5042,7 @@ msgstr ""
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 msgid "Choose your preferences for the apps installed on your workspace by the admin"
-msgstr ""
+msgstr "관리자가 워크스페이스에 설치한 앱의 기본 설정을 선택하세요"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -9123,7 +9118,6 @@ msgstr "이메일"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "이메일"
 
@@ -9140,7 +9134,7 @@ msgstr "이미 제공업체에 전달된 이메일은 회수할 수 없습니다
 #. js-lingui-id: USBKh+
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Emails from the blocklist will be ignored regardless of this setting."
-msgstr ""
+msgstr "이 설정과 관계없이 차단 목록의 이메일은 무시됩니다."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -11589,7 +11583,7 @@ msgstr "전역 검색"
 #. js-lingui-id: DSJEta
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Gmail"
-msgstr ""
+msgstr "Gmail"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -11645,7 +11639,7 @@ msgstr "구글"
 #. js-lingui-id: ebIDwV
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Google Calendar"
-msgstr ""
+msgstr "Google 캘린더"
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -12342,7 +12336,7 @@ msgstr "이미지 \"{fileName}\"이(가) {maxUploadSize}를 초과합니다"
 #. js-lingui-id: Grur3I
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "IMAP"
-msgstr ""
+msgstr "IMAP"
 
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -14357,7 +14351,7 @@ msgstr "이 애플리케이션의 {0} 호출에 사용되는 연결을 관리합
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Manage events"
-msgstr ""
+msgstr "이벤트 관리"
 
 #. js-lingui-id: Dt05oz
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -14841,7 +14835,7 @@ msgstr "트리거 간의 분"
 #. js-lingui-id: G40We3
 #: src/modules/settings/app-preferences/components/SettingsNativeAccountAppStatusCell.tsx
 msgid "Missing account"
-msgstr ""
+msgstr "계정 없음"
 
 #. js-lingui-id: cOFpUq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -17538,7 +17532,7 @@ msgstr "장애"
 #. js-lingui-id: gdC3cZ
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Outlook"
-msgstr ""
+msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -18692,7 +18686,7 @@ msgstr "문서 읽기"
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Read emails"
-msgstr ""
+msgstr "이메일 읽기"
 
 #. js-lingui-id: U26cMX
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -19247,7 +19241,7 @@ msgstr "{address} 제거"
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
-msgstr ""
+msgstr "{displayName} 제거"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19489,7 +19483,7 @@ msgstr "옵션 재정렬"
 #. js-lingui-id: Jtm0TT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
-msgstr ""
+msgstr "계정 설정을 계정 및 이를 사용하는 앱을 중심으로 구성된 앱 환경설정으로 대체합니다."
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21193,7 +21187,7 @@ msgstr "이메일 보내기"
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Send emails"
-msgstr ""
+msgstr "이메일 보내기"
 
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -21546,7 +21540,7 @@ msgstr "마켓플레이스에 게시하지 않고 다른 워크스페이스에 �
 #. js-lingui-id: fX13zr
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Shared accounts between apps"
-msgstr ""
+msgstr "앱 간 공유 계정"
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -22071,8 +22065,6 @@ msgstr "이 페이지를 불러오는 동안 문제가 발생했습니다."
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Soon"
 msgstr "곧"
 
@@ -25610,7 +25602,7 @@ msgstr "사용됨"
 #. js-lingui-id: xUOPoQ
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 msgid "Used by"
-msgstr ""
+msgstr "사용 중인 앱"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -26501,11 +26493,6 @@ msgstr "이 API가 할 수 있는 것: 사용자의 권한을 정의하기 위�
 msgid "What's installed and being used in your workspace"
 msgstr "워크스페이스에 설치되어 사용 중인 항목"
 
-#. js-lingui-id: RlSr4h
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Whatsapp"
-msgstr "Whatsapp"
-
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
@@ -26833,11 +26820,6 @@ msgstr "워크스페이스"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Workspace access is also managed by an application."
 msgstr "워크스페이스 액세스는 애플리케이션에서도 관리됩니다."
-
-#. js-lingui-id: rxazlH
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Workspace communications"
-msgstr "워크스페이스 커뮤니케이션"
 
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
