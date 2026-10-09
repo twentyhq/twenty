@@ -26,7 +26,7 @@ export const buildCallRecordingTranscriptSettingsUpdate = ({
 
   const existingSettings = { ...universalSettingsObject, ...settingsObject };
 
-  if ('isValueLoadedOnOpen' in existingSettings) {
+  if (isDefined(existingSettings.isValueLoadedOnOpen)) {
     return undefined;
   }
 
