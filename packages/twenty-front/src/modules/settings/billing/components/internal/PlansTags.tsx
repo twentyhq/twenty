@@ -15,6 +15,12 @@ const StyledTagsWrapper = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledTrialTag = styled(Tag)`
+  && {
+    min-width: fit-content;
+  }
+`;
+
 export const PlansTags = ({ plan, isTrialPeriod = false }: PlansTagsProps) => {
   const planDescriptor =
     plan === BillingPlanKey.PRO
@@ -25,9 +31,9 @@ export const PlansTags = ({ plan, isTrialPeriod = false }: PlansTagsProps) => {
     <StyledTagsWrapper>
       <Tag color={planDescriptor.color}>{planDescriptor.label}</Tag>
       {isTrialPeriod && (
-        <Tag color="blue" truncate={false} style={{ minWidth: 'fit-content' }}>
+        <StyledTrialTag color="blue" truncate={false}>
           {t`Trial`}
-        </Tag>
+        </StyledTrialTag>
       )}
     </StyledTagsWrapper>
   );
