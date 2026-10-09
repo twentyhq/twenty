@@ -12721,7 +12721,7 @@ msgstr "Bu ilova o‘rnatilmoqda. Uni o‘chirishdan oldin o‘rnatish tugashini
 #. js-lingui-id: O3pUuN
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being installed. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "Ushbu ilova o‘rnatilmoqda. Uni yangilashdan oldin jarayon tugashini kuting."
 
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
@@ -12731,17 +12731,17 @@ msgstr "Bu ilova o‘chirilmoqda. Uni qayta o‘rnatishdan oldin o‘chirish tug
 #. js-lingui-id: rfbjZb
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "Ushbu ilova o‘chirib tashlanmoqda. Uni yangilashdan oldin jarayon tugashini kuting."
 
 #. js-lingui-id: Kepc2n
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before installing it."
-msgstr ""
+msgstr "Ushbu ilova yangilanmoqda. Uni o‘rnatishdan oldin jarayon tugashini kuting."
 
 #. js-lingui-id: XBHpg5
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
-msgstr ""
+msgstr "Ushbu ilova yangilanmoqda. Uni o‘chirib tashlashdan oldin jarayon tugashini kuting."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
