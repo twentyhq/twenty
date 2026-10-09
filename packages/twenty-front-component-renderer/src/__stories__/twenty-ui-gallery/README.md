@@ -139,10 +139,12 @@ Playwright's intercepted chooser; operating-system dialog dismissal and other
 browser engines are not covered by these tests.
 
 A worker-created object URL assigned to `img.src` carries its `Blob` to the host.
-Each mounted image owns a host URL and revokes it on source replacement,
-explicit worker URL revocation or unmount. Applications still revoke their
-worker URLs and own validation, upload, progress and cancellation. Other object
-URL consumers are outside this adapter's scope.
+Each mounted image owns a host URL and revokes it on source replacement or
+unmount. As in browsers, revoking the worker URL keeps an image that already
+uses it and only stops later assignments, so revoking once the image has loaded
+is safe. Applications still revoke their worker URLs and own validation, upload,
+progress and cancellation. Other object URL consumers are outside this adapter's
+scope.
 
 To run these tests, serve the built Storybook on port 6008 or set
 `STORYBOOK_URL`, then run from the repository root:

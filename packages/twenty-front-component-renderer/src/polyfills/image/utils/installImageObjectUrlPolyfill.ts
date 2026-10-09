@@ -1,5 +1,4 @@
 import { updateRemoteElementProperty } from '@remote-dom/core/elements';
-import { isDefined } from 'twenty-shared/utils';
 
 import { IMAGE_OBJECT_URL_BLOB_PROPERTY } from '@/constants/ImageObjectUrlBlobProperty';
 
@@ -12,35 +11,19 @@ export const installImageObjectUrlPolyfill = ({
 }): void => {
   const createObjectURL = urlConstructor.createObjectURL.bind(urlConstructor);
   const revokeObjectURL = urlConstructor.revokeObjectURL.bind(urlConstructor);
-  const objectUrls = new Map<
-    string,
-    { blob: Blob; images: Set<WeakRef<Element>> }
-  >();
-  const imageReferences = new WeakMap<Element, WeakRef<Element>>();
+  const blobByObjectUrl = new Map<string, Blob>();
   const imageSources = new WeakMap<Element, string>();
 
   urlConstructor.createObjectURL = (blob) => {
     const url = createObjectURL(blob);
     if (blob instanceof Blob) {
-      objectUrls.set(url, { blob, images: new Set() });
+      blobByObjectUrl.set(url, blob);
     }
     return url;
   };
 
   urlConstructor.revokeObjectURL = (url) => {
-    const registration = objectUrls.get(url);
-    objectUrls.delete(url);
-
-    for (const reference of registration?.images ?? []) {
-      const image = reference.deref();
-      if (isDefined(image)) {
-        updateRemoteElementProperty(
-          image,
-          IMAGE_OBJECT_URL_BLOB_PROPERTY,
-          undefined,
-        );
-      }
-    }
+    blobByObjectUrl.delete(url);
     revokeObjectURL(url);
   };
 
@@ -50,22 +33,11 @@ export const installImageObjectUrlPolyfill = ({
       return imageSources.get(this);
     },
     set(this: Element, src: string) {
-      let reference = imageReferences.get(this);
-      if (!isDefined(reference)) {
-        reference = new WeakRef(this);
-        imageReferences.set(this, reference);
-      }
-      const previousSrc = imageSources.get(this);
-      if (isDefined(previousSrc)) {
-        objectUrls.get(previousSrc)?.images.delete(reference);
-      }
-      const registration = objectUrls.get(src);
-      registration?.images.add(reference);
       imageSources.set(this, src);
       updateRemoteElementProperty(
         this,
         IMAGE_OBJECT_URL_BLOB_PROPERTY,
-        registration?.blob,
+        blobByObjectUrl.get(src),
       );
       updateRemoteElementProperty(this, 'src', src);
     },

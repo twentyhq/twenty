@@ -34,13 +34,28 @@ const readImageObjectUrlBlob = (image: HTMLImageElement) =>
   ];
 
 describe('installImageObjectUrlPolyfill', () => {
-  it('bridges only locally created blobs and clears their image bindings on revocation', () => {
+  it('bridges only locally created blobs', () => {
     const { blob, url, image } = createImageWithObjectUrl();
     expect(readImageObjectUrlBlob(image)).toBe(blob);
     expect(image.src).toBe(url);
-    ImageUrl.revokeObjectURL(url);
-    expect(readImageObjectUrlBlob(image)).toBeUndefined();
     image.src = 'blob:other-worker/unowned';
+    expect(readImageObjectUrlBlob(image)).toBeUndefined();
+  });
+
+  it('keeps the blob of a displayed image when its URL is revoked', () => {
+    const { blob, url, image } = createImageWithObjectUrl();
+    ImageUrl.revokeObjectURL(url);
+    expect(readImageObjectUrlBlob(image)).toBe(blob);
+    expect(image.src).toBe(url);
+  });
+
+  it('does not bridge a revoked URL assigned afterwards', () => {
+    const { url } = createImageWithObjectUrl();
+    ImageUrl.revokeObjectURL(url);
+    const image = document.createElement(
+      'html-img',
+    ) as unknown as HTMLImageElement;
+    image.src = url;
     expect(readImageObjectUrlBlob(image)).toBeUndefined();
   });
 

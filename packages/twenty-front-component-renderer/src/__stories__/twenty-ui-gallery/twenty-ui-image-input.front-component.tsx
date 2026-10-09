@@ -20,6 +20,7 @@ const ImageInputExample = () => {
   const [selectedFile, setSelectedFile] = useState('none');
   const [fileContents, setFileContents] = useState('none');
   const [isCallbackConnected, setIsCallbackConnected] = useState(true);
+  const [revokedPreviewUrl, setRevokedPreviewUrl] = useState('none');
 
   useEffect(
     () => () => {
@@ -99,6 +100,17 @@ const ImageInputExample = () => {
           ? 'Disconnect file callback'
           : 'Connect file callback'}
       </Button>
+      <Button
+        onClick={() => {
+          if (src?.startsWith('blob:')) {
+            URL.revokeObjectURL(src);
+            setRevokedPreviewUrl(src);
+          }
+        }}
+      >
+        Revoke preview URL
+      </Button>
+      <output aria-label="Revoked preview URL">{revokedPreviewUrl}</output>
       <output aria-label="File contents">{fileContents}</output>
       <output aria-label="Image actions">
         Uploads: {uploads}; Removals: {removals}; Aborts: {aborts}

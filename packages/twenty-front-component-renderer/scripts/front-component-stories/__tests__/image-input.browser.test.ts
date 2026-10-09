@@ -341,6 +341,18 @@ for (const runtime of ['react', 'preact']) {
     const primaryUrl = await primary.locator('img').getAttribute('src');
     const secondaryUrl = await secondary.locator('img').getAttribute('src');
     assert.notEqual(primaryUrl, secondaryUrl);
+    await primary.getByRole('button', { name: 'Revoke preview URL' }).click();
+    await primary
+      .getByLabel('Revoked preview URL')
+      .filter({ hasText: 'blob:' })
+      .waitFor();
+    assert.equal(await primary.locator('img').getAttribute('src'), primaryUrl);
+    assert.equal(
+      await primary
+        .locator('img')
+        .evaluate((image) => (image as HTMLImageElement).naturalWidth),
+      31,
+    );
     await primary.getByRole('button', { name: 'Remove profile image' }).click();
     await primary.locator('img').waitFor({ state: 'detached' });
     assert.equal(
