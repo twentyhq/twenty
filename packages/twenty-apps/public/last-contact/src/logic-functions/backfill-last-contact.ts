@@ -23,8 +23,6 @@ import {
 } from 'src/utils/run-last-contact-backfill';
 import { isDefined } from 'twenty-sdk/utils';
 
-// A run that stops before the end enqueues this function again with the
-// cursor to resume from.
 type BackfillPayload = InstallPayload & {
   resumeFrom?: BackfillCursor;
   stalledRunCount?: number;

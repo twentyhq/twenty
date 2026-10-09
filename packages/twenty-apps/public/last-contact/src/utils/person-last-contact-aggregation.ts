@@ -347,9 +347,6 @@ export const buildPersonAggregates = async (
   return aggByPersonId;
 };
 
-// Every field is written, null when no remaining email or meeting supports it,
-// so a contact whose email was deleted or whose meeting was canceled does not
-// linger on the person, nor on the companies and opportunities that mirror it.
 export const buildPersonUpdateData = (
   agg: PersonAgg | undefined,
 ): PersonUpdateData => ({

@@ -3,8 +3,6 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 const sleep = (durationMs: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, durationMs));
 
-// Each call reserves its slot before waiting, so calls issued concurrently
-// (Promise.all) are spaced out as well.
 export const createPacedClient = (
   client: CoreApiClient,
   minCallIntervalMs: number,

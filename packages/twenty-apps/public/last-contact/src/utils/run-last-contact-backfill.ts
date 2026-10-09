@@ -12,16 +12,12 @@ import { recomputeCompaniesLastContact } from 'src/utils/recompute-company-last-
 import { recomputeOpportunitiesLastContact } from 'src/utils/recompute-opportunity-last-contact';
 
 // A total order over createdAt then id keeps the cursor stable while the
-// backfill runs, including across runs: records created meanwhile sort to the
-// tail.
+// backfill runs: records created meanwhile sort to the tail.
 const BACKFILL_ORDER_BY = [
   { createdAt: 'AscNullsFirst' },
   { id: 'AscNullsFirst' },
 ];
 
-// People are aggregated from their emails and meetings. Opportunities and
-// companies come after them and only mirror the people's stored last contact,
-// which is far cheaper than aggregating the same interactions again.
 const BACKFILL_BATCH_HANDLERS: Record<
   BackfillPhase,
   (client: CoreApiClient, recordIds: string[]) => Promise<void>
@@ -92,8 +88,6 @@ const backfillPhaseInBatches = async ({
         ? (connection.pageInfo.endCursor ?? undefined)
         : undefined;
     } catch (error) {
-      // Every batch write is idempotent, so the interrupted batch is simply
-      // redone when the backfill resumes.
       if (error instanceof RetryableLogicFunctionError) {
         return { count, pause: { reason: 'rate-limited', after } };
       }
@@ -105,8 +99,9 @@ const backfillPhaseInBatches = async ({
   return { count };
 };
 
-// Batches run one after the other so the backfill's API calls stay sequential
-// instead of competing with each other for the same rate limit.
+// Processes every batch in this execution, one after the other, so the
+// backfill's API calls stay sequential instead of spreading across concurrent
+// jobs that compete for the same rate limit.
 export const runLastContactBackfill = async (
   client: CoreApiClient,
   {

@@ -10,9 +10,6 @@ import { type InteractionDirection } from 'src/utils/update-person-last-contact'
 
 const PAGE_SIZE = 200;
 
-// The sender decides the direction and team members decide who owns the
-// contact; the other recipients change nothing. Leaving them out keeps a batch
-// to about one page per 200 messages however many people each email copies.
 const SENDER_OR_TEAM_MEMBER_FILTER = {
   or: [
     { role: { eq: 'FROM' } },
@@ -150,8 +147,6 @@ export const collectMessageInteractions = async (
     });
   }
 
-  // Without a sender participant, an email still counts as an inbound contact
-  // with no team member, so only its date is missing.
   const messageIdsWithoutSenderOrTeamMember = messageIds.filter(
     (messageId) => !participantsByMessageId.has(messageId),
   );
