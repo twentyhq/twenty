@@ -12718,10 +12718,30 @@ msgstr "此應用程式已由某個工作區擁有。"
 msgid "This application is being installed. Please wait for it to finish before uninstalling it."
 msgstr "此應用程式正在安裝。請等待安裝完成後再解除安裝。"
 
+#. js-lingui-id: O3pUuN
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being installed. Please wait for it to finish before upgrading it."
+msgstr "此應用程式正在安裝中。請等待安裝完成後再升級。"
+
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
 msgstr "此應用程式正在解除安裝。請等待解除安裝完成後再重新安裝。"
+
+#. js-lingui-id: rfbjZb
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
+msgstr "此應用程式正在解除安裝中。請等待解除安裝完成後再升級。"
+
+#. js-lingui-id: Kepc2n
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before installing it."
+msgstr "此應用程式正在升級中。請等待升級完成後再安裝。"
+
+#. js-lingui-id: XBHpg5
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
+msgstr "此應用程式正在升級中。請等待升級完成後再解除安裝。"
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

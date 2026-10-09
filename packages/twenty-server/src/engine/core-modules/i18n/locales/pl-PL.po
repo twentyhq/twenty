@@ -12718,10 +12718,30 @@ msgstr "Ta aplikacja jest już własnością przestrzeni roboczej."
 msgid "This application is being installed. Please wait for it to finish before uninstalling it."
 msgstr "Ta aplikacja jest instalowana. Poczekaj, aż proces się zakończy, zanim ją odinstalujesz."
 
+#. js-lingui-id: O3pUuN
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being installed. Please wait for it to finish before upgrading it."
+msgstr "Ta aplikacja jest instalowana. Poczekaj na zakończenie instalacji przed jej aktualizacją."
+
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
 msgstr "Ta aplikacja jest odinstalowywana. Poczekaj, aż proces się zakończy, zanim zainstalujesz ją ponownie."
+
+#. js-lingui-id: rfbjZb
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
+msgstr "Ta aplikacja jest odinstalowywana. Poczekaj na zakończenie odinstalowywania przed jej aktualizacją."
+
+#. js-lingui-id: Kepc2n
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before installing it."
+msgstr "Ta aplikacja jest aktualizowana. Poczekaj na zakończenie aktualizacji przed jej instalacją."
+
+#. js-lingui-id: XBHpg5
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
+msgstr "Ta aplikacja jest aktualizowana. Poczekaj na zakończenie aktualizacji przed jej odinstalowaniem."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

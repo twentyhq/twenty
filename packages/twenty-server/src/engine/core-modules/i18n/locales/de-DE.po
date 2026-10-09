@@ -12718,10 +12718,30 @@ msgstr "Diese Anwendung gehört bereits einem Arbeitsbereich."
 msgid "This application is being installed. Please wait for it to finish before uninstalling it."
 msgstr "Diese Anwendung wird installiert. Bitte warten Sie, bis die Installation abgeschlossen ist, bevor Sie sie deinstallieren."
 
+#. js-lingui-id: O3pUuN
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being installed. Please wait for it to finish before upgrading it."
+msgstr "Diese Anwendung wird installiert. Bitte warten Sie, bis die Installation abgeschlossen ist, bevor Sie sie aktualisieren."
+
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
 msgstr "Diese Anwendung wird deinstalliert. Bitte warten Sie, bis die Deinstallation abgeschlossen ist, bevor Sie sie erneut installieren."
+
+#. js-lingui-id: rfbjZb
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
+msgstr "Diese Anwendung wird deinstalliert. Bitte warten Sie, bis die Deinstallation abgeschlossen ist, bevor Sie sie aktualisieren."
+
+#. js-lingui-id: Kepc2n
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before installing it."
+msgstr "Diese Anwendung wird aktualisiert. Bitte warten Sie, bis die Aktualisierung abgeschlossen ist, bevor Sie sie installieren."
+
+#. js-lingui-id: XBHpg5
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
+msgstr "Diese Anwendung wird aktualisiert. Bitte warten Sie, bis die Aktualisierung abgeschlossen ist, bevor Sie sie deinstallieren."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

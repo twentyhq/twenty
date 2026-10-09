@@ -12724,10 +12724,30 @@ msgstr "Den här applikationen ägs redan av en arbetsyta."
 msgid "This application is being installed. Please wait for it to finish before uninstalling it."
 msgstr "Det här programmet installeras. Vänta tills installationen är klar innan du avinstallerar det."
 
+#. js-lingui-id: O3pUuN
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being installed. Please wait for it to finish before upgrading it."
+msgstr "Den här applikationen installeras. Vänta tills det är klart innan du uppgraderar den."
+
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
 msgstr "Det här programmet avinstalleras. Vänta tills avinstallationen är klar innan du installerar det igen."
+
+#. js-lingui-id: rfbjZb
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
+msgstr "Den här applikationen avinstalleras. Vänta tills det är klart innan du uppgraderar den."
+
+#. js-lingui-id: Kepc2n
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before installing it."
+msgstr "Den här applikationen uppgraderas. Vänta tills det är klart innan du installerar den."
+
+#. js-lingui-id: XBHpg5
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
+msgstr "Den här applikationen uppgraderas. Vänta tills det är klart innan du avinstallerar den."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

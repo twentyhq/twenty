@@ -12718,10 +12718,30 @@ msgstr "Denne applikation er allerede overtaget af et arbejdsområde."
 msgid "This application is being installed. Please wait for it to finish before uninstalling it."
 msgstr "Denne applikation installeres. Vent, til den er færdig, før du afinstallerer den."
 
+#. js-lingui-id: O3pUuN
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being installed. Please wait for it to finish before upgrading it."
+msgstr "Denne applikation installeres. Vent, indtil den er færdig, før du opgraderer den."
+
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
 msgstr "Denne applikation afinstalleres. Vent, til den er færdig, før du installerer den igen."
+
+#. js-lingui-id: rfbjZb
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
+msgstr "Denne applikation afinstalleres. Vent, indtil den er færdig, før du opgraderer den."
+
+#. js-lingui-id: Kepc2n
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before installing it."
+msgstr "Denne applikation opgraderes. Vent, indtil den er færdig, før du installerer den."
+
+#. js-lingui-id: XBHpg5
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
+msgstr "Denne applikation opgraderes. Vent, indtil den er færdig, før du afinstallerer den."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

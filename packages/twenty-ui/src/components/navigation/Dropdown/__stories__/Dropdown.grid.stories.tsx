@@ -62,6 +62,9 @@ export const IconGrid: Story = {
 
     await waitFor(() => expect(search).toHaveFocus());
     expect(group).toHaveStyle({ display: 'grid' });
+    await expect(
+      within(popup).getByRole('button', { name: 'Calendar 5' }),
+    ).toBeDisabled();
     await waitFor(() =>
       expect(
         within(popup)

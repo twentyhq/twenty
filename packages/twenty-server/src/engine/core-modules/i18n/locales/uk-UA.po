@@ -12718,10 +12718,30 @@ msgstr "Цей застосунок уже належить робочому п�
 msgid "This application is being installed. Please wait for it to finish before uninstalling it."
 msgstr "Ця програма встановлюється. Будь ласка, зачекайте, доки встановлення завершиться, перш ніж видаляти її."
 
+#. js-lingui-id: O3pUuN
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being installed. Please wait for it to finish before upgrading it."
+msgstr "Ця програма встановлюється. Зачекайте, доки встановлення завершиться, перш ніж оновлювати її."
+
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
 msgstr "Ця програма видаляється. Будь ласка, зачекайте, доки видалення завершиться, перш ніж установлювати її знову."
+
+#. js-lingui-id: rfbjZb
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
+msgstr "Ця програма видаляється. Зачекайте, доки видалення завершиться, перш ніж оновлювати її."
+
+#. js-lingui-id: Kepc2n
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before installing it."
+msgstr "Ця програма оновлюється. Зачекайте, доки оновлення завершиться, перш ніж установлювати її."
+
+#. js-lingui-id: XBHpg5
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
+msgstr "Ця програма оновлюється. Зачекайте, доки оновлення завершиться, перш ніж видаляти її."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

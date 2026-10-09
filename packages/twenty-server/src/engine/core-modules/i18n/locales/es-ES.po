@@ -12718,10 +12718,30 @@ msgstr "Esta aplicación ya pertenece a un espacio de trabajo."
 msgid "This application is being installed. Please wait for it to finish before uninstalling it."
 msgstr "Esta aplicación se está instalando. Espere a que termine antes de desinstalarla."
 
+#. js-lingui-id: O3pUuN
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being installed. Please wait for it to finish before upgrading it."
+msgstr "Esta aplicación se está instalando. Espere a que finalice antes de actualizarla."
+
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
 msgstr "Esta aplicación se está desinstalando. Espere a que termine antes de instalarla de nuevo."
+
+#. js-lingui-id: rfbjZb
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
+msgstr "Esta aplicación se está desinstalando. Espere a que finalice antes de actualizarla."
+
+#. js-lingui-id: Kepc2n
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before installing it."
+msgstr "Esta aplicación se está actualizando. Espere a que finalice antes de instalarla."
+
+#. js-lingui-id: XBHpg5
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
+msgstr "Esta aplicación se está actualizando. Espere a que finalice antes de desinstalarla."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

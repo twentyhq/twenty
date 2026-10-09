@@ -11,7 +11,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { AxisNameDisplay } from '~/generated-metadata/graphql';
 
 export const ChartAxisNameSelectionDropdownContent = () => {
@@ -76,7 +76,7 @@ export const ChartAxisNameSelectionDropdownContent = () => {
                 handleSelectAxisNameOption(option);
               }}
             >
-              <ListItem
+              <ListItemButton
                 focused={selectedItemId === option}
                 onClick={() => {
                   handleSelectAxisNameOption(option);
@@ -87,7 +87,7 @@ export const ChartAxisNameSelectionDropdownContent = () => {
                 indicator="check"
               >
                 {getChartAxisNameDisplayOptions(option)}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           ))}
         </SelectableList>
