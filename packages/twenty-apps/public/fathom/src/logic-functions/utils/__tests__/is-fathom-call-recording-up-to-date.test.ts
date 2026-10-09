@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { type CallRecordingSyncState } from 'src/logic-functions/types/call-recording-sync-state.type';
+import { buildFathomCallRecordingTitle } from 'src/logic-functions/utils/build-fathom-call-recording-title.util';
 import { isFathomCallRecordingUpToDate } from 'src/logic-functions/utils/is-fathom-call-recording-up-to-date.util';
 
 const MEETING = {
+  title: 'Customer call',
+  meetingTitle: 'Customer call',
   meetingUrl: 'https://meet.google.com/abc-defg-hij',
   recordingStartTime: '2026-08-20T10:00:00.000Z',
   recordingEndTime: '2026-08-20T10:30:00.000Z',
@@ -65,6 +68,42 @@ describe('isFathomCallRecordingUpToDate', () => {
         },
       }),
     ).toBe(true);
+  });
+
+  describe('impromptu meetings', () => {
+    const IMPROMPTU_MEETING = {
+      ...MEETING,
+      title: 'Impromptu Zoom Meeting',
+      meetingTitle: 'Impromptu Zoom Meeting',
+    };
+    const PLACEHOLDER_TITLE = buildFathomCallRecordingTitle({
+      ...IMPROMPTU_MEETING,
+      recordingStartTime: new Date(IMPROMPTU_MEETING.recordingStartTime),
+    }).title;
+
+    it('syncs a completed recording still holding the placeholder title so its title job is queued', () => {
+      expect(
+        isFathomCallRecordingUpToDate({
+          meeting: IMPROMPTU_MEETING,
+          callRecording: {
+            ...COMPLETE_CALL_RECORDING,
+            title: PLACEHOLDER_TITLE,
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('treats a completed recording with its generated title as up to date', () => {
+      expect(
+        isFathomCallRecordingUpToDate({
+          meeting: IMPROMPTU_MEETING,
+          callRecording: {
+            ...COMPLETE_CALL_RECORDING,
+            title: 'Impromptu Zoom Meeting (Pricing discussion)',
+          },
+        }),
+      ).toBe(true);
+    });
   });
 
   it.each<[string, Partial<CallRecordingSyncState>]>([

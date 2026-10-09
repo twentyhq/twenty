@@ -90,7 +90,7 @@ export const fathomSyncCallHandler = async (
       callRecordingIds: [callRecordingId],
     });
 
-    if (callRecordingSyncStates.get(callRecordingId)?.isDeleted === true) {
+    if (callRecordingSyncStates.get(callRecordingId)?.isDeleted) {
       return {
         success: true,
         recordingId,

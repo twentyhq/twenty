@@ -39,7 +39,7 @@ export const filterImportableFathomMeetings = async ({
   for (const { meeting, callRecordingId } of identifiedMeetings) {
     const callRecording = callRecordings.get(callRecordingId);
 
-    if (callRecording?.isDeleted === true) {
+    if (callRecording?.isDeleted) {
       deletedMeetingCount += 1;
       continue;
     }

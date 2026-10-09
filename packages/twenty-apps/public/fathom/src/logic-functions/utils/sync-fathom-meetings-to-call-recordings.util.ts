@@ -51,9 +51,7 @@ export const syncFathomMeetingsToCallRecordings = async ({
     }));
   const liveMeetings = [...meetingsByCallRecordingId].flatMap(
     ([callRecordingId, meeting]) =>
-      existingCallRecordings.get(callRecordingId)?.isDeleted === true
-        ? []
-        : [meeting],
+      existingCallRecordings.get(callRecordingId)?.isDeleted ? [] : [meeting],
   );
   const calendarEventIds = await findMatchingCalendarEvents({
     coreApiClient,
@@ -107,7 +105,7 @@ export const syncFathomMeetingsToCallRecordings = async ({
   };
 
   for (const plan of plans) {
-    if (plan.existingCallRecording?.isDeleted === true) {
+    if (plan.existingCallRecording?.isDeleted) {
       recordResult({
         callRecordingId: plan.callRecordingId,
         skipped: true,
@@ -144,7 +142,7 @@ export const syncFathomMeetingsToCallRecordings = async ({
 
   for (const plan of plans) {
     if (
-      plan.existingCallRecording?.isDeleted === true ||
+      plan.existingCallRecording?.isDeleted ||
       createdCallRecordingIds.has(plan.callRecordingId)
     ) {
       continue;

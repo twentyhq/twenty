@@ -100,7 +100,7 @@ export const fathomWebhookHandler = async (
   });
   const existingCallRecording = callRecordingSyncStates.get(callRecordingId);
 
-  if (existingCallRecording?.isDeleted === true) {
+  if (existingCallRecording?.isDeleted) {
     return {
       success: true,
       skipped: true,
