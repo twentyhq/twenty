@@ -205,6 +205,12 @@ msgstr "Μια ενημέρωση πριν λήξει η δοκιμαστική 
 msgid "A higher version of this application is already installed. Downgrading is not allowed."
 msgstr "Μια νεότερη έκδοση αυτής της εφαρμογής έχει ήδη εγκατασταθεί. Η υποβάθμιση δεν επιτρέπεται."
 
+#. js-lingui-id: JoVKhy
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "A link tracked in a campaign"
+msgstr "Ένας σύνδεσμος που παρακολουθείται σε μια καμπάνια"
+
 #. js-lingui-id: 0sxIdH
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
@@ -334,6 +340,11 @@ msgstr "Λείπει ένα απαιτούμενο πεδίο. Παρακαλο�
 msgid "A role with this label already exists."
 msgstr "Η ετικέτα αυτή ήδη υπάρχει σε κάποιον ρόλο."
 
+#. js-lingui-id: qk/eV0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
+msgid "A secret variable cannot have a default value."
+msgstr "Μια μυστική μεταβλητή δεν μπορεί να έχει προεπιλεγμένη τιμή."
+
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "A skill with this name already exists"
@@ -381,6 +392,16 @@ msgstr "Ένας τύπος δραστηριότητας χρονολογίου 
 msgid "A timeline activity type with this name already exists for this application"
 msgstr "Υπάρχει ήδη τύπος δραστηριότητας χρονολογίου με αυτό το όνομα για αυτήν την εφαρμογή."
 
+#. js-lingui-id: jFM4QN
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "A two-factor authentication recovery code was generated for you"
+msgstr "Δημιουργήθηκε για εσάς ένας κωδικός ανάκτησης ελέγχου ταυτότητας δύο παραγόντων"
+
+#. js-lingui-id: 28Abul
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "A user variable cannot have a value: each member sets their own."
+msgstr "Μια μεταβλητή χρήστη δεν μπορεί να έχει τιμή: κάθε μέλος ορίζει τη δική του."
+
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
@@ -421,6 +442,11 @@ msgstr "Απαιτείται ένα έγκυρο targetRecordId για τον τ
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid viewUniversalIdentifier is required for VIEW type"
 msgstr "Απαιτείται ένα έγκυρο viewUniversalIdentifier για τον τύπο VIEW"
+
+#. js-lingui-id: 4/naVr
+#: src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception.ts
+msgid "A validation rule could not be evaluated. Ask an admin to review it."
+msgstr "Δεν ήταν δυνατή η αξιολόγηση ενός κανόνα επικύρωσης. Ζητήστε από έναν διαχειριστή να τον ελέγξει."
 
 #. js-lingui-id: qqnpQ9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -496,6 +522,11 @@ msgstr "Μια έκδοση ροής εργασίας"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Ένα μέλος χώρου εργασίας"
+
+#. js-lingui-id: 7co7Js
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "A workspace variable must have a value."
+msgstr "Μια μεταβλητή χώρου εργασίας πρέπει να έχει τιμή."
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -606,18 +637,6 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "Πραγματική έναρξη εγγραφής"
 
-#. js-lingui-id: czQdYE
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Add a Node"
-msgstr "Προσθήκη κόμβου"
-
-#. js-lingui-id: Opy73Z
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Add a Node"
-msgstr "Προσθήκη κόμβου"
-
 #. js-lingui-id: ffpvxH
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "Add at least one field to update."
@@ -663,12 +682,6 @@ msgctxt "objectMetadata.description"
 msgid "Agent chat thread"
 msgstr "Νήμα συνομιλίας πράκτορα"
 
-#. js-lingui-id: 05II48
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
-msgid "Agent chat thread"
-msgstr "Νήμα συνομιλίας πράκτορα"
-
 #. js-lingui-id: leA1JY
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -680,12 +693,6 @@ msgstr "Στόχος νήματος συνομιλίας πράκτορα"
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent chat thread targets"
 msgstr "Στόχοι νημάτων συνομιλίας πράκτορα"
-
-#. js-lingui-id: d9XlI/
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Agent chat threads"
-msgstr "Νήματα συνομιλίας πράκτορα"
 
 #. js-lingui-id: kmAKx+
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -760,11 +767,45 @@ msgstr "Ο πράκτορας δεν βρέθηκε."
 msgid "Agent step execution failed."
 msgstr "Η εκτέλεση βήματος πράκτορα απέτυχε."
 
-#. js-lingui-id: DLyw5k
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Agent step of the workflow run that held this conversation"
-msgstr ""
+#. js-lingui-id: FwHD8A
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger ids must be unique"
+msgstr "Τα αναγνωριστικά ενεργοποίησης πράκτορα πρέπει να είναι μοναδικά"
+
+#. js-lingui-id: pkpppn
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger ids must be UUIDs"
+msgstr "Τα αναγνωριστικά ενεργοποίησης πράκτορα πρέπει να είναι UUID"
+
+#. js-lingui-id: DEjYze
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger instructions cannot exceed {maxLength} characters"
+msgstr "Οι οδηγίες ενεργοποίησης πράκτορα δεν μπορούν να υπερβαίνουν τους {maxLength} χαρακτήρες"
+
+#. js-lingui-id: IB9Gyw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger instructions must be text or null"
+msgstr "Οι οδηγίες ενεργοποίησης πράκτορα πρέπει να είναι κείμενο ή null"
+
+#. js-lingui-id: JCVBEh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger isActive must be true or false"
+msgstr "Το isActive της ενεργοποίησης πράκτορα πρέπει να είναι true ή false"
+
+#. js-lingui-id: R0xjlO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger settings must be an object"
+msgstr "Οι ρυθμίσεις ενεργοποίησης πράκτορα πρέπει να είναι αντικείμενο"
+
+#. js-lingui-id: UwmMbv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent trigger type must be one of: {supportedTypes}"
+msgstr "Ο τύπος ενεργοποίησης πράκτορα πρέπει να είναι ένας από τους εξής: {supportedTypes}"
+
+#. js-lingui-id: 9UuLk+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Agent triggers must be a list"
+msgstr "Οι ενεργοποιήσεις πράκτορα πρέπει να είναι λίστα"
 
 #. js-lingui-id: fX04ru
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -777,24 +818,6 @@ msgstr "Στροφή πράκτορα"
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent turn"
 msgstr "Στροφή πράκτορα"
-
-#. js-lingui-id: mCEPno
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.description"
-msgid "Agent turn evaluation"
-msgstr "Αξιολόγηση στροφής πράκτορα"
-
-#. js-lingui-id: 8TxJ/S
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
-msgid "Agent turn evaluation"
-msgstr "Αξιολόγηση στροφής πράκτορα"
-
-#. js-lingui-id: 8JwBHf
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Agent turn evaluations"
-msgstr "Αξιολογήσεις στροφής πράκτορα"
 
 #. js-lingui-id: Tdydg8
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -845,6 +868,12 @@ msgctxt "fieldMetadata.description"
 msgid "AI chat messages sent by the workspace member"
 msgstr "Μηνύματα συνομιλίας AI που στάλθηκαν από το μέλος του χώρου εργασίας"
 
+#. js-lingui-id: NBPjed
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "AI chat threads assigned to the workspace member"
+msgstr "Νήματα συνομιλίας AI που έχουν ανατεθεί στο μέλος του χώρου εργασίας"
+
 #. js-lingui-id: NHpbHJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -878,6 +907,16 @@ msgctxt "fieldMetadata.label"
 msgid "Amount"
 msgstr "Ποσό"
 
+#. js-lingui-id: /BH1B7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "An agent cannot have more than {maxTriggers} triggers"
+msgstr "Ένας πράκτορας δεν μπορεί να έχει περισσότερες από {maxTriggers} ενεργοποιήσεις"
+
+#. js-lingui-id: 4vJ4de
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "An agent trigger is invalid"
+msgstr "Μια ενεργοποίηση πράκτορα δεν είναι έγκυρη"
+
 #. js-lingui-id: pZEIPj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util.ts
 msgid "An agent with this name already exists"
@@ -887,6 +926,11 @@ msgstr "Υπάρχει ήδη πράκτορας με αυτό το όνομα"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "An agent with this name already exists."
 msgstr "Υπάρχει ήδη πράκτορας με αυτό το όνομα."
+
+#. js-lingui-id: uU52TI
+#: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
+msgid "An application can only start its own workflows."
+msgstr "Μια εφαρμογή μπορεί να ξεκινά μόνο τις δικές της ροές εργασίας."
 
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1029,6 +1073,11 @@ msgstr "Ετήσια έσοδα"
 msgid "Another application in this workspace has already registered a permission flag with this key."
 msgstr "Μια άλλη εφαρμογή σε αυτόν τον χώρο εργασίας έχει ήδη καταχωρίσει μια σημαία δικαιώματος με αυτό το κλειδί."
 
+#. js-lingui-id: hzz7Em
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Another recovery code was just generated for this member. Refresh the page to see it."
+msgstr "Μόλις δημιουργήθηκε άλλος κωδικός ανάκτησης για αυτό το μέλος. Ανανεώστε τη σελίδα για να τον δείτε."
+
 #. js-lingui-id: wsmbFt
 #. placeholder {0}: flatSettingsMenuItem.position
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -1145,6 +1194,18 @@ msgstr "Η συνάρτηση λογικής απεγκατάστασης της
 msgid "Application upgrade failed."
 msgstr "Η αναβάθμιση της εφαρμογής απέτυχε."
 
+#. js-lingui-id: Id/k1d
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key {key} is reserved"
+msgstr "Το κλειδί μεταβλητής εφαρμογής {key} είναι δεσμευμένο"
+
+#. js-lingui-id: wJwhrT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key {keyUpdate} is reserved"
+msgstr "Το κλειδί μεταβλητής εφαρμογής {keyUpdate} είναι δεσμευμένο"
+
 #. js-lingui-id: 5MJQ4s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
@@ -1169,6 +1230,31 @@ msgstr "Η μεταβλητή εφαρμογής δεν βρέθηκε"
 #: src/engine/core-modules/application/application-variable/application-variable.exception.ts
 msgid "Application variable not found."
 msgstr "Η μεταβλητή εφαρμογής δεν βρέθηκε."
+
+#. js-lingui-id: 6A2f5A
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "Application variable scope \"{scope}\" is invalid"
+msgstr "Το εύρος μεταβλητής εφαρμογής \"{scope}\" δεν είναι έγκυρο"
+
+#. js-lingui-id: jtm6CB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable scope cannot be changed"
+msgstr "Το εύρος μεταβλητής εφαρμογής δεν μπορεί να αλλάξει"
+
+#. js-lingui-id: /Qr5Q/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable scope cannot be changed after creation"
+msgstr "Το εύρος μεταβλητής εφαρμογής δεν μπορεί να αλλάξει μετά τη δημιουργία"
+
+#. js-lingui-id: TclsKI
+#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
+msgid "Application workflows are not enabled for this workspace."
+msgstr "Οι ροές εργασίας εφαρμογής δεν είναι ενεργοποιημένες για αυτόν τον χώρο εργασίας."
+
+#. js-lingui-id: l/Xlom
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Applications cannot update these fields: {fieldsList}."
+msgstr "Οι εφαρμογές δεν μπορούν να ενημερώσουν αυτά τα πεδία: {fieldsList}."
 
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -1214,6 +1300,12 @@ msgctxt "fieldMetadata.label"
 msgid "Archived"
 msgstr "Αρχειοθετημένο"
 
+#. js-lingui-id: okfXhQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Archived at"
+msgstr "Αρχειοθετήθηκε στις"
+
 #. js-lingui-id: Uj9aPO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -1226,11 +1318,34 @@ msgctxt "fieldMetadata.label"
 msgid "Archived At"
 msgstr "Αρχειοθετήθηκε στις"
 
+#. js-lingui-id: b1O47s
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Ask a workspace admin for a new recovery code to finish setting up two-factor authentication."
+msgstr "Ζητήστε από έναν διαχειριστή του χώρου εργασίας έναν νέο κωδικό ανάκτησης για να ολοκληρώσετε τη ρύθμιση του ελέγχου ταυτότητας δύο παραγόντων."
+
 #. js-lingui-id: ITCVsf
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Ask AI"
 msgstr "Ρώτησε την AI"
+
+#. js-lingui-id: YWpd8A
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Assign"
+msgstr "Ανάθεση"
+
+#. js-lingui-id: Yd22pJ
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Assign"
+msgstr "Ανάθεση"
+
+#. js-lingui-id: 66wSGr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Assigned chat threads"
+msgstr "Ανατεθειμένα νήματα συνομιλίας"
 
 #. js-lingui-id: z2Vy8H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1245,6 +1360,7 @@ msgid "Assigned to Me"
 msgstr "Ανατεθειμένο σε εμένα"
 
 #. js-lingui-id: EqqZEp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Assignee"
@@ -1450,6 +1566,12 @@ msgstr "Απαιτείται ταυτοποίηση."
 msgid "Authentication required."
 msgstr "Απαιτείται ταυτοποίηση."
 
+#. js-lingui-id: Z6TS/W
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Authored template URL"
+msgstr "URL προτύπου που συντάχθηκε"
+
 #. js-lingui-id: hq1K5d
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -1485,6 +1607,11 @@ msgstr "Αρχείο άβαταρ"
 msgctxt "fieldMetadata.label"
 msgid "Avatar URL"
 msgstr "Διεύθυνση URL άβαταρ"
+
+#. js-lingui-id: EaJzRw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Batch mode of a database event trigger must be true or false"
+msgstr "Η λειτουργία δέσμης μιας ενεργοποίησης συμβάντος βάσης δεδομένων πρέπει να είναι true ή false"
 
 #. js-lingui-id: Cei2D0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -1682,6 +1809,30 @@ msgstr "Κατά στάδιο"
 msgctxt "view.name"
 msgid "By Status"
 msgstr "Κατά κατάσταση"
+
+#. js-lingui-id: gUmRmd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Cache Creation Tokens"
+msgstr "Διακριτικά δημιουργίας κρυφής μνήμης"
+
+#. js-lingui-id: YIsqqp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Cache Creation Tokens"
+msgstr "Διακριτικά δημιουργίας κρυφής μνήμης"
+
+#. js-lingui-id: CV5XMd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Cache Read Tokens"
+msgstr "Διακριτικά ανάγνωσης κρυφής μνήμης"
+
+#. js-lingui-id: Iwbkq0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Cache Read Tokens"
+msgstr "Διακριτικά ανάγνωσης κρυφής μνήμης"
 
 #. js-lingui-id: ma0oop
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -2344,6 +2495,12 @@ msgstr "Ο τελεστής φίλτρου γραφήματος δεν υποσ�
 msgid "Chart filter value is not valid for this operand"
 msgstr "Η τιμή του φίλτρου γραφήματος δεν είναι έγκυρη για αυτόν τον τελεστή"
 
+#. js-lingui-id: ApLkPY
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Chat"
+msgstr "Συνομιλία"
+
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chat message not found."
@@ -2360,10 +2517,23 @@ msgstr "Μηνύματα συνομιλίας"
 msgid "Chat thread not found."
 msgstr "Το νήμα συνομιλίας δεν βρέθηκε."
 
-#. js-lingui-id: eLQjKW
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Chat thread title cannot be empty."
-msgstr ""
+#. js-lingui-id: dkKfLP
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Chat thread participant"
+msgstr "Συμμετέχων σε νήμα συνομιλίας"
+
+#. js-lingui-id: iCLf0Y
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Chat thread participants"
+msgstr "Συμμετέχοντες σε νήμα συνομιλίας"
+
+#. js-lingui-id: sTkIAU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Chat thread participations"
+msgstr "Συμμετοχές σε νήμα συνομιλίας"
 
 #. js-lingui-id: lZ6AwB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2374,6 +2544,12 @@ msgstr "Νήματα συνομιλίας"
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
 msgctxt "fieldMetadata.label"
+msgid "Chats"
+msgstr "Συνομιλίες"
+
+#. js-lingui-id: 68T2AN
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
 msgid "Chats"
 msgstr "Συνομιλίες"
 
@@ -2399,6 +2575,11 @@ msgstr "Συνομιλίες που συνδέονται με την ευκαι�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
 msgstr "Επιλέξτε έναν υπάρχοντα τύπο δραστηριότητας χρονολογίου για παράκαμψη."
+
+#. js-lingui-id: +eCqA7
+#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+msgid "Choose one person or one role to share with."
+msgstr "Επιλέξτε ένα άτομο ή έναν ρόλο για κοινή χρήση."
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -2521,18 +2702,6 @@ msgstr "Το στοιχείο μενού εντολών με το ίδιο κα�
 msgctxt "fieldMetadata.label"
 msgid "Commas and dot"
 msgstr "Κόμματα και τελεία"
-
-#. js-lingui-id: CqQgUE
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Comment"
-msgstr "Σχόλιο"
-
-#. js-lingui-id: 3lgJNW
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Comment"
-msgstr "Σχόλιο"
 
 #. js-lingui-id: snetsR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -2906,17 +3075,17 @@ msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
 msgstr "Μέγεθος συνομιλίας"
 
-#. js-lingui-id: qsiOwY
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
+#. js-lingui-id: 5hyV33
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutTab.title"
 msgid "Conversations"
-msgstr ""
+msgstr "Συνομιλίες"
 
-#. js-lingui-id: z+qran
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Conversations held by the run's agent steps"
-msgstr ""
+#. js-lingui-id: Hl4lJ2
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutWidget.title"
+msgid "Conversations"
+msgstr "Συνομιλίες"
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -3059,11 +3228,11 @@ msgid "Create View"
 msgstr "Δημιουργία προβολής"
 
 #. js-lingui-id: 4lG6GV
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -3072,11 +3241,11 @@ msgid "Created At"
 msgstr "Δημιουργήθηκε στις"
 
 #. js-lingui-id: ZA1xqP
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -3084,8 +3253,15 @@ msgctxt "fieldMetadata.label"
 msgid "Created At"
 msgstr "Δημιουργήθηκε στις"
 
+#. js-lingui-id: AAy/QL
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Created by"
+msgstr "Δημιουργήθηκε από"
+
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3107,6 +3283,7 @@ msgstr "Δημιουργήθηκε στις"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3151,6 +3328,7 @@ msgstr "Η δημιουργία μιας εγγραφής ιδιωτικού α�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3187,6 +3365,7 @@ msgstr "Ημερομηνία Δημιουργίας"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3243,6 +3422,11 @@ msgstr "Cron"
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Cron pattern \"{pattern}\" is invalid"
 msgstr "Το μοτίβο Cron \"{pattern}\" δεν είναι έγκυρο"
+
+#. js-lingui-id: ViG9dm
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Cron triggers need a valid cron pattern such as \"0 9 * * 1\""
+msgstr "Οι ενεργοποιήσεις Cron χρειάζονται ένα έγκυρο μοτίβο cron, όπως \"0 9 * * 1\""
 
 #. js-lingui-id: DIjcDc
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -3337,6 +3521,11 @@ msgstr "Η διαμόρφωση βάσης δεδομένων είναι απε�
 msgctxt "fieldMetadata.label"
 msgid "Database Event"
 msgstr "Συμβάν Βάσης Δεδομένων"
+
+#. js-lingui-id: EMLSIx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Database event triggers need an event name such as \"company.created\""
+msgstr "Οι ενεργοποιήσεις συμβάντων βάσης δεδομένων χρειάζονται ένα όνομα συμβάντος, όπως \"company.created\""
 
 #. js-lingui-id: IakS6+
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -3486,6 +3675,12 @@ msgctxt "pageLayout.name"
 msgid "Default Campaign Layout"
 msgstr "Προεπιλεγμένη Διάταξη Καμπάνιας"
 
+#. js-lingui-id: fJiMYI
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-agent-chat-thread-page-layout.config.ts
+msgctxt "pageLayout.name"
+msgid "Default Chat Layout"
+msgstr "Προεπιλεγμένη διάταξη συνομιλίας"
+
 #. js-lingui-id: aBOgPF
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
@@ -3633,6 +3828,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Deleted {objectLabelPlural}"
 msgstr "Διαγράφηκε {objectLabelPlural}"
 
+#. js-lingui-id: wG932w
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Deleted at"
+msgstr "Διαγράφηκε Στις"
+
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -3656,6 +3857,7 @@ msgstr "Διαγράφηκε {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3669,11 +3871,11 @@ msgid "Deleted at"
 msgstr "Διαγράφηκε Στις"
 
 #. js-lingui-id: l+MMBR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -3682,11 +3884,11 @@ msgid "Deleted At"
 msgstr "Διαγράφηκε Στις"
 
 #. js-lingui-id: Lu8j/6
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -3735,6 +3937,12 @@ msgstr "Περιγραφή"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Design"
 msgstr "Σχεδίαση"
+
+#. js-lingui-id: hlOMTM
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Destination URL after recipient variables are replaced"
+msgstr "URL προορισμού μετά την αντικατάσταση των μεταβλητών παραλήπτη"
 
 #. js-lingui-id: BlbMIB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3805,6 +4013,12 @@ msgstr "Όνομα τομέα"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Domains"
 msgstr "Τομείς"
+
+#. js-lingui-id: SFbVrl
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Done"
+msgstr "Ολοκληρώθηκε"
 
 #. js-lingui-id: uyJle/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -3885,6 +4099,11 @@ msgstr "Διπλότυπη Ροή Εργασίας"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "Διπλή επιλογή {field}"
+
+#. js-lingui-id: YNySNZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Each agent trigger must be an object"
+msgstr "Κάθε ενεργοποίηση πράκτορα πρέπει να είναι αντικείμενο"
 
 #. js-lingui-id: nTBzmZ
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
@@ -4106,7 +4325,14 @@ msgctxt "fieldMetadata.label"
 msgid "End Date"
 msgstr "Ημερομηνία Λήξης"
 
+#. js-lingui-id: MRW3kn
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Ended At"
+msgstr "Έληξε στις"
+
 #. js-lingui-id: BECIbc
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Ended At"
@@ -4127,6 +4353,16 @@ msgstr "Απαιτείται το engineComponentKey"
 msgctxt "fieldMetadata.label"
 msgid "Enqueued"
 msgstr "Σε ουρά"
+
+#. js-lingui-id: q1jHuq
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Enter your two-factor authentication code to continue."
+msgstr "Εισαγάγετε τον κωδικό ελέγχου ταυτότητας δύο παραγόντων για να συνεχίσετε."
+
+#. js-lingui-id: Doq+6U
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "Enter your two-factor authentication code to generate a recovery code."
+msgstr "Εισαγάγετε τον κωδικό ελέγχου ταυτότητας δύο παραγόντων για να δημιουργήσετε έναν κωδικό ανάκτησης."
 
 #. js-lingui-id: vNNSFX
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
@@ -4160,6 +4396,18 @@ msgstr "Η μεταβλητή περιβάλλοντος CLOUDFLARE_API_KEY πρ
 msgid "Error"
 msgstr "Σφάλμα"
 
+#. js-lingui-id: Z4B6mY
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Error"
+msgstr "Σφάλμα"
+
+#. js-lingui-id: AmBiAv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Error"
+msgstr "Σφάλμα"
+
 #. js-lingui-id: rG9Fzz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -4183,18 +4431,6 @@ msgstr "Μήνυμα σφάλματος"
 msgctxt "fieldMetadata.label"
 msgid "Error Message"
 msgstr "Μήνυμα σφάλματος"
-
-#. js-lingui-id: dFBOz1
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Evaluations"
-msgstr "Αξιολογήσεις"
-
-#. js-lingui-id: e8MefK
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Evaluations"
-msgstr "Αξιολογήσεις"
 
 #. js-lingui-id: ++Dmjj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4390,11 +4626,6 @@ msgstr "Πλήθος αποτυχιών"
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to build function dependencies."
 msgstr "Απέτυχε η δημιουργία των εξαρτήσεων της συνάρτησης."
-
-#. js-lingui-id: E7Dsiq
-#: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
-msgid "Failed to create evaluation. Please try again."
-msgstr "Αποτυχία δημιουργίας αξιολόγησης. Παρακαλώ δοκιμάστε ξανά."
 
 #. js-lingui-id: RjuW0j
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -4750,6 +4981,7 @@ msgstr "Πεδίο χρησιμοποιούμενο για πλήρη κειμε
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5005,6 +5237,21 @@ msgstr "Τα πεδία ενέργειας της φόρμας πρέπει να
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "Η ενέργεια της φόρμας πρέπει να έχει τουλάχιστον ένα πεδίο"
+
+#. js-lingui-id: JRr+QW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
+msgid "Forwarded request headers must be a list of header names"
+msgstr "Οι προωθημένες κεφαλίδες αιτήματος πρέπει να είναι λίστα ονομάτων κεφαλίδων"
+
+#. js-lingui-id: VMhHnD
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
+msgid "forwardedRequestHeaders cannot include credential headers: {headerNames}"
+msgstr "forwardedRequestHeaders δεν μπορεί να περιλαμβάνει κεφαλίδες διαπιστευτηρίων: {headerNames}"
+
+#. js-lingui-id: u1byEn
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
+msgid "forwardedRequestHeaders must be an array of strings"
+msgstr "forwardedRequestHeaders πρέπει να είναι πίνακας συμβολοσειρών"
 
 #. js-lingui-id: 39y5bn
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -5358,6 +5605,12 @@ msgstr "Μη έγκυρο όνομα handler"
 msgid "handlerName must be a valid JavaScript identifier or dotted path"
 msgstr "Το handlerName πρέπει να είναι έγκυρο αναγνωριστικό JavaScript ή διακεκομμένη διαδρομή"
 
+#. js-lingui-id: wtkOku
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Hash of the authored template and resolved destination URLs"
+msgstr "Κατακερματισμός του συνταγμένου προτύπου και των επιλυμένων URL προορισμού"
+
 #. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -5401,11 +5654,11 @@ msgstr "Ταυτότητα iCal"
 
 #. js-lingui-id: OtYhMx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -5430,6 +5683,7 @@ msgstr "Ταυτότητα iCal"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5444,11 +5698,11 @@ msgstr "ID"
 
 #. js-lingui-id: dB826o
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -5473,6 +5727,7 @@ msgstr "ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5578,6 +5833,18 @@ msgstr "Το ευρετήριο με το ίδιο όνομα υπάρχει ή�
 msgid "Index with same universal identifier already exists"
 msgstr "Το ευρετήριο με το ίδιο καθολικό αναγνωριστικό υπάρχει ήδη"
 
+#. js-lingui-id: ghVcC2
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Input Credits"
+msgstr "Πιστώσεις εισόδου"
+
+#. js-lingui-id: Ca4seM
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Input Credits"
+msgstr "Πιστώσεις εισόδου"
+
 #. js-lingui-id: 9Lkkre
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Input exceeds maximum length."
@@ -5587,6 +5854,18 @@ msgstr "Η εισαγωγή υπερβαίνει το μέγιστο μήκος.
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Input is too short."
 msgstr "Η εισαγωγή είναι πολύ μικρή."
+
+#. js-lingui-id: Kfbja9
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Input Tokens"
+msgstr "Διακριτικά εισόδου"
+
+#. js-lingui-id: qUpYTQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Input Tokens"
+msgstr "Διακριτικά εισόδου"
 
 #. js-lingui-id: VUEkq2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5621,6 +5900,12 @@ msgctxt "fieldMetadata.description"
 msgid "Internal name of the campaign"
 msgstr "Εσωτερικό όνομα της καμπάνιας"
 
+#. js-lingui-id: Lztd7b
+#: src/engine/core-modules/record-share/services/record-sharing.service.ts
+#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+msgid "Invalid access level."
+msgstr "Μη έγκυρο επίπεδο πρόσβασης."
+
 #. js-lingui-id: pSjWxS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
@@ -5637,15 +5922,20 @@ msgstr "Μη έγκυρα δεδομένα εισόδου πράκτορα."
 msgid "Invalid aggregate fields parameter."
 msgstr "Μη έγκυρη παράμετρος συγκεντρωτικών πεδίων."
 
-#. js-lingui-id: pvMXsN
+#. js-lingui-id: kwF4Vs
 #: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Invalid answer for this question."
-msgstr "Μη έγκυρη απάντηση για αυτήν την ερώτηση."
+msgid "Invalid answer for this request."
+msgstr "Μη έγκυρη απάντηση για αυτό το αίτημα."
 
 #. js-lingui-id: 56bSD0
 #: src/engine/core-modules/application/application-variable/application-variable.exception.ts
 msgid "Invalid application variable input."
 msgstr "Μη έγκυρη είσοδος μεταβλητής εφαρμογής."
+
+#. js-lingui-id: fOpg3H
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
+msgid "Invalid application workflow definition."
+msgstr "Μη έγκυρος ορισμός ροής εργασίας εφαρμογής."
 
 #. js-lingui-id: KNrRpL
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5814,6 +6104,16 @@ msgstr "Μη έγκυρο κλειδί σημαίας λειτουργίας."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Invalid field input."
 msgstr "Μη έγκυρα δεδομένα εισόδου πεδίου."
+
+#. js-lingui-id: FHBTxe
+#: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
+msgid "Invalid field selection. Check the requested fields and relation depth."
+msgstr "Μη έγκυρη επιλογή πεδίων. Ελέγξτε τα ζητούμενα πεδία και το βάθος σχέσης."
+
+#. js-lingui-id: 0a1W33
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid fields parameter."
+msgstr "Μη έγκυρη παράμετρος πεδίων."
 
 #. js-lingui-id: s6LppJ
 #. placeholder {0}: Object.keys(allowedExtensions).join(', ')
@@ -6003,6 +6303,11 @@ msgstr "Μη έγκυρα δεδομένα εισόδου αντικειμένο
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Invalid or expired export download link."
 msgstr "Μη έγκυρος ή ληγμένος σύνδεσμος λήψης εξαγωγής."
+
+#. js-lingui-id: Mwwd+k
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Invalid or expired recovery code."
+msgstr "Μη έγκυρος ή ληγμένος κωδικός ανάκτησης."
 
 #. js-lingui-id: t4AABW
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -6210,9 +6515,20 @@ msgstr "Μη έγκυρη μορφή URL."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
+#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Μη έγκυρη μορφή UUID."
+
+#. js-lingui-id: VJ3pD8
+#: src/engine/metadata-modules/validation-rule/validation-rule.exception.ts
+msgid "Invalid validation rule expression."
+msgstr "Μη έγκυρη έκφραση κανόνα επικύρωσης."
+
+#. js-lingui-id: x0Uq3/
+#: src/engine/metadata-modules/validation-rule/validation-rule.exception.ts
+msgid "Invalid validation rule input."
+msgstr "Μη έγκυρη είσοδος κανόνα επικύρωσης."
 
 #. js-lingui-id: RyBgV/
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -6708,11 +7024,41 @@ msgctxt "fieldMetadata.label"
 msgid "Language"
 msgstr "Γλώσσα"
 
+#. js-lingui-id: pPtB+n
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Last activity"
+msgstr "Τελευταία δραστηριότητα"
+
+#. js-lingui-id: 6BLB1j
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Last mentioned at"
+msgstr "Τελευταία αναφορά στις"
+
+#. js-lingui-id: 98c5Xs
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Last message"
+msgstr "Τελευταίο μήνυμα"
+
+#. js-lingui-id: XIwvdi
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Last message sender"
+msgstr "Αποστολέας τελευταίου μηνύματος"
+
 #. js-lingui-id: qqD3aX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last published Version ID"
 msgstr "Αναγνωριστικό τελευταίας δημοσιευμένης έκδοσης"
+
+#. js-lingui-id: R2LOsP
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Last read at"
+msgstr "Τελευταία ανάγνωση στις"
 
 #. js-lingui-id: 2zq4LZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -6725,6 +7071,12 @@ msgstr "Τελευταίο σφάλμα ροής"
 msgctxt "fieldMetadata.label"
 msgid "Last Stream Error"
 msgstr "Τελευταίο σφάλμα ροής"
+
+#. js-lingui-id: 94QD51
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Last time the link was changed"
+msgstr "Τελευταία φορά που άλλαξε ο σύνδεσμος"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -6784,6 +7136,7 @@ msgstr "Τελευταία φορά που άλλαξε η εγγραφή"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6795,6 +7148,12 @@ msgstr "Τελευταία φορά που άλλαξε η εγγραφή"
 msgctxt "fieldMetadata.label"
 msgid "Last update"
 msgstr "Τελευταία ενημέρωση"
+
+#. js-lingui-id: 4DNDAY
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Latest activity the member has read up to"
+msgstr "Τελευταία δραστηριότητα που έχει διαβαστεί από το μέλος"
 
 #. js-lingui-id: 0x2TQ/
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
@@ -6810,6 +7169,12 @@ msgstr "Η διάταξη είναι υποχρεωτική για το widget �
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Limits scoped below the workspace require the Organization plan."
 msgstr "Τα όρια που ορίζονται σε επίπεδο κάτω από τον χώρο εργασίας απαιτούν το πρόγραμμα Organization."
+
+#. js-lingui-id: T2S+Em
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Link position"
+msgstr "Θέση συνδέσμου"
 
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -7038,6 +7403,36 @@ msgstr "Πολλά σφάλματα επικύρωσης"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
 msgstr "Μάρτιος"
+
+#. js-lingui-id: Yzgk1u
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Mark as done"
+msgstr "Σημειώστε ως ολοκληρωμένο"
+
+#. js-lingui-id: lL9UM0
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Mark as read"
+msgstr "Σημείωση ως αναγνωσμένο"
+
+#. js-lingui-id: /Y0nEy
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Mark as read"
+msgstr "Σημείωση ως αναγνωσμένο"
+
+#. js-lingui-id: c3ONTD
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Mark as unread"
+msgstr "Σημείωση ως μη αναγνωσμένο"
+
+#. js-lingui-id: WnZHix
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Mark as unread"
+msgstr "Σημείωση ως μη αναγνωσμένο"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -7565,6 +7960,18 @@ msgstr "Λείπει σώμα αιτήματος."
 msgid "Missing required fields: at least one unique constraint have to be fully populated for \"{connectFieldName}\"."
 msgstr "Λείπουν απαραίτητα πεδία: τουλάχιστον ένας μοναδικός περιορισμός πρέπει να είναι πλήρως συμπληρωμένος για το \"{connectFieldName}\"."
 
+#. js-lingui-id: 770A/z
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Model ID"
+msgstr "ID μοντέλου"
+
+#. js-lingui-id: yrTsg9
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Model ID"
+msgstr "ID μοντέλου"
+
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -7681,11 +8088,6 @@ msgstr "Όνομα της εκτέλεσης ροής εργασίας"
 msgid "Names are not synced with labels"
 msgstr "Τα ονόματα δεν είναι συγχρονισμένα με τις ετικέτες"
 
-#. js-lingui-id: zL+3RN
-#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
-msgid "Navigate App"
-msgstr "Πλοήγηση στην εφαρμογή"
-
 #. js-lingui-id: GxRBGY
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -7755,6 +8157,18 @@ msgstr "Απαιτείται ενέργεια"
 msgctxt "fieldMetadata.label"
 msgid "New"
 msgstr "Νέο"
+
+#. js-lingui-id: y2lV0S
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "New chat"
+msgstr "Νέα συνομιλία"
+
+#. js-lingui-id: xKvfAx
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "New chat"
+msgstr "Νέα συνομιλία"
 
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
@@ -8290,6 +8704,11 @@ msgstr "Ένα ή περισσότερα αιτηθέντα πεδία πρόσ�
 msgid "Only a scheduled or sending campaign can be canceled."
 msgstr "Μόνο μια προγραμματισμένη ή υπό αποστολή καμπάνια μπορεί να ακυρωθεί."
 
+#. js-lingui-id: 8Hy+aw
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "Only a server administrator can manage recovery codes for this member."
+msgstr "Μόνο ένας διαχειριστής διακομιστή μπορεί να διαχειριστεί κωδικούς ανάκτησης για αυτό το μέλος."
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -8330,10 +8749,21 @@ msgstr "Επιτρέπεται μόνο ένα widget πλήρους ύψους 
 msgid "Only one workflow version identifier may be provided"
 msgstr "Μπορεί να παρέχεται μόνο ένα αναγνωριστικό έκδοσης ροής εργασίας"
 
+#. js-lingui-id: gJqtB1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
+msgid "Only the application that owns this agent can change its triggers"
+msgstr "Μόνο η εφαρμογή που κατέχει αυτόν τον πράκτορα μπορεί να αλλάξει τις ενεργοποιήσεις του"
+
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Μόνο το άτομο που δημιούργησε αυτήν τη ροή εργασίας μπορεί να αλλάξει ποιος τη βλέπει"
+
+#. js-lingui-id: E3ezWc
+#: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
+msgid "Only the values of this form can be changed."
+msgstr "Μόνο οι τιμές αυτής της φόρμας μπορούν να αλλάξουν."
 
 #. js-lingui-id: lWLaJ5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8558,11 +8988,28 @@ msgstr "Άλλο"
 msgid "Other error"
 msgstr "Άλλο σφάλμα"
 
+#. js-lingui-id: qxvgIJ
+#: src/engine/core-modules/application/application.service.ts
+msgid "Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here."
+msgstr "Άλλοι χώροι εργασίας βασίζονται στη διαδρομή διακομιστή αυτής της εφαρμογής, η οποία εξυπηρετείται από αυτόν τον χώρο εργασίας. Μεταφέρετε την ιδιοκτησία της εφαρμογής σε έναν άλλο χώρο εργασίας όπου είναι εγκατεστημένη ή απεγκαταστήστε την από όλους τους άλλους χώρους εργασίας, προτού την απεγκαταστήσετε εδώ."
+
 #. js-lingui-id: CN5Up3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Outgoing"
 msgstr "Εξερχόμενο"
+
+#. js-lingui-id: B6syqB
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Output Credits"
+msgstr "Πιστώσεις εξόδου"
+
+#. js-lingui-id: Vexcon
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Output Credits"
+msgstr "Πιστώσεις εξόδου"
 
 #. js-lingui-id: NFhGiX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
@@ -8574,6 +9021,18 @@ msgstr "Τα ονόματα πεδίων εξόδου μπορούν να περ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "Output field names must use only letters, numbers, underscores, dots or hyphens and be at most 64 characters: {0}"
 msgstr "Τα ονόματα πεδίων εξόδου πρέπει να χρησιμοποιούν μόνο γράμματα, αριθμούς, κάτω παύλες, τελείες ή παύλες και να είναι το πολύ 64 χαρακτήρες: {0}"
+
+#. js-lingui-id: C+hPEf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Output Tokens"
+msgstr "Διακριτικά εξόδου"
+
+#. js-lingui-id: FjWz1Z
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Output Tokens"
+msgstr "Διακριτικά εξόδου"
 
 #. js-lingui-id: Bxs7Ar
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8720,6 +9179,12 @@ msgstr "Δεν βρέθηκε η γονική ομάδα κατηγορημάτ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
 msgstr "Δεν βρέθηκε γονική ομάδα φίλτρων προβολής"
+
+#. js-lingui-id: vTA2Ms
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Participants"
+msgstr "Συμμετέχοντες"
 
 #. js-lingui-id: Yp8zt3
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -9085,6 +9550,7 @@ msgstr "Υπεύθυνος Επικοινωνίας"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9349,11 +9815,34 @@ msgctxt "fieldMetadata.label"
 msgid "Read"
 msgstr "Ανάγνωση"
 
+#. js-lingui-id: FiHtmb
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Read and inbox state of a member in a chat thread"
+msgstr "Κατάσταση ανάγνωσης και εισερχομένων ενός μέλους σε νήμα συνομιλίας"
+
+#. js-lingui-id: XReG0G
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Read and inbox state of each member in this thread"
+msgstr "Κατάσταση ανάγνωσης και εισερχομένων κάθε μέλους σε αυτό το νήμα"
+
+#. js-lingui-id: uCOlF8
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Read and inbox state of the workspace member in AI chat threads"
+msgstr "Κατάσταση ανάγνωσης και εισερχομένων του μέλους του χώρου εργασίας σε νήματα συνομιλίας AI"
+
 #. js-lingui-id: ZsNi6Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "Ανάγνωση και εγγραφή"
+
+#. js-lingui-id: e2WMO+
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Read, archive and snooze are not available yet. Try again in a few minutes."
+msgstr "Η ανάγνωση, η αρχειοθέτηση και η αναβολή δεν είναι ακόμη διαθέσιμες. Δοκιμάστε ξανά σε λίγα λεπτά."
 
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -9665,6 +10154,18 @@ msgctxt "fieldMetadata.label"
 msgid "Rendering Failed At"
 msgstr "Η απόδοση απέτυχε στις"
 
+#. js-lingui-id: VXwxSq
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Reopen"
+msgstr "Επανάνοιγμα"
+
+#. js-lingui-id: jR8q6B
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Reopen"
+msgstr "Επανάνοιγμα"
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9704,6 +10205,12 @@ msgstr "Ζητήθηκε"
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Requested file range cannot be served."
 msgstr "Δεν είναι δυνατή η εξυπηρέτηση του ζητούμενου εύρους αρχείου."
+
+#. js-lingui-id: pvmev1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Resolved destination URL"
+msgstr "Επιλυμένο URL προορισμού"
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -9788,6 +10295,12 @@ msgstr "Επαναφορά"
 msgctxt "commandMenuItem.label"
 msgid "Restore {objectLabel}"
 msgstr "Επαναφορά {objectLabel}"
+
+#. js-lingui-id: Ns9Rpt
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Restricted"
+msgstr "Περιορισμένο"
 
 #. js-lingui-id: xKCu0t
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9980,6 +10493,11 @@ msgstr "Η διαδρομή δεν βρέθηκε."
 msgid "Route path already exists."
 msgstr "Η διαδρομή υπάρχει ήδη."
 
+#. js-lingui-id: k2dqAu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
+msgid "Route triggers cannot forward credential headers"
+msgstr "Οι ενεργοποιήσεις διαδρομής δεν μπορούν να προωθούν κεφαλίδες διαπιστευτηρίων"
+
 #. js-lingui-id: dFzdKL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10120,18 +10638,6 @@ msgctxt "fieldMetadata.label"
 msgid "Scope"
 msgstr "Εμβέλεια"
 
-#. js-lingui-id: rhC6Nh
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Score"
-msgstr "Βαθμολογία"
-
-#. js-lingui-id: F2sVun
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Score"
-msgstr "Βαθμολογία"
-
 #. js-lingui-id: SiXwZL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10223,6 +10729,7 @@ msgstr "Διάνυσμα Αναζήτησης"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10250,6 +10757,11 @@ msgstr "Το πεδίο διανύσματος αναζήτησης πρέπει
 msgid "Search vector field not found"
 msgstr "Το πεδίο διανύσματος αναζήτησης δεν βρέθηκε"
 
+#. js-lingui-id: xvgOFj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
+msgid "Secret application variable cannot have a default value"
+msgstr "Η μυστική μεταβλητή εφαρμογής δεν μπορεί να έχει προεπιλεγμένη τιμή"
+
 #. js-lingui-id: 0Hcw3b
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -10275,18 +10787,6 @@ msgstr "Δείτε τις εκτελέσεις"
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Runs"
 msgstr "Δείτε τις εκτελέσεις"
-
-#. js-lingui-id: pRQO5R
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "See Version"
-msgstr "Δείτε την έκδοση"
-
-#. js-lingui-id: onFkTP
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "See Version"
-msgstr "Δείτε την έκδοση"
 
 #. js-lingui-id: cyovqN
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10489,6 +10989,11 @@ msgstr "Η προσωποποίηση σε επίπεδο διακομιστή �
 msgid "Set up two-factor authentication before impersonating users in another workspace."
 msgstr "Ρυθμίστε τον έλεγχο ταυτότητας δύο παραγόντων πριν υποδυθείτε χρήστες σε άλλον χώρο εργασίας."
 
+#. js-lingui-id: hMtVF7
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "Set up two-factor authentication on your own account before generating a recovery code."
+msgstr "Ρυθμίστε τον έλεγχο ταυτότητας δύο παραγόντων στον δικό σας λογαριασμό πριν δημιουργήσετε έναν κωδικό ανάκτησης."
+
 #. js-lingui-id: vGWuPM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -10550,6 +11055,25 @@ msgstr "Ο τίτλος του στοιχείου μενού ρυθμίσεων 
 msgid "Settings menu item title is required"
 msgstr "Απαιτείται τίτλος στοιχείου μενού ρυθμίσεων"
 
+#. js-lingui-id: r+zQgZ
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Share"
+msgstr "Κοινοποίηση"
+
+#. js-lingui-id: yBQtdU
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Share {objectLabelSingular}"
+msgstr "Κοινή χρήση {objectLabelSingular}"
+
+#. js-lingui-id: FiE0YS
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Share Record"
+msgstr "Κοινή χρήση εγγραφής"
+
 #. js-lingui-id: mPgP26
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -10582,6 +11106,18 @@ msgstr "Το shareWith ορίζει ένα μέλος χώρου εργασία�
 #: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "Το shareWith ορίζει την ίδια οντότητα περισσότερες από μία φορές"
+
+#. js-lingui-id: K9lEbt
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Short link"
+msgstr "Σύντομος σύνδεσμος"
+
+#. js-lingui-id: Cftw//
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Short links"
+msgstr "Σύντομοι σύνδεσμοι"
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -10635,6 +11171,29 @@ msgctxt "fieldMetadata.label"
 msgid "Skipped count"
 msgstr "Πλήθος παραλειφθέντων"
 
+#. js-lingui-id: WBwjjW
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Snooze"
+msgstr "Αναβολή"
+
+#. js-lingui-id: 62MTp+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Snooze"
+msgstr "Αναβολή"
+
+#. js-lingui-id: DAn6TI
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Snooze time must be in the future."
+msgstr "Η ώρα αναβολής πρέπει να είναι στο μέλλον."
+
+#. js-lingui-id: Q/HVbF
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Snoozed until"
+msgstr "Σε αναβολή έως"
+
 #. js-lingui-id: kIKb9e
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "Social"
@@ -10665,11 +11224,6 @@ msgstr "Δεν ήταν δυνατή η εύρεση ορισμένων συμμ
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "Something went wrong while saving your onboarding progress."
 msgstr "Κάτι πήγε στραβά κατά την αποθήκευση της προόδου σας στη διαδικασία έναρξης."
-
-#. js-lingui-id: RjTo7h
-#: src/engine/core-modules/onboarding/onboarding.exception.ts
-msgid "Something went wrong while starting the app installation. Please try again."
-msgstr "Κάτι πήγε στραβά κατά την έναρξη της εγκατάστασης της εφαρμογής. Δοκιμάστε ξανά."
 
 #. js-lingui-id: fWsBTs
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
@@ -10879,7 +11433,14 @@ msgctxt "fieldMetadata.label"
 msgid "Start of the week"
 msgstr "Αρχή της εβδομάδας"
 
+#. js-lingui-id: kg0Ky1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Started At"
+msgstr "Ξεκίνησε στις"
+
 #. js-lingui-id: tCbiO2
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Started At"
@@ -10914,12 +11475,14 @@ msgstr "Στατιστικά"
 
 #. js-lingui-id: 45wQns
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Status"
 msgstr "Κατάσταση"
 
 #. js-lingui-id: a1tUtz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -10937,11 +11500,6 @@ msgstr "Καταστάσεις"
 #: src/modules/workflow/common/utils/assert-workflow-statuses-not-set.ts
 msgid "Statuses cannot be set manually."
 msgstr "Οι καταστάσεις δεν μπορούν να οριστούν με το χέρι."
-
-#. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
-msgid "Step is not a form"
-msgstr "Το βήμα δεν είναι φόρμα"
 
 #. js-lingui-id: 9vB6Yo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -10998,6 +11556,24 @@ msgstr "Θέμα"
 msgctxt "fieldMetadata.label"
 msgid "Subject"
 msgstr "Θέμα"
+
+#. js-lingui-id: dkptzA
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Subscribe"
+msgstr "Εγγραφείτε"
+
+#. js-lingui-id: YXzEKE
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Subscribe"
+msgstr "Εγγραφείτε"
+
+#. js-lingui-id: lnqIRm
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Subscribed"
+msgstr "Έχει εγγραφεί"
 
 #. js-lingui-id: x0Vn7k
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11324,6 +11900,12 @@ msgctxt "fieldMetadata.description"
 msgid "TaskTarget task"
 msgstr "Στόχος Εργασίας της Εργασίας"
 
+#. js-lingui-id: nuuwhl
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Template and resolved URL hash"
+msgstr "Κατακερματισμός προτύπου και επιλυμένου URL"
+
 #. js-lingui-id: 2kFzQB
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Temporary file cannot be downloaded."
@@ -11436,6 +12018,13 @@ msgstr "Δεν έχει ανατεθεί έγκυρος ρόλος στην εφ
 msgid "The application key-value entry could not be saved. Please try again."
 msgstr "Δεν ήταν δυνατή η αποθήκευση της εγγραφής ζεύγους κλειδιού-τιμής της εφαρμογής. Δοκιμάστε ξανά."
 
+#. js-lingui-id: Y24OF2
+#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-workflow-version.util.ts
+msgid "The application workflow definition is invalid."
+msgstr "Ο ορισμός της ροής εργασίας εφαρμογής δεν είναι έγκυρος."
+
 #. js-lingui-id: WPAHpm
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of \"dependencies\"."
@@ -11486,6 +12075,12 @@ msgstr "Τα συνολικά ετήσια έσοδα της εταιρείας"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The connection-provider manifest is missing required fields."
 msgstr "Στο manifest του παρόχου σύνδεσης λείπουν τα απαιτούμενα πεδία."
+
+#. js-lingui-id: qTOWOx
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The creator of the link"
+msgstr "Ο δημιουργός του συνδέσμου"
 
 #. js-lingui-id: WhUgpA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -11655,6 +12250,12 @@ msgstr "Το πεδίο happensAt που χρησιμοποιείται από �
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Η αρχική έκδοση μιας ροής εργασίας δεν μπορεί να διαγραφεί"
 
+#. js-lingui-id: EJ2jHl
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The last editor of the link"
+msgstr "Ο τελευταίος επεξεργαστής του συνδέσμου"
+
 #. js-lingui-id: s8R9ou
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11687,6 +12288,18 @@ msgstr "Η λογική συνάρτηση που θα εκτελεστεί κα
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on disconnect was not found."
 msgstr "Η λογική συνάρτηση που θα εκτελεστεί κατά την αποσύνδεση δεν βρέθηκε."
+
+#. js-lingui-id: gefH0a
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The member who wrote the last message, empty when the agent or an application did"
+msgstr "Το μέλος που έγραψε το τελευταίο μήνυμα, κενό όταν το έγραψε ο πράκτορας ή μια εφαρμογή"
+
+#. js-lingui-id: IK/8im
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The members who wrote in the thread"
+msgstr "Τα μέλη που έγραψαν στο νήμα"
 
 #. js-lingui-id: fIq00W
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
@@ -11750,6 +12363,11 @@ msgstr "Δεν ήταν δυνατή η πρόσβαση στο μητρώο π�
 msgctxt "fieldMetadata.description"
 msgid "The people this campaign was sent to"
 msgstr "Τα άτομα στα οποία στάλθηκε αυτή η καμπάνια"
+
+#. js-lingui-id: lO2q5Z
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "The permissions of this run no longer allow submitting this form."
+msgstr "Τα δικαιώματα αυτής της εκτέλεσης δεν επιτρέπουν πλέον την υποβολή αυτής της φόρμας."
 
 #. js-lingui-id: HvJTSR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-member-standard-flat-field-metadata.util.ts
@@ -11841,6 +12459,12 @@ msgstr "Τα ενικά και πληθυντικά ονόματα δεν μπο
 msgid "The standard application cannot be exported."
 msgstr "Δεν είναι δυνατή η εξαγωγή της τυπικής εφαρμογής."
 
+#. js-lingui-id: D1ScNL
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The start of the last message in the thread"
+msgstr "Η αρχή του τελευταίου μηνύματος στο νήμα"
+
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
@@ -11908,6 +12532,11 @@ msgctxt "fieldMetadata.description"
 msgid "The workflow automated trigger type"
 msgstr "Το είδος αυτόματης σκανδάλης της ροής εργασίας"
 
+#. js-lingui-id: yf0hmT
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow field does not belong to the referenced object."
+msgstr "Το πεδίο ροής εργασίας δεν ανήκει στο αναφερόμενο αντικείμενο."
+
 #. js-lingui-id: ilJZDO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11919,6 +12548,16 @@ msgstr "Το αναγνωριστικό της τελευταίας δημοσι
 msgctxt "fieldMetadata.description"
 msgid "The workflow name"
 msgstr "Το όνομα της ροής εργασίας"
+
+#. js-lingui-id: UAyJ4f
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow record picker must reference an object."
+msgstr "Ο επιλογέας εγγραφής ροής εργασίας πρέπει να αναφέρεται σε ένα αντικείμενο."
+
+#. js-lingui-id: R6vHYk
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow references metadata that is not available to this application."
+msgstr "Η ροή εργασίας αναφέρεται σε μεταδεδομένα που δεν είναι διαθέσιμα για αυτή την εφαρμογή."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -11966,6 +12605,16 @@ msgstr "Η κατάσταση της έκδοσης της ροής εργασί
 msgctxt "fieldMetadata.description"
 msgid "The workspace member who last updated the record"
 msgstr "Το μέλος του χώρου εργασίας που πραγματοποίησε την τελευταία ενημέρωση της εγγραφής"
+
+#. js-lingui-id: lRojhv
+#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+msgid "Their role cannot access these records, and this object is only shared with roles that can."
+msgstr "Ο ρόλος τους δεν μπορεί να αποκτήσει πρόσβαση σε αυτές τις εγγραφές και αυτό το αντικείμενο κοινοποιείται μόνο σε ρόλους που μπορούν."
+
+#. js-lingui-id: qX/4Ez
+#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+msgid "Their role cannot see this record, and this object is only shared with people who can."
+msgstr "Ο ρόλος τους δεν μπορεί να δει αυτή την εγγραφή και αυτό το αντικείμενο κοινοποιείται μόνο σε άτομα που μπορούν."
 
 #. js-lingui-id: mTxjri
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -12074,6 +12723,11 @@ msgstr "Αυτή η εφαρμογή εγκαθίσταται. Περιμένε�
 msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
 msgstr "Αυτή η εφαρμογή απεγκαθίσταται. Περιμένετε να ολοκληρωθεί πριν την εγκαταστήσετε ξανά."
 
+#. js-lingui-id: J6svMA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "This application variable scope is not supported."
+msgstr "Αυτό το εύρος μεταβλητής εφαρμογής δεν υποστηρίζεται."
+
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -12130,15 +12784,20 @@ msgstr "Αυτός ο συνδεδεμένος λογαριασμός δεν μ�
 msgid "This connection is not allowed."
 msgstr "Αυτή η σύνδεση δεν επιτρέπεται."
 
-#. js-lingui-id: 4GicxZ
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "This conversation belongs to a workflow run and can only be read."
-msgstr ""
+#. js-lingui-id: rTgIgB
+#: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
+msgid "This conversation is busy. Try again."
+msgstr "Αυτή η συνομιλία είναι απασχολημένη. Δοκιμάστε ξανά."
 
 #. js-lingui-id: y3SNqs
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This conversation is too long for the model. Start a new thread to continue."
 msgstr "Αυτή η συνομιλία είναι υπερβολικά μεγάλη για το μοντέλο. Ξεκινήστε ένα νέο νήμα για να συνεχίσετε."
+
+#. js-lingui-id: 7Wki2n
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This conversation is waiting on an earlier request. Send your message once it is answered or done."
+msgstr "Αυτή η συνομιλία αναμένει ένα προηγούμενο αίτημα. Στείλτε το μήνυμά σας μόλις απαντηθεί ή ολοκληρωθεί."
 
 #. js-lingui-id: z7bcpf
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -12179,11 +12838,6 @@ msgstr "Αυτό το endpoint έχει μετακινηθεί. Καλέστε �
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr "Αυτό το endpoint δεν είναι πλέον διαθέσιμο στο /s/. Χρησιμοποιήστε αντ' αυτού το ειδικό URL δημόσιου domain."
-
-#. js-lingui-id: mjE4RD
-#: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
-msgid "This evaluation target could not be found."
-msgstr "Ο στόχος της αξιολόγησης δεν βρέθηκε."
 
 #. js-lingui-id: jBNDRQ
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12267,10 +12921,10 @@ msgstr "Η διαδρομή αυτού του αρχείου είναι πολύ
 msgid "This file upload has already been finalized."
 msgstr "Αυτή η μεταφόρτωση αρχείου έχει ήδη ολοκληρωθεί."
 
-#. js-lingui-id: Ee9ncG
+#. js-lingui-id: HTylEV
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
-msgid "This form is no longer awaiting a submission"
-msgstr "Αυτή η φόρμα δεν αναμένει πλέον υποβολή."
+msgid "This form no longer waits for an answer."
+msgstr "Αυτή η φόρμα δεν αναμένει πλέον απάντηση."
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -12316,6 +12970,16 @@ msgstr "Αυτό το φίλτρο καταγραφών δεν είναι έγκ
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
 msgstr "Αυτός ο πίνακας καταγραφών δεν είναι έγκυρος."
+
+#. js-lingui-id: 7Ecb3M
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This member can't reply in this chat, so it can't be assigned to them."
+msgstr "Αυτό το μέλος δεν μπορεί να απαντήσει σε αυτή τη συνομιλία, επομένως δεν μπορεί να του ανατεθεί."
+
+#. js-lingui-id: fbSots
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "This member hasn't set up two-factor authentication, so there is nothing to recover."
+msgstr "Αυτό το μέλος δεν έχει ρυθμίσει έλεγχο ταυτότητας δύο παραγόντων, επομένως δεν υπάρχει τίποτα για ανάκτηση."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -12412,11 +13076,6 @@ msgstr "Αυτός ο πάροχος δεν υποστηρίζεται."
 msgid "This public domain is already registered."
 msgstr "Αυτός ο δημόσιος τομέας έχει ήδη καταχωρηθεί."
 
-#. js-lingui-id: z7QJbR
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "This question has already been answered."
-msgstr "Αυτή η ερώτηση έχει ήδη απαντηθεί."
-
 #. js-lingui-id: TjUnO1
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
@@ -12441,6 +13100,21 @@ msgstr "Αυτή η εγγραφή δεν υπάρχει ή έχει διαγρ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This relation field cannot be used in a record rule"
 msgstr "Αυτό το πεδίο σχέσης δεν μπορεί να χρησιμοποιηθεί σε κανόνα εγγραφής"
+
+#. js-lingui-id: 16eZJL
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This request for input could not be found."
+msgstr "Δεν ήταν δυνατή η εύρεση αυτού του αιτήματος εισόδου."
+
+#. js-lingui-id: KQoPVq
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This request is no longer waiting for an answer."
+msgstr "Αυτό το αίτημα δεν αναμένει πλέον απάντηση."
+
+#. js-lingui-id: jd14wQ
+#: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
+msgid "This request is still getting ready. Try again in a moment."
+msgstr "Αυτό το αίτημα εξακολουθεί να προετοιμάζεται. Δοκιμάστε ξανά σε λίγο."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -12541,6 +13215,11 @@ msgstr "Αυτή η μεταφόρτωση ολοκληρώνεται ήδη. Π
 msgid "This user is already a member of the workspace."
 msgstr "Αυτός ο χρήστης είναι ήδη μέλος του χώρου εργασίας."
 
+#. js-lingui-id: r6G80y
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "This user is not a member of the workspace."
+msgstr "Αυτός ο χρήστης δεν αποτελεί μέρος του χώρου εργασίας."
+
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."
@@ -12565,6 +13244,16 @@ msgstr "Αυτή η ροή εργασίας υπάρχει ήδη"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "Αυτή η ροή εργασίας υπάρχει ήδη."
+
+#. js-lingui-id: MuU6yL
+#: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
+msgid "This workflow is managed by an application and is read-only"
+msgstr "Αυτή η ροή εργασίας διαχειρίζεται από μια εφαρμογή και είναι μόνο για ανάγνωση"
+
+#. js-lingui-id: ZyyOUp
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+msgid "This workflow step is not allowed with the permissions of the workflow."
+msgstr "Αυτό το βήμα ροής εργασίας δεν επιτρέπεται με τα δικαιώματα της ροής εργασίας."
 
 #. js-lingui-id: cqZK9Z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
@@ -12642,6 +13331,7 @@ msgid "Thread"
 msgstr "Νήμα"
 
 #. js-lingui-id: KJ4+gp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -12666,6 +13356,12 @@ msgstr "Εξωτερικό Id νήματος"
 msgctxt "fieldMetadata.description"
 msgid "Thread id from the messaging provider"
 msgstr "Το αναγνωριστικό του νήματος από τον πάροχο μηνυμάτων"
+
+#. js-lingui-id: rwVcrd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Thread this state belongs to"
+msgstr "Νήμα στο οποίο ανήκει αυτή η κατάσταση"
 
 #. js-lingui-id: kkDQ8m
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -13091,14 +13787,12 @@ msgstr "Τρίτη"
 
 #. js-lingui-id: Ucgl3N
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Turn"
 msgstr "Στροφή"
 
 #. js-lingui-id: VM2Yjp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Turn"
 msgstr "Στροφή"
@@ -13163,6 +13857,11 @@ msgstr "Δεν είναι δυνατή η πρόσβαση στο ιστορικ
 msgid "Unable to retrieve the application package."
 msgstr "Δεν είναι δυνατή η ανάκτηση του πακέτου εφαρμογής."
 
+#. js-lingui-id: p/CSwP
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Unassign yourself before unsubscribing from this chat."
+msgstr "Καταργήστε την ανάθεση από τον εαυτό σας πριν διαγραφείτε από αυτή τη συνομιλία."
+
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -13213,6 +13912,30 @@ msgstr "αποσύνδεσε μια σχετική σημείωση"
 msgctxt "timelineActivityType.label"
 msgid "unlinked a related task"
 msgstr "αποσύνδεσε μια σχετική εργασία"
+
+#. js-lingui-id: S6V7+e
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Unsnooze"
+msgstr "Κατάργηση αναβολής"
+
+#. js-lingui-id: pm01mX
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Unsnooze"
+msgstr "Κατάργηση αναβολής"
+
+#. js-lingui-id: rx6DZo
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Unsubscribe"
+msgstr "Κατάργηση εγγραφής"
+
+#. js-lingui-id: TkPhSO
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Unsubscribe"
+msgstr "Κατάργηση εγγραφής"
 
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -13328,11 +14051,11 @@ msgid "updated a related task"
 msgstr "ενημέρωσε μια σχετική εργασία"
 
 #. js-lingui-id: zYS9b3
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -13341,11 +14064,11 @@ msgid "Updated At"
 msgstr "Ενημερώθηκε στις"
 
 #. js-lingui-id: LuWQ3A
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
@@ -13376,6 +14099,7 @@ msgstr "Ενημερώθηκε στις"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -13397,6 +14121,12 @@ msgstr "Το όνομα του ενημερωμένου πεδίου δεν εί
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Upsert"
 msgstr "Εισαγωγή ή ενημέρωση"
+
+#. js-lingui-id: CfAilE
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "URL as authored in the campaign, including variables"
+msgstr "URL όπως συντάχθηκε στην καμπάνια, συμπεριλαμβανομένων μεταβλητών"
 
 #. js-lingui-id: Gjk0so
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-url.util.ts
@@ -13439,6 +14169,11 @@ msgstr "Ο χρήστης ήδη υπάρχει"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Στον χρήστη έχει ήδη ανατεθεί ρόλος."
+
+#. js-lingui-id: +FdZ1+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "User application variable cannot have a value"
+msgstr "Η μεταβλητή εφαρμογής χρήστη δεν μπορεί να έχει τιμή"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -13500,8 +14235,7 @@ msgid "User time zone"
 msgstr "Ζώνη ώρας χρήστη"
 
 #. js-lingui-id: VkcC68
-#: src/engine/core-modules/auth/services/auth.service.ts
-#: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util.ts
 msgid "User was not created with email/password"
 msgstr "Ο χρήστης δεν δημιουργήθηκε με email/κωδικό πρόσβασης"
 
@@ -13521,7 +14255,6 @@ msgstr "ID χώρου εργασίας χρήστη"
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Ο χώρος εργασίας χρήστη δεν βρέθηκε."
@@ -13554,6 +14287,55 @@ msgstr "Η προτιμώμενη ημέρα έναρξης της εβδομά�
 msgctxt "fieldMetadata.description"
 msgid "User's preferred time format"
 msgstr "Η προτιμώμενη μορφή ώρας του χρήστη"
+
+#. js-lingui-id: lgqX2U
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule error field must belong to the rule's object"
+msgstr "Το πεδίο σφάλματος κανόνα επικύρωσης πρέπει να ανήκει στο αντικείμενο του κανόνα"
+
+#. js-lingui-id: s3MXA5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule expression cannot be parsed"
+msgstr "Δεν είναι δυνατή η ανάλυση της έκφρασης κανόνα επικύρωσης"
+
+#. js-lingui-id: zPzkn5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule message is required"
+msgstr "Απαιτείται μήνυμα κανόνα επικύρωσης"
+
+#. js-lingui-id: YHVOJA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule name is required"
+msgstr "Απαιτείται όνομα κανόνα επικύρωσης"
+
+#. js-lingui-id: tRNbCu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule not found"
+msgstr "Ο κανόνας επικύρωσης δεν βρέθηκε"
+
+#. js-lingui-id: 4U57GB
+#: src/engine/metadata-modules/validation-rule/validation-rule.exception.ts
+msgid "Validation rule not found."
+msgstr "Ο κανόνας επικύρωσης δεν βρέθηκε."
+
+#. js-lingui-id: Wkov6K
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rule object not found"
+msgstr "Το αντικείμενο κανόνα επικύρωσης δεν βρέθηκε"
+
+#. js-lingui-id: /zScA0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service.ts
+msgid "Validation rules cannot be added to system objects"
+msgstr "Δεν είναι δυνατή η προσθήκη κανόνων επικύρωσης σε αντικείμενα συστήματος"
 
 #. js-lingui-id: sFN4Dx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -13975,6 +14757,11 @@ msgstr "Το ViewId είναι απαραίτητο για τη δημιουργ
 msgid "ViewId is required to create a view sort."
 msgstr "Το ViewId είναι απαραίτητο για τη δημιουργία ενός είδους παραγγελίας προβολής."
 
+#. js-lingui-id: 4KUXUa
+#: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
+msgid "Wait for event step must have a valid event"
+msgstr "Το βήμα αναμονής για συμβάν πρέπει να έχει έγκυρο συμβάν"
+
 #. js-lingui-id: vuzFx0
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -14004,6 +14791,16 @@ msgstr "ανακτήθηκε από"
 msgctxt "timelineActivityType.label"
 msgid "was unlinked by"
 msgstr "αποσυνδέθηκε από"
+
+#. js-lingui-id: aIwQPa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Watched fields of a database event trigger must be field names"
+msgstr "Τα παρακολουθούμενα πεδία μιας ενεργοποίησης συμβάντος βάσης δεδομένων πρέπει να είναι ονόματα πεδίων"
+
+#. js-lingui-id: CsCRdd
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "Watched fields only apply to \"updated\" database event triggers"
+msgstr "Τα παρακολουθούμενα πεδία ισχύουν μόνο για ενεργοποιήσεις συμβάντος βάσης δεδομένων \"updated\""
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
@@ -14091,6 +14888,12 @@ msgctxt "fieldMetadata.description"
 msgid "What this list is for"
 msgstr "Για ποιον σκοπό προορίζεται αυτή η λίστα"
 
+#. js-lingui-id: bA46C1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When a snoozed thread comes back to the inbox"
+msgstr "Όταν ένα νήμα σε αναβολή επιστρέφει στα εισερχόμενα"
+
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14102,6 +14905,24 @@ msgstr "Πότε ολοκληρώθηκε η αποστολή της καμπά�
 msgctxt "fieldMetadata.description"
 msgid "When the campaign is due to start sending"
 msgstr "Πότε πρόκειται να ξεκινήσει η αποστολή της καμπάνιας"
+
+#. js-lingui-id: xTbDMO
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the member archived or snoozed the thread"
+msgstr "Πότε το μέλος αρχειοθέτησε ή ανέβαλε το νήμα"
+
+#. js-lingui-id: LOsHJT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the member was last mentioned in the thread"
+msgstr "Πότε έγινε η τελευταία αναφορά στο μέλος στο νήμα"
+
+#. js-lingui-id: 6KK+Lq
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the thread was created or last received a message"
+msgstr "Πότε δημιουργήθηκε το νήμα ή έλαβε τελευταία φορά μήνυμα"
 
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -14120,6 +14941,12 @@ msgstr "Εάν ένας χρήστης ανέθεσε ρητά αυτόν τον
 msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
 msgstr "Εάν οι τρέχοντες κανόνες συμμετεχόντων δικαιολογούν αυτόν τον στόχο"
+
+#. js-lingui-id: rJ6Dbr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether new activity brings the thread back to the inbox"
+msgstr "Αν η νέα δραστηριότητα επαναφέρει το νήμα στα εισερχόμενα"
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -14298,6 +15125,7 @@ msgstr "Ροή εργασίας που συνδέεται με την εκτέλ
 #. js-lingui-id: dNmZ33
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
@@ -14321,12 +15149,6 @@ msgstr "Θέση εγγραφής ροής εργασίας"
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
 msgid "Workflow root step not found."
 msgstr "Το ριζικό βήμα ροής εργασίας δεν βρέθηκε."
-
-#. js-lingui-id: U1tpnT
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Workflow Run"
-msgstr ""
 
 #. js-lingui-id: hqdwCt
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14398,12 +15220,6 @@ msgctxt "fieldMetadata.label"
 msgid "Workflow run status"
 msgstr "Κατάσταση εκτέλεσης ροής εργασίας"
 
-#. js-lingui-id: jwF6Mg
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow run whose agent step held this conversation"
-msgstr ""
-
 #. js-lingui-id: Tinlvs
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -14421,12 +15237,6 @@ msgstr "Εκτελέσεις ροής εργασίας συνδεδεμένες 
 msgctxt "fieldMetadata.description"
 msgid "Workflow runs linked to the workflow."
 msgstr "Εκτελέσεις ροής εργασίας συνδεδεμένες με τη ροή εργασίας."
-
-#. js-lingui-id: 0madNH
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Workflow Step ID"
-msgstr ""
 
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -14636,6 +15446,11 @@ msgstr "Περιοχή Εργασίας"
 msgid "Workspace {workspaceId} is not found."
 msgstr "Ο χώρος εργασίας {workspaceId} δεν βρέθηκε."
 
+#. js-lingui-id: Ulbao6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
+msgid "Workspace application variable must have a value"
+msgstr "Η μεταβλητή εφαρμογής χώρου εργασίας πρέπει να έχει τιμή"
+
 #. js-lingui-id: lNgTSN
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace cannot be deleted: subscription is not yet canceled."
@@ -14692,6 +15507,7 @@ msgid "Workspace Member"
 msgstr "Μέλος Χώρου Εργασίας"
 
 #. js-lingui-id: tz4ASG
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -14751,6 +15567,18 @@ msgstr "Το μέλος χώρου εργασίας δεν βρέθηκε."
 msgctxt "fieldMetadata.description"
 msgid "Workspace member position"
 msgstr "Θέση μέλους χώρου εργασίας"
+
+#. js-lingui-id: 62xYnj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member responsible for the thread"
+msgstr "Μέλος του χώρου εργασίας υπεύθυνο για το νήμα"
+
+#. js-lingui-id: JZ3O3J
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member this state belongs to"
+msgstr "Μέλος του χώρου εργασίας στο οποίο ανήκει αυτή η κατάσταση"
 
 #. js-lingui-id: 8GSlT/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -14823,6 +15651,11 @@ msgstr "Το σχήμα χώρου εργασίας δεν βρέθηκε."
 msgid "Workspace setup"
 msgstr "Ρύθμιση χώρου εργασίας"
 
+#. js-lingui-id: 5TbIzO
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
+msgid "Workspace workflows cannot be adopted by an application."
+msgstr "Οι ροές εργασίας χώρου εργασίας δεν μπορούν να υιοθετηθούν από μια εφαρμογή."
+
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
@@ -14870,18 +15703,19 @@ msgstr "ΜέλοςΧώρουΕργασίας"
 msgid "Would not reach this"
 msgstr "Δεν θα έφτανε εδώ"
 
+#. js-lingui-id: yxN9Xx
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Writers"
+msgstr "Συντάκτες"
+
 #. js-lingui-id: VddeYt
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 msgid "Wrong extension for file."
 msgstr "Λανθασμένη επέκταση αρχείου."
 
-#. js-lingui-id: fV2Bu6
-#: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Wrong password"
-msgstr "Λάθος κωδικός πρόσβασης"
-
 #. js-lingui-id: RksBK0
-#: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util.ts
 msgid "Wrong password."
 msgstr "Λάθος κωδικός πρόσβασης."
 
@@ -14899,7 +15733,12 @@ msgstr "Ναι"
 #. js-lingui-id: 3N5PgZ
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "You are not allowed to access this function."
-msgstr ""
+msgstr "Δεν επιτρέπεται να έχετε πρόσβαση σε αυτή τη λειτουργία."
+
+#. js-lingui-id: OkhBdX
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "You are not allowed to answer this request."
+msgstr "Δεν επιτρέπεται να απαντήσετε σε αυτό το αίτημα."
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
@@ -14932,6 +15771,16 @@ msgstr "Μπορείτε να ενημερώσετε μόνο μία εγγρα�
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
+#. js-lingui-id: UyTIP7
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "You can't generate a recovery code for this member."
+msgstr "Δεν μπορείτε να δημιουργήσετε κωδικό ανάκτησης για αυτό το μέλος."
+
+#. js-lingui-id: hZGogC
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "You can't generate a recovery code for yourself. Reset two-factor authentication from your profile instead."
+msgstr "Δεν μπορείτε να δημιουργήσετε κωδικό ανάκτησης για τον εαυτό σας. Αντ' αυτού, επαναφέρετε τον έλεγχο ταυτότητας δύο παραγόντων από το προφίλ σας."
+
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
@@ -14962,6 +15811,11 @@ msgstr "Δεν μπορείτε να αφαιρέσετε τον ρόλο δια
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Δεν μπορείτε να ανακαλέσετε την πρόσβαση στον πίνακα διαχείρισης από τον τελευταίο διαχειριστή διακομιστή."
+
+#. js-lingui-id: YAKRJR
+#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service.ts
+msgid "You cannot select this record in this form."
+msgstr "Δεν μπορείτε να επιλέξετε αυτή την εγγραφή σε αυτή τη φόρμα."
 
 #. js-lingui-id: y2sD5W
 #: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
@@ -15053,6 +15907,7 @@ msgstr "Δεν έχετε δικαίωμα να διαχειριστείτε τ�
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
+#: src/engine/guards/exceptions/auth-principal-refused.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "Δεν έχετε δικαίωμα να εκτελέσετε αυτήν την ενέργεια."
@@ -15097,11 +15952,6 @@ msgstr "Δεν έχετε άδεια να δημιουργήσετε προβο�
 msgid "You don't have permission to modify this view."
 msgstr "Δεν έχετε άδεια να τροποποιήσετε αυτή την προβολή."
 
-#. js-lingui-id: WCKl4k
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-msgid "You have reached the maximum number of invitations for this step."
-msgstr "Έχετε φτάσει τον μέγιστο αριθμό προσκλήσεων για αυτό το στάδιο."
-
 #. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
@@ -15140,7 +15990,7 @@ msgid "Your AWS SES account is still in the sandbox, so this domain cannot send 
 msgstr "Ο λογαριασμός σας AWS SES βρίσκεται ακόμη στο sandbox, επομένως αυτός ο τομέας δεν μπορεί να στείλει σε μη επαληθευμένους παραλήπτες. Ζητήστε πρόσβαση παραγωγής από την AWS και, στη συνέχεια, επαληθεύστε ξανά τον τομέα."
 
 #. js-lingui-id: J5Vm4Q
-#: src/engine/core-modules/billing/billing.validate.ts
+#: src/engine/core-modules/billing/utils/build-phase-update-params-or-throw.util.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "Η συνδρομή χρέωσης είναι χαλασμένη. Παρακαλώ επικοινωνήστε με την υποστήριξη."
 
@@ -15159,8 +16009,12 @@ msgstr "Ο κωδικός πρόσβασης άλλαξε με επιτυχία"
 msgid "Your payment method was declined. Please update it and try again."
 msgstr "Η μέθοδος πληρωμής σας απορρίφθηκε. Ενημερώστε την και δοκιμάστε ξανά."
 
+#. js-lingui-id: ycrsQ2
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Your purchased credits could not be added. Please contact support."
+msgstr "Δεν ήταν δυνατή η προσθήκη των πιστώσεων που αγοράσατε. Επικοινωνήστε με την υποστήριξη."
+
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
@@ -15181,6 +16035,11 @@ msgstr "Το πρόγραμμα Twenty σας θα ανανεωθεί σύντο
 #: src/engine/core-modules/billing/reminders/services/billing-reminder.service.ts
 msgid "Your Twenty trial is ending soon"
 msgstr "Η δοκιμαστική περίοδός σας στο Twenty λήγει σύντομα"
+
+#. js-lingui-id: pOQQ3U
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+msgid "Your two-factor authentication was reset"
+msgstr "Ο έλεγχος ταυτότητας δύο παραγόντων επαναφέρθηκε"
 
 #. js-lingui-id: ej/tZF
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

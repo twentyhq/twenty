@@ -446,6 +446,7 @@ export const prefillWorkflows = async (
               primaryEmail: '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.email}}',
               additionalEmails: [],
             },
+            jobTitle: '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.jobTitle}}',
             companyId: '{{0715b6cd-7cc1-4b98-971b-00f54dfe643b.id}}',
           },
         },

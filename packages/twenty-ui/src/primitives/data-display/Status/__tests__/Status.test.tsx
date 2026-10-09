@@ -2,7 +2,7 @@ import { runComponentConformance } from '@test-utilities/conformance/runComponen
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
-import { expectTypeOf, it, expect, vi } from 'vitest';
+import { expect, it, vi } from 'vitest';
 
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
@@ -16,62 +16,92 @@ runComponentConformance({
   refInstanceOf: HTMLSpanElement,
 });
 
-it('forwards native button props, refs, and click event targets', async () => {
-  const buttonRef = createRef<HTMLButtonElement>();
+it('keeps a presentational span with native handlers and caller-owned content', async () => {
+  const ref = createRef<HTMLSpanElement>();
   const handleClick = vi.fn();
+  render(
+    <ThemeProvider colorScheme="light">
+      <Status color="green" ref={ref} onClick={handleClick}>
+        <a href="#connection">Connected</a>
+      </Status>
+    </ThemeProvider>,
+  );
 
+  expect(ref.current).toBeInstanceOf(HTMLSpanElement);
+  expect(ref.current).not.toHaveAttribute('role');
+  expect(ref.current).not.toHaveAttribute('tabindex');
+  expect(screen.queryByRole('button')).not.toBeInTheDocument();
+  await userEvent.click(screen.getByRole('link', { name: 'Connected' }));
+  expect(handleClick).toHaveBeenCalledOnce();
+});
+
+it('supports native link attributes and the root ref through callback composition', async () => {
+  const ref = createRef<HTMLSpanElement>();
+  const handleClick = vi.fn();
   render(
     <ThemeProvider colorScheme="light">
       <Status
         color="blue"
-        name="connection"
-        type="button"
-        ref={buttonRef}
-        onClick={(event) => {
-          expectTypeOf(event.currentTarget).toEqualTypeOf<
-            EventTarget & HTMLButtonElement
-          >();
-          handleClick(event.currentTarget.name);
-        }}
+        ref={ref}
+        render={(props) => (
+          <a
+            {...props}
+            href="#connection"
+            download="connection.txt"
+            onClick={handleClick}
+          >
+            {props.children}
+          </a>
+        )}
       >
         Connection details
       </Status>
     </ThemeProvider>,
   );
 
-  const button = screen.getByRole('button', { name: 'Connection details' });
-  expect(buttonRef.current).toBe(button);
-  expect(buttonRef.current).toBeInstanceOf(HTMLButtonElement);
-  await userEvent.click(button);
-  expect(handleClick).toHaveBeenCalledWith('connection');
+  const link = screen.getByRole('link', { name: 'Connection details' });
+  expect(ref.current).toBe(link);
+  expect(link).toHaveAttribute('download', 'connection.txt');
+  await userEvent.tab();
+  expect(link).toHaveFocus();
+  await userEvent.keyboard('{Enter}');
+  expect(handleClick).toHaveBeenCalledOnce();
 });
 
-it('uses an HTMLElement contract for a custom non-native button', async () => {
-  const elementRef = createRef<HTMLElement>();
-  const handleClick = vi.fn();
-
-  render(
+it('exposes loading without introducing a live region and preserves caller accessibility overrides', () => {
+  const ref = createRef<HTMLSpanElement>();
+  const { rerender } = render(
     <ThemeProvider colorScheme="light">
-      <Status
-        color="blue"
-        nativeButton={false}
-        render={<div />}
-        ref={elementRef}
-        onClick={(event) => {
-          expectTypeOf(event.currentTarget).toEqualTypeOf<
-            EventTarget & HTMLElement
-          >();
-          handleClick(event.currentTarget.tagName);
-        }}
-      >
-        Custom details
+      <Status color="blue" loading ref={ref}>
+        Saving
       </Status>
     </ThemeProvider>,
   );
 
-  const button = screen.getByRole('button', { name: 'Custom details' });
-  expect(elementRef.current).toBe(button);
-  expect(elementRef.current).toBeInstanceOf(HTMLDivElement);
-  await userEvent.click(button);
-  expect(handleClick).toHaveBeenCalledWith('DIV');
+  expect(ref.current).toHaveAttribute('aria-busy', 'true');
+  expect(ref.current).not.toHaveAttribute('aria-live');
+  expect(ref.current).not.toHaveAttribute('role');
+  expect(
+    ref.current?.querySelector('[aria-hidden="true"]'),
+  ).toBeInTheDocument();
+  expect(screen.getByText('Saving')).toBeVisible();
+
+  rerender(
+    <ThemeProvider colorScheme="light">
+      <Status color="green" ref={ref}>
+        Saved
+      </Status>
+    </ThemeProvider>,
+  );
+  expect(ref.current).not.toHaveAttribute('aria-busy');
+  expect(ref.current?.querySelector('[aria-hidden="true"]')).toBeNull();
+
+  rerender(
+    <ThemeProvider colorScheme="light">
+      <Status color="blue" loading aria-busy={false} role="status" ref={ref}>
+        Syncing
+      </Status>
+    </ThemeProvider>,
+  );
+  expect(screen.getByRole('status')).toHaveAttribute('aria-busy', 'false');
 });
