@@ -164,7 +164,6 @@ export const SettingsApplicationDetails = () => {
       onCompleted: handleUninstallCompleted,
     });
 
-  // Members set their own user-scoped values from App preferences
   const displayedApplicationVariables = getDisplayedApplicationVariables(
     (application?.applicationVariables ?? []).filter(
       (applicationVariable) =>
@@ -193,10 +192,10 @@ export const SettingsApplicationDetails = () => {
     refetchApplicationVariables: refetch,
   });
 
-  const workspaceSettingsMenuItems = getSettingsMenuItemsForScope(
-    application?.settingsMenuItems ?? [],
-    SettingsMenuItemScope.WORKSPACE,
-  );
+  const workspaceSettingsMenuItems = getSettingsMenuItemsForScope({
+    settingsMenuItems: application?.settingsMenuItems ?? [],
+    scope: SettingsMenuItemScope.WORKSPACE,
+  });
 
   const missingRequiredApplicationVariables =
     getMissingRequiredApplicationVariables(displayedApplicationVariables);

@@ -3,17 +3,19 @@ import { SettingsAccountGroupsSection } from '@/settings/app-preferences/compone
 import { SettingsAppPreferencesAppsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesAppsSection';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { useEnabledNativeAccountApps } from '@/settings/app-preferences/hooks/useEnabledNativeAccountApps';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 export const SettingsAppPreferencesSections = () => {
   const { enabledNativeAccountApps } = useEnabledNativeAccountApps();
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
 
-  const hasNativeAccountApps = enabledNativeAccountApps.length > 0;
+  const hasNativeAccountApps = isNonEmptyArray(enabledNativeAccountApps);
 
   return (
     <>
       <SettingsAccountGroupsSection />
-      {(hasNativeAccountApps || applicationsWithPreferences.length > 0) && (
+      {(hasNativeAccountApps ||
+        isNonEmptyArray(applicationsWithPreferences)) && (
         <SettingsAppPreferencesAppsSection />
       )}
       {/* The blocklist otherwise lives on the native apps' pages */}

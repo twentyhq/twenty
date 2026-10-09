@@ -20,10 +20,10 @@ export const getApplicationsWithPreferences = ({
       const application = installedApplications.find(
         (installedApplication) => installedApplication.id === applicationId,
       );
-      const userSettingsMenuItems = getSettingsMenuItemsForScope(
+      const userSettingsMenuItems = getSettingsMenuItemsForScope({
         settingsMenuItems,
-        SettingsMenuItemScope.USER,
-      );
+        scope: SettingsMenuItemScope.USER,
+      });
       const displayedVariables = getDisplayedApplicationVariables(variables);
 
       if (

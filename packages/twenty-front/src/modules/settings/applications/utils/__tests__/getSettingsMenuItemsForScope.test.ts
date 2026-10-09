@@ -13,14 +13,14 @@ const buildSettingsMenuItem = ({
 
 describe('getSettingsMenuItemsForScope', () => {
   it('should order items by ascending position', () => {
-    const result = getSettingsMenuItemsForScope(
-      [
+    const result = getSettingsMenuItemsForScope({
+      settingsMenuItems: [
         buildSettingsMenuItem({ universalIdentifier: 'c', position: 3 }),
         buildSettingsMenuItem({ universalIdentifier: 'a', position: 1 }),
         buildSettingsMenuItem({ universalIdentifier: 'b', position: 1.5 }),
       ],
-      SettingsMenuItemScope.WORKSPACE,
-    );
+      scope: SettingsMenuItemScope.WORKSPACE,
+    });
 
     expect(result.map((item) => item.universalIdentifier)).toEqual([
       'a',
@@ -30,20 +30,20 @@ describe('getSettingsMenuItemsForScope', () => {
   });
 
   it('should break a shared position on universalIdentifier', () => {
-    const result = getSettingsMenuItemsForScope(
-      [
+    const result = getSettingsMenuItemsForScope({
+      settingsMenuItems: [
         buildSettingsMenuItem({ universalIdentifier: 'b', position: 1 }),
         buildSettingsMenuItem({ universalIdentifier: 'a', position: 1 }),
       ],
-      SettingsMenuItemScope.WORKSPACE,
-    );
+      scope: SettingsMenuItemScope.WORKSPACE,
+    });
 
     expect(result.map((item) => item.universalIdentifier)).toEqual(['a', 'b']);
   });
 
   it('should leave out user-scoped items for the workspace scope', () => {
-    const result = getSettingsMenuItemsForScope(
-      [
+    const result = getSettingsMenuItemsForScope({
+      settingsMenuItems: [
         buildSettingsMenuItem({
           universalIdentifier: 'user-item',
           position: 1,
@@ -54,8 +54,8 @@ describe('getSettingsMenuItemsForScope', () => {
           position: 2,
         }),
       ],
-      SettingsMenuItemScope.WORKSPACE,
-    );
+      scope: SettingsMenuItemScope.WORKSPACE,
+    });
 
     expect(result.map((item) => item.universalIdentifier)).toEqual([
       'workspace-item',
@@ -63,8 +63,8 @@ describe('getSettingsMenuItemsForScope', () => {
   });
 
   it('should keep only user-scoped items, in order, for the user scope', () => {
-    const result = getSettingsMenuItemsForScope(
-      [
+    const result = getSettingsMenuItemsForScope({
+      settingsMenuItems: [
         buildSettingsMenuItem({
           universalIdentifier: 'workspace-item',
           position: 0,
@@ -80,8 +80,8 @@ describe('getSettingsMenuItemsForScope', () => {
           scope: SettingsMenuItemScope.USER,
         }),
       ],
-      SettingsMenuItemScope.USER,
-    );
+      scope: SettingsMenuItemScope.USER,
+    });
 
     expect(result.map((item) => item.universalIdentifier)).toEqual([
       'first-user-item',
@@ -95,10 +95,10 @@ describe('getSettingsMenuItemsForScope', () => {
       buildSettingsMenuItem({ universalIdentifier: 'a', position: 1 }),
     ];
 
-    getSettingsMenuItemsForScope(
+    getSettingsMenuItemsForScope({
       settingsMenuItems,
-      SettingsMenuItemScope.WORKSPACE,
-    );
+      scope: SettingsMenuItemScope.WORKSPACE,
+    });
 
     expect(settingsMenuItems.map((item) => item.universalIdentifier)).toEqual([
       'b',

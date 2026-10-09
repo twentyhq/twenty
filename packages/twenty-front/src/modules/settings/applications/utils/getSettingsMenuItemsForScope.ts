@@ -8,10 +8,13 @@ export const getSettingsMenuItemsForScope = <
     SettingsMenuItem,
     'universalIdentifier' | 'position' | 'scope'
   >,
->(
-  settingsMenuItems: OrderableSettingsMenuItem[],
-  scope: SettingsMenuItemScope,
-): OrderableSettingsMenuItem[] =>
+>({
+  settingsMenuItems,
+  scope,
+}: {
+  settingsMenuItems: OrderableSettingsMenuItem[];
+  scope: SettingsMenuItemScope;
+}): OrderableSettingsMenuItem[] =>
   settingsMenuItems
     .filter((settingsMenuItem) => settingsMenuItem.scope === scope)
     .sort(

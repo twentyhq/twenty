@@ -14,7 +14,6 @@ export const SettingsAppPreferencesAppStatusCell = ({
   const { t } = useLingui();
   const { groups, loading } = useMyAccountGroups();
 
-  // An installed app does not rely on the member's native accounts
   if (item.type !== 'native') {
     return null;
   }
