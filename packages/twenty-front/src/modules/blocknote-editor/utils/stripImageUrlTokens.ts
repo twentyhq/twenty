@@ -1,6 +1,5 @@
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 
-// The server re-signs image URLs with a fresh token on every read.
 export const stripImageUrlTokens = (stringifiedBody: string): string => {
   const blocks = parseInitialBlocknote(stringifiedBody);
 
