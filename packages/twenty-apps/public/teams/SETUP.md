@@ -63,10 +63,15 @@ publishes them. A connection added while transcripts were off has no
 subscription: reconnect it after turning transcripts on. Disconnecting the
 account or uninstalling the app deletes the subscription.
 
-Connecting also imports the transcripts of the last 31 days. Use the **Sync
-Teams Transcript** action for older transcripts, and for any that Microsoft
-had not published about two and a half hours after the meeting or whose
-import keeps failing.
+Connecting also imports the transcripts of the last 31 days. For older ones,
+use **Import history** in **Settings > Applications > Microsoft Teams >
+Settings**: count the transcripts of up to the last 365 days first, then import
+them. Only members who can open the app settings see this section; every
+member's connection still imports its last 31 days when it connects. The import
+runs in the background, newest first, about one calendar page a minute. Use the
+**Sync Teams Transcript** action for a single transcript, such as one that
+Microsoft had not published about two and a half hours after the meeting or
+whose import keeps failing.
 
 Transcripts link to the meeting's calendar event when that calendar is synced in
 Twenty. An occurrence of a recurring meeting links to the series' event.
