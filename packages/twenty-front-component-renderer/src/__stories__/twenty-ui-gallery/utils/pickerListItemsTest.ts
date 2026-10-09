@@ -36,9 +36,13 @@ export const pickerListItemsTest: TwentyUiGalleryPlayFunction = async ({
   );
   expect(canvas.getByRole('status')).toHaveTextContent('Changes: 2');
 
-  await userEvent.click(
-    canvas.getByRole('option', { name: 'Unavailable color' }),
-  );
+  const unavailableColor = canvas.getByRole('option', {
+    name: 'Unavailable color',
+  });
+
+  expect(unavailableColor).toBeDisabled();
+  expect(unavailableColor).toHaveAttribute('aria-disabled', 'true');
+  await userEvent.click(unavailableColor);
   expect(canvas.getByRole('status')).toHaveTextContent('Changes: 2');
   expect(canvas.queryByRole('checkbox')).toBeNull();
   expect(errorHandler).not.toHaveBeenCalled();

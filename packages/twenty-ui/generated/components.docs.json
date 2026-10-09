@@ -5263,7 +5263,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Prevents clicks and applies the disabled style."
+        "description": "Applies disabled styling only. Set native disabled behavior and accessible semantics on the button, link, or popup item owner."
       },
       {
         "name": "endIcon",
@@ -5277,7 +5277,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Applies the highlighted style, for example to the focused item of a list."
+        "description": "Applies highlighted styling without moving DOM focus or handling keyboard navigation."
       },
       {
         "name": "hasSubmenu",
@@ -5294,18 +5294,25 @@
         "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the actual DOM root, including a composed native button or link."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ListItemState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Composes the row with an element or render callback. The owner supplies interaction semantics, native attributes, and behavior."
       },
       {
         "name": "selected",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Whether the item is selected. Shows the check or checkbox indicator when\n`indicator` is set."
+        "description": "Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner."
       },
       {
         "name": "shortcut",
@@ -11330,6 +11337,111 @@
     ]
   },
   {
+    "name": "ListItemButton",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/list-item-button",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"danger\" | \"neutral\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Color of the text and icons. `danger` marks a destructive action."
+      },
+      {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Supporting text, placed according to `descriptionPlacement`."
+      },
+      {
+        "name": "descriptionPlacement",
+        "type": "\"end\" | \"inline\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Where the description renders: inline after the content or at the end of\nthe row."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables activation and applies the matching row appearance."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered after the content."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Keeps a disabled button focusable with aria-disabled while preventing activation."
+      },
+      {
+        "name": "focused",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Highlights the row without moving DOM focus."
+      },
+      {
+        "name": "hasSubmenu",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays a decorative submenu indicator."
+      },
+      {
+        "name": "indicator",
+        "type": "\"check\" | \"checkbox\" | \"none\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native HTMLButtonElement."
+      },
+      {
+        "name": "selected",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays decorative shortcut hints. The caller registers the shortcuts."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered before the content."
+      }
+    ]
+  },
+  {
     "name": "TabButton",
     "entryPoint": "twenty-ui/components/navigation",
     "slug": "components/navigation/tab-button",
@@ -12165,7 +12277,35 @@
         "type": "string",
         "required": false,
         "defaultValue": "image/*",
-        "description": "Native file picker filter. Defaults to image/*. The application validates the selected file."
+        "description": "Native file picker filter. Defaults to image/*. The caller validates allowed formats."
+      },
+      {
+        "name": "aria-describedby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible description references for the hidden file input and selection buttons, combined with helperText and errorMessage."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name of the hidden file input. Defaults to uploadLabel."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name reference for the hidden file input."
+      },
+      {
+        "name": "capture",
+        "type": "boolean | \"user\" | \"environment\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native device capture hint for the file picker."
       },
       {
         "name": "className",
@@ -12173,6 +12313,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Class applied to the root element."
+      },
+      {
+        "name": "dir",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text direction applied to both the root and hidden file input."
       },
       {
         "name": "disabled",
@@ -12189,11 +12336,32 @@
         "description": "Application error, displayed as an alert and associated with the selection controls."
       },
       {
+        "name": "form",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native form identifier associated with the hidden file input."
+      },
+      {
         "name": "helperText",
         "type": "string",
         "required": false,
         "defaultValue": null,
         "description": "Application instructions, associated with the selection controls."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native identifier of the hidden file input."
+      },
+      {
+        "name": "inputRef",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the hidden single-file HTMLInputElement."
       },
       {
         "name": "isUploading",
@@ -12203,11 +12371,32 @@
         "description": "Marks the module busy. Selection and removal controls that would otherwise be enabled stay focusable but unavailable. Shows Abort when onAbort is supplied."
       },
       {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native name of the hidden file input."
+      },
+      {
         "name": "onAbort",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
         "description": "Shows an abort action while uploading. It can cancel the first upload before a src exists."
+      },
+      {
+        "name": "onChange",
+        "type": "ChangeEventHandler<HTMLInputElement, HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native file input change event, fired while the selected file is present and before the input resets. The input does not retain a file for form submission."
+      },
+      {
+        "name": "onFileSelect",
+        "type": "((file: File) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Fires when a file is selected and receives its usable File after the input resets. Empty and canceled selections do not call it. Selection is disabled when omitted. The caller owns validation and uploading."
       },
       {
         "name": "onRemove",
@@ -12217,18 +12406,11 @@
         "description": "Requests removal of the current image. Removal is disabled without this callback or a nonempty src."
       },
       {
-        "name": "onUpload",
-        "type": "((file: File) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Receives the selected File. Empty and canceled selections do not call it. Selection is disabled when omitted."
-      },
-      {
         "name": "ref",
         "type": "Ref<HTMLDivElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Ref to the root element."
+        "description": "Ref to the root div element."
       },
       {
         "name": "removeLabel",
@@ -12242,7 +12424,14 @@
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Custom root element or render function. Keep a non-interactive root."
+        "description": "Custom root element or render function. Supply root native attributes here and keep a non-interactive root."
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native file input requirement. The input resets after selection, so the caller validates completed uploads."
       },
       {
         "name": "src",
@@ -12259,11 +12448,18 @@
         "description": "Inline style applied to the root element."
       },
       {
+        "name": "title",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native title of the hidden file input."
+      },
+      {
         "name": "uploadLabel",
         "type": "string",
         "required": false,
         "defaultValue": "Upload",
-        "description": "Label for the preview and Upload action."
+        "description": "Label for the preview, Upload action, and hidden file input."
       }
     ]
   },
