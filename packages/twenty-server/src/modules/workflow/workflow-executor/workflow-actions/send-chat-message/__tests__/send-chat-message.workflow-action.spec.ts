@@ -154,6 +154,7 @@ describe('SendChatMessageWorkflowAction', () => {
       toolCall: { toolName: 'update_one_company', arguments: { id: 'id' } },
     });
 
+    expect(armStepWait).toHaveBeenCalledTimes(1);
     expect(armStepWait).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
       workflowRunId: WORKFLOW_RUN_ID,
