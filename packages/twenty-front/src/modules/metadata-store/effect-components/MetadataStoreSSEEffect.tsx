@@ -1,18 +1,23 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { useCleanMorphRelationsTargetingObjectMetadataId } from '@/metadata-store/hooks/useCleanMorphRelationsTargetingObjectMetadataId';
+import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
+import { SSE_RESYNC_DEBOUNCE_TIME_IN_MS } from '@/sse-db-event/constants/SseResyncDebounceTimeInMs';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
 type AnyMetadataEntity = MetadataEntityTypeMap[MetadataEntityKey];
 
 export const MetadataStoreSSEEffect = () => {
   const { addToDraft, removeFromDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
-  const { cleanMorphRelations } =
-    useCleanMorphRelationsTargetingObjectMetadataId();
+  const { resyncMetadataStore } = useResyncMetadataStore();
+  const debouncedResyncMetadataStore = useDebouncedCallback(
+    resyncMetadataStore,
+    SSE_RESYNC_DEBOUNCE_TIME_IN_MS,
+  );
 
   useListenToMetadataOperationBrowserEvent({
     onMetadataOperationBrowserEvent: (eventDetail) => {
@@ -22,11 +27,22 @@ export const MetadataStoreSSEEffect = () => {
         return;
       }
 
+      // The objects query resolves relations and collapses morph groups, so raw
+      // row events cannot safely patch the snapshot it returns.
+      if (
+        entityKey === 'objectMetadataItems' ||
+        entityKey === 'fieldMetadataItems' ||
+        entityKey === 'indexMetadataItems'
+      ) {
+        debouncedResyncMetadataStore();
+        return;
+      }
+
       const collectionHash = eventDetail.updatedCollectionHash;
 
       switch (eventDetail.operation.type) {
         case 'create': {
-          addToDraft({
+          addToDraft<MetadataEntityKey>({
             key: entityKey,
             items: [
               eventDetail.operation
@@ -37,7 +53,7 @@ export const MetadataStoreSSEEffect = () => {
           break;
         }
         case 'update': {
-          addToDraft({
+          addToDraft<MetadataEntityKey>({
             key: entityKey,
             items: [
               eventDetail.operation
@@ -53,10 +69,6 @@ export const MetadataStoreSSEEffect = () => {
             itemIds: [eventDetail.operation.deletedRecordId],
             collectionHash,
           });
-
-          if (entityKey === 'objectMetadataItems') {
-            cleanMorphRelations(eventDetail.operation.deletedRecordId);
-          }
           break;
         }
       }
