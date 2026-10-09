@@ -106,7 +106,7 @@ const OPTIONS = {
       const migrationRunner = createQueryRunner();
       await migrationRunner.connect();
       await migrationRunner.query("SET lock_timeout = '100ms'");
-      let migrationCompleted = false;
+      let isMigrationCompleted = false;
       jest.spyOn(dataSource, 'createQueryRunner').mockImplementation((mode) => {
         const runner = createQueryRunner(mode);
         const query = runner.query.bind(runner);
@@ -124,7 +124,7 @@ const OPTIONS = {
               await migrationRunner.query(
                 `ALTER TABLE "${getWorkspaceSchemaName(WORKSPACE_IDS[0])}"."agentChatThread" ADD COLUMN "reportLockRegression" text`,
               );
-              migrationCompleted = true;
+              isMigrationCompleted = true;
             }
             return query(...parameters);
           });
@@ -138,7 +138,7 @@ const OPTIONS = {
           totalCount: 2,
           hasMore: false,
         });
-        expect(migrationCompleted).toBe(true);
+        expect(isMigrationCompleted).toBe(true);
       } finally {
         await migrationRunner.release();
       }

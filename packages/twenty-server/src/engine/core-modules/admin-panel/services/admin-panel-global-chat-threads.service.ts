@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import chunk from 'lodash.chunk';
 import { Repository } from 'typeorm';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import {
   ASK_QUESTION_TOOL_NAME,
   ASK_QUESTIONS_TOOL_NAME,
@@ -111,7 +112,7 @@ export class AdminPanelGlobalChatThreadsService {
       await this.historyStorage.runReadOnlyReport(
         workspaceBatch.map((workspace) => workspace.id),
         async ({ manager, partitions }) => {
-          if (partitions.length === 0) {
+          if (!isNonEmptyArray(partitions)) {
             return;
           }
 
