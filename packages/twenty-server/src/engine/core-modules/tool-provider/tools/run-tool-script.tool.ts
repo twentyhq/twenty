@@ -74,6 +74,7 @@ export type RunToolScriptOutput = {
   stdout: string;
   stderr: string;
   toolCalls: { name: string; success: boolean }[];
+  warnings?: string[];
   error?: string;
 };
 
@@ -126,6 +127,7 @@ export const createRunToolScriptTool = (
     const outputCollector = createScriptOutputCollector(
       RUN_TOOL_SCRIPT_LIMITS.maxOutputStreamLength,
     );
+    const toolWarnings = new Set<string>();
     let attemptedToolCallCount = 0;
 
     const findCatalogEntry = (toolName: string) => {
@@ -189,6 +191,10 @@ export const createRunToolScriptTool = (
 
       toolCalls.push({ name: toolName, success: toolOutput.success });
 
+      for (const warning of toolOutput.warnings ?? []) {
+        toolWarnings.add(`${toolName}: ${warning}`);
+      }
+
       if (!toolOutput.success) {
         throw new Error(
           `Tool "${toolName}" failed: ${toolOutput.error ?? toolOutput.message}`,
@@ -214,6 +220,7 @@ export const createRunToolScriptTool = (
     });
 
     const { stdout, stderr } = outputCollector.getOutput();
+    const warnings = toolWarnings.size > 0 ? [...toolWarnings] : undefined;
 
     if (!scriptRun.success) {
       return {
@@ -226,6 +233,7 @@ export const createRunToolScriptTool = (
         stdout,
         stderr,
         toolCalls,
+        warnings,
       };
     }
 
@@ -236,6 +244,7 @@ export const createRunToolScriptTool = (
       stdout,
       stderr,
       toolCalls,
+      warnings,
     };
   },
 });

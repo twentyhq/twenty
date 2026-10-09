@@ -63,6 +63,12 @@ const TOOL_HANDLERS: Record<
     message: 'Echoed',
     result: toolArguments,
   }),
+  find_many_people: () => ({
+    success: true,
+    message: 'Found 1 person',
+    result: { records: [{ id: 'person-1' }] },
+    warnings: ["Field 'city' not found on person."],
+  }),
   failing_tool: () => ({
     success: false,
     message: 'Failed',
@@ -197,6 +203,19 @@ echoed = await call_tool(name="echo", args={"day": datetime.date(2026, 10, 9), "
       big: '1180591620717411303424',
       keys: { '1': 'one' },
     });
+  });
+
+  it('passes tool warnings on instead of dropping them', async () => {
+    const output = await runScript(`
+first = await call_tool("find_many_people", {"select": ["id", "city"]})
+second = await call_tool("find_many_people", {"select": ["id", "city"]})
+len(first["records"]) + len(second["records"])
+`);
+
+    expect(output.result).toBe(2);
+    expect(output.warnings).toEqual([
+      "find_many_people: Field 'city' not found on person.",
+    ]);
   });
 
   describe('when a tool fails', () => {
