@@ -728,7 +728,14 @@
       "Tag": "primitives/data-display/Tag/Tag"
     },
     "types": {
+      "AvatarFallbackProps": "primitives/data-display/Avatar/types/AvatarFallbackProps",
+      "AvatarFallbackState": "primitives/data-display/Avatar/types/AvatarFallbackState",
+      "AvatarImageLoadingStatus": "primitives/data-display/Avatar/types/AvatarImageLoadingStatus",
+      "AvatarImageProps": "primitives/data-display/Avatar/types/AvatarImageProps",
+      "AvatarImageState": "primitives/data-display/Avatar/types/AvatarImageState",
       "AvatarProps": "primitives/data-display/Avatar/types/AvatarProps",
+      "AvatarRootProps": "primitives/data-display/Avatar/types/AvatarRootProps",
+      "AvatarRootState": "primitives/data-display/Avatar/types/AvatarRootState",
       "AvatarShape": "primitives/data-display/Avatar/types/AvatarShape",
       "AvatarSize": "primitives/data-display/Avatar/types/AvatarSize",
       "ChipProps": "primitives/data-display/Chip/types/ChipProps",
@@ -798,7 +805,9 @@
       "ButtonSize": "primitives/input/Button/types/ButtonSize",
       "ButtonVariant": "primitives/input/Button/types/ButtonVariant",
       "CheckboxColor": "primitives/input/Checkbox/types/CheckboxColor",
+      "CheckboxIndicatorProps": "primitives/input/Checkbox/types/CheckboxIndicatorProps",
       "CheckboxProps": "primitives/input/Checkbox/types/CheckboxProps",
+      "CheckboxRootProps": "primitives/input/Checkbox/types/CheckboxRootProps",
       "CheckboxShape": "primitives/input/Checkbox/types/CheckboxShape",
       "CheckboxSize": "primitives/input/Checkbox/types/CheckboxSize",
       "CheckboxVariant": "primitives/input/Checkbox/types/CheckboxVariant",
@@ -834,7 +843,9 @@
       "SliderTrackProps": "primitives/input/Slider/types/SliderTrackProps",
       "SliderValueProps": "primitives/input/Slider/types/SliderValueProps",
       "SwitchProps": "primitives/input/Switch/types/SwitchProps",
+      "SwitchRootProps": "primitives/input/Switch/types/SwitchRootProps",
       "SwitchSize": "primitives/input/Switch/types/SwitchSize",
+      "SwitchThumbProps": "primitives/input/Switch/types/SwitchThumbProps",
       "TextareaProps": "primitives/input/Textarea/types/TextareaProps"
     }
   },

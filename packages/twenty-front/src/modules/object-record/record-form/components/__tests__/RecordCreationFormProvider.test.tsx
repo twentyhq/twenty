@@ -21,10 +21,6 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
     closeSidePanelMenu: mockCloseSidePanelMenu,
   }),
 }));
-jest.mock('twenty-ui/components/feedback', () => ({
-  ...jest.requireActual('twenty-ui/components/feedback'),
-  useToast: () => ({ enqueueToast: jest.fn() }),
-}));
 
 const setup = () => {
   const store = createStore();

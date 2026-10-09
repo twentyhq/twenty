@@ -22,7 +22,9 @@ import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 export const AssigneeChip = () => (
   <Chip
     variant="soft"
-    startElement={<Avatar name="Jane" size="sm" shape="circle" aria-hidden />}
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
   >
     Jane
   </Chip>
@@ -51,7 +53,9 @@ export const AssigneeAction = ({
     render={<button type="button" disabled={disabled} />}
     onClick={onOpenAssignee}
     aria-label="Open Jane's record"
-    startElement={<Avatar name="Jane" size="sm" shape="circle" aria-hidden />}
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
   >
     Jane
   </Chip>

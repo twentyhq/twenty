@@ -44,6 +44,7 @@ import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFron
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -388,6 +389,13 @@ export const useFrontComponentExecutionContext = ({
         }
 
         return;
+      }
+
+      if (isPageLayoutSidePanelPage(params.page)) {
+        throw new CustomError(
+          `${params.page} edits the page layout it was opened from and cannot be opened by a front component`,
+          'FRONT_COMPONENT_PAGE_LAYOUT_SIDE_PANEL_PAGE_UNSUPPORTED',
+        );
       }
 
       navigateSidePanel({

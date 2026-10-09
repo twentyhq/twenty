@@ -69,7 +69,7 @@ const DirectionalLayoutExample = ({
               avatars={['Ada', 'Bea', 'Cam'].map((name) => (
                 <Avatar key={name} name={name} size="lg" />
               ))}
-              overflowCount={2}
+              total={5}
             />
           </div>
         ))}
