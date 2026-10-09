@@ -12718,10 +12718,30 @@ msgstr "مالکیت این برنامه از قبل متعلق به یک فضا
 msgid "This application is being installed. Please wait for it to finish before uninstalling it."
 msgstr "این برنامه در حال نصب است. لطفاً پیش از حذف نصب آن، منتظر بمانید تا تمام شود."
 
+#. js-lingui-id: O3pUuN
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being installed. Please wait for it to finish before upgrading it."
+msgstr "این برنامه در حال نصب است. لطفاً پیش از ارتقای آن، منتظر بمانید تا فرایند نصب کامل شود."
+
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
 msgstr "این برنامه در حال حذف نصب است. لطفاً پیش از نصب دوباره آن، منتظر بمانید تا تمام شود."
+
+#. js-lingui-id: rfbjZb
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
+msgstr "این برنامه در حال حذف نصب است. لطفاً پیش از ارتقای آن، منتظر بمانید تا فرایند حذف نصب کامل شود."
+
+#. js-lingui-id: Kepc2n
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before installing it."
+msgstr "این برنامه در حال ارتقا است. لطفاً پیش از نصب آن، منتظر بمانید تا فرایند ارتقا کامل شود."
+
+#. js-lingui-id: XBHpg5
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
+msgstr "این برنامه در حال ارتقا است. لطفاً پیش از حذف نصب آن، منتظر بمانید تا فرایند ارتقا کامل شود."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

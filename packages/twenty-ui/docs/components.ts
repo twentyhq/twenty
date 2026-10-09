@@ -655,6 +655,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/settings',
     slug: 'components/settings/settings-row',
     propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
+    propDefaults: { size: 'sm' },
   },
   {
     name: 'PhoneCountryPicker',
