@@ -104,6 +104,7 @@
       "CurrencyPickerTriggerProps": "components/input/CurrencyPicker/types/CurrencyPickerTriggerProps",
       "IconButtonProps": "components/input/IconButton/types/IconButtonProps",
       "IconButtonSize": "components/input/IconButton/types/IconButtonSize",
+      "ImageInputFileInputProps": "components/input/ImageInput/types/ImageInputFileInputProps",
       "ImageInputProps": "components/input/ImageInput/types/ImageInputProps",
       "LightButtonProps": "components/input/LightButton/types/LightButtonProps",
       "LightIconButtonProps": "components/input/LightIconButton/types/LightIconButtonProps",

@@ -18,6 +18,7 @@ export { IconButton } from './IconButton/IconButton';
 export type { IconButtonProps } from './IconButton/types/IconButtonProps';
 export type { IconButtonSize } from './IconButton/types/IconButtonSize';
 export { ImageInput } from './ImageInput/ImageInput';
+export type { ImageInputFileInputProps } from './ImageInput/types/ImageInputFileInputProps';
 export type { ImageInputProps } from './ImageInput/types/ImageInputProps';
 export { LightButton } from './LightButton/LightButton';
 export type { LightButtonProps } from './LightButton/types/LightButtonProps';

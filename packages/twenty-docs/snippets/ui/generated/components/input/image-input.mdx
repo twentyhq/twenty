@@ -15,10 +15,6 @@
   Label for the Abort action.
 </ParamField>
 
-<ParamField body="accept" type="string" default="image/*">
-  Native file picker filter. Defaults to image/*. The application validates the selected file.
-</ParamField>
-
 <ParamField body="className" type="string">
   Class applied to the root element.
 </ParamField>
@@ -29,6 +25,10 @@
 
 <ParamField body="errorMessage" type="string | null">
   Application error, displayed as an alert and associated with the selection controls.
+</ParamField>
+
+<ParamField body="fileInputProps" type="ImageInputFileInputProps" default="{}">
+  Native props and HTMLInputElement ref for the hidden single-file input. accept defaults to image/*. Native onChange runs before the input resets. disabled blocks selection only. The input does not retain a file for form submission.
 </ParamField>
 
 <ParamField body="helperText" type="string">
@@ -43,16 +43,16 @@
   Shows an abort action while uploading. It can cancel the first upload before a src exists.
 </ParamField>
 
+<ParamField body="onFileSelect" type="((file: File) =&gt; void)">
+  Fires when a file is selected and receives its usable File after the input resets. Empty and canceled selections do not call it. Selection is disabled when omitted. The caller owns validation and uploading.
+</ParamField>
+
 <ParamField body="onRemove" type="(() =&gt; void)">
   Requests removal of the current image. Removal is disabled without this callback or a nonempty src.
 </ParamField>
 
-<ParamField body="onUpload" type="((file: File) =&gt; void)">
-  Receives the selected File. Empty and canceled selections do not call it. Selection is disabled when omitted.
-</ParamField>
-
 <ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
-  Ref to the root element.
+  Ref to the root div element.
 </ParamField>
 
 <ParamField body="removeLabel" type="string" default="Remove">
@@ -72,5 +72,5 @@
 </ParamField>
 
 <ParamField body="uploadLabel" type="string" default="Upload">
-  Label for the preview and Upload action.
+  Label for the preview, Upload action, and hidden file input.
 </ParamField>

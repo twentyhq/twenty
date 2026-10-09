@@ -1,11 +1,13 @@
 import { type useRender } from '@base-ui/react/use-render';
 
+import { type ImageInputFileInputProps } from './ImageInputFileInputProps';
+
 export type ImageInputProps = Omit<
   useRender.ComponentProps<'div'>,
   'children' | 'onAbort'
 > & {
   src?: string | null;
-  onUpload?: (file: File) => void;
+  onFileSelect?: (file: File) => void;
   onRemove?: () => void;
   onAbort?: () => void;
   disabled?: boolean;
@@ -15,5 +17,5 @@ export type ImageInputProps = Omit<
   uploadLabel?: string;
   removeLabel?: string;
   abortLabel?: string;
-  accept?: string;
+  fileInputProps?: ImageInputFileInputProps;
 };

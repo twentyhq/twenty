@@ -1,4 +1,5 @@
 import { useRender } from '@base-ui/react/use-render';
+import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { type ChangeEvent, useId, useRef } from 'react';
@@ -11,9 +12,11 @@ import styles from './ImageInput.module.scss';
 import { ImageInputPreview } from './internal/ImageInputPreview';
 import { type ImageInputProps } from './types/ImageInputProps';
 
+const DEFAULT_IMAGE_ACCEPT = 'image/*';
+
 export const ImageInput = ({
   src,
-  onUpload,
+  onFileSelect,
   onRemove,
   onAbort,
   disabled = false,
@@ -23,20 +26,22 @@ export const ImageInput = ({
   uploadLabel = 'Upload',
   removeLabel = 'Remove',
   abortLabel = 'Abort',
-  accept = 'image/*',
+  fileInputProps = {},
   className,
   render,
   ref,
   ...props
 }: ImageInputProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const mergedFileInputRef = useMergedRefs(fileInputRef, fileInputProps.ref);
   const descriptionId = useId();
   const helperTextId = `${descriptionId}-helper`;
   const errorMessageId = `${descriptionId}-error`;
   const hasPicture = isNonEmptyString(src);
   const hasHelperText = isNonEmptyString(helperText);
   const hasErrorMessage = isNonEmptyString(errorMessage);
-  const isSelectionUnavailable = disabled || !isDefined(onUpload);
+  const isSelectionUnavailable =
+    disabled || fileInputProps.disabled === true || !isDefined(onFileSelect);
   const isRemovalUnavailable = disabled || !hasPicture || !isDefined(onRemove);
   const isUploadDisabled = isSelectionUnavailable || isUploading;
   const isRemoveDisabled = isRemovalUnavailable || isUploading;
@@ -57,13 +62,17 @@ export const ImageInput = ({
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
 
-    event.currentTarget.value = '';
+    try {
+      fileInputProps.onChange?.(event);
+    } finally {
+      event.currentTarget.value = '';
+    }
 
     if (isUploadDisabled || !isDefined(file)) {
       return;
     }
 
-    onUpload?.(file);
+    onFileSelect?.(file);
   };
 
   return useRender({
@@ -89,11 +98,18 @@ export const ImageInput = ({
           <div className={styles.content}>
             <div className={styles.actions}>
               <input
-                ref={fileInputRef}
-                className={styles.fileInput}
+                aria-label={uploadLabel}
+                {...fileInputProps}
+                ref={mergedFileInputRef}
+                className={clsx(styles.fileInput, fileInputProps.className)}
                 type="file"
-                accept={accept}
+                accept={fileInputProps.accept ?? DEFAULT_IMAGE_ACCEPT}
                 disabled={isUploadDisabled}
+                aria-describedby={
+                  [fileInputProps['aria-describedby'], describedBy]
+                    .filter(isNonEmptyString)
+                    .join(' ') || undefined
+                }
                 hidden
                 onChange={handleFileChange}
               />

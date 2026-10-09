@@ -32,7 +32,7 @@ const ImageInputExample = () => {
         uploadLabel="Choose profile image"
         removeLabel="Remove profile image"
         abortLabel="Cancel profile upload"
-        onUpload={(file) => {
+        onFileSelect={(file) => {
           setUploads((count) => count + 1);
           setSelectedFile(`${file.name}; ${file.type}; ${file.size} bytes`);
         }}

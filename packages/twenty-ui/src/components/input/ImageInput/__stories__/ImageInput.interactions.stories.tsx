@@ -27,7 +27,7 @@ const meta: Meta<typeof ImageInput> = {
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  args: { onUpload: fn(), onRemove: fn(), onAbort: fn() },
+  args: { onFileSelect: fn(), onRemove: fn(), onAbort: fn() },
 };
 
 export default meta;
@@ -74,7 +74,7 @@ export const NativeButtonsInForm: Story = {
       await userEvent.keyboard('{Enter}');
       await expect(args.onRemove).toHaveBeenCalledTimes(2);
       await expect(onSubmit).not.toHaveBeenCalled();
-      await expect(args.onUpload).not.toHaveBeenCalled();
+      await expect(args.onFileSelect).not.toHaveBeenCalled();
       await userEvent.click(
         canvas.getByRole('button', { name: 'Save workspace' }),
       );
@@ -87,7 +87,7 @@ export const NativeButtonsInForm: Story = {
 };
 
 export const FileSelectionAndRetry: Story = {
-  args: { accept: 'image/png' },
+  args: { fileInputProps: { accept: 'image/png' } },
   play: async ({ canvasElement, args }) => {
     const fileInput = getFileInput(canvasElement);
     const file = new File(['image'], 'workspace.png', { type: 'image/png' });
@@ -96,15 +96,15 @@ export const FileSelectionAndRetry: Story = {
     await expect(fileInput).toHaveAttribute('accept', 'image/png');
     await expect(fileInput).not.toHaveAttribute('multiple');
     await userEvent.upload(fileInput, file);
-    await expect(args.onUpload).toHaveBeenCalledOnce();
-    await expect(args.onUpload).toHaveBeenCalledWith(file);
+    await expect(args.onFileSelect).toHaveBeenCalledOnce();
+    await expect(args.onFileSelect).toHaveBeenCalledWith(file);
     await expect(fileInput).toHaveValue('');
     await userEvent.upload(fileInput, file);
-    await expect(args.onUpload).toHaveBeenCalledTimes(2);
-    await expect(args.onUpload).toHaveBeenLastCalledWith(file);
+    await expect(args.onFileSelect).toHaveBeenCalledTimes(2);
+    await expect(args.onFileSelect).toHaveBeenLastCalledWith(file);
     fileInput.dispatchEvent(new Event('cancel', { bubbles: true }));
     fileInput.dispatchEvent(new Event('change', { bubbles: true }));
-    await expect(args.onUpload).toHaveBeenCalledTimes(2);
+    await expect(args.onFileSelect).toHaveBeenCalledTimes(2);
   },
 };
 
@@ -123,7 +123,7 @@ export const Disabled: Story = {
       }
       await expect(fileInput).toBeDisabled();
       await expect(onFilePicker).not.toHaveBeenCalled();
-      await expect(args.onUpload).not.toHaveBeenCalled();
+      await expect(args.onFileSelect).not.toHaveBeenCalled();
       await expect(args.onRemove).not.toHaveBeenCalled();
     } finally {
       fileInput.removeEventListener('click', onFilePicker);
@@ -146,7 +146,7 @@ export const UploadingWithoutAbort: Story = {
     await expect(
       canvas.queryByRole('button', { name: 'Abort' }),
     ).not.toBeInTheDocument();
-    await expect(args.onUpload).not.toHaveBeenCalled();
+    await expect(args.onFileSelect).not.toHaveBeenCalled();
     await expect(args.onRemove).not.toHaveBeenCalled();
   },
 };
@@ -165,7 +165,7 @@ export const AbortFirstUpload: Story = {
     abortButton.focus();
     await userEvent.keyboard('{Enter}');
     await expect(args.onAbort).toHaveBeenCalledOnce();
-    await expect(args.onUpload).not.toHaveBeenCalled();
+    await expect(args.onFileSelect).not.toHaveBeenCalled();
     await expect(args.onRemove).not.toHaveBeenCalled();
   },
 };
