@@ -19,7 +19,7 @@ const workflowStepTipTapValueSchema = z.object({
   markdown: z.string().nullable(),
 });
 
-export const resolveRichTextFieldsInRecord = (
+export const convertStepTipTapToRichText = (
   stepObjectRecord: Record<string, unknown>,
   objectMetadataInfo: Pick<
     ObjectMetadataInfo,

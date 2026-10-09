@@ -4,7 +4,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
+import { convertStepTipTapToRichText } from 'src/modules/workflow/workflow-executor/utils/convert-step-tiptap-to-rich-text.util';
 
 const bodyField = getFlatFieldMetadataMock({
   id: 'body-field',
@@ -49,9 +49,9 @@ const context = {
   trigger: { body: { amount: 42, currency: 'EUR', meta: { source: 'form' } } },
 };
 
-describe('resolveRichTextFieldsInRecord', () => {
+describe('convertStepTipTapToRichText', () => {
   it('keeps a markdown that is exactly one variable a string', () => {
-    const resolved = resolveRichTextFieldsInRecord(
+    const resolved = convertStepTipTapToRichText(
       { body: { markdown: '{{trigger.body.amount}}', blocknote: null } },
       objectMetadataInfo,
       context,
@@ -61,7 +61,7 @@ describe('resolveRichTextFieldsInRecord', () => {
   });
 
   it('interpolates variables inside a markdown', () => {
-    const resolved = resolveRichTextFieldsInRecord(
+    const resolved = convertStepTipTapToRichText(
       {
         body: {
           markdown:
@@ -80,7 +80,7 @@ describe('resolveRichTextFieldsInRecord', () => {
   });
 
   it('serializes an object resolved from a whole-string variable', () => {
-    const resolved = resolveRichTextFieldsInRecord(
+    const resolved = convertStepTipTapToRichText(
       { body: { markdown: '{{trigger.body.meta}}', blocknote: null } },
       objectMetadataInfo,
       context,
@@ -107,7 +107,7 @@ describe('resolveRichTextFieldsInRecord', () => {
       },
     ]);
 
-    const resolved = resolveRichTextFieldsInRecord(
+    const resolved = convertStepTipTapToRichText(
       { body: { blocknote: tipTapBody, markdown: null } },
       objectMetadataInfo,
       context,
@@ -129,7 +129,7 @@ describe('resolveRichTextFieldsInRecord', () => {
   });
 
   it('leaves a value that is not a rich text object untouched', () => {
-    const resolved = resolveRichTextFieldsInRecord(
+    const resolved = convertStepTipTapToRichText(
       { body: 'legacy bare string {{trigger.body.amount}}', title: 'x' },
       objectMetadataInfo,
       context,
@@ -139,7 +139,7 @@ describe('resolveRichTextFieldsInRecord', () => {
   });
 
   it('does not touch fields that are not rich text', () => {
-    const resolved = resolveRichTextFieldsInRecord(
+    const resolved = convertStepTipTapToRichText(
       {
         title: '{{trigger.body.amount}}',
         body: { markdown: 'a', blocknote: null },

@@ -16,7 +16,7 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
 import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
+import { convertStepTipTapToRichText } from 'src/modules/workflow/workflow-executor/utils/convert-step-tiptap-to-rich-text.util';
 import { isWorkflowUpsertRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-upsert-record-action.guard';
 import { type WorkflowUpsertRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
@@ -56,9 +56,9 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
         workspaceId,
       );
 
-    const inputWithResolvedRichText = {
+    const inputWithRichText = {
       ...rawInput,
-      objectRecord: resolveRichTextFieldsInRecord(
+      objectRecord: convertStepTipTapToRichText(
         rawInput.objectRecord,
         objectMetadataInfo,
         context,
@@ -66,7 +66,7 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
     };
 
     const workflowActionInput = resolveInput(
-      inputWithResolvedRichText,
+      inputWithRichText,
       context,
     ) as WorkflowUpsertRecordActionInput;
 
