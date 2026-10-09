@@ -1,4 +1,5 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
+import { isBoolean } from '@sniptt/guards';
 import { useId } from 'react';
 import { clsx } from 'clsx';
 
@@ -7,6 +8,7 @@ import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Dropdown.module.scss';
+import { DropdownItemOwner } from './DropdownItemOwner';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
 import { useDropdownContext } from './useDropdownContext';
@@ -93,31 +95,44 @@ export const DropdownOptionItem = ({
           closeTree();
         }
       }}
-      render={(renderProps) => (
-        <ListItem
-          {...renderProps}
-          render={render ?? <button type="button" />}
-          className={clsx(
-            renderProps.className,
-            hasActions && styles.itemWithActionsPrimary,
-          )}
-          disabled={disabled}
-          selected={selected}
-          focused={isFocused}
-          indicator={isCheckIndicatorRenderedByRow ? 'none' : resolvedIndicator}
-          color={color}
-          startIcon={startIcon}
-          endIcon={endIcon}
-          actionsVisibility={actionsVisibility}
-          description={description}
-          descriptionPlacement={descriptionPlacement}
-          shortcut={shortcut}
-          shortcutJoinLabel={shortcutJoinLabel}
-          hasSubmenu={!hasActions && hasSubmenu}
-        >
-          {children}
-        </ListItem>
-      )}
+      render={(renderProps) => {
+        const nativeDisabled =
+          nativeButton &&
+          'disabled' in renderProps &&
+          isBoolean(renderProps.disabled)
+            ? renderProps.disabled
+            : undefined;
+
+        return (
+          <ListItem
+            {...renderProps}
+            render={
+              <DropdownItemOwner render={render} disabled={nativeDisabled} />
+            }
+            className={clsx(
+              renderProps.className,
+              hasActions && styles.itemWithActionsPrimary,
+            )}
+            disabled={disabled}
+            selected={selected}
+            focused={isFocused}
+            indicator={
+              isCheckIndicatorRenderedByRow ? 'none' : resolvedIndicator
+            }
+            color={color}
+            startIcon={startIcon}
+            endIcon={endIcon}
+            actionsVisibility={actionsVisibility}
+            description={description}
+            descriptionPlacement={descriptionPlacement}
+            shortcut={shortcut}
+            shortcutJoinLabel={shortcutJoinLabel}
+            hasSubmenu={!hasActions && hasSubmenu}
+          >
+            {children}
+          </ListItem>
+        );
+      }}
     />
   );
 
