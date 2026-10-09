@@ -33,16 +33,11 @@ export const resolveRichTextFieldsInRecord = (
       continue;
     }
 
-    const { blocknote, markdown } = parsedRichTextValue.data;
+    const { blocknote: tipTapJson, markdown } = parsedRichTextValue.data;
 
-    const resolvedBlocknote = isString(blocknote)
-      ? resolveRichTextVariables(blocknote, context)
-      : blocknote;
-    const resolvedMarkdown = isString(markdown)
-      ? resolveStringTemplate(markdown, context)
-      : markdown;
-    const tipTapMarkdown = isString(resolvedBlocknote)
-      ? convertTipTapBlocksToMarkdown(resolvedBlocknote)
+    const resolvedTipTapJson = resolveRichTextVariables(tipTapJson, context);
+    const tipTapMarkdown = isDefined(resolvedTipTapJson)
+      ? convertTipTapBlocksToMarkdown(resolvedTipTapJson)
       : undefined;
 
     resolvedRecord[fieldName] = isDefined(tipTapMarkdown)
@@ -50,9 +45,14 @@ export const resolveRichTextFieldsInRecord = (
           blocknote: JSON.stringify(
             convertMarkdownToBlocknoteBlocks(tipTapMarkdown),
           ),
-          markdown: resolvedMarkdown || tipTapMarkdown,
+          markdown: tipTapMarkdown,
         }
-      : { blocknote: resolvedBlocknote, markdown: resolvedMarkdown };
+      : {
+          blocknote: null,
+          markdown: isString(markdown)
+            ? resolveStringTemplate(markdown, context)
+            : markdown,
+        };
   }
 
   return resolvedRecord;

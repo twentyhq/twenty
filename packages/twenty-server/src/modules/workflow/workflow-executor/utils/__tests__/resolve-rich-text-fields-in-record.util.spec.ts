@@ -128,27 +128,6 @@ describe('resolveRichTextFieldsInRecord', () => {
     });
   });
 
-  it('keeps a BlockNote body untouched', () => {
-    const blocknoteBody = JSON.stringify([
-      {
-        id: 'b1',
-        type: 'paragraph',
-        props: {},
-        children: [],
-        content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
-      },
-      { id: 'b2', type: 'divider', props: {}, children: [] },
-    ]);
-
-    const resolved = resolveRichTextFieldsInRecord(
-      { body: { blocknote: blocknoteBody, markdown: null } },
-      objectMetadataInfo,
-      context,
-    );
-
-    expect(resolved.body).toEqual({ blocknote: blocknoteBody, markdown: null });
-  });
-
   it('leaves a value that is not a rich text object untouched', () => {
     const resolved = resolveRichTextFieldsInRecord(
       { body: 'legacy bare string {{trigger.body.amount}}', title: 'x' },
