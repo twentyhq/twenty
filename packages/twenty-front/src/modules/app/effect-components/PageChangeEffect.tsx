@@ -181,7 +181,6 @@ export const PageChangeEffect = () => {
       }
     }
   }, [
-    location,
     navigate,
     pageChangeEffectNavigateLocation,
     isAppEffectRedirectEnabled,
