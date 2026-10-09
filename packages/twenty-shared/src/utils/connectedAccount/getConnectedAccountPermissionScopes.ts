@@ -16,7 +16,6 @@ export const getConnectedAccountPermissionScopes = ({
     case ConnectedAccountProvider.GOOGLE:
     case ConnectedAccountProvider.MICROSOFT:
       return CONNECTED_ACCOUNT_PERMISSION_SCOPES[permission][provider];
-    // Non-OAuth providers do not rely on OAuth scopes.
     case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
     case ConnectedAccountProvider.EMAIL_GROUP:
     case ConnectedAccountProvider.APP:

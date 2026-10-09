@@ -8,8 +8,7 @@ export const getMissingDraftEmailScopes = (connectedAccount: {
 }): string[] => {
   const grantedScopes = connectedAccount.scopes ?? [];
 
-  // Gmail drafts need gmail.compose only: gmail.send, the other Google scope
-  // of the send permission, cannot create drafts.
+  // Gmail drafts need gmail.compose only; gmail.send cannot create drafts
   const requiredScopes =
     connectedAccount.provider === ConnectedAccountProvider.GOOGLE
       ? [GMAIL_COMPOSE_SCOPE]
