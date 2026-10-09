@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "Тип автоматизованого тригера робочого процесу"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "Поле робочого процесу не належить до об'єкта, на який посилаються."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "Засіб вибору записів робочого процесу має посилатися на об'єкт."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Робочий процес посилається на метадані, недоступні для цього застосунку."
 
@@ -12721,7 +12721,7 @@ msgstr "Ця програма встановлюється. Будь ласка,
 #. js-lingui-id: O3pUuN
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being installed. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "Ця програма встановлюється. Зачекайте, доки встановлення завершиться, перш ніж оновлювати її."
 
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
@@ -12731,17 +12731,17 @@ msgstr "Ця програма видаляється. Будь ласка, за�
 #. js-lingui-id: rfbjZb
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "Ця програма видаляється. Зачекайте, доки видалення завершиться, перш ніж оновлювати її."
 
 #. js-lingui-id: Kepc2n
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before installing it."
-msgstr ""
+msgstr "Ця програма оновлюється. Зачекайте, доки оновлення завершиться, перш ніж установлювати її."
 
 #. js-lingui-id: XBHpg5
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
-msgstr ""
+msgstr "Ця програма оновлюється. Зачекайте, доки оновлення завершиться, перш ніж видаляти її."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

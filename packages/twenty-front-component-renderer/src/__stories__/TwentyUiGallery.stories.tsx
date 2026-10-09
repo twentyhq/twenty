@@ -35,7 +35,6 @@ import {
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
-import { chipControlsTest } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { statusControlsTest } from '@/__stories__/twenty-ui-gallery/utils/statusControlsTest';
 import { tagControlsTest } from '@/__stories__/twenty-ui-gallery/utils/tagControlsTest';
 import { PortalBoundsDecorator } from '@/__stories__/twenty-ui-gallery/components/PortalBoundsDecorator';
@@ -66,6 +65,7 @@ import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarIma
 import { avatarControlsTest } from '@/__stories__/twenty-ui-gallery/utils/avatarControlsTest';
 import { commandBlockTest } from '@/__stories__/twenty-ui-gallery/utils/commandBlockTest';
 import { calloutTest } from '@/__stories__/twenty-ui-gallery/utils/calloutTest';
+import { chipControlsTest } from '@/__stories__/twenty-ui-gallery/utils/chipControlsTest';
 import { cardCompositionTest } from '@/__stories__/twenty-ui-gallery/utils/cardCompositionTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {

@@ -479,6 +479,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} cheie API} few {{apiKeyCount} c
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} ar dori să:"
 
+#. js-lingui-id: ST9xGf
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+msgid "{appName} preferences"
+msgstr ""
+
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
 msgid "{appName} would like to:"
@@ -1206,7 +1211,7 @@ msgstr "Un proiect există deja pentru acest workflow. Sigur doriți să îl șt
 #. js-lingui-id: xk6SkO
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run."
-msgstr ""
+msgstr "Se deschide un formular pentru persoana care lansează fluxul de lucru și este completat pe loc. Cu acest declanșator, acesta apare numai în rularea fluxului de lucru."
 
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -1363,13 +1368,14 @@ msgstr "Accesați datele din spațiul dvs. de lucru de pe clientul MCP favorit, 
 
 #. js-lingui-id: AeXO77
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
-#: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Account"
 msgstr "Cont"
 
@@ -1388,7 +1394,13 @@ msgstr "Cont adăugat cu succes. Sincronizarea a început."
 msgid "Account Deletion"
 msgstr "Ștergerea contului"
 
+#. js-lingui-id: T3FM0r
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+msgid "Account settings"
+msgstr ""
+
 #. js-lingui-id: bPwFdf
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -1641,6 +1653,7 @@ msgstr "Adaugă un pas de flux de lucru care trimite un mesaj și, opțional, o 
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -3107,6 +3120,7 @@ msgstr "Apostrof și punct"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -3130,6 +3144,16 @@ msgstr "Jurnale de aplicație"
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "App logs are kept {retentionInDays} days."
 msgstr "Jurnalele de aplicație sunt păstrate timp de {retentionInDays} zile."
+
+#. js-lingui-id: MAyGac
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+msgid "App preferences"
+msgstr ""
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -3166,6 +3190,7 @@ msgid "Applicability"
 msgstr "Aplicabilitate"
 
 #. js-lingui-id: IrC12v
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -3812,6 +3837,7 @@ msgstr "Creează automat contacte pentru persoane."
 
 #. js-lingui-id: RpExX0
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Creează automat înregistrări pentru persoane când primiți sau trimiteți emailuri"
 
@@ -4338,6 +4364,8 @@ msgstr "caldav.example.com"
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Calendar"
 msgstr "Calendar"
 
@@ -5016,6 +5044,11 @@ msgstr "Alegeți câmpurile utilizate la căutarea înregistrărilor."
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
 msgstr ""
 
+#. js-lingui-id: 22LF79
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
+msgid "Choose your preferences for the apps installed on your workspace by the admin"
+msgstr ""
+
 #. js-lingui-id: 3wV73y
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
@@ -5523,6 +5556,7 @@ msgstr "Reclamație"
 
 #. js-lingui-id: 3WrMP5
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Complete setup"
 msgstr "Finalizați configurarea"
 
@@ -5712,6 +5746,7 @@ msgstr "Configurați acest widget pentru a afișa câmpuri"
 
 #. js-lingui-id: no/yG9
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Configure what emails should get synced"
 msgstr "Configurați ce e-mailuri ar trebui sincronizate"
 
@@ -5823,16 +5858,19 @@ msgstr "Conectați Google, Microsoft sau CalDAV și activați sincronizarea cale
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "Conectați-vă prin IMAP/SMTP"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Conectați-vă cu Google"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Conectați-vă cu Microsoft"
 
@@ -5848,7 +5886,7 @@ msgid "Connected"
 msgstr "Conectat"
 
 #. js-lingui-id: 9TzudL
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Connected accounts"
 msgstr "Conturi conectate"
 
@@ -5876,6 +5914,7 @@ msgstr "Furnizori de conexiune"
 
 #. js-lingui-id: W4Kgwq
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Connection settings"
 msgstr "Setări de conexiune"
 
@@ -5890,7 +5929,7 @@ msgid "Connection successfully updated"
 msgstr "Conexiunea a fost actualizată cu succes"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/components/AgentChatStreamKeepAliveEffect.tsx
+#: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Conexiunea cu asistentul s-a pierdut. Reîncarcă pentru a vedea răspunsul."
 
@@ -5912,6 +5951,7 @@ msgstr "Contactați administratorul"
 #. js-lingui-id: Y2y0mC
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Contact auto-creation"
 msgstr "Creare automată contacte"
 
@@ -7635,6 +7675,7 @@ msgstr "Definiți ce face acest instrument"
 #. js-lingui-id: bQkkFU
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
 msgstr "Definiți ce va fi vizibil pentru alți utilizatori în spațiul dvs. de lucru"
 
@@ -7752,16 +7793,19 @@ msgstr "Șterge contul și toate datele asociate sau părăsește spațiul de lu
 
 #. js-lingui-id: 452Oso
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and data"
 msgstr "Șterge contul și datele"
 
 #. js-lingui-id: bwUbrT
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data"
 msgstr "Șterge contul și datele sincronizate"
 
 #. js-lingui-id: nmosf7
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data?"
 msgstr "Șterge contul și datele sincronizate?"
 
@@ -8249,6 +8293,9 @@ msgstr "Deconectează"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Disconnect account"
 msgstr "Deconectează contul"
 
@@ -8412,11 +8459,13 @@ msgstr "Nu se creează automat contacte."
 
 #. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Don't create contacts from/to Gmail, Outlook emails"
 msgstr "Nu creați contacte din/în Gmail, Outlook emails"
 
 #. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Don't import emails from team@ support@ noreply@..."
 msgstr "Nu importați e-mailuri de la team@ support@ noreply@..."
 
@@ -9021,7 +9070,7 @@ msgstr "Trimiteți participanților o invitație prin e-mail"
 #. js-lingui-id: ju58G/
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
 msgid "Email thread"
-msgstr ""
+msgstr "Fir de e-mail"
 
 #. js-lingui-id: +V3dhy
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -9070,8 +9119,10 @@ msgstr "email-uri"
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "Emailuri"
@@ -9085,6 +9136,11 @@ msgstr "E-mailuri & Calendar"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
 msgstr "E-mailurile deja predate furnizorului nu pot fi retrase. Această acțiune oprește tot ce încă așteaptă să fie trimis."
+
+#. js-lingui-id: USBKh+
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Emails from the blocklist will be ignored regardless of this setting."
+msgstr ""
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -9878,11 +9934,13 @@ msgstr "Tot"
 
 #. js-lingui-id: QQlMid
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Exclude group emails"
 msgstr "Excludere email-uri de grup"
 
 #. js-lingui-id: +tk2yZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Exclude non-professional emails"
 msgstr "Excludeți emailurile neprofesionale"
 
@@ -11398,6 +11456,7 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -11527,6 +11586,11 @@ msgstr "Autorizarea GitHub a eșuat sau a fost refuzată. Conectați din nou con
 msgid "Global search"
 msgstr "Căutare globală"
 
+#. js-lingui-id: DSJEta
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Gmail"
+msgstr ""
+
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent.tsx
@@ -11577,6 +11641,11 @@ msgstr "Gest de bunăvoință după incidentul din martie"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Google"
 msgstr "Google"
+
+#. js-lingui-id: ebIDwV
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Google Calendar"
+msgstr ""
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -12270,6 +12339,11 @@ msgstr "Imagine"
 msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Imaginea \"{fileName}\" depășește {maxUploadSize}"
 
+#. js-lingui-id: Grur3I
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "IMAP"
+msgstr ""
+
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Configuration"
@@ -12368,6 +12442,7 @@ msgstr "Parteneri de implementare"
 
 #. js-lingui-id: l3s5ri
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Import"
 msgstr "Importați"
 
@@ -12414,6 +12489,7 @@ msgstr "Date importate"
 #. js-lingui-id: RqSvT0
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing"
 msgstr "Importând"
 
@@ -14277,6 +14353,12 @@ msgstr "Gestionați informațiile de facturare"
 msgid "Manage connections used by this app to call {0}."
 msgstr "Administrează conexiunile folosite de această aplicație pentru a apela {0}."
 
+#. js-lingui-id: bjuasY
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Manage events"
+msgstr ""
+
 #. js-lingui-id: Dt05oz
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Manage feature flags for this workspace"
@@ -14348,7 +14430,7 @@ msgid "Manage workflows"
 msgstr "Administrează fluxuri de lucru"
 
 #. js-lingui-id: FyFNsd
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Manage your internet accounts."
 msgstr "Gestionează-ți conturile de internet."
 
@@ -14756,6 +14838,11 @@ msgstr "Minute"
 msgid "Minutes between triggers"
 msgstr "Minute între acțiuni"
 
+#. js-lingui-id: G40We3
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppStatusCell.tsx
+msgid "Missing account"
+msgstr ""
+
 #. js-lingui-id: cOFpUq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Missing calendar permission."
@@ -14941,6 +15028,7 @@ msgstr "Mai multe acțiuni"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
@@ -16578,6 +16666,7 @@ msgstr "Nu este partajat de {notSharedByFullName}"
 
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Neacordat"
 
@@ -17287,6 +17376,7 @@ msgstr "Secret opțional folosit pentru a calcula semnătura HMAC pentru încăr
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/side-panel/components/SidePanelOptionsDropdown.tsx
@@ -17444,6 +17534,11 @@ msgstr "OTP trebuie să aibă exact 6 cifre"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
 msgid "Outage"
 msgstr "Întrerupere"
+
+#. js-lingui-id: gdC3cZ
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Outlook"
+msgstr ""
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -17844,6 +17939,7 @@ msgid "permission flag"
 msgstr "indicator de permisiune"
 
 #. js-lingui-id: 9cDpsw
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -18592,6 +18688,12 @@ msgstr "Citește jurnalul modificărilor"
 msgid "Read documentation"
 msgstr "Citește documentația"
 
+#. js-lingui-id: BksH/i
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Read emails"
+msgstr ""
+
 #. js-lingui-id: U26cMX
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
@@ -18720,6 +18822,7 @@ msgstr "Recomandat"
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect"
 msgstr "Reconectare"
@@ -19141,6 +19244,11 @@ msgstr "Eliminați {0} elemente din meniul de navigare?"
 msgid "Remove {address}"
 msgstr "Elimină {address}"
 
+#. js-lingui-id: boQErO
+#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+msgid "Remove {displayName}"
+msgstr ""
+
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Remove {origin}"
@@ -19377,6 +19485,11 @@ msgstr "Reordonare câmp"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent.tsx
 msgid "Reorder options"
 msgstr "Reordonează opțiunile"
+
+#. js-lingui-id: Jtm0TT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
+msgstr ""
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21076,6 +21189,12 @@ msgstr "Trimite email"
 msgid "Send Email"
 msgstr "Trimite Email"
 
+#. js-lingui-id: YUviZE
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Send emails"
+msgstr ""
+
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
@@ -21364,6 +21483,7 @@ msgstr "element de meniu de setări"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Setup incomplete"
 msgstr "Configurare incompletă"
 
@@ -21422,6 +21542,11 @@ msgstr "Partajați cu spațiul de lucru?"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Share your app to other workspaces without pushing it on the marketplace"
 msgstr "Partajați aplicația în alte spații de lucru, fără a o publica în marketplace"
+
+#. js-lingui-id: fX13zr
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Shared accounts between apps"
+msgstr ""
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -22210,6 +22335,7 @@ msgstr "Text static partajat în toate paginile de înregistrare"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -22669,6 +22795,7 @@ msgstr "Sincronizați fiecare mesaj"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync failed"
 msgstr "Sincronizare eșuată"
 
@@ -22684,11 +22811,13 @@ msgstr "Sincronizarea cu căsuța poștală {mailboxHandle} s-a pierdut. Vă rug
 
 #. js-lingui-id: U6wmNc
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync paused"
 msgstr "Sincronizare întreruptă"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Synced"
 msgstr "Sincronizat"
 
@@ -22714,6 +22843,7 @@ msgstr "Sincronizează etichetele obiectelor și numele API"
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr "Sincronizarea se va opri, iar datele de autentificare ale acestui cont vor fi eliminate. E-mailurile și evenimentele dvs. vor fi păstrate și disponibile după reconectare."
 
@@ -23633,6 +23763,7 @@ msgstr "Această pagină nu este disponibilă."
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
 msgstr "Aceasta șterge permanent {accountHandle} și toate e-mailurile și evenimentele sincronizate ale acestuia. Această acțiune nu poate fi anulată."
 
@@ -24890,25 +25021,16 @@ msgstr "Până la {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadTitle.tsx
-#: src/modules/ai/components/ChatReferenceChip.tsx
-#: src/modules/ai/components/ChatReferenceChip.tsx
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
-#: src/modules/log-console/components/LogConsoleMemberChip.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
-#: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/object-core/components/cells/CoreObjectNameCell.tsx
-#: src/modules/object-record/components/RecordChip.tsx
-#: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
 #: src/modules/page-layout/hooks/usePageLayoutAddTabStrategy.ts
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/side-panel/components/SidePanelContextChip.tsx
-#: src/modules/ui/field/display/components/ActorDisplay.tsx
-#: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/modules/ui/field/display/utils/getChipLabel.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
@@ -25206,7 +25328,7 @@ msgstr "Actualizat"
 #. js-lingui-id: nDpDl0
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
 msgid "Upgrading {displayedUpgradeProgress}"
-msgstr ""
+msgstr "Se actualizează {displayedUpgradeProgress}"
 
 #. js-lingui-id: 9gm/Oo
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
@@ -25485,6 +25607,11 @@ msgstr "Folosește microfonul"
 msgid "Used"
 msgstr "Utilizate"
 
+#. js-lingui-id: xUOPoQ
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Used by"
+msgstr ""
+
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Useful for pivot/junction tables"
@@ -25496,6 +25623,7 @@ msgstr "Util pentru tabele pivot/de legătură"
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -25503,6 +25631,7 @@ msgstr "Util pentru tabele pivot/de legătură"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -25955,6 +26084,7 @@ msgstr "Violet"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx

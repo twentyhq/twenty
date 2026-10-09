@@ -68,7 +68,7 @@ describe('MultiSelectAddressFields', () => {
     await user.click(trigger);
     expect(
       screen.getByRole('button', { name: 'Reset to default' }),
-    ).toHaveAttribute('aria-disabled', 'true');
+    ).toBeDisabled();
   });
 
   it('filters results, selects with the keyboard, and clears search after closing', async () => {

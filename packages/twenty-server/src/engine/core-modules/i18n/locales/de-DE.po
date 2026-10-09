@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "Der automatische Auslösertyp des Workflows"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "Das Workflow-Feld gehört nicht zum referenzierten Objekt."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "Die Workflow-Datensatzauswahl muss auf ein Objekt verweisen."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Der Workflow verweist auf Metadaten, die dieser Anwendung nicht zur Verfügung stehen."
 
@@ -12721,7 +12721,7 @@ msgstr "Diese Anwendung wird installiert. Bitte warten Sie, bis die Installation
 #. js-lingui-id: O3pUuN
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being installed. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "Diese Anwendung wird installiert. Bitte warten Sie, bis die Installation abgeschlossen ist, bevor Sie sie aktualisieren."
 
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
@@ -12731,17 +12731,17 @@ msgstr "Diese Anwendung wird deinstalliert. Bitte warten Sie, bis die Deinstalla
 #. js-lingui-id: rfbjZb
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "Diese Anwendung wird deinstalliert. Bitte warten Sie, bis die Deinstallation abgeschlossen ist, bevor Sie sie aktualisieren."
 
 #. js-lingui-id: Kepc2n
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before installing it."
-msgstr ""
+msgstr "Diese Anwendung wird aktualisiert. Bitte warten Sie, bis die Aktualisierung abgeschlossen ist, bevor Sie sie installieren."
 
 #. js-lingui-id: XBHpg5
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
-msgstr ""
+msgstr "Diese Anwendung wird aktualisiert. Bitte warten Sie, bis die Aktualisierung abgeschlossen ist, bevor Sie sie deinstallieren."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

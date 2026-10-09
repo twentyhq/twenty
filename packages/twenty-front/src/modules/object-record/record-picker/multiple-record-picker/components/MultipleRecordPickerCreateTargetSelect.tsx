@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -66,7 +66,7 @@ export const MultipleRecordPickerCreateTargetSelect = ({
               itemId={objectMetadataItem.id}
               onEnter={() => handleSelect(objectMetadataItem.id)}
             >
-              <ListItem
+              <ListItemButton
                 startIcon={
                   <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
                 }
@@ -75,7 +75,7 @@ export const MultipleRecordPickerCreateTargetSelect = ({
                 onClick={() => handleSelect(objectMetadataItem.id)}
               >
                 {objectMetadataItem.labelSingular}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           ))}
         </SelectableList>

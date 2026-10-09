@@ -16,6 +16,7 @@ export type ConnectedAccount = {
   lastSignedInAt: string | null;
   userWorkspaceId: string;
   connectionProviderId: string | null;
+  applicationId: string | null;
   name: string | null;
   // Connection-row visibility — distinct from the `scopes` array above
   // (those are upstream-granted OAuth permissions).

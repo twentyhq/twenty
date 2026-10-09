@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { FathomError } from 'fathom-typescript/sdk/models/errors';
 
-const FATHOM_RATE_LIMIT_FALLBACK_DELAY_MILLISECONDS = 60_000;
+import { FATHOM_RETRY_FALLBACK_DELAY_MILLISECONDS } from 'src/constants/fathom.constant';
 
 export const getFathomRetryAfterDelay = ({
   error,
@@ -17,7 +17,7 @@ export const getFathomRetryAfterDelay = ({
   const retryAfter = error.headers.get('retry-after')?.trim();
 
   if (!isNonEmptyString(retryAfter)) {
-    return FATHOM_RATE_LIMIT_FALLBACK_DELAY_MILLISECONDS;
+    return FATHOM_RETRY_FALLBACK_DELAY_MILLISECONDS;
   }
 
   const retryAfterSeconds = Number(retryAfter);
@@ -27,5 +27,5 @@ export const getFathomRetryAfterDelay = ({
 
   return Number.isFinite(delayMilliseconds) && delayMilliseconds >= 0
     ? delayMilliseconds
-    : FATHOM_RATE_LIMIT_FALLBACK_DELAY_MILLISECONDS;
+    : FATHOM_RETRY_FALLBACK_DELAY_MILLISECONDS;
 };

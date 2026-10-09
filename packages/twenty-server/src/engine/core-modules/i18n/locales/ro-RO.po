@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "Tipul declanșatorului automatizat al fluxului de lucru"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "Câmpul fluxului de lucru nu aparține obiectului la care se face referire."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "Selectorul de înregistrări al fluxului de lucru trebuie să facă referire la un obiect."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Fluxul de lucru face referire la metadate care nu sunt disponibile pentru această aplicație."
 
@@ -12721,7 +12721,7 @@ msgstr "Această aplicație se instalează. Așteptați finalizarea înainte de 
 #. js-lingui-id: O3pUuN
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being installed. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "Această aplicație este în curs de instalare. Așteptați finalizarea acesteia înainte de a o actualiza."
 
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
@@ -12731,17 +12731,17 @@ msgstr "Această aplicație se dezinstalează. Așteptați finalizarea înainte 
 #. js-lingui-id: rfbjZb
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "Această aplicație este în curs de dezinstalare. Așteptați finalizarea acesteia înainte de a o actualiza."
 
 #. js-lingui-id: Kepc2n
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before installing it."
-msgstr ""
+msgstr "Această aplicație este în curs de actualizare. Așteptați finalizarea acesteia înainte de a o instala."
 
 #. js-lingui-id: XBHpg5
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
-msgstr ""
+msgstr "Această aplicație este în curs de actualizare. Așteptați finalizarea acesteia înainte de a o dezinstala."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts

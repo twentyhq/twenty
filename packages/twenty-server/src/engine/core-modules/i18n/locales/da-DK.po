@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "Typen af arbejdsgangens automatiserede udløser"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "Workflowfeltet tilhører ikke det refererede objekt."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "Workflowpostvælgeren skal referere til et objekt."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Workflowet refererer til metadata, der ikke er tilgængelige for denne applikation."
 
@@ -12721,7 +12721,7 @@ msgstr "Denne applikation installeres. Vent, til den er færdig, før du afinsta
 #. js-lingui-id: O3pUuN
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being installed. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "Denne applikation installeres. Vent, indtil den er færdig, før du opgraderer den."
 
 #. js-lingui-id: 63s1OL
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
@@ -12731,17 +12731,17 @@ msgstr "Denne applikation afinstalleres. Vent, til den er færdig, før du insta
 #. js-lingui-id: rfbjZb
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being uninstalled. Please wait for it to finish before upgrading it."
-msgstr ""
+msgstr "Denne applikation afinstalleres. Vent, indtil den er færdig, før du opgraderer den."
 
 #. js-lingui-id: Kepc2n
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before installing it."
-msgstr ""
+msgstr "Denne applikation opgraderes. Vent, indtil den er færdig, før du installerer den."
 
 #. js-lingui-id: XBHpg5
 #: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
 msgid "This application is being upgraded. Please wait for it to finish before uninstalling it."
-msgstr ""
+msgstr "Denne applikation opgraderes. Vent, indtil den er færdig, før du afinstallerer den."
 
 #. js-lingui-id: J6svMA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
