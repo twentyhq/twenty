@@ -229,7 +229,8 @@ describe('2-46 fast instance command 1791186790123 - RenameUsageLimitMeterToUnit
 
   beforeEach(async () => {
     spenderId = v4();
-    queryRunner = global.testDataSource.createQueryRunner();
+    queryRunner =
+      global.workflowTestServices.coreDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
   });
