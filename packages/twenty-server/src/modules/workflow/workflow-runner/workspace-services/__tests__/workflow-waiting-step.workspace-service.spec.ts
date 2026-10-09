@@ -57,12 +57,6 @@ const buildService = ({
         stepInfos: { [STEP_ID]: { status: stepStatus, error: stepError } },
       },
     }),
-    updateStepInfoIfPending: jest
-      .fn()
-      .mockResolvedValue(
-        runStatus === WorkflowRunStatus.RUNNING &&
-          stepStatus === StepStatus.PENDING,
-      ),
     endWorkflowRun: jest.fn(),
   };
   const workflowExecutionContextService = {
@@ -121,9 +115,8 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('completes the step with the record as the run reads it and resumes the run', async () => {
-    const { service, workflowRunWorkspaceService, messageQueueService } =
-      buildService();
+  it('ends the step with the record as the run reads it through the run job', async () => {
+    const { service, messageQueueService } = buildService();
 
     await service.resolve({
       workspaceId: WORKSPACE_ID,
@@ -131,40 +124,44 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
       event: EVENT,
     });
 
-    expect(
-      workflowRunWorkspaceService.updateStepInfoIfPending,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({
-        stepId: STEP_ID,
-        stepInfo: {
-          status: StepStatus.SUCCESS,
-          result: { hasTimedOut: false, ...EVENT, record: READABLE_RECORD },
-        },
-      }),
-    );
     expect(messageQueueService.add).toHaveBeenCalledWith(
       RUN_WORKFLOW_JOB_NAME,
       {
         workspaceId: WORKSPACE_ID,
         workflowRunId: WORKFLOW_RUN_ID,
-        lastExecutedStepId: STEP_ID,
+        awaitedStepOutput: {
+          stepId: STEP_ID,
+          actionOutput: {
+            result: { hasTimedOut: false, ...EVENT, record: READABLE_RECORD },
+          },
+        },
       },
       expect.anything(),
     );
   });
 
+  it('resumes the step once when its wait is resolved twice', async () => {
+    const { service, pendingWakeUpService, messageQueueService } =
+      buildService();
+
+    pendingWakeUpService.claim.mockResolvedValue(null);
+
+    await service.resolve({ workspaceId: WORKSPACE_ID, wakeUpId: WAIT_ID });
+
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
   it('ends the step with the answer to the call it posted through the run job', async () => {
-    const { service, workflowRunWorkspaceService, messageQueueService } =
-      buildService({
-        storedWait: {
-          ...STORED_WAIT,
-          condition: {
-            type: 'ANSWER',
-            threadId: 'thread-id',
-            toolCallId: 'call-id',
-          },
+    const { service, messageQueueService } = buildService({
+      storedWait: {
+        ...STORED_WAIT,
+        condition: {
+          type: 'ANSWER',
+          threadId: 'thread-id',
+          toolCallId: 'call-id',
         },
-      });
+      },
+    });
 
     await service.resolve({
       workspaceId: WORKSPACE_ID,
@@ -172,9 +169,6 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
       answer: { result: { threadId: 'thread-id', outcome: 'executed' } },
     });
 
-    expect(
-      workflowRunWorkspaceService.updateStepInfoIfPending,
-    ).not.toHaveBeenCalled();
     expect(messageQueueService.add).toHaveBeenCalledWith(
       RUN_WORKFLOW_JOB_NAME,
       {
@@ -210,8 +204,9 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
   });
 
   it('keeps waiting when the run cannot read the record of the event', async () => {
-    const { service, pendingWakeUpService, workflowRunWorkspaceService } =
-      buildService({ readableRecords: [] });
+    const { service, pendingWakeUpService, messageQueueService } = buildService(
+      { readableRecords: [] },
+    );
 
     await service.resolve({
       workspaceId: WORKSPACE_ID,
@@ -220,9 +215,7 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
     });
 
     expect(pendingWakeUpService.claim).not.toHaveBeenCalled();
-    expect(
-      workflowRunWorkspaceService.updateStepInfoIfPending,
-    ).not.toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
   it('keeps the event and tries again when reading its record fails', async () => {
@@ -259,7 +252,7 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
   });
 
   it('keeps fields the run cannot read out of the previous snapshot', async () => {
-    const { service, workflowRunWorkspaceService } = buildService();
+    const { service, messageQueueService } = buildService();
 
     await service.resolve({
       workspaceId: WORKSPACE_ID,
@@ -271,11 +264,15 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
       },
     });
 
-    const [{ stepInfo }] =
-      workflowRunWorkspaceService.updateStepInfoIfPending.mock.calls[0];
+    const [, { awaitedStepOutput }] = messageQueueService.add.mock.calls[0];
 
-    expect(stepInfo.result.before).toEqual({ id: 'company-id', name: 'Old' });
-    expect(stepInfo.result.updatedFields).toEqual(['name']);
+    expect(awaitedStepOutput.actionOutput.result.before).toEqual({
+      id: 'company-id',
+      name: 'Old',
+    });
+    expect(awaitedStepOutput.actionOutput.result.updatedFields).toEqual([
+      'name',
+    ]);
   });
 
   it('reads deleted records when the event is a deletion', async () => {
@@ -335,16 +332,19 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
   });
 
   it('reports a timeout when an event wait expires', async () => {
-    const { service, workflowRunWorkspaceService } = buildService();
+    const { service, messageQueueService } = buildService();
 
     await service.resolve({ workspaceId: WORKSPACE_ID, wakeUpId: WAIT_ID });
 
-    expect(
-      workflowRunWorkspaceService.updateStepInfoIfPending,
-    ).toHaveBeenCalledWith(
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      RUN_WORKFLOW_JOB_NAME,
       expect.objectContaining({
-        stepInfo: { status: StepStatus.SUCCESS, result: { hasTimedOut: true } },
+        awaitedStepOutput: {
+          stepId: STEP_ID,
+          actionOutput: { result: { hasTimedOut: true } },
+        },
       }),
+      expect.anything(),
     );
   });
 
@@ -360,19 +360,13 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
   });
 
   it('removes the wait of a step that now waits on a retry without resuming it', async () => {
-    const {
-      service,
-      pendingWakeUpService,
-      workflowRunWorkspaceService,
-      messageQueueService,
-    } = buildService({ stepError: 'Step failed' });
+    const { service, pendingWakeUpService, messageQueueService } = buildService(
+      { stepError: 'Step failed' },
+    );
 
     await service.resolve({ workspaceId: WORKSPACE_ID, wakeUpId: WAIT_ID });
 
     expect(pendingWakeUpService.claim).toHaveBeenCalled();
-    expect(
-      workflowRunWorkspaceService.updateStepInfoIfPending,
-    ).not.toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
