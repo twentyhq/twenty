@@ -7,6 +7,7 @@ import {
   formatValueForCSV,
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
+import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -63,7 +64,7 @@ export const useDownloadFakeRecords = () => {
 
           headerRow.push(
             ...subFields.map(({ subFieldLabel }) =>
-              getCompositeSubFieldLabelWithFieldLabel(field, subFieldLabel),
+              getCompositeSubFieldLabelWithFieldLabel(field, t(subFieldLabel)),
             ),
           );
 

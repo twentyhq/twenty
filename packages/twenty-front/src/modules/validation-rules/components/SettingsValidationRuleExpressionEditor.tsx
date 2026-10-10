@@ -31,6 +31,7 @@ import { computeValidationRuleHelperContext } from '@/validation-rules/utils/com
 import { computeValidationRuleHelperContextAtCursor } from '@/validation-rules/utils/computeValidationRuleHelperContextAtCursor';
 import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
 import { getValidationRuleEditorText } from '@/validation-rules/utils/getValidationRuleEditorText';
+import { getValidationRuleErrorMessage } from '@/validation-rules/utils/getValidationRuleErrorMessage';
 import { handleValidationRuleEditorPaste } from '@/validation-rules/utils/handleValidationRuleEditorPaste';
 import { insertValidationRuleHelperItem } from '@/validation-rules/utils/insertValidationRuleHelperItem';
 
@@ -264,7 +265,7 @@ export const SettingsValidationRuleExpressionEditor = ({
   });
   const errorMessage =
     value.trim().length > 0 && !compilationResult.isValid
-      ? compilationResult.errorMessage
+      ? getValidationRuleErrorMessage(compilationResult)
       : null;
 
   return (

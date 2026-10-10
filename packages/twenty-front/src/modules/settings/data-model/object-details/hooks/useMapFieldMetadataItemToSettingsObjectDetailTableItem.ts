@@ -11,10 +11,12 @@ import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFi
 import { type SettingsObjectDetailTableItem } from '@/settings/data-model/types/SettingsObjectDetailTableItem';
 import { getSettingsObjectFieldType } from '@/settings/data-model/utils/getSettingsObjectFieldType';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
 
 export const useMapFieldMetadataItemToSettingsObjectDetailTableItem = (
   objectMetadataItem: EnrichedObjectMetadataItem,
 ) => {
+  const { t } = useLingui();
   const getRelationMetadata = useGetRelationMetadata();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -42,15 +44,18 @@ export const useMapFieldMetadataItemToSettingsObjectDetailTableItem = (
 
     const fieldMetadataType = fieldMetadataItem.type as FieldType;
 
+    const settingsFieldTypeConfig =
+      isDefined(relationObjectMetadataItem?.labelPlural) ||
+      isFieldTypeSupportedInSettings(fieldMetadataType)
+        ? getSettingsFieldTypeConfig(fieldMetadataType as SettingsFieldType)
+        : undefined;
+
     return {
       fieldMetadataItem,
       fieldType: fieldType ?? '',
-      dataType:
-        isDefined(relationObjectMetadataItem?.labelPlural) ||
-        isFieldTypeSupportedInSettings(fieldMetadataType)
-          ? getSettingsFieldTypeConfig(fieldMetadataType as SettingsFieldType)
-              ?.label
-          : '',
+      dataType: isDefined(settingsFieldTypeConfig)
+        ? t(settingsFieldTypeConfig.label)
+        : '',
       label: fieldMetadataItem.label,
       identifierType: identifierType,
       objectMetadataItem,

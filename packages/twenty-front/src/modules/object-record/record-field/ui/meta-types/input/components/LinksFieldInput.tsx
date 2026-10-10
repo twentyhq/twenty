@@ -8,6 +8,7 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { linksFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/linksFieldValueSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import {
@@ -24,6 +25,7 @@ type LinkRecord = {
 };
 
 export const LinksFieldInput = () => {
+  const { t } = useLingui();
   const { draftValue, fieldDefinition, setDraftValue } = useLinksField();
 
   const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
@@ -115,7 +117,7 @@ export const LinksFieldInput = () => {
       onEnter={handleEnter}
       onSubmit={handleSubmit}
       onClickOutside={handleClickOutside}
-      placeholder={isDomainField ? 'Domain' : 'URL'}
+      placeholder={isDomainField ? t`Domain` : t`URL`}
       fieldMetadataType={FieldMetadataType.LINKS}
       validateInput={(input) => ({
         isValid: validateInput(input),

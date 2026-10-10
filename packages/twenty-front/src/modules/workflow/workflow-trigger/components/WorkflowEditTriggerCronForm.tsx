@@ -66,7 +66,10 @@ export const WorkflowEditTriggerCronForm = ({
           label={t`Trigger interval`}
           hint={t`Cron will be triggered at UTC time`}
           defaultValue={trigger.settings.type}
-          options={CRON_TRIGGER_INTERVAL_OPTIONS}
+          options={CRON_TRIGGER_INTERVAL_OPTIONS.map((option) => ({
+            ...option,
+            label: t(option.label),
+          }))}
           readonly={triggerOptions.readonly}
           onChange={(newTriggerType) => {
             if (triggerOptions.readonly === true) {

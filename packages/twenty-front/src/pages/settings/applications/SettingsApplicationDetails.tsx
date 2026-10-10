@@ -53,6 +53,7 @@ import { getApplicationDescriptionSummary } from '~/pages/settings/applications/
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
+import { getSettingsMenuItemDisplayTitle } from '~/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle';
 import { getWorkspaceSettingsMenuItems } from '~/pages/settings/applications/utils/getWorkspaceSettingsMenuItems';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
@@ -204,7 +205,11 @@ export const SettingsApplicationDetails = () => {
       : []),
     ...workspaceSettingsMenuItems.map((settingsMenuItem) => ({
       id: settingsMenuItem.universalIdentifier,
-      title: settingsMenuItem.title,
+      title: getSettingsMenuItemDisplayTitle({
+        applicationUniversalIdentifier: application?.universalIdentifier ?? '',
+        frontComponents: application?.frontComponents ?? [],
+        settingsMenuItem,
+      }),
       Icon: getIcon(settingsMenuItem.icon, 'IconAdjustments'),
     })),
   ];

@@ -1,5 +1,7 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
@@ -65,11 +67,14 @@ export const SettingsObjectFieldDataType = ({
   labelDetail,
   onClick,
 }: SettingsObjectFieldDataTypeProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const fieldTypeConfig = getSettingsFieldTypeConfig(value);
   const Icon: IconComponent =
     IconFromProps ?? fieldTypeConfig?.Icon ?? IconTwentyStar;
-  const label = labelFromProps ?? fieldTypeConfig?.label;
+  const label =
+    labelFromProps ??
+    (isDefined(fieldTypeConfig) ? t(fieldTypeConfig.label) : undefined);
 
   return (
     <StyledDataType

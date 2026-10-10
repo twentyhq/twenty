@@ -12,6 +12,7 @@ import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAgentLabel';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
@@ -110,10 +111,25 @@ export const SidePanelWorkflowStepInfo = ({
         : (stepDefinition.definition.name ?? t`Action`)
       : '';
 
+  // An editable title keeps the stored name, so saving it never writes a translation
+  const displayedStepName =
+    isReadonly &&
+    isDefined(stepDefinition) &&
+    isDefined(stepDefinition.definition) &&
+    isDefined(stepDefinition.definition.name)
+      ? getWorkflowStepDisplayName({
+          name: stepDefinition.definition.name,
+          type: stepDefinition.definition.type,
+        })
+      : stepName;
+
   const [editedTitle, setEditedTitle] = useState<string | null>(null);
 
   const title =
-    editedTitle ?? (isDefined(stepName) && stepName !== '' ? stepName : '');
+    editedTitle ??
+    (isDefined(displayedStepName) && displayedStepName !== ''
+      ? displayedStepName
+      : '');
 
   const handleTitleChange = (newTitle: string) => {
     setEditedTitle(newTitle);

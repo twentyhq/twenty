@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type {
   CreateNavigationMenuItemInput,
   NavigationMenuItem,
@@ -24,7 +25,7 @@ export const buildCreateNavigationMenuItemInput = (
     input.name = draftItem.name ?? undefined;
     input.icon = draftItem.icon ?? null;
   } else if (isNavigationMenuItemLink(draftItem)) {
-    input.name = draftItem.name ?? 'Link';
+    input.name = draftItem.name ?? t`Link`;
     const linkUrl = (draftItem.link ?? '').trim();
     input.link = linkUrl
       ? getLinkNavigationMenuItemComputedLink({ link: linkUrl })

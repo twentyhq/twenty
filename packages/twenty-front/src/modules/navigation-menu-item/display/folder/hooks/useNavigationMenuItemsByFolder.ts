@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -46,7 +47,7 @@ export const useNavigationMenuItemsByFolder = () => {
         if (isNavigationMenuItemFolder(item)) {
           const folderEntry: NavigationMenuItemFolderEntry = {
             id: item.id,
-            folderName: item.name || 'Folder',
+            folderName: item.name || t`Folder`,
             icon: item.icon ?? undefined,
             color: item.color ?? undefined,
           };

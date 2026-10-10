@@ -1,3 +1,4 @@
+import { RECORD_GROUP_SORT_LABELS } from '@/object-record/record-group/constants/RecordGroupSortLabels';
 import { getRecordGroupReorderConfirmationModalId } from '@/object-record/record-group/utils/getRecordGroupReorderConfirmationModalId';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
@@ -19,13 +20,17 @@ export const RecordGroupReorderConfirmationModal = ({
     recordIndexRecordGroupSortComponentState,
   );
 
+  const recordGroupSortLabel = t(
+    RECORD_GROUP_SORT_LABELS[recordIndexRecordGroupSort],
+  );
+
   return (
     <>
       {createPortal(
         <ConfirmationDialog
           dialogId={getRecordGroupReorderConfirmationModalId(recordIndexId)}
           title={t`Group sorting`}
-          subtitle={t`Would you like to remove ${recordIndexRecordGroupSort} group sorting?`}
+          subtitle={t`Would you like to remove ${recordGroupSortLabel} group sorting?`}
           onConfirmClick={onConfirmClick}
           confirmButtonText={t`Remove`}
         />,

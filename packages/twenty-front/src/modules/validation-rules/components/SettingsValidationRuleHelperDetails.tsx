@@ -99,9 +99,11 @@ export const SettingsValidationRuleHelperDetails = ({
   const renderHeader = () => {
     switch (item.kind) {
       case 'field': {
-        const typeLabel = isFieldTypeSupportedInSettings(item.field.type)
-          ? (getSettingsFieldTypeConfig(item.field.type)?.label ??
-            item.field.type)
+        const fieldTypeConfig = isFieldTypeSupportedInSettings(item.field.type)
+          ? getSettingsFieldTypeConfig(item.field.type)
+          : undefined;
+        const typeLabel = isDefined(fieldTypeConfig)
+          ? t(fieldTypeConfig.label)
           : item.field.type;
         const ObjectIcon = getIcon(item.field.objectIconName);
 

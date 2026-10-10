@@ -1,11 +1,13 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
 export const FIND_RECORDS_ACTION: {
-  defaultLabel: string;
+  defaultLabel: MessageDescriptor;
   type: Extract<WorkflowActionType, 'FIND_RECORDS'>;
   icon: string;
 } = {
-  defaultLabel: 'Search Records',
+  defaultLabel: msg`Search Records`,
   type: 'FIND_RECORDS',
   icon: 'IconSearch',
 };

@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { IconCopy } from 'twenty-ui/icon';
 
 import { useDebouncedCallback } from 'use-debounce';
@@ -50,6 +50,7 @@ export const WorkflowEditTriggerWebhookForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerWebhookFormProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
@@ -175,7 +176,12 @@ export const WorkflowEditTriggerWebhookForm = ({
           fullWidth
           disabled
           value={trigger.settings.authentication}
-          options={WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS}
+          options={WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS.map(
+            (authenticationOption) => ({
+              ...authenticationOption,
+              label: t(authenticationOption.label),
+            }),
+          )}
           onChange={(newAuthenticationType) => {
             if (triggerOptions.readonly === true) {
               return;

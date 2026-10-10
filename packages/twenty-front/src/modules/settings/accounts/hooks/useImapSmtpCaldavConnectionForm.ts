@@ -7,6 +7,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   type ConnectionParametersInput,
@@ -21,8 +22,8 @@ import {
   isProtocolConfiguredForUpdate,
 } from '@/settings/accounts/utils/isProtocolConfigured';
 import {
-  connectionImapSmtpCalDav,
-  connectionImapSmtpCalDavUpdate,
+  getConnectionImapSmtpCalDavSchema,
+  getConnectionImapSmtpCalDavUpdateSchema,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
@@ -66,12 +67,24 @@ export const useImapSmtpCaldavConnectionForm = ({
   connectedAccountId,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
+  const { i18n } = useLingui();
+
+  const connectionSchema = useMemo(
+    () =>
+      isEditing
+        ? getConnectionImapSmtpCalDavUpdateSchema()
+        : getConnectionImapSmtpCalDavSchema(),
+    [
+      isEditing,
+      // The schema gets its validation messages translated when it is built
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
+      i18n.locale,
+    ],
+  );
 
   const formMethods = useForm<ConnectionFormData>({
     mode: 'onSubmit',
-    resolver: zodResolver(
-      isEditing ? connectionImapSmtpCalDavUpdate : connectionImapSmtpCalDav,
-    ),
+    resolver: zodResolver(connectionSchema),
     defaultValues: {
       name: '',
       handle: '',

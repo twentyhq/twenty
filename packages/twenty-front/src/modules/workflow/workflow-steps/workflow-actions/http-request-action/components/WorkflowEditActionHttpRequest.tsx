@@ -19,10 +19,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings } from 'twenty-ui/icon';
-import {
-  HTTP_METHODS,
-  JSON_RESPONSE_PLACEHOLDER,
-} from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { HTTP_METHODS } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/WorkflowHttpRequestTabListComponentId';
 import { useHttpRequestForm } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useHttpRequestForm';
 import { useHttpRequestOutputSchema } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useHttpRequestOutputSchema';
@@ -90,6 +87,10 @@ export const WorkflowEditActionHttpRequest = ({
   actionOptions,
 }: WorkflowEditActionHttpRequestProps) => {
   const { t } = useLingui();
+
+  // Braces stay outside the message, because Lingui reads them as placeholders
+  const jsonResponsePlaceholder = `{\n  ${t`Paste expected call response here to use its keys later in the workflow`} \n}`;
+
   const theme = useTheme();
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -187,7 +188,7 @@ export const WorkflowEditActionHttpRequest = ({
               <StyledFullHeightFormRawJsonFieldInputContainer>
                 <FormRawJsonFieldInput
                   label={t`Expected Response Body`}
-                  placeholder={JSON_RESPONSE_PLACEHOLDER}
+                  placeholder={jsonResponsePlaceholder}
                   defaultValue={outputSchema}
                   onChange={handleOutputSchemaChange}
                   readonly={actionOptions.readonly}

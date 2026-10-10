@@ -35,6 +35,7 @@ import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
@@ -317,7 +318,9 @@ export const WorkflowEditActionCode = ({
       href: '#',
     },
     {
-      children: isDefined(action.name) ? action.name : CODE_ACTION.defaultLabel,
+      children: isDefined(action.name)
+        ? getWorkflowStepDisplayName({ name: action.name, type: action.type })
+        : t(CODE_ACTION.defaultLabel),
       href: '#',
     },
     {

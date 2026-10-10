@@ -141,7 +141,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
             tarballUrlData?.applicationRegistrationTarballUrl,
           ) ? (
             <StyledSourceRow>
-              <span>Tarball</span>
+              <span>{t`Tarball`}</span>
               <StyledDownloadLink
                 href={tarballUrlData.applicationRegistrationTarballUrl}
                 download
@@ -150,7 +150,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
               </StyledDownloadLink>
             </StyledSourceRow>
           ) : (
-            'Tarball'
+            t`Tarball`
           ),
         });
         break;
@@ -158,7 +158,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         items.push({
           Icon: IconBox,
           label: t`Source`,
-          value: 'Local',
+          value: t`Local`,
         });
         break;
       case ApplicationRegistrationSourceType.OAUTH_ONLY:
