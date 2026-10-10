@@ -1,12 +1,12 @@
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCellSkeletonContainer = styled.div`
   display: flex;
-  padding: 8px;
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 export const RecordTableCellLoading = ({
@@ -24,7 +24,7 @@ export const RecordTableCellLoading = ({
       <StyledCellSkeletonContainer>
         <Skeleton
           render={<div />}
-          height={16}
+          height={SKELETON_HEIGHT_SIZES.s}
           animated={false}
           baseColor={themeCssVariables.background.tertiary}
           borderRadius={themeCssVariables.border.radius.sm}
