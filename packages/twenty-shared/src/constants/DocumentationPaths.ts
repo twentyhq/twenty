@@ -139,8 +139,6 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_DATA_DISPLAY_JSON_TREE: '/ui/components/data-display/json-tree',
   UI_COMPONENTS_DATA_DISPLAY_METRIC_ROW:
     '/ui/components/data-display/metric-row',
-  UI_COMPONENTS_DATA_DISPLAY_NOTIFICATION_COUNTER:
-    '/ui/components/data-display/notification-counter',
   UI_COMPONENTS_DATA_DISPLAY_TINTED_ICON_TILE:
     '/ui/components/data-display/tinted-icon-tile',
   UI_COMPONENTS_FEEDBACK_CALLOUT: '/ui/components/feedback/callout',
@@ -176,10 +174,10 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_ACCESSIBILITY_VISUALLY_HIDDEN:
     '/ui/primitives/accessibility/visually-hidden',
   UI_PRIMITIVES_DATA_DISPLAY_AVATAR: '/ui/primitives/data-display/avatar',
+  UI_PRIMITIVES_DATA_DISPLAY_BADGE: '/ui/primitives/data-display/badge',
   UI_PRIMITIVES_DATA_DISPLAY_CHIP: '/ui/primitives/data-display/chip',
   UI_PRIMITIVES_DATA_DISPLAY_COLOR_SAMPLE:
     '/ui/primitives/data-display/color-sample',
-  UI_PRIMITIVES_DATA_DISPLAY_PILL: '/ui/primitives/data-display/pill',
   UI_PRIMITIVES_DATA_DISPLAY_STATUS: '/ui/primitives/data-display/status',
   UI_PRIMITIVES_DATA_DISPLAY_TAG: '/ui/primitives/data-display/tag',
   UI_PRIMITIVES_FEEDBACK_BANNER: '/ui/primitives/feedback/banner',

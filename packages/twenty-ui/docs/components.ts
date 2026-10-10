@@ -11,7 +11,6 @@ import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions'
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
 import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
 import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
-import { NOTIFICATION_COUNTER_PROP_DESCRIPTIONS } from './notificationCounterPropDescriptions';
 import { TINTED_ICON_TILE_PROP_DESCRIPTIONS } from './tintedIconTilePropDescriptions';
 import { CALLOUT_PROP_DESCRIPTIONS } from './calloutPropDescriptions';
 import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
@@ -63,7 +62,7 @@ import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescri
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
 import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
 import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
-import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
+import { BADGE_PROP_DESCRIPTIONS } from './badgePropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
 import { RESIZE_HANDLE_PROP_DESCRIPTIONS } from './resizeHandlePropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
@@ -151,11 +150,13 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: COLOR_SAMPLE_PROP_DESCRIPTIONS,
   },
   {
-    name: 'Pill',
-    source: 'primitives/data-display/Pill/Pill.tsx',
+    name: 'Badge',
+    nativeProps: 'span',
+    source: 'primitives/data-display/Badge/Badge.tsx',
     entryPoint: 'twenty-ui/primitives/data-display',
-    slug: 'data-display/pill',
-    propDescriptions: PILL_PROP_DESCRIPTIONS,
+    slug: 'data-display/badge',
+    propDescriptions: BADGE_PROP_DESCRIPTIONS,
+    propDefaults: { size: 'sm', color: 'tertiary', shape: 'pill' },
   },
   {
     name: 'Banner',
@@ -799,14 +800,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/data-display',
     slug: 'components/data-display/json-tree',
     propDescriptions: JSON_TREE_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'NotificationCounter',
-    source:
-      'components/data-display/NotificationCounter/NotificationCounter.tsx',
-    entryPoint: 'twenty-ui/components/data-display',
-    slug: 'components/data-display/notification-counter',
-    propDescriptions: NOTIFICATION_COUNTER_PROP_DESCRIPTIONS,
   },
   {
     name: 'TintedIconTile',

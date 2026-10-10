@@ -1,17 +1,14 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  AvatarGroup,
-  NotificationCounter,
-} from 'twenty-ui/components/data-display';
+import { AvatarGroup } from 'twenty-ui/components/data-display';
 import { IconStar } from 'twenty-ui/icon';
 
 import { CommandBlockExample } from './command-block-example';
 import { TintedIconTileExample } from './tinted-icon-tile-example';
 import {
   Avatar,
+  Badge,
   Chip,
   ColorSample,
-  Pill,
   Status,
   Tag,
 } from 'twenty-ui/primitives/data-display';
@@ -82,12 +79,21 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
     node: <CommandBlockExample />,
   },
   {
-    name: 'NotificationCounter',
-    node: <NotificationCounter count={3} />,
+    name: 'CountBadge',
+    node: (
+      <Badge size="xs" color="primary" shape="circle">
+        3
+      </Badge>
+    ),
   },
   {
-    name: 'Pill',
-    node: <Pill label="Pill" Icon={IconStar} />,
+    name: 'Badge',
+    node: (
+      <Badge>
+        <IconStar size={12} />
+        Badge
+      </Badge>
+    ),
   },
   {
     name: 'Status',

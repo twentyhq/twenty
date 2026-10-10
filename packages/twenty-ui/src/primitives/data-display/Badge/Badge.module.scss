@@ -1,4 +1,6 @@
-.pill {
+.badge[data-badge-size] {
+  --badge-height: var(--t-spacing-4);
+
   align-items: center;
   background: var(--t-background-transparent-light);
   border-radius: var(--t-border-radius-pill);
@@ -9,15 +11,24 @@
   font-style: normal;
   font-weight: var(--t-font-weight-medium);
   gap: var(--t-spacing-1);
-  height: var(--t-spacing-4);
-  justify-content: flex-end;
+  height: var(--badge-height);
+  justify-content: center;
   line-height: var(--t-text-line-height-lg);
   padding: 0 var(--t-spacing-2);
 
-  &[data-size='md'] {
+  &[data-badge-size='xs'] {
+    --badge-height: calc(var(--t-spacing-3) + var(--t-spacing-0_5));
+
+    font-size: var(--t-font-size-xxs);
+    font-weight: var(--t-font-weight-semi-bold);
+    padding: 0 var(--t-spacing-1);
+  }
+
+  &[data-badge-size='md'] {
+    --badge-height: calc(var(--t-spacing-4) + var(--t-spacing-0_5));
+
     font-size: var(--t-font-size-sm);
     gap: var(--t-spacing-0_5);
-    height: calc(var(--t-spacing-4) + var(--t-spacing-0_5));
     padding: 0 var(--t-spacing-1_5);
 
     & > svg {
@@ -26,10 +37,26 @@
     }
   }
 
-  &[data-color='inherit'] {
+  &[data-badge-color='inherit'] {
     background: color-mix(in srgb, currentColor 16%, transparent);
     color: inherit;
     font-variant-numeric: tabular-nums;
     font-weight: inherit;
+  }
+
+  &[data-badge-color='primary'] {
+    background: var(--t-color-blue);
+    color: white;
+  }
+
+  &[data-badge-color='secondary'] {
+    color: var(--t-font-color-secondary);
+  }
+
+  &[data-badge-shape='circle'] {
+    border-radius: 50%;
+    flex-shrink: 0;
+    padding: 0;
+    width: var(--badge-height);
   }
 }

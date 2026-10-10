@@ -1,6 +1,6 @@
 import { AvatarGroup, JsonTree } from 'twenty-ui/components/data-display';
 import { Callout } from 'twenty-ui/components/feedback';
-import { Avatar, Pill } from 'twenty-ui/primitives/data-display';
+import { Avatar, Badge } from 'twenty-ui/primitives/data-display';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -55,7 +55,7 @@ const DirectionalLayoutExample = ({
             }}
           >
             Upcoming action
-            <Pill label="Soon" />
+            <Badge>Soon</Badge>
           </Text>
         </Button>
         {(['left', 'right'] as const).map((overlap) => (
