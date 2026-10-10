@@ -3,6 +3,10 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { IconInfoCircle } from '@ui/icon';
+import { Button } from '@ui/primitives/input/Button/Button';
+import { Input } from '@ui/primitives/input/Input/Input';
+
 import { ComponentDecorator } from '@ui/testing';
 
 import tabStyles from '../../internal/tab/Tab.module.scss';
@@ -39,9 +43,10 @@ const TabsInteractionExample = ({
         Activity
       </Tabs.Tab>
       <Tabs.Tab value="settings">Settings</Tabs.Tab>
+      <Tabs.Indicator />
     </Tabs.List>
     <Tabs.Panel value="overview" keepMounted={keepMounted}>
-      <input aria-label="Draft" />
+      <Input aria-label="Draft" />
     </Tabs.Panel>
     <Tabs.Panel value="files" keepMounted={keepMounted}>
       Files content
@@ -70,9 +75,7 @@ const ControlledTabsInteractionExample = ({
           onValueChange?.(nextValue, details);
         }}
       />
-      <button type="button" onClick={() => setValue(pendingValue)}>
-        Apply selection
-      </button>
+      <Button onClick={() => setValue(pendingValue)}>Apply selection</Button>
     </>
   );
 };
@@ -303,7 +306,7 @@ export const SlotsAndStateStyling: Story = {
         <Tabs.Tab
           value="activity"
           size="md"
-          startIcon={<svg data-testid="icon" />}
+          startIcon={<IconInfoCircle data-testid="icon" />}
           badge={0}
           className={({ active }) =>
             active ? 'selected-consumer' : 'consumer'
@@ -312,6 +315,7 @@ export const SlotsAndStateStyling: Story = {
         >
           Activity
         </Tabs.Tab>
+        <Tabs.Indicator />
       </Tabs.List>
       <Tabs.Panel value="overview">Overview content</Tabs.Panel>
       <Tabs.Panel value="activity">Activity content</Tabs.Panel>
@@ -347,6 +351,7 @@ export const EmptySlots: Story = {
             Tab {index + 1}
           </Tabs.Tab>
         ))}
+        <Tabs.Indicator />
       </Tabs.List>
     </Tabs.Root>
   ),
@@ -378,6 +383,7 @@ export const PolymorphicTab: Story = {
         >
           Activity
         </Tabs.Tab>
+        <Tabs.Indicator />
       </Tabs.List>
       <Tabs.Panel value="overview">Overview content</Tabs.Panel>
       <Tabs.Panel value="activity">Activity content</Tabs.Panel>
@@ -393,5 +399,78 @@ export const PolymorphicTab: Story = {
     await expect(
       canvas.getByRole('tabpanel', { name: 'Activity' }),
     ).toBeVisible();
+  },
+};
+
+export const CanceledAutomaticChange: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    activateOnFocus: true,
+    onValueChange: fn<NonNullable<TabsRootProps['onValueChange']>>(
+      (_value, details) => details.cancel(),
+    ),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('tab', { name: 'Overview' }));
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(canvas.getByRole('tab', { name: 'Activity' })).toHaveFocus();
+    await expect(
+      canvas.getByRole('tabpanel', { name: 'Overview' }),
+    ).toBeVisible();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).toHaveBeenCalledWith(
+      'activity',
+      expect.objectContaining({ reason: 'none', isCanceled: true }),
+    );
+  },
+};
+
+export const ExplicitIndicator: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <Tabs.Root defaultValue="overview">
+      <Tabs.List aria-label="Details">
+        <Tabs.Tab value="overview">Overview</Tabs.Tab>
+        <Tabs.Tab value="activity">Activity</Tabs.Tab>
+        <Tabs.Indicator
+          data-testid="indicator"
+          className={({ activeTabSize }) =>
+            activeTabSize ? 'measured-indicator' : undefined
+          }
+          render={(props, state) => (
+            <span {...props} data-width={state.activeTabSize?.width} />
+          )}
+        />
+      </Tabs.List>
+      <Tabs.Panel value="overview">Overview content</Tabs.Panel>
+      <Tabs.Panel value="activity">Activity content</Tabs.Panel>
+    </Tabs.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const indicator = canvas.getByTestId('indicator');
+    const list = canvas.getByRole('tablist');
+    await expect(list.querySelectorAll(`.${tabStyles.indicator}`)).toHaveLength(
+      1,
+    );
+    await expect(indicator).toHaveClass(
+      tabStyles.indicator,
+      'measured-indicator',
+    );
+    await expect(indicator).toBeVisible();
+    const overviewWidth = canvas
+      .getByRole('tab', { name: 'Overview' })
+      .getBoundingClientRect().width;
+    await expect(Number(indicator.getAttribute('data-width'))).toBeCloseTo(
+      overviewWidth,
+    );
+    await userEvent.click(canvas.getByRole('tab', { name: 'Activity' }));
+    const activityWidth = canvas
+      .getByRole('tab', { name: 'Activity' })
+      .getBoundingClientRect().width;
+    await expect(Number(indicator.getAttribute('data-width'))).toBeCloseTo(
+      activityWidth,
+    );
   },
 };

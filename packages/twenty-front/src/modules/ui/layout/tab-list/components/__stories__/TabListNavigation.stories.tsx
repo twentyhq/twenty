@@ -229,8 +229,14 @@ export const RouteLinks: Story = {
 
     expect(disabled).toHaveAttribute('aria-disabled', 'true');
     expect(disabled).toHaveAttribute('tabindex', '-1');
+    expect(activity.tagName).toBe('A');
     expect(activity).not.toHaveAttribute('type');
+    expect(activity).not.toHaveAttribute('aria-selected');
+    expect(activity).not.toHaveAttribute('aria-controls');
+    expect(overview).toHaveAttribute('aria-current', 'page');
     overview.focus();
+    await userEvent.keyboard('{ArrowRight}');
+    expect(overview).toHaveFocus();
     await userEvent.tab();
     expect(activity).toHaveFocus();
 
@@ -243,6 +249,8 @@ export const RouteLinks: Story = {
     expect(canvas.getByText(args.sidePanel ? 'REPLACE' : 'PUSH')).toBeVisible();
     expect(canvas.getByText('tab-list')).toBeVisible();
     expect(activity).toHaveAttribute('aria-current', 'page');
+    expect(overview).not.toHaveAttribute('aria-current');
+    expect(canvas.queryByRole('tab')).not.toBeInTheDocument();
     await userEvent.click(disabled);
     expect(canvas.getByRole('status')).toHaveTextContent('activity: 2');
     expect(canvas.getByText('?filter=open#activity')).toBeVisible();

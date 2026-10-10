@@ -380,6 +380,13 @@ export const IdentifierBarNarrow: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     const [moreButton] = await canvas.findAllByRole('button', { name: /More/ });
+    const addButton = canvas.getByRole('button', { name: 'New Tab' });
+
+    expect(moreButton.closest('[role="tablist"]')).toBeNull();
+    expect(moreButton).not.toHaveAttribute('aria-selected');
+    expect(addButton.closest('[role="tablist"]')).toBeNull();
+    expect(addButton).not.toHaveAttribute('aria-selected');
+    expect(addButton).not.toHaveAttribute('aria-controls');
 
     await userEvent.click(moreButton);
     await userEvent.click(await body.findByRole('button', { name: 'Revenue' }));

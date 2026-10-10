@@ -39,6 +39,7 @@ const TabsExample = ({
       <Tabs.Tab {...tabProps} />
       <Tabs.Tab value="activity">Activity</Tabs.Tab>
       <Tabs.Tab value="settings">Settings</Tabs.Tab>
+      <Tabs.Indicator />
     </Tabs.List>
     <Tabs.Panel
       value="overview"
@@ -266,6 +267,7 @@ export const Catalog: CatalogStory<Story, typeof Tabs.Tab> = {
     <Tabs.Root value={args.value === 'selected' ? 'selected' : null}>
       <Tabs.List aria-label="Record details">
         <Tabs.Tab {...args} />
+        <Tabs.Indicator />
       </Tabs.List>
       <Tabs.Panel value={args.value} keepMounted />
     </Tabs.Root>

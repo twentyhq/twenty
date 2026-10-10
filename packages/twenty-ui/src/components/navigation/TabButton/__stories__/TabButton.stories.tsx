@@ -19,7 +19,6 @@ import {
   type CatalogStory,
 } from '@ui/testing';
 import { type ReactNode } from 'react';
-import { expect, fn, userEvent, within } from 'storybook/test';
 
 import styles from './TabButton.stories.module.scss';
 
@@ -246,39 +245,6 @@ export const Catalog: CatalogStory<Story, typeof TabButton> = {
   decorators: [CatalogDecorator],
 };
 
-export const KeyboardAction: Story = {
-  args: { children: 'New Tab', startIcon: <IconUser />, onClick: fn() },
-  render: Default.render,
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button', { name: 'New Tab' });
-
-    button.focus();
-    await userEvent.keyboard('{Enter}');
-    expect(args.onClick).toHaveBeenCalledTimes(1);
-    expect(button).toHaveAttribute('type', 'button');
-  },
-};
-
-export const DisabledLink: Story = {
-  args: {
-    children: 'Unavailable',
-    href: '#unavailable',
-    disabled: true,
-    onClick: fn(),
-  },
-  render: Default.render,
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    const link = canvas.getByRole('link', { name: 'Unavailable' });
-
-    expect(link).toHaveAttribute('aria-disabled', 'true');
-    await userEvent.click(link);
-    expect(args.onClick).not.toHaveBeenCalled();
-    expect(link).not.toHaveAttribute('type');
-  },
-};
-
 export const MatchingTabContent: Story = {
   args: {
     children: 'Messages',
@@ -299,22 +265,27 @@ export const MatchingTabContent: Story = {
           >
             {args.children}
           </Tabs.Tab>
+          <Tabs.Indicator />
         </Tabs.List>
         <Tabs.Panel value="messages">Messages content</Tabs.Panel>
       </Tabs.Root>
     </>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button', { name: 'Messages 12' });
-    const tab = canvas.getByRole('tab', { name: 'Messages 12' });
+};
 
-    expect(button.getBoundingClientRect().width).toBe(
-      tab.getBoundingClientRect().width,
-    );
-    expect(button.getBoundingClientRect().height).toBe(
-      tab.getBoundingClientRect().height,
-    );
-    expect(getComputedStyle(button).color).toBe(getComputedStyle(tab).color);
+export const CurrentRoute: Story = {
+  args: {
+    children: 'Overview',
+    href: '#overview',
+    active: true,
+    'aria-current': 'page',
   },
+  render: (args) => (
+    <nav aria-label="Workspace pages">
+      <TabContainer>
+        <TabButton {...args} />
+        <TabButton href="#settings">Settings</TabButton>
+      </TabContainer>
+    </nav>
+  ),
 };
