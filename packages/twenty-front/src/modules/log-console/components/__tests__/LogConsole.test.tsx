@@ -240,6 +240,22 @@ describe('LogConsole', () => {
     expect(await screen.findByText('Log results')).toBeInTheDocument();
   });
 
+  it('stays open when developer mode is turned off', async () => {
+    renderWithLogsFeatureFlag(true);
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Developer mode' }),
+    );
+
+    expect(await screen.findByText('Log results')).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Developer mode' }),
+    );
+
+    expect(screen.getByText('Log results')).toBeInTheDocument();
+  });
+
   it('stays hidden when the logs feature flag is off', async () => {
     renderWithLogsFeatureFlag(false);
 

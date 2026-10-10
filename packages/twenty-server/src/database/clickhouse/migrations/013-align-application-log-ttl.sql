@@ -1,0 +1,1 @@
+ALTER TABLE applicationLog MODIFY TTL timestamp + INTERVAL 3 YEAR DELETE;

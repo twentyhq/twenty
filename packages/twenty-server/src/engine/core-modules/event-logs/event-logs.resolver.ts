@@ -58,7 +58,7 @@ export class EventLogsResolver {
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
   ): Promise<EventLogQueryResult> {
-    return this.eventLogsService.queryEventLogs(workspace.id, input, {
+    return this.eventLogsService.queryEventLogs(workspace, input, {
       callingApplicationId: getScopedCallingApplication(callingApplication)?.id,
     });
   }

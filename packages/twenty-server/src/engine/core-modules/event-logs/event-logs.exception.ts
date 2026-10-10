@@ -20,7 +20,7 @@ const getEventLogsExceptionUserFriendlyMessage = (
     case EventLogsExceptionCode.CLICKHOUSE_NOT_CONFIGURED:
       return msg`Audit logs require ClickHouse to be configured.`;
     case EventLogsExceptionCode.NO_ENTITLEMENT:
-      return msg`Audit logs require an Enterprise subscription.`;
+      return msg`Audit logs require an Organization subscription.`;
     case EventLogsExceptionCode.INVALID_FIELD_FILTER:
       return msg`This log filter is not valid.`;
     case EventLogsExceptionCode.INVALID_TABLE:

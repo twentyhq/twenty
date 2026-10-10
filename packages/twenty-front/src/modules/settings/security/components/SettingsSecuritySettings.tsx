@@ -26,6 +26,7 @@ import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
+import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 import {
   BillingEntitlementKey,
   UpdateWorkspaceDocument,
@@ -33,6 +34,7 @@ import {
 import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -142,9 +144,14 @@ export const SettingsSecuritySettings = () => {
     !hasDirectAuthEnabled &&
     hasBypassProviderAvailable;
 
-  const hasEnterpriseAccess =
-    currentWorkspace?.hasValidEnterpriseValidityToken === true;
-  const isEventLogsEnabled = hasEnterpriseAccess && isClickHouseConfigured;
+  const hasAuditLogsEntitlement = checkIfBillingEntitlementIsEnabledOnWorkspace(
+    BillingEntitlementKey.AUDIT_LOGS,
+    currentWorkspace,
+  );
+  const isEventLogsEnabled = hasAuditLogsEntitlement && isClickHouseConfigured;
+  const minEventLogRetentionInDays = EVENT_LOG_RETENTION.minInDays;
+  const maxEventLogRetentionInDays = EVENT_LOG_RETENTION.maxInDays;
+  const proPlanEventLogRetentionInHours = EVENT_LOG_RETENTION.proPlanInHours;
   const hasSsoEntitlement =
     currentWorkspace?.billingEntitlements?.some(
       (entitlement) =>
@@ -220,17 +227,20 @@ export const SettingsSecuritySettings = () => {
             description={t`Configure how long audit logs are retained`}
             actions={<OrganizationAdornment />}
           />
-          {hasEnterpriseAccess ? (
+          {hasAuditLogsEntitlement ? (
             <Card.Root rounded>
               {isEventLogsEnabled ? (
                 <SettingsOptionCardContentCounter
                   Icon={IconClockHour8}
                   title={t`Log retention`}
-                  description={t`Number of days to retain audit logs (30-1095 days)`}
-                  value={currentWorkspace?.eventLogRetentionDays ?? 90}
+                  description={t`Number of days to retain logs (${minEventLogRetentionInDays}-${maxEventLogRetentionInDays} days)`}
+                  value={
+                    currentWorkspace?.eventLogRetentionDays ??
+                    EVENT_LOG_RETENTION.defaultInDays
+                  }
                   onChange={handleEventLogRetentionDaysChange}
-                  minValue={30}
-                  maxValue={1095}
+                  minValue={minEventLogRetentionInDays}
+                  maxValue={maxEventLogRetentionInDays}
                   showButtons={false}
                 />
               ) : (
@@ -244,7 +254,7 @@ export const SettingsSecuritySettings = () => {
           ) : (
             <SettingsEnterpriseFeatureGateCard
               title={t`Organization feature`}
-              description={t`Upgrade to Organization to access audit logs.`}
+              description={t`Logs are kept ${proPlanEventLogRetentionInHours} hours on your plan. Upgrade to customize retention.`}
               buttonTitle={t`Activate`}
             />
           )}
