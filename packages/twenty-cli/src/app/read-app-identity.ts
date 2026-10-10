@@ -9,6 +9,7 @@ import { type AppSourceIdentity } from '@/app/source/types/app-source-identity.t
 import { toWorkerOutputDiagnostics } from '@/app/to-worker-output-diagnostics';
 import { CliError } from '@/output/cli-error';
 import { createCancelledError } from '@/output/create-cancelled-error';
+import { type CliWarning } from '@/output/types/cli-warning.type';
 
 const parseIdentity = (
   value: unknown,
@@ -45,13 +46,15 @@ const parseIdentity = (
 export const readAppIdentity = async ({
   appPath,
   signal,
+  warn,
 }: {
   appPath: string;
   signal: AbortSignal;
+  warn?: (warning: CliWarning) => void;
 }) => {
   signal.throwIfAborted();
 
-  const sdk = await resolveSourceSdk({ appPath });
+  const sdk = await resolveSourceSdk({ appPath, warn });
   const worker = await runAppWorker({
     request: { type: 'readSourceIdentity', appPath },
     signal,
