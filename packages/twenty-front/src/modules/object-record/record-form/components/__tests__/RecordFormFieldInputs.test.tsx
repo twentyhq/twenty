@@ -24,16 +24,22 @@ const objectMetadataItem = {
   nameSingular: 'opportunity',
 } as unknown as EnrichedObjectMetadataItem;
 
-const renderInputs = (draftRecord: Record<string, unknown>) =>
+const renderInputs = (
+  draftRecord: Record<string, unknown>,
+  onFieldValueChange = jest.fn(),
+) => {
   render(
     <RecordFormFieldInputs
       objectMetadataItem={objectMetadataItem}
       fieldMetadataItems={[currencyFieldMetadataItem]}
       draftRecord={draftRecord}
-      onFieldValueChange={jest.fn()}
+      onFieldValueChange={onFieldValueChange}
       onFieldValueClear={jest.fn()}
     />,
   );
+
+  return onFieldValueChange;
+};
 
 const getPassedDefaultValue = () =>
   (mockFormFieldInput.mock.calls.at(-1)?.[0] as { defaultValue: unknown })
@@ -68,5 +74,28 @@ describe('RecordFormFieldInputs', () => {
     renderInputs({ amount: null });
 
     expect(getPassedDefaultValue()).toBeNull();
+  });
+
+  it('seeds the draft with the currency default on mount when the draft has no value yet', () => {
+    const onFieldValueChange = renderInputs({});
+
+    expect(onFieldValueChange).toHaveBeenCalledWith('amount', {
+      amountMicros: null,
+      currencyCode: CurrencyCode.USD,
+    });
+  });
+
+  it('does not seed the draft when it already has a value', () => {
+    const onFieldValueChange = renderInputs({
+      amount: { amountMicros: 1500000000, currencyCode: CurrencyCode.EUR },
+    });
+
+    expect(onFieldValueChange).not.toHaveBeenCalled();
+  });
+
+  it('does not seed the draft again after the field was cleared', () => {
+    const onFieldValueChange = renderInputs({ amount: null });
+
+    expect(onFieldValueChange).not.toHaveBeenCalled();
   });
 });
