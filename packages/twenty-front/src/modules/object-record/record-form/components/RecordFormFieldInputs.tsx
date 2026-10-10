@@ -3,10 +3,13 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
 import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
+import { useEffect, useState } from 'react';
 import { type JsonValue } from 'type-fest';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldList = styled.div`
@@ -29,25 +32,67 @@ export const RecordFormFieldInputs = ({
   draftRecord,
   onFieldValueChange,
   onFieldValueClear,
-}: RecordFormFieldInputsProps) => (
-  <StyledFieldList>
-    {fieldMetadataItems.map((fieldMetadataItem) => {
+}: RecordFormFieldInputsProps) => {
+  const [hasSeededCurrencyDefaults, setHasSeededCurrencyDefaults] =
+    useState(false);
+
+  // FormCurrencyFieldInput only reports its value through onChange on user
+  // interaction, so seed the draft with the field defaults once on mount:
+  // otherwise a pre-filled default would be displayed but never submitted.
+  // After a clear the draft keeps the key with a null value, so hasOwn still
+  // holds and the default is not resurrected here.
+  useEffect(() => {
+    if (hasSeededCurrencyDefaults) {
+      return;
+    }
+    setHasSeededCurrencyDefaults(true);
+
+    for (const fieldMetadataItem of fieldMetadataItems) {
       const gqlFieldName = getFieldMetadataItemGqlFieldName(fieldMetadataItem);
 
-      return (
-        <FormFieldInput
-          key={fieldMetadataItem.id}
-          field={formatFieldMetadataItemAsFieldDefinition({
-            field: fieldMetadataItem,
-            objectMetadataItem,
-            showLabel: true,
-          })}
-          defaultValue={draftRecord[gqlFieldName]}
-          onChange={(value) => onFieldValueChange(gqlFieldName, value)}
-          onClear={() => onFieldValueClear(gqlFieldName)}
-          settings={getRecordFormFieldInputSettings(fieldMetadataItem.type)}
-        />
-      );
-    })}
-  </StyledFieldList>
-);
+      if (Object.hasOwn(draftRecord, gqlFieldName)) {
+        continue;
+      }
+
+      const defaultValue =
+        getRecordFormCurrencyFieldDefaultValue(fieldMetadataItem);
+
+      if (isDefined(defaultValue)) {
+        onFieldValueChange(gqlFieldName, defaultValue);
+      }
+    }
+  }, [
+    draftRecord,
+    fieldMetadataItems,
+    hasSeededCurrencyDefaults,
+    onFieldValueChange,
+  ]);
+
+  return (
+    <StyledFieldList>
+      {fieldMetadataItems.map((fieldMetadataItem) => {
+        const gqlFieldName =
+          getFieldMetadataItemGqlFieldName(fieldMetadataItem);
+
+        return (
+          <FormFieldInput
+            key={fieldMetadataItem.id}
+            field={formatFieldMetadataItemAsFieldDefinition({
+              field: fieldMetadataItem,
+              objectMetadataItem,
+              showLabel: true,
+            })}
+            defaultValue={
+              Object.hasOwn(draftRecord, gqlFieldName)
+                ? draftRecord[gqlFieldName]
+                : getRecordFormCurrencyFieldDefaultValue(fieldMetadataItem)
+            }
+            onChange={(value) => onFieldValueChange(gqlFieldName, value)}
+            onClear={() => onFieldValueClear(gqlFieldName)}
+            settings={getRecordFormFieldInputSettings(fieldMetadataItem.type)}
+          />
+        );
+      })}
+    </StyledFieldList>
+  );
+};
