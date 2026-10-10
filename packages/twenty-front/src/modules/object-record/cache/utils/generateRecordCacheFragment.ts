@@ -2,8 +2,10 @@ import { type DocumentNode, parse } from 'graphql';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import {
+  type ObjectPermissions,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 type GenerateRecordCacheFragmentArgs = {

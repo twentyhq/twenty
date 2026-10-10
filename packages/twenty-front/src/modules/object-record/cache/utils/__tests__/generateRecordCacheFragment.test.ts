@@ -1,4 +1,5 @@
 import { Kind, print } from 'graphql';
+import { type RecordGqlFields } from 'twenty-shared/types';
 
 import { generateRecordCacheFragment } from '@/object-record/cache/utils/generateRecordCacheFragment';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -26,7 +27,7 @@ const objectPermissionsByObjectMetadataId = {
   },
 };
 
-const generatePersonFragment = (recordGqlFields: Record<string, boolean>) =>
+const generatePersonFragment = (recordGqlFields: RecordGqlFields) =>
   generateRecordCacheFragment({
     objectMetadataItems,
     objectMetadataItem: personObjectMetadataItem,
