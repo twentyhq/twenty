@@ -27,6 +27,12 @@ describe('Custom object renaming', () => {
     'timelineActivity',
   ];
 
+  const SHARED_LABEL_BY_RELATION: Record<string, string> = {
+    attachment: 'Attached to',
+    noteTarget: 'Linked to',
+    taskTarget: 'Linked to',
+  };
+
   const standardObjectRelationsMap = STANDARD_OBJECT_RELATIONS.reduce<
     Record<string, StandardObjectRelation>
   >(
@@ -139,11 +145,10 @@ describe('Custom object renaming', () => {
       const relationFieldMetadataId = relationFieldMetadata?.id;
 
       expect(relationFieldMetadataId).not.toBeUndefined();
-      // Attachment targets share their morph group label instead of the engine-derived one.
+      // Attachment, note and task targets share their morph group label instead of the engine-derived one.
       expect(relationFieldMetadata?.label).toBe(
-        relation === 'attachment'
-          ? 'Attached to'
-          : capitalize(CUSTOM_OBJECT.nameSingular),
+        SHARED_LABEL_BY_RELATION[relation] ??
+          capitalize(CUSTOM_OBJECT.nameSingular),
       );
 
       standardObjectRelationsMap[relation].relationFieldMetadataId =
@@ -204,7 +209,7 @@ describe('Custom object renaming', () => {
       expect(renamedReverseField).toBeDefined();
       expect(renamedReverseField.name).toBe(expectedReverseFieldName);
       expect(renamedReverseField.label).toBe(
-        relation === 'attachment' ? 'Attached to' : expectedReverseFieldLabel,
+        SHARED_LABEL_BY_RELATION[relation] ?? expectedReverseFieldLabel,
       );
       expect(renamedReverseField.universalIdentifier).toBe(
         relationFieldMetadataUniversalIdentifier,
