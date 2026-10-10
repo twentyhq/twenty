@@ -279,9 +279,7 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
 
     expect(result).toMatchObject({
       success: false,
-      error: expect.stringContaining(
-        'is not the connected account handle nor one of its verified aliases',
-      ),
+      error: 'You cannot send from this address.',
     });
     expect(google.sentMessages).toHaveLength(sentMessageCount);
   }, 60000);

@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -28,7 +30,7 @@ type ResolvedCalendarAccount =
       connectedAccount: ConnectedAccountEntity;
       calendarChannel: CalendarChannelEntity;
     }
-  | { error: string };
+  | { error: MessageDescriptor };
 
 @Injectable()
 export class CalendarEventComposerService {
@@ -65,9 +67,11 @@ export class CalendarEventComposerService {
     const missingScopes = getMissingCreateEventScopes(connectedAccount);
 
     if (missingScopes.length > 0) {
+      const missingScopeList = missingScopes.join(', ');
+
       return {
         success: false,
-        error: `The connected ${connectedAccount.provider} account is missing calendar permissions (${missingScopes.join(', ')}). Please reconnect the account to grant calendar access.`,
+        error: msg`The connected ${connectedAccount.provider} account is missing calendar permissions (${missingScopeList}). Please reconnect the account to grant calendar access.`,
       };
     }
 
@@ -79,11 +83,11 @@ export class CalendarEventComposerService {
 
   private normalizeAndValidateInput(
     params: ComposeCalendarEventParams,
-  ): CalendarEventToCreate | { error: string } {
+  ): CalendarEventToCreate | { error: MessageDescriptor } {
     const title = params.title?.trim();
 
     if (!isNonEmptyString(title)) {
-      return { error: 'A title is required to create a calendar event' };
+      return { error: msg`A title is required to create a calendar event` };
     }
 
     const isFullDay = params.isFullDay ?? false;
@@ -101,7 +105,9 @@ export class CalendarEventComposerService {
     const timeZone = resolveCalendarEventTimeZone(params.timeZone);
 
     if (!isValidTimeZone(timeZone)) {
-      return { error: `timeZone '${timeZone}' is not a valid IANA time zone` };
+      return {
+        error: msg`timeZone "${timeZone}" is not a valid IANA time zone`,
+      };
     }
 
     const sendInvitations = params.sendInvitations ?? false;
@@ -112,8 +118,10 @@ export class CalendarEventComposerService {
       : [];
 
     if (attendeeEmails.length > MAX_EMAIL_RECIPIENTS) {
+      const attendeeCount = attendeeEmails.length;
+
       return {
-        error: `Too many attendees: ${attendeeEmails.length}. Maximum allowed is ${MAX_EMAIL_RECIPIENTS}.`,
+        error: msg`Too many attendees: ${attendeeCount}. Maximum allowed is ${MAX_EMAIL_RECIPIENTS}.`,
       };
     }
 
@@ -122,8 +130,10 @@ export class CalendarEventComposerService {
     );
 
     if (invalidAttendees.length > 0) {
+      const invalidAttendeeList = invalidAttendees.join(', ');
+
       return {
-        error: `Invalid attendee email addresses: ${invalidAttendees.join(', ')}`,
+        error: msg`Invalid attendee email addresses: ${invalidAttendeeList}`,
       };
     }
 
@@ -147,7 +157,7 @@ export class CalendarEventComposerService {
     startsAt: string,
     endsAt: string,
     isFullDay: boolean,
-  ): string | undefined {
+  ): MessageDescriptor | undefined {
     if (isFullDay) {
       const startDate = startsAt.slice(0, 10);
       const endDate = endsAt.slice(0, 10);
@@ -156,11 +166,11 @@ export class CalendarEventComposerService {
         !dateSchema.safeParse(startDate).success ||
         !dateSchema.safeParse(endDate).success
       ) {
-        return 'startsAt and endsAt must be valid ISO 8601 dates';
+        return msg`startsAt and endsAt must be valid ISO 8601 dates`;
       }
 
       if (endDate <= startDate) {
-        return 'endsAt must be a later day than startsAt for all-day events';
+        return msg`endsAt must be a later day than startsAt for all-day events`;
       }
 
       return undefined;
@@ -170,11 +180,11 @@ export class CalendarEventComposerService {
       !offsetDateTimeSchema.safeParse(startsAt).success ||
       !offsetDateTimeSchema.safeParse(endsAt).success
     ) {
-      return 'startsAt and endsAt must be ISO 8601 date-times with an offset (e.g. 2026-07-01T15:00:00Z)';
+      return msg`startsAt and endsAt must be ISO 8601 date-times with an offset (e.g. 2026-07-01T15:00:00Z)`;
     }
 
     if (Date.parse(endsAt) <= Date.parse(startsAt)) {
-      return 'endsAt must be after startsAt';
+      return msg`endsAt must be after startsAt`;
     }
 
     return undefined;
@@ -194,7 +204,9 @@ export class CalendarEventComposerService {
     // A blank id (the workflow node's default) falls back to the default account.
     if (isNonEmptyString(connectedAccountId)) {
       if (!isValidUuid(connectedAccountId)) {
-        return { error: 'The provided connectedAccountId is not a valid UUID' };
+        return {
+          error: msg`The provided connectedAccountId is not a valid UUID`,
+        };
       }
 
       const connectedAccount = await this.connectedAccountRepository.findOne({
@@ -203,13 +215,13 @@ export class CalendarEventComposerService {
 
       if (!isDefined(connectedAccount)) {
         return {
-          error: `No connected account found for id '${connectedAccountId}'`,
+          error: msg`No connected account found for id "${connectedAccountId}"`,
         };
       }
 
       if (!isCalendarCreationSupportedProvider(connectedAccount.provider)) {
         return {
-          error: `Calendar event creation is only supported for Google, Microsoft and CalDAV accounts (got ${connectedAccount.provider})`,
+          error: msg`Calendar event creation is only supported for Google, Microsoft and CalDAV accounts (got ${connectedAccount.provider})`,
         };
       }
 
@@ -220,7 +232,7 @@ export class CalendarEventComposerService {
 
       if (!isDefined(calendarChannel)) {
         return {
-          error: `Connected account '${connectedAccountId}' has no calendar channel with sync enabled. Enable calendar sync for this account first.`,
+          error: msg`Connected account "${connectedAccountId}" has no calendar channel with sync enabled. Enable calendar sync for this account first.`,
         };
       }
 
@@ -250,8 +262,7 @@ export class CalendarEventComposerService {
 
     if (!isDefined(calendarChannel)) {
       return {
-        error:
-          'No Google, Microsoft or CalDAV account with calendar sync is connected in this workspace',
+        error: msg`No Google, Microsoft or CalDAV account with calendar sync is connected in this workspace`,
       };
     }
 

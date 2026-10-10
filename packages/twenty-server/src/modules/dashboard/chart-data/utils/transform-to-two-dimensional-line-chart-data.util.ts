@@ -1,3 +1,4 @@
+import { type I18n } from '@lingui/core';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
@@ -18,7 +19,7 @@ import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/
 import { applyCumulativeToLineDataPoints } from 'src/modules/dashboard/chart-data/utils/apply-cumulative-to-line-data-points.util';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
-import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
+import { getAggregateValueLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
@@ -35,6 +36,7 @@ export const transformToTwoDimensionalLineChartData = ({
   seriesIdPrefix,
   primaryRelationLabelResolution,
   secondaryRelationLabelResolution,
+  i18n,
 }: {
   filteredRawResults: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
@@ -46,6 +48,7 @@ export const transformToTwoDimensionalLineChartData = ({
   seriesIdPrefix: string;
   primaryRelationLabelResolution: RelationLabelResolution | undefined;
   secondaryRelationLabelResolution: RelationLabelResolution | undefined;
+  i18n: I18n;
 }): LineChartDataDTO => {
   const isStacked = configuration.isStacked ?? false;
 
@@ -189,7 +192,11 @@ export const transformToTwoDimensionalLineChartData = ({
   });
 
   const xAxisLabel = primaryAxisGroupByField.label;
-  const yAxisLabel = `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`;
+  const yAxisLabel = getAggregateValueLabel({
+    aggregateOperation: configuration.aggregateOperation,
+    aggregateFieldLabel: aggregateField.label,
+    i18n,
+  });
 
   const hasTooManySeries = seriesIds.length > maxSeries;
   const hasTooManyDataPoints =

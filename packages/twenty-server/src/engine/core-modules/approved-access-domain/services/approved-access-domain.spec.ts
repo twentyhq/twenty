@@ -13,6 +13,7 @@ import {
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -98,6 +99,15 @@ describe('ApprovedAccessDomainService', () => {
           useValue: {
             signAsyncOrThrow: jest.fn(),
             verifyJwtToken: jest.fn(),
+          },
+        },
+        {
+          provide: I18nService,
+          useValue: {
+            getI18nInstance: jest.fn(() => ({
+              _: (descriptor: { id: string; message?: string }) =>
+                descriptor.message ?? descriptor.id,
+            })),
           },
         },
       ],
