@@ -4,9 +4,13 @@ import { styled } from '@linaria/react';
 import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledCellSkeletonContainer = styled.div`
-  display: flex;
-  padding: ${themeCssVariables.spacing[2]};
+const StyledCellSkeleton = styled(Skeleton)`
+  // Fit the cell regardless of the primitive's CSS load order.
+  && {
+    display: block;
+    margin: ${themeCssVariables.spacing[2]};
+    width: auto;
+  }
 `;
 
 export const RecordTableCellLoading = ({
@@ -21,15 +25,13 @@ export const RecordTableCellLoading = ({
       widthClassName={getRecordTableColumnFieldWidthClassName(recordFieldIndex)}
       isSelected={isSelected}
     >
-      <StyledCellSkeletonContainer>
-        <Skeleton
-          render={<div />}
-          height={SKELETON_HEIGHT_SIZES.s}
-          animated={false}
-          baseColor={themeCssVariables.background.tertiary}
-          borderRadius={themeCssVariables.border.radius.sm}
-        />
-      </StyledCellSkeletonContainer>
+      <StyledCellSkeleton
+        render={<div />}
+        height={SKELETON_HEIGHT_SIZES.s}
+        animated={false}
+        baseColor={themeCssVariables.background.tertiary}
+        borderRadius={themeCssVariables.border.radius.sm}
+      />
     </RecordTableCellStyleWrapper>
   );
 };
