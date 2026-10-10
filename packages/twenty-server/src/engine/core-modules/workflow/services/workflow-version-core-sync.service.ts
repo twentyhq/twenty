@@ -39,6 +39,8 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
+import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
+import { publishCronTriggerCacheEntry } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/publish-cron-trigger-cache-entry.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -304,6 +306,18 @@ export class WorkflowVersionCoreSyncService {
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
     await this.evictCronTriggerCacheEntries(deletedVersions);
+  }
+
+  async publishCronTriggerCacheEntries(
+    cachedTriggers: CachedCronTrigger[],
+  ): Promise<void> {
+    for (const cachedTrigger of cachedTriggers) {
+      await publishCronTriggerCacheEntry({
+        cacheStorageService: this.cacheStorageService,
+        cachedTrigger,
+        logger: this.logger,
+      });
+    }
   }
 
   private async evictCronTriggerCacheEntries(

@@ -1,11 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
@@ -19,6 +21,10 @@ const WORKSPACE_3 = '20202020-0000-0000-0000-000000000003';
 
 const mockWorkspaceRepository = {
   find: jest.fn(),
+};
+
+const mockApplicationRepository = {
+  findOne: jest.fn(),
 };
 
 const mockMessageQueueService = {
@@ -59,6 +65,7 @@ describe('WorkflowCronTriggerCronJob', () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-04-02T15:00:30.000Z'));
     mockCronTriggerDeduplicationService.shouldDispatch.mockResolvedValue(true);
+    mockApplicationRepository.findOne.mockResolvedValue({ version: '1.0.1' });
     mockWorkflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId.mockImplementation(
       async (_workspaceId: string, workflowId: string) => ({
         id: workflowId,
@@ -93,6 +100,10 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           provide: getRepositoryToken(WorkspaceEntity),
           useValue: mockWorkspaceRepository,
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(ApplicationEntity),
+          useValue: mockApplicationRepository,
         },
         {
           provide: 'MESSAGE_QUEUE_workflow-queue',
@@ -198,6 +209,21 @@ describe('WorkflowCronTriggerCronJob', () => {
         },
         { retryLimit: 3 },
       );
+    });
+
+    it('should not enqueue jobs while the application of the workflow is still installing', async () => {
+      mockApplicationRepository.findOne.mockResolvedValue({ version: null });
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
+          workflowId: 'workflow-1',
+          pattern: '* * * * *',
+        }),
+      ]);
+
+      await job.handle();
+
+      expect(mockMessageQueueService.add).not.toHaveBeenCalled();
     });
 
     it('should not enqueue jobs when the trigger is not due', async () => {
