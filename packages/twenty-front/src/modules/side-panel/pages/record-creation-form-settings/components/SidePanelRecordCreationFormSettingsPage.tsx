@@ -59,7 +59,7 @@ const SidePanelRecordCreationFormSettings = ({
 }: {
   objectMetadataId: string;
 }) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const { getIcon } = useIcons();
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -138,7 +138,10 @@ const SidePanelRecordCreationFormSettings = ({
                 text={fieldMetadataItem.label}
                 contextualText={
                   isFieldTypeSupportedInSettings(fieldMetadataItem.type)
-                    ? getSettingsFieldTypeConfig(fieldMetadataItem.type)?.label
+                    ? i18n._(
+                        getSettingsFieldTypeConfig(fieldMetadataItem.type)
+                          .label,
+                      )
                     : undefined
                 }
                 isIconDisplayedOnHoverOnly={false}
