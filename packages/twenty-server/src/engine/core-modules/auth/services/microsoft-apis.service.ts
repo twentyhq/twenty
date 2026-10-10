@@ -187,12 +187,16 @@ export class MicrosoftAPIsService {
             );
 
             await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
-              [newOrExistingConnectedAccountId],
+              existingMessageChannels.map(
+                (messageChannel) => messageChannel.id,
+              ),
               workspaceId,
             );
 
             await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
-              [newOrExistingConnectedAccountId],
+              existingCalendarChannels.map(
+                (calendarChannel) => calendarChannel.id,
+              ),
               workspaceId,
             );
           }
