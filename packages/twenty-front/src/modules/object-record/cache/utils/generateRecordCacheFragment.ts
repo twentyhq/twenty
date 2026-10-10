@@ -53,7 +53,8 @@ export const generateRecordCacheFragment = ({
     return cachedFragment;
   }
 
-  const fragment = parse(fragmentSource);
+  // Cached for the session: drop the per-node token locations Apollo never reads
+  const fragment = parse(fragmentSource, { noLocation: true });
 
   recordCacheFragmentBySource.set(fragmentSource, fragment);
 
