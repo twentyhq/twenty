@@ -7,7 +7,7 @@ import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-f
 import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -33,7 +33,8 @@ export const RecordFormFieldInputs = ({
   onFieldValueChange,
   onFieldValueClear,
 }: RecordFormFieldInputsProps) => {
-  const hasSeededCurrencyDefaults = useRef(false);
+  const [hasSeededCurrencyDefaults, setHasSeededCurrencyDefaults] =
+    useState(false);
 
   // FormCurrencyFieldInput only reports its value through onChange on user
   // interaction, so seed the draft with the field defaults once on mount:
@@ -41,10 +42,10 @@ export const RecordFormFieldInputs = ({
   // After a clear the draft keeps the key with a null value, so hasOwn still
   // holds and the default is not resurrected here.
   useEffect(() => {
-    if (hasSeededCurrencyDefaults.current) {
+    if (hasSeededCurrencyDefaults) {
       return;
     }
-    hasSeededCurrencyDefaults.current = true;
+    setHasSeededCurrencyDefaults(true);
 
     for (const fieldMetadataItem of fieldMetadataItems) {
       const gqlFieldName = getFieldMetadataItemGqlFieldName(fieldMetadataItem);
@@ -60,12 +61,18 @@ export const RecordFormFieldInputs = ({
         onFieldValueChange(gqlFieldName, defaultValue);
       }
     }
-  }, [draftRecord, fieldMetadataItems, onFieldValueChange]);
+  }, [
+    draftRecord,
+    fieldMetadataItems,
+    hasSeededCurrencyDefaults,
+    onFieldValueChange,
+  ]);
 
   return (
     <StyledFieldList>
       {fieldMetadataItems.map((fieldMetadataItem) => {
-        const gqlFieldName = getFieldMetadataItemGqlFieldName(fieldMetadataItem);
+        const gqlFieldName =
+          getFieldMetadataItemGqlFieldName(fieldMetadataItem);
 
         return (
           <FormFieldInput
