@@ -246,6 +246,7 @@ export const DisabledItem: Story = {
     onActivate.mockClear();
     await userEvent.tab();
     await userEvent.keyboard('{ArrowDown}');
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
     await waitFor(() =>
       expect(body.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
     );
