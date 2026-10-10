@@ -497,6 +497,12 @@ enum ApplicationHealthStatus {
   WARNING
 }
 
+type ApplicationPreferences {
+  applicationId: UUID!
+  settingsMenuItems: [SettingsMenuItem!]!
+  variables: [UserApplicationVariableValue!]!
+}
+
 type ApplicationRegistration {
   createdAt: DateTime!
   galleryImagesUrls: [String!]!
@@ -3846,6 +3852,7 @@ type Query {
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   minimalMetadata: MinimalMetadata!
   mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
+  myApplicationPreferences: [ApplicationPreferences!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!

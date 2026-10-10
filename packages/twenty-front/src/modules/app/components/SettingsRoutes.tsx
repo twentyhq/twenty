@@ -427,6 +427,14 @@ const SettingsNativeAccountApp = lazy(() =>
   ),
 );
 
+const SettingsApplicationPreferences = lazy(() =>
+  import('~/pages/settings/accounts/SettingsApplicationPreferences').then(
+    (module) => ({
+      default: module.SettingsApplicationPreferences,
+    }),
+  ),
+);
+
 const SettingsAccountsEmails = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
     default: module.SettingsAccountsEmails,
@@ -775,6 +783,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.NativeAccountApp}
         element={<SettingsNativeAccountApp />}
+      />
+      <Route
+        path={SettingsPath.ApplicationPreferences}
+        element={<SettingsApplicationPreferences />}
       />
       <Route
         path={SettingsPath.AccountsEmails}

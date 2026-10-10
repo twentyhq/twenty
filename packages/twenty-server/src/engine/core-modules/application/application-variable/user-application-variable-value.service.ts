@@ -11,6 +11,7 @@ import {
   ApplicationVariableEntityExceptionCode,
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
+import { type UserApplicationVariableValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/user-application-variable-value.dto';
 import { type WorkspaceMemberApplicationVariablesDTO } from 'src/engine/core-modules/application/application-variable/dtos/workspace-member-application-variables.dto';
 import { UserApplicationVariableValueEntity } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.entity';
 import { toUserApplicationVariableValues } from 'src/engine/core-modules/application/application-variable/utils/to-user-application-variable-values.util';
@@ -21,6 +22,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -150,6 +152,43 @@ export class UserApplicationVariableValueService {
         },
       ];
     });
+  }
+
+  async findMyUserApplicationVariableValuesByApplicationId({
+    workspaceId,
+    applicationIds,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    applicationIds: string[];
+    userWorkspaceId: string;
+  }): Promise<Record<string, UserApplicationVariableValueDTO[]>> {
+    const { flatApplicationVariableMaps, userApplicationVariableValueMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationVariableMaps',
+        'userApplicationVariableValueMaps',
+      ]);
+
+    return Object.fromEntries(
+      applicationIds.map((applicationId) => [
+        applicationId,
+        toUserApplicationVariableValues({
+          flatUserApplicationVariables: findFlatEntitiesByApplicationId({
+            flatEntityMaps: flatApplicationVariableMaps,
+            applicationId,
+          }).filter(({ scope }) => scope === 'USER'),
+          userApplicationVariableValueMaps,
+          userWorkspaceId,
+          shouldMaskSecret: true,
+          getDisplayValue: ({ value, isSecret }) =>
+            this.applicationVariableService.getDisplayValue({
+              value,
+              workspaceId,
+              isSecret,
+            }),
+        }),
+      ]),
+    );
   }
 
   async updateMyUserApplicationVariable({

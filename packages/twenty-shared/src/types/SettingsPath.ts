@@ -5,6 +5,7 @@ export enum SettingsPath {
   Accounts = 'accounts',
   AccountDetail = 'accounts/detail/:connectedAccountId',
   NativeAccountApp = 'accounts/apps/:nativeAccountAppId',
+  ApplicationPreferences = 'accounts/applications/:applicationId',
   NewAccount = 'accounts/new',
   AccountsConfiguration = 'accounts/configuration/:connectedAccountId',
   AccountsCalendars = 'accounts/calendars',
