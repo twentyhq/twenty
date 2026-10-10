@@ -12,6 +12,42 @@ exports[`View Sort creation should fail when fieldMetadataId does not exist 1`] 
 }
 `;
 
+exports[`View Sort creation should fail when the view already has a sort on the same field 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewSort": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_SORT_DATA",
+              "message": "View sort with same fieldMetadataId and viewId already exists",
+              "userFriendlyMessage": "View sort already exists",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewSort",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewSort",
+    "summary": {
+      "totalErrors": 1,
+      "viewSort": 1,
+    },
+    "userFriendlyMessage": "View sort already exists",
+  },
+  "message": "Multiple validation errors occurred while creating view sort",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`View Sort creation should fail when viewId does not exist 1`] = `
 {
   "extensions": {
