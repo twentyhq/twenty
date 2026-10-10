@@ -18,7 +18,6 @@ type MeetingInteraction = {
 type MessageMemberInfo = { ownerId: string; fromIsMember: boolean };
 type ContactItem = { kind: 'email' | 'meeting'; id: string };
 
-export type LastContact = { at: string; item: ContactItem };
 export type PersonUpdateData = Record<string, string | null>;
 
 export type PersonAgg = {
@@ -348,51 +347,20 @@ export const buildPersonAggregates = async (
   return aggByPersonId;
 };
 
-export const pickPersonLastContact = (
+export const buildPersonUpdateData = (
   agg: PersonAgg | undefined,
-): LastContact | undefined =>
-  agg?.lastContactAt && agg.item
-    ? { at: agg.lastContactAt, item: agg.item }
-    : undefined;
-
-export const pickLatestLastContact = (
-  contacts: LastContact[],
-): LastContact | undefined =>
-  contacts.reduce<LastContact | undefined>(
-    (latest, contact) =>
-      !latest || contact.at > latest.at ? contact : latest,
-    undefined,
-  );
-
-export const buildPersonUpdateData = (agg: PersonAgg): PersonUpdateData => ({
-  ...(agg.lastContactAt
-    ? {
-        lastContactAt: agg.lastContactAt,
-        lastContactById: agg.lastContactById ?? null,
-      }
-    : {}),
-  ...(agg.lastOutboundAt ? { lastOutboundAt: agg.lastOutboundAt } : {}),
-  ...(agg.lastInboundAt ? { lastInboundAt: agg.lastInboundAt } : {}),
-  ...(agg.lastEmail ? { lastEmailId: agg.lastEmail.id } : {}),
-  ...(agg.lastMeeting ? { lastMeetingId: agg.lastMeeting.id } : {}),
-  ...(agg.item?.kind === 'email'
-    ? {
-        lastContactItemMessageId: agg.item.id,
-        lastContactItemCalendarEventId: null,
-      }
-    : agg.item?.kind === 'meeting'
-      ? {
-          lastContactItemCalendarEventId: agg.item.id,
-          lastContactItemMessageId: null,
-        }
-      : {}),
+): PersonUpdateData => ({
+  lastContactAt: agg?.lastContactAt ?? null,
+  lastContactById: agg?.lastContactById ?? null,
+  lastOutboundAt: agg?.lastOutboundAt ?? null,
+  lastInboundAt: agg?.lastInboundAt ?? null,
+  lastEmailId: agg?.lastEmail?.id ?? null,
+  lastMeetingId: agg?.lastMeeting?.id ?? null,
+  lastContactItemMessageId: agg?.item?.kind === 'email' ? agg.item.id : null,
+  lastContactItemCalendarEventId:
+    agg?.item?.kind === 'meeting' ? agg.item.id : null,
 });
 
-export const buildRelatedUpdateData = ({
-  at,
-  item,
-}: LastContact): PersonUpdateData => ({
-  lastContactAt: at,
-  lastContactItemMessageId: item.kind === 'email' ? item.id : null,
-  lastContactItemCalendarEventId: item.kind === 'meeting' ? item.id : null,
-});
+export const PERSON_LAST_CONTACT_FIELD_NAMES = Object.keys(
+  buildPersonUpdateData(undefined),
+);

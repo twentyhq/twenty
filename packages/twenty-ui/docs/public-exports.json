@@ -132,6 +132,7 @@
     "values": {
       "DEFAULT_COLOR_LABELS": "components/navigation/MenuItem/constants/DefaultColorLabels",
       "Dropdown": "components/navigation/Dropdown/Dropdown",
+      "ListItemButton": "components/navigation/ListItemButton/ListItemButton",
       "MenuItem": "components/navigation/MenuItem/MenuItem",
       "MenuItemAvatar": "components/navigation/MenuItemAvatar/MenuItemAvatar",
       "MenuItemDraggable": "components/navigation/MenuItemDraggable/MenuItemDraggable",
@@ -157,6 +158,7 @@
       "DropdownTitleProps": "components/navigation/Dropdown/types/DropdownTitleProps",
       "DropdownTriggerProps": "components/navigation/Dropdown/types/DropdownTriggerProps",
       "DropdownType": "components/navigation/Dropdown/types/DropdownType",
+      "ListItemButtonProps": "components/navigation/ListItemButton/types/ListItemButtonProps",
       "MenuItemAccent": "components/navigation/MenuItem/types/MenuItemAccent",
       "MenuItemAvatarProps": "components/navigation/MenuItemAvatar/types/MenuItemAvatarProps",
       "MenuItemDraggableGripMode": "components/navigation/MenuItem/types/MenuItemDraggableGripMode",
@@ -744,8 +746,10 @@
       "ColorSampleProps": "primitives/data-display/ColorSample/types/ColorSampleProps",
       "ColorSampleVariant": "primitives/data-display/ColorSample/types/ColorSampleVariant",
       "StatusProps": "primitives/data-display/Status/types/StatusProps",
+      "StatusState": "primitives/data-display/Status/types/StatusState",
       "TagColor": "primitives/data-display/Tag/types/TagColor",
-      "TagProps": "primitives/data-display/Tag/types/TagProps"
+      "TagProps": "primitives/data-display/Tag/types/TagProps",
+      "TagState": "primitives/data-display/Tag/types/TagState"
     }
   },
   "primitives/feedback": {
@@ -931,6 +935,10 @@
       "AlertDialogTriggerState": "primitives/surfaces/AlertDialog/types/AlertDialogTriggerState",
       "AlertDialogViewportProps": "primitives/surfaces/AlertDialog/types/AlertDialogViewportProps",
       "AlertDialogViewportState": "primitives/surfaces/AlertDialog/types/AlertDialogViewportState",
+      "CardContentProps": "primitives/surfaces/Card/types/CardContentProps",
+      "CardFooterProps": "primitives/surfaces/Card/types/CardFooterProps",
+      "CardHeaderProps": "primitives/surfaces/Card/types/CardHeaderProps",
+      "CardRootProps": "primitives/surfaces/Card/types/CardRootProps",
       "DialogBackdropProps": "primitives/surfaces/Dialog/types/DialogBackdropProps",
       "DialogBackdropState": "primitives/surfaces/Dialog/types/DialogBackdropState",
       "DialogBodyProps": "primitives/surfaces/Dialog/types/DialogBodyProps",

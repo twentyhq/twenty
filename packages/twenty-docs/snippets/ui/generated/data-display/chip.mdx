@@ -12,54 +12,39 @@
  */}
 
 <ParamField body="alwaysShowTooltip" type="boolean" default="false">
-  Shows the string-label tooltip even when the label is not truncated.
+  Shows the content tooltip even when the content is not truncated.
+</ParamField>
+
+<ParamField body="children" type="ReactNode">
+  Caller-owned content. Missing or empty children add no fallback label.
 </ParamField>
 
 <ParamField body="clickable" type="boolean" default="isDefined(onClick)">
-  Enables hover and pointer styling. Defaults to whether `onClick` is supplied; does not add button semantics by itself.
+  Enables hover and pointer styling. Defaults to whether `onClick` is supplied; does not change the default div or add keyboard behavior.
 </ParamField>
 
 <ParamField body="color" type="&quot;primary&quot; | &quot;secondary&quot;" default="primary">
   Primary or secondary text color.
 </ParamField>
 
-<ParamField body="disabled" type="boolean" default="false">
-  Applies disabled styling and disables activation when `onClick` is supplied.
-</ParamField>
-
-<ParamField body="emptyLabel" type="string" default="Untitled">
-  Placeholder shown when children are missing, empty, or false, unless `forceEmptyText` is enabled.
-</ParamField>
-
 <ParamField body="endElement" type="ReactNode">
-  Content after the label. Avoid interactive content when the chip itself is a button.
+  Content after the label. Avoid interactive content when the chip itself is a button or link.
 </ParamField>
 
 <ParamField body="endElementDivider" type="boolean" default="false">
   Adds a divider before `endElement` when that slot has content.
 </ParamField>
 
-<ParamField body="forceEmptyText" type="boolean" default="false">
-  Suppresses the empty label when children are missing, empty, or false.
-</ParamField>
-
-<ParamField body="isLabelHidden" type="boolean" default="false">
-  Hides the label while keeping the start and end elements. Supply an accessible name for an interactive chip.
+<ParamField body="isTooltipMultiline" type="boolean">
+  Preserves line breaks in the tooltip text.
 </ParamField>
 
 <ParamField body="maxWidth" type="number">
-  Maximum chip width in pixels, used to constrain and truncate the label.
-</ParamField>
-
-<ParamField body="nativeButton" type="boolean" default="true">
-  Set to `false` when a clickable chip uses `render` with an element other than a native button.
+  Maximum chip width in pixels, used to constrain the content.
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
-
-  Accepts a `ReactElement` or a function that returns the element to render.
+  Replaces the default div. Compose a native button or link explicitly; that owner supplies disabled and native interaction behavior.
 </ParamField>
 
 <ParamField body="shape" type="&quot;round&quot; | &quot;square&quot;" default="square">
@@ -74,12 +59,20 @@
   Content before the label, such as an avatar or icon.
 </ParamField>
 
-<ParamField body="tooltipLabel" type="string">
-  Tooltip content for a string label. Defaults to the label text.
+<ParamField body="tooltipContent" type="string">
+  Tooltip text. Defaults to string children. Supply text explicitly for node content.
+</ParamField>
+
+<ParamField body="tooltipDelay" type="number">
+  Delay in milliseconds before the tooltip opens.
 </ParamField>
 
 <ParamField body="tooltipPlace" type="&quot;bottom&quot; | &quot;inline-end&quot; | &quot;inline-start&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;">
-  Position of the string-label tooltip.
+  Position of the content tooltip.
+</ParamField>
+
+<ParamField body="truncate" type="boolean" default="true">
+  Truncates overflowing content with an ellipsis. Defaults to true.
 </ParamField>
 
 <ParamField body="variant" type="&quot;ghost&quot; | &quot;soft&quot; | &quot;solid&quot;" default="ghost">
@@ -87,5 +80,5 @@
 </ParamField>
 
 <ParamField body="weight" type="&quot;medium&quot; | &quot;regular&quot;" default="regular">
-  Font weight of the label.
+  Font weight of the content.
 </ParamField>

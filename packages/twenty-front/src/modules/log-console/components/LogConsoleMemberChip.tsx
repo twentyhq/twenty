@@ -1,4 +1,4 @@
-import { useLingui } from '@lingui/react/macro';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
 
@@ -14,7 +14,6 @@ type LogConsoleMemberChipProps = {
 };
 
 export const LogConsoleMemberChip = (props: LogConsoleMemberChipProps) => {
-  const { t } = useLingui();
   const member = useLogConsoleMember(props);
 
   if (!isDefined(member)) {
@@ -23,12 +22,11 @@ export const LogConsoleMemberChip = (props: LogConsoleMemberChipProps) => {
 
   return (
     <Chip
-      emptyLabel={t`Untitled`}
       variant="ghost"
       startElement={<LogConsoleMemberAvatar member={member} />}
       style={{ paddingInlineStart: 0 }}
     >
-      {member.name ?? ''}
+      {getChipLabel(member.name).content}
     </Chip>
   );
 };

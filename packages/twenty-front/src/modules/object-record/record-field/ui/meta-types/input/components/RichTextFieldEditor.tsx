@@ -7,7 +7,7 @@ import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
 import { useReplaceBlockEditorContent } from '@/blocknote-editor/hooks/useReplaceBlockEditorContent';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
-import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
+import { stripImageUrlTokens } from '@/blocknote-editor/utils/stripImageUrlTokens';
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
@@ -149,16 +149,16 @@ export const RichTextFieldEditor = ({
 
   const { updateDraft, markDirty, flush, draftResyncKey } =
     useRecordSeededDraft({
-      upstreamDraft: { blocknote: fieldValue?.blocknote ?? '' },
+      upstreamDraft: {
+        blocknote: stripImageUrlTokens(fieldValue?.blocknote ?? ''),
+      },
       persistDebounceMs: 300,
       resetKey: recordId,
       onPersist: ({ blocknote }) => {
         if (isRecordFieldReadOnly === true) return;
 
-        const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
-
         if (onPersistBody) {
-          onPersistBody(preparedBlocknote);
+          onPersistBody(blocknote);
           return;
         }
 
@@ -167,7 +167,7 @@ export const RichTextFieldEditor = ({
           objectNameSingular,
           updateOneRecordInput: {
             [fieldName]: {
-              blocknote: preparedBlocknote,
+              blocknote,
               markdown: null,
             },
           },
@@ -236,7 +236,7 @@ export const RichTextFieldEditor = ({
       | undefined;
 
     // Only after capturing the pre-edit body: persisting rewrites the record, so the diff would miss removed attachments.
-    updateDraft({ blocknote: newStringifiedBody });
+    updateDraft({ blocknote: stripImageUrlTokens(newStringifiedBody) });
 
     await syncAttachments(newStringifiedBody, oldFieldValue?.blocknote);
   };

@@ -40,7 +40,7 @@ beforeEach(() => {
       ? Promise.resolve({
           companies: {
             edges: query.companies.__args.filter.id.in.map((id: string) => ({
-              node: { id },
+              node: { id, lastContactAt: '2026-01-01T09:00:00.000Z' },
             })),
             pageInfo: { hasNextPage: false, endCursor: null },
           },

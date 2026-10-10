@@ -544,6 +544,62 @@ export const LinkOptionsMarkCurrent: Story = {
   },
 };
 
+export const DisabledLinkOption: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Workspaces</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Switch workspace">
+        <Dropdown.OptionItem
+          ref={onItemRef}
+          disabled
+          selected={false}
+          render={
+            <a
+              href="#unavailable-workspace"
+              aria-label="Unavailable workspace"
+            />
+          }
+          onSelect={onSelectDisabledOption}
+        >
+          Unavailable workspace
+        </Dropdown.OptionItem>
+        <Dropdown.OptionItem selected={false}>
+          Current workspace
+        </Dropdown.OptionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const document = canvasElement.ownerDocument;
+    const body = within(document.body);
+    const initialLocation = document.URL;
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Workspaces' }),
+    );
+    const link = await body.findByRole('link', {
+      name: 'Unavailable workspace',
+    });
+    const currentWorkspace = body.getByRole('button', {
+      name: 'Current workspace',
+    });
+
+    await expect(link).toHaveAttribute('aria-disabled', 'true');
+    await expect(link).not.toHaveAttribute('disabled');
+    await expect(link).toHaveAttribute('tabindex', '-1');
+    await expect(onItemRef).toHaveBeenCalledWith(link);
+    await waitFor(() => expect(currentWorkspace).toHaveFocus());
+    await userEvent.click(link);
+    await expect(onSelectDisabledOption).not.toHaveBeenCalled();
+    await expect(document.URL).toBe(initialLocation);
+    await expect(body.getByRole('dialog')).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
 export const LoadingStatus: Story = {
   render: () => (
     <Dropdown.Root type="picker">

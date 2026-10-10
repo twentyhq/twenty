@@ -13470,9 +13470,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opennextjs/aws@npm:4.0.2":
-  version: 4.0.2
-  resolution: "@opennextjs/aws@npm:4.0.2"
+"@opennextjs/aws@npm:4.1.7":
+  version: 4.1.7
+  resolution: "@opennextjs/aws@npm:4.1.7"
   dependencies:
     "@ast-grep/napi": "npm:^0.40.5"
     "@aws-sdk/client-cloudfront": "npm:3.984.0"
@@ -13492,20 +13492,20 @@ __metadata:
     urlpattern-polyfill: "npm:^10.1.0"
     yaml: "npm:^2.8.1"
   peerDependencies:
-    next: ">=15.5.18 <16 || >=16.2.6"
+    next: ">=15.5.27 <16 || >=16.3.8"
   bin:
     open-next: dist/index.js
-  checksum: 10c0/d0b157429c42f6f2a82a92367af06cee58eae8752af645b9ae9ee5eabb173f02f5e324e0ee127894f002889d87cc878a17f019677974ee6c9a5fab8e77fe6fc3
+  checksum: 10c0/737d87aeddc52c06ca708e6849e86b6f8e46c9a05f1a2505b5ececfe4503e0b7b00457e8e7753f38f063151429b655b9bf03d45469263903514470b6313b08cd
   languageName: node
   linkType: hard
 
-"@opennextjs/cloudflare@npm:^1.20.0":
-  version: 1.20.0
-  resolution: "@opennextjs/cloudflare@npm:1.20.0"
+"@opennextjs/cloudflare@npm:^1.20.8":
+  version: 1.20.8
+  resolution: "@opennextjs/cloudflare@npm:1.20.8"
   dependencies:
     "@ast-grep/napi": "npm:^0.40.5"
     "@dotenvx/dotenvx": "npm:1.31.0"
-    "@opennextjs/aws": "npm:4.0.2"
+    "@opennextjs/aws": "npm:4.1.7"
     ci-info: "npm:^4.2.0"
     cloudflare: "npm:^4.4.1"
     comment-json: "npm:^4.5.1"
@@ -13514,15 +13514,15 @@ __metadata:
     ts-tqdm: "npm:^0.8.6"
     yargs: "npm:^18.0.0"
   peerDependencies:
-    next: ">=15.5.18 <16 || >=16.2.6"
+    next: ">=15.5.27 <16 || >=16.3.8"
     rclone.js: ^0.6.6
-    wrangler: ^4.86.0
+    wrangler: ^4.125.0
   peerDependenciesMeta:
     rclone.js:
       optional: true
   bin:
     opennextjs-cloudflare: dist/cli/index.js
-  checksum: 10c0/a28b29fc3548dc81252daa2f4e319727f1cd471f7d26a3508d622209cfd13b47301fb904b89a8c1f241dca4d1fb88655a89d5ffa54a23aba8d8c2de32f8ffa6d
+  checksum: 10c0/6cca5f6db38ffec364edf3edc464af57ac0731ce28a4947de19579d89b6920635e82226be26c05ccd1a6c31f12c07d5b2be8459145f80c6aaa885dcde641516b
   languageName: node
   linkType: hard
 
@@ -50924,6 +50924,7 @@ __metadata:
     sass-embedded: "npm:^1.83.0"
     size-limit: "npm:^12.1.0"
     slash: "npm:^5.1.0"
+    storybook: "npm:^10.4.6"
     storybook-addon-pseudo-states: "npm:^10.3.3"
     tsx: "npm:^4.19.3"
     type-fest: "npm:^4.10.1"
@@ -50975,7 +50976,7 @@ __metadata:
     "@lingui/react": "npm:^5.1.2"
     "@lingui/swc-plugin": "npm:^5.11.0"
     "@lottiefiles/dotlottie-react": "npm:^0.18.10"
-    "@opennextjs/cloudflare": "npm:^1.20.0"
+    "@opennextjs/cloudflare": "npm:^1.20.8"
     "@tabler/icons-react": "npm:^3.41.1"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"

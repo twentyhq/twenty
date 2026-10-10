@@ -7,6 +7,8 @@ import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Dropdown.module.scss';
+import { DropdownItemOwner } from './DropdownItemOwner';
+import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
@@ -92,28 +94,37 @@ export const DropdownActionItem = ({
           closeTree();
         }
       }}
-      render={(renderProps) => (
-        <ListItem
-          {...renderProps}
-          render={render ?? <button type="button" />}
-          className={clsx(
-            renderProps.className,
-            hasActions && styles.itemWithActionsPrimary,
-          )}
-          disabled={disabled}
-          color={color}
-          startIcon={startIcon}
-          endIcon={endIcon}
-          actionsVisibility={actionsVisibility}
-          description={description}
-          descriptionPlacement={descriptionPlacement}
-          shortcut={shortcut}
-          shortcutJoinLabel={shortcutJoinLabel}
-          hasSubmenu={!hasActions && resolvedHasSubmenu}
-        >
-          {children}
-        </ListItem>
-      )}
+      render={(renderProps) => {
+        const nativeDisabled = getNativeDisabled({
+          nativeButton,
+          renderProps,
+        });
+
+        return (
+          <ListItem
+            {...renderProps}
+            render={
+              <DropdownItemOwner render={render} disabled={nativeDisabled} />
+            }
+            className={clsx(
+              renderProps.className,
+              hasActions && styles.itemWithActionsPrimary,
+            )}
+            disabled={disabled}
+            color={color}
+            startIcon={startIcon}
+            endIcon={endIcon}
+            actionsVisibility={actionsVisibility}
+            description={description}
+            descriptionPlacement={descriptionPlacement}
+            shortcut={shortcut}
+            shortcutJoinLabel={shortcutJoinLabel}
+            hasSubmenu={!hasActions && resolvedHasSubmenu}
+          >
+            {children}
+          </ListItem>
+        );
+      }}
     />
   );
 
