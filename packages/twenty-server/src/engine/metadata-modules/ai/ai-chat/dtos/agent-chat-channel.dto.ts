@@ -19,4 +19,7 @@ export class AgentChatChannelDTO {
 
   @Field(() => AgentChatChannelVisibility)
   visibility: AgentChatChannelVisibility;
+
+  @Field(() => [UUIDScalarType])
+  roleIds: string[];
 }

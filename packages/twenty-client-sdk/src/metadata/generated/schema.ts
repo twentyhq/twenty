@@ -39,6 +39,7 @@ export interface AgentChatChannel {
     icon?: Scalars['String']
     id: Scalars['UUID']
     name: Scalars['String']
+    roleIds: Scalars['UUID'][]
     visibility: AgentChatChannelVisibility
     __typename: 'AgentChatChannel'
 }
@@ -46,6 +47,7 @@ export interface AgentChatChannel {
 export type AgentChatChannelAssignmentFilter = 'ANY' | 'ASSIGNED_TO_ME' | 'UNASSIGNED'
 
 export interface AgentChatChannelListItem {
+    canLeave: Scalars['Boolean']
     canManage: Scalars['Boolean']
     color?: Scalars['String']
     icon?: Scalars['String']
@@ -54,8 +56,16 @@ export interface AgentChatChannelListItem {
     isSystem: Scalars['Boolean']
     memberCount: Scalars['Int']
     name: Scalars['String']
+    roleIds: Scalars['UUID'][]
     visibility: AgentChatChannelVisibility
     __typename: 'AgentChatChannelListItem'
+}
+
+export interface AgentChatChannelRole {
+    icon?: Scalars['String']
+    id: Scalars['UUID']
+    label: Scalars['String']
+    __typename: 'AgentChatChannelRole'
 }
 
 export interface AgentChatChannelSummary {
@@ -2747,6 +2757,7 @@ export interface PublicWorkspaceDataSummary {
 }
 
 export interface Query {
+    agentChatChannelRoles: AgentChatChannelRole[]
     agentChatChannelSummaries: AgentChatChannelSummary[]
     agentChatChannelThreadIds: AgentChatChannelThreadIds
     agentChatChannels: AgentChatChannelListItem[]
@@ -4010,12 +4021,14 @@ export interface AgentChatChannelGenqlSelection{
     icon?: boolean | number
     id?: boolean | number
     name?: boolean | number
+    roleIds?: boolean | number
     visibility?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
 export interface AgentChatChannelListItemGenqlSelection{
+    canLeave?: boolean | number
     canManage?: boolean | number
     color?: boolean | number
     icon?: boolean | number
@@ -4024,7 +4037,16 @@ export interface AgentChatChannelListItemGenqlSelection{
     isSystem?: boolean | number
     memberCount?: boolean | number
     name?: boolean | number
+    roleIds?: boolean | number
     visibility?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatChannelRoleGenqlSelection{
+    icon?: boolean | number
+    id?: boolean | number
+    label?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5191,7 +5213,7 @@ export interface ConnectedImapSmtpCaldavAccountGenqlSelection{
 
 export interface ConnectionParametersInput {connectionSecurity?: (EmailConnectionSecurity | null),host: Scalars['String'],password?: (Scalars['String'] | null),port: Scalars['Float'],username?: (Scalars['String'] | null)}
 
-export interface CreateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),memberIds: Scalars['UUID'][],name: Scalars['String'],visibility: AgentChatChannelVisibility}
+export interface CreateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),memberIds: Scalars['UUID'][],name: Scalars['String'],roleIds: Scalars['UUID'][],visibility: AgentChatChannelVisibility}
 
 export interface CreateAgentInput {description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),label: Scalars['String'],modelConfiguration?: (Scalars['JSON'] | null),modelId: Scalars['String'],name?: (Scalars['String'] | null),prompt: Scalars['String'],responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
 
@@ -7023,6 +7045,7 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    agentChatChannelRoles?: AgentChatChannelRoleGenqlSelection
     agentChatChannelSummaries?: AgentChatChannelSummaryGenqlSelection
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
     agentChatChannels?: AgentChatChannelListItemGenqlSelection
@@ -7747,7 +7770,7 @@ export interface UnsubscribeTopicGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface UpdateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),name?: (Scalars['String'] | null),visibility?: (AgentChatChannelVisibility | null)}
+export interface UpdateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),name?: (Scalars['String'] | null),roleIds?: (Scalars['UUID'][] | null),visibility?: (AgentChatChannelVisibility | null)}
 
 export interface UpdateAgentInput {description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],label?: (Scalars['String'] | null),modelConfiguration?: (Scalars['JSON'] | null),modelId?: (Scalars['String'] | null),name?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
 
@@ -8619,6 +8642,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAgentChatChannelListItem = (obj?: { __typename?: any } | null): obj is AgentChatChannelListItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannelListItem"')
       return AgentChatChannelListItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatChannelRole_possibleTypes: string[] = ['AgentChatChannelRole']
+    export const isAgentChatChannelRole = (obj?: { __typename?: any } | null): obj is AgentChatChannelRole => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannelRole"')
+      return AgentChatChannelRole_possibleTypes.includes(obj.__typename)
     }
     
 

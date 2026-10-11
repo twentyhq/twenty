@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
 
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -28,7 +30,7 @@ const SYSTEM_CHANNEL_ID = buildAgentChatDefaultChannelId({
 });
 
 const CHANNELS = parse(
-  `query Channels { agentChatChannels { id name visibility isMember canManage isSystem } }`,
+  `query Channels { agentChatChannels { id name visibility isMember canLeave canManage isSystem } }`,
 );
 
 const DELETE_CHANNEL = parse(
@@ -48,9 +50,16 @@ type ListedChannel = {
   name: string;
   visibility: 'PUBLIC' | 'PRIVATE';
   isMember: boolean;
+  canLeave: boolean;
   canManage: boolean;
   isSystem: boolean;
 };
+
+const assignRoleToJony = (roleId: string) =>
+  updateWorkspaceMemberRole({
+    expectToFail: false,
+    input: { workspaceMemberId: JONY, roleId },
+  });
 
 const listChannels = async (
   token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -86,7 +95,7 @@ describe('Default chat channels', () => {
     );
   });
 
-  it('gives everyone with AI access General, and the members who manage the workspace System', async () => {
+  it('gives everyone with AI access General, and the roles that manage the workspace System', async () => {
     const janeChannels = await listChannels();
     const jonyChannels = await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 
@@ -95,6 +104,7 @@ describe('Default chat channels', () => {
       name: 'General',
       visibility: 'PUBLIC',
       isMember: true,
+      canLeave: true,
       canManage: true,
       isSystem: false,
     });
@@ -103,6 +113,7 @@ describe('Default chat channels', () => {
       name: 'System',
       visibility: 'PRIVATE',
       isMember: true,
+      canLeave: false,
       canManage: true,
       isSystem: true,
     });
@@ -110,6 +121,33 @@ describe('Default chat channels', () => {
       expect.objectContaining({ isMember: true, canManage: false }),
     );
     expect(jonyChannels.map(({ id }) => id)).not.toContain(SYSTEM_CHANNEL_ID);
+  });
+
+  it('opens System to a member who later gets a role that manages the workspace', async () => {
+    const { id: adminRoleId } = await findOneRoleByLabel({ label: 'Admin' });
+    const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
+
+    await assignRoleToJony(adminRoleId);
+
+    try {
+      expect(
+        (await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN)).find(
+          ({ id }) => id === SYSTEM_CHANNEL_ID,
+        ),
+      ).toEqual(
+        expect.objectContaining({
+          isMember: true,
+          canLeave: false,
+          canManage: true,
+        }),
+      );
+    } finally {
+      await assignRoleToJony(memberRoleId);
+    }
+
+    expect(
+      (await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN)).map(({ id }) => id),
+    ).not.toContain(SYSTEM_CHANNEL_ID);
   });
 
   it('keeps System, where conversations no member started land', async () => {

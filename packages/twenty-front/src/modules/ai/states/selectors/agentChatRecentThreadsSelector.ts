@@ -5,8 +5,9 @@ import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreads
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-// Every chat that is the member's, whatever its place in their inbox. Chats
-// of a channel they read but never followed stay in the channel's view
+// Every chat the member can still open, whatever its place in their inbox,
+// except the chats of a channel they read but never followed, which stay in
+// the channel's view
 export const agentChatRecentThreadsSelector = createAtomSelector<
   AgentChatThreadRecord[]
 >({
@@ -15,7 +16,8 @@ export const agentChatRecentThreadsSelector = createAtomSelector<
     get(agentChatThreadsSelector).filter(
       (thread) =>
         !isDefined(thread.deletedAt) &&
-        get(agentChatThreadInboxStatusFamilySelector, thread.id).scope !==
-          'NONE',
+        (!isDefined(thread.channelId) ||
+          get(agentChatThreadInboxStatusFamilySelector, thread.id).scope !==
+            'NONE'),
     ),
 });

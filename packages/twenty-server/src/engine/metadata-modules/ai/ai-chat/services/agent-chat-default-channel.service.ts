@@ -14,12 +14,12 @@ import { buildAgentChatDefaultChannelId } from 'src/engine/metadata-modules/ai/a
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import { insertAgentChatChannelMembers } from 'src/engine/metadata-modules/ai/ai-chat/utils/insert-agent-chat-channel-members.util';
 import { writeAgentChatChannelGeneralAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/write-agent-chat-channel-general-access.util';
+import { writeAgentChatChannelRoleAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/write-agent-chat-channel-role-access.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatChannelMemberWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-channel-member.workspace-entity';
 import { type AgentChatChannelWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-channel.workspace-entity';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -73,8 +73,9 @@ const grantDefaultChannelOwnership = async ({
 };
 
 // Every workspace starts with General, which everyone with AI access joins,
-// and System, where the conversations no member started land for the
-// people who manage the workspace
+// and System, where the conversations no member started land. System is open
+// to the roles that manage the workspace rather than to their members at
+// the time, so whoever holds one of those roles later reads and manages it
 @Injectable()
 export class AgentChatDefaultChannelService {
   constructor(
@@ -95,7 +96,8 @@ export class AgentChatDefaultChannelService {
     const { channelObjectMetadataId } =
       await this.channelAccessService.findChannelObjectMetadataIds(workspaceId);
     const { channelTable } = getAgentChatChannelTables(workspaceId);
-    const memberIdsByKind = await this.findDefaultMemberIds(workspaceId);
+    const { generalMemberIds, managerMemberIds, systemRoleIds } =
+      await this.findDefaultAccess(workspaceId);
 
     const createdChannels = await this.threadRepository.query(
       workspaceId,
@@ -125,14 +127,6 @@ export class AgentChatDefaultChannelService {
             continue;
           }
 
-          await grantDefaultChannelOwnership({
-            manager,
-            workspaceId,
-            channelId: channel.id,
-            ownerIds: memberIdsByKind.SYSTEM,
-            channelObjectMetadataId,
-          });
-
           await writeAgentChatChannelGeneralAccess({
             manager,
             workspaceId,
@@ -141,11 +135,30 @@ export class AgentChatDefaultChannelService {
             channelObjectMetadataId,
           });
 
+          if (kind === 'SYSTEM') {
+            await writeAgentChatChannelRoleAccess({
+              manager,
+              workspaceId,
+              channelId: channel.id,
+              roleIds: systemRoleIds,
+              channelObjectMetadataId,
+              accessLevel: 'FULL',
+            });
+          } else {
+            await grantDefaultChannelOwnership({
+              manager,
+              workspaceId,
+              channelId: channel.id,
+              ownerIds: managerMemberIds,
+              channelObjectMetadataId,
+            });
+          }
+
           const members = await insertAgentChatChannelMembers({
             manager,
             workspaceId,
             channelId: channel.id,
-            memberIds: memberIdsByKind[kind],
+            memberIds: kind === 'GENERAL' ? generalMemberIds : [],
             channelObjectMetadataId,
           });
 
@@ -264,9 +277,11 @@ export class AgentChatDefaultChannelService {
 
   // Seeding follows the creation of the first member, which the cached map
   // may not hold yet
-  private async findDefaultMemberIds(
-    workspaceId: string,
-  ): Promise<Record<AgentChatDefaultChannelKind, string[]>> {
+  private async findDefaultAccess(workspaceId: string): Promise<{
+    generalMemberIds: string[];
+    managerMemberIds: string[];
+    systemRoleIds: string[];
+  }> {
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatWorkspaceMemberMaps',
     ]);
@@ -283,10 +298,22 @@ export class AgentChatDefaultChannelService {
       'flatRolePermissionFlagMaps',
     ]);
 
-    const memberIdsByKind: Record<AgentChatDefaultChannelKind, string[]> = {
-      GENERAL: [],
-      SYSTEM: [],
-    };
+    const aiRoles = Object.values(flatRoleMaps.byUniversalIdentifier).filter(
+      (flatRole): flatRole is NonNullable<typeof flatRole> =>
+        isDefined(flatRole) &&
+        flatRole.canBeAssignedToUsers &&
+        isPermissionFlagGrantedToFlatRole({
+          flatRole,
+          permissionFlag: PermissionFlagType.AI,
+          flatRolePermissionFlagMaps,
+        }),
+    );
+    const aiRoleById = new Map(
+      aiRoles.map((flatRole) => [flatRole.id, flatRole]),
+    );
+
+    const generalMemberIds: string[] = [];
+    const managerMemberIds: string[] = [];
 
     for (const member of Object.values(flatWorkspaceMemberMaps.byId)) {
       if (!isDefined(member) || isDefined(member.deletedAt)) {
@@ -298,31 +325,25 @@ export class AgentChatDefaultChannelService {
       const roleId = isDefined(userWorkspaceId)
         ? userWorkspaceRoleMap[userWorkspaceId]
         : undefined;
-      const flatRole = isDefined(roleId)
-        ? findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: roleId,
-            flatEntityMaps: flatRoleMaps,
-          })
-        : undefined;
+      const flatRole = isDefined(roleId) ? aiRoleById.get(roleId) : undefined;
 
-      if (
-        !isDefined(flatRole) ||
-        !isPermissionFlagGrantedToFlatRole({
-          flatRole,
-          permissionFlag: PermissionFlagType.AI,
-          flatRolePermissionFlagMaps,
-        })
-      ) {
+      if (!isDefined(flatRole)) {
         continue;
       }
 
-      memberIdsByKind.GENERAL.push(member.id);
+      generalMemberIds.push(member.id);
 
       if (flatRole.canUpdateAllSettings) {
-        memberIdsByKind.SYSTEM.push(member.id);
+        managerMemberIds.push(member.id);
       }
     }
 
-    return memberIdsByKind;
+    return {
+      generalMemberIds,
+      managerMemberIds,
+      systemRoleIds: aiRoles
+        .filter((flatRole) => flatRole.canUpdateAllSettings)
+        .map(({ id }) => id),
+    };
   }
 }

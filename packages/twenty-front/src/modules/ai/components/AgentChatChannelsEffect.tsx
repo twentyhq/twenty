@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -18,6 +18,16 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 // Changes come in bursts, as a message updates a chat and its members' rows
 const AGENT_CHAT_CHANNELS_REFRESH_DEBOUNCE_MS = 1000;
+
+const CHANNEL_OPERATION_SIGNATURE = {
+  objectNameSingular: CoreObjectNameSingular.AgentChatChannel,
+  variables: {},
+};
+
+const CHANNEL_MEMBER_OPERATION_SIGNATURE = {
+  objectNameSingular: CoreObjectNameSingular.AgentChatChannelMember,
+  variables: {},
+};
 
 // Channels and their counts follow changes made anywhere: a channel or a
 // membership changing reloads the list, a chat or a member's row changing
@@ -64,30 +74,15 @@ export const AgentChatChannelsEffect = () => {
     }
   }, [isEnabled, refreshAgentChatChannels]);
 
-  const channelOperationSignature = useMemo(
-    () => ({
-      objectNameSingular: CoreObjectNameSingular.AgentChatChannel,
-      variables: {},
-    }),
-    [],
-  );
-  const channelMemberOperationSignature = useMemo(
-    () => ({
-      objectNameSingular: CoreObjectNameSingular.AgentChatChannelMember,
-      variables: {},
-    }),
-    [],
-  );
-
   useListenToEventsForQuery({
     queryId: 'agent-chat-channel-operations',
-    operationSignature: channelOperationSignature,
+    operationSignature: CHANNEL_OPERATION_SIGNATURE,
     skip: !isEnabled,
     onSseReconnected: refreshAgentChatChannels,
   });
   useListenToEventsForQuery({
     queryId: 'agent-chat-channel-member-operations',
-    operationSignature: channelMemberOperationSignature,
+    operationSignature: CHANNEL_MEMBER_OPERATION_SIGNATURE,
     skip: !isEnabled || !isDefined(channelMemberObjectMetadataItem),
   });
 

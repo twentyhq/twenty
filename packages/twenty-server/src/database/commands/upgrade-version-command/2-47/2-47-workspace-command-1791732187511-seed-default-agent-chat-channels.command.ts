@@ -13,7 +13,6 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { buildAgentChatDefaultChannelId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-default-channel-id.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -47,10 +46,10 @@ const getSeedTables = (workspaceId: string) => {
   };
 };
 
-// A channel that already exists is left as its members made it. The members
-// who manage the workspace own each one, as a creator owns their channel.
-// Everyone reads a public channel through its general access, and each
-// member reads a private one through the grant their membership carries
+// A channel that already exists is left as its members made it. Everyone
+// reads a public channel through its general access, each member reads one
+// through the grant their membership carries, and the holders of a role read
+// and manage one through the grant given to the role
 const seedDefaultChannel = async ({
   manager,
   workspaceId,
@@ -58,6 +57,7 @@ const seedDefaultChannel = async ({
   channel: { kind, name, icon, visibility },
   memberIds,
   ownerIds,
+  roleIds,
 }: {
   manager: EntityManager;
   workspaceId: string;
@@ -65,6 +65,7 @@ const seedDefaultChannel = async ({
   channel: DefaultChannel;
   memberIds: string[];
   ownerIds: string[];
+  roleIds: string[];
 }): Promise<boolean> => {
   const tables = getSeedTables(workspaceId);
   const channelId = buildAgentChatDefaultChannelId({ workspaceId, kind });
@@ -88,6 +89,15 @@ const seedDefaultChannel = async ({
      FROM unnest($3::uuid[]) AS owner_id
      ON CONFLICT DO NOTHING`,
     [channelObjectMetadataId, channelId, ownerIds],
+  );
+
+  await manager.query(
+    `INSERT INTO ${tables.recordShare}
+       ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
+     SELECT $1::uuid, $2::uuid, role_id, 'ROLE', 'FULL', 'RULE', $2::uuid
+     FROM unnest($3::uuid[]) AS role_id
+     ON CONFLICT DO NOTHING`,
+    [channelObjectMetadataId, channelId, roleIds],
   );
 
   if (visibility === 'PUBLIC') {
@@ -158,7 +168,7 @@ const deleteDefaultChannels = async ({
 @Command({
   name: 'upgrade:2-47:seed-default-agent-chat-channels',
   description:
-    'Create the General chat channel for every member with AI access and the private System channel for the members who manage the workspace',
+    'Create the General chat channel for every member with AI access and the private System channel for the roles that manage the workspace',
 })
 export class SeedDefaultAgentChatChannelsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -189,7 +199,8 @@ export class SeedDefaultAgentChatChannelsCommand extends ProvisionedWorkspaceCom
       return;
     }
 
-    const memberIdsByKind = await this.findDefaultMemberIds(workspaceId);
+    const { generalMemberIds, managerMemberIds, systemRoleIds } =
+      await this.findDefaultAccess(workspaceId);
 
     const createdCount = await this.storage.run(
       workspaceId,
@@ -202,8 +213,13 @@ export class SeedDefaultAgentChatChannelsCommand extends ProvisionedWorkspaceCom
             workspaceId,
             channelObjectMetadataId,
             channel,
-            memberIds: memberIdsByKind[channel.kind],
-            ownerIds: memberIdsByKind.SYSTEM,
+            ...(channel.kind === 'GENERAL'
+              ? {
+                  memberIds: generalMemberIds,
+                  ownerIds: managerMemberIds,
+                  roleIds: [],
+                }
+              : { memberIds: [], ownerIds: [], roleIds: systemRoleIds }),
           });
 
           count += isCreated ? 1 : 0;
@@ -267,9 +283,13 @@ export class SeedDefaultAgentChatChannelsCommand extends ProvisionedWorkspaceCom
     return channelObject.id;
   }
 
-  private async findDefaultMemberIds(
-    workspaceId: string,
-  ): Promise<Record<DefaultChannel['kind'], string[]>> {
+  // System is open to the roles that manage the workspace, so whoever holds
+  // one later reads and manages it too
+  private async findDefaultAccess(workspaceId: string): Promise<{
+    generalMemberIds: string[];
+    managerMemberIds: string[];
+    systemRoleIds: string[];
+  }> {
     const {
       flatWorkspaceMemberMaps,
       userWorkspaceRoleMap,
@@ -282,10 +302,22 @@ export class SeedDefaultAgentChatChannelsCommand extends ProvisionedWorkspaceCom
       'flatRolePermissionFlagMaps',
     ]);
 
-    const memberIdsByKind: Record<DefaultChannel['kind'], string[]> = {
-      GENERAL: [],
-      SYSTEM: [],
-    };
+    const aiRoles = Object.values(flatRoleMaps.byUniversalIdentifier).filter(
+      (flatRole): flatRole is NonNullable<typeof flatRole> =>
+        isDefined(flatRole) &&
+        flatRole.canBeAssignedToUsers &&
+        isPermissionFlagGrantedToFlatRole({
+          flatRole,
+          permissionFlag: PermissionFlagType.AI,
+          flatRolePermissionFlagMaps,
+        }),
+    );
+    const aiRoleById = new Map(
+      aiRoles.map((flatRole) => [flatRole.id, flatRole]),
+    );
+
+    const generalMemberIds: string[] = [];
+    const managerMemberIds: string[] = [];
 
     for (const member of Object.values(flatWorkspaceMemberMaps.byId)) {
       if (!isDefined(member) || isDefined(member.deletedAt)) {
@@ -297,31 +329,25 @@ export class SeedDefaultAgentChatChannelsCommand extends ProvisionedWorkspaceCom
       const roleId = isDefined(userWorkspaceId)
         ? userWorkspaceRoleMap[userWorkspaceId]
         : undefined;
-      const flatRole = isDefined(roleId)
-        ? findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: roleId,
-            flatEntityMaps: flatRoleMaps,
-          })
-        : undefined;
+      const flatRole = isDefined(roleId) ? aiRoleById.get(roleId) : undefined;
 
-      if (
-        !isDefined(flatRole) ||
-        !isPermissionFlagGrantedToFlatRole({
-          flatRole,
-          permissionFlag: PermissionFlagType.AI,
-          flatRolePermissionFlagMaps,
-        })
-      ) {
+      if (!isDefined(flatRole)) {
         continue;
       }
 
-      memberIdsByKind.GENERAL.push(member.id);
+      generalMemberIds.push(member.id);
 
       if (flatRole.canUpdateAllSettings) {
-        memberIdsByKind.SYSTEM.push(member.id);
+        managerMemberIds.push(member.id);
       }
     }
 
-    return memberIdsByKind;
+    return {
+      generalMemberIds,
+      managerMemberIds,
+      systemRoleIds: aiRoles
+        .filter((flatRole) => flatRole.canUpdateAllSettings)
+        .map(({ id }) => id),
+    };
   }
 }

@@ -25,6 +25,7 @@ export enum AiExceptionCode {
   SYSTEM_CHAT_CHANNEL_CANNOT_BE_DELETED = 'SYSTEM_CHAT_CHANNEL_CANNOT_BE_DELETED',
   CHAT_CHANNEL_MANAGEMENT_FORBIDDEN = 'CHAT_CHANNEL_MANAGEMENT_FORBIDDEN',
   INVALID_CHAT_CHANNEL_NAME = 'INVALID_CHAT_CHANNEL_NAME',
+  INVALID_CHAT_CHANNEL_ROLE = 'INVALID_CHAT_CHANNEL_ROLE',
   INVALID_CHAT_CHANNEL_DESTINATION = 'INVALID_CHAT_CHANNEL_DESTINATION',
   INVALID_CHAT_CHANNEL_THREAD_CURSOR = 'INVALID_CHAT_CHANNEL_THREAD_CURSOR',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
@@ -88,6 +89,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Only the people who manage this channel can do this.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:
       return msg`A channel needs a name.`;
+    case AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE:
+      return msg`One of these roles no longer exists.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION:
       return msg`Pick another channel to move the chats to.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_THREAD_CURSOR:

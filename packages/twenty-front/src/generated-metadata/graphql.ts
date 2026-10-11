@@ -59,6 +59,7 @@ export type AgentChatChannel = {
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
+  roleIds: Array<Scalars['UUID']['output']>;
   visibility: AgentChatChannelVisibility;
 };
 
@@ -70,6 +71,7 @@ export enum AgentChatChannelAssignmentFilter {
 
 export type AgentChatChannelListItem = {
   __typename?: 'AgentChatChannelListItem';
+  canLeave: Scalars['Boolean']['output'];
   canManage: Scalars['Boolean']['output'];
   color?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
@@ -78,7 +80,15 @@ export type AgentChatChannelListItem = {
   isSystem: Scalars['Boolean']['output'];
   memberCount: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  roleIds: Array<Scalars['UUID']['output']>;
   visibility: AgentChatChannelVisibility;
+};
+
+export type AgentChatChannelRole = {
+  __typename?: 'AgentChatChannelRole';
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  label: Scalars['String']['output'];
 };
 
 export type AgentChatChannelSummary = {
@@ -1399,6 +1409,7 @@ export type CreateAgentChatChannelInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   memberIds?: Array<Scalars['UUID']['input']>;
   name: Scalars['String']['input'];
+  roleIds?: Array<Scalars['UUID']['input']>;
   visibility?: AgentChatChannelVisibility;
 };
 
@@ -5436,6 +5447,7 @@ export type PublicWorkspaceDataSummary = {
 
 export type Query = {
   __typename?: 'Query';
+  agentChatChannelRoles: Array<AgentChatChannelRole>;
   agentChatChannelSummaries: Array<AgentChatChannelSummary>;
   agentChatChannelThreadIds: AgentChatChannelThreadIds;
   agentChatChannels: Array<AgentChatChannelListItem>;
@@ -6860,6 +6872,7 @@ export type UpdateAgentChatChannelInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  roleIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
   visibility?: InputMaybe<AgentChatChannelVisibility>;
 };
 
@@ -8556,6 +8569,11 @@ export type FindWorkspaceAiStatsQueryVariables = Exact<{ [key: string]: never; }
 
 export type FindWorkspaceAiStatsQuery = { __typename?: 'Query', findWorkspaceAiStats: { __typename?: 'WorkspaceAiStats', conversationsCount: number, skillsCount: number, toolsCount: number } };
 
+export type GetAgentChatChannelRolesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAgentChatChannelRolesQuery = { __typename?: 'Query', agentChatChannelRoles: Array<{ __typename?: 'AgentChatChannelRole', id: string, label: string, icon?: string | null }> };
+
 export type GetAgentChatChannelSummariesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -8575,7 +8593,7 @@ export type GetAgentChatChannelThreadIdsQuery = { __typename?: 'Query', agentCha
 export type GetAgentChatChannelsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAgentChatChannelsQuery = { __typename?: 'Query', agentChatChannels: Array<{ __typename?: 'AgentChatChannelListItem', id: string, name: string, icon?: string | null, color?: string | null, visibility: AgentChatChannelVisibility, isMember: boolean, canManage: boolean, memberCount: number, isSystem: boolean }> };
+export type GetAgentChatChannelsQuery = { __typename?: 'Query', agentChatChannels: Array<{ __typename?: 'AgentChatChannelListItem', id: string, name: string, icon?: string | null, color?: string | null, visibility: AgentChatChannelVisibility, isMember: boolean, canLeave: boolean, canManage: boolean, memberCount: number, isSystem: boolean, roleIds: Array<string> }> };
 
 export type GetAgentChatOpenThreadsSummaryQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -11134,9 +11152,10 @@ export const FindManySkillsForSuggestionDocument = {"kind":"Document","definitio
 export const FindOneAgentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindOneAgent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findOneAgent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Agent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"prompt"}},{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"responseFormat"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"modelConfiguration"}},{"kind":"Field","name":{"kind":"Name","value":"triggers"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindOneAgentQuery, FindOneAgentQueryVariables>;
 export const FindOneSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindOneSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindOneSkillQuery, FindOneSkillQueryVariables>;
 export const FindWorkspaceAiStatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindWorkspaceAiStats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findWorkspaceAiStats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conversationsCount"}},{"kind":"Field","name":{"kind":"Name","value":"skillsCount"}},{"kind":"Field","name":{"kind":"Name","value":"toolsCount"}}]}}]}}]} as unknown as DocumentNode<FindWorkspaceAiStatsQuery, FindWorkspaceAiStatsQueryVariables>;
+export const GetAgentChatChannelRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAgentChatChannelRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"agentChatChannelRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<GetAgentChatChannelRolesQuery, GetAgentChatChannelRolesQueryVariables>;
 export const GetAgentChatChannelSummariesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAgentChatChannelSummaries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"agentChatChannelSummaries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"channelId"}},{"kind":"Field","name":{"kind":"Name","value":"openCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasUnreadOpen"}}]}}]}}]} as unknown as DocumentNode<GetAgentChatChannelSummariesQuery, GetAgentChatChannelSummariesQueryVariables>;
 export const GetAgentChatChannelThreadIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAgentChatChannelThreadIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"channelId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"status"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatChannelThreadStatus"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"assignment"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatChannelAssignmentFilter"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"agentChatChannelThreadIds"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"channelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"channelId"}}},{"kind":"Argument","name":{"kind":"Name","value":"status"},"value":{"kind":"Variable","name":{"kind":"Name","value":"status"}}},{"kind":"Argument","name":{"kind":"Name","value":"assignment"},"value":{"kind":"Variable","name":{"kind":"Name","value":"assignment"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"threadIds"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]} as unknown as DocumentNode<GetAgentChatChannelThreadIdsQuery, GetAgentChatChannelThreadIdsQueryVariables>;
-export const GetAgentChatChannelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAgentChatChannels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"agentChatChannels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"isMember"}},{"kind":"Field","name":{"kind":"Name","value":"canManage"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}}]}}]}}]} as unknown as DocumentNode<GetAgentChatChannelsQuery, GetAgentChatChannelsQueryVariables>;
+export const GetAgentChatChannelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAgentChatChannels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"agentChatChannels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"isMember"}},{"kind":"Field","name":{"kind":"Name","value":"canLeave"}},{"kind":"Field","name":{"kind":"Name","value":"canManage"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"roleIds"}}]}}]}}]} as unknown as DocumentNode<GetAgentChatChannelsQuery, GetAgentChatChannelsQueryVariables>;
 export const GetAgentChatOpenThreadsSummaryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAgentChatOpenThreadsSummary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"agentChatOpenThreadsSummary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"openThreadCount"}},{"kind":"Field","name":{"kind":"Name","value":"needsInputThreadCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasUnreadOpenThread"}},{"kind":"Field","name":{"kind":"Name","value":"hasUnreadMentionThread"}},{"kind":"Field","name":{"kind":"Name","value":"hasUnreadAssignedThread"}}]}}]}}]} as unknown as DocumentNode<GetAgentChatOpenThreadsSummaryQuery, GetAgentChatOpenThreadsSummaryQueryVariables>;
 export const GetAgentRunsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAgentRuns"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"agentRuns"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"agentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"threadTitle"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"startedAt"}},{"kind":"Field","name":{"kind":"Name","value":"endedAt"}},{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"inputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"outputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"credits"}},{"kind":"Field","name":{"kind":"Name","value":"creatorSource"}},{"kind":"Field","name":{"kind":"Name","value":"creatorName"}},{"kind":"Field","name":{"kind":"Name","value":"input"}},{"kind":"Field","name":{"kind":"Name","value":"reply"}},{"kind":"Field","name":{"kind":"Name","value":"toolNames"}}]}}]}}]} as unknown as DocumentNode<GetAgentRunsQuery, GetAgentRunsQueryVariables>;
 export const GetAiChatUsageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAiChatUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aiChatUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"limitValue"}},{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"kind"}}]}}]}}]} as unknown as DocumentNode<GetAiChatUsageQuery, GetAiChatUsageQueryVariables>;

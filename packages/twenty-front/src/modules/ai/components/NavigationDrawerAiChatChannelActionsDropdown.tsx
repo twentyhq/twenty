@@ -10,6 +10,7 @@ import {
   IconWorld,
 } from 'twenty-ui/icon';
 
+import { NavigationDrawerAiChatChannelRolesSubmenu } from '@/ai/components/NavigationDrawerAiChatChannelRolesSubmenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import {
@@ -23,6 +24,7 @@ type NavigationDrawerAiChatChannelActionsDropdownProps = {
   dropdownId: string;
   onRename: () => void;
   onSetVisibility: (visibility: AgentChatChannelVisibility) => void;
+  onSetRoles: (roleIds: string[]) => void;
   onLeave: () => void;
   onDelete: (destinationChannelId: string | null) => void;
 };
@@ -33,6 +35,7 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
   dropdownId,
   onRename,
   onSetVisibility,
+  onSetRoles,
   onLeave,
   onDelete,
 }: NavigationDrawerAiChatChannelActionsDropdownProps) => {
@@ -67,11 +70,17 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
               >
                 {isPublic ? t`Make private` : t`Make public`}
               </Dropdown.ActionItem>
+              <NavigationDrawerAiChatChannelRolesSubmenu
+                roleIds={channel.roleIds}
+                onChange={onSetRoles}
+              />
             </>
           )}
-          <Dropdown.ActionItem startIcon={<IconLogout />} onClick={onLeave}>
-            {t`Leave channel`}
-          </Dropdown.ActionItem>
+          {channel.canLeave && (
+            <Dropdown.ActionItem startIcon={<IconLogout />} onClick={onLeave}>
+              {t`Leave channel`}
+            </Dropdown.ActionItem>
+          )}
           {channel.canManage &&
             !channel.isSystem &&
             (destinationChannels.length === 0 ? (

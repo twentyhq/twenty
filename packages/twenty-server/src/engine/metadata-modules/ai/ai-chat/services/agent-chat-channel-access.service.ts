@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
+import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { RecordSharePrincipalService } from 'src/engine/core-modules/record-share/services/record-share-principal.service';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatChannelAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-access-args.type';
+import { buildAgentChatJoinedChannelsQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-joined-channels-query.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
-import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import {
   throwAgentChatChannelManagementForbidden,
   throwAgentChatChannelNotFound,
@@ -31,6 +33,7 @@ export class AgentChatChannelAccessService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly sharingService: AgentChatSharingService,
     private readonly recordSharingService: RecordSharingService,
+    private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -64,20 +67,50 @@ export class AgentChatChannelAccessService {
   async assertMemberOrManager(args: AgentChatChannelAccessArgs): Promise<void> {
     await this.assertChannelAccess({ ...args, operationType: 'update' });
 
-    const { memberTable } = getAgentChatChannelTables(args.workspaceId);
-    const [membership] = await this.threadRepository.query(
+    if (!(await this.isMember(args))) {
+      await this.assertCanManageChannel(args);
+    }
+  }
+
+  // Through a membership row, or through a role the channel is open to
+  async isMember(args: AgentChatChannelAccessArgs): Promise<boolean> {
+    const roleId = await this.findMemberRoleId(args);
+    const [joinedChannel] = await this.threadRepository.query(
       args.workspaceId,
       ({ manager }) =>
-        manager.query<{ id: string }[]>(
-          `SELECT id FROM ${memberTable}
-           WHERE "channelId" = $1 AND "workspaceMemberId" = $2`,
-          [args.channelId, args.workspaceMemberId],
+        manager.query<{ channelId: string }[]>(
+          `SELECT joined_channel."channelId"
+           FROM (${buildAgentChatJoinedChannelsQuery({
+             workspaceId: args.workspaceId,
+             workspaceMemberIdParameter: '$2::uuid',
+             roleIdParameter: '$3::uuid',
+           })}) joined_channel
+           WHERE joined_channel."channelId" = $1`,
+          [args.channelId, args.workspaceMemberId, roleId ?? null],
         ),
     );
 
-    if (!isDefined(membership)) {
-      await this.assertCanManageChannel(args);
-    }
+    return isDefined(joinedChannel);
+  }
+
+  async findMemberRoleId({
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    workspaceId: string;
+    workspaceMemberId: string;
+  }): Promise<string | undefined> {
+    const [roleId] = await this.recordSharePrincipalService.resolveRoleIds({
+      workspaceId,
+      principals: [
+        {
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          principalId: workspaceMemberId,
+        },
+      ],
+    });
+
+    return roleId;
   }
 
   async assertCanManageChannel(

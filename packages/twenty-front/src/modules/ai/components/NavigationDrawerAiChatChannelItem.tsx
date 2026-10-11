@@ -47,6 +47,7 @@ export const NavigationDrawerAiChatChannelItem = ({
   const {
     renameAgentChatChannel,
     setAgentChatChannelVisibility,
+    setAgentChatChannelRoles,
     leaveAgentChatChannel,
     deleteAgentChatChannel,
   } = useAgentChatChannelActions();
@@ -114,6 +115,9 @@ export const NavigationDrawerAiChatChannelItem = ({
                 channelId: channel.id,
                 visibility,
               })
+            }
+            onSetRoles={(roleIds) =>
+              void setAgentChatChannelRoles({ channelId: channel.id, roleIds })
             }
             onLeave={() => void leaveAgentChatChannel(channel.id)}
             onDelete={(destinationChannelId) => {

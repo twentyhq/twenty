@@ -1,3 +1,4 @@
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type SeedDefaultAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791732187511-seed-default-agent-chat-channels.command';
@@ -40,6 +41,12 @@ const readDefaultChannels = async () => {
        WHERE "channelId" = ANY($1::uuid[])`,
       [[GENERAL_CHANNEL_ID, SYSTEM_CHANNEL_ID]],
     );
+  const systemRoleGrants: { principalId: string; accessLevel: string }[] =
+    await global.testDataSource.query(
+      `SELECT "principalId", "accessLevel" FROM ${SCHEMA}."recordShare"
+       WHERE "recordId" = $1 AND "principalType" = 'ROLE'`,
+      [SYSTEM_CHANNEL_ID],
+    );
   const generalAccess: unknown[] = await global.testDataSource.query(
     `SELECT 1 FROM ${SCHEMA}."recordShare"
      WHERE "recordId" = $1 AND "principalType" = 'EVERYONE'`,
@@ -55,6 +62,7 @@ const readDefaultChannels = async () => {
     channels,
     generalMemberIds: memberIdsOf(GENERAL_CHANNEL_ID),
     systemMemberIds: memberIdsOf(SYSTEM_CHANNEL_ID),
+    systemRoleGrants,
     hasGeneralAccess: generalAccess.length === 1,
   };
 };
@@ -80,24 +88,39 @@ describe('2-47 workspace command - seed default agent chat channels (integration
       channels: [],
       generalMemberIds: [],
       systemMemberIds: [],
+      systemRoleGrants: [],
       hasGeneralAccess: false,
     });
   });
 
-  it('creates General for every member with AI access and System for those who manage the workspace', async () => {
+  it('creates General for every member with AI access and System for the roles that manage the workspace', async () => {
+    const { id: adminRoleId } = await findOneRoleByLabel({ label: 'Admin' });
+    const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
+
     await command.down(RUN_ON_WORKSPACE_ARGS);
     await command.up(RUN_ON_WORKSPACE_ARGS);
 
-    const { channels, generalMemberIds, systemMemberIds, hasGeneralAccess } =
-      await readDefaultChannels();
+    const {
+      channels,
+      generalMemberIds,
+      systemMemberIds,
+      systemRoleGrants,
+      hasGeneralAccess,
+    } = await readDefaultChannels();
 
     expect(channels).toEqual([
       { id: GENERAL_CHANNEL_ID, name: 'General', visibility: 'PUBLIC' },
       { id: SYSTEM_CHANNEL_ID, name: 'System', visibility: 'PRIVATE' },
     ]);
     expect(generalMemberIds).toEqual(expect.arrayContaining([JANE, JONY]));
-    expect(systemMemberIds).toContain(JANE);
-    expect(systemMemberIds).not.toContain(JONY);
+    expect(systemMemberIds).toEqual([]);
+    expect(systemRoleGrants).toContainEqual({
+      principalId: adminRoleId,
+      accessLevel: 'FULL',
+    });
+    expect(
+      systemRoleGrants.map(({ principalId }) => principalId),
+    ).not.toContain(memberRoleId);
     expect(hasGeneralAccess).toBe(true);
   });
 

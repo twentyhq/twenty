@@ -14,6 +14,7 @@ import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-thread-cursor.type';
+import { buildAgentChatJoinedChannelsQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-joined-channels-query.util';
 import { decodeAgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/decode-agent-chat-channel-thread-cursor.util';
 import { encodeAgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/encode-agent-chat-channel-thread-cursor.util';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
@@ -138,15 +139,14 @@ export class AgentChatChannelThreadsService {
     };
   }
 
-  // One per channel the member joined, in their sidebar order
+  // One per channel the member is in, in their sidebar order
   async findSummaries(args: MemberArgs): Promise<AgentChatChannelSummaryDTO[]> {
     if (!(await this.sharingService.hasChannels(args.workspaceId))) {
       return [];
     }
 
-    const { channelTable, memberTable } = getAgentChatChannelTables(
-      args.workspaceId,
-    );
+    const { channelTable } = getAgentChatChannelTables(args.workspaceId);
+    const roleId = await this.channelAccessService.findMemberRoleId(args);
 
     return this.queryReadableThreads<{
       channelId: string;
@@ -161,17 +161,20 @@ export class AgentChatChannelThreadsService {
               AND thread."channelId" IS NOT NULL
               GROUP BY thread."channelId"
             )
-            SELECT membership."channelId",
+            SELECT joined_channel."channelId",
               COALESCE(channel_thread."openCount", 0) AS "openCount",
               COALESCE(channel_thread."hasUnreadOpen", false) AS "hasUnreadOpen"
-            FROM ${memberTable} membership
+            FROM (${buildAgentChatJoinedChannelsQuery({
+              workspaceId: args.workspaceId,
+              workspaceMemberIdParameter:
+                ':channelThreadsWorkspaceMemberId::uuid',
+              roleIdParameter: ':channelThreadsRoleId::uuid',
+            })}) joined_channel
             JOIN ${channelTable} channel
-              ON channel.id = membership."channelId" AND channel."deletedAt" IS NULL
-            LEFT JOIN channel_thread ON channel_thread."channelId" = membership."channelId"
-            WHERE membership."workspaceMemberId" = :channelThreadsWorkspaceMemberId::uuid
-              AND membership."deletedAt" IS NULL
-            ORDER BY membership.position, membership."createdAt"`,
-      parameters,
+              ON channel.id = joined_channel."channelId" AND channel."deletedAt" IS NULL
+            LEFT JOIN channel_thread ON channel_thread."channelId" = joined_channel."channelId"
+            ORDER BY joined_channel.position NULLS LAST, lower(channel.name), channel.id`,
+      parameters: { ...parameters, channelThreadsRoleId: roleId ?? null },
     }));
   }
 
