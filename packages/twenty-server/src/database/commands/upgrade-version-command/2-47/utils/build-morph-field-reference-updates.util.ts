@@ -9,10 +9,10 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
-import { buildMorphViewFieldReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-46/utils/build-morph-view-field-reference-updates.util';
-import { buildMorphPermissionReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-46/utils/build-morph-permission-reference-updates.util';
-import { buildMorphJunctionReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-46/utils/build-morph-junction-reference-updates.util';
-import { buildMorphWidgetReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-46/utils/build-morph-widget-reference-updates.util';
+import { buildMorphViewFieldReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-47/utils/build-morph-view-field-reference-updates.util';
+import { buildMorphPermissionReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-47/utils/build-morph-permission-reference-updates.util';
+import { buildMorphJunctionReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-47/utils/build-morph-junction-reference-updates.util';
+import { buildMorphWidgetReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-47/utils/build-morph-widget-reference-updates.util';
 
 export const buildMorphFieldReferenceUpdates = ({
   flatFieldMetadataMaps,

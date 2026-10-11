@@ -13,13 +13,15 @@ export const isMorphRelationGroup = <
   type: FieldMetadataType.MORPH_RELATION;
   morphId: string;
 } & {
-  [TKey in Extract<
-    keyof TFieldMetadata,
-    | 'relationTargetFieldMetadataId'
-    | 'relationTargetObjectMetadataId'
-    | 'relationTargetFieldMetadataUniversalIdentifier'
-    | 'relationTargetObjectMetadataUniversalIdentifier'
-  >]: null;
+  [
+    TKey in Extract<
+      keyof TFieldMetadata,
+      | 'relationTargetFieldMetadataId'
+      | 'relationTargetObjectMetadataId'
+      | 'relationTargetFieldMetadataUniversalIdentifier'
+      | 'relationTargetObjectMetadataUniversalIdentifier'
+    >
+  ]: null;
 } =>
   fieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
   fieldMetadata.universalIdentifier === fieldMetadata.morphId;

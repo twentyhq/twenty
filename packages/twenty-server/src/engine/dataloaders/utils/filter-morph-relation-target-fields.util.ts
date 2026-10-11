@@ -13,7 +13,7 @@ export const filterMorphRelationTargetFields = (
       .map((field) => `${field.objectMetadataId}:${field.universalIdentifier}`),
   );
 
-  // Until the 2.46 backfill completes, returning partial metadata would erase saved fields on clients.
+  // Until the 2.47 backfill completes, returning partial metadata would erase saved fields on clients.
   if (
     flatFieldMetadatas.some(
       (field) =>

@@ -6,8 +6,8 @@ import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/fl
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildIndependentMorphFields } from 'src/database/commands/upgrade-version-command/2-46/utils/build-independent-morph-fields.util';
-import { buildMorphFieldReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-46/utils/build-morph-field-reference-updates.util';
+import { buildIndependentMorphFields } from 'src/database/commands/upgrade-version-command/2-47/utils/build-independent-morph-fields.util';
+import { buildMorphFieldReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-47/utils/build-morph-field-reference-updates.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
@@ -16,9 +16,9 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.46.0', 1791546573975)
+@RegisteredWorkspaceCommand('2.47.0', 1791715137110)
 @Command({
-  name: 'upgrade:2-46:persist-independent-morph-fields',
+  name: 'upgrade:2-47:persist-independent-morph-fields',
   description: 'Give morph fields an identity independent of their targets',
 })
 export class PersistIndependentMorphFieldsCommand extends ProvisionedWorkspaceCommandRunner {

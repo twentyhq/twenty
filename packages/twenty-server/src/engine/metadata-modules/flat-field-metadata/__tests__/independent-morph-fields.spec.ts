@@ -19,8 +19,8 @@ import { addMorphFieldsForLegacyManifest } from 'src/engine/core-modules/applica
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
-import { buildMorphFieldReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-46/utils/build-morph-field-reference-updates.util';
-import { buildIndependentMorphFields } from 'src/database/commands/upgrade-version-command/2-46/utils/build-independent-morph-fields.util';
+import { buildMorphFieldReferenceUpdates } from 'src/database/commands/upgrade-version-command/2-47/utils/build-morph-field-reference-updates.util';
+import { buildIndependentMorphFields } from 'src/database/commands/upgrade-version-command/2-47/utils/build-independent-morph-fields.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
