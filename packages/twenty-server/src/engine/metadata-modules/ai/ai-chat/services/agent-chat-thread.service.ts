@@ -14,7 +14,6 @@ import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
-import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -120,7 +119,7 @@ export class AgentChatThreadService {
 
     const assignedThreadIds = assignedThreads.map(({ id }) => id);
     const participantObjectMetadataId =
-      await this.sharingService.findParticipantObjectMetadataId(workspaceId);
+      await this.sharingService.getParticipantObjectMetadataId(workspaceId);
 
     const setUpThreads = await this.threadRepository.query(
       workspaceId,
@@ -237,10 +236,7 @@ export class AgentChatThreadService {
         memberIds: candidateMemberIds,
       });
 
-    if (
-      participantMemberIds.length === 0 ||
-      !(await this.sharingService.hasInboxState(args.workspaceId))
-    ) {
+    if (participantMemberIds.length === 0) {
       return participantMemberIds;
     }
 
@@ -283,13 +279,6 @@ export class AgentChatThreadService {
   }: AgentChatThreadAccessArgs & {
     assigneeWorkspaceMemberId: string | null;
   }): Promise<void> {
-    if (!(await this.sharingService.hasInboxState(args.workspaceId))) {
-      throw new AiException(
-        'Chat assignees are not available until this workspace finishes upgrading',
-        AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE,
-      );
-    }
-
     const thread = await this.getWritableThread(args);
 
     if (
@@ -408,13 +397,11 @@ export class AgentChatThreadService {
       return;
     }
 
-    const activity = (await this.sharingService.hasInboxState(workspaceId))
-      ? await this.recordAgentActivity({ workspaceId, threadId, text })
-      : await touchAgentChatThread({
-          repository: this.threadRepository,
-          workspaceId,
-          threadId,
-        });
+    const activity = await this.recordAgentActivity({
+      workspaceId,
+      threadId,
+      text,
+    });
 
     if (!isDefined(activity)) {
       return;
@@ -467,7 +454,7 @@ export class AgentChatThreadService {
       threadAfter: {
         ...thread,
         ...recordedColumns,
-        lastActivityAt: lastActivityAt?.toISOString() ?? thread.lastActivityAt,
+        lastActivityAt: lastActivityAt.toISOString(),
         updatedAt: updatedAt.toISOString(),
       },
     });

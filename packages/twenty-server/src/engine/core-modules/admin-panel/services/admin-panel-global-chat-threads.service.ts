@@ -116,43 +116,22 @@ export class AdminPanelGlobalChatThreadsService {
             return;
           }
 
-          // Fence for the 2.46 cross-upgrade window: turns only have a status
-          // once the 2.46 commands reached their workspace. Remove once 2.46
-          // leaves the window.
-          const schemasWithTurnStatus = new Set(
-            (
-              await manager.query<{ schemaName: string }[]>(
-                `SELECT table_schema AS "schemaName" FROM information_schema.columns
-                 WHERE table_name = 'agentTurn' AND column_name = 'status' AND table_schema = ANY($1::text[])`,
-                [
-                  partitions.map(({ workspaceIds }) =>
-                    getWorkspaceSchemaName(workspaceIds[0]),
-                  ),
-                ],
-              )
-            ).map(({ schemaName }) => schemaName),
-          );
-
           const parameters: unknown[] = [];
           const queries = partitions.map(
             ({ workspaceIds, table }, partitionIndex) => {
               const search = args.searchTerm?.trim().replace(/[\\%_]/g, '\\$&');
-              const hasErrorSql = schemasWithTurnStatus.has(
-                getWorkspaceSchemaName(workspaceIds[0]),
-              )
-                ? `COALESCE((SELECT turn.status = '${AgentTurnStatus.FAILED}' FROM ${table('agentTurn')} turn WHERE turn."threadId" = thread.id ORDER BY turn."createdAt" DESC, turn.id DESC LIMIT 1), false)`
-                : 'false';
               const query = `
           WITH candidates AS (
             SELECT thread.id, thread.title, workspace.id AS "workspaceId", workspace."displayName" AS "workspaceDisplayName",
               membership.id AS "userWorkspaceId", owner.email AS "userEmail", owner."firstName" AS "userFirstName", owner."lastName" AS "userLastName",
-              thread."deletedAt", thread."createdAt", thread."updatedAt", ${hasErrorSql} AS "hasError",
-              (EXISTS (SELECT 1 FROM ${table('agentMessage')} context WHERE context."threadId" = thread.id AND (context.role = 'system' OR context."isHidden" = true))
+              thread."deletedAt", thread."createdAt", thread."updatedAt",
+              COALESCE((SELECT turn.status = '${AgentTurnStatus.FAILED}' FROM ${table('agentTurn')} turn WHERE turn."threadId" = thread.id ORDER BY turn."createdAt" DESC, turn.id DESC LIMIT 1), false) AS "hasError",
+              (EXISTS (SELECT 1 FROM ${table('agentMessage')} context WHERE context."threadId" = thread.id AND context.role = 'system')
                 OR (membership.id IS NOT NULL AND thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || membership.id::text))) AS "isOnboardingThread",
-              (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role <> 'system') AS "messageCount",
-              ((SELECT COUNT(*) FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role = 'user')
+              (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message.role <> 'system') AS "messageCount",
+              ((SELECT COUNT(*) FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message.role = 'user')
                 + (SELECT COUNT(*) FROM ${table('agentMessagePart')} part JOIN ${table('agentMessage')} message ON message.id = part."messageId"
-                   WHERE message."threadId" = thread.id AND message."isHidden" = false AND part."toolName" = ANY($3::text[]) AND part."toolOutput"->'result'->>'status' = 'answered'))::int AS "userReplyCount"
+                   WHERE message."threadId" = thread.id AND part."toolName" = ANY($3::text[]) AND part."toolOutput"->'result'->>'status' = 'answered'))::int AS "userReplyCount"
             FROM ${table('agentChatThread')} thread
             JOIN core.workspace workspace ON workspace.id = ANY($1::uuid[]) AND workspace."allowImpersonation" = true AND workspace."deletedAt" IS NULL
             LEFT JOIN ${escapeIdentifier(getWorkspaceSchemaName(workspaceIds[0]))}."workspaceMember" member ON member.id = thread."workspaceMemberId"

@@ -19,7 +19,6 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
-import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -1159,27 +1158,5 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect((await findOpenThreadsSummary()).openThreadCount).toBe(
       before.openThreadCount + 1,
     );
-  });
-
-  it('reads as empty in a workspace the inbox upgrade has not reached', async () => {
-    const threadId = await createTestThread();
-
-    await setShareWithJony(threadId, true);
-    jest
-      .spyOn(
-        getAppProviderByClassName<AgentChatSharingService>(
-          'AgentChatSharingService',
-        ),
-        'hasInboxState',
-      )
-      .mockResolvedValue(false);
-
-    expect(await findOpenThreadsSummary()).toEqual({
-      openThreadCount: 0,
-      needsInputThreadCount: 0,
-      hasUnreadOpenThread: false,
-      hasUnreadMentionThread: false,
-      hasUnreadAssignedThread: false,
-    });
   });
 });

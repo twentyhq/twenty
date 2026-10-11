@@ -32,7 +32,6 @@ import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/typ
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
-import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
@@ -54,7 +53,6 @@ export class AgentChatService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
-    private readonly upgradeFenceService: AgentHistoryUpgradeFenceService,
   ) {}
 
   private getMessageSenderValues({
@@ -212,12 +210,8 @@ export class AgentChatService {
       return [];
     }
 
-    // hidden user messages are contexts the 2.46 upgrade has not turned into system messages yet
     const contextMessages = await this.messageRepository.find(workspaceId, {
-      where: [
-        { threadId, role: AgentMessageRole.SYSTEM },
-        { threadId, isHidden: true },
-      ],
+      where: { threadId, role: AgentMessageRole.SYSTEM },
       order: { createdAt: 'ASC', id: 'ASC' },
       relations: ['parts'],
     });
@@ -246,10 +240,7 @@ export class AgentChatService {
   }): Promise<string> {
     // only the contexts and their turns go, so a message queued meanwhile stays
     const earlierContexts = await this.messageRepository.find(workspaceId, {
-      where: [
-        { threadId, role: AgentMessageRole.SYSTEM },
-        { threadId, isHidden: true },
-      ],
+      where: { threadId, role: AgentMessageRole.SYSTEM },
       select: ['id', 'turnId'],
     });
 
@@ -285,7 +276,6 @@ export class AgentChatService {
   }): Promise<boolean> {
     return this.messageRepository.existsBy(workspaceId, {
       threadId,
-      isHidden: false,
       role: Not(AgentMessageRole.SYSTEM),
     });
   }
@@ -322,7 +312,6 @@ export class AgentChatService {
     return this.messageRepository.find(workspaceId, {
       where: {
         threadId,
-        isHidden: false,
         role: Not(AgentMessageRole.SYSTEM),
       },
       order: { processedAt: { order: 'ASC', nulls: 'NULLS LAST' } },
@@ -559,9 +548,6 @@ export class AgentChatService {
     isLastAnswer: boolean;
     workspaceId: string;
   }): Promise<void> {
-    const hasAgentTurnRunFields =
-      await this.upgradeFenceService.hasUpgradedAgentHistory(workspaceId);
-
     const isPendingQuestionCleared = await this.messagePartRepository.query(
       workspaceId,
       async ({ manager, table }) => {
@@ -587,12 +573,10 @@ export class AgentChatService {
           return false;
         }
 
-        if (hasAgentTurnRunFields) {
-          await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
-            messageId,
-            AgentTurnStatus.COMPLETED,
-          ]);
-        }
+        await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
+          messageId,
+          AgentTurnStatus.COMPLETED,
+        ]);
 
         return true;
       },
