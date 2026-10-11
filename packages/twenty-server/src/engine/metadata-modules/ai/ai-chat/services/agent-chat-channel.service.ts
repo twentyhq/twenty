@@ -391,32 +391,33 @@ export class AgentChatChannelService {
     });
   }
 
+  // A private channel is only joined by being added to it
   async joinChannel(args: AgentChatChannelAccessArgs): Promise<void> {
     await this.channelAccessService.assertChannelAccess({
       ...args,
       operationType: 'select',
     });
 
-    const channel = await this.findChannelOrThrow(args);
-
-    // A private channel is only joined by being added to it
-    if (channel.visibility !== AgentChatChannelVisibility.PUBLIC) {
-      return throwAgentChatChannelNotFound();
-    }
-
     await this.addMembersToChannel({
       ...args,
       memberIds: [args.workspaceMemberId],
+      canManage: await this.channelAccessService.canManageChannel(args),
     });
   }
 
+  // Members add people to a public channel, which anyone can join anyway;
+  // who joins a private one is left to who manages it
   async addMembers({
     memberIds,
     ...args
   }: AgentChatChannelAccessArgs & { memberIds: string[] }): Promise<void> {
     await this.channelAccessService.assertMemberOrManager(args);
-    await this.findChannelOrThrow(args);
-    await this.addMembersToChannel({ ...args, memberIds });
+
+    await this.addMembersToChannel({
+      ...args,
+      memberIds,
+      canManage: await this.channelAccessService.canManageChannel(args),
+    });
   }
 
   // Members leave on their own; removing someone else is left to who manages
@@ -470,25 +471,53 @@ export class AgentChatChannelService {
     });
   }
 
+  // The visibility is read under the lock updateChannel takes, so a channel
+  // made private meanwhile is not joined through its old visibility
   private async addMembersToChannel({
     memberIds,
+    canManage,
     ...args
-  }: AgentChatChannelAccessArgs & { memberIds: string[] }): Promise<void> {
+  }: AgentChatChannelAccessArgs & {
+    memberIds: string[];
+    canManage: boolean;
+  }): Promise<void> {
     const { channelObjectMetadataId } =
       await this.channelAccessService.findChannelObjectMetadataIds(
         args.workspaceId,
       );
+    const { channelTable } = getAgentChatChannelTables(args.workspaceId);
 
     const members = await this.threadRepository.query(
       args.workspaceId,
-      ({ manager }) =>
-        insertAgentChatChannelMembers({
+      async ({ manager }) => {
+        const [channel] = await manager.query<
+          Pick<AgentChatChannelWorkspaceEntity, 'visibility'>[]
+        >(
+          `SELECT visibility FROM ${channelTable}
+           WHERE id = $1 AND "deletedAt" IS NULL
+           FOR UPDATE`,
+          [args.channelId],
+        );
+
+        if (!isDefined(channel)) {
+          return throwAgentChatChannelNotFound();
+        }
+
+        if (
+          !canManage &&
+          channel.visibility !== AgentChatChannelVisibility.PUBLIC
+        ) {
+          return throwAgentChatChannelManagementForbidden();
+        }
+
+        return insertAgentChatChannelMembers({
           manager,
           workspaceId: args.workspaceId,
           channelId: args.channelId,
           memberIds,
           channelObjectMetadataId,
-        }),
+        });
+      },
     );
 
     await this.channelRecordEventService.emit({

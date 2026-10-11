@@ -217,15 +217,13 @@ export class AgentRunConversationService {
           execution,
         })
         .catch(async (error: unknown) => {
+          const failure = mapErrorToStreamError(error);
+
           await this.turnRecorderService.finishExecutedTurn({
             ...turn,
-            error: mapErrorToStreamError(error),
+            error: failure,
           });
-          await this.recordFailureActivity({
-            workspaceId,
-            threadId,
-            failure: mapErrorToStreamError(error),
-          });
+          await this.recordFailureActivity({ workspaceId, threadId, failure });
 
           throw error;
         });
@@ -276,17 +274,15 @@ export class AgentRunConversationService {
     turnId: string;
     error: unknown;
   }): Promise<void> {
+    const failure = mapErrorToStreamError(error);
+
     await this.turnRecorderService.finish({
       workspaceId,
       turnId,
       status: AgentTurnStatus.FAILED,
-      error: mapErrorToStreamError(error),
+      error: failure,
     });
-    await this.recordFailureActivity({
-      workspaceId,
-      threadId,
-      failure: mapErrorToStreamError(error),
-    });
+    await this.recordFailureActivity({ workspaceId, threadId, failure });
   }
 
   // A failed run in a channel comes back for its members, where a chat

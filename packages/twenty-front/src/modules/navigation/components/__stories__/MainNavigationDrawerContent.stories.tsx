@@ -1,34 +1,34 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import {
-  AgentChatChannelVisibility,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
-const CHANNEL = {
-  __typename: 'AgentChatChannelListItem' as const,
+const THREAD_PERMISSIONS = {
+  canRead: true,
+  canUpdate: true,
+  canDelete: true,
+  canSoftDelete: true,
+};
+
+const THREAD = {
+  __typename: 'AgentChatThread',
   id: '3a36fc8c-c8e2-4f16-a283-24dc05e3704b',
-  name: 'Sales',
-  icon: null,
-  color: null,
-  visibility: AgentChatChannelVisibility.PUBLIC,
-  isMember: true,
-  canManage: true,
-  memberCount: 1,
-  isSystem: false,
+  title: 'Pipeline summary',
+  deletedAt: null,
+  createdAt: '2026-01-01T12:00:00.000Z',
+  updatedAt: '2026-01-01T12:00:00.000Z',
 };
 
 const ContentWithCollapseControl = () => {
@@ -56,10 +56,14 @@ const AiNavigationContent = () => {
       isImpersonating: false,
       twoFactorAuthenticationMethodSummary: null,
     });
-    setAgentChatThreadList(initialStore, []);
-    initialStore.set(agentChatChannelsState.atom, [CHANNEL]);
+    setAgentChatThreadList(initialStore, [THREAD]);
     return initialStore;
   });
+
+  // Persisted auth atoms must hydrate before capturing the permission snapshot.
+  useEffect(() => {
+    setAgentChatThreadPermissions(store, THREAD.id, THREAD_PERMISSIONS);
+  }, [store]);
 
   return (
     <Provider store={store}>
@@ -85,28 +89,28 @@ export const KeepsAiContentWhenCollapsed: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      await canvas.findByRole('button', { name: /Sales/ }),
+      await canvas.findByRole('button', { name: /Pipeline summary/ }),
     ).toBeVisible();
-    const channelOptions = await canvas.findByLabelText('Channel options', {
+    const chatActions = await canvas.findByLabelText('Chat actions', {
       selector: 'button',
     });
-    channelOptions.focus();
-    await expect(channelOptions).toHaveFocus();
+    chatActions.focus();
+    await expect(chatActions).toHaveFocus();
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Collapse sidebar' }),
     );
     await expect(
-      await canvas.findByRole('button', { name: /Sales/ }),
+      await canvas.findByRole('button', { name: /Pipeline summary/ }),
     ).toBeVisible();
-    channelOptions.focus();
-    await expect(channelOptions).not.toHaveFocus();
+    chatActions.focus();
+    await expect(chatActions).not.toHaveFocus();
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Expand sidebar' }),
     );
     await expect(
-      await canvas.findByRole('button', { name: /Sales/ }),
+      await canvas.findByRole('button', { name: /Pipeline summary/ }),
     ).toBeVisible();
-    channelOptions.focus();
-    await expect(channelOptions).toHaveFocus();
+    chatActions.focus();
+    await expect(chatActions).toHaveFocus();
   },
 };
