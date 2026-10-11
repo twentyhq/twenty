@@ -50,11 +50,11 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
       />
       <DropdownContent side="right" align="start">
         <Dropdown.Section>
+          <Dropdown.ActionItem startIcon={<IconEdit />} onClick={onRename}>
+            {t`Rename`}
+          </Dropdown.ActionItem>
           {channel.canManage && (
             <>
-              <Dropdown.ActionItem startIcon={<IconEdit />} onClick={onRename}>
-                {t`Rename`}
-              </Dropdown.ActionItem>
               <Dropdown.ActionItem
                 startIcon={isPublic ? <IconLock /> : <IconWorld />}
                 onClick={() =>
