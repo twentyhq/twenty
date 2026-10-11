@@ -27,12 +27,13 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.viewFieldGroup.update,
     ...aggregatedOrchestratorActionsReport.viewField.create,
     ...aggregatedOrchestratorActionsReport.viewField.update,
-    ...aggregatedOrchestratorActionsReport.viewFilterGroup.delete,
     ...aggregatedOrchestratorActionsReport.viewFilterGroup.create,
     ...aggregatedOrchestratorActionsReport.viewFilterGroup.update,
     ...aggregatedOrchestratorActionsReport.viewFilter.delete,
     ...aggregatedOrchestratorActionsReport.viewFilter.create,
     ...aggregatedOrchestratorActionsReport.viewFilter.update,
+    // Filters and child groups CASCADE on their group, so one moved out of a dropped group must be repointed before that group goes
+    ...aggregatedOrchestratorActionsReport.viewFilterGroup.delete,
     ...aggregatedOrchestratorActionsReport.viewGroup.delete,
     ...aggregatedOrchestratorActionsReport.viewGroup.create,
     ...aggregatedOrchestratorActionsReport.viewGroup.update,
@@ -93,6 +94,9 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.frontComponent.create,
     ...aggregatedOrchestratorActionsReport.frontComponent.update,
 
+    // commandMenuItem.pageLayoutId is a non-deferrable FK
+    ...aggregatedOrchestratorActionsReport.pageLayout.create,
+
     ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.update,
 
@@ -101,10 +105,6 @@ export const computeOrderedMigrationActions = (
 
     ...aggregatedOrchestratorActionsReport.frontComponent.delete,
 
-    ...aggregatedOrchestratorActionsReport.pageLayout.delete,
-    ...aggregatedOrchestratorActionsReport.pageLayout.create,
-
-    ...aggregatedOrchestratorActionsReport.pageLayoutTab.delete,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.create,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.update,
 
@@ -114,12 +114,15 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.create,
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.update,
 
-    ...aggregatedOrchestratorActionsReport.navigationMenuItem.delete,
+    // Widgets CASCADE on their tab, and tabs on their layout, so a widget moved off a dropped tab must be repointed before that tab or layout goes
+    ...aggregatedOrchestratorActionsReport.pageLayoutTab.delete,
+    ...aggregatedOrchestratorActionsReport.pageLayout.delete,
+
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.create,
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.update,
+    // Items CASCADE on their folder, so one moved out of a dropped folder must be repointed before that folder goes
+    ...aggregatedOrchestratorActionsReport.navigationMenuItem.delete,
 
-    ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
-      .delete,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .create,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
@@ -128,6 +131,10 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.delete,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.create,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.update,
+
+    // Predicates and child groups CASCADE on their group, so one moved out of a dropped group must be repointed before that group goes
+    ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
+      .delete,
 
     ...aggregatedOrchestratorActionsReport.webhook.delete,
     ...aggregatedOrchestratorActionsReport.webhook.create,
