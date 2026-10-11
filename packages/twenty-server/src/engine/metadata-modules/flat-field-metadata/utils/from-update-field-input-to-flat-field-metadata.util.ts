@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -20,6 +21,7 @@ import {
   handleFlatFieldMetadataUpdateSideEffect,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-flat-field-metadata-update-side-effect.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { validateMorphRelationsUpdatePayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relations-update-payload.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
@@ -108,6 +110,24 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       workspaceCustomApplicationUniversalIdentifier,
     });
 
+  const { morphRelationsUpdatePayload } = rawUpdateFieldInput;
+
+  if (isNonEmptyArray(morphRelationsUpdatePayload)) {
+    const morphRelationsUpdatePayloadErrors =
+      validateMorphRelationsUpdatePayload({
+        flatFieldMetadataToUpdate: existingFlatFieldMetadataToUpdate,
+        morphRelationsUpdatePayload,
+        flatApplication,
+        isSystemBuild,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      });
+
+    if (morphRelationsUpdatePayloadErrors.length > 0) {
+      return { status: 'fail', errors: morphRelationsUpdatePayloadErrors };
+    }
+  }
+
   const { flatFieldMetadatasToCreate, flatIndexMetadatasToCreate } =
     isFlatFieldMetadataOfType(
       flatFieldMetadataFromTo.toFlatFieldMetadata,
@@ -115,8 +135,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     )
       ? computeFlatFieldToUpdateFromMorphRelationUpdatePayload({
           flatApplication,
-          morphRelationsUpdatePayload:
-            rawUpdateFieldInput?.morphRelationsUpdatePayload,
+          morphRelationsUpdatePayload,
           flatFieldMetadataMaps: flatFieldMetadataMaps,
           fieldMetadataToUpdate: flatFieldMetadataFromTo.toFlatFieldMetadata,
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,

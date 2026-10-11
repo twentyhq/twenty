@@ -5,8 +5,11 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -16,6 +19,7 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
   let createdObjectMetadataCompanyId: string;
   let createdObjectMetadataNewTargetId: string;
   let createdFieldMetadataId: string;
+  let createdTargetFieldMetadataId: string;
 
   beforeAll(async () => {
     const {
@@ -135,10 +139,20 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
           },
         ],
       },
+      gqlFields: `
+        id
+        morphRelations {
+          sourceFieldMetadata {
+            id
+          }
+        }
+      `,
       expectToFail: false,
     });
 
     createdFieldMetadataId = rawCreateOneField.id;
+    createdTargetFieldMetadataId =
+      rawCreateOneField.morphRelations?.[0]?.sourceFieldMetadata.id ?? '';
   });
 
   afterEach(async () => {
@@ -231,6 +245,72 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
         }
       }
       `,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('Should fail adding the same object metadata target twice in one payload', async () => {
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: createdFieldMetadataId,
+        updatePayload: {
+          morphRelationsUpdatePayload: [
+            { targetObjectMetadataId: createdObjectMetadataNewTargetId },
+            { targetObjectMetadataId: createdObjectMetadataNewTargetId },
+          ],
+        },
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('Should fail adding one object metadata target through one of the morph relation targets', async () => {
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: createdTargetFieldMetadataId,
+        updatePayload: {
+          morphRelationsUpdatePayload: [
+            { targetObjectMetadataId: createdObjectMetadataNewTargetId },
+          ],
+        },
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('Should fail adding one object metadata target to a standard morph relation', async () => {
+    const objects = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
+    const noteTargetGroup = objects
+      .find(
+        (object) =>
+          object.universalIdentifier ===
+          STANDARD_OBJECTS.noteTarget.universalIdentifier,
+      )
+      ?.fieldsList.find(
+        (field) =>
+          field.universalIdentifier ===
+          STANDARD_OBJECTS.noteTarget.fields.target.universalIdentifier,
+      );
+
+    assertIsDefinedOrThrow(noteTargetGroup);
+
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: noteTargetGroup.id,
+        updatePayload: {
+          morphRelationsUpdatePayload: [
+            { targetObjectMetadataId: createdObjectMetadataNewTargetId },
+          ],
+        },
+      },
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors });
