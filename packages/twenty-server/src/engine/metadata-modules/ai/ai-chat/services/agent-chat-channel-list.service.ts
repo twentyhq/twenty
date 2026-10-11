@@ -4,6 +4,7 @@ import { type AgentChatChannelListItemDTO } from 'src/engine/metadata-modules/ai
 import { type AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { buildAgentChatJoinedChannelsQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-joined-channels-query.util';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
@@ -11,7 +12,7 @@ type ChannelRow = Omit<AgentChatChannelListItemDTO, 'canManage'> & {
   visibility: AgentChatChannelVisibility;
 };
 
-// The channels a member can read: the ones they joined first, in their
+// The channels a member can read: the ones they are in first, in their
 // sidebar order, then the public ones they can join
 @Injectable()
 export class AgentChatChannelListService {
@@ -37,8 +38,12 @@ export class AgentChatChannelListService {
       workspaceId,
       workspaceMemberId,
     });
-    const { channelTable, memberTable } =
+    const { channelTable, memberTable, recordShareTable } =
       getAgentChatChannelTables(workspaceId);
+    const roleId = await this.channelAccessService.findMemberRoleId({
+      workspaceId,
+      workspaceMemberId,
+    });
 
     const rows = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -54,19 +59,30 @@ export class AgentChatChannelListService {
         return repository.executeRaw<ChannelRow>(
           `SELECT channel.id, channel.name, channel.icon, channel.color,
              channel.visibility,
-             membership.id IS NOT NULL AS "isMember",
+             joined_channel."channelId" IS NOT NULL AS "isMember",
+             COALESCE(joined_channel."hasMembership", false) AS "canLeave",
              (SELECT count(*)::int FROM ${memberTable} member
-              WHERE member."channelId" = channel.id) AS "memberCount"
+              WHERE member."channelId" = channel.id) AS "memberCount",
+             ARRAY(
+               SELECT DISTINCT role_grant."principalId" FROM ${recordShareTable} role_grant
+               WHERE role_grant."recordId" = channel.id AND role_grant."principalType" = 'ROLE'
+                 AND role_grant."rowCause" = 'RULE' AND role_grant."sourceId" = channel.id
+                 AND role_grant."deletedAt" IS NULL
+             ) AS "roleIds"
            FROM ${channelTable} channel
-           LEFT JOIN ${memberTable} membership
-             ON membership."channelId" = channel.id
-             AND membership."workspaceMemberId" = :channelListWorkspaceMemberId::uuid
+           LEFT JOIN (${buildAgentChatJoinedChannelsQuery({
+             workspaceId,
+             workspaceMemberIdParameter: ':channelListWorkspaceMemberId::uuid',
+             roleIdParameter: ':channelListRoleId::uuid',
+           })}) joined_channel ON joined_channel."channelId" = channel.id
            WHERE channel."deletedAt" IS NULL
              AND channel.id IN (${readableChannelQueryBuilder.getQuery()})
-           ORDER BY membership.position NULLS LAST, lower(channel.name), channel.id`,
+           ORDER BY joined_channel."channelId" IS NULL, joined_channel.position NULLS LAST,
+             lower(channel.name), channel.id`,
           {
             ...readableChannelQueryBuilder.getParameters(),
             channelListWorkspaceMemberId: workspaceMemberId,
+            channelListRoleId: roleId ?? null,
           },
         );
       },

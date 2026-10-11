@@ -9,8 +9,10 @@ export const GET_AGENT_CHAT_CHANNELS = gql`
       color
       visibility
       isMember
+      canLeave
       canManage
       memberCount
+      roleIds
     }
   }
 `;

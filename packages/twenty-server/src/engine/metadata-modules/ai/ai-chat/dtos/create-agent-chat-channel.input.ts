@@ -22,4 +22,8 @@ export class CreateAgentChatChannelInput {
   // The creator always joins
   @Field(() => [UUIDScalarType], { defaultValue: [] })
   memberIds: string[];
+
+  // Everyone holding one of these roles is in the channel
+  @Field(() => [UUIDScalarType], { defaultValue: [] })
+  roleIds: string[];
 }

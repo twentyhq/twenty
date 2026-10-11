@@ -20,12 +20,20 @@ export class AgentChatChannelListItemDTO {
   @Field(() => AgentChatChannelVisibility)
   visibility: AgentChatChannelVisibility;
 
+  // Through a membership or one of the channel's roles
   @Field(() => Boolean)
   isMember: boolean;
+
+  // Only a membership can be left; a role keeps its holders in
+  @Field(() => Boolean)
+  canLeave: boolean;
 
   @Field(() => Boolean)
   canManage: boolean;
 
   @Field(() => Int)
   memberCount: number;
+
+  @Field(() => [UUIDScalarType])
+  roleIds: string[];
 }

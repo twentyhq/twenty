@@ -28,6 +28,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordShareStorageModule,
     ShareWithService,
     RecordAccessPolicyService,
+    RecordSharePrincipalService,
     RecordSharingService,
   ],
 })

@@ -35,6 +35,7 @@ type AgentChatChannel {
   icon: String
   id: UUID!
   name: String!
+  roleIds: [UUID!]!
   visibility: AgentChatChannelVisibility!
 }
 
@@ -45,6 +46,7 @@ enum AgentChatChannelAssignmentFilter {
 }
 
 type AgentChatChannelListItem {
+  canLeave: Boolean!
   canManage: Boolean!
   color: String
   icon: String
@@ -52,7 +54,14 @@ type AgentChatChannelListItem {
   isMember: Boolean!
   memberCount: Int!
   name: String!
+  roleIds: [UUID!]!
   visibility: AgentChatChannelVisibility!
+}
+
+type AgentChatChannelRole {
+  icon: String
+  id: UUID!
+  label: String!
 }
 
 type AgentChatChannelSummary {
@@ -1289,6 +1298,7 @@ input CreateAgentChatChannelInput {
   icon: String
   memberIds: [UUID!]! = []
   name: String!
+  roleIds: [UUID!]! = []
   visibility: AgentChatChannelVisibility! = PUBLIC
 }
 
@@ -3794,6 +3804,7 @@ type PublicWorkspaceDataSummary {
 }
 
 type Query {
+  agentChatChannelRoles: [AgentChatChannelRole!]!
   agentChatChannelSummaries: [AgentChatChannelSummary!]!
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
   agentChatChannels: [AgentChatChannelListItem!]!
@@ -4647,6 +4658,7 @@ input UpdateAgentChatChannelInput {
   color: String
   icon: String
   name: String
+  roleIds: [UUID!]
   visibility: AgentChatChannelVisibility
 }
 

@@ -13,6 +13,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AgentChatChannelListItemDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-list-item.dto';
 import { AgentChatChannelDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel.dto';
+import { AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-role.dto';
 import { AgentChatChannelSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-summary.dto';
 import { AgentChatChannelThreadIdsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-thread-ids.dto';
 import { AgentChatChannelAssignmentFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-assignment-filter.enum';
@@ -104,6 +105,13 @@ export class AgentChatChannelResolver {
     });
   }
 
+  @Query(() => [AgentChatChannelRoleDTO])
+  async agentChatChannelRoles(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatChannelRoleDTO[]> {
+    return this.channelService.findAssignableRoles(workspaceId);
+  }
+
   @Mutation(() => AgentChatChannelDTO)
   async createAgentChatChannel(
     @Args('input', { type: () => CreateAgentChatChannelInput })
@@ -117,6 +125,7 @@ export class AgentChatChannelResolver {
       color: input.color ?? null,
       visibility: input.visibility,
       memberIds: input.memberIds,
+      roleIds: input.roleIds,
       workspaceMemberId,
       workspaceId,
     });
@@ -137,6 +146,7 @@ export class AgentChatChannelResolver {
         icon: input.icon,
         color: input.color,
         visibility: input.visibility ?? undefined,
+        roleIds: input.roleIds ?? undefined,
       },
       workspaceMemberId,
       workspaceId,

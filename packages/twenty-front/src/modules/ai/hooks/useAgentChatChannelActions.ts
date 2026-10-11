@@ -74,6 +74,15 @@ export const useAgentChatChannelActions = () => {
     [runChannelMutation],
   );
 
+  const setAgentChatChannelRoles = useCallback(
+    ({ channelId, roleIds }: { channelId: string; roleIds: string[] }) =>
+      runChannelMutation(UpdateAgentChatChannelDocument, {
+        channelId,
+        input: { roleIds },
+      }),
+    [runChannelMutation],
+  );
+
   const joinAgentChatChannel = useCallback(
     (channelId: string) =>
       runChannelMutation(JoinAgentChatChannelDocument, { channelId }),
@@ -105,6 +114,7 @@ export const useAgentChatChannelActions = () => {
     createAgentChatChannel,
     renameAgentChatChannel,
     setAgentChatChannelVisibility,
+    setAgentChatChannelRoles,
     joinAgentChatChannel,
     leaveAgentChatChannel,
     deleteAgentChatChannel,
