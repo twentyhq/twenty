@@ -58,7 +58,7 @@ const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES).map(
 );
 
 export const settingsDataModelFieldMorphRelationFormSchema = z.object({
-  morphRelationObjectMetadataIds: z.array(z.uuid()).min(1),
+  morphRelationObjectMetadataIds: z.array(z.uuid()),
   relationType: z.enum(
     Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
   ),

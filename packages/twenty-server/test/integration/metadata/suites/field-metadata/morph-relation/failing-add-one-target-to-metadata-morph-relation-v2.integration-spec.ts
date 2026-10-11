@@ -11,6 +11,8 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
+import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 describe('updateOne FieldMetadataService morph relation fields v2 - Add one target', () => {
@@ -19,7 +21,6 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
   let createdObjectMetadataCompanyId: string;
   let createdObjectMetadataNewTargetId: string;
   let createdFieldMetadataId: string;
-  let createdTargetFieldMetadataId: string;
 
   beforeAll(async () => {
     const {
@@ -139,20 +140,10 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
           },
         ],
       },
-      gqlFields: `
-        id
-        morphRelations {
-          sourceFieldMetadata {
-            id
-          }
-        }
-      `,
       expectToFail: false,
     });
 
     createdFieldMetadataId = rawCreateOneField.id;
-    createdTargetFieldMetadataId =
-      rawCreateOneField.morphRelations?.[0]?.sourceFieldMetadata.id ?? '';
   });
 
   afterEach(async () => {
@@ -268,10 +259,34 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
   });
 
   it('Should fail adding one object metadata target through one of the morph relation targets', async () => {
+    // Metadata reads list the morph field only, so its targets come from morphRelations.
+    const { data } = await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdFieldMetadataId,
+        updatePayload: { description: 'Description for all' },
+      },
+      gqlFields: `
+        id
+        morphRelations {
+          sourceFieldMetadata {
+            id
+          }
+        }
+      `,
+    });
+    const targetFieldMetadataId = (
+      data.updateOneField as FieldMetadataEntity & {
+        morphRelations: RelationDTO[];
+      }
+    ).morphRelations[0]?.sourceFieldMetadata.id;
+
+    assertIsDefinedOrThrow(targetFieldMetadataId);
+
     const { errors } = await updateOneFieldMetadata({
       expectToFail: true,
       input: {
-        idToUpdate: createdTargetFieldMetadataId,
+        idToUpdate: targetFieldMetadataId,
         updatePayload: {
           morphRelationsUpdatePayload: [
             { targetObjectMetadataId: createdObjectMetadataNewTargetId },

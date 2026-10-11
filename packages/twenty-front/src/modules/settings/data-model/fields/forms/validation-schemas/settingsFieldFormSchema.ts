@@ -1,7 +1,7 @@
 import { settingsDataModelFieldDescriptionFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { settingsDataModelFieldIconLabelFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { settingsDataModelFieldSettingsFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsDataModelFieldSettingsFormSchema';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { settingsDataModelFieldTypeFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsDataModelFieldTypeFormSchema';
@@ -9,12 +9,18 @@ import { settingsDataModelFieldTypeFormSchema } from '@/settings/data-model/fiel
 type SettingsFieldFormSchemaOptions = {
   existingOtherLabels?: string[];
   sourceObjectMetadataId?: string;
+  // An existing morph field can have no destinations left and must stay editable.
+  isRelationDestinationRequired?: boolean;
 };
 
 export const settingsFieldFormSchema = (
   options: SettingsFieldFormSchemaOptions = {},
 ) => {
-  const { existingOtherLabels, sourceObjectMetadataId } = options;
+  const {
+    existingOtherLabels,
+    sourceObjectMetadataId,
+    isRelationDestinationRequired = false,
+  } = options;
 
   const baseSchema = z
     .object({})
@@ -41,6 +47,19 @@ export const settingsFieldFormSchema = (
       )
         return false;
       return true;
+    })
+    .refine((data) => {
+      const formData = data as {
+        type?: FieldMetadataType;
+        morphRelationObjectMetadataIds?: string[];
+      };
+      if (!isRelationDestinationRequired) return true;
+      if (
+        formData.type !== FieldMetadataType.RELATION &&
+        formData.type !== FieldMetadataType.MORPH_RELATION
+      )
+        return true;
+      return isNonEmptyArray(formData.morphRelationObjectMetadataIds);
     });
 
   return baseSchema;
