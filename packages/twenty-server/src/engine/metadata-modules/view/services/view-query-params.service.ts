@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
+  convertViewFilterValueToString,
   isDefined,
   type RecordFilter,
   type RecordFilterGroup,
@@ -106,7 +107,7 @@ export class ViewQueryParamsService {
         return {
           id: viewFilter.id,
           fieldMetadataId: viewFilter.fieldMetadataId,
-          value: viewFilter.value ?? '',
+          value: convertViewFilterValueToString(viewFilter.value ?? ''),
           type: field.type,
           recordFilterGroupId: viewFilter.viewFilterGroupId,
           operand: viewFilter.operand,
