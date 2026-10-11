@@ -33,7 +33,7 @@ const CHAT_MESSAGE_HIDDEN_KICKOFF_INDEX_UNIVERSAL_IDENTIFIER =
 // Chats are owned and sent by workspace members, failed turns hold their own
 // error and hidden kickoffs became system messages, so the columns those
 // replaced go
-@RegisteredWorkspaceCommand('2.47.0', 1791726834817)
+@RegisteredWorkspaceCommand('2.47.0', 1791730401449)
 @Command({
   name: 'upgrade:2-47:drop-legacy-chat-columns',
   description:
