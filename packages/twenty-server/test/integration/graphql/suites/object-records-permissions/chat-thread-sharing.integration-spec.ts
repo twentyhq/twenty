@@ -732,7 +732,7 @@ describe('Conversation sharing through the authenticated API', () => {
     });
   });
 
-  it('stores the member owner and preserves the legacy API identity', async () => {
+  it('stores the member owner and exposes it through the record API', async () => {
     const owner = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
@@ -747,28 +747,15 @@ describe('Conversation sharing through the authenticated API', () => {
       const response = await makeGraphqlApiRequest(
         findOneOperationFactory({
           objectMetadataSingularName: 'agentChatThread',
-          gqlFields: 'id userWorkspaceId',
+          gqlFields: 'id workspaceMemberId',
           filter: { id: { eq: owner.threadId } },
         }),
       );
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.agentChatThread).toEqual({
         id: owner.threadId,
-        userWorkspaceId: owner.userWorkspaceId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       });
-
-      const rows: { workspaceMemberId: string; userWorkspaceId: string }[] =
-        await global.testDataSource.query(
-          `SELECT "workspaceMemberId", "userWorkspaceId" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThread" WHERE id = $1`,
-          [owner.threadId],
-        );
-
-      expect(rows).toEqual([
-        {
-          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-        },
-      ]);
     } finally {
       await destroyAgentChatThread({ threadId: owner.threadId });
     }

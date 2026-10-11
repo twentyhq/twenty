@@ -11,8 +11,10 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { type DataSource } from 'typeorm';
 
 import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import { type AgentHistorySchemaService } from 'src/database/commands/agent-history/agent-history-schema.service';
 import { type MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
 import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
+import { type DropLegacyChatColumnsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791726834817-drop-legacy-chat-columns.command';
 import { type ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790317893308-provision-agent-chat-thread-target.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { type WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
@@ -147,6 +149,23 @@ describe('versioned agent history upgrade (integration)', () => {
     await dataSource.query(
       `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE "workspaceMemberId" IS NULL`,
     );
+    // And the membership columns 2.47 dropped, which the rollback copies back
+    await workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        getAppProviderByClassName<AgentHistorySchemaService>(
+          'AgentHistorySchemaService',
+        ).prepare(WORKSPACE_ID, false),
+      buildSystemAuthContext(WORKSPACE_ID),
+    );
+    await dataSource.query(
+      `UPDATE "${SCHEMA}"."agentChatThread" thread
+       SET "userWorkspaceId" = membership.id
+       FROM "${SCHEMA}"."workspaceMember" member
+       JOIN core."userWorkspace" membership
+         ON membership."userId" = member."userId" AND membership."workspaceId" = $1
+       WHERE member.id = thread."workspaceMemberId"`,
+      [WORKSPACE_ID],
+    );
     await runCommand('down');
     await dataSource.query(
       'INSERT INTO core."agentChatThread" (id, "workspaceId", "userWorkspaceId", title, "activeStreamId") VALUES ($1, $2, $3, $4, $5)',
@@ -276,6 +295,9 @@ describe('versioned agent history upgrade (integration)', () => {
       ),
       getAppProviderByClassName<AddChatRecordPageCommandMenuItemsCommand>(
         'AddChatRecordPageCommandMenuItemsCommand',
+      ),
+      getAppProviderByClassName<DropLegacyChatColumnsCommand>(
+        'DropLegacyChatColumnsCommand',
       ),
     ]) {
       await workspaceOrmManager.executeInWorkspaceContext(
