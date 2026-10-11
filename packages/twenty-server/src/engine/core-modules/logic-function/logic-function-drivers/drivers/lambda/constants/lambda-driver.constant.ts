@@ -1,5 +1,7 @@
 import { join, resolve } from 'path';
 
+import { type LoggingConfig } from '@aws-sdk/client-lambda';
+
 import { ASSET_PATH } from 'src/constants/assets-path';
 
 export const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
@@ -15,6 +17,11 @@ export const BUILDER_LAMBDA_MEMORY_MB = 512;
 export const EXECUTOR_LAMBDA_MEMORY_MB = 512;
 export const EXECUTOR_LAMBDA_TIMEOUT_SECONDS = 900;
 export const LAMBDA_EPHEMERAL_STORAGE_MB = 4096;
+export const SENSITIVE_LAMBDA_LOGGING_CONFIGURATION = {
+  LogFormat: 'JSON',
+  ApplicationLogLevel: 'FATAL',
+  SystemLogLevel: 'INFO',
+} as const satisfies LoggingConfig;
 
 export const LAMBDA_CLIENT_REQUEST_TIMEOUT_MS =
   (EXECUTOR_LAMBDA_TIMEOUT_SECONDS + 60) * 1000;

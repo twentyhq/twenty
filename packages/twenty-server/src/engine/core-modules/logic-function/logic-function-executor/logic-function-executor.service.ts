@@ -132,6 +132,8 @@ export class LogicFunctionExecutorService {
     workspaceDeletionRequestTimestamp,
     retry = { retryCount: 0, maxRetries: 0 },
     shouldEnforceUsageLimits = true,
+    shouldSuppressExecutionLogs = false,
+    timeoutMs,
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -142,6 +144,8 @@ export class LogicFunctionExecutorService {
     workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
     shouldEnforceUsageLimits?: boolean;
+    shouldSuppressExecutionLogs?: boolean;
+    timeoutMs?: number;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -202,10 +206,22 @@ export class LogicFunctionExecutorService {
         payload,
         context,
         env: envVariables,
-        timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
+        timeoutMs: Math.min(
+          timeoutMs ?? Infinity,
+          flatLogicFunction.timeoutSeconds * 1_000,
+        ),
         forceExecutionMode: effectiveExecutionMode,
+        shouldSuppressExecutionLogs,
       });
     } catch (error) {
+      if (shouldSuppressExecutionLogs) {
+        // Driver errors may include the credential-bearing payload.
+        throw new LogicFunctionException(
+          'Logic function execution failed',
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR,
+        );
+      }
+
       this.logger.error(
         `Logic function execution failed: ` +
           `functionId=${logicFunctionId}, ` +
@@ -218,11 +234,26 @@ export class LogicFunctionExecutorService {
       throw error;
     }
 
+    if (shouldSuppressExecutionLogs) {
+      resultLogicFunction = {
+        ...resultLogicFunction,
+        logs: '',
+        ...(isDefined(resultLogicFunction.error) && {
+          error: {
+            errorType: 'Error',
+            errorMessage: 'Logic function execution failed',
+            stackTrace: [],
+          },
+        }),
+      };
+    }
+
     await this.handleExecutionResult({
       result: resultLogicFunction,
       flatApplication,
       flatLogicFunction,
       workspaceId,
+      shouldSuppressExecutionLogs,
     });
 
     return resultLogicFunction;
@@ -569,38 +600,42 @@ export class LogicFunctionExecutorService {
     flatApplication,
     flatLogicFunction,
     workspaceId,
+    shouldSuppressExecutionLogs,
   }: {
     result: LogicFunctionExecuteResult;
     workspaceId: string;
     flatLogicFunction: FlatLogicFunction;
     flatApplication: FlatApplication;
+    shouldSuppressExecutionLogs: boolean;
   }) {
-    const executionId = v4();
+    if (!shouldSuppressExecutionLogs) {
+      const executionId = v4();
 
-    const parsedLines = parseApplicationLogLines(result.logs);
-    const logEntries = parsedLines.map((line) => ({
-      ...line,
-      workspaceId,
-      applicationId: flatApplication.id,
-      logicFunctionId: flatLogicFunction.id,
-      logicFunctionName: flatLogicFunction.name,
-      executionId,
-    }));
+      const parsedLines = parseApplicationLogLines(result.logs);
+      const logEntries = parsedLines.map((line) => ({
+        ...line,
+        workspaceId,
+        applicationId: flatApplication.id,
+        logicFunctionId: flatLogicFunction.id,
+        logicFunctionName: flatLogicFunction.name,
+        executionId,
+      }));
 
-    if (this.eventLogEmitterService.isEnabled()) {
-      void this.eventLogEmitterService
-        .dispatch(buildApplicationLogEnvelopes(logEntries))
-        .catch((error) => {
-          this.logger.error('Failed to record application logs', error);
-        });
+      if (this.eventLogEmitterService.isEnabled()) {
+        void this.eventLogEmitterService
+          .dispatch(buildApplicationLogEnvelopes(logEntries))
+          .catch((error) => {
+            this.logger.error('Failed to record application logs', error);
+          });
+      }
+
+      void this.publishLogicFunctionLogsToCli({
+        result,
+        flatApplication,
+        flatLogicFunction,
+        workspaceId,
+      });
     }
-
-    void this.publishLogicFunctionLogsToCli({
-      result,
-      flatApplication,
-      flatLogicFunction,
-      workspaceId,
-    });
 
     void this.eventLogEmitterService
       .createContext({

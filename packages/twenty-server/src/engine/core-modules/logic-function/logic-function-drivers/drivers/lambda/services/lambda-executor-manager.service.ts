@@ -34,6 +34,7 @@ import {
   PREBUILT_INSTALL_LOCK_MAX_RETRIES,
   PREBUILT_INSTALL_LOCK_RETRY_MS,
   PREBUILT_INSTALL_LOCK_TTL_MS,
+  SENSITIVE_LAMBDA_LOGGING_CONFIGURATION,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
@@ -53,6 +54,7 @@ type ExecutorBuildContext = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
+  shouldSuppressExecutionLogs?: boolean;
 };
 
 export class LambdaExecutorManagerService {
@@ -117,14 +119,27 @@ export class LambdaExecutorManagerService {
           // see it. Without this, every queued waiter rebuilds again.
           const refreshedContext = await this.refreshBuildContext(context);
 
-          const { canSkip: canSkipAfterLock, lambdaExecutor } =
-            await this.checkBuildStatus(refreshedContext);
+          let buildStatus = await this.checkBuildStatus(refreshedContext);
 
-          if (canSkipAfterLock) {
+          if (
+            refreshedContext.shouldSuppressExecutionLogs &&
+            buildStatus.lambdaExecutor?.Configuration?.LastUpdateStatus ===
+              'InProgress'
+          ) {
+            await this.awsClient.waitFunctionUpdated(
+              refreshedContext.flatLogicFunction.id,
+            );
+            buildStatus = await this.checkBuildStatus(refreshedContext);
+          }
+
+          if (buildStatus.canSkip) {
             return;
           }
 
-          await this.ensureExecutor({ ...refreshedContext, lambdaExecutor });
+          await this.ensureExecutor({
+            ...refreshedContext,
+            lambdaExecutor: buildStatus.lambdaExecutor,
+          });
         },
         lockKey,
         {
@@ -282,16 +297,33 @@ export class LambdaExecutorManagerService {
     canSkip: boolean;
     lambdaExecutor: GetFunctionCommandOutput | undefined;
   }> {
-    const { flatApplication, applicationUniversalIdentifier } = context;
+    const {
+      flatApplication,
+      applicationUniversalIdentifier,
+      shouldSuppressExecutionLogs,
+    } = context;
     const lambdaExecutor = await this.getLambdaExecutor(
       context.flatLogicFunction,
     );
 
     const isActive = lambdaExecutor?.Configuration?.State === 'Active';
+    // Active functions keep serving their previous configuration during updates.
+    const isUpdateComplete =
+      !shouldSuppressExecutionLogs ||
+      lambdaExecutor?.Configuration?.LastUpdateStatus === 'Successful';
+    const loggingConfiguration = lambdaExecutor?.Configuration?.LoggingConfig;
+    const hasRequiredLoggingConfiguration =
+      !shouldSuppressExecutionLogs ||
+      (loggingConfiguration?.LogFormat ===
+        SENSITIVE_LAMBDA_LOGGING_CONFIGURATION.LogFormat &&
+        loggingConfiguration.ApplicationLogLevel ===
+          SENSITIVE_LAMBDA_LOGGING_CONFIGURATION.ApplicationLogLevel);
 
     const canSkip =
       isDefined(lambdaExecutor) &&
       isActive &&
+      isUpdateComplete &&
+      hasRequiredLoggingConfiguration &&
       !flatApplication.isSdkLayerStale &&
       this.layerManager.hasExpectedLayers({
         lambdaExecutor,
@@ -307,6 +339,7 @@ export class LambdaExecutorManagerService {
     flatApplication,
     applicationUniversalIdentifier,
     lambdaExecutor,
+    shouldSuppressExecutionLogs,
   }: ExecutorBuildContext & {
     lambdaExecutor: GetFunctionCommandOutput | undefined;
   }): Promise<void> {
@@ -359,8 +392,12 @@ export class LambdaExecutorManagerService {
         flatLogicFunction,
         depsLayerArn,
         sdkLayerArn,
+        shouldSuppressExecutionLogs,
       });
       await this.awsClient.waitFunctionActive(flatLogicFunction.id);
+      if (shouldSuppressExecutionLogs) {
+        await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
+      }
 
       return;
     }
@@ -369,6 +406,7 @@ export class LambdaExecutorManagerService {
       flatLogicFunction,
       depsLayerArn,
       sdkLayerArn,
+      shouldSuppressExecutionLogs,
     });
     await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
   }
@@ -377,10 +415,12 @@ export class LambdaExecutorManagerService {
     flatLogicFunction,
     depsLayerArn,
     sdkLayerArn,
+    shouldSuppressExecutionLogs,
   }: {
     flatLogicFunction: FlatLogicFunction;
     depsLayerArn: string;
     sdkLayerArn: string;
+    shouldSuppressExecutionLogs?: boolean;
   }): Promise<void> {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
@@ -391,6 +431,9 @@ export class LambdaExecutorManagerService {
         Runtime: flatLogicFunction.runtime,
         Timeout: EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
+        LoggingConfig: shouldSuppressExecutionLogs
+          ? SENSITIVE_LAMBDA_LOGGING_CONFIGURATION
+          : undefined,
       }),
     );
   }
@@ -399,10 +442,12 @@ export class LambdaExecutorManagerService {
     flatLogicFunction,
     depsLayerArn,
     sdkLayerArn,
+    shouldSuppressExecutionLogs,
   }: {
     flatLogicFunction: FlatLogicFunction;
     depsLayerArn: string;
     sdkLayerArn: string;
+    shouldSuppressExecutionLogs?: boolean;
   }): Promise<void> {
     const temporaryDirManager = new TemporaryDirManager();
     const { sourceTemporaryDir, lambdaZipPath } =
@@ -426,6 +471,10 @@ export class LambdaExecutorManagerService {
         Timeout: EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
+        // Lambda logs detached exceptions outside the handler's catch block.
+        LoggingConfig: shouldSuppressExecutionLogs
+          ? SENSITIVE_LAMBDA_LOGGING_CONFIGURATION
+          : undefined,
       };
 
       const lambdaClient = await this.awsClient.getLambdaClient();

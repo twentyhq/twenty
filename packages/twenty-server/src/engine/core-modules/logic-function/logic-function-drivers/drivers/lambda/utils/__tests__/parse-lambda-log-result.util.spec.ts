@@ -81,4 +81,105 @@ describe('parseLambdaLogResult', () => {
     );
     expect(result.logs.endsWith('INFO line')).toBe(true);
   });
+
+  it('reads JSON platform.report metrics and keeps application logs', () => {
+    const applicationLog = JSON.stringify({
+      timestamp: '2026-06-02T12:00:00.000Z',
+      level: 'INFO',
+      message: 'hello',
+    });
+    const raw = [
+      JSON.stringify({
+        time: '2026-06-02T12:00:00.000Z',
+        type: 'platform.start',
+        record: { requestId: 'request-id', version: '$LATEST' },
+      }),
+      applicationLog,
+      JSON.stringify({
+        time: '2026-06-02T12:00:00.694Z',
+        type: 'platform.runtimeDone',
+        record: { requestId: 'request-id', status: 'success' },
+      }),
+      JSON.stringify({
+        time: '2026-06-02T12:00:00.694Z',
+        type: 'platform.report',
+        record: {
+          requestId: 'request-id',
+          metrics: {
+            billedDurationMs: 694,
+            durationMs: 693.92,
+            initDurationMs: 397.68,
+            maxMemoryUsedMB: 84,
+            memorySizeMB: 128,
+          },
+        },
+      }),
+    ].join('\n');
+
+    expect(parseLambdaLogResult(toBase64(raw))).toEqual({
+      logs: applicationLog,
+      initDurationMs: '397.68',
+      billedDurationMs: '694',
+      reportDurationMs: '693.92',
+      coldStart: true,
+    });
+  });
+
+  it('reads a warm JSON report after a truncated log line', () => {
+    const raw = [
+      'tail of a truncated log entry"}',
+      JSON.stringify({
+        type: 'platform.report',
+        record: { metrics: { billedDurationMs: 1, durationMs: 0 } },
+      }),
+    ].join('\n');
+
+    expect(parseLambdaLogResult(toBase64(raw))).toEqual({
+      logs: 'tail of a truncated log entry"}',
+      initDurationMs: null,
+      billedDurationMs: '1',
+      reportDurationMs: '0',
+      coldStart: false,
+    });
+  });
+
+  it('does not coerce invalid JSON metric values', () => {
+    const raw = JSON.stringify({
+      type: 'platform.report',
+      record: {
+        metrics: {
+          billedDurationMs: -1,
+          durationMs: '12.34',
+          initDurationMs: {},
+        },
+      },
+    });
+
+    expect(parseLambdaLogResult(toBase64(raw))).toEqual({
+      logs: '',
+      initDurationMs: null,
+      billedDurationMs: null,
+      reportDurationMs: null,
+      coldStart: false,
+    });
+  });
+
+  it('ignores unrelated JSON and incomplete report objects', () => {
+    const raw = [
+      JSON.stringify({
+        message: 'application log',
+        record: { metrics: { durationMs: 12, initDurationMs: 10 } },
+      }),
+      JSON.stringify({ type: 'platform.report', record: null }),
+      JSON.stringify({ type: 'platform.report', record: { metrics: null } }),
+    ].join('\n');
+
+    expect(parseLambdaLogResult(toBase64(raw))).toEqual({
+      logs: raw,
+      initDurationMs: null,
+      billedDurationMs: null,
+      reportDurationMs: null,
+      coldStart: false,
+    });
+  });
 });

@@ -95,7 +95,12 @@ export class LambdaDriver implements LogicFunctionDriver {
   }
 
   async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
-    await this.executorManager.delete(flatLogicFunction);
+    await Promise.all([
+      this.executorManager.delete(flatLogicFunction),
+      this.executorManager.delete(
+        this.getSensitiveLogicFunction(flatLogicFunction),
+      ),
+    ]);
   }
 
   async deleteApplicationResources({
@@ -132,8 +137,13 @@ export class LambdaDriver implements LogicFunctionDriver {
     env,
     timeoutMs = 900_000,
     forceExecutionMode,
+    shouldSuppressExecutionLogs = false,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     const executionMode = forceExecutionMode ?? flatLogicFunction.executionMode;
+    // A separate runtime cannot reuse an older deployment that ignores suppression.
+    const executionLogicFunction = shouldSuppressExecutionLogs
+      ? this.getSensitiveLogicFunction(flatLogicFunction)
+      : flatLogicFunction;
 
     if (
       executionMode === LogicFunctionExecutionMode.PREBUILT &&
@@ -152,11 +162,21 @@ export class LambdaDriver implements LogicFunctionDriver {
     try {
       const buildStart = Date.now();
 
-      await this.executorManager.buildExecutor({
-        flatLogicFunction,
+      const buildContext = {
+        flatLogicFunction: executionLogicFunction,
         flatApplication,
         applicationUniversalIdentifier,
-      });
+        shouldSuppressExecutionLogs,
+      };
+
+      if (
+        shouldSuppressExecutionLogs &&
+        executionMode === LogicFunctionExecutionMode.PREBUILT
+      ) {
+        await this.executorManager.installPrebuiltBundle(buildContext);
+      } else {
+        await this.executorManager.buildExecutor(buildContext);
+      }
       buildExecutorMs = Date.now() - buildStart;
 
       currentPhase = LambdaExecutionPhase.FETCH_CODE;
@@ -174,6 +194,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         context,
         env: env ?? {},
         handlerName: flatLogicFunction.handlerName,
+        shouldSuppressExecutionLogs,
       };
 
       if (executionMode === LogicFunctionExecutionMode.LIVE) {
@@ -192,7 +213,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const payloadString = JSON.stringify(executorPayload);
       const params: InvokeCommandInput = {
-        FunctionName: flatLogicFunction.id,
+        FunctionName: executionLogicFunction.id,
         Payload: payloadString,
         LogType: LogType.Tail,
       };
@@ -258,8 +279,14 @@ export class LambdaDriver implements LogicFunctionDriver {
       }
 
       this.logger.error(
-        `Lambda invocation failed for function ${flatLogicFunction.id} [${phaseTiming}]: ${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error.stack : undefined,
+        `Lambda invocation failed for function ${flatLogicFunction.id} [${phaseTiming}]${
+          shouldSuppressExecutionLogs
+            ? ''
+            : `: ${error instanceof Error ? error.message : String(error)}`
+        }`,
+        !shouldSuppressExecutionLogs && error instanceof Error
+          ? error.stack
+          : undefined,
       );
 
       if (error instanceof ResourceNotFoundException) {
@@ -272,7 +299,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       if (isTimeoutError) {
         // Build/fetch-phase timeouts are platform-side — keep throwing so they reach Sentry.
         const executor = await this.executorManager
-          .getLambdaExecutor(flatLogicFunction)
+          .getLambdaExecutor(executionLogicFunction)
           .catch(() => undefined);
         const functionState = executor?.Configuration?.State ?? 'unknown';
 
@@ -282,14 +309,30 @@ export class LambdaDriver implements LogicFunctionDriver {
         );
       }
 
-      if (error instanceof LogicFunctionException) {
+      if (
+        error instanceof LogicFunctionException &&
+        !shouldSuppressExecutionLogs
+      ) {
         throw error;
       }
 
       throw new LogicFunctionException(
-        `Lambda invocation failed for function '${flatLogicFunction.id}' during ${currentPhase}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Lambda invocation failed for function '${flatLogicFunction.id}' during ${currentPhase}${
+          shouldSuppressExecutionLogs
+            ? ''
+            : `: ${error instanceof Error ? error.message : 'Unknown error'}`
+        }`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR,
       );
     }
+  }
+
+  private getSensitiveLogicFunction(
+    flatLogicFunction: FlatLogicFunction,
+  ): FlatLogicFunction {
+    return {
+      ...flatLogicFunction,
+      id: `${flatLogicFunction.id}-sensitive-v1`,
+    };
   }
 }

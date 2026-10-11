@@ -12,6 +12,7 @@ export type LambdaDriverExecutorPayload = {
   context: LogicFunctionExecutionContext;
   env: Record<string, string>;
   handlerName: string;
+  shouldSuppressExecutionLogs?: boolean;
 };
 
 export type YarnInstallLambdaPayload = {

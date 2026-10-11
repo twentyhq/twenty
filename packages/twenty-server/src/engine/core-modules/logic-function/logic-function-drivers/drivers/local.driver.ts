@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { build } from 'esbuild';
 import { NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
 
@@ -113,6 +114,7 @@ export class LocalDriver implements LogicFunctionDriver {
     env,
     timeoutMs = 900_000,
     forceExecutionMode,
+    shouldSuppressExecutionLogs = false,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     const executionMode = forceExecutionMode ?? flatLogicFunction.executionMode;
 
@@ -164,6 +166,10 @@ export class LocalDriver implements LogicFunctionDriver {
       const consoleListener = new ConsoleListener();
 
       consoleListener.intercept((type, args) => {
+        if (shouldSuppressExecutionLogs) {
+          return;
+        }
+
         const formattedArgs = args.map((arg) => {
           if (typeof arg === 'object' && arg !== null) {
             const seen = new WeakSet();
@@ -208,20 +214,22 @@ export class LocalDriver implements LogicFunctionDriver {
             timeoutMs,
           });
 
-        if (stdout)
+        if (isNonEmptyString(stdout) && !shouldSuppressExecutionLogs) {
           logs +=
             stdout
               .split('\n')
               .filter(Boolean)
               .map((l) => `${new Date().toISOString()} INFO ${l}`)
               .join('\n') + '\n';
-        if (stderr)
+        }
+        if (isNonEmptyString(stderr) && !shouldSuppressExecutionLogs) {
           logs +=
             stderr
               .split('\n')
               .filter(Boolean)
               .map((l) => `${new Date().toISOString()} ERROR ${l}`)
               .join('\n') + '\n';
+        }
 
         const duration = Date.now() - startTime;
 

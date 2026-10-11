@@ -1,3 +1,6 @@
+import { isPlainObject } from 'twenty-shared/utils';
+import { z } from 'zod';
+
 export type ParsedLambdaLogResult = {
   logs: string;
   initDurationMs: string | null;
@@ -14,6 +17,8 @@ const EMPTY_PARSED_LAMBDA_LOG_RESULT: ParsedLambdaLogResult = {
   coldStart: false,
 };
 
+const lambdaReportDurationSchema = z.number().nonnegative().transform(String);
+
 export const parseLambdaLogResult = (
   logResult: string | undefined,
 ): ParsedLambdaLogResult => {
@@ -22,15 +27,57 @@ export const parseLambdaLogResult = (
   }
 
   const decoded = Buffer.from(logResult, 'base64').toString('utf8');
+  let reportMetrics: Record<string, unknown> | undefined;
+
+  const applicationLogLines = decoded.split('\n').filter((line) => {
+    let event: unknown;
+
+    try {
+      event = JSON.parse(line);
+    } catch {
+      return true;
+    }
+
+    if (!isPlainObject(event)) {
+      return true;
+    }
+
+    if (
+      event.type === 'platform.start' ||
+      event.type === 'platform.runtimeDone'
+    ) {
+      return false;
+    }
+
+    if (
+      event.type === 'platform.report' &&
+      isPlainObject(event.record) &&
+      isPlainObject(event.record.metrics)
+    ) {
+      reportMetrics = event.record.metrics;
+
+      return false;
+    }
+
+    return true;
+  });
 
   const initDurationMs =
-    decoded.match(/Init Duration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+    lambdaReportDurationSchema.safeParse(reportMetrics?.initDurationMs).data ??
+    decoded.match(/Init Duration:\s*([\d.]+)\s*ms/i)?.[1] ??
+    null;
   const billedDurationMs =
-    decoded.match(/Billed Duration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+    lambdaReportDurationSchema.safeParse(reportMetrics?.billedDurationMs)
+      .data ??
+    decoded.match(/Billed Duration:\s*([\d.]+)\s*ms/i)?.[1] ??
+    null;
   const reportDurationMs =
-    decoded.match(/\bDuration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+    lambdaReportDurationSchema.safeParse(reportMetrics?.durationMs).data ??
+    decoded.match(/\bDuration:\s*([\d.]+)\s*ms/i)?.[1] ??
+    null;
 
-  const logs = decoded
+  const logs = applicationLogLines
+    .join('\n')
     .split('\t')
     .join(' ')
     .replace(/^(START|END|REPORT).*\n?/gm, '')
