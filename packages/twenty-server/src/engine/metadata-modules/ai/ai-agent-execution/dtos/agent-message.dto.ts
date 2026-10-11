@@ -20,9 +20,6 @@ export class AgentMessageDTO {
   agentId: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  senderUserWorkspaceId: string | null;
-
-  @Field(() => UUIDScalarType, { nullable: true })
   senderWorkspaceMemberId: string | null;
 
   @Field()
