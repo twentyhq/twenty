@@ -23,7 +23,6 @@ import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/meta
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
-import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -315,10 +314,6 @@ export class AgentChatThreadParticipantService {
 
   // For the row written along with a new thread
   async emitParticipantCreated(args: AgentChatThreadAccessArgs): Promise<void> {
-    if (!(await this.sharingService.hasInboxState(args.workspaceId))) {
-      return;
-    }
-
     const participant = await this.threadRepository.query(
       args.workspaceId,
       ({ manager }) => this.findOne({ manager, ...args }),
@@ -345,19 +340,9 @@ export class AgentChatThreadParticipantService {
   }: AgentChatThreadAccessArgs & {
     text: string;
   }): Promise<AgentChatThreadActivity> {
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      return (
-        (await touchAgentChatThread({
-          repository: this.threadRepository,
-          workspaceId,
-          threadId,
-        })) ?? throwAgentChatThreadNotFound()
-      );
-    }
-
     const participantTable = getAgentChatThreadParticipantTable(workspaceId);
     const participantObjectMetadataId =
-      await this.sharingService.findParticipantObjectMetadataId(workspaceId);
+      await this.sharingService.getParticipantObjectMetadataId(workspaceId);
 
     const { rows, before, after } = await this.threadRepository.query(
       workspaceId,
@@ -437,10 +422,6 @@ export class AgentChatThreadParticipantService {
       workspaceId,
       workspaceMemberId,
     });
-
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      return EMPTY_OPEN_THREADS_SUMMARY;
-    }
 
     const [summary] = await this.workspaceOrmManager
       .executeInWorkspaceContext(() => {
@@ -581,13 +562,6 @@ export class AgentChatThreadParticipantService {
     if (readableThreadIds.length !== threadIds.length) {
       throwAgentChatThreadNotFound();
     }
-
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      throw new AiException(
-        'Chat inbox state is not available until this workspace finishes upgrading',
-        AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE,
-      );
-    }
   }
 
   // Each row is locked while it is read and written, so the change sent is
@@ -607,7 +581,7 @@ export class AgentChatThreadParticipantService {
     writeThread?: WriteThreadStep,
   ): Promise<AgentChatThreadParticipantRow[]> {
     const objectMetadataId =
-      await this.sharingService.findParticipantObjectMetadataId(workspaceId);
+      await this.sharingService.getParticipantObjectMetadataId(workspaceId);
 
     const writes = await this.threadRepository.query(
       workspaceId,
