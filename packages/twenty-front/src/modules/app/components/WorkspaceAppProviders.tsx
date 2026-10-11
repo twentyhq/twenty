@@ -9,6 +9,7 @@ import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysE
 import { InitializeQueryParamStateEffect } from '@/app/effect-components/InitializeQueryParamStateEffect';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { ApplicationsLoadEffect } from '@/applications/components/ApplicationsLoadEffect';
+import { AppConnectionReusedEffect } from '@/applications/components/AppConnectionReusedEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { SignOutOnOtherTabSignOutEffect } from '@/auth/effect-components/SignOutOnOtherTabSignOutEffect';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
@@ -61,6 +62,7 @@ export const WorkspaceAppProviders = () => {
                   >
                     <AppToaster />
                     <ErrorMessageEffect />
+                    <AppConnectionReusedEffect />
                     <AgentChatProvider>
                       <DialogComponentInstanceContext.Provider
                         value={{ instanceId: 'dialog-manager' }}

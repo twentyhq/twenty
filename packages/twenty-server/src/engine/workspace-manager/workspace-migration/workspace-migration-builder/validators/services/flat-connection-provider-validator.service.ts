@@ -11,6 +11,8 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 
 @Injectable()
 export class FlatConnectionProviderValidatorService {
@@ -18,6 +20,7 @@ export class FlatConnectionProviderValidatorService {
     flatEntityToValidate: flatConnectionProvider,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatConnectionProviderMaps: optimisticFlatConnectionProviderMaps,
+      flatLogicFunctionMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.connectionProvider
@@ -99,6 +102,13 @@ export class FlatConnectionProviderValidatorService {
       });
     }
 
+    validationResult.errors.push(
+      ...this.validateIdentityHook(
+        flatConnectionProvider,
+        flatLogicFunctionMaps,
+      ),
+    );
+
     return validationResult;
   }
 
@@ -139,8 +149,10 @@ export class FlatConnectionProviderValidatorService {
 
   public validateFlatConnectionProviderUpdate({
     universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatConnectionProviderMaps: optimisticFlatConnectionProviderMaps,
+      flatLogicFunctionMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.connectionProvider
@@ -168,6 +180,43 @@ export class FlatConnectionProviderValidatorService {
       return validationResult;
     }
 
+    validationResult.errors.push(
+      ...this.validateIdentityHook(
+        { ...fromFlatConnectionProvider, ...flatEntityUpdate },
+        flatLogicFunctionMaps,
+      ),
+    );
+
     return validationResult;
+  }
+
+  private validateIdentityHook(
+    provider: UniversalFlatConnectionProvider,
+    logicFunctions: MetadataUniversalFlatEntityMaps<'logicFunction'>,
+  ): FailedFlatEntityValidation<'connectionProvider', 'create'>['errors'] {
+    const identifier = provider.identifyAccountLogicFunctionUniversalIdentifier;
+
+    if (!isDefined(identifier)) {
+      return [];
+    }
+
+    const logicFunction = logicFunctions.byUniversalIdentifier[identifier];
+
+    if (
+      isDefined(logicFunction) &&
+      !isDefined(logicFunction.deletedAt) &&
+      logicFunction.applicationUniversalIdentifier ===
+        provider.applicationUniversalIdentifier
+    ) {
+      return [];
+    }
+
+    return [
+      {
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Account identification must reference a logic function in the same application`,
+        userFriendlyMessage: msg`Account identification must reference a logic function in the same application`,
+      },
+    ];
   }
 }

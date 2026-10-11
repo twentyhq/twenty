@@ -81,6 +81,10 @@ export class ConnectionProviderLifecycleHookService {
         {
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          deduplication: {
+            id: `connection-on-connect-${workspaceId}-${provider.id}-${connectedAccountId}`,
+            keepLastIfActive: true,
+          },
         },
       );
     });

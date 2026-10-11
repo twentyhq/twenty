@@ -97,6 +97,57 @@ https://<your-twenty-server>/auth/apps/callback
 
 </Accordion>
 
+<Accordion title="Identify an account and prevent duplicate connections" description="Recognize the external account before saving its credentials">
+
+Declare `identifyAccountLogicFunction: { universalIdentifier: '...' }` on the connection provider to reference a logic function in the same app. Twenty runs it after OAuth and before saving a connection, with a maximum execution time of ten seconds.
+
+```ts src/logic-functions/identify-linear-account.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type {
+  ConnectionAccountIdentity,
+  IdentifyConnectionAccountInput,
+} from 'twenty-sdk/logic-function';
+
+export default defineLogicFunction({
+  universalIdentifier: 'f8c08725-af39-4b6c-945a-a243a12b3d19',
+  name: 'identify-linear-account',
+  timeoutSeconds: 10,
+  handler: async ({ accessToken }: IdentifyConnectionAccountInput): Promise<ConnectionAccountIdentity> => {
+    const response = await fetch('https://api.linear.app/graphql', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: '{ viewer { id email } organization { id } }' }),
+    });
+    const result = await response.json();
+    const userId = result.data?.viewer?.id;
+    const organizationId = result.data?.organization?.id;
+
+    if (!response.ok || result.errors?.length || !userId || !organizationId) {
+      throw new Error('Could not identify the Linear account.');
+    }
+
+    return {
+      externalAccountId: `${organizationId}:${userId}`,
+      handle: result.data.viewer.email,
+    };
+  },
+});
+```
+
+Use the provider's authenticated account lookup to return an immutable identity, including its organization or installation where necessary. Linear, for example, combines `organization.id` and `viewer.id`. The identity must keep the same meaning across app updates; do not change its format without a migration strategy. Email and display names belong in `handle`, never in the identity key. The identity is limited to 512 characters and the optional handle to 320.
+
+This hook is a lookup: do not save app state, register webhooks, or log its access token. There is no `connectedAccountId` yet. A failure or invalid result stops the connection attempt; Twenty does not save an unidentified connection as a fallback.
+
+Connecting the same identified account again reuses the active connection in the same Twenty workspace, installed provider, and visibility. Personal connections additionally belong to their member. Reuse preserves the connection ID, name, and dependent workflows. Personal and shared connections remain separate. Explicit reconnect must identify the same account; sharing a personal connection is refused if an equivalent shared connection already exists.
+
+Archived connections do not reserve an active identity. Explicit reconnect can restore an identified archived connection only when no active connection already represents that account in its visibility scope.
+
+Existing connections start with an unknown identity and are not automatically merged or backfilled. An explicit reconnect verifies the original saved credential before adopting an identity. If that original credential cannot be identified, create a new connection and deliberately update its consumers. Adding a new connection cannot deduplicate historical unidentified rows. Removing an identity hook also prevents reconnecting previously identified rows, because their identity can no longer be verified.
+
+Providers without this hook retain their existing behavior; Twenty does not infer account identity from an email or a decoded ID token. Fathom currently has no documented authenticated account identity suitable for this contract, so its provider remains unchanged until a reliable source is available. Deploy the server and SDK support before releasing app versions that declare the hook.
+
+</Accordion>
+
 <Accordion title="Run a logic function on connect" description="React the moment a connection is established">
 
 Some providers hand you data at connect time that you need to persist before the connection is usable — the classic example is Slack, where the OAuth response identifies the workspace's `team_id` that inbound events will be keyed by. Set `onConnectLogicFunction` to reference a logic function in the same app (by its `universalIdentifier`), and it runs right after the `ConnectedAccount` is created.
@@ -117,7 +168,11 @@ export default defineConnectionProvider({
 });
 ```
 
-The hook runs **asynchronously in the connecting workspace** (it is enqueued, not awaited), so a slow or failing hook never blocks or breaks the OAuth callback — make it idempotent and handle its own retries. The handler receives:
+The hook runs **asynchronously in the connecting workspace** (it is enqueued, not awaited), so a slow or failing hook never blocks or breaks the OAuth callback — make it idempotent and handle its own retries.
+
+It also runs after reconnect and reuse. Overlapping jobs for the same connection are coalesced by the production queue, but retries can still repeat delivery. Remote setup must be idempotent; one saved connection does not guarantee exactly one remote side effect.
+
+The handler receives:
 
 ```ts
 type OnConnectPayload = {
@@ -225,7 +280,7 @@ Each connection has:
 | `workspaceMemberId` | The owner's workspace member id, or `null` if they've since left the workspace                                                                                                                                             |
 | `accessToken`       | Fresh OAuth access token (refreshed automatically if expired)                                                                                                                                                              |
 | `name`              | The connection's display name (auto-derived at OAuth callback, user-renameable)                                                                                                                                            |
-| `handle`            | The connected upstream account's email, refreshed on each reconnect; resolved from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email when the provider doesn't return one |
+| `handle`            | The display handle returned by the account-identification hook. If omitted, Twenty uses the existing OIDC email lookup or the connecting Twenty user's email. It is never a deduplication key. |
 | `authFailedAt`      | Set when the most recent refresh failed, or when the app reported the credential dead via `reportConnectionAuthFailure`; the user must reconnect                                                                           |
 | `authFailedReason`  | Human-readable explanation for `authFailedAt`, when the reporter gave one; shown on the connection detail page in settings                                                                                                 |
 

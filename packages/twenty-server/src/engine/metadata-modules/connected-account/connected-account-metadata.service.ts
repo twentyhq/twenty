@@ -406,58 +406,76 @@ export class ConnectedAccountMetadataService {
       ),
     );
 
-    await this.repository.manager.transaction(async (entityManager) => {
-      await entityManager.update(
-        ConnectedAccountEntity,
-        { id: In(connectedAccountIds), workspaceId },
-        {
-          userWorkspaceId: toUserWorkspaceId,
-          accessToken: null,
-          refreshToken: null,
-          connectionParameters: null,
-        },
-      );
+    const transferredAccounts = await this.repository.manager.transaction(
+      async (entityManager) => {
+        const accountsToTransfer = await entityManager.find(
+          ConnectedAccountEntity,
+          {
+            where: {
+              id: In(connectedAccountIds),
+              workspaceId,
+              userWorkspaceId: fromUserWorkspaceId,
+            },
+            lock: { mode: 'pessimistic_write' },
+          },
+        );
 
-      await entityManager.update(
-        ConnectedAccountEntity,
-        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
-        { archivedAt: new Date() },
-      );
+        if (accountsToTransfer.length === 0) {
+          return [];
+        }
 
-      await entityManager.update(
-        MessageChannelEntity,
-        { connectedAccountId: In(connectedAccountIds), workspaceId },
-        { isSyncEnabled: false },
-      );
+        const transferredAccountIds = accountsToTransfer.map(
+          (account) => account.id,
+        );
+        await entityManager.update(
+          ConnectedAccountEntity,
+          { id: In(transferredAccountIds), workspaceId },
+          {
+            // Leave the active identity index in the same statement that changes owner.
+            archivedAt: () => 'COALESCE("archivedAt", NOW())',
+            userWorkspaceId: toUserWorkspaceId,
+            accessToken: null,
+            refreshToken: null,
+            connectionParameters: null,
+          },
+        );
 
-      await entityManager.update(
-        CalendarChannelEntity,
-        { connectedAccountId: In(connectedAccountIds), workspaceId },
-        { isSyncEnabled: false },
-      );
+        await entityManager.update(
+          MessageChannelEntity,
+          { connectedAccountId: In(transferredAccountIds), workspaceId },
+          { isSyncEnabled: false },
+        );
 
-      await entityManager.update(
-        MessageChannelEntity,
-        {
-          connectedAccountId: In(connectedAccountIds),
-          workspaceId,
-          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
-        },
-        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
-      );
+        await entityManager.update(
+          CalendarChannelEntity,
+          { connectedAccountId: In(transferredAccountIds), workspaceId },
+          { isSyncEnabled: false },
+        );
 
-      await entityManager.update(
-        CalendarChannelEntity,
-        {
-          connectedAccountId: In(connectedAccountIds),
-          workspaceId,
-          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
-        },
-        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
-      );
-    });
+        await entityManager.update(
+          MessageChannelEntity,
+          {
+            connectedAccountId: In(transferredAccountIds),
+            workspaceId,
+            webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+          },
+          { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+        );
 
-    for (const connectedAccount of connectedAccounts) {
+        await entityManager.update(
+          CalendarChannelEntity,
+          {
+            connectedAccountId: In(transferredAccountIds),
+            workspaceId,
+            webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+          },
+          { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+        );
+        return accountsToTransfer;
+      },
+    );
+
+    for (const connectedAccount of transferredAccounts) {
       await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
     }
   }

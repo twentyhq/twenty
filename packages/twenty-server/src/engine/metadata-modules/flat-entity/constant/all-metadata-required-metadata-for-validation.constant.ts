@@ -119,7 +119,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   frontComponent: {},
   webhook: {},
   applicationVariable: {},
-  connectionProvider: {},
+  connectionProvider: { logicFunction: true },
   searchFieldMetadata: {
     objectMetadata: true,
     fieldMetadata: true,

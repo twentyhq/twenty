@@ -21,6 +21,9 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
       case ConnectionProviderExceptionCode.FORBIDDEN:
         throw new ForbiddenError(error);
       case ConnectionProviderExceptionCode.INVALID_REQUEST:
+      case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
+      case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_IDENTITY_UNKNOWN:
+      case ConnectionProviderExceptionCode.ACCOUNT_ALREADY_CONNECTED:
       case ConnectionProviderExceptionCode.INVALID_STATE:
       case ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT:
       case ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NAME_ALREADY_EXISTS:
@@ -28,6 +31,7 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
       case ConnectionProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED:
       case ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED:
       case ConnectionProviderExceptionCode.REFRESH_FAILED:
+      case ConnectionProviderExceptionCode.ACCOUNT_IDENTIFICATION_FAILED:
       case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_FAILED:
         throw new InternalServerError(error);
       default: {

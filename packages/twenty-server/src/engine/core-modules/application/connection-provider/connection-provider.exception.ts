@@ -17,6 +17,14 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`Failed to exchange the authorization code for an access token.`;
     case ConnectionProviderExceptionCode.REFRESH_FAILED:
       return msg`Failed to refresh the access token.`;
+    case ConnectionProviderExceptionCode.ACCOUNT_IDENTIFICATION_FAILED:
+      return msg`We could not identify the account. Please try connecting again.`;
+    case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
+      return msg`You signed in to a different account. Reconnect using the original account, or add a new connection.`;
+    case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_IDENTITY_UNKNOWN:
+      return msg`We could not verify the original account for this connection. Add a new connection to avoid changing the account used by existing workflows.`;
+    case ConnectionProviderExceptionCode.ACCOUNT_ALREADY_CONNECTED:
+      return msg`This account already has an active connection with the requested sharing. Use the existing connection.`;
     case ConnectionProviderExceptionCode.INVALID_STATE:
       return msg`The OAuth state parameter is invalid or expired.`;
     case ConnectionProviderExceptionCode.INVALID_REQUEST:

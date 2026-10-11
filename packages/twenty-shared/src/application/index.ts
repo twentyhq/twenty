@@ -78,6 +78,10 @@ export type {
   BillableOperations,
 } from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
+export type {
+  ConnectionAccountIdentity,
+  IdentifyConnectionAccountInput,
+} from './connectionAccountIdentityType';
 export type { ConnectionProviderType } from './connectionProviderType';
 export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
 export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';

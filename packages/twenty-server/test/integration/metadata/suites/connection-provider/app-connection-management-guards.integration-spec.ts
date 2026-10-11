@@ -179,7 +179,7 @@ describe('app connection management guards (e2e)', () => {
     });
 
     expect(errorMessage).toContain(
-      `Cannot reconnect connectedAccount ${PRIVATE_OF_TIM_ID}`,
+      'Not authorized to access this OAuth provider.',
     );
   });
 

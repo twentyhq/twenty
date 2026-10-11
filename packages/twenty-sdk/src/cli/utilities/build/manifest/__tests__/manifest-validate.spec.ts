@@ -204,7 +204,36 @@ describe('manifestValidate', () => {
       );
     });
 
-    it.each(['onConnectLogicFunction', 'onDisconnectLogicFunction'] as const)(
+    it('rejects an identity hook that is not defined in the app', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        connectionProviders: [
+          {
+            universalIdentifier: '550e8400-e29b-41d4-a716-446655440041',
+            name: 'linear',
+            displayName: 'Linear',
+            type: 'oauth',
+            oauth: {} as NonNullable<
+              Manifest['connectionProviders']
+            >[number]['oauth'],
+            identifyAccountLogicFunction: {
+              universalIdentifier: '550e8400-e29b-41d4-a716-446655440040',
+            },
+          },
+        ],
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain(
+        'Connection provider "linear" identifyAccountLogicFunction must reference a logic function in this app.',
+      );
+    });
+
+    it.each([
+      'identifyAccountLogicFunction',
+      'onConnectLogicFunction',
+      'onDisconnectLogicFunction',
+    ] as const)(
       'should not flag a connection provider referencing a logic function via %s as a duplicate',
       (lifecycleHookKey) => {
         const logicFunctionId = '550e8400-e29b-41d4-a716-446655440040';
@@ -764,7 +793,8 @@ describe('manifestValidate', () => {
               universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000013',
               title: 'App',
               type: WidgetType.FRONT_COMPONENT,
-              heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+              heightBehavior:
+                PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
               configuration: {
                 configurationType: 'FRONT_COMPONENT',
                 frontComponentUniversalIdentifier:

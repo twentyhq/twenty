@@ -132,6 +132,7 @@ export class LogicFunctionExecutorService {
     workspaceDeletionRequestTimestamp,
     retry = { retryCount: 0, maxRetries: 0 },
     shouldEnforceUsageLimits = true,
+    timeoutMs,
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -142,6 +143,7 @@ export class LogicFunctionExecutorService {
     workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
     shouldEnforceUsageLimits?: boolean;
+    timeoutMs?: number;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -202,7 +204,10 @@ export class LogicFunctionExecutorService {
         payload,
         context,
         env: envVariables,
-        timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
+        timeoutMs: Math.min(
+          timeoutMs ?? Infinity,
+          flatLogicFunction.timeoutSeconds * 1_000,
+        ),
         forceExecutionMode: effectiveExecutionMode,
       });
     } catch (error) {

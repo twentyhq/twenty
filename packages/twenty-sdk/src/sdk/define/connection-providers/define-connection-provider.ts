@@ -7,15 +7,16 @@ import { isDefined } from 'twenty-shared/utils';
 const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
 const SUPPORTED_TYPES = ['oauth'] as const;
 
-type ConnectionProviderLifecycleHookKey = Extract<
+type ConnectionProviderHookKey = Extract<
   keyof ConnectionProviderManifest,
-  `on${string}LogicFunction`
+  `${string}LogicFunction`
 >;
 
-const LIFECYCLE_HOOK_KEYS = [
+const HOOK_KEYS = [
+  'identifyAccountLogicFunction',
   'onConnectLogicFunction',
   'onDisconnectLogicFunction',
-] as const satisfies readonly ConnectionProviderLifecycleHookKey[];
+] as const satisfies readonly ConnectionProviderHookKey[];
 
 export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
@@ -42,7 +43,7 @@ export const defineConnectionProvider: DefineEntity<
     errors.push('Connection provider must have a displayName');
   }
 
-  for (const hookKey of LIFECYCLE_HOOK_KEYS) {
+  for (const hookKey of HOOK_KEYS) {
     const hook = config[hookKey];
 
     if (isDefined(hook) && !isValidPostgresUuid(hook.universalIdentifier)) {

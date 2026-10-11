@@ -63,6 +63,7 @@ const findUniversalIdentifiers = (obj: object): string[] => {
       key === 'preInstallLogicFunction' ||
       key === 'uninstallLogicFunction' ||
       key === 'healthCheckLogicFunction' ||
+      key === 'identifyAccountLogicFunction' ||
       key === 'onConnectLogicFunction' ||
       key === 'onDisconnectLogicFunction' ||
       key === 'settingsFrontComponent'
@@ -280,6 +281,22 @@ export const manifestValidate = (manifest: Manifest) => {
   errors.push(...validateGraphWidgets(collectPageLayoutWidgets(manifest)));
 
   errors.push(...validateTimelineActivityTypes(manifest));
+
+  for (const provider of manifest.connectionProviders ?? []) {
+    const identifier =
+      provider.identifyAccountLogicFunction?.universalIdentifier;
+
+    if (
+      isDefined(identifier) &&
+      !manifest.logicFunctions.some(
+        (logicFunction) => logicFunction.universalIdentifier === identifier,
+      )
+    ) {
+      errors.push(
+        `Connection provider "${provider.name}" identifyAccountLogicFunction must reference a logic function in this app.`,
+      );
+    }
+  }
 
   return { errors, warnings, isValid: errors.length === 0 };
 };

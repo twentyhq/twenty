@@ -52,6 +52,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         usePkce: true,
       },
       onConnectLogicFunctionUniversalIdentifier: null,
+      identifyAccountLogicFunctionUniversalIdentifier: null,
       onDisconnectLogicFunctionUniversalIdentifier: null,
       createdAt: NOW,
       updatedAt: NOW,
@@ -69,6 +70,22 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       });
 
     expect(result.logo).toBe('public/linear-logomark.svg');
+  });
+
+  it('preserves the identity function reference', () => {
+    const identifier = 'c1c1c1c1-c1c1-4c1c-c1c1-c1c1c1c1c1c1';
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          identifyAccountLogicFunction: { universalIdentifier: identifier },
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.identifyAccountLogicFunctionUniversalIdentifier).toBe(
+      identifier,
+    );
   });
 
   it('resolves the onConnectLogicFunction universalIdentifier into the flat field when provided', () => {
