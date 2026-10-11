@@ -38,6 +38,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       applicationUniversalIdentifier: APP_UID,
       name: 'linear',
       displayName: 'Linear',
+      allowedVisibilities: ['user', 'workspace'],
       logo: null,
       type: 'oauth',
       oauthConfig: {
@@ -70,6 +71,19 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       });
 
     expect(result.logo).toBe('public/linear-logomark.svg');
+  });
+
+  it('preserves explicitly restricted connection choices', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          allowedVisibilities: ['user'],
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.allowedVisibilities).toEqual(['user']);
   });
 
   it('preserves the identity function reference', () => {

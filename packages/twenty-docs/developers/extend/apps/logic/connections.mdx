@@ -97,6 +97,26 @@ https://<your-twenty-server>/auth/apps/callback
 
 </Accordion>
 
+<Accordion title="Choose personal or workspace connections" description="Declare who can use new connections for each provider">
+
+Set `allowedVisibilities` on each `defineConnectionProvider` declaration:
+
+| Declaration | Connection choices |
+| --- | --- |
+| `allowedVisibilities: ['user']` | Personal connections, usable by the member who connected them. |
+| `allowedVisibilities: ['workspace']` | Connections shared with the workspace. |
+| `allowedVisibilities: ['user', 'workspace']` | Both choices. This is also the default when the field is omitted. |
+
+The list must contain at least one supported value, without duplicates. Providers in the same app can declare different choices. These choices describe access to credentials; they do not change who can see records the app creates.
+
+The current workspace app settings only offer **Add connection** for providers that allow `workspace`. Declaring `user` alone does not add a personal settings screen. Introduce the personal connection entry point before changing a shipped provider to personal-only.
+
+The server checks the declaration when authorization starts and again before saving the credentials, including when the app updates during OAuth. Sharing an existing personal connection with the workspace also requires `workspace` to be allowed.
+
+Changing this declaration does not move, hide, or delete existing connections. Members who can manage an existing connection can still disconnect it or reconnect it with the same visibility, even when that visibility is no longer offered for new connections. A shared connection cannot become personal through reconnect. Removing `allowedVisibilities` from a later manifest restores both choices for new connections.
+
+</Accordion>
+
 <Accordion title="Identify an account and prevent duplicate connections" description="Recognize the external account before saving its credentials">
 
 Declare `identifyAccountLogicFunction: { universalIdentifier: '...' }` on the connection provider to reference a logic function in the same app. Twenty runs it after OAuth and before saving a connection, with a maximum execution time of ten seconds.

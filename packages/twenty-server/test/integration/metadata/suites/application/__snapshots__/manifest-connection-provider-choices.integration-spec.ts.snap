@@ -1,0 +1,427 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Connection provider choices in application manifests create validation rejects a string without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "visibility-provider",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests create validation rejects an empty list without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "visibility-provider",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests create validation rejects an unknown choice without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "visibility-provider",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests create validation rejects duplicate choices without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "visibility-provider",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests create validation rejects null without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "visibility-provider",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests create validation rejects uppercase values without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "visibility-provider",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests update validation rejects a string without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests update validation rejects an empty list without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests update validation rejects an unknown choice without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests update validation rejects duplicate choices without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests update validation rejects null without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Connection provider choices in application manifests update validation rejects uppercase values without changing the saved declaration 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "connectionProvider": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_CONNECTION_PROVIDER_INPUT",
+              "message": "Connection provider allowedVisibilities must contain unique user or workspace values",
+              "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "connectionProvider",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 connectionProvider",
+    "summary": {
+      "connectionProvider": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Choose personal connections, workspace connections, or both for this provider.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

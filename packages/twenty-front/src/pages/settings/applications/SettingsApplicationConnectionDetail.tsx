@@ -162,7 +162,11 @@ export const SettingsApplicationConnectionDetail = () => {
   };
 
   const handleShareWithWorkspace = () => {
-    if (connection === undefined || provider === undefined) {
+    if (
+      connection === undefined ||
+      provider === undefined ||
+      !provider.allowedVisibilities.includes('workspace')
+    ) {
       return;
     }
 
@@ -336,13 +340,14 @@ export const SettingsApplicationConnectionDetail = () => {
                     color="accent"
                   >{t`Reconnect`}</Button>
                 )}
-                {connection.visibility !== 'workspace' && (
-                  <Button
-                    startIcon={<IconUsers />}
-                    onClick={() => openDialog(shareWithWorkspaceModalId)}
-                    variant="outline"
-                  >{t`Share with workspace`}</Button>
-                )}
+                {connection.visibility !== 'workspace' &&
+                  provider.allowedVisibilities.includes('workspace') && (
+                    <Button
+                      startIcon={<IconUsers />}
+                      onClick={() => openDialog(shareWithWorkspaceModalId)}
+                      variant="outline"
+                    >{t`Share with workspace`}</Button>
+                  )}
                 <Button
                   startIcon={<IconTrash />}
                   onClick={() => openDialog(deleteModalId)}
@@ -390,19 +395,22 @@ export const SettingsApplicationConnectionDetail = () => {
               confirmButtonText={t`Disconnect`}
               loading={isDeleting}
             />
-            <ConfirmationDialog
-              dialogId={shareWithWorkspaceModalId}
-              title={t`Share with workspace?`}
-              subtitle={
-                <Trans>
-                  Sharing this connection with the workspace requires
-                  reconnecting it. You will be redirected to authorize it again.
-                </Trans>
-              }
-              onConfirmClick={handleShareWithWorkspace}
-              confirmButtonText={t`Reconnect and share`}
-              confirmButtonColor="accent"
-            />
+            {provider.allowedVisibilities.includes('workspace') && (
+              <ConfirmationDialog
+                dialogId={shareWithWorkspaceModalId}
+                title={t`Share with workspace?`}
+                subtitle={
+                  <Trans>
+                    Sharing this connection with the workspace requires
+                    reconnecting it. You will be redirected to authorize it
+                    again.
+                  </Trans>
+                }
+                onConfirmClick={handleShareWithWorkspace}
+                confirmButtonText={t`Reconnect and share`}
+                confirmButtonColor="accent"
+              />
+            )}
           </>
         )}
       </SettingsPageContainer>

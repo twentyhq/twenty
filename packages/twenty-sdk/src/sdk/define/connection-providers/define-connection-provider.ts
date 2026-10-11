@@ -1,7 +1,10 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
-import { type ConnectionProviderManifest } from 'twenty-shared/application';
+import {
+  type ConnectionProviderManifest,
+  isValidConnectionProviderAllowedVisibilities,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
@@ -41,6 +44,15 @@ export const defineConnectionProvider: DefineEntity<
 
   if (!config.displayName) {
     errors.push('Connection provider must have a displayName');
+  }
+
+  if (
+    config.allowedVisibilities !== undefined &&
+    !isValidConnectionProviderAllowedVisibilities(config.allowedVisibilities)
+  ) {
+    errors.push(
+      "Connection provider allowedVisibilities must be a non-empty array of unique 'user' or 'workspace' values.",
+    );
   }
 
   for (const hookKey of HOOK_KEYS) {

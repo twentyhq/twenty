@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
@@ -125,6 +126,7 @@ describe('SettingsApplicationConnectionDetail', () => {
           type: 'oauth',
           name: 'google-calendar',
           displayName: 'Google Calendar',
+          allowedVisibilities: ['user', 'workspace'],
           logoUrl: null,
           oauth: {
             scopes: ['calendar.readonly'],
@@ -186,6 +188,14 @@ describe('SettingsApplicationConnectionDetail', () => {
   });
 
   it('offers reconnect and disconnect on a failed workspace shared connection', () => {
+    const providers = mockedUseFindApplicationConnectionProviders();
+    mockedUseFindApplicationConnectionProviders.mockReturnValue({
+      ...providers,
+      connectionProviders: providers.connectionProviders.map((provider) => ({
+        ...provider,
+        allowedVisibilities: ['user'],
+      })),
+    });
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
@@ -228,6 +238,33 @@ describe('SettingsApplicationConnectionDetail', () => {
     fireEvent.click(disconnectButton);
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1);
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      'delete-application-connection-modal-account-1',
+    );
+  });
+
+  it('keeps personal connections manageable without offering unsupported sharing', async () => {
+    const providers = mockedUseFindApplicationConnectionProviders();
+    mockedUseFindApplicationConnectionProviders.mockReturnValue({
+      ...providers,
+      connectionProviders: providers.connectionProviders.map((provider) => ({
+        ...provider,
+        allowedVisibilities: ['user'],
+      })),
+    });
+
+    renderDetailPage();
+
+    expect(
+      screen.queryByRole('button', { name: 'Share with workspace' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Reconnect and share' }),
+    ).not.toBeInTheDocument();
+    const [disconnectButton] = screen.getAllByRole('button', {
+      name: 'Disconnect',
+    });
+    await userEvent.click(disconnectButton);
     expect(mockOpenModal).toHaveBeenCalledWith(
       'delete-application-connection-modal-account-1',
     );

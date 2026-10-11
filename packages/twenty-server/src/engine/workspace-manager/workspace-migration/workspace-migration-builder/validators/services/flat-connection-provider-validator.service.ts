@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isValidConnectionProviderAllowedVisibilities } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -103,6 +104,7 @@ export class FlatConnectionProviderValidatorService {
     }
 
     validationResult.errors.push(
+      ...this.validateAllowedVisibilities(flatConnectionProvider),
       ...this.validateIdentityHook(
         flatConnectionProvider,
         flatLogicFunctionMaps,
@@ -181,6 +183,10 @@ export class FlatConnectionProviderValidatorService {
     }
 
     validationResult.errors.push(
+      ...this.validateAllowedVisibilities({
+        ...fromFlatConnectionProvider,
+        ...flatEntityUpdate,
+      }),
       ...this.validateIdentityHook(
         { ...fromFlatConnectionProvider, ...flatEntityUpdate },
         flatLogicFunctionMaps,
@@ -188,6 +194,24 @@ export class FlatConnectionProviderValidatorService {
     );
 
     return validationResult;
+  }
+
+  private validateAllowedVisibilities(
+    provider: UniversalFlatConnectionProvider,
+  ): FailedFlatEntityValidation<'connectionProvider', 'create'>['errors'] {
+    if (
+      isValidConnectionProviderAllowedVisibilities(provider.allowedVisibilities)
+    ) {
+      return [];
+    }
+
+    return [
+      {
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider allowedVisibilities must contain unique user or workspace values`,
+        userFriendlyMessage: msg`Choose personal connections, workspace connections, or both for this provider.`,
+      },
+    ];
   }
 
   private validateIdentityHook(

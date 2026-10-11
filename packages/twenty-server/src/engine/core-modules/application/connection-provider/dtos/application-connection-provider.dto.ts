@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { type ConnectionProviderType } from 'twenty-shared/application';
+import { type ConnectedAccountVisibility } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -34,6 +35,9 @@ export class ApplicationConnectionProviderDTO {
 
   @Field()
   displayName: string;
+
+  @Field(() => [String])
+  allowedVisibilities: ConnectedAccountVisibility[];
 
   logo: string | null;
 

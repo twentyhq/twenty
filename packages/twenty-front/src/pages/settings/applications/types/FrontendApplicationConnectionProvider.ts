@@ -1,4 +1,5 @@
 import { type ConnectionProviderType } from 'twenty-shared/application';
+import { type ConnectedAccountVisibility } from 'twenty-shared/types';
 
 export type FrontendApplicationConnectionProviderOAuthConfig = {
   scopes: string[];
@@ -14,6 +15,7 @@ export type FrontendApplicationConnectionProvider = {
   type: ConnectionProviderType;
   name: string;
   displayName: string;
+  allowedVisibilities: ConnectedAccountVisibility[];
   logoUrl: string | null;
   oauth: FrontendApplicationConnectionProviderOAuthConfig | null;
 };

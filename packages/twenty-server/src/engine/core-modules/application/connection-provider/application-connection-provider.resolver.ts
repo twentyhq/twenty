@@ -64,6 +64,7 @@ export class ApplicationConnectionProviderResolver {
       type: provider.type,
       name: provider.name,
       displayName: provider.displayName,
+      allowedVisibilities: provider.allowedVisibilities,
       logo: provider.logo,
       oauth:
         provider.type === 'oauth' && provider.oauthConfig

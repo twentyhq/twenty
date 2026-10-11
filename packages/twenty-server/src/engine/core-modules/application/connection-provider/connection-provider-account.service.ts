@@ -13,6 +13,7 @@ import { ConnectionProviderEntity } from 'src/engine/core-modules/application/co
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { type OAuthConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
+import { assertConnectionProviderVisibilityAllowed } from 'src/engine/core-modules/application/connection-provider/utils/assert-connection-provider-visibility-allowed.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
@@ -128,6 +129,12 @@ export class ConnectionProviderAccountService {
             userWorkspaceId,
           },
         );
+
+        assertConnectionProviderVisibilityAllowed({
+          provider: currentProvider,
+          visibility,
+          reconnectTarget,
+        });
 
         if (
           reconnectTarget?.visibility === 'workspace' &&

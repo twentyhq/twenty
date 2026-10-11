@@ -100,6 +100,10 @@ For third-party connections:
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
 
+Declare `allowedVisibilities` on each `defineConnectionProvider`: `['user']` for personal connections, `['workspace']` for shared connections, or both. Omission permits both, including when an app update removes a previous restriction. The declaration controls new connections and sharing; existing connections keep their visibility and can still reconnect or disconnect. Wait for a personal connection settings screen before making an existing shared provider personal-only.
+
+For account deduplication, declare `identifyAccountLogicFunction` and return a stable, provider-verified `externalAccountId`. Include the external organization identifier when account IDs are only unique within that organization. Do not derive identity from an email address or token contents. Repeated connections reuse the existing record within the same workspace, provider, and visibility; personal records also belong to one member. See the [connection provider guide](https://docs.twenty.com/developers/extend/apps/logic/connections) for hook inputs, lifecycle behavior, and legacy connection limits.
+
 ## Post-Install Hooks
 
 Use `definePostInstallLogicFunction` for records that must exist on install — default workflows, views, roles, or seeded reference data. Do not implement this as runtime first-run code.

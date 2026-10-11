@@ -931,6 +931,9 @@ export default {
             ]
         },
         "ApplicationConnectionProvider": {
+            "allowedVisibilities": [
+                1
+            ],
             "applicationId": [
                 1
             ],

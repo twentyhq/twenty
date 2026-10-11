@@ -1,7 +1,9 @@
 import {
   type ConnectionProviderType,
+  DEFAULT_CONNECTION_PROVIDER_ALLOWED_VISIBILITIES,
   type StoredOAuthConnectionProviderConfig,
 } from 'twenty-shared/application';
+import { type ConnectedAccountVisibility } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -33,6 +35,18 @@ export class ConnectionProviderEntity
 
   @Column({ nullable: false, type: 'varchar' })
   displayName: string;
+
+  @Column({
+    type: 'varchar',
+    array: true,
+    nullable: false,
+    default: DEFAULT_CONNECTION_PROVIDER_ALLOWED_VISIBILITIES,
+  })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.47.0_AddConnectionProviderAllowedVisibilitiesFastInstanceCommand_1791710214770',
+  })
+  allowedVisibilities: ConnectedAccountVisibility[];
 
   @Column({ nullable: true, type: 'varchar' })
   @WasIntroducedInUpgrade({

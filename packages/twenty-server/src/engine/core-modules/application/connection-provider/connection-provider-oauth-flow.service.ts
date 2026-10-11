@@ -15,6 +15,7 @@ import { ConnectionProviderException } from 'src/engine/core-modules/application
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
+import { assertConnectionProviderVisibilityAllowed } from 'src/engine/core-modules/application/connection-provider/utils/assert-connection-provider-visibility-allowed.util';
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { computePkceChallenge } from 'src/engine/core-modules/application/connection-provider/utils/compute-pkce-challenge.util';
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util';
@@ -103,6 +104,12 @@ export class ConnectionProviderOAuthFlowService {
     }
 
     const visibility = args.visibility ?? reconnectTarget?.visibility ?? 'user';
+
+    assertConnectionProviderVisibilityAllowed({
+      provider: connectionProvider,
+      visibility,
+      reconnectTarget,
+    });
 
     if (reconnectTarget?.visibility === 'workspace' && visibility === 'user') {
       throw new ConnectionProviderException(

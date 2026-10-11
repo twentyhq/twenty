@@ -61,6 +61,13 @@ export const SettingsApplicationConnectionsSection = ({
           (account) => account.connectionProviderId === provider.id,
         );
 
+        const canAddWorkspaceConnection =
+          provider.allowedVisibilities.includes('workspace');
+
+        if (!canAddWorkspaceConnection && providerConnections.length === 0) {
+          return null;
+        }
+
         return (
           <Section.Root key={provider.id}>
             <Section.Header
@@ -77,12 +84,14 @@ export const SettingsApplicationConnectionsSection = ({
                 ) : undefined
               }
             />
-            {isOAuth && !isClientCredentialsConfigured && (
-              <InlineBanner
-                layout="compact"
-                status="error"
-              >{t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}</InlineBanner>
-            )}
+            {canAddWorkspaceConnection &&
+              isOAuth &&
+              !isClientCredentialsConfigured && (
+                <InlineBanner
+                  layout="compact"
+                  status="error"
+                >{t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}</InlineBanner>
+              )}
             {providerConnections.length > 0 && (
               <Table>
                 <TableRow
@@ -156,7 +165,7 @@ export const SettingsApplicationConnectionsSection = ({
                 </StyledTableRowsContainer>
               </Table>
             )}
-            {isClientCredentialsConfigured && (
+            {canAddWorkspaceConnection && isClientCredentialsConfigured && (
               <StyledFooter>
                 <Button
                   startIcon={<IconPlus />}

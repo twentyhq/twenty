@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { defineConnectionProvider } from '@/sdk/define';
+import { type ConnectionProviderManifest } from 'twenty-shared/application';
+import { type ConnectedAccountVisibility } from 'twenty-shared/types';
 
 const baseValidConfig = {
   universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3eaaaa',
@@ -17,6 +19,44 @@ const baseValidConfig = {
 };
 
 describe('defineConnectionProvider', () => {
+  it.each<{ allowedVisibilities: ConnectedAccountVisibility[] }>([
+    { allowedVisibilities: ['user'] },
+    { allowedVisibilities: ['workspace'] },
+    { allowedVisibilities: ['user', 'workspace'] },
+    { allowedVisibilities: ['workspace', 'user'] },
+  ])(
+    'accepts supported connection choices $allowedVisibilities',
+    ({ allowedVisibilities }) => {
+      expect(
+        defineConnectionProvider({ ...baseValidConfig, allowedVisibilities })
+          .success,
+      ).toBe(true);
+    },
+  );
+
+  it.each([
+    { allowedVisibilities: [] },
+    { allowedVisibilities: ['user', 'user'] },
+    { allowedVisibilities: ['workspace', 'team'] },
+    { allowedVisibilities: ['USER'] },
+    { allowedVisibilities: 'user' },
+    { allowedVisibilities: null },
+  ])(
+    'rejects invalid connection choices $allowedVisibilities',
+    ({ allowedVisibilities }) => {
+      const result = defineConnectionProvider({
+        ...baseValidConfig,
+        allowedVisibilities:
+          allowedVisibilities as ConnectionProviderManifest['allowedVisibilities'],
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        "Connection provider allowedVisibilities must be a non-empty array of unique 'user' or 'workspace' values.",
+      );
+    },
+  );
+
   it('returns success for a valid config', () => {
     const result = defineConnectionProvider(baseValidConfig);
 

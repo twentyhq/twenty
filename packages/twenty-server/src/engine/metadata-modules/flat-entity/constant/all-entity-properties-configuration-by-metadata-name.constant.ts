@@ -1899,6 +1899,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   connectionProvider: {
+    allowedVisibilities: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
     displayName: {
       toCompare: true,

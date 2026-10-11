@@ -1,5 +1,6 @@
 import {
   type ConnectionProviderManifest,
+  DEFAULT_CONNECTION_PROVIDER_ALLOWED_VISIBILITIES,
   type StoredOAuthConnectionProviderConfig,
 } from 'twenty-shared/application';
 
@@ -41,6 +42,10 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
       applicationUniversalIdentifier,
       name: connectionProviderManifest.name,
       displayName: connectionProviderManifest.displayName,
+      allowedVisibilities:
+        connectionProviderManifest.allowedVisibilities === undefined
+          ? [...DEFAULT_CONNECTION_PROVIDER_ALLOWED_VISIBILITIES]
+          : connectionProviderManifest.allowedVisibilities,
       logo: connectionProviderManifest.logo ?? null,
       type: connectionProviderManifest.type,
       oauthConfig,

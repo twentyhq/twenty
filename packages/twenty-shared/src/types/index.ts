@@ -71,6 +71,7 @@ export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
+export type { ConnectedAccountVisibility } from './ConnectedAccountVisibility';
 export { ContextStorePageType } from './ContextStorePageType';
 export { CoreObjectNameSingular } from './CoreObjectNameSingular';
 export { CrudOperationType } from './CrudOperationType';
