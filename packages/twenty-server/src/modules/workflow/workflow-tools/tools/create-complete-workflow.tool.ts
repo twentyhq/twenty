@@ -7,7 +7,10 @@ import {
 } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import { type CreatedCoreWorkflow } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
+import {
+  CoreWorkflowCreationRollbackError,
+  type CreatedCoreWorkflow,
+} from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -72,7 +75,7 @@ CRITICAL SCHEMA REQUIREMENTS:
 - RICH_TEXT fields (e.g. a note/task "body") MUST be an object, not a string: { "markdown": "your text, may contain {{variables}}" }. A bare string is rejected.
 - Use "trigger" as the id for the trigger step in edges
 - Step positions are computed automatically; do not provide coordinates
-- settings.outputSchema can be {}: Twenty derives each step's output schema from its settings
+- settings.outputSchema can be {}: Twenty computes it for ITERATOR steps and derives it for record, form and trigger steps. For HTTP_REQUEST steps, set settings.expectedOutputSchema to an example response so later steps can reference its fields
 
 ITERATOR steps (loops):
 - An edge leaving an ITERATOR only enters the loop body when it carries sourceConnectionOptions: { connectedStepType: "ITERATOR", settings: { isConnectedToLoop: true } }. Without it the target is placed after the loop instead.
@@ -130,6 +133,15 @@ Call validate_workflow once when the workflow is complete, before activating.`,
           edges: parameters.edges ?? [],
         });
     } catch (error) {
+      if (error instanceof CoreWorkflowCreationRollbackError) {
+        return {
+          success: false,
+          message: `Failed to create workflow "${parameters.name}" and a partial workflow remains (coreWorkflowId ${error.coreWorkflow.id}). Delete it with delete_workflow before creating the workflow again.`,
+          error: error.message,
+          result: { coreWorkflowId: error.coreWorkflow.id },
+        };
+      }
+
       return {
         success: false,
         message: `Failed to create workflow "${parameters.name}", nothing was created: ${error.message}`,

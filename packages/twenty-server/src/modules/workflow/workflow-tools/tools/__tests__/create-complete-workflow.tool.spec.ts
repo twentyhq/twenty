@@ -1,3 +1,4 @@
+import { CoreWorkflowCreationRollbackError } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { createCreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
 
 const CORE_WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000001';
@@ -111,6 +112,28 @@ describe('createCreateCompleteWorkflowTool', () => {
       error: "Target step 'unknown' not found",
       message: expect.stringContaining('nothing was created'),
     });
+  });
+
+  it('returns the leftover workflow id when the rollback also fails', async () => {
+    const { tool, coreWorkflowMutationService } = buildTool();
+
+    coreWorkflowMutationService.createWorkflowWithContent.mockRejectedValue(
+      new CoreWorkflowCreationRollbackError(
+        { id: CORE_WORKFLOW_ID } as never,
+        new Error('write failed'),
+      ),
+    );
+
+    const result = await tool.execute(buildInput());
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        message: expect.stringContaining('delete_workflow'),
+        result: { coreWorkflowId: CORE_WORKFLOW_ID },
+      }),
+    );
+    expect(result.message).not.toContain('nothing was created');
   });
 
   it.each(['CODE', 'AI_AGENT'])(

@@ -59,6 +59,18 @@ export type CreatedCoreWorkflow = {
   coreWorkflowVersionId: string;
 };
 
+export class CoreWorkflowCreationRollbackError extends Error {
+  constructor(
+    readonly coreWorkflow: CoreWorkflowDTO,
+    readonly cause: unknown,
+  ) {
+    super(
+      `Workflow content could not be saved and the created workflow '${coreWorkflow.id}' could not be removed: ${cause instanceof Error ? cause.message : String(cause)}`,
+    );
+    this.name = 'CoreWorkflowCreationRollbackError';
+  }
+}
+
 @Injectable()
 export class CoreWorkflowMutationWorkspaceService {
   private readonly logger = new Logger(
@@ -328,6 +340,8 @@ export class CoreWorkflowMutationWorkspaceService {
         );
       } catch (rollbackError) {
         this.logger.error(rollbackError);
+
+        throw new CoreWorkflowCreationRollbackError(coreWorkflow, error);
       }
 
       throw error;
