@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
@@ -125,14 +125,45 @@ export class ConnectedAccountRefreshTokensService {
       workspaceId,
     });
 
-    await this.connectedAccountRepository.update(
-      { id: connectedAccount.id, workspaceId },
+    const updateResult = await this.connectedAccountRepository.update(
+      {
+        id: connectedAccount.id,
+        workspaceId,
+        ...(connectedAccount.provider === ConnectedAccountProvider.APP
+          ? {
+              accessToken: connectedAccount.accessToken ?? IsNull(),
+              refreshToken: encryptedRefreshToken,
+              archivedAt: IsNull(),
+            }
+          : {}),
+      },
       {
         accessToken: encryptedAccessToken,
         refreshToken: reEncryptedRefreshToken,
         lastCredentialsRefreshedAt: new Date(),
       },
     );
+
+    // Reauthorization or disconnect may finish while the provider is refreshing.
+    if (
+      connectedAccount.provider === ConnectedAccountProvider.APP &&
+      updateResult.affected === 0
+    ) {
+      const latestAccount = await this.connectedAccountRepository.findOneBy({
+        id: connectedAccount.id,
+        workspaceId,
+        archivedAt: IsNull(),
+      });
+
+      if (!isDefined(latestAccount)) {
+        throw new ConnectedAccountRefreshAccessTokenException(
+          'The app connection was disconnected during token refresh.',
+          ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND,
+        );
+      }
+
+      return this.getExistingEncryptedTokens(latestAccount, workspaceId);
+    }
 
     return {
       accessToken: encryptedAccessToken,

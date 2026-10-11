@@ -1,0 +1,242 @@
+import { insertApplicationRegistrationVariable } from 'test/integration/metadata/suites/application-registration-variable/utils/insert-application-registration-variable.util';
+import {
+  type ApplicationWithAppConnection,
+  cleanupApplicationWithAppConnection,
+  setupApplicationWithAppConnection,
+} from 'test/integration/metadata/suites/connection-provider/utils/setup-application-with-app-connection.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { isDefined } from 'twenty-shared/utils';
+
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { type ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+
+describe('app token refresh overlapping connection changes', () => {
+  let application: ApplicationWithAppConnection;
+  let service: ConnectedAccountRefreshTokensService;
+  let encryptionService: ConnectedAccountTokenEncryptionService;
+
+  const tokenResponse = () =>
+    new Response(
+      JSON.stringify({
+        access_token: 'refreshed-access',
+        refresh_token: 'refreshed-refresh',
+      }),
+      { status: 200 },
+    );
+  const tokenRequest = jest.fn(async () => tokenResponse());
+
+  const pauseTokenResponse = () => {
+    let respond!: (response: Response) => void;
+    let notifyRequestStarted!: () => void;
+    const requestStarted = new Promise<void>((resolve) => {
+      notifyRequestStarted = resolve;
+    });
+    const response = new Promise<Response>((resolve) => {
+      respond = resolve;
+    });
+
+    tokenRequest.mockImplementationOnce(async () => {
+      notifyRequestStarted();
+
+      return response;
+    });
+
+    return { requestStarted, respond };
+  };
+
+  const accounts = () =>
+    getCoreRepository<ConnectedAccountEntity>(ConnectedAccountEntity);
+  const encrypt = (value: string) =>
+    encryptionService.encrypt({
+      plaintext: plaintextStringSchema.parse(value),
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
+  const readAccount = () =>
+    accounts().findOneByOrFail({ id: application.connectedAccountId });
+  const refresh = async () =>
+    service.resolveTokens(await readAccount(), SEED_APPLE_WORKSPACE_ID);
+
+  beforeAll(async () => {
+    application = await setupApplicationWithAppConnection({
+      name: 'Connection refresh races',
+    });
+    service = getAppProviderByClassName('ConnectedAccountRefreshTokensService');
+    encryptionService = getAppProviderByClassName(
+      'ConnectedAccountTokenEncryptionService',
+    );
+
+    const { applicationRegistrationId } =
+      await getCoreRepository<ApplicationEntity>(
+        ApplicationEntity,
+      ).findOneByOrFail({ id: application.applicationId });
+
+    if (!isDefined(applicationRegistrationId)) {
+      throw new Error('The test application must have a registration');
+    }
+
+    for (const variable of [
+      { key: 'SLACK_CLIENT_ID', value: 'refresh-test-client' },
+      { key: 'SLACK_CLIENT_SECRET', value: 'refresh-test-secret' },
+    ]) {
+      await insertApplicationRegistrationVariable({
+        applicationRegistrationId,
+        ...variable,
+      });
+    }
+  }, 120000);
+
+  beforeEach(async () => {
+    await accounts().update(application.connectedAccountId, {
+      accessToken: encrypt('expired-access'),
+      refreshToken: encrypt('old-refresh'),
+      lastCredentialsRefreshedAt: new Date(0),
+      archivedAt: null,
+      authFailedAt: null,
+      authFailedReason: null,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+    });
+    tokenRequest.mockReset().mockImplementation(async () => tokenResponse());
+
+    jest
+      .spyOn(
+        getAppProviderByClassName<SecureHttpClientService>(
+          'SecureHttpClientService',
+        ),
+        'createSsrfSafeFetch',
+      )
+      .mockReturnValue(tokenRequest);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  afterAll(async () => {
+    if (isDefined(application)) {
+      await cleanupApplicationWithAppConnection(application);
+    }
+  }, 120000);
+
+  it('saves fresh credentials when the connection has not changed', async () => {
+    const tokens = await refresh();
+    const account = await readAccount();
+
+    expect(account.accessToken).toBe(tokens.accessToken);
+    expect(account.refreshToken).toBe(tokens.refreshToken);
+    expect(
+      encryptionService.decrypt({
+        ciphertext: tokens.accessToken,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      }),
+    ).toBe('refreshed-access');
+    expect(account.lastCredentialsRefreshedAt?.getTime()).toBeGreaterThan(0);
+    expect(tokenRequest).toHaveBeenCalledWith(
+      'https://slack.com/api/oauth.v2.access',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          grant_type: 'refresh_token',
+          refresh_token: 'old-refresh',
+          client_id: 'refresh-test-client',
+          client_secret: 'refresh-test-secret',
+        }),
+      }),
+    );
+  });
+
+  it('preserves the new authorization and owner when an older refresh finishes', async () => {
+    const { requestStarted, respond } = pauseTokenResponse();
+    const refreshing = refresh();
+
+    await requestStarted;
+
+    const replacementAccessToken = encrypt('reauthorized-access');
+    const replacementRefreshToken = encrypt('reauthorized-refresh');
+    const replacementTimestamp = new Date('2026-01-01T00:00:00Z');
+
+    await accounts().update(application.connectedAccountId, {
+      accessToken: replacementAccessToken,
+      refreshToken: replacementRefreshToken,
+      lastCredentialsRefreshedAt: replacementTimestamp,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+    });
+    respond(tokenResponse());
+
+    expect(await refreshing).toEqual({
+      accessToken: replacementAccessToken,
+      refreshToken: replacementRefreshToken,
+    });
+    expect(await readAccount()).toMatchObject({
+      accessToken: replacementAccessToken,
+      refreshToken: replacementRefreshToken,
+      lastCredentialsRefreshedAt: replacementTimestamp,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+    });
+  });
+
+  it('cannot put credentials back after a connection was disconnected during refresh', async () => {
+    const { requestStarted, respond } = pauseTokenResponse();
+    const refreshing = refresh();
+
+    await requestStarted;
+
+    const archivedAt = new Date();
+
+    await accounts().update(application.connectedAccountId, {
+      archivedAt,
+      accessToken: null,
+      refreshToken: null,
+    });
+    respond(tokenResponse());
+
+    await expect(refreshing).rejects.toMatchObject({
+      code: ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND,
+    });
+    expect(await readAccount()).toMatchObject({
+      archivedAt,
+      accessToken: null,
+      refreshToken: null,
+    });
+  });
+
+  it('leaves the new authorization healthy when an older refresh fails', async () => {
+    const { requestStarted, respond } = pauseTokenResponse();
+    const refreshing = refresh();
+
+    await requestStarted;
+
+    const replacementAccessToken = encrypt('reauthorized-access');
+    const replacementRefreshToken = encrypt('reauthorized-refresh');
+    const replacementTimestamp = new Date('2026-01-01T00:00:00Z');
+
+    await accounts().update(application.connectedAccountId, {
+      accessToken: replacementAccessToken,
+      refreshToken: replacementRefreshToken,
+      lastCredentialsRefreshedAt: replacementTimestamp,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+    });
+    respond(
+      new Response(JSON.stringify({ error: 'invalid_grant' }), { status: 400 }),
+    );
+
+    await expect(refreshing).rejects.toMatchObject({
+      code: ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
+    });
+    expect(await readAccount()).toMatchObject({
+      accessToken: replacementAccessToken,
+      refreshToken: replacementRefreshToken,
+      lastCredentialsRefreshedAt: replacementTimestamp,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+      authFailedAt: null,
+      authFailedReason: null,
+    });
+  });
+});
