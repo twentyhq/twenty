@@ -59,7 +59,7 @@ describe('useUpdateAgentChatThreadInboxState', () => {
     jest.clearAllMocks();
   });
 
-  it('reads a thread up to its last activity before the server answers', async () => {
+  it('reads a thread up to its last activity before the server answers, without following it', async () => {
     mutate.mockReturnValue(new Promise(() => undefined));
     const { result, store } = renderUpdateInboxState();
 
@@ -77,7 +77,7 @@ describe('useUpdateAgentChatThreadInboxState', () => {
       lastReadAt: LAST_ACTIVITY_AT,
       archivedAt: null,
       snoozedUntil: null,
-      isSubscribed: true,
+      isSubscribed: false,
     });
   });
 
@@ -94,7 +94,10 @@ describe('useUpdateAgentChatThreadInboxState', () => {
 
     const participants = store.get(agentChatThreadParticipantsState.atom);
 
-    expect(participants?.[THREAD_ID]?.archivedAt).toEqual(expect.any(String));
+    expect(participants?.[THREAD_ID]).toMatchObject({
+      archivedAt: expect.any(String),
+      isSubscribed: true,
+    });
     expect(participants?.[OTHER_THREAD_ID]?.archivedAt).toEqual(
       expect.any(String),
     );

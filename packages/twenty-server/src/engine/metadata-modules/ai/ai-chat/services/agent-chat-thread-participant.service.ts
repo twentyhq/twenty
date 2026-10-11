@@ -49,15 +49,15 @@ type BuildParticipantWriteQuery = (tables: {
 }) => string;
 
 // A snooze whose end is already due, which its queued end may have checked
-// before this write, is saved as ended. A snoozed thread is meant to come
-// back, so snoozing follows it again
+// before this write, is saved as ended. Filing a thread, done or snoozed,
+// follows it, so new activity or the snooze's end brings it back
 const buildArchiveQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
-  `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil")
-   VALUES ($1, $2, CASE WHEN $3::timestamptz <= clock_timestamp() THEN NULL ELSE clock_timestamp() END, $3)
+  `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil", "isSubscribed")
+   VALUES ($1, $2, CASE WHEN $3::timestamptz <= clock_timestamp() THEN NULL ELSE clock_timestamp() END, $3, true)
    ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
      "archivedAt" = EXCLUDED."archivedAt",
      "snoozedUntil" = EXCLUDED."snoozedUntil",
-     "isSubscribed" = participant."isSubscribed" OR EXCLUDED."snoozedUntil" IS NOT NULL,
+     "isSubscribed" = true,
      "updatedAt" = now()
    RETURNING *`;
 
@@ -68,17 +68,18 @@ const INBOX_ACTION_QUERIES: Record<
   AgentChatInboxAction,
   BuildParticipantWriteQuery
 > = {
-  // Read up to what the thread holds now, never past it, and never back
+  // Read up to what the thread holds now, never past it, and never back.
+  // Reading or marking unread tracks a chat without following it
   [AgentChatInboxAction.READ]: ({ participantTable, threadTable }) =>
-    `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
-     SELECT thread.id, $2, thread."lastActivityAt" FROM ${threadTable} thread WHERE thread.id = $1
+    `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
+     SELECT thread.id, $2, thread."lastActivityAt", false FROM ${threadTable} thread WHERE thread.id = $1
      ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
        "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
        "updatedAt" = now()
      RETURNING *`,
   [AgentChatInboxAction.UNREAD]: ({ participantTable }) =>
-    `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
-     VALUES ($1, $2, NULL)
+    `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
+     VALUES ($1, $2, NULL, false)
      ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
        "lastReadAt" = NULL,
        "updatedAt" = now()
@@ -409,8 +410,8 @@ export class AgentChatThreadParticipantService {
     return rows[0];
   }
 
-  // Over every chat the member can open, the way the inbox lists them; a chat
-  // without the member's row is in their inbox, unread
+  // Over the chats the member can open and follows, the way the inbox lists
+  // them
   async findOpenThreadsSummary({
     workspaceId,
     workspaceMemberId,
@@ -452,9 +453,9 @@ export class AgentChatThreadParticipantService {
                thread."lastActivityAt" IS NOT NULL
                  AND (participant."lastReadAt" IS NULL OR thread."lastActivityAt" > participant."lastReadAt") AS "isUnread"
              FROM (${readableThreads.getQuery()}) thread
-             LEFT JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
+             JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
                ON participant."threadId" = thread.id AND participant."workspaceMemberId" = :summaryWorkspaceMemberId
-             WHERE COALESCE(participant."isSubscribed", true)
+             WHERE participant."isSubscribed"
                AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt")
            )
            SELECT

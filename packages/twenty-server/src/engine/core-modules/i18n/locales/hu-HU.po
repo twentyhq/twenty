@@ -9839,11 +9839,6 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "Olvasás és írás"
 
-#. js-lingui-id: e2WMO+
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Read, archive and snooze are not available yet. Try again in a few minutes."
-msgstr "Az olvasás, archiválás és elhalasztás még nem érhető el. Próbálja újra néhány perc múlva."
-
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"

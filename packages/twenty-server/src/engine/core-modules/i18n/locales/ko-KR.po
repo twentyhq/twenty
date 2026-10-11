@@ -9839,11 +9839,6 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "읽기 및 쓰기"
 
-#. js-lingui-id: e2WMO+
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Read, archive and snooze are not available yet. Try again in a few minutes."
-msgstr "읽음, 보관 및 다시 알림은 아직 사용할 수 없습니다. 몇 분 후에 다시 시도하세요."
-
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
