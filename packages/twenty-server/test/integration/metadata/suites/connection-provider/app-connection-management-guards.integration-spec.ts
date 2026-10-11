@@ -4,14 +4,14 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
-import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
-import { generateTransientToken } from 'test/integration/utils/generate-transient-token.util';
-import { getDataOrThrow } from 'test/integration/utils/query-messaging.util';
-import gql from 'graphql-tag';
+import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
+import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
@@ -54,43 +54,27 @@ describe('app connection management guards (e2e)', () => {
     );
   };
 
-  const generateMemberTransientToken = async (): Promise<string> => {
-    const response = await makeMetadataApiRequestWithMemberRole({
-      query: gql`
-        mutation GenerateTransientToken {
-          generateTransientToken {
-            transientToken {
-              token
-            }
-          }
-        }
-      `,
-    });
-
-    const data = getDataOrThrow(response) as {
-      generateTransientToken: { transientToken: { token: string } };
-    };
-
-    return data.generateTransientToken.transientToken.token;
-  };
-
-  const startAuthorizeAndGetErrorMessage = async ({
+  const startAuthorization = async ({
     reconnectingConnectedAccountId,
     visibility,
-    asMember = false,
+    isMember = false,
   }: {
     reconnectingConnectedAccountId?: string;
     visibility?: 'user' | 'workspace';
-    asMember?: boolean;
-  }): Promise<string> => {
+    isMember?: boolean;
+  }): Promise<URL> => {
+    const transient = await generateTransientTokenResponse({
+      token: isMember
+        ? APPLE_JONY_MEMBER_ACCESS_TOKEN
+        : APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
       .query({
         applicationId: applicationDbId,
         providerName: 'slack',
-        transientToken: asMember
-          ? await generateMemberTransientToken()
-          : await generateTransientToken(),
+        transientToken:
+          transient.data.generateTransientToken.transientToken.token,
         ...(isDefined(reconnectingConnectedAccountId)
           ? { reconnectingConnectedAccountId }
           : {}),
@@ -99,9 +83,7 @@ describe('app connection management guards (e2e)', () => {
 
     expect(response.status).toBe(302);
 
-    return (
-      new URL(response.headers.location).searchParams.get('errorMessage') ?? ''
-    );
+    return new URL(response.headers.location);
   };
 
   beforeAll(async () => {
@@ -144,6 +126,24 @@ describe('app connection management guards (e2e)', () => {
     applicationDbId = provider.applicationId;
     providerDbId = provider.id;
 
+    const encryption = getAppProviderByClassName<SecretEncryptionService>(
+      'SecretEncryptionService',
+    );
+
+    for (const key of ['SLACK_CLIENT_ID', 'SLACK_CLIENT_SECRET']) {
+      await globalThis.testDataSource.query(
+        `INSERT INTO core."applicationRegistrationVariable" (key, "encryptedValue", "applicationRegistrationId")
+         SELECT $1, $2, "applicationRegistrationId" FROM core.application WHERE id = $3`,
+        [
+          key,
+          encryption.encryptVersioned(
+            plaintextStringSchema.parse(`test-${key}`),
+          ),
+          applicationDbId,
+        ],
+      );
+    }
+
     await insertAppConnection({
       id: SHARED_BY_TIM_ID,
       visibility: 'workspace',
@@ -174,59 +174,67 @@ describe('app connection management guards (e2e)', () => {
   }, 120000);
 
   it('refuses to reconnect a private connection owned by another member', async () => {
-    const errorMessage = await startAuthorizeAndGetErrorMessage({
+    const redirect = await startAuthorization({
       reconnectingConnectedAccountId: PRIVATE_OF_TIM_ID,
     });
 
-    expect(errorMessage).toContain(
-      `Cannot reconnect connectedAccount ${PRIVATE_OF_TIM_ID}`,
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'Not authorized to access this OAuth provider.',
     );
   });
 
   it('lets a member with the Applications permission reconnect a workspace-shared connection', async () => {
-    const errorMessage = await startAuthorizeAndGetErrorMessage({
+    const redirect = await startAuthorization({
       reconnectingConnectedAccountId: SHARED_BY_TIM_ID,
     });
 
-    expect(errorMessage).not.toContain('Cannot reconnect connectedAccount');
-    expect(errorMessage).not.toContain('does not have permission');
+    expect(redirect.origin).toBe('https://slack.com');
+    expect(redirect.pathname).toBe('/oauth/v2/authorize');
+    expect(redirect.searchParams.get('errorMessage')).toBeNull();
   });
 
   it('refuses a member without the Applications permission to reconnect a workspace-shared connection', async () => {
-    const errorMessage = await startAuthorizeAndGetErrorMessage({
+    const redirect = await startAuthorization({
       reconnectingConnectedAccountId: SHARED_BY_TIM_ID,
-      asMember: true,
+      isMember: true,
     });
 
-    expect(errorMessage).toContain('does not have permission');
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'does not have permission',
+    );
   });
 
   it('refuses a member without the Applications permission to create a workspace-shared connection', async () => {
-    const errorMessage = await startAuthorizeAndGetErrorMessage({
+    const redirect = await startAuthorization({
       visibility: 'workspace',
-      asMember: true,
+      isMember: true,
     });
 
-    expect(errorMessage).toContain('does not have permission');
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'does not have permission',
+    );
   });
 
   it('refuses a member without the Applications permission to share their own private connection', async () => {
-    const errorMessage = await startAuthorizeAndGetErrorMessage({
+    const redirect = await startAuthorization({
       reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
       visibility: 'workspace',
-      asMember: true,
+      isMember: true,
     });
 
-    expect(errorMessage).toContain('does not have permission');
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'does not have permission',
+    );
   });
 
   it('lets a member without the Applications permission reconnect their own private connection', async () => {
-    const errorMessage = await startAuthorizeAndGetErrorMessage({
+    const redirect = await startAuthorization({
       reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
-      asMember: true,
+      isMember: true,
     });
 
-    expect(errorMessage).not.toContain('Cannot reconnect connectedAccount');
-    expect(errorMessage).not.toContain('does not have permission');
+    expect(redirect.origin).toBe('https://slack.com');
+    expect(redirect.pathname).toBe('/oauth/v2/authorize');
+    expect(redirect.searchParams.get('errorMessage')).toBeNull();
   });
 });

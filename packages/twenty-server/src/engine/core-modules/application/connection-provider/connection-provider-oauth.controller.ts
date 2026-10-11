@@ -1,6 +1,7 @@
 import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { i18n } from '@lingui/core';
 import { type Response } from 'express';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -128,8 +129,7 @@ export class ConnectionProviderOAuthController {
           workspaceId,
           userId,
           userWorkspaceId: userWorkspace.id,
-          visibility:
-            (visibility as 'user' | 'workspace' | undefined) ?? 'user',
+          visibility: visibility as 'user' | 'workspace' | undefined,
           reconnectingConnectedAccountId:
             reconnectingConnectedAccountId ?? null,
           redirectLocation: redirectLocation ?? null,
@@ -157,27 +157,29 @@ export class ConnectionProviderOAuthController {
   ) {
     let workspace: WorkspaceEntity | null = null;
 
-    if (errorParam) {
-      return this.redirectToError(
-        res,
-        new Error(
-          `OAuth provider returned error: ${errorParam}${errorDescription ? `: ${errorDescription}` : ''}`,
-        ),
-        workspace,
-      );
-    }
-
-    if (!code || !state) {
-      return this.redirectToError(
-        res,
-        new Error(
-          'OAuth callback is missing the `code` or `state` query parameter',
-        ),
-        workspace,
-      );
-    }
-
     try {
+      // Resolve only verified state so failed reconnects return to the right workspace.
+      if (state) {
+        const workspaceId =
+          await this.oauthProviderFlowService.getCallbackWorkspaceId(state);
+
+        workspace = await this.workspaceRepository.findOneBy({
+          id: workspaceId,
+        });
+      }
+
+      if (errorParam) {
+        throw new Error(
+          `OAuth provider returned error: ${errorParam}${errorDescription ? `: ${errorDescription}` : ''}`,
+        );
+      }
+
+      if (!code || !state) {
+        throw new Error(
+          'OAuth callback is missing the `code` or `state` query parameter',
+        );
+      }
+
       const { workspaceId, applicationId, redirectLocation } =
         await this.oauthProviderFlowService.completeAuthorizationFlow({
           code,
@@ -223,9 +225,16 @@ export class ConnectionProviderOAuthController {
     error: unknown,
     workspace: WorkspaceEntity | null,
   ) {
+    const redirectError =
+      error instanceof ConnectionProviderException
+        ? new Error(i18n._(error.userFriendlyMessage))
+        : error instanceof Error
+          ? error
+          : new Error(String(error));
+
     return res.redirect(
       this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
-        error: error instanceof Error ? error : new Error(String(error)),
+        error: redirectError,
         workspace: {
           id: workspace?.id,
           subdomain:
