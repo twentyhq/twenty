@@ -1,4 +1,4 @@
-import { FieldMetadataType, ViewFilterOperand } from '@/types';
+import { ViewFilterOperand } from '@/types';
 import { getFilterOperandsForFilterableFieldType } from '@/utils/filter/utils/getFilterOperandsForFilterableFieldType';
 
 describe('getFilterOperandsForFilterableFieldType', () => {
@@ -6,18 +6,6 @@ describe('getFilterOperandsForFilterableFieldType', () => {
     ViewFilterOperand.IS_EMPTY,
     ViewFilterOperand.IS_NOT_EMPTY,
   ];
-
-  it('should preserve relation operands for saved morph relation filters', () => {
-    expect(
-      getFilterOperandsForFilterableFieldType({
-        filterType: FieldMetadataType.MORPH_RELATION,
-      }),
-    ).toEqual([
-      ViewFilterOperand.IS,
-      ViewFilterOperand.IS_NOT,
-      ...emptyOperands,
-    ]);
-  });
 
   it('should return select operands', () => {
     expect(

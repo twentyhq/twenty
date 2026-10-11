@@ -1,11 +1,14 @@
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/types/FindRecordsActionFilter';
+import { getRecordFiltersWithFilterTypeFromFieldMetadata } from '@/workflow/workflow-steps/workflow-actions/find-records-action/utils/getRecordFiltersWithFilterTypeFromFieldMetadata';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -38,6 +41,10 @@ export const WorkflowFindRecordsFiltersEffect = ({
     currentRecordFilterGroupsComponentState,
   );
 
+  const fieldMetadataItemByIdMap = useAtomStateValue(
+    fieldMetadataItemByIdMapSelector,
+  );
+
   const { setAdvancedFilterDropdownStates } =
     useSetAdvancedFilterDropdownStates();
 
@@ -51,7 +58,12 @@ export const WorkflowFindRecordsFiltersEffect = ({
       !hasInitializedCurrentRecordFilters &&
       isDefined(defaultValue?.recordFilters)
     ) {
-      setCurrentRecordFilters(defaultValue.recordFilters ?? []);
+      setCurrentRecordFilters(
+        getRecordFiltersWithFilterTypeFromFieldMetadata({
+          recordFilters: defaultValue.recordFilters,
+          fieldMetadataItemByIdMap,
+        }),
+      );
       setShouldSetAdvancedFilterDropdownStates(true);
       setHasInitializedCurrentRecordFilters(true);
     }
@@ -60,6 +72,7 @@ export const WorkflowFindRecordsFiltersEffect = ({
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
     defaultValue?.recordFilters,
+    fieldMetadataItemByIdMap,
   ]);
 
   useEffect(() => {
