@@ -29,6 +29,27 @@ export type ConnectedAccountVisibility = 'user' | 'workspace';
 @Index('IDX_CONNECTED_ACCOUNT_CONNECTION_PROVIDER_ID', ['connectionProviderId'])
 @Index('IDX_CONNECTED_ACCOUNT_APPLICATION_ID', ['applicationId'])
 @Index('IDX_CONNECTED_ACCOUNT_HANDLE_PROVIDER', ['handle', 'provider'])
+@Index(
+  'IDX_CONNECTED_ACCOUNT_APP_SHARED_EXTERNAL_ACCOUNT_UNIQUE',
+  ['workspaceId', 'connectionProviderId', 'externalAccountId'],
+  {
+    unique: true,
+    where: `"provider" = 'app' AND "visibility" = 'workspace' AND "externalAccountId" IS NOT NULL AND "archivedAt" IS NULL`,
+  },
+)
+@Index(
+  'IDX_CONNECTED_ACCOUNT_APP_USER_EXTERNAL_ACCOUNT_UNIQUE',
+  [
+    'workspaceId',
+    'connectionProviderId',
+    'userWorkspaceId',
+    'externalAccountId',
+  ],
+  {
+    unique: true,
+    where: `"provider" = 'app' AND "visibility" = 'user' AND "externalAccountId" IS NOT NULL AND "archivedAt" IS NULL`,
+  },
+)
 @Check(
   'CHK_connectedAccount_accessToken_encrypted',
   `"accessToken" IS NULL OR "accessToken" LIKE 'enc:v2:%'`,
@@ -51,6 +72,13 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'varchar', nullable: false })
   handle: string;
+
+  @Column({ type: 'varchar', length: 512, nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.47.0_AddConnectedAccountExternalAccountIdFastInstanceCommand_1791808820952',
+  })
+  externalAccountId: string | null;
 
   @Column({ type: 'varchar', nullable: false })
   provider: ConnectedAccountProvider;
