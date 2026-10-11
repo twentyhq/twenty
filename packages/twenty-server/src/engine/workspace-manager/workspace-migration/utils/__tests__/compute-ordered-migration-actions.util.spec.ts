@@ -15,8 +15,38 @@ import {
   type UniversalDeleteSettingsMenuItemAction,
   type UniversalUpdateSettingsMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/types/workspace-migration-settings-menu-item-action.type';
+import { type UniversalCreateViewSortAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
 
 describe('computeOrderedMigrationActions', () => {
+  it('should remove a replaced view sort before creating its replacement', () => {
+    const orchestratorActionsReport = createEmptyOrchestratorActionsReport();
+    const oldSortDeleteAction = {
+      type: 'delete',
+      metadataName: 'viewSort',
+      universalIdentifier: 'old-sort',
+    } as const;
+    const replacementSortCreateAction = {
+      type: 'create',
+      metadataName: 'viewSort',
+      flatEntity: {
+        universalIdentifier: 'replacement-sort',
+        viewUniversalIdentifier: 'view',
+        fieldMetadataUniversalIdentifier: 'field',
+      },
+    } as unknown as UniversalCreateViewSortAction;
+
+    orchestratorActionsReport.viewSort.delete.push(oldSortDeleteAction);
+    orchestratorActionsReport.viewSort.create.push(replacementSortCreateAction);
+
+    const orderedActions = computeOrderedMigrationActions(
+      orchestratorActionsReport,
+    );
+
+    expect(orderedActions.indexOf(oldSortDeleteAction)).toBeLessThan(
+      orderedActions.indexOf(replacementSortCreateAction),
+    );
+  });
+
   it('should run pageLayout updates after pageLayoutTab creates so defaultTabToFocusOnMobileAndSidePanel can reference a tab created in the same migration', () => {
     const pageLayoutUpdateAction = {
       type: 'update',
