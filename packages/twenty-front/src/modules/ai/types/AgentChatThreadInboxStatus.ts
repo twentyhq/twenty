@@ -1,5 +1,5 @@
 export type AgentChatThreadInboxStatus = {
-  // NONE is a channel chat the member neither follows nor filed
+  // NONE: a chat the member can open but does not follow
   scope: 'INBOX' | 'SNOOZED' | 'ARCHIVED' | 'NONE';
   isUnread: boolean;
   isSubscribed: boolean;

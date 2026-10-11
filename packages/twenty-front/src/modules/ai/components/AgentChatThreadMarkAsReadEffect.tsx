@@ -26,12 +26,10 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     isDefined(agentChatDisplayedThread) && isValidUuid(agentChatDisplayedThread)
       ? agentChatDisplayedThread
       : null;
-  const thread = useAtomFamilySelectorValue(
+  const lastActivityAt = useAtomFamilySelectorValue(
     agentChatThreadRecordFamilySelector,
     threadId ?? '',
-  );
-  const lastActivityAt = thread?.lastActivityAt;
-  const isInChannel = isDefined(thread?.channelId);
+  )?.lastActivityAt;
   const agentChatThreadParticipants = useAtomStateValue(
     agentChatThreadParticipantsState,
   );
@@ -80,7 +78,6 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     const { isUnread } = getAgentChatThreadInboxStatus({
       lastActivityAt,
       participant,
-      isInChannel,
     });
     const visit = store.get(agentChatThreadVisitState.atom);
 
@@ -97,7 +94,9 @@ export const AgentChatThreadMarkAsReadEffect = () => {
 
     const isKeptUnread = visit?.threadId === threadId && visit.isKeptUnread;
 
-    if (isUnread && !isKeptUnread) {
+    // Opening a chat the member does not participate in yet starts tracking
+    // it for them, so later activity in it reads as unread
+    if ((isUnread || !isDefined(participant)) && !isKeptUnread) {
       void updateAgentChatThreadInboxState({
         threadIds: [threadId],
         action: AgentChatInboxAction.READ,
@@ -105,7 +104,6 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     }
   }, [
     isVisible,
-    isInChannel,
     lastActivityAt,
     agentChatThreadParticipants,
     updateAgentChatThreadInboxState,

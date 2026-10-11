@@ -31,11 +31,18 @@ describe('applyAgentChatInboxAction', () => {
     ]
   >([
     [
-      'reads a chat without a row up to its last activity',
+      'reads a chat without a row up to its last activity, without following it',
       undefined,
       'READ',
       { threadLastActivityAt: EARLIER },
-      READ,
+      { ...READ, isSubscribed: false },
+    ],
+    [
+      'marks a chat without a row unread, without following it',
+      undefined,
+      'UNREAD',
+      {},
+      { ...READ, lastReadAt: null, isSubscribed: false },
     ],
     [
       'never moves the read cursor back',
@@ -46,11 +53,11 @@ describe('applyAgentChatInboxAction', () => {
     ],
     ['marks unread', READ, 'UNREAD', {}, { ...READ, lastReadAt: null }],
     [
-      'archives without following the chat again',
+      'archives and follows the chat again',
       SNOOZED_UNSUBSCRIBED,
       'ARCHIVE',
       {},
-      { ...READ, archivedAt: NOW.toISOString(), isSubscribed: false },
+      { ...READ, archivedAt: NOW.toISOString() },
     ],
     [
       'snoozes and follows the chat again',
@@ -74,20 +81,6 @@ describe('applyAgentChatInboxAction', () => {
       READ,
     ],
     ['subscribes', { ...READ, isSubscribed: false }, 'SUBSCRIBE', {}, READ],
-    [
-      'reads a channel chat without following it',
-      undefined,
-      'READ',
-      { threadLastActivityAt: EARLIER, isInChannel: true },
-      { ...READ, isSubscribed: false },
-    ],
-    [
-      'follows a channel chat moved back to the inbox',
-      undefined,
-      'MOVE_TO_INBOX',
-      { isInChannel: true },
-      { ...READ, lastReadAt: null },
-    ],
     [
       'files an unsubscribed chat under done',
       SNOOZED_UNSUBSCRIBED,

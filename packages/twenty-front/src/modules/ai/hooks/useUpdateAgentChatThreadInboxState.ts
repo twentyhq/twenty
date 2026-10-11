@@ -73,19 +73,17 @@ export const useUpdateAgentChatThreadInboxState = () => {
         const updatedParticipants = { ...participants };
 
         for (const threadId of threadIds) {
-          const thread = store.get(
-            agentChatThreadRecordFamilySelector.selectorFamily(threadId),
-          );
-
           updatedParticipants[threadId] = {
             ...participants[threadId],
             ...applyAgentChatInboxAction({
               participant: participants[threadId],
               action,
               now,
-              threadLastActivityAt: thread?.lastActivityAt ?? null,
+              threadLastActivityAt:
+                store.get(
+                  agentChatThreadRecordFamilySelector.selectorFamily(threadId),
+                )?.lastActivityAt ?? null,
               snoozedUntil: snoozedUntil?.toISOString(),
-              isInChannel: isDefined(thread?.channelId),
             }),
             threadId,
           };
