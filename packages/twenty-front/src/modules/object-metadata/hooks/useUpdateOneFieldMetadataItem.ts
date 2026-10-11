@@ -5,6 +5,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastFieldMetadataItemUpdateState';
@@ -13,7 +14,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,6 +27,7 @@ export const useUpdateOneFieldMetadataItem = () => {
 
   const { enqueueToast } = useToast();
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const setLastFieldMetadataItemUpdate = useSetAtomState(
     lastFieldMetadataItemUpdateState,
@@ -52,6 +54,7 @@ export const useUpdateOneFieldMetadataItem = () => {
       | 'settings'
       | 'isLabelSyncedWithName'
       | 'translations'
+      | 'morphRelationsUpdatePayload'
     >;
   }): Promise<
     MetadataRequestResult<
@@ -78,6 +81,11 @@ export const useUpdateOneFieldMetadataItem = () => {
           } as FlatFieldMetadataItem,
         ]);
         applyChanges();
+      }
+
+      // New destinations also create a relation field on each destination object.
+      if (isNonEmptyArray(updatePayload.morphRelationsUpdatePayload)) {
+        invalidateMetadataStore();
       }
 
       setLastFieldMetadataItemUpdate({

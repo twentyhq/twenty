@@ -44,6 +44,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getFieldMetadataItemInitialValues } from '@/settings/data-model/fields/forms/utils/getFieldMetadataItemInitialValues';
+import { getAddedMorphRelationTargetObjectMetadataIds } from '@/settings/data-model/fields/forms/morph-relation/utils/getAddedMorphRelationTargetObjectMetadataIds';
 
 const DELETE_FIELD_MODAL_ID = 'delete-field-confirmation-modal';
 const StyledDangerButtons = styled.div`
@@ -130,7 +131,11 @@ export const SettingsObjectFieldEdit = () => {
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema()),
+    resolver: zodResolver(
+      settingsFieldFormSchema({
+        sourceObjectMetadataId: objectMetadataItem?.id,
+      }),
+    ),
     defaultValues: {
       icon: fieldMetadataItem?.icon ?? 'Icon',
       type: fieldMetadataItem?.type as SettingsFieldType,
@@ -224,24 +229,56 @@ export const SettingsObjectFieldEdit = () => {
       }
     }
 
-    const otherDirtyFields = omit(dirtyFields, 'relation');
+    // The relation form keys are not field properties: only new destinations
+    // are sent, as morphRelationsUpdatePayload.
+    const otherDirtyFieldNames = Object.keys(
+      omit(dirtyFields, [
+        'relation',
+        'morphRelationObjectMetadataIds',
+        'relationType',
+        'targetFieldLabel',
+        'iconOnDestination',
+      ]),
+    );
 
-    if (Object.keys(otherDirtyFields).length > 0) {
-      const formattedInput = Object.fromEntries(
-        Object.entries(formatFieldMetadataItemInput(formValues)).filter(
-          ([key]) => Object.keys(otherDirtyFields).includes(key),
-        ),
-      );
+    const addedTargetObjectMetadataIds =
+      fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
+        ? getAddedMorphRelationTargetObjectMetadataIds({
+            savedMorphRelations: fieldMetadataItem.morphRelations,
+            selectedObjectMetadataIds:
+              formValues.morphRelationObjectMetadataIds,
+          })
+        : [];
 
-      const updateResult = await updateOneFieldMetadataItem({
-        objectMetadataId: objectMetadataItem.id,
-        fieldMetadataIdToUpdate: fieldMetadataItem.id,
-        updatePayload: formattedInput,
-      });
+    if (
+      otherDirtyFieldNames.length === 0 &&
+      addedTargetObjectMetadataIds.length === 0
+    ) {
+      navigateBackOrToSettings();
+      return;
+    }
 
-      if (updateResult.status === 'successful') {
-        navigateBackOrToSettings();
-      }
+    const formattedInput = Object.fromEntries(
+      Object.entries(formatFieldMetadataItemInput(formValues)).filter(([key]) =>
+        otherDirtyFieldNames.includes(key),
+      ),
+    );
+
+    const updateResult = await updateOneFieldMetadataItem({
+      objectMetadataId: objectMetadataItem.id,
+      fieldMetadataIdToUpdate: fieldMetadataItem.id,
+      updatePayload: {
+        ...formattedInput,
+        ...(addedTargetObjectMetadataIds.length > 0 && {
+          morphRelationsUpdatePayload: addedTargetObjectMetadataIds.map(
+            (targetObjectMetadataId) => ({ targetObjectMetadataId }),
+          ),
+        }),
+      },
+    });
+
+    if (updateResult.status === 'successful') {
+      navigateBackOrToSettings();
     }
   };
 
