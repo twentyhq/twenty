@@ -392,7 +392,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     await setShareWithJony(threadId, true);
 
     // A thread shared with a member they never opened has no state yet,
-    // which reads as unread
+    // which reads as one they do not follow
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toBeUndefined();
@@ -1087,7 +1087,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
   // Other tests' chats may stay open for the member, so counts are compared
   // with what they were before
-  it('summarizes the open chats the member can read, from their own rows', async () => {
+  it('summarizes the open chats the member follows, from their own rows', async () => {
     const before = await findOpenThreadsSummary();
     const threadId = await createTestThread();
 
@@ -1099,19 +1099,35 @@ describe('Chat thread participant state through the authenticated API', () => {
       [threadId, randomUUID()],
     );
 
-    expect(await findOpenThreadsSummary()).toMatchObject({
-      openThreadCount: before.openThreadCount + 1,
-      needsInputThreadCount: before.needsInputThreadCount + 1,
-      hasUnreadOpenThread: true,
-    });
+    // Being able to open a chat, reading it or marking it unread does not
+    // follow it
+    expect(await findOpenThreadsSummary()).toEqual(before);
 
-    await runInboxAction('READ', threadId, {
+    for (const action of ['UNREAD', 'READ'] as const) {
+      await runInboxAction(action, threadId, {
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      expect(await findOpenThreadsSummary()).toEqual(before);
+    }
+
+    await runInboxAction('SUBSCRIBE', threadId, {
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
     expect(await findOpenThreadsSummary()).toMatchObject({
       openThreadCount: before.openThreadCount + 1,
+      needsInputThreadCount: before.needsInputThreadCount + 1,
       hasUnreadOpenThread: before.hasUnreadOpenThread,
+    });
+
+    await runInboxAction('UNREAD', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      openThreadCount: before.openThreadCount + 1,
+      hasUnreadOpenThread: true,
     });
 
     await runInboxAction('ARCHIVE', threadId, {
@@ -1119,6 +1135,27 @@ describe('Chat thread participant state through the authenticated API', () => {
     });
 
     expect(await findOpenThreadsSummary()).toEqual(before);
+  });
+
+  it('follows a chat the member files as done, so new activity brings it back', async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithJony(threadId, true);
+    await runInboxAction('READ', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ isSubscribed: false, archivedAt: null });
+
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ isSubscribed: true, archivedAt: expect.any(String) });
   });
 
   it('flags the open chats the member was mentioned in or assigned that are unread', async () => {
