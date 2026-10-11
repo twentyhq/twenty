@@ -206,14 +206,15 @@ describe('agent runs that wait (integration)', () => {
       Object.keys(executeAgent.mock.calls[0][0].pausingTools ?? {}),
     ).toEqual(['wait_for_event', 'wait_for_duration']);
 
+    // the wake-up goes once the run went on, just after its turn closes
     await expectEventually(async () => {
       expect(await findTurnStatuses(suspension.threadId)).toEqual([
         'completed',
         'completed',
       ]);
+      expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
     });
 
-    expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
     expect(executeAgent).toHaveBeenCalledTimes(2);
     expect(executeAgent.mock.calls[1][0].messages).toEqual([]);
     expect(

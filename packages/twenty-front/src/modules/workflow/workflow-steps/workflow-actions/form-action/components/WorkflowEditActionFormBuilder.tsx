@@ -18,6 +18,7 @@ import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/w
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -36,6 +37,7 @@ import {
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export type WorkflowEditActionFormBuilderProps = {
@@ -175,6 +177,9 @@ export const WorkflowEditActionFormBuilder = ({
   const [isCalloutVisible, setIsCalloutVisible] = useState<boolean>(true);
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [hoveredField, setHoveredField] = useState<string | null>(null);
+  const isSendChatMessageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+  );
 
   const isFieldSelected = (fieldName: string) => selectedField === fieldName;
 
@@ -274,7 +279,11 @@ export const WorkflowEditActionFormBuilder = ({
                 />
               }
               title={t`Forms are meant for manual triggers`}
-              description={t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead.`}
+              description={
+                isSendChatMessageEnabled
+                  ? t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead.`
+                  : t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run.`
+              }
               closeLabel={t`Close`}
               onDismiss={() => setIsCalloutVisible(false)}
               action={

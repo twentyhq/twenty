@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
-msgstr ""
+msgstr "Ο/Η {actorName} δημιούργησε έναν κωδικό ανάκτησης που σας επιτρέπει να συνδεθείτε στο {workspaceDisplayName} χωρίς την εφαρμογή ελέγχου ταυτότητας."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -46,7 +46,7 @@ msgstr "Μια ενημέρωση πριν λήξει η δοκιμαστική 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
-msgstr ""
+msgstr "Χρησιμοποιήθηκε ένας κωδικός ανάκτησης για σύνδεση στο {workspaceDisplayName}. Το εργαλείο ελέγχου ταυτότητας για αυτόν τον χώρο εργασίας καταργήθηκε και έγινε αποσύνδεση από τις άλλες συνεδρίες σας εκεί."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -140,7 +140,7 @@ msgstr "Γεια σου {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Αν δεν ήσασταν εσείς, επικοινωνήστε με τον διαχειριστή του χώρου εργασίας σας και αλλάξτε τον κωδικό πρόσβασής σας."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -150,7 +150,7 @@ msgstr "Αν το Twenty σας εξυπηρετεί, είστε καλυμμέ�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "If you did not ask for this, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Αν δεν το ζητήσατε εσείς, επικοινωνήστε με τον διαχειριστή του χώρου εργασίας σας και αλλάξτε τον κωδικό πρόσβασής σας."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -256,7 +256,7 @@ msgstr "Ορίστε"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "Ρυθμίστε ξανά τον έλεγχο ταυτότητας δύο παραγόντων στις Ρυθμίσεις, Προφίλ."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "Δοκιμαστικό email"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "Ο κωδικός μπορεί να χρησιμοποιηθεί μία φορά και λήγει στις {formattedExpiresAt}. Η χρήση του καταργεί τον τρέχοντα έλεγχο ταυτότητας για αυτόν τον χώρο εργασίας και σας αποσυνδέει από τις άλλες συνεδρίες σας εκεί."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, Δημόσια Οφέλη Εταιρεία"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "Εκδόθηκε κωδικός ανάκτησης για έλεγχο ταυτότητας δύο παραγόντων"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "Επαναφορά ελέγχου ταυτότητας δύο παραγόντων"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

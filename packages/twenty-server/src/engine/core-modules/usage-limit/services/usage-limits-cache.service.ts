@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { IsNull, Not } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -9,7 +10,8 @@ import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/t
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
 const USAGE_LIMITS_ROWS_REQUIREMENT = {
-  usageLimit: true,
+  // Unmapped legacy quantities must not enter unit-based counters.
+  usageLimit: { columns: true, where: { unit: Not(IsNull()) } },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()

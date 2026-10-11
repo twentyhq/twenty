@@ -3,6 +3,8 @@ import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { createFileInputAwareRemoteConnection } from '@/host/file-input/utils/createFileInputAwareRemoteConnection';
+import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
 import { type HostFocusController } from '@/host/focus/types/HostFocusController';
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/buildHostFetchPolicyFromFrontComponentUrls';
@@ -86,6 +88,7 @@ export const FrontComponentWorkerEffect = ({
 
     const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
     const imageLoadingHost = createImageLoadingHost();
+    const fileInputHost = createFileInputHost({ geometryTracker });
 
     const thread = createFrontComponentHostThread({
       hostMessagePort: channel.port1,
@@ -148,9 +151,12 @@ export const FrontComponentWorkerEffect = ({
           : undefined;
 
         await thread.imports.render(
-          createFocusAwareRemoteConnection({
-            connection: newReceiver.connection,
-            hostFocusController,
+          createFileInputAwareRemoteConnection({
+            fileInputHost,
+            connection: createFocusAwareRemoteConnection({
+              connection: newReceiver.connection,
+              hostFocusController,
+            }),
           }),
           {
             componentUrl,
@@ -184,6 +190,7 @@ export const FrontComponentWorkerEffect = ({
     return () => {
       isCancelled = true;
       imageLoadingHost.dispose();
+      fileInputHost.dispose();
       hostFocusController.reset();
       window.removeEventListener('message', handleSandboxMessage);
       setThread(null);

@@ -1,6 +1,5 @@
 import { AgentChatMessagesFetchEffect } from '@/ai/components/AgentChatMessagesFetchEffect';
 import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
-import { AgentChatStreamKeepAliveEffect } from '@/ai/components/AgentChatStreamKeepAliveEffect';
 import { AgentChatStreamSubscriptionEffect } from '@/ai/components/AgentChatStreamSubscriptionEffect';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -26,7 +25,6 @@ export const AgentChatRuntimeEffects = () => {
       <AgentChatMessagesFetchEffect />
       <AgentChatStreamSubscriptionEffect />
       <AgentChatPrepromptEffect />
-      <AgentChatStreamKeepAliveEffect />
     </>
   );
 };

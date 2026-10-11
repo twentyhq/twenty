@@ -4,35 +4,29 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { listItemButtonTest } from '@/__stories__/twenty-ui-gallery/utils/listItemButtonTest';
+import { listItemOwnerTest } from '@/__stories__/twenty-ui-gallery/utils/listItemOwnerTest';
+import { listItemPopupOwnerTest } from '@/__stories__/twenty-ui-gallery/utils/listItemPopupOwnerTest';
+import { listItemPresentationTest } from '@/__stories__/twenty-ui-gallery/utils/listItemPresentationTest';
 
 const OVERFLOW_LABEL = 'A long workspace preference that overflows its row';
 
-export const listItemTest: TwentyUiGalleryPlayFunction = async ({
-  canvasElement,
-}) => {
+export const listItemTest: TwentyUiGalleryPlayFunction = async (context) => {
+  const { canvasElement } = context;
   const user = userEvent.setup();
   const canvas = within(canvasElement);
   const page = within(canvasElement.ownerDocument.body);
   await expectFrontComponentMounted(canvas);
+  await listItemButtonTest(context);
+  await listItemOwnerTest(context);
+  await listItemPresentationTest(context);
+  await listItemPopupOwnerTest(context);
 
-  const digest = canvas.getByText('Weekly digest');
-
-  await user.click(digest);
-  await waitFor(() =>
-    expect(canvas.getByRole('status')).toHaveTextContent('Digest: enabled'),
-  );
-  await user.click(digest);
-  await waitFor(() =>
-    expect(canvas.getByRole('status')).toHaveTextContent('Digest: disabled'),
-  );
-  await user.click(canvas.getByText('Disabled preference'));
-  expect(canvas.getByRole('status')).toHaveTextContent('Digest: disabled');
-  const hiddenFields = canvas.getByRole('button', {
-    name: 'Hidden fields',
+  const digest = canvas.getByRole('button', {
+    name: /^Weekly digest\s*Workspace preference$/,
   });
-  await user.click(hiddenFields);
-  await waitFor(() => expect(canvas.getByText('Fields: open')).toBeVisible());
 
+  await user.click(digest);
   const overflowingLabel = canvas.getByText(OVERFLOW_LABEL);
   await waitFor(
     () =>
@@ -59,15 +53,14 @@ export const listItemTest: TwentyUiGalleryPlayFunction = async ({
     { timeout: INTERACTION_TIMEOUT },
   );
 
-  expect(hiddenFields).toHaveFocus();
+  expect(digest).toHaveFocus();
   await user.keyboard('{Escape}');
-  await waitFor(() => expect(canvas.getByText('Fields: closed')).toBeVisible());
   await waitFor(() =>
     expect(page.queryByRole('tooltip')).not.toBeInTheDocument(),
   );
   await user.click(digest);
   await waitFor(() =>
-    expect(canvas.getByRole('status')).toHaveTextContent('Digest: enabled'),
+    expect(canvas.getByLabelText('Digest activations')).toHaveTextContent('5'),
   );
   expect(errorHandler).not.toHaveBeenCalled();
 };

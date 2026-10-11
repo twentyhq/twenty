@@ -10,8 +10,9 @@ import {
 
 import { ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-is-system-to-agent-and-workflow-upgrade-command-name.constant';
 import { ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-triggers-to-agent-upgrade-command-name.constant';
+import { DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/drop-agent-evaluation-inputs-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/model-configuration.type';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
@@ -87,7 +88,9 @@ export class AgentEntity
   @Column({ nullable: false, type: 'jsonb', default: [] })
   triggers: JsonbProperty<AgentTrigger[]>;
 
-  // dropped in 2.47; no @WasRemovedInUpgrade yet: 2.45 pods still map it mid rolling deploy
+  @WasRemovedInUpgrade({
+    upgradeCommandName: DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME,
+  })
   @Column({ type: 'text', array: true, default: '{}' })
   evaluationInputs: WasRemovedInUpgrade<string[]>;
 }

@@ -286,6 +286,8 @@ describe('Send chat message workflow step', () => {
                   type: 'WORKFLOW_STEP',
                   ref: { workflowRunId, stepId },
                 },
+                // the message was already written, so the call is not built again
+                waitOnAnswer: async () => {},
               },
             });
 

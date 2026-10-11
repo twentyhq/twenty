@@ -53,7 +53,12 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar' })
   periodUnit: PeriodUnit;
 
-  @Column({ type: 'varchar' })
+  // Old pods still use meter; the compatibility trigger owns it until cleanup.
+  @Column({ type: 'varchar', select: false, insert: false, update: false })
+  meter: string;
+
+  // Unmapped legacy quotas stay stored but are excluded from unit-based reads.
+  @Column({ type: 'varchar', nullable: true })
   unit: UsageUnit;
 
   @Column({ type: 'bigint', transformer: nullableBigintColumnTransformer })

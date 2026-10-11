@@ -5263,7 +5263,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Prevents clicks and applies the disabled style."
+        "description": "Applies disabled styling only. Set native disabled behavior and accessible semantics on the button, link, or popup item owner."
       },
       {
         "name": "endIcon",
@@ -5277,7 +5277,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Applies the highlighted style, for example to the focused item of a list."
+        "description": "Applies highlighted styling without moving DOM focus or handling keyboard navigation."
       },
       {
         "name": "hasSubmenu",
@@ -5294,18 +5294,25 @@
         "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the actual DOM root, including a composed native button or link."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ListItemState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Composes the row with an element or render callback. The owner supplies interaction semantics, native attributes, and behavior."
       },
       {
         "name": "selected",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Whether the item is selected. Shows the check or checkbox indicator when\n`indicator` is set."
+        "description": "Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner."
       },
       {
         "name": "shortcut",
@@ -5578,6 +5585,13 @@
             "description": "Card sections or other content."
           },
           {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class merged with the part class."
+          },
+          {
             "name": "fullWidth",
             "type": "boolean",
             "required": false,
@@ -5585,11 +5599,32 @@
             "description": "Sets the card width to 100% of its container."
           },
           {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
             "name": "rounded",
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Compatibility styling flag. Cards already use the same rounded corners when omitted."
+            "description": "Cards already use the same rounded corners when omitted."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       },
@@ -5608,7 +5643,28 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "CSS class applied to the header."
+            "description": "CSS class merged with the part class."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       },
@@ -5627,7 +5683,7 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "CSS class applied to the body."
+            "description": "CSS class merged with the part class."
           },
           {
             "name": "divider",
@@ -5637,18 +5693,25 @@
             "description": "Adds a bottom border."
           },
           {
-            "name": "hasHoverHighlight",
-            "type": "boolean",
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
             "required": false,
             "defaultValue": null,
-            "description": "Changes the background on hover. Does not add an action."
+            "description": "Ref to the default div, or the element supplied through render."
           },
           {
-            "name": "isClickable",
-            "type": "boolean",
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
             "required": false,
             "defaultValue": null,
-            "description": "Shows a pointer cursor. Does not add button semantics or keyboard interaction."
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       },
@@ -5663,11 +5726,39 @@
             "description": "Footer content, such as actions or supporting text."
           },
           {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class merged with the part class."
+          },
+          {
             "name": "divider",
             "type": "boolean",
             "required": false,
             "defaultValue": "true",
             "description": "Shows the top border unless explicitly set to false."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       }
@@ -9397,14 +9488,21 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Shows the string-label tooltip even when the label is not truncated."
+        "description": "Shows the content tooltip even when the content is not truncated."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-owned content. Missing or empty children add no fallback label."
       },
       {
         "name": "clickable",
         "type": "boolean",
         "required": false,
         "defaultValue": "isDefined(onClick)",
-        "description": "Enables hover and pointer styling. Defaults to whether `onClick` is supplied; does not add button semantics by itself."
+        "description": "Enables hover and pointer styling. Defaults to whether `onClick` is supplied; does not change the default div or add keyboard behavior."
       },
       {
         "name": "color",
@@ -9414,25 +9512,11 @@
         "description": "Primary or secondary text color."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and disables activation when `onClick` is supplied."
-      },
-      {
-        "name": "emptyLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": "Untitled",
-        "description": "Placeholder shown when children are missing, empty, or false, unless `forceEmptyText` is enabled."
-      },
-      {
         "name": "endElement",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Content after the label. Avoid interactive content when the chip itself is a button."
+        "description": "Content after the label. Avoid interactive content when the chip itself is a button or link."
       },
       {
         "name": "endElementDivider",
@@ -9442,39 +9526,25 @@
         "description": "Adds a divider before `endElement` when that slot has content."
       },
       {
-        "name": "forceEmptyText",
+        "name": "isTooltipMultiline",
         "type": "boolean",
         "required": false,
-        "defaultValue": "false",
-        "description": "Suppresses the empty label when children are missing, empty, or false."
-      },
-      {
-        "name": "isLabelHidden",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Hides the label while keeping the start and end elements. Supply an accessible name for an interactive chip."
+        "defaultValue": null,
+        "description": "Preserves line breaks in the tooltip text."
       },
       {
         "name": "maxWidth",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum chip width in pixels, used to constrain and truncate the label."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when a clickable chip uses `render` with an element other than a native button."
+        "description": "Maximum chip width in pixels, used to constrain the content."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Replaces the default div. Compose a native button or link explicitly; that owner supplies disabled and native interaction behavior."
       },
       {
         "name": "shape",
@@ -9498,18 +9568,32 @@
         "description": "Content before the label, such as an avatar or icon."
       },
       {
-        "name": "tooltipLabel",
+        "name": "tooltipContent",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Tooltip content for a string label. Defaults to the label text."
+        "description": "Tooltip text. Defaults to string children. Supply text explicitly for node content."
+      },
+      {
+        "name": "tooltipDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Delay in milliseconds before the tooltip opens."
       },
       {
         "name": "tooltipPlace",
         "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
-        "description": "Position of the string-label tooltip."
+        "description": "Position of the content tooltip."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Truncates overflowing content with an ellipsis. Defaults to true."
       },
       {
         "name": "variant",
@@ -9523,7 +9607,7 @@
         "type": "\"medium\" | \"regular\"",
         "required": false,
         "defaultValue": "regular",
-        "description": "Font weight of the label."
+        "description": "Font weight of the content."
       }
     ]
   },
@@ -9547,39 +9631,18 @@
         "description": "Theme color for the tag, or `transparent` for an unfilled label."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
+        "name": "onClick",
+        "type": "MouseEventHandler<HTMLSpanElement>",
         "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and prevents pointer and keyboard activation."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when a clickable tag uses `render` with an element other than a native button."
-      },
-      {
-        "name": "preventPadding",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Removes the tag padding."
-      },
-      {
-        "name": "preventShrink",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Keeps the tag from shrinking and disables string-label truncation and its tooltip."
+        "defaultValue": null,
+        "description": "Native click handler. Does not change the default span or add keyboard activation."
       },
       {
         "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TagState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Replaces the default span. Compose a button or link to provide explicit interaction semantics."
       },
       {
         "name": "startIcon",
@@ -9587,6 +9650,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Decorative icon before the label. Hidden from assistive technology."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Truncates constrained string labels and exposes the full text in a tooltip. Set to `false` to show the full label without a tooltip."
       },
       {
         "name": "variant",
@@ -9617,39 +9687,25 @@
         "description": "Theme color used for the status background, text, and loader."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and disables activation when `onClick` is supplied."
-      },
-      {
         "name": "loading",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Shows a loader after the label. Does not disable the control or announce a status change by itself."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when using `render` with an element other than a native button."
+        "description": "Shows a decorative loader after the label and defaults aria-busy to true. The caller owns announcements and disabled interaction."
       },
       {
         "name": "onClick",
-        "type": "MouseEventHandler<HTMLButtonElement> | MouseEventHandler<HTMLElement>",
+        "type": "MouseEventHandler<HTMLSpanElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Handles activation and renders a native button by default. Without it, the default element is a span."
+        "description": "Native click handler. Does not change the default span or add keyboard activation."
       },
       {
         "name": "render",
-        "type": "NonNullable<ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}> | undefined>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, StatusState>",
         "required": false,
         "defaultValue": null,
-        "description": "Replaces the default element. Required when `nativeButton` is `false`."
+        "description": "Replaces the default span. Compose a button or link to provide explicit interaction semantics."
       },
       {
         "name": "weight",
@@ -9705,35 +9761,42 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Controlled checked state of the switch."
+        "description": "Whether the switch is currently active.\n\nTo render an uncontrolled switch, use the `defaultChecked` prop instead."
       },
       {
         "name": "children",
         "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Visible label and accessible name of the switch. Use non-interactive content."
+        "description": "Visible label and default accessible name of the switch. Use non-interactive node content."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: SwitchRootState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the visible Switch root and accepts a Switch state callback."
       },
       {
         "name": "defaultChecked",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Initial checked state when uncontrolled."
+        "description": "Whether the switch is initially active.\n\nTo render a controlled switch, use the `checked` prop instead."
       },
       {
         "name": "description",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Non-interactive supporting content, associated with the switch as its accessible description."
+        "description": "Non-interactive supporting node content, used as the default accessible description of the switch."
       },
       {
         "name": "disabled",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Disables both the row and its switch."
+        "description": "Whether the component should ignore user interaction."
       },
       {
         "name": "focused",
@@ -9743,53 +9806,130 @@
         "description": "Applies the highlighted row style without moving keyboard focus."
       },
       {
+        "name": "form",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Identifies the form that owns the hidden input.\nUseful when the switch is rendered outside the form."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Identifies the associated checkbox, or the visible root with nativeButton. The label association follows this ID."
+      },
+      {
+        "name": "inputRef",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Targets the underlying native checkbox."
+      },
+      {
+        "name": "labelRef",
+        "type": "Ref<HTMLLabelElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Targets the outer native label."
+      },
+      {
+        "name": "labelRender",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the outer native label with its complete composed row children. Preserve a label element and forward its props to retain control association."
+      },
+      {
         "name": "name",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Name of the hidden checkbox used in form submission."
+        "description": "Identifies the field when a form is submitted."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
       },
       {
         "name": "onCheckedChange",
         "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the switch value changes, with the next checked state and Base UI event details."
+        "description": "Receives the next checked value and Base UI event details. Controlled callers own accepted state updates; cancellation prevents a change."
+      },
+      {
+        "name": "onClick",
+        "type": "((event: BaseUIEvent<MouseEvent<HTMLSpanElement, MouseEvent>>) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native click handler for the visible Switch root."
       },
       {
         "name": "readOnly",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Keeps the switch focusable while preventing changes."
+        "description": "Whether the user should be unable to activate or deactivate the switch."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLSpanElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Targets the visible Switch root, which defaults to a span."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, SwitchRootState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the visible Switch root with control props and Switch state. Use nativeButton when composing a button."
       },
       {
         "name": "required",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Requires the switch to be checked for form submission."
+        "description": "Whether the user must activate the switch before submitting a form."
       },
       {
         "name": "size",
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Visual size of the switch. The row height stays the same."
+        "description": "Visual size of the switch. Defaults to sm."
       },
       {
-        "name": "startIcon",
+        "name": "startElement",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Decorative content before the label."
+        "description": "Non-interactive node content before the label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: SwitchRootState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the visible Switch root and accepts a Switch state callback."
+      },
+      {
+        "name": "uncheckedValue",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "The value submitted with the form when the switch is off.\nBy default, unchecked switches do not submit any value, matching native checkbox behavior."
       },
       {
         "name": "value",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Value submitted when the switch is checked."
+        "description": "The value submitted with the form when the switch is on.\nBy default, switch submits the \"on\" value, matching native checkbox behavior."
       }
     ]
   },
@@ -11197,6 +11337,111 @@
     ]
   },
   {
+    "name": "ListItemButton",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/list-item-button",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"danger\" | \"neutral\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Color of the text and icons. `danger` marks a destructive action."
+      },
+      {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Supporting text, placed according to `descriptionPlacement`."
+      },
+      {
+        "name": "descriptionPlacement",
+        "type": "\"end\" | \"inline\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Where the description renders: inline after the content or at the end of\nthe row."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables activation and applies the matching row appearance."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered after the content."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Keeps a disabled button focusable with aria-disabled while preventing activation."
+      },
+      {
+        "name": "focused",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Highlights the row without moving DOM focus."
+      },
+      {
+        "name": "hasSubmenu",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays a decorative submenu indicator."
+      },
+      {
+        "name": "indicator",
+        "type": "\"check\" | \"checkbox\" | \"none\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native HTMLButtonElement."
+      },
+      {
+        "name": "selected",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays decorative shortcut hints. The caller registers the shortcuts."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered before the content."
+      }
+    ]
+  },
+  {
     "name": "TabButton",
     "entryPoint": "twenty-ui/components/navigation",
     "slug": "components/navigation/tab-button",
@@ -12032,7 +12277,35 @@
         "type": "string",
         "required": false,
         "defaultValue": "image/*",
-        "description": "Native file picker filter. Defaults to image/*. The application validates the selected file."
+        "description": "Native file picker filter. Defaults to image/*. The caller validates allowed formats."
+      },
+      {
+        "name": "aria-describedby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible description references for the hidden file input and selection buttons, combined with helperText and errorMessage."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name of the hidden file input. Defaults to uploadLabel."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name reference for the hidden file input."
+      },
+      {
+        "name": "capture",
+        "type": "boolean | \"user\" | \"environment\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native device capture hint for the file picker."
       },
       {
         "name": "className",
@@ -12040,6 +12313,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Class applied to the root element."
+      },
+      {
+        "name": "dir",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text direction applied to both the root and hidden file input."
       },
       {
         "name": "disabled",
@@ -12056,11 +12336,32 @@
         "description": "Application error, displayed as an alert and associated with the selection controls."
       },
       {
+        "name": "form",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native form identifier associated with the hidden file input."
+      },
+      {
         "name": "helperText",
         "type": "string",
         "required": false,
         "defaultValue": null,
         "description": "Application instructions, associated with the selection controls."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native identifier of the hidden file input."
+      },
+      {
+        "name": "inputRef",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the hidden single-file HTMLInputElement."
       },
       {
         "name": "isUploading",
@@ -12070,11 +12371,32 @@
         "description": "Marks the module busy. Selection and removal controls that would otherwise be enabled stay focusable but unavailable. Shows Abort when onAbort is supplied."
       },
       {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native name of the hidden file input."
+      },
+      {
         "name": "onAbort",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
         "description": "Shows an abort action while uploading. It can cancel the first upload before a src exists."
+      },
+      {
+        "name": "onChange",
+        "type": "ChangeEventHandler<HTMLInputElement, HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native file input change event, fired while the selected file is present and before the input resets. The input does not retain a file for form submission."
+      },
+      {
+        "name": "onFileSelect",
+        "type": "((file: File) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Fires when a file is selected and receives its usable File after the input resets. Empty and canceled selections do not call it. Selection is disabled when omitted. The caller owns validation and uploading."
       },
       {
         "name": "onRemove",
@@ -12084,18 +12406,11 @@
         "description": "Requests removal of the current image. Removal is disabled without this callback or a nonempty src."
       },
       {
-        "name": "onUpload",
-        "type": "((file: File) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Receives the selected File. Empty and canceled selections do not call it. Selection is disabled when omitted."
-      },
-      {
         "name": "ref",
         "type": "Ref<HTMLDivElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Ref to the root element."
+        "description": "Ref to the root div element."
       },
       {
         "name": "removeLabel",
@@ -12109,7 +12424,14 @@
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Custom root element or render function. Keep a non-interactive root."
+        "description": "Custom root element or render function. Supply root native attributes here and keep a non-interactive root."
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native file input requirement. The input resets after selection, so the caller validates completed uploads."
       },
       {
         "name": "src",
@@ -12126,11 +12448,18 @@
         "description": "Inline style applied to the root element."
       },
       {
+        "name": "title",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native title of the hidden file input."
+      },
+      {
         "name": "uploadLabel",
         "type": "string",
         "required": false,
         "defaultValue": "Upload",
-        "description": "Label for the preview and Upload action."
+        "description": "Label for the preview, Upload action, and hidden file input."
       }
     ]
   },

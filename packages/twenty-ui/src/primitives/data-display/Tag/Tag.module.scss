@@ -19,7 +19,7 @@
   min-inline-size: 0;
   text-align: inherit;
 
-  &[data-interactive] {
+  &:is(button, a, [role='button'], [role='link']) {
     cursor: pointer;
   }
   &[data-weight='medium'] {
@@ -35,21 +35,23 @@
     background: var(--tw-tag-text);
     color: var(--t-background-primary);
   }
-  &[data-prevent-shrink] {
-    min-inline-size: fit-content;
-  }
-  &[data-prevent-padding] {
-    padding: 0;
-  }
-  &[data-disabled] {
+  &:disabled,
+  &[aria-disabled='true'] {
     cursor: not-allowed;
     opacity: 0.5;
   }
 }
 .content {
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-inline-size: 0;
   white-space: nowrap;
+
+  [data-truncate] > & {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+.overflowingText {
+  display: block;
 }
 .iconContainer {
   display: flex;

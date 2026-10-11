@@ -1,3 +1,4 @@
+import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsApplicationUninstallButton } from '@/settings/applications/components/SettingsApplicationUninstallButton';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
@@ -39,6 +40,7 @@ type SettingsApplicationDetailGeneralTabProps = {
   latestAvailableVersion?: string;
   onUpgrade: () => void;
   isUpgrading: boolean;
+  upgradeProgress?: number;
   onUninstall: () => void;
   isUninstalling: boolean;
   uninstallProgress?: number;
@@ -54,6 +56,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   latestAvailableVersion,
   onUpgrade,
   isUpgrading,
+  upgradeProgress,
   onUninstall,
   isUninstalling,
   uninstallProgress,
@@ -66,6 +69,10 @@ export const SettingsApplicationDetailGeneralTab = ({
 
   const isUpgradable = isUpgradableApplicationSourceType(
     application.applicationRegistration?.sourceType,
+  );
+
+  const displayedUpgradeProgress = formatQueueJobProgressLabel(
+    upgradeProgress ?? 0,
   );
 
   const actions = [
@@ -92,10 +99,11 @@ export const SettingsApplicationDetailGeneralTab = ({
             variant="outline"
             size="sm"
             onClick={onUpgrade}
-            disabled={isUpgrading}
+            loading={isUpgrading}
+            loadingPosition="end"
           >
             {isUpgrading
-              ? t`Upgrading...`
+              ? t`Upgrading ${displayedUpgradeProgress}`
               : t`Upgrade to ${latestAvailableVersion ?? ''}`}
           </Button>,
         ]

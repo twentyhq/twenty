@@ -3,7 +3,6 @@ import {
   type RichTextMetadata,
   richTextValueSchema,
 } from 'twenty-shared/types';
-import { convertTipTapBlocksToMarkdown, isDefined } from 'twenty-shared/utils';
 
 import type { ServerBlockNoteEditor } from '@blocknote/server-util';
 
@@ -61,17 +60,6 @@ export const transformRichTextValue = async (
   const parsedValue = isNonEmptyString(richTextValue)
     ? richTextValueSchema.parse(richTextValue)
     : richTextValue;
-
-  const tipTapMarkdown = isDefined(parsedValue.blocknote)
-    ? convertTipTapBlocksToMarkdown(parsedValue.blocknote)
-    : undefined;
-
-  if (isDefined(tipTapMarkdown)) {
-    return {
-      markdown: parsedValue.markdown || tipTapMarkdown,
-      blocknote: convertMarkdownToBlocknote(tipTapMarkdown),
-    };
-  }
 
   return {
     markdown:

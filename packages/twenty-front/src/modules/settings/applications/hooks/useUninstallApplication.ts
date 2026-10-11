@@ -12,7 +12,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import {
   FindUninstallApplicationJobStatusDocument,
   JobState,
-  TriggerUninstallApplicationJobDocument,
+  TriggerUninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 type UseUninstallApplicationArgs = {
@@ -25,8 +25,8 @@ export const useUninstallApplication = ({
   onCompleted,
 }: UseUninstallApplicationArgs = {}) => {
   const { enqueueToast } = useToast();
-  const [triggerUninstallApplicationJob, { loading: isTriggeringUninstall }] =
-    useMutation(TriggerUninstallApplicationJobDocument);
+  const [triggerUninstallApplication, { loading: isTriggeringUninstall }] =
+    useMutation(TriggerUninstallApplicationDocument);
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
   const { data: jobStatusData } = useQuery(
@@ -96,11 +96,11 @@ export const useUninstallApplication = ({
     }
 
     try {
-      const { data } = await triggerUninstallApplicationJob({
+      const { data } = await triggerUninstallApplication({
         variables: { input: { universalIdentifier } },
       });
 
-      const jobId = data?.triggerUninstallApplicationJob.jobId;
+      const jobId = data?.triggerUninstallApplication.jobId;
 
       if (isDefined(jobId)) {
         trackJob({ jobId, context: universalIdentifier });

@@ -62,6 +62,7 @@ describe('application workflow definitions', () => {
     expect(version.coreWorkflowId).toBe(workflow.id);
     expect(workflow.workspaceWorkflowId).toBeNull();
     expect(workflow.isSystem).toBe(false);
+    expect(workflow.flatUniversalCommandMenuItem).toBeUndefined();
     expect(version.workspaceWorkflowVersionId).toBeNull();
     expect(version.status).toBe('ACTIVE');
     expect(version.steps?.[0].settings.input).toEqual({
@@ -136,6 +137,75 @@ describe('application workflow definitions', () => {
         logicFunctionIdByUniversalIdentifier: new Map(),
       }),
     ).toThrow('missing application workflow action');
+  });
+
+  it('resolves the manual trigger availability object to its name', () => {
+    const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+    const { workflow, version } = convert({
+      ...options,
+      manifest: {
+        ...manifest,
+        version: {
+          ...manifest.version,
+          trigger: {
+            universalIdentifier: TRIGGER_ID,
+            type: 'MANUAL',
+            nextStepIds: [STEP_ID],
+            settings: {
+              availability: {
+                type: 'SINGLE_RECORD',
+                objectUniversalIdentifier: OBJECT_ID,
+              },
+              icon: 'IconBolt',
+              isPinned: true,
+            },
+          },
+        },
+      },
+      objectByUniversalIdentifier: new Map([
+        [OBJECT_ID, { nameSingular: 'ticket' }],
+      ]),
+    });
+
+    expect(version.triggers?.[0]).toMatchObject({
+      type: 'MANUAL',
+      settings: {
+        availability: { type: 'SINGLE_RECORD', objectNameSingular: 'ticket' },
+        icon: 'IconBolt',
+        isPinned: true,
+      },
+    });
+    expect(workflow.flatUniversalCommandMenuItem).toMatchObject({
+      coreWorkflowVersionId: version.id,
+      availabilityObjectMetadataUniversalIdentifier: OBJECT_ID,
+      isSystemSideEffect: true,
+    });
+  });
+
+  it('refuses a manual trigger available on a missing object', () => {
+    expect(() =>
+      convert({
+        ...options,
+        manifest: {
+          ...manifest,
+          version: {
+            ...manifest.version,
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'MANUAL',
+              nextStepIds: [STEP_ID],
+              settings: {
+                availability: {
+                  type: 'BULK_RECORDS',
+                  objectUniversalIdentifier:
+                    '99999999-9999-4999-8999-999999999999',
+                },
+              },
+            },
+          },
+        },
+      }),
+    ).toThrow('Workflow trigger: missing object');
   });
 
   it('rejects an unsupported trigger on the server too', () => {

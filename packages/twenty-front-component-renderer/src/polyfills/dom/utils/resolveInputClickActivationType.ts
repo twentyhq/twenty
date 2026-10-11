@@ -4,12 +4,14 @@ import { resolveInputTypeOfElement } from '@/polyfills/selectors/utils/resolveIn
 
 export const resolveInputClickActivationType = (
   inputElement: SelectorElementLike,
-): 'checkbox' | 'radio' | null => {
+): 'checkbox' | 'radio' | 'file' | null => {
   if (isElementDisabled(inputElement)) {
     return null;
   }
 
   const inputType = resolveInputTypeOfElement(inputElement);
+  const hasClickActivationBehavior =
+    inputType === 'checkbox' || inputType === 'radio' || inputType === 'file';
 
-  return inputType === 'checkbox' || inputType === 'radio' ? inputType : null;
+  return hasClickActivationBehavior ? inputType : null;
 };
