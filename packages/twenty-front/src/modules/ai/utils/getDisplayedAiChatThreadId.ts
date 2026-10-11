@@ -4,17 +4,15 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 export const getDisplayedAiChatThreadId = ({
   urlThreadId,
   currentAiChatThread,
+  isOnNewAiChatSlot,
 }: {
   urlThreadId: string | undefined;
   currentAiChatThread: string | null;
+  isOnNewAiChatSlot: boolean;
 }): string | null => {
   if (isDefined(urlThreadId) && isValidUuid(urlThreadId)) {
     return urlThreadId;
   }
 
-  if (isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)) {
-    return currentAiChatThread;
-  }
-
-  return null;
+  return isOnNewAiChatSlot ? null : currentAiChatThread;
 };

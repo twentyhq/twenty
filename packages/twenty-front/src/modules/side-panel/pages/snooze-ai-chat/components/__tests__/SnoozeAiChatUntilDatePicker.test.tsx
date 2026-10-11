@@ -12,12 +12,14 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const snoozeAgentChatThreads = jest.fn();
+const updateAgentChatThreadInboxState = jest.fn();
 const snoozeAgentChatThreadsInChannel = jest.fn();
 const onSnoozed = jest.fn();
 
-jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
-  useAgentChatThreadParticipants: () => ({ snoozeAgentChatThreads }),
+jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
+  useUpdateAgentChatThreadInboxState: () => ({
+    updateAgentChatThreadInboxState,
+  }),
 }));
 
 jest.mock('@/ai/hooks/useAgentChatChannelThreadTriage', () => ({
@@ -90,8 +92,9 @@ describe('SnoozeAiChatUntilDatePicker', () => {
     fireEvent.click(screen.getByRole('button', { name: /Snooze until/ }));
 
     expect(onSnoozed).toHaveBeenCalled();
-    expect(snoozeAgentChatThreads).toHaveBeenCalledWith({
+    expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
       threadIds: ['thread-1'],
+      action: 'SNOOZE',
       snoozedUntil: new Date(2026, 9, 2, 9, 0),
     });
   });
@@ -113,7 +116,7 @@ describe('SnoozeAiChatUntilDatePicker', () => {
     expect(
       screen.getByRole('button', { name: 'Pick a time in the future' }),
     ).toBeDisabled();
-    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
+    expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
     expect(onSnoozed).not.toHaveBeenCalled();
   });
 
@@ -130,7 +133,7 @@ describe('SnoozeAiChatUntilDatePicker', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Snooze until/ }));
 
-    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
+    expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
     expect(onSnoozed).not.toHaveBeenCalled();
     expect(
       screen.getByRole('button', { name: 'Pick a time in the future' }),

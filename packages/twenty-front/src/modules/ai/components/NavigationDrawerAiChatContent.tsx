@@ -14,6 +14,8 @@ import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatR
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -36,17 +38,24 @@ const StyledSectionsContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
+const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 const AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
-// Triage and channels open the inbox page; the drawer itself only lists favorites
+// Triage and channels open the inbox page, which replaces the recent chats;
+// without the inbox the drawer lists them
 export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { handleThreadClick } = useAiChatThreadClick({
-    shouldOpenInFullPage: true,
-  });
+  const { handleThreadClick } = useAiChatThreadClick(
+    isAiChatInboxEnabled
+      ? { shouldOpenInFullPage: true }
+      : { resetNavigationStack: true },
+  );
 
   const { threads, loading } = useChatThreads(agentChatRecentThreadsSelector);
   const agentChatFavoriteThreads = useAtomStateValue(
@@ -61,17 +70,37 @@ export const NavigationDrawerAiChatContent = () => {
     );
   }
 
+  const agentChatFavoriteThreadIds = new Set(
+    agentChatFavoriteThreads.map(({ id }) => id),
+  );
+  const recentThreads = isAiChatInboxEnabled
+    ? []
+    : threads.filter(({ id }) => !agentChatFavoriteThreadIds.has(id));
+
   return (
     <StyledContainer>
       <StyledThreadList>
         <StyledSectionsContainer>
-          <NavigationDrawerAiChatTriageSection />
-          <NavigationDrawerAiChatChannelsSection />
+          {isAiChatInboxEnabled && (
+            <>
+              <NavigationDrawerAiChatTriageSection />
+              <NavigationDrawerAiChatChannelsSection />
+            </>
+          )}
           {agentChatFavoriteThreads.length > 0 && (
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
               title={t`Favorites`}
               threads={agentChatFavoriteThreads}
+              currentThreadId={currentAiChatThread}
+              onThreadClick={handleThreadClick}
+            />
+          )}
+          {recentThreads.length > 0 && (
+            <NavigationDrawerAiChatThreadSection
+              sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
+              title={t`Recent`}
+              threads={recentThreads}
               currentThreadId={currentAiChatThread}
               onThreadClick={handleThreadClick}
             />

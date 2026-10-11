@@ -20,6 +20,11 @@ const FIELDS = [
     universalIdentifier: 'tagline',
   },
   {
+    name: 'description',
+    type: FieldMetadataType.RICH_TEXT,
+    universalIdentifier: 'description',
+  },
+  {
     name: 'createdAt',
     type: FieldMetadataType.DATE_TIME,
     universalIdentifier: 'createdAt',
@@ -94,6 +99,13 @@ const TAGLINE_RULE = {
   id: 'tagline-rule',
   expression: 'isNonEmptyString(tagline)',
   message: 'A company needs a tagline',
+};
+
+const DESCRIPTION_RULE = {
+  ...AMOUNT_RULE,
+  id: 'description-rule',
+  expression: 'not isEmpty(description)',
+  message: 'A deal needs a description',
 };
 
 describe('computeDraftValidationRuleViolations', () => {
@@ -215,6 +227,39 @@ describe('computeDraftValidationRuleViolations', () => {
         [{ name: 'position', isSystem: true, defaultValue: 0 }],
       ),
     ).toEqual([]);
+  });
+
+  it('should leave a rich text rule to the server until the server computes its markdown', () => {
+    const descriptionAwaitingMarkdown = {
+      blocknote:
+        '[{"type":"paragraph","content":[{"type":"text","text":"Hello"}]}]',
+      markdown: null,
+    };
+
+    expect(
+      compute({ description: descriptionAwaitingMarkdown }, [DESCRIPTION_RULE]),
+    ).toEqual([]);
+    expect(
+      compute(
+        {
+          description: descriptionAwaitingMarkdown,
+          stage: 'CUSTOMER',
+          amount: { amountMicros: null, currencyCode: 'USD' },
+        },
+        [DESCRIPTION_RULE, AMOUNT_RULE],
+      ).map((violation) => violation.ruleId),
+    ).toEqual(['amount-rule']);
+  });
+
+  it('should still report an empty rich text', () => {
+    expect(
+      compute({}, [DESCRIPTION_RULE]).map((violation) => violation.ruleId),
+    ).toEqual(['description-rule']);
+    expect(
+      compute({ description: { blocknote: null, markdown: null } }, [
+        DESCRIPTION_RULE,
+      ]).map((violation) => violation.ruleId),
+    ).toEqual(['description-rule']);
   });
 
   it('should skip inactive rules', () => {

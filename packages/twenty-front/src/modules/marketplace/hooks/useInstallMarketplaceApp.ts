@@ -14,7 +14,7 @@ import {
   FindOneApplicationByUniversalIdentifierDocument,
   type FindOneApplicationByUniversalIdentifierQuery,
   JobState,
-  TriggerInstallApplicationJobDocument,
+  TriggerInstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 type UseInstallMarketplaceAppArgs = {
@@ -29,8 +29,8 @@ export const useInstallMarketplaceApp = ({
   onCompleted,
 }: UseInstallMarketplaceAppArgs = {}) => {
   const { enqueueToast } = useToast();
-  const [triggerInstallApplicationJob, { loading: isTriggeringInstall }] =
-    useMutation(TriggerInstallApplicationJobDocument);
+  const [triggerInstallApplication, { loading: isTriggeringInstall }] =
+    useMutation(TriggerInstallApplicationDocument);
   const [findInstalledApplication] = useLazyQuery(
     FindOneApplicationByUniversalIdentifierDocument,
     { fetchPolicy: 'network-only' },
@@ -130,11 +130,11 @@ export const useInstallMarketplaceApp = ({
     }
 
     try {
-      const { data } = await triggerInstallApplicationJob({
+      const { data } = await triggerInstallApplication({
         variables: { input: { universalIdentifier } },
       });
 
-      const jobId = data?.triggerInstallApplicationJob.jobId;
+      const jobId = data?.triggerInstallApplication.jobId;
 
       if (isDefined(jobId)) {
         trackJob({ jobId, context: universalIdentifier });

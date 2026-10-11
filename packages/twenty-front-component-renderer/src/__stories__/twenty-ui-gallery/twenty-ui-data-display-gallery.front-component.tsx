@@ -1,11 +1,11 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   AvatarGroup,
-  CommandBlock,
   NotificationCounter,
 } from 'twenty-ui/components/data-display';
 import { IconStar } from 'twenty-ui/icon';
 
+import { CommandBlockExample } from './command-block-example';
 import { TintedIconTileExample } from './tinted-icon-tile-example';
 import {
   Avatar,
@@ -79,7 +79,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'CommandBlock',
-    node: <CommandBlock commands={['npm install', 'npm run start']} />,
+    node: <CommandBlockExample />,
   },
   {
     name: 'NotificationCounter',

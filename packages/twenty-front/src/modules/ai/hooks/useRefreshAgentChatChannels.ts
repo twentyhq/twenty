@@ -7,7 +7,7 @@ import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSumm
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import {
   GetAgentChatChannelsDocument,
-  GetAgentChatInboxSummaryDocument,
+  GetAgentChatChannelSummariesDocument,
 } from '~/generated-metadata/graphql';
 
 // A failed load keeps what was shown, as the next change loads again
@@ -16,23 +16,23 @@ export const useRefreshAgentChatChannels = () => {
   const store = useStore();
 
   const refreshAgentChatChannelSummaries = useCallback(async () => {
-    const summary = (
+    const summaries = (
       await apolloClient
         .query({
-          query: GetAgentChatInboxSummaryDocument,
+          query: GetAgentChatChannelSummariesDocument,
           fetchPolicy: 'network-only',
         })
         .catch(() => undefined)
-    )?.data?.agentChatInboxSummary;
+    )?.data?.agentChatChannelSummaries;
 
-    if (!isDefined(summary)) {
+    if (!isDefined(summaries)) {
       return;
     }
 
     store.set(
       agentChatChannelSummariesState.atom,
       Object.fromEntries(
-        summary.channels.map(({ channelId, openCount, hasUnreadOpen }) => [
+        summaries.map(({ channelId, openCount, hasUnreadOpen }) => [
           channelId,
           { openCount, hasUnreadOpen },
         ]),

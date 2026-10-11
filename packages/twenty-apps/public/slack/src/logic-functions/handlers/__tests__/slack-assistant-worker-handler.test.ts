@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
-import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
+import { SLACK_REQUEST_NOT_ATTRIBUTABLE_TEXT } from 'src/logic-functions/constants/slack-request-not-attributable-text';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-request-timeout-seconds';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
@@ -22,7 +22,6 @@ const {
   finishSlackAssistantRequestWithFailureMock,
   setSlackAssistantThreadTitleMock,
   subscribeSlackThreadMock,
-  getSlackAccessModeMock,
   resolveSlackAccessDecisionMock,
 } = vi.hoisted(() => ({
   callLog: [] as string[],
@@ -39,16 +38,11 @@ const {
   finishSlackAssistantRequestWithFailureMock: vi.fn(),
   setSlackAssistantThreadTitleMock: vi.fn(),
   subscribeSlackThreadMock: vi.fn(),
-  getSlackAccessModeMock: vi.fn(),
   resolveSlackAccessDecisionMock: vi.fn(),
 }));
 
 vi.mock('src/logic-functions/utils/resolve-slack-access-decision', () => ({
   resolveSlackAccessDecision: resolveSlackAccessDecisionMock,
-}));
-
-vi.mock('src/logic-functions/utils/get-slack-access-mode', () => ({
-  getSlackAccessMode: getSlackAccessModeMock,
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -151,9 +145,11 @@ describe('slackAssistantWorkerHandler', () => {
     claimSlackAssistantRequestMock.mockResolvedValue(true);
     updateSlackAssistantRequestMock.mockResolvedValue(undefined);
     fetchWorkspaceBaseUrlsMock.mockResolvedValue(['https://acme.twenty.com']);
-    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
-    getSlackAccessModeMock.mockResolvedValue(SLACK_ACCESS_MODE.ANYONE);
-    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'ALLOWED' });
+    resolveSlackRunAsForRequestMock.mockResolvedValue('workspace-member-1');
+    resolveSlackAccessDecisionMock.mockResolvedValue({
+      status: 'ALLOWED',
+      runAsWorkspaceMemberId: 'workspace-member-1',
+    });
     setSlackAssistantThreadTitleMock.mockResolvedValue(undefined);
     subscribeSlackThreadMock.mockResolvedValue(undefined);
 
@@ -189,8 +185,12 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
-  it('should decline an unlinked Slack user when access is restricted to linked members', async () => {
-    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'DENIED' });
+  it('should decline an unlinked Slack user', async () => {
+    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
+    resolveSlackAccessDecisionMock.mockResolvedValue({
+      status: 'DENIED',
+      reason: 'NOT_A_MEMBER',
+    });
 
     await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
       done: true,
@@ -212,8 +212,39 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
+  it('should ask a linked member to mention the assistant when the request could not be attributed to them', async () => {
+    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
+    resolveSlackAccessDecisionMock.mockResolvedValue({
+      status: 'DENIED',
+      reason: 'REQUEST_NOT_ATTRIBUTABLE',
+    });
+
+    await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
+      done: true,
+      declined: true,
+    });
+
+    expect(runSlackAssistantAgentWithDeadlineMock).not.toHaveBeenCalled();
+    expect(sendSlackMessageMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        messageText: SLACK_REQUEST_NOT_ATTRIBUTABLE_TEXT,
+      }),
+    );
+    expect(updateSlackAssistantRequestMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        id: REQUEST_RECORD.id,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: SLACK_REQUEST_NOT_ATTRIBUTABLE_TEXT,
+      }),
+    );
+  });
+
   it('should fail the request when the denial message cannot be delivered', async () => {
-    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'DENIED' });
+    resolveSlackAccessDecisionMock.mockResolvedValue({
+      status: 'DENIED',
+      reason: 'NOT_A_MEMBER',
+    });
     sendSlackMessageMock.mockImplementation(async () => {
       callLog.push('reply:denied');
 
@@ -250,10 +281,7 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
-  it('should ask for the access decision with the stored mode and the resolved requester', async () => {
-    getSlackAccessModeMock.mockResolvedValue(
-      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
-    );
+  it('should ask for the access decision with the resolved requester', async () => {
     resolveSlackRunAsForRequestMock.mockResolvedValue('workspace-member-1');
     fetchSlackAssistantContextMock.mockImplementation(async () => {
       callLog.push('context:fetch');
@@ -269,24 +297,24 @@ describe('slackAssistantWorkerHandler', () => {
 
     expect(resolveSlackAccessDecisionMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
         identity: REQUESTER_IDENTITY,
         runAsWorkspaceMemberId: 'workspace-member-1',
       }),
     );
   });
 
-  it('should answer a request access allowed', async () => {
-    getSlackAccessModeMock.mockResolvedValue(
-      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
-    );
-    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
+  it('should answer a request from a linked member as that member', async () => {
+    resolveSlackRunAsForRequestMock.mockResolvedValue('workspace-member-1');
 
     await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
       done: true,
     });
 
-    expect(runSlackAssistantAgentWithDeadlineMock).toHaveBeenCalledTimes(1);
+    expect(
+      runSlackAssistantAgentWithDeadlineMock,
+    ).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ runAsWorkspaceMemberId: 'workspace-member-1' }),
+    );
   });
 
   it('should show the thinking status before fetching the Slack context', async () => {

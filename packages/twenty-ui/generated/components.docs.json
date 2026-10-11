@@ -690,7 +690,7 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "Destination URL. Enables native link semantics instead of button semantics."
+            "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
           },
           {
             "name": "loading",
@@ -707,11 +707,25 @@
             "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
           },
           {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+          },
+          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
             "required": false,
             "defaultValue": null,
-            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+            "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+          },
+          {
+            "name": "role",
+            "type": "AriaRole",
+            "required": false,
+            "defaultValue": null,
+            "description": "Role of the root element. Use `link` for custom navigation renderers."
           },
           {
             "name": "shortcut",
@@ -1113,48 +1127,162 @@
     "name": "Collapsible",
     "entryPoint": "twenty-ui/primitives/layout",
     "slug": "layout/collapsible",
-    "props": [
+    "props": [],
+    "parts": [
       {
-        "name": "animationDurations",
-        "type": "AnimationDurations",
-        "required": false,
-        "defaultValue": "default",
-        "description": "Default theme timing or separate opacity and size durations in seconds."
+        "name": "Root",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsibleRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "defaultOpen",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Initial uncontrolled expansion state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Default disabled state inherited by the triggers in this root."
+          },
+          {
+            "name": "onOpenChange",
+            "type": "((open: boolean, eventDetails: CollapsibleRootChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called with the requested open state and cancelable Base UI event details."
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled expansion state. Use defaultOpen for uncontrolled state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsibleRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the root div. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsibleRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       },
       {
-        "name": "children",
-        "type": "ReactNode",
-        "required": true,
-        "defaultValue": null,
-        "description": "Content inside the expanding panel."
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsibleTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Disables this trigger."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Set to false when render replaces the native button with another element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsibleTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the linked trigger button. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsibleTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       },
       {
-        "name": "containAnimation",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Clips overflowing content during expansion and uses a column layout."
-      },
-      {
-        "name": "dimension",
-        "type": "\"height\" | \"width\"",
-        "required": false,
-        "defaultValue": "height",
-        "description": "Dimension animated when the panel opens and closes."
-      },
-      {
-        "name": "duration",
-        "type": "\"fast\" | \"instant\" | \"normal\" | \"slow\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Theme timing preset for both opacity and size. Explicit `animationDurations` take precedence."
-      },
-      {
-        "name": "isExpanded",
-        "type": "boolean",
-        "required": true,
-        "defaultValue": null,
-        "description": "Controlled visibility of the panel. The application owns the trigger and state."
+        "name": "Panel",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsiblePanelState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "containAnimation",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Clips overflowing content during expansion and uses a column layout."
+          },
+          {
+            "name": "dimension",
+            "type": "\"height\" | \"width\"",
+            "required": false,
+            "defaultValue": "height",
+            "description": "Dimension animated when the panel opens and closes."
+          },
+          {
+            "name": "duration",
+            "type": "\"fast\" | \"instant\" | \"normal\" | \"slow\"",
+            "required": false,
+            "defaultValue": "normal",
+            "description": "Theme timing preset for both size and opacity. Native style can customize transition timing."
+          },
+          {
+            "name": "hiddenUntilFound",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Uses hidden until-found so browser page search can reveal the contents. Overrides keepMounted."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Keeps the closed panel mounted and hidden, preserving local content state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsiblePanelState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the animated panel div. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsiblePanelState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
@@ -1360,18 +1488,11 @@
         "description": "Allows the tooltip even when the text is not truncated."
       },
       {
-        "name": "displayedMaxRows",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Maximum displayed rows. Omit for single-line truncation; use a positive integer for multiline text."
-      },
-      {
         "name": "isFocusable",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a tab stop and opens the tooltip on focus or click."
+        "description": "Adds an optional tab stop. Native tabIndex and focusable render elements also open the tooltip on focus."
       },
       {
         "name": "isTooltipMultiline",
@@ -1381,25 +1502,32 @@
         "description": "Preserves whitespace and line breaks in the tooltip."
       },
       {
-        "name": "size",
-        "type": "\"large\" | \"small\"",
+        "name": "lineClamp",
+        "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Small inherited text sizing or the large fixed-height treatment."
+        "description": "Positive integer limiting visible lines, matching Text. Cannot be combined with `truncate`."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the default div. Native props, styles, handlers and ref target the displayed text, not the popup."
       },
       {
         "name": "text",
         "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<...> | null | undefined",
         "required": true,
         "defaultValue": null,
-        "description": "Text or React content to truncate. Non-string React content requires `tooltipContent`."
+        "description": "Caller-owned text or React content. Non-string content requires `tooltipContent`. URLs stay plain text."
       },
       {
         "name": "tooltipContent",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Plain text displayed in the tooltip. Defaults to `text` when it is a nonempty string."
+        "description": "Plain text displayed in the tooltip. Defaults to nonempty string `text`."
       },
       {
         "name": "tooltipDelay",
@@ -1414,6 +1542,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Preferred side of the tooltip."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
       }
     ]
   },
@@ -1425,9 +1560,16 @@
       {
         "name": "aria-label",
         "type": "string",
-        "required": true,
+        "required": false,
         "defaultValue": null,
-        "description": "Required accessible name describing the action."
+        "description": "Accessible name describing the action. Required unless `aria-labelledby` supplies the name."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the element supplying the accessible name. Can be used instead of `aria-label`."
       },
       {
         "name": "children",
@@ -1476,7 +1618,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
       },
       {
         "name": "loading",
@@ -1486,11 +1628,25 @@
         "description": "Shows a loading indicator and disables activation."
       },
       {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "shape",
@@ -1546,7 +1702,7 @@
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics."
       }
     ]
   },
@@ -1558,9 +1714,16 @@
       {
         "name": "aria-label",
         "type": "string",
-        "required": true,
+        "required": false,
         "defaultValue": null,
-        "description": "Required accessible name describing the action."
+        "description": "Accessible name describing the action. Required unless `aria-labelledby` supplies the name."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the element supplying the accessible name. Can be used instead of `aria-label`."
       },
       {
         "name": "children",
@@ -1580,7 +1743,7 @@
         "name": "color",
         "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
         "required": false,
-        "defaultValue": null,
+        "defaultValue": "neutral",
         "description": "Semantic color of the button."
       },
       {
@@ -1602,7 +1765,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
       },
       {
         "name": "loading",
@@ -1612,11 +1775,25 @@
         "description": "Shows a loading indicator and disables activation."
       },
       {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true (false for the built-in href anchor)",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "shape",
@@ -1671,8 +1848,8 @@
         "name": "variant",
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
-        "defaultValue": null,
-        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
+        "defaultValue": "outline",
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics."
       }
     ]
   },
@@ -1728,7 +1905,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
       },
       {
         "name": "loading",
@@ -1745,11 +1922,25 @@
         "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
       },
       {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "shortcut",
@@ -1791,7 +1982,7 @@
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "solid",
-        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics."
       }
     ]
   },
@@ -1854,7 +2045,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
       },
       {
         "name": "loading",
@@ -1871,11 +2062,25 @@
         "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
       },
       {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "shortcut",
@@ -1917,7 +2122,7 @@
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics."
       }
     ]
   },
@@ -1973,7 +2178,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
       },
       {
         "name": "loading",
@@ -1990,11 +2195,25 @@
         "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
       },
       {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true (false for the built-in href anchor)",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "shortcut",
@@ -2036,7 +2255,7 @@
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "outline",
-        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics."
       }
     ]
   },
@@ -2057,7 +2276,7 @@
         "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
-        "description": "Shared semantic color that overrides the color of buttons in the group."
+        "description": "Default semantic color for children without an explicit color."
       },
       {
         "name": "framed",
@@ -2078,14 +2297,14 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
-        "description": "Shared button height that overrides the size of buttons in the group."
+        "description": "Default button height for children without an explicit size."
       },
       {
         "name": "variant",
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
-        "description": "Shared surface treatment that overrides the variant of buttons in the group."
+        "description": "Default surface treatment for children without an explicit variant."
       }
     ]
   },
@@ -2181,6 +2400,39 @@
             "required": false,
             "defaultValue": "onSubmit",
             "description": "Determines when the field should be validated.\nThis takes precedence over the `validationMode` prop on `<Form>`.\n\n- `onSubmit`: triggers validation when the form is submitted, and re-validates on change after submission.\n- `onBlur`: triggers validation when the control loses focus.\n- `onChange`: triggers validation on every change to the control value."
+          }
+        ]
+      },
+      {
+        "name": "Item",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: FieldItemState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the wrapped control should ignore user interaction.\nThe `disabled` prop on `<Field.Root>` takes precedence over this."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, FieldItemState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: FieldItemState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           }
         ]
       },
@@ -2354,21 +2606,28 @@
         "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Callback fired when the `value` changes. Use when controlled."
+        "description": "Receives the next string value and Base UI details, including the native event, reason and cancellation methods."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native input element."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, InputState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Composes the native input with a custom element or render callback. Forward the supplied props and ref to an input."
       },
       {
         "name": "size",
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
-        "description": "Visual size of the input. Inside an `InputGroup`, the group's size applies."
+        "description": "Visual size. Explicit input size takes precedence over the InputGroup default, then md applies. Group layout still sets the surrounding height."
       },
       {
         "name": "style",
@@ -2399,18 +2658,25 @@
         "description": "Content rendered after the input, such as a suffix or a button."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the layout element, a div by default."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Customizes the layout element. Forward its props, children and ref. Native control props belong on the child input."
       },
       {
         "name": "size",
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Visual size of the group and its input."
+        "description": "Visual size of the layout and default size for inputs that omit size. Defaults to md."
       },
       {
         "name": "startElement",
@@ -2585,7 +2851,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Grows the textarea with its content instead of showing a scrollbar."
+        "description": "Measures committed controlled values or uncontrolled edits, form resets, row and size changes, and width changes. Overrides blockSize while enabled."
       },
       {
         "name": "className",
@@ -2599,21 +2865,28 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum number of rows the textarea grows to when `autoResize` is set.\nLonger content scrolls."
+        "description": "Caps automatic height growth. Content beyond this row limit scrolls."
       },
       {
         "name": "onValueChange",
         "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called with the new value when the textarea value changes."
+        "description": "Receives the next string value and Base UI details, including the native event, reason and cancellation methods."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLTextAreaElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native textarea element."
       },
       {
         "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<DetailedHTMLProps<TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>, InputState>",
         "required": false,
-        "defaultValue": "<textarea />",
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "defaultValue": null,
+        "description": "Composes the native textarea with a custom element or callback receiving textarea props and Field state. Forward the supplied props and ref to a textarea."
       },
       {
         "name": "size",
@@ -2676,7 +2949,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": "Adds padding around the box and a hover background. Disable it for a\ncompact checkbox inside another interactive element."
+        "description": "Adds padding and a hover background around the box."
       },
       {
         "name": "id",
@@ -2789,6 +3062,207 @@
         "required": false,
         "defaultValue": "solid",
         "description": "Visual style of the box: filled, outlined, or tinted."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "checked",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the checkbox is currently ticked.\n\nTo render an uncontrolled checkbox, use the `defaultChecked` prop instead."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: CheckboxRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "color",
+            "type": "\"accent\" | \"success\" | \"warning\"",
+            "required": false,
+            "defaultValue": "accent",
+            "description": "Color used while the checkbox is checked or indeterminate."
+          },
+          {
+            "name": "defaultChecked",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the checkbox is initially ticked.\n\nTo render a controlled checkbox, use the `checked` prop instead."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component should ignore user interaction."
+          },
+          {
+            "name": "form",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Identifies the form that owns the hidden input.\nUseful when the checkbox is rendered outside the form."
+          },
+          {
+            "name": "hoverable",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Adds padding and a hover background around the box."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The id of the input element."
+          },
+          {
+            "name": "indeterminate",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the checkbox is in a mixed state: neither ticked, nor unticked."
+          },
+          {
+            "name": "inputRef",
+            "type": "Ref<HTMLInputElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A ref to access the hidden `<input>` element."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Identifies the field when a form is submitted."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
+          },
+          {
+            "name": "onCheckedChange",
+            "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called when the checkbox is ticked or unticked."
+          },
+          {
+            "name": "parent",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the checkbox controls a group of child checkboxes.\n\nMust be used in a [Checkbox Group](https://base-ui.com/react/components/checkbox-group)."
+          },
+          {
+            "name": "readOnly",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the user should be unable to tick or untick the checkbox."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CheckboxRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "required",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the user must tick the checkbox before submitting a form."
+          },
+          {
+            "name": "shape",
+            "type": "\"round\" | \"square\"",
+            "required": false,
+            "defaultValue": "square",
+            "description": "Corner shape of the box."
+          },
+          {
+            "name": "size",
+            "type": "\"md\" | \"sm\"",
+            "required": false,
+            "defaultValue": "sm",
+            "description": "Visual size of the checkbox."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CheckboxRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "uncheckedValue",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The value submitted with the form when the checkbox is unchecked.\nBy default, unchecked checkboxes do not submit any value, matching native checkbox behavior."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The checkbox's value. Identifies it within a [Checkbox Group](https://base-ui.com/react/components/checkbox-group), falling back to `name` when omitted.\nWhen submitting a form, a checked box submits `value`; with no `value`, it submits the native \"on\"."
+          },
+          {
+            "name": "variant",
+            "type": "\"outline\" | \"soft\" | \"solid\"",
+            "required": false,
+            "defaultValue": "solid",
+            "description": "Visual style of the box: filled, outlined, or tinted."
+          }
+        ]
+      },
+      {
+        "name": "Indicator",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CheckboxIndicatorState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to keep the element in the DOM when the checkbox is not checked."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CheckboxIndicatorState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CheckboxIndicatorState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
@@ -4541,6 +5015,158 @@
         "defaultValue": null,
         "description": "The value submitted with the form when the switch is on.\nBy default, switch submits the \"on\" value, matching native checkbox behavior."
       }
+    ],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "checked",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the switch is currently active.\n\nTo render an uncontrolled switch, use the `defaultChecked` prop instead."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: SwitchRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "defaultChecked",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the switch is initially active.\n\nTo render a controlled switch, use the `checked` prop instead."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component should ignore user interaction."
+          },
+          {
+            "name": "form",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Identifies the form that owns the hidden input.\nUseful when the switch is rendered outside the form."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The id of the hidden input element.\n\nWhen `nativeButton` is `true`, the id is applied to the root element."
+          },
+          {
+            "name": "inputRef",
+            "type": "Ref<HTMLInputElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A ref to access the hidden `<input>` element."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Identifies the field when a form is submitted."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
+          },
+          {
+            "name": "onCheckedChange",
+            "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called when the switch is activated or deactivated."
+          },
+          {
+            "name": "readOnly",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the user should be unable to activate or deactivate the switch."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, SwitchRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "required",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the user must activate the switch before submitting a form."
+          },
+          {
+            "name": "size",
+            "type": "\"md\" | \"sm\"",
+            "required": false,
+            "defaultValue": "md",
+            "description": "Visual size of the switch."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: SwitchRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "uncheckedValue",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The value submitted with the form when the switch is off.\nBy default, unchecked switches do not submit any value, matching native checkbox behavior."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The value submitted with the form when the switch is on.\nBy default, switch submits the \"on\" value, matching native checkbox behavior."
+          }
+        ]
+      },
+      {
+        "name": "Thumb",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: SwitchThumbState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, SwitchThumbState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: SwitchThumbState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      }
     ]
   },
   {
@@ -4549,11 +5175,32 @@
     "slug": "navigation/breadcrumb",
     "props": [
       {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible navigation name. Defaults to Breadcrumb; supply a localized name or use aria-labelledby."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class merged onto the root navigation element."
+      },
+      {
         "name": "links",
         "type": "BreadcrumbItem[]",
         "required": true,
         "defaultValue": null,
-        "description": "Ordered trail items. Each item accepts `children`, `href`, `render`, and `title`. The final item represents the current page."
+        "description": "Ordered trail items with native anchor attributes, event handlers, ref, children and element or callback render composition. Items with href default to anchors; other items default to text. The final item defaults to aria-current=\"page\". An explicit aria-current value is preserved, including false."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root nav, or the DOM element supplied through render."
       },
       {
         "name": "render",
@@ -4561,6 +5208,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Caller-supplied root element or renderer. Preserve the navigation landmark and forward the supplied props and ref."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root navigation element."
       }
     ]
   },
@@ -4609,7 +5263,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Prevents clicks and applies the disabled style."
+        "description": "Applies disabled styling only. Set native disabled behavior and accessible semantics on the button, link, or popup item owner."
       },
       {
         "name": "endIcon",
@@ -4623,7 +5277,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Applies the highlighted style, for example to the focused item of a list."
+        "description": "Applies highlighted styling without moving DOM focus or handling keyboard navigation."
       },
       {
         "name": "hasSubmenu",
@@ -4640,18 +5294,25 @@
         "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the actual DOM root, including a composed native button or link."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ListItemState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Composes the row with an element or render callback. The owner supplies interaction semantics, native attributes, and behavior."
       },
       {
         "name": "selected",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Whether the item is selected. Shows the check or checkbox indicator when\n`indicator` is set."
+        "description": "Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner."
       },
       {
         "name": "shortcut",
@@ -4924,6 +5585,13 @@
             "description": "Card sections or other content."
           },
           {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class merged with the part class."
+          },
+          {
             "name": "fullWidth",
             "type": "boolean",
             "required": false,
@@ -4931,11 +5599,32 @@
             "description": "Sets the card width to 100% of its container."
           },
           {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
             "name": "rounded",
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Compatibility styling flag. Cards already use the same rounded corners when omitted."
+            "description": "Cards already use the same rounded corners when omitted."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       },
@@ -4954,7 +5643,28 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "CSS class applied to the header."
+            "description": "CSS class merged with the part class."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       },
@@ -4973,7 +5683,7 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "CSS class applied to the body."
+            "description": "CSS class merged with the part class."
           },
           {
             "name": "divider",
@@ -4983,18 +5693,25 @@
             "description": "Adds a bottom border."
           },
           {
-            "name": "hasHoverHighlight",
-            "type": "boolean",
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
             "required": false,
             "defaultValue": null,
-            "description": "Changes the background on hover. Does not add an action."
+            "description": "Ref to the default div, or the element supplied through render."
           },
           {
-            "name": "isClickable",
-            "type": "boolean",
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
             "required": false,
             "defaultValue": null,
-            "description": "Shows a pointer cursor. Does not add button semantics or keyboard interaction."
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       },
@@ -5009,11 +5726,39 @@
             "description": "Footer content, such as actions or supporting text."
           },
           {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class merged with the part class."
+          },
+          {
             "name": "divider",
             "type": "boolean",
             "required": false,
             "defaultValue": "true",
             "description": "Shows the top border unless explicitly set to false."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered part."
           }
         ]
       }
@@ -5040,7 +5785,7 @@
             "type": "ReactNode | PayloadChildRenderFunction<Payload>",
             "required": false,
             "defaultValue": null,
-            "description": "The content of the dialog.\nThis can be a regular React node or a render function that receives the `payload` of the active trigger."
+            "description": "Parts or a render function receiving the active trigger payload. Root renders no DOM node."
           },
           {
             "name": "defaultOpen",
@@ -5068,7 +5813,7 @@
             "type": "DialogHandle<Payload>",
             "required": false,
             "defaultValue": null,
-            "description": "A handle to associate the dialog with a trigger.\nIf specified, allows external triggers to control the dialog's open state.\nCan be created with the Dialog.createHandle() method."
+            "description": "Connects detached triggers and imperative dialog actions."
           },
           {
             "name": "modal",
@@ -5082,7 +5827,7 @@
             "type": "((open: boolean, eventDetails: DialogRootChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
-            "description": "Event handler called when the dialog is opened or closed."
+            "description": "Receives the requested state and Base UI event details, including reason, event, trigger and cancel()."
           },
           {
             "name": "onOpenChangeComplete",
@@ -5146,6 +5891,13 @@
             "description": "A payload to pass to the dialog when it is opened."
           },
           {
+            "name": "ref",
+            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (RefObject<...> | ((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)))) | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the trigger button, or the element supplied through render."
+          },
+          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogTriggerState>",
             "required": false,
@@ -5162,18 +5914,11 @@
         ]
       },
       {
-        "name": "Popup",
+        "name": "Portal",
         "props": [
           {
-            "name": "backdrop",
-            "type": "boolean | DialogBackdropProps",
-            "required": false,
-            "defaultValue": "true",
-            "description": "Show the backdrop, customize its native props, or pass `false` to hide it."
-          },
-          {
             "name": "className",
-            "type": "string | ((state: DialogPopupState) => string | undefined)",
+            "type": "string | ((state: DialogPortalState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -5183,35 +5928,162 @@
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
             "defaultValue": null,
-            "description": "Portal destination. Defaults to the theme container; `null` defers mounting."
+            "description": "Portal destination. Omit to use the nearest theme scope, then the parent portal or document body. Explicit null defers mounting; an element, ShadowRoot or ref keeps Base UI resolution."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Keeps the portal and its content mounted while closed."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the portal div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogPortalState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the portal element. Native props and handlers target it."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogPortalState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Backdrop",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogBackdropState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "forceRender",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Renders the backdrop even when this dialog is nested."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the backdrop div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogBackdropState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogBackdropState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Viewport",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Popup and any other content within the positioning viewport."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: DialogViewportState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the viewport div, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogViewportState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogViewportState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Popup",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Dialog content. Compose inside Viewport and Portal; Popup does not create those parts or a Backdrop."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: DialogPopupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
             "name": "finalFocus",
             "type": "boolean | RefObject<HTMLElement | null> | ((closeType: InteractionType) => boolean | void | HTMLElement | null)",
             "required": false,
             "defaultValue": null,
-            "description": "Determines the element to focus when the dialog is closed.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (trigger or previously focused element).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing."
+            "description": "Controls focus restoration on closing. Accepts a boolean, element ref or callback receiving the interaction type."
           },
           {
             "name": "initialFocus",
             "type": "boolean | RefObject<HTMLElement | null> | ((openType: InteractionType) => boolean | void | HTMLElement | null)",
             "required": false,
             "defaultValue": null,
-            "description": "Determines the element to focus when the dialog is opened.\nBy default, focus moves to the first tabbable element inside the popup, except when the dialog\nis opened by touch — then the popup itself is focused to avoid opening the virtual keyboard.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (first tabbable element or popup).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing."
+            "description": "Controls focus on opening. Accepts a boolean, element ref or callback receiving the interaction type."
           },
           {
-            "name": "keepMounted",
-            "type": "boolean",
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
             "required": false,
             "defaultValue": null,
-            "description": "Keeps content mounted while the dialog is closed."
+            "description": "Ref to the popup div, or the element supplied through render."
           },
           {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogPopupState>",
             "required": false,
             "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+            "description": "Composes the popup element while retaining native props, handlers, dialog semantics and focus behavior."
           },
           {
             "name": "size",
@@ -5226,13 +6098,6 @@
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          },
-          {
-            "name": "viewportProps",
-            "type": "DialogViewportProps",
-            "required": false,
-            "defaultValue": null,
-            "description": "Native props and render composition for the viewport surrounding the popup."
           }
         ]
       },
@@ -5294,6 +6159,13 @@
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
+            "name": "ref",
+            "type": "Ref<HTMLParagraphElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the description paragraph, or the element supplied through render."
+          },
+          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogDescriptionState>",
             "required": false,
@@ -5325,6 +6197,13 @@
             "required": false,
             "defaultValue": "true",
             "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the close button, or the element supplied through render."
           },
           {
             "name": "render",
@@ -5509,11 +6388,11 @@
         ]
       },
       {
-        "name": "Popup",
+        "name": "Portal",
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: DialogPopupState) => string | undefined)",
+            "type": "string | ((state: DialogPortalState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -5523,7 +6402,99 @@
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
             "defaultValue": null,
-            "description": "Element the dialog is portaled into. Defaults to the theme's portal\ncontainer."
+            "description": "Portal destination. Omission uses the theme container or Base UI default; explicit `null` defers mounting. A ref with a null current value uses the Base UI default destination."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Keeps content mounted while the alert is closed."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogPortalState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogPortalState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Backdrop",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogBackdropState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "forceRender",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the backdrop is forced to render even when nested."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogBackdropState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogBackdropState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Viewport",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogViewportState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogViewportState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogViewportState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Popup",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogPopupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
             "name": "finalFocus",
@@ -5540,13 +6511,6 @@
             "description": "Determines the element to focus when the dialog is opened.\nBy default, focus moves to the first tabbable element inside the popup, except when the dialog\nis opened by touch — then the popup itself is focused to avoid opening the virtual keyboard.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (first tabbable element or popup).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing."
           },
           {
-            "name": "keepMounted",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keeps the dialog mounted in the DOM while it is closed."
-          },
-          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogPopupState>",
             "required": false,
@@ -5558,7 +6522,7 @@
             "type": "\"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
             "required": false,
             "defaultValue": "md",
-            "description": "Width of the dialog, or `fullscreen` to fill the viewport."
+            "description": "Width of the alert, or `fullscreen` to fill the viewport."
           },
           {
             "name": "style",
@@ -6705,7 +7669,7 @@
             "type": "ReactNode | PayloadChildRenderFunction<Payload>",
             "required": false,
             "defaultValue": null,
-            "description": "The content of the popover.\nThis can be a regular React node or a render function that receives the `payload` of the active trigger."
+            "description": "Parts or a render function receiving the active trigger payload. Root renders no DOM element."
           },
           {
             "name": "defaultOpen",
@@ -6726,7 +7690,7 @@
             "type": "PopoverHandle<Payload>",
             "required": false,
             "defaultValue": null,
-            "description": "A handle to associate the popover with a trigger.\nIf specified, allows external triggers to control the popover's open state."
+            "description": "Connects detached triggers and imperative open/close actions."
           },
           {
             "name": "modal",
@@ -6740,7 +7704,7 @@
             "type": "((open: boolean, eventDetails: PopoverRootChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
-            "description": "Event handler called when the popover is opened or closed."
+            "description": "Receives the requested open state and Base UI event details, including reason, event, trigger, cancel() and preventUnmountOnClose()."
           },
           {
             "name": "onOpenChangeComplete",
@@ -6841,35 +7805,178 @@
         ]
       },
       {
-        "name": "Popup",
+        "name": "Portal",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverPortalState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "container",
+            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "When omitted, uses the scoped theme container, then the Base UI parent portal or document body. Explicit null delays rendering until a target is supplied. Explicit elements, ShadowRoots and refs are forwarded unchanged; their DOM scope supplies CSS tokens."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to keep the portal mounted in the DOM while the popup is hidden."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the portal div. Native props, handlers and render target this element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverPortalState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverPortalState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Positioner",
         "props": [
           {
             "name": "align",
             "type": "\"center\" | \"end\" | \"start\"",
             "required": false,
             "defaultValue": "center",
-            "description": "Alignment of the popup along the anchor."
+            "description": "How to align the popup relative to the specified side."
           },
           {
             "name": "alignOffset",
             "type": "number | OffsetFunction",
             "required": false,
-            "defaultValue": null,
-            "description": "Offset in pixels along the alignment axis."
+            "defaultValue": "0",
+            "description": "Additional offset along the alignment axis in pixels.\nAlso accepts a function that returns the offset to read the dimensions of the anchor\nand positioner elements, along with its side and alignment.\n\nThe function takes a `data` object parameter with the following properties:\n- `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.\n- `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.\n- `data.side`: which side of the anchor element the positioner is aligned against.\n- `data.align`: how the positioner is aligned relative to the specified side."
           },
           {
             "name": "anchor",
             "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
             "required": false,
             "defaultValue": null,
-            "description": "Element or position the popup is anchored to. Defaults to the trigger."
+            "description": "An element to position the popup against.\nBy default, the popup will be positioned against the trigger."
           },
           {
-            "name": "arrow",
+            "name": "arrowPadding",
+            "type": "number",
+            "required": false,
+            "defaultValue": "5",
+            "description": "Minimum distance to maintain between the arrow and the edges of the popup.\n\nUse it to prevent the arrow element from hanging out of the rounded corners of a popup."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverPositionerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "collisionAvoidance",
+            "type": "CollisionAvoidance",
+            "required": false,
+            "defaultValue": null,
+            "description": "Determines how to handle collisions when positioning the popup.\n\n`side` controls overflow on the preferred placement axis (`top`/`bottom` or `left`/`right`):\n- `'flip'`: keep the requested side when it fits; otherwise try the opposite side\n  (`top` and `bottom`, or `left` and `right`).\n- `'shift'`: never change side; keep the requested side and move the popup within\n  the clipping boundary so it stays visible.\n- `'none'`: do not correct side-axis overflow.\n\n`align` controls overflow on the alignment axis (`start`/`center`/`end`):\n- `'flip'`: keep side, but swap `start` and `end` when the requested alignment overflows.\n- `'shift'`: keep side and requested alignment, then nudge the popup along the\n  alignment axis to fit.\n- `'none'`: do not correct alignment-axis overflow.\n\n`fallbackAxisSide` controls fallback behavior on the perpendicular axis when the\npreferred axis cannot fit:\n- `'start'`: allow perpendicular fallback and try the logical start side first\n  (`top` before `bottom`, or `left` before `right` in LTR).\n- `'end'`: allow perpendicular fallback and try the logical end side first\n  (`bottom` before `top`, or `right` before `left` in LTR).\n- `'none'`: do not fallback to the perpendicular axis.\n\nWhen `side` is `'shift'`, explicitly setting `align` only supports `'shift'` or `'none'`.\nIf `align` is omitted, it defaults to `'flip'`."
+          },
+          {
+            "name": "collisionBoundary",
+            "type": "Boundary",
+            "required": false,
+            "defaultValue": "clipping-ancestors",
+            "description": "An element or a rectangle that delimits the area that the popup is confined to."
+          },
+          {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": "5",
+            "description": "Additional space to maintain from the edge of the collision boundary."
+          },
+          {
+            "name": "disableAnchorTracking",
             "type": "boolean",
             "required": false,
             "defaultValue": "false",
-            "description": "Shows an arrow pointing at the anchor."
+            "description": "Whether to disable the popup from tracking any layout shift of its positioning anchor."
+          },
+          {
+            "name": "positionMethod",
+            "type": "\"absolute\" | \"fixed\"",
+            "required": false,
+            "defaultValue": "absolute",
+            "description": "Determines which CSS `position` property to use."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the positioning div. Accepts the complete Base UI anchor, collision and positioning contract."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverPositionerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "side",
+            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
+            "required": false,
+            "defaultValue": "bottom",
+            "description": "Which side of the anchor element to align the popup against.\nMay automatically change to avoid collisions."
+          },
+          {
+            "name": "sideOffset",
+            "type": "number | OffsetFunction",
+            "required": false,
+            "defaultValue": "8",
+            "description": "Distance from the anchor. Defaults to 8. Accepts a number or positioning function."
+          },
+          {
+            "name": "sticky",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to maintain the popup in the viewport after\nthe anchor element was scrolled out of view."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverPositionerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Popup",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Popup content. Compose Portal, Positioner and Arrow separately."
           },
           {
             "name": "className",
@@ -6877,20 +7984,6 @@
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "collisionPadding",
-            "type": "Padding",
-            "required": false,
-            "defaultValue": null,
-            "description": "Space in pixels kept between the popup and the edges of its collision\nboundary, for all sides or per side. Defaults to 5."
-          },
-          {
-            "name": "container",
-            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
-            "required": false,
-            "defaultValue": null,
-            "description": "Element the popup is portaled into. Defaults to the theme's portal\ncontainer."
           },
           {
             "name": "finalFocus",
@@ -6907,11 +8000,11 @@
             "description": "Determines the element to focus when the popover is opened.\nBy default, focus moves to the first tabbable element inside the popup, except when the popover\nis opened by touch — then the popup itself is focused to avoid opening the virtual keyboard.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (first tabbable element or popup).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing."
           },
           {
-            "name": "keepMounted",
-            "type": "boolean",
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
             "required": false,
             "defaultValue": null,
-            "description": "Keeps the popup mounted in the DOM while the popover is closed."
+            "description": "Ref to the popup div. Focus props, native attributes, handlers and render target this element."
           },
           {
             "name": "render",
@@ -6921,22 +8014,74 @@
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
           },
           {
-            "name": "side",
-            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverPopupState) => CSSProperties | undefined)",
             "required": false,
-            "defaultValue": "bottom",
-            "description": "Side of the anchor the popup is placed on."
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Arrow",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverArrowState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
-            "name": "sideOffset",
-            "type": "number | OffsetFunction",
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
             "required": false,
-            "defaultValue": "8",
-            "description": "Distance in pixels between the anchor and the popup."
+            "defaultValue": null,
+            "description": "Ref to the arrow div. Compose inside Popup."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverArrowState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: PopoverPopupState) => CSSProperties | undefined)",
+            "type": "CSSProperties | ((state: PopoverArrowState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Backdrop",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverBackdropState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the optional backdrop div. Compose inside Portal."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverBackdropState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverBackdropState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -7022,6 +8167,46 @@
           {
             "name": "style",
             "type": "CSSProperties | ((state: PopoverCloseState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Viewport",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "The content to render inside the transition container."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverViewportState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the content-transition div for changing trigger payloads."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverViewportState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverViewportState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -7915,21 +9100,21 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum number of lines before the text is truncated with an ellipsis.\nCannot be combined with `truncate`."
+        "description": "Positive integer limiting the number of visible lines. Cannot be combined with `truncate`."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Replaces the default div. Native props and the ref target the rendered text element."
       },
       {
         "name": "truncate",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Truncates overflowing text on one line with an ellipsis. Cannot be\ncombined with `lineClamp`."
+        "description": "Truncates one line with an ellipsis. Cannot be combined with `lineClamp`."
       }
     ]
   },
@@ -7974,32 +9159,32 @@
         "description": "Stable value used to choose fallback colors. Defaults to `name`."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
+        "name": "fallbackProps",
+        "type": "AvatarFallbackProps",
         "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and disables activation when `onClick` is supplied."
+        "defaultValue": null,
+        "description": "Complete `Avatar.Fallback` props, including caller-owned children, labeling, refs, `render`, and fallback `delay` in milliseconds."
       },
       {
         "name": "icon",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Icon rendered instead of the image and first-letter fallback."
+        "description": "Decorative icon rendered instead of the image and first-letter fallback. Give the root an accessible label when the icon conveys information."
+      },
+      {
+        "name": "imageProps",
+        "type": "AvatarImageProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Complete `Avatar.Image` props, including native image attributes, refs, `render`, `keepMounted`, and `onLoadingStatusChange`. Alternative text defaults to an empty string. Supply a nonempty `alt` to label the image and default fallback."
       },
       {
         "name": "name",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Name used for the first-letter fallback and the default accessible name when clickable."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when a clickable avatar uses `render` with an element other than a native button."
+        "description": "Name used for the first-letter fallback and fallback colors. Does not add an accessible label."
       },
       {
         "name": "pulsing",
@@ -8013,7 +9198,7 @@
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AvatarRootState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction, and put its click handler and disabled state on that owner."
       },
       {
         "name": "ring",
@@ -8041,7 +9226,7 @@
         "type": "string | null",
         "required": false,
         "defaultValue": null,
-        "description": "Image URL. A missing or failed image shows the fallback."
+        "description": "Image URL. A missing or failed image shows the fallback. `imageProps.src` overrides this value."
       },
       {
         "name": "style",
@@ -8057,6 +9242,240 @@
         "defaultValue": "soft",
         "description": "Visual treatment of the fallback."
       }
+    ],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "backgroundColor",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Background color override for a first-letter fallback."
+          },
+          {
+            "name": "borderColor",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Border color override for the outline fallback."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-owned Image, Fallback, and other content."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: AvatarRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "color",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text color override for a first-letter fallback."
+          },
+          {
+            "name": "colorSeed",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Stable value used to choose fallback colors. Defaults to `name`."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Name used to choose fallback colors. Does not add children or accessible labels."
+          },
+          {
+            "name": "pulsing",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Animates the avatar opacity. Respects reduced-motion preferences."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AvatarRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction, and put its click handler and disabled state on that owner."
+          },
+          {
+            "name": "ring",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Surrounds the avatar with a background-colored ring so overlapping avatars stay distinct."
+          },
+          {
+            "name": "shape",
+            "type": "\"circle\" | \"rounded-square\" | \"square\"",
+            "required": false,
+            "defaultValue": "square",
+            "description": "Shape of the avatar and its fallback."
+          },
+          {
+            "name": "size",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
+            "required": false,
+            "defaultValue": "md",
+            "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), or `xl` (40px)."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: AvatarRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "variant",
+            "type": "\"outline\" | \"soft\"",
+            "required": false,
+            "defaultValue": "soft",
+            "description": "Visual treatment of the fallback."
+          }
+        ]
+      },
+      {
+        "name": "Image",
+        "props": [
+          {
+            "name": "alt",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-owned alternative text. Use an empty string for decorative images."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: AvatarImageState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "crossOrigin",
+            "type": "\"\" | \"anonymous\" | \"use-credentials\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native image cross-origin policy, also used during preloading."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Keeps the image mounted and loads it in place. Loading and failed images stay hidden while Fallback is shown."
+          },
+          {
+            "name": "loading",
+            "type": "\"eager\" | \"lazy\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native eager or lazy loading. Use keepMounted for lazy loading."
+          },
+          {
+            "name": "onLoadingStatusChange",
+            "type": "((status: ImageLoadingStatus) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called when Base UI reports a loading, loaded, or error status. Shares that state with Root and Fallback."
+          },
+          {
+            "name": "referrerPolicy",
+            "type": "\"\" | \"no-referrer-when-downgrade\" | \"no-referrer\" | \"origin-when-cross-origin\" | \"origin\" | \"same-origin\" | \"strict-origin-when-cross-origin\" | \"strict-origin\" | \"unsafe-url\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native image referrer policy, also used during preloading."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, AvatarImageState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the image. Preserve a native image and forward the supplied attributes, events, and ref."
+          },
+          {
+            "name": "sizes",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native responsive image sizes used with srcSet."
+          },
+          {
+            "name": "src",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Image URL. Image renders after a successful load unless keepMounted is enabled."
+          },
+          {
+            "name": "srcSet",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native responsive image source candidates."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: AvatarImageState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Fallback",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-owned fallback content, such as initials or an icon."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: AvatarFallbackState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "delay",
+            "type": "number",
+            "required": false,
+            "defaultValue": "0",
+            "description": "Milliseconds before the initial fallback is shown. Defaults to 0."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AvatarFallbackState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the fallback span. Forward the supplied props and ref, and provide its accessible label or decorative attributes."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: AvatarFallbackState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      }
     ]
   },
   {
@@ -8069,14 +9488,21 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Shows the string-label tooltip even when the label is not truncated."
+        "description": "Shows the content tooltip even when the content is not truncated."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-owned content. Missing or empty children add no fallback label."
       },
       {
         "name": "clickable",
         "type": "boolean",
         "required": false,
         "defaultValue": "isDefined(onClick)",
-        "description": "Enables hover and pointer styling. Defaults to whether `onClick` is supplied; does not add button semantics by itself."
+        "description": "Enables hover and pointer styling. Defaults to whether `onClick` is supplied; does not change the default div or add keyboard behavior."
       },
       {
         "name": "color",
@@ -8086,25 +9512,11 @@
         "description": "Primary or secondary text color."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and disables activation when `onClick` is supplied."
-      },
-      {
-        "name": "emptyLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": "Untitled",
-        "description": "Placeholder shown when children are missing, empty, or false, unless `forceEmptyText` is enabled."
-      },
-      {
         "name": "endElement",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Content after the label. Avoid interactive content when the chip itself is a button."
+        "description": "Content after the label. Avoid interactive content when the chip itself is a button or link."
       },
       {
         "name": "endElementDivider",
@@ -8114,39 +9526,25 @@
         "description": "Adds a divider before `endElement` when that slot has content."
       },
       {
-        "name": "forceEmptyText",
+        "name": "isTooltipMultiline",
         "type": "boolean",
         "required": false,
-        "defaultValue": "false",
-        "description": "Suppresses the empty label when children are missing, empty, or false."
-      },
-      {
-        "name": "isLabelHidden",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Hides the label while keeping the start and end elements. Supply an accessible name for an interactive chip."
+        "defaultValue": null,
+        "description": "Preserves line breaks in the tooltip text."
       },
       {
         "name": "maxWidth",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum chip width in pixels, used to constrain and truncate the label."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when a clickable chip uses `render` with an element other than a native button."
+        "description": "Maximum chip width in pixels, used to constrain the content."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Replaces the default div. Compose a native button or link explicitly; that owner supplies disabled and native interaction behavior."
       },
       {
         "name": "shape",
@@ -8170,18 +9568,32 @@
         "description": "Content before the label, such as an avatar or icon."
       },
       {
-        "name": "tooltipLabel",
+        "name": "tooltipContent",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Tooltip content for a string label. Defaults to the label text."
+        "description": "Tooltip text. Defaults to string children. Supply text explicitly for node content."
+      },
+      {
+        "name": "tooltipDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Delay in milliseconds before the tooltip opens."
       },
       {
         "name": "tooltipPlace",
         "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
-        "description": "Position of the string-label tooltip."
+        "description": "Position of the content tooltip."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Truncates overflowing content with an ellipsis. Defaults to true."
       },
       {
         "name": "variant",
@@ -8195,7 +9607,7 @@
         "type": "\"medium\" | \"regular\"",
         "required": false,
         "defaultValue": "regular",
-        "description": "Font weight of the label."
+        "description": "Font weight of the content."
       }
     ]
   },
@@ -8219,39 +9631,18 @@
         "description": "Theme color for the tag, or `transparent` for an unfilled label."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
+        "name": "onClick",
+        "type": "MouseEventHandler<HTMLSpanElement>",
         "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and prevents pointer and keyboard activation."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when a clickable tag uses `render` with an element other than a native button."
-      },
-      {
-        "name": "preventPadding",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Removes the tag padding."
-      },
-      {
-        "name": "preventShrink",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Keeps the tag from shrinking and disables string-label truncation and its tooltip."
+        "defaultValue": null,
+        "description": "Native click handler. Does not change the default span or add keyboard activation."
       },
       {
         "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TagState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Replaces the default span. Compose a button or link to provide explicit interaction semantics."
       },
       {
         "name": "startIcon",
@@ -8259,6 +9650,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Decorative icon before the label. Hidden from assistive technology."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Truncates constrained string labels and exposes the full text in a tooltip. Set to `false` to show the full label without a tooltip."
       },
       {
         "name": "variant",
@@ -8289,39 +9687,25 @@
         "description": "Theme color used for the status background, text, and loader."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and disables activation when `onClick` is supplied."
-      },
-      {
         "name": "loading",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Shows a loader after the label. Does not disable the control or announce a status change by itself."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when using `render` with an element other than a native button."
+        "description": "Shows a decorative loader after the label and defaults aria-busy to true. The caller owns announcements and disabled interaction."
       },
       {
         "name": "onClick",
-        "type": "MouseEventHandler<HTMLButtonElement> | MouseEventHandler<HTMLElement>",
+        "type": "MouseEventHandler<HTMLSpanElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Handles activation and renders a native button by default. Without it, the default element is a span."
+        "description": "Native click handler. Does not change the default span or add keyboard activation."
       },
       {
         "name": "render",
-        "type": "NonNullable<ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}> | undefined>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, StatusState>",
         "required": false,
         "defaultValue": null,
-        "description": "Replaces the default element. Required when `nativeButton` is `false`."
+        "description": "Replaces the default span. Compose a button or link to provide explicit interaction semantics."
       },
       {
         "name": "weight",
@@ -8377,35 +9761,42 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Controlled checked state of the switch."
+        "description": "Whether the switch is currently active.\n\nTo render an uncontrolled switch, use the `defaultChecked` prop instead."
       },
       {
         "name": "children",
         "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Visible label and accessible name of the switch. Use non-interactive content."
+        "description": "Visible label and default accessible name of the switch. Use non-interactive node content."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: SwitchRootState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the visible Switch root and accepts a Switch state callback."
       },
       {
         "name": "defaultChecked",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Initial checked state when uncontrolled."
+        "description": "Whether the switch is initially active.\n\nTo render a controlled switch, use the `checked` prop instead."
       },
       {
         "name": "description",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Non-interactive supporting content, associated with the switch as its accessible description."
+        "description": "Non-interactive supporting node content, used as the default accessible description of the switch."
       },
       {
         "name": "disabled",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Disables both the row and its switch."
+        "description": "Whether the component should ignore user interaction."
       },
       {
         "name": "focused",
@@ -8415,53 +9806,130 @@
         "description": "Applies the highlighted row style without moving keyboard focus."
       },
       {
+        "name": "form",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Identifies the form that owns the hidden input.\nUseful when the switch is rendered outside the form."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Identifies the associated checkbox, or the visible root with nativeButton. The label association follows this ID."
+      },
+      {
+        "name": "inputRef",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Targets the underlying native checkbox."
+      },
+      {
+        "name": "labelRef",
+        "type": "Ref<HTMLLabelElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Targets the outer native label."
+      },
+      {
+        "name": "labelRender",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the outer native label with its complete composed row children. Preserve a label element and forward its props to retain control association."
+      },
+      {
         "name": "name",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Name of the hidden checkbox used in form submission."
+        "description": "Identifies the field when a form is submitted."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
       },
       {
         "name": "onCheckedChange",
         "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the switch value changes, with the next checked state and Base UI event details."
+        "description": "Receives the next checked value and Base UI event details. Controlled callers own accepted state updates; cancellation prevents a change."
+      },
+      {
+        "name": "onClick",
+        "type": "((event: BaseUIEvent<MouseEvent<HTMLSpanElement, MouseEvent>>) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native click handler for the visible Switch root."
       },
       {
         "name": "readOnly",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Keeps the switch focusable while preventing changes."
+        "description": "Whether the user should be unable to activate or deactivate the switch."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLSpanElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Targets the visible Switch root, which defaults to a span."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, SwitchRootState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the visible Switch root with control props and Switch state. Use nativeButton when composing a button."
       },
       {
         "name": "required",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Requires the switch to be checked for form submission."
+        "description": "Whether the user must activate the switch before submitting a form."
       },
       {
         "name": "size",
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Visual size of the switch. The row height stays the same."
+        "description": "Visual size of the switch. Defaults to sm."
       },
       {
-        "name": "startIcon",
+        "name": "startElement",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Decorative content before the label."
+        "description": "Non-interactive node content before the label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: SwitchRootState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the visible Switch root and accepts a Switch state callback."
+      },
+      {
+        "name": "uncheckedValue",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "The value submitted with the form when the switch is off.\nBy default, unchecked switches do not submit any value, matching native checkbox behavior."
       },
       {
         "name": "value",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Value submitted when the switch is checked."
+        "description": "The value submitted with the form when the switch is on.\nBy default, switch submits the \"on\" value, matching native checkbox behavior."
       }
     ]
   },
@@ -8717,21 +10185,21 @@
             "type": "\"center\" | \"end\" | \"start\"",
             "required": false,
             "defaultValue": "start",
-            "description": "Alignment of the popup along the anchor."
+            "description": "Alignment along the anchor. Defaults to start."
           },
           {
             "name": "alignOffset",
             "type": "number | OffsetFunction",
             "required": false,
-            "defaultValue": null,
-            "description": "Offset in pixels along the alignment axis."
+            "defaultValue": "0",
+            "description": "Offset along the alignment axis. Accepts a number or positioning function."
           },
           {
             "name": "anchor",
             "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
             "required": false,
             "defaultValue": null,
-            "description": "Element or position the popup is anchored to. Defaults to the trigger."
+            "description": "An element to position the popup against.\nBy default, the popup will be positioned against the trigger."
           },
           {
             "name": "className",
@@ -8744,15 +10212,15 @@
             "name": "collisionPadding",
             "type": "Padding",
             "required": false,
-            "defaultValue": null,
-            "description": "Space in pixels kept between the popup and the edges of its collision\nboundary, for all sides or per side. Defaults to 5."
+            "defaultValue": "5",
+            "description": "Additional space to maintain from the edge of the collision boundary."
           },
           {
             "name": "container",
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
             "defaultValue": null,
-            "description": "Element the popup is portaled into. Defaults to the theme's portal\ncontainer."
+            "description": "Portal destination, using the scoped theme when omitted. Explicit null waits for a target, matching Popover.Portal."
           },
           {
             "name": "finalFocus",
@@ -8772,8 +10240,8 @@
             "name": "keepMounted",
             "type": "boolean",
             "required": false,
-            "defaultValue": null,
-            "description": "Keeps the popup mounted in the DOM while the popover is closed."
+            "defaultValue": "false",
+            "description": "Keeps the popup mounted while closed."
           },
           {
             "name": "render",
@@ -8786,15 +10254,15 @@
             "name": "side",
             "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
             "required": false,
-            "defaultValue": null,
-            "description": "Side of the anchor the popup is placed on."
+            "defaultValue": "bottom",
+            "description": "Preferred side of the anchor. Defaults to bottom, or inline-end in a submenu."
           },
           {
             "name": "sideOffset",
             "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "0",
-            "description": "Distance in pixels between the anchor and the popup."
+            "description": "Distance from the anchor. Defaults to 0. Accepts a number or positioning function."
           },
           {
             "name": "style",
@@ -9634,7 +11102,7 @@
         "name": "Header",
         "props": [
           {
-            "name": "adornment",
+            "name": "actions",
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
@@ -9652,14 +11120,21 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Supporting text associated with the heading. Strings support links and overflow tooltips; React nodes render as supplied."
+            "description": "Supporting text associated with the heading. Strings have optional truncation and overflow tooltips; React nodes render as supplied."
           },
           {
             "name": "descriptionLineClamp",
-            "type": "number",
+            "type": "number | false",
             "required": false,
             "defaultValue": "5",
-            "description": "Maximum visible lines for a string description. Defaults to `5`. Overflowing descriptions can be read in a tooltip on hover or focus."
+            "description": "Maximum visible lines for a string description. Defaults to `5`; use `false` to display the full description without a tooltip."
+          },
+          {
+            "name": "isDescriptionFocusable",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Adds a tab stop to a truncated string description so its overflow tooltip can open on focus. Defaults to `false`."
           },
           {
             "name": "level",
@@ -9862,6 +11337,111 @@
     ]
   },
   {
+    "name": "ListItemButton",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/list-item-button",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"danger\" | \"neutral\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Color of the text and icons. `danger` marks a destructive action."
+      },
+      {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Supporting text, placed according to `descriptionPlacement`."
+      },
+      {
+        "name": "descriptionPlacement",
+        "type": "\"end\" | \"inline\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Where the description renders: inline after the content or at the end of\nthe row."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables activation and applies the matching row appearance."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered after the content."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Keeps a disabled button focusable with aria-disabled while preventing activation."
+      },
+      {
+        "name": "focused",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Highlights the row without moving DOM focus."
+      },
+      {
+        "name": "hasSubmenu",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays a decorative submenu indicator."
+      },
+      {
+        "name": "indicator",
+        "type": "\"check\" | \"checkbox\" | \"none\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native HTMLButtonElement."
+      },
+      {
+        "name": "selected",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays decorative shortcut hints. The caller registers the shortcuts."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered before the content."
+      }
+    ]
+  },
+  {
     "name": "TabButton",
     "entryPoint": "twenty-ui/components/navigation",
     "slug": "components/navigation/tab-button",
@@ -9906,14 +11486,28 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "size",
@@ -9948,7 +11542,7 @@
         "type": "ReactNode[]",
         "required": true,
         "defaultValue": null,
-        "description": "Avatar elements in display order. Only the first maxVisible elements are shown."
+        "description": "Avatar elements in display order. Empty React nodes are ignored. Supply stable keys to preserve identity when reordering."
       },
       {
         "name": "className",
@@ -9962,21 +11556,7 @@
         "type": "number",
         "required": false,
         "defaultValue": "4",
-        "description": "Maximum number of supplied avatars to show."
-      },
-      {
-        "name": "overflowAvatar",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Custom trailing element, used instead of the numeric overflow indicator."
-      },
-      {
-        "name": "overflowCount",
-        "type": "number",
-        "required": false,
-        "defaultValue": "0",
-        "description": "Number shown in the trailing +N indicator. Compute this in the application; it is not derived from avatars."
+        "description": "Maximum number of actual avatars to show, excluding the overflow indicator. Floored and clamped to zero; Infinity shows all avatars and NaN shows none."
       },
       {
         "name": "overflowShape",
@@ -9998,6 +11578,34 @@
         "required": false,
         "defaultValue": "3px",
         "description": "CSS length of the overlap between avatars."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the rendered root element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render function for the root. Forward the supplied props and ref; the default element is a div."
+      },
+      {
+        "name": "renderOverflow",
+        "type": "((hiddenCount: number) => ReactNode)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the derived hidden count when it is positive. Return a custom indicator, or null to hide it."
+      },
+      {
+        "name": "total",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Total collection size for partially loaded avatars. Floored and never smaller than the supplied renderable count; nonfinite values use the supplied count."
       }
     ]
   },
@@ -10007,18 +11615,25 @@
     "slug": "components/data-display/command-block",
     "props": [
       {
-        "name": "button",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+        "name": "actions",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional action element beside the command lines, such as a copy button."
+        "description": "Content beside the command lines, such as a copy button, link or status."
       },
       {
         "name": "commands",
-        "type": "string[]",
+        "type": "readonly string[]",
         "required": true,
         "defaultValue": null,
         "description": "Command lines to display. The component prefixes each line with > and does not execute commands."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
       }
     ]
   },
@@ -10176,10 +11791,17 @@
     "props": [
       {
         "name": "action",
-        "type": "{ label: string; onClick: () => void; }",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional footer action with a label and onClick callback."
+        "description": "Optional footer node. Use Callout.Action for the standard action or supply custom controls."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Additional class names merged onto the root."
       },
       {
         "name": "closeLabel",
@@ -10189,53 +11811,200 @@
         "description": "Accessible name of the dismiss button. Defaults to `Close`."
       },
       {
+        "name": "color",
+        "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
+        "required": false,
+        "defaultValue": "status palette",
+        "description": "Palette override: gray, blue, green, orange, or red. Defaults to the status palette."
+      },
+      {
         "name": "description",
-        "type": "string",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional supporting text. Empty strings are hidden."
+        "description": "Optional supporting content node. Empty slots are hidden."
       },
       {
         "name": "fullWidth",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Fills the available container width."
+        "description": "Removes the default 512px maximum width."
       },
       {
-        "name": "Icon",
-        "type": "IconComponent",
+        "name": "icon",
+        "type": "ReactNode",
         "required": false,
-        "defaultValue": null,
-        "description": "Leading icon component. Defaults to the help icon."
+        "defaultValue": "decorative help icon",
+        "description": "Leading icon node. Defaults to a decorative help icon. Pass null to omit it."
       },
       {
-        "name": "isClosable",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Shows a close button that hides the callout until it is remounted."
-      },
-      {
-        "name": "onClose",
+        "name": "onDismiss",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called after the close button hides the callout."
+        "description": "Shows a dismiss button and notifies the caller once per activation. The caller owns visibility."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CalloutState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or callback composition for the root. Receives status, variant, and color state."
+      },
+      {
+        "name": "status",
+        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
+        "required": false,
+        "defaultValue": "info",
+        "description": "Feedback meaning: neutral, info, success, warning, or error. Defaults to info."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles forwarded to the root."
       },
       {
         "name": "title",
-        "type": "string",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Main message displayed beside the icon."
+        "description": "Main message node displayed beside the icon."
       },
       {
         "name": "variant",
-        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
-        "required": true,
-        "defaultValue": null,
-        "description": "Semantic appearance: info, warning, error, neutral, or success."
+        "type": "\"soft\"",
+        "required": false,
+        "defaultValue": "soft",
+        "description": "Supported appearance: soft."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Action",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ButtonState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "color",
+            "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Semantic color of the button."
+          },
+          {
+            "name": "elevated",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed after the label."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Expands the button to fill its container width."
+          },
+          {
+            "name": "href",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
+          },
+          {
+            "name": "loading",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a loading indicator and disables activation."
+          },
+          {
+            "name": "loadingPosition",
+            "type": "\"center\" | \"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+          },
+          {
+            "name": "role",
+            "type": "AriaRole",
+            "required": false,
+            "defaultValue": null,
+            "description": "Role of the root element. Use `link` for custom navigation renderers."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized text between sequence steps. Defaults to then."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed before the label."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
@@ -10373,7 +12142,7 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "Destination URL. Enables native link semantics instead of button semantics."
+            "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
           },
           {
             "name": "loading",
@@ -10390,11 +12159,25 @@
             "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
           },
           {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+          },
+          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
             "required": false,
             "defaultValue": null,
-            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+            "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+          },
+          {
+            "name": "role",
+            "type": "AriaRole",
+            "required": false,
+            "defaultValue": null,
+            "description": "Role of the root element. Use `link` for custom navigation renderers."
           },
           {
             "name": "shortcut",
@@ -10494,7 +12277,35 @@
         "type": "string",
         "required": false,
         "defaultValue": "image/*",
-        "description": "Native file picker filter. Defaults to image/*. The application validates the selected file."
+        "description": "Native file picker filter. Defaults to image/*. The caller validates allowed formats."
+      },
+      {
+        "name": "aria-describedby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible description references for the hidden file input and selection buttons, combined with helperText and errorMessage."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name of the hidden file input. Defaults to uploadLabel."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name reference for the hidden file input."
+      },
+      {
+        "name": "capture",
+        "type": "boolean | \"user\" | \"environment\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native device capture hint for the file picker."
       },
       {
         "name": "className",
@@ -10502,6 +12313,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Class applied to the root element."
+      },
+      {
+        "name": "dir",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text direction applied to both the root and hidden file input."
       },
       {
         "name": "disabled",
@@ -10518,11 +12336,32 @@
         "description": "Application error, displayed as an alert and associated with the selection controls."
       },
       {
+        "name": "form",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native form identifier associated with the hidden file input."
+      },
+      {
         "name": "helperText",
         "type": "string",
         "required": false,
         "defaultValue": null,
         "description": "Application instructions, associated with the selection controls."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native identifier of the hidden file input."
+      },
+      {
+        "name": "inputRef",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the hidden single-file HTMLInputElement."
       },
       {
         "name": "isUploading",
@@ -10532,11 +12371,32 @@
         "description": "Marks the module busy. Selection and removal controls that would otherwise be enabled stay focusable but unavailable. Shows Abort when onAbort is supplied."
       },
       {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native name of the hidden file input."
+      },
+      {
         "name": "onAbort",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
         "description": "Shows an abort action while uploading. It can cancel the first upload before a src exists."
+      },
+      {
+        "name": "onChange",
+        "type": "ChangeEventHandler<HTMLInputElement, HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native file input change event, fired while the selected file is present and before the input resets. The input does not retain a file for form submission."
+      },
+      {
+        "name": "onFileSelect",
+        "type": "((file: File) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Fires when a file is selected and receives its usable File after the input resets. Empty and canceled selections do not call it. Selection is disabled when omitted. The caller owns validation and uploading."
       },
       {
         "name": "onRemove",
@@ -10546,18 +12406,11 @@
         "description": "Requests removal of the current image. Removal is disabled without this callback or a nonempty src."
       },
       {
-        "name": "onUpload",
-        "type": "((file: File) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Receives the selected File. Empty and canceled selections do not call it. Selection is disabled when omitted."
-      },
-      {
         "name": "ref",
         "type": "Ref<HTMLDivElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Ref to the root element."
+        "description": "Ref to the root div element."
       },
       {
         "name": "removeLabel",
@@ -10571,7 +12424,14 @@
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Custom root element or render function. Keep a non-interactive root."
+        "description": "Custom root element or render function. Supply root native attributes here and keep a non-interactive root."
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native file input requirement. The input resets after selection, so the caller validates completed uploads."
       },
       {
         "name": "src",
@@ -10588,11 +12448,18 @@
         "description": "Inline style applied to the root element."
       },
       {
+        "name": "title",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native title of the hidden file input."
+      },
+      {
         "name": "uploadLabel",
         "type": "string",
         "required": false,
         "defaultValue": "Upload",
-        "description": "Label for the preview and Upload action."
+        "description": "Label for the preview, Upload action, and hidden file input."
       }
     ]
   },

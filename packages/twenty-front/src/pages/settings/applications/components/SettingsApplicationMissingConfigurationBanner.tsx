@@ -1,4 +1,3 @@
-import { themeCssVariables } from 'twenty-ui/theme';
 import { t } from '@lingui/core/macro';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertCircle } from 'twenty-ui/icon';
@@ -21,12 +20,7 @@ export const SettingsApplicationMissingConfigurationBanner = ({
   return (
     <InlineBanner
       status="error"
-      icon={
-        <IconAlertCircle
-          size={themeCssVariables.icon.size.md}
-          aria-hidden="true"
-        />
-      }
+      icon={<IconAlertCircle aria-hidden="true" />}
       action={
         <InlineBanner.Action
           onClick={onConfigure}

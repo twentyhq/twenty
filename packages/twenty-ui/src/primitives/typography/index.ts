@@ -10,9 +10,11 @@
 export { Heading } from './Heading/Heading';
 export type { HeadingProps } from './Heading/types/HeadingProps';
 export { OverflowingTextWithTooltip } from './OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+export type { OverflowingTextWithTooltipProps } from './OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps';
 export { formatShortcut } from './Shortcut/formatShortcut';
 export { Shortcut } from './Shortcut/Shortcut';
 export type { ShortcutDefinition } from './Shortcut/types/ShortcutDefinition';
 export type { ShortcutFormatOptions } from './Shortcut/types/ShortcutFormatOptions';
 export type { ShortcutProps } from './Shortcut/types/ShortcutProps';
 export { Text } from './Text/Text';
+export type { TextProps } from './Text/types/TextProps';

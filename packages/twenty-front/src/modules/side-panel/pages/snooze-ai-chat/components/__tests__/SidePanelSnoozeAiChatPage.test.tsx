@@ -15,12 +15,14 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const snoozeAgentChatThreads = jest.fn();
+const updateAgentChatThreadInboxState = jest.fn();
 const snoozeAgentChatThreadsInChannel = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
-jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
-  useAgentChatThreadParticipants: () => ({ snoozeAgentChatThreads }),
+jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
+  useUpdateAgentChatThreadInboxState: () => ({
+    updateAgentChatThreadInboxState,
+  }),
 }));
 
 jest.mock('@/ai/hooks/useAgentChatChannelThreadTriage', () => ({
@@ -67,8 +69,9 @@ describe('SidePanelSnoozeAiChatPage', () => {
     fireEvent.click(screen.getByText('This evening'));
 
     expect(closeSidePanelMenu).toHaveBeenCalled();
-    expect(snoozeAgentChatThreads).toHaveBeenCalledWith({
+    expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
       threadIds: ['thread-1', 'thread-2'],
+      action: 'SNOOZE',
       snoozedUntil: new Date(2026, 9, 1, 18, 0),
     });
   });
@@ -83,7 +86,7 @@ describe('SidePanelSnoozeAiChatPage', () => {
 
     fireEvent.click(screen.getByText('This evening'));
 
-    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
+    expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
     expect(snoozeAgentChatThreadsInChannel).toHaveBeenCalledWith({
       threadIds: ['thread-1', 'thread-2'],
       snoozedUntil: new Date(2026, 9, 1, 18, 0),
@@ -106,7 +109,7 @@ describe('SidePanelSnoozeAiChatPage', () => {
     expect(
       await screen.findByRole('button', { name: /^Snooze until/ }),
     ).toBeInTheDocument();
-    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
+    expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
     expect(
       screen.getByText('Day & Time').closest('[data-focused]'),
     ).toHaveAttribute('data-focused', 'true');
@@ -120,7 +123,7 @@ describe('SidePanelSnoozeAiChatPage', () => {
     });
     fireEvent.click(screen.getByText('This evening'));
 
-    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
+    expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
     expect(screen.queryByText('This evening')).not.toBeInTheDocument();
     expect(screen.getByText('Tomorrow')).toBeInTheDocument();
   });

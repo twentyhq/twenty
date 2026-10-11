@@ -1,24 +1,21 @@
 ---
 title: Collapsible
-description: Animate a controlled panel as it opens and closes.
+description: Compose an accessible trigger and animated panel with controlled or uncontrolled expansion.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
 import CollapsibleReference from '/snippets/ui/generated/layout/collapsible.mdx';
 
-`Collapsible` animates the height or width of its content. The application owns its expanded state and trigger. There is no uncontrolled mode or built-in toggle.
+`Collapsible` exposes Base UI's Root, Trigger, and Panel contracts. Root owns expansion state, Trigger supplies keyboard activation and the panel relationship, and Panel owns animation and content lifetime.
 
 ## Anatomy
 
 ```text
-Application
-├── Button (application-supplied trigger)
-└── Collapsible
+Collapsible.Root
+├── Collapsible.Trigger
+└── Collapsible.Panel
     └── Content
 ```
-
-`children` and `isExpanded` are required. The component supplies the collapsible root and animated panel internally. Supply the trigger separately and keep its `aria-expanded` value synchronized with `isExpanded`.
 
 <StoryEmbed
   storyId="ui-layout-collapsible--documentation"
@@ -28,37 +25,39 @@ Application
 ## Usage
 
 ```tsx
-import { useState } from 'react';
 import { Button } from 'twenty-ui/primitives/input';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Text } from 'twenty-ui/primitives/typography';
 
-export const ImportDetails = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  return (
-    <>
-      <Button
-        aria-expanded={isExpanded}
-        onClick={() => setIsExpanded((expanded) => !expanded)}
-      >
-        {isExpanded ? 'Hide import details' : 'Show import details'}
-      </Button>
-      <Collapsible isExpanded={isExpanded}>
-        <Text>Match each CSV column to a record field before importing.</Text>
-      </Collapsible>
-    </>
-  );
-};
+export const ImportDetails = () => (
+  <Collapsible.Root defaultOpen>
+    <Collapsible.Trigger render={<Button />}>
+      Import details
+    </Collapsible.Trigger>
+    <Collapsible.Panel>
+      <Text>Match each CSV column to a record field before importing.</Text>
+    </Collapsible.Panel>
+  </Collapsible.Root>
+);
 ```
+
+Use `defaultOpen` for uncontrolled expansion. Use `open` and `onOpenChange` when the application owns the state. The callback receives the requested boolean and Base UI event details, including `reason`, `event`, and `cancel()`. Canceling a change preserves the current state. An externally controlled panel can omit Trigger when its state comes from another control or application condition.
+
+Triggers inherit Root's `disabled` state and can override it with their own `disabled` prop. The native trigger supports Enter and Space and supplies `aria-expanded` and `aria-controls` automatically. Give each trigger a meaningful accessible name.
+
+## Native customization
+
+Root and Panel render a `div`; Trigger renders a `button`. Each part accepts native attributes, handlers, `className`, `style`, refs, and Base UI `render` composition. Class and style callbacks receive the part's state. Forward all supplied props and the ref from custom render components. Set `nativeButton={false}` when Trigger renders a non-button element.
+
+Public types include `CollapsibleRootProps`, `CollapsibleTriggerProps`, `CollapsiblePanelProps`, the three part state types, and `CollapsibleRootChangeEventDetails` and `CollapsibleRootChangeEventReason`.
 
 ## Animation and content lifetime
 
-The default dimension is `height`. Use `dimension="width"` for horizontal expansion. `containAnimation` defaults to `true`, clips overflow, and lays content out in a column. Turn it off when content needs to overflow during the transition.
+Panel defaults to `dimension="height"`. Use `dimension="width"` for horizontal expansion and constrain the content's width when needed. `containAnimation` defaults to `true`, clips overflow, and lays content out in a column. Set it to `false` when content needs to overflow during the transition.
 
-Use `duration` for a theme timing preset (`instant`, `fast`, `normal`, or `slow`). `animationDurations={{ opacity: 0.15, size: 0.25 }}` supplies independent durations in seconds and takes precedence over the preset.
+Panel's `duration` chooses a theme preset (`instant`, `fast`, `normal`, or `slow`). For independent timings, use native `style={{ transitionDuration: '0.4s, 0.2s' }}`. The first duration controls size and the second controls opacity. Reduced-motion preferences disable the transitions, including custom timings.
 
-The panel unmounts its content after closing. Keep state that must survive closing outside the panel. The component does not forward native attributes or refs to its internal panel; keep focus handling and trigger relationships in the application.
+Panel unmounts after closing by default. Use `keepMounted` to preserve local content state while hiding the closed panel. `hiddenUntilFound` lets browser page search reveal closed content and takes precedence over `keepMounted`.
 
 ## Props
 

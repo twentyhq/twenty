@@ -177,7 +177,7 @@ export const SettingsAdminAI = () => {
         <Section.Header
           title={t`Custom Providers`}
           description={t`Add custom endpoints, private gateways, or additional regions.`}
-          adornment={
+          actions={
             <OrganizationAdornment
               tooltipContent={customAiProviderTooltipContent}
             />
@@ -253,7 +253,7 @@ export const SettingsAdminAI = () => {
         <Section.Header
           title={t`AI Usage by Workspace`}
           description={t`AI consumption across all workspaces.`}
-          adornment={
+          actions={
             hasEnterpriseAccess ? (
               <Select
                 dropdownId="admin-ai-usage-period"

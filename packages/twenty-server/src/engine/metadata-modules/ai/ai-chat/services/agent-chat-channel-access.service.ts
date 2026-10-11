@@ -119,7 +119,7 @@ export class AgentChatChannelAccessService {
     if (!isDefined(channelObjectMetadata)) {
       throw new AiException(
         'Chat channels are not available until this workspace finishes upgrading',
-        AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE,
+        AiExceptionCode.CHAT_CHANNELS_UNAVAILABLE,
       );
     }
 

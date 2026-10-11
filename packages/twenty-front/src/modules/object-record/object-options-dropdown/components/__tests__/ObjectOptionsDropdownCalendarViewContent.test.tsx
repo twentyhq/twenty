@@ -93,8 +93,8 @@ jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
 jest.mock('twenty-ui/primitives/data-display', () => ({
   Pill: ({ label }: { label: string }) => <span>{label}</span>,
 }));
-jest.mock('twenty-ui/primitives/navigation', () => ({
-  ListItem: ({
+jest.mock('twenty-ui/components/navigation', () => ({
+  ListItemButton: ({
     description,
     disabled,
     onClick,

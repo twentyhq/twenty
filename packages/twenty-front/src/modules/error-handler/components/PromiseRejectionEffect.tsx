@@ -42,7 +42,9 @@ export const PromiseRejectionEffect = () => {
 
       const isAbortError =
         error?.networkError?.name === 'AbortError' ||
-        error?.name === 'AbortError';
+        error?.name === 'AbortError' ||
+        (error instanceof TypeError &&
+          error.message.toLowerCase() === 'cancelled');
 
       const isViteStaleChunkLazyLoadingError =
         error instanceof Error &&

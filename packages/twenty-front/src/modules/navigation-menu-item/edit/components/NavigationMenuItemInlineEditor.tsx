@@ -150,6 +150,7 @@ export const NavigationMenuItemInlineEditor = ({
         autoFocus
         selectOnFocus
         copyButton={false}
+        shouldTrim={false}
         value={name}
         onChange={setName}
         onEnter={finishRename}

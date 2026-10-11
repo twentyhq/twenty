@@ -10,6 +10,7 @@ import {
 import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TEAMS_SYNC_TRANSCRIPT_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
+import { type CallRecordingSyncFields } from 'src/features/transcripts/logic-functions/types/call-recording-sync-fields.type';
 import { getTeamsConnectionForRequestOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request-or-throw';
 import { syncTeamsTranscriptToCallRecordingOrThrow } from 'src/features/transcripts/logic-functions/utils/sync-teams-transcript-to-call-recording-or-throw';
 import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
@@ -38,6 +39,7 @@ type TeamsSyncTranscriptResult =
       success: true;
       callRecordingId: string;
       calendarEventId?: string;
+      status: CallRecordingSyncFields['status'];
       created: boolean;
       skipped: boolean;
     }
@@ -102,6 +104,7 @@ export default defineLogicFunction({
           error: { type: 'string' },
           callRecordingId: { type: 'string' },
           calendarEventId: { type: 'string' },
+          status: { type: 'string' },
           created: { type: 'boolean' },
           skipped: { type: 'boolean' },
         },

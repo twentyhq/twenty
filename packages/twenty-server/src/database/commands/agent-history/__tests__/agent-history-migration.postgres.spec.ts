@@ -230,7 +230,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           new AgentHistoryTransactionService(workspaceStorage, orm as never),
         ),
         chatThreadService,
-        {} as never,
       );
 
     const createActorService = (messageRepository: typeof messages) =>
@@ -1065,7 +1064,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           repository: threads,
           workspaceId: WORKSPACE_ID,
           threadId: THREAD_ID,
-          recordedActivity: null,
+          lastMessageText: null,
           usage: {
             totalInputTokens: 1,
             totalOutputTokens: 2,

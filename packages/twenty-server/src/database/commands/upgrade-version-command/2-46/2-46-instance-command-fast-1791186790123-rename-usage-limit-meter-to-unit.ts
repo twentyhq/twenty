@@ -1,5 +1,6 @@
 import { QueryRunner } from 'typeorm';
 
+import { ensureUsageLimitMeterCompatibility } from 'src/database/commands/upgrade-version-command/2-46/utils/ensure-usage-limit-meter-compatibility.util';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
@@ -17,12 +18,6 @@ const QUANTITY_UNIT_BY_OPERATION_SQL = `CASE "operationType"
   WHEN 'RECORD_WRITE' THEN 'RECORD'
 END`;
 
-const UNIT_FROM_METER_SQL = `CASE "meter"
-  WHEN 'creditsUsedMicro' THEN 'CREDIT'
-  WHEN 'bytes' THEN 'BYTE'
-  WHEN 'quantity' THEN (${QUANTITY_UNIT_BY_OPERATION_SQL})
-END`;
-
 const METER_FROM_UNIT_SQL = `CASE "unit"
   WHEN 'CREDIT' THEN 'creditsUsedMicro'
   WHEN 'BYTE' THEN 'bytes'
@@ -32,21 +27,19 @@ END`;
 @RegisteredInstanceCommand('2.46.0', 1791186790123)
 export class RenameUsageLimitMeterToUnitFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" DROP CONSTRAINT "UQ_USAGE_LIMIT_SCOPE"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" ALTER COLUMN "meter" TYPE character varying USING (${UNIT_FROM_METER_SQL})`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" RENAME COLUMN "meter" TO "unit"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" ADD CONSTRAINT "UQ_USAGE_LIMIT_SCOPE" UNIQUE ("workspaceId", "resourceType", "operationType", "spenderType", "spenderId", "limitKind", "periodCount", "periodUnit", "unit")`,
-    );
+    await ensureUsageLimitMeterCompatibility(queryRunner);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `DROP TRIGGER IF EXISTS "syncUsageLimitMeterAndUnit" ON "core"."usageLimit"`,
+    );
+    await queryRunner.query(
+      `DROP FUNCTION IF EXISTS "core"."syncUsageLimitMeterAndUnit"()`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" DROP COLUMN IF EXISTS "meter"`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" DROP CONSTRAINT "UQ_USAGE_LIMIT_SCOPE"`,
     );
@@ -60,6 +53,9 @@ export class RenameUsageLimitMeterToUnitFastInstanceCommand implements FastInsta
     );
     await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" RENAME COLUMN "unit" TO "meter"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" ALTER COLUMN "meter" SET NOT NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" ADD CONSTRAINT "UQ_USAGE_LIMIT_SCOPE" UNIQUE ("workspaceId", "resourceType", "operationType", "spenderType", "spenderId", "limitKind", "periodCount", "periodUnit", "meter")`,

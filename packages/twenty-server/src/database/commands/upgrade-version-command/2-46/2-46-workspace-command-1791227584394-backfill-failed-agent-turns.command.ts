@@ -13,7 +13,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 // A failed stream is a failed turn: the error a thread held moves to its latest
 // turn, which retries and the chat banner now read. The thread column stays
-// until the 2.42 history move that still copies it is gone.
+// until the 2.42 history move that still copies it is gone, and nothing clears
+// it, so a thread that had a turn after the error, and a turn that ran again
+// since, before this ran or before a rerun, keep their status.
 @RegisteredWorkspaceCommand('2.46.0', 1791227584394)
 @Command({
   name: 'upgrade:2-46:backfill-failed-agent-turns',
@@ -80,11 +82,17 @@ export class BackfillFailedAgentTurnsCommand extends ProvisionedWorkspaceCommand
            FROM ${table('agentChatThread')} thread
            WHERE thread."lastStreamError" IS NOT NULL
              AND turn."status" <> 'failed'
+             AND turn."startedAt" IS NULL
              AND turn.id = (
                SELECT latest.id FROM ${table('agentTurn')} latest
                WHERE latest."threadId" = thread.id
                ORDER BY latest."createdAt" DESC, latest.id DESC
                LIMIT 1
+             )
+             AND NOT EXISTS (
+               SELECT 1 FROM ${table('agentTurn')} later
+               WHERE later."threadId" = thread.id
+                 AND later."createdAt" > COALESCE((thread."lastStreamError"->>'failedAt')::timestamptz, now())
              )
            RETURNING turn.id`,
         );

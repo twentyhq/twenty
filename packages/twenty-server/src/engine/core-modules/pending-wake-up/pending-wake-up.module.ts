@@ -34,6 +34,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   exports: [
     PendingWakeUpService,
     PendingWakeUpOwnerHandlerRegistryService,
+    PendingWakeUpResolverService,
     PendingWakeUpSweepCronCommand,
   ],
 })

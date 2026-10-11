@@ -17,10 +17,26 @@ export const breadcrumbTest: TwentyUiGalleryPlayFunction = async ({
   const objects = trail.getByRole('link', { name: 'Objects' });
   const account = trail.getByRole('link', { name: 'Account', current: 'page' });
 
+  await waitFor(() =>
+    expect(navigation).toHaveAttribute('data-ref-tag', 'HTML-NAV'),
+  );
+  await expect(navigation).toHaveAttribute('data-composed-root', 'true');
   await expect(trail.getByRole('list').tagName).toBe('OL');
   await expect(trail.getAllByRole('listitem')).toHaveLength(2);
   await expect(trail.getByText('/')).toHaveAttribute('aria-hidden', 'true');
+  await waitFor(() =>
+    expect(objects).toHaveAttribute('data-ref-tag', 'HTML-A'),
+  );
   await expect(objects).toHaveAttribute('href', '/objects');
+  await expect(objects).toHaveAttribute('target', '_self');
+  await expect(objects).toHaveAttribute('rel', 'nofollow');
+  await expect(objects).toHaveAttribute('download', 'objects.csv');
+  await expect(objects).toHaveAttribute('hreflang', 'en');
+  await expect(objects).toHaveAttribute('referrerpolicy', 'no-referrer');
+  await expect(objects).toHaveAttribute('id', 'objects-link');
+  await expect(objects).toHaveClass('native-breadcrumb-link');
+  await expect(objects).toHaveAttribute('tabindex', '0');
+  await expect(objects).toHaveAttribute('title', 'All objects');
   await expect(objects).not.toHaveAttribute('aria-current');
   await expect(account).toHaveAttribute('href', '/objects/account');
   await expect(account.tagName).toBe('A');
@@ -33,13 +49,13 @@ export const breadcrumbTest: TwentyUiGalleryPlayFunction = async ({
     await expect(objects).toHaveFocus();
     await waitFor(() =>
       expect(canvas.getByRole('status')).toHaveTextContent(
-        'Activations: 1; Composed activations: 0',
+        'Activations: 1; Composed activations: 0; Native activations: 1; Native target: HTML-A:/objects',
       ),
     );
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(canvas.getByRole('status')).toHaveTextContent(
-        'Activations: 2; Composed activations: 0',
+        'Activations: 2; Composed activations: 0; Native activations: 2; Native target: HTML-A:/objects',
       ),
     );
     await userEvent.tab();
@@ -47,12 +63,29 @@ export const breadcrumbTest: TwentyUiGalleryPlayFunction = async ({
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(canvas.getByRole('status')).toHaveTextContent(
-        'Activations: 3; Composed activations: 1',
+        'Activations: 3; Composed activations: 1; Native activations: 2; Native target: HTML-A:/objects',
       ),
     );
   } finally {
     navigation.removeEventListener('click', preventNavigation);
   }
+
+  const explicitTrail = within(
+    canvas.getByRole('navigation', { name: 'Explicit current breadcrumb' }),
+  );
+  const workspace = explicitTrail.getByRole('link', {
+    name: 'Workspace',
+    current: 'location',
+  });
+  const following = explicitTrail.getByRole('link', {
+    name: 'Following',
+    current: false,
+  });
+
+  await expect(workspace).toHaveAttribute('href', '/workspace');
+  await expect(workspace).toHaveAttribute('data-composed-route', 'true');
+  await expect(following).toHaveAttribute('aria-current', 'false');
+  await expect(following).toHaveAttribute('title', '');
 
   const truncatedNavigation = canvas.getByRole('navigation', {
     name: 'Truncated breadcrumb',

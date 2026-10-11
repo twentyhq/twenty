@@ -10,7 +10,7 @@ import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai
 import { AgentChatChannelListService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-list.service';
 import { AgentChatChannelRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-record-event.service';
 import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
-import { AgentChatInboxViewService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-view.service';
+import { AgentChatChannelThreadsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-threads.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant-event.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
@@ -38,7 +38,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentChatChannelListService,
     AgentChatChannelRecordEventService,
     AgentChatChannelService,
-    AgentChatInboxViewService,
+    AgentChatChannelThreadsService,
     AgentChatSharingService,
     AgentChatThreadParticipantEventService,
     AgentChatThreadParticipantService,
@@ -51,7 +51,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   exports: [
     AgentChatChannelListService,
     AgentChatChannelService,
-    AgentChatInboxViewService,
+    AgentChatChannelThreadsService,
     AgentChatSharingService,
     AgentChatThreadParticipantService,
     AgentChatThreadService,

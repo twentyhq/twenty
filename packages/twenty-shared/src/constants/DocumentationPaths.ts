@@ -38,6 +38,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/data/timeline-activity-types',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_CONCEPTS:
     '/developers/extend/apps/getting-started/concepts',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_GOOD_PRACTICES:
+    '/developers/extend/apps/getting-started/good-practices',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_LOCAL_SERVER:
     '/developers/extend/apps/getting-started/local-server',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_PROJECT_STRUCTURE:
@@ -64,8 +66,6 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
     '/developers/extend/apps/logic/connections',
   DEVELOPERS_EXTEND_APPS_LOGIC_CREDITS: '/developers/extend/apps/logic/credits',
-  DEVELOPERS_EXTEND_APPS_LOGIC_GOOD_PRACTICES:
-    '/developers/extend/apps/logic/good-practices',
   DEVELOPERS_EXTEND_APPS_LOGIC_KEY_VALUE_STORE:
     '/developers/extend/apps/logic/key-value-store',
   DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
@@ -163,6 +163,8 @@ export const DOCUMENTATION_PATHS = {
     '/ui/components/layout/overflowing-list',
   UI_COMPONENTS_LAYOUT_SECTION: '/ui/components/layout/section',
   UI_COMPONENTS_NAVIGATION_DROPDOWN: '/ui/components/navigation/dropdown',
+  UI_COMPONENTS_NAVIGATION_LIST_ITEM_BUTTON:
+    '/ui/components/navigation/list-item-button',
   UI_COMPONENTS_NAVIGATION_MENU_ITEMS: '/ui/components/navigation/menu-items',
   UI_COMPONENTS_NAVIGATION_MENU_PICKER: '/ui/components/navigation/menu-picker',
   UI_COMPONENTS_NAVIGATION_TAB_BUTTON: '/ui/components/navigation/tab-button',

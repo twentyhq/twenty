@@ -1,6 +1,9 @@
 import { defineConfig } from 'vitest/config';
 
+import { createBundledSourcePlugin } from './vite.bundled-source-plugin';
+
 export default defineConfig({
+  plugins: [createBundledSourcePlugin()],
   resolve: {
     tsconfigPaths: true,
   },

@@ -1,3 +1,5 @@
+import { getAvatarButtonRender } from '@/ui/field/display/utils/getAvatarButtonRender';
+import { t } from '@lingui/core/macro';
 import { css } from '@linaria/core';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -67,12 +69,12 @@ export const AvatarOrIcon = ({
         name={name}
         size="sm"
         shape={shape ?? undefined}
-        onClick={onClick}
+        render={getAvatarButtonRender({ name, onClick })}
       />
     );
   }
 
-  const accessibleLabel = isNonEmptyString(name) ? name : 'Avatar';
+  const accessibleLabel = isNonEmptyString(name) ? name : t`Avatar`;
 
   const iconContent =
     isIconInverted || isDefined(IconBackgroundColor) ? (

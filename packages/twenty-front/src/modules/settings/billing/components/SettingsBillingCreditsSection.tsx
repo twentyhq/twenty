@@ -37,6 +37,7 @@ import {
   PermissionFlagType,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE = 4;
 
@@ -314,13 +315,7 @@ export const SettingsBillingCreditsSection = ({
         <Button
           startIcon={<IconExternalLink />}
           size="sm"
-          onClick={() =>
-            window.open(
-              creditsDocumentationUrl,
-              '_blank',
-              'noopener,noreferrer',
-            )
-          }
+          onClick={() => openUrlInNewTab(creditsDocumentationUrl)}
           variant="outline"
         >{t`How credits work`}</Button>
       </StyledCreditUsageFooterActions>

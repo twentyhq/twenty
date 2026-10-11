@@ -20,8 +20,9 @@ export type PendingWakeUpOwnerHandler<TOwner = unknown> = {
     rolePermissionConfig: RolePermissionConfig;
   }>;
 
+  // the handler claims the wake-up once it takes the outcome, so the outcome is taken once
   resolve(input: {
-    claimedWakeUp: PendingWakeUpEntity;
+    wakeUp: PendingWakeUpEntity;
     outcome: PendingWakeUpOutcome;
     owner: TOwner | null;
     isOwnerGone: boolean;

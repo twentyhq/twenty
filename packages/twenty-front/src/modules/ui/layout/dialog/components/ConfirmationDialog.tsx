@@ -90,9 +90,9 @@ export const ConfirmationDialog = ({
       onEnter={handleEnter}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           data-globally-prevent-click-outside
           style={{
             padding: 'var(--t-spacing-6)',

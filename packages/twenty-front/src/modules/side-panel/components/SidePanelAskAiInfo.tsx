@@ -1,5 +1,5 @@
 import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
@@ -19,6 +19,7 @@ const StyledContainer = styled.div`
 
 export const SidePanelAskAiInfo = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
   const currentAiChatThreadTitle = useAtomFamilySelectorValue(
     agentChatThreadRecordFamilySelector,
     currentAiChatThread ?? '',
@@ -27,10 +28,9 @@ export const SidePanelAskAiInfo = () => {
   return (
     <StyledContainer>
       <HeaderIdentifier title={currentAiChatThreadTitle ?? t`Ask AI`} />
-      {isDefined(currentAiChatThread) &&
-        currentAiChatThread !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY && (
-          <AiChatThreadDetailsDropdown threadId={currentAiChatThread} />
-        )}
+      {isDefined(currentAiChatThread) && !isOnNewAiChatSlot && (
+        <AiChatThreadDetailsDropdown threadId={currentAiChatThread} />
+      )}
     </StyledContainer>
   );
 };

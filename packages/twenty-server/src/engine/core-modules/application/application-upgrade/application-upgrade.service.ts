@@ -21,6 +21,7 @@ import {
   type UpgradeWorkspaceApplicationJobData,
 } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
@@ -295,6 +296,7 @@ export class ApplicationUpgradeService {
     targetVersion: string;
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
+    updateProgress?: MessageQueueJobProgressContext['updateProgress'];
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -305,6 +307,7 @@ export class ApplicationUpgradeService {
       targetVersion: params.targetVersion,
       workspaceId: params.workspaceId,
       skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
+      updateProgress: params.updateProgress,
     });
   }
 
@@ -313,6 +316,7 @@ export class ApplicationUpgradeService {
     targetVersion: string;
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
+    updateProgress?: MessageQueueJobProgressContext['updateProgress'];
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -335,6 +339,7 @@ export class ApplicationUpgradeService {
         version: params.targetVersion,
         workspaceId: params.workspaceId,
         skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
+        updateProgress: params.updateProgress,
       });
     } catch (error) {
       const appName =

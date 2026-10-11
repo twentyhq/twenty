@@ -275,6 +275,8 @@ Entries are matched on the hostname only, without wildcards: for an OIDC issuer 
 
 `OUTBOUND_HTTP_SAFE_MODE_ENABLED` is deprecated. While it is set to `false`, the protection stays fully off and `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS` is ignored, so remove it when you migrate to the list.
 
+This list does not cover AI file attachments: images and PDFs reach the model as links built from `SERVER_URL`, fetched either by the AI provider or by the AI SDK in the worker, which refuses private addresses. For attachments to work, `SERVER_URL` must be public; with a `localhost` or private `SERVER_URL`, AI chats and agents only work with text.
+
 ## Email Configuration
 
 1. Go to **Settings → Admin Panel → Configuration Variables**
@@ -329,9 +331,100 @@ Entries are matched on the hostname only, without wildcards: for an OIDC issuer 
 By default, Twenty stores uploaded files on the local filesystem. For production deployments, use S3 or an S3-compatible service (MinIO, DigitalOcean Spaces, etc.) to ensure files persist across container restarts and scale across multiple server instances.
 </Warning>
 
-Set `STORAGE_TYPE=S_3` and configure the `STORAGE_S3_*` variables through the admin panel or `.env`. See the [config-variables.ts reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) for the full list of S3 variables.
+Set `STORAGE_TYPE=S_3` and configure the `STORAGE_S3_*` variables through the admin panel or `.env`.
 
-When using S3 with CORS-dependent features (e.g. in-browser file downloads), make sure your bucket allows your Twenty frontend origin in its CORS configuration.
+| Variable | Required | Description |
+| --- | --- | --- |
+| `STORAGE_S3_REGION` | Yes | Region of the bucket: an AWS region such as `eu-west-3`, or a provider-specific slug such as `fr-par` for Scaleway. |
+| `STORAGE_S3_NAME` | Yes | Name of the bucket. |
+| `STORAGE_S3_ACCESS_KEY_ID` | No | Access key of an IAM user. Leave unset to use the AWS default credential chain (see [Credentials](#credentials)). |
+| `STORAGE_S3_SECRET_ACCESS_KEY` | No | Secret for the access key above. Required when `STORAGE_S3_ACCESS_KEY_ID` is set. |
+| `STORAGE_S3_ENDPOINT` | No | Custom endpoint URL. Only for S3-compatible services such as `http://minio:9000`, or for an AWS VPC interface endpoint. Leave unset for native AWS S3, where the SDK derives the endpoint from the region. |
+| `STORAGE_S3_PRESIGNED_URL_ENABLED` | No | When `true`, downloads redirect to presigned URLs and browsers upload straight to the bucket instead of going through the server. Defaults to `false`. |
+| `STORAGE_S3_PRESIGNED_URL_BASE` | No | Public endpoint to use in presigned URLs when `STORAGE_S3_ENDPOINT` is an internal address browsers cannot reach, for example MinIO inside Docker. |
+| `STORAGE_S3_PRESIGNED_URL_EXPIRES_IN` | No | Lifetime of presigned URLs in seconds. Defaults to `900`. |
+
+A minimal `.env` for AWS S3 with an IAM user:
+
+```ini
+STORAGE_TYPE=S_3
+STORAGE_S3_REGION=eu-west-3
+STORAGE_S3_NAME=my-twenty-bucket
+STORAGE_S3_ACCESS_KEY_ID=AKIA...
+STORAGE_S3_SECRET_ACCESS_KEY=...
+```
+
+<Note>
+The Docker Compose file forwards `STORAGE_TYPE`, `STORAGE_S3_REGION`, `STORAGE_S3_NAME`, `STORAGE_S3_ENDPOINT` and the two credential variables from `.env`. Set the presigned URL variables in the admin panel, or add them to the `environment` block of the `server` and `worker` services.
+</Note>
+
+### Credentials
+
+When `STORAGE_S3_ACCESS_KEY_ID` is unset, the server resolves credentials through the AWS SDK default chain: the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables, a shared credentials file, an ECS task role, an EKS service account role (IRSA), or an EC2 instance profile.
+
+<Warning>
+**EC2 instance profiles and Docker:** the instance profile is served by the instance metadata service, and a container on Docker's default bridge network is one network hop further from it than the host. With the default IMDSv2 hop limit of 1, the container never receives credentials even though the AWS CLI works on the host. Raise the limit to 2 on the instance, or use static credentials.
+</Warning>
+
+```bash
+aws ec2 modify-instance-metadata-options --instance-id i-0123456789abcdef0 --http-put-response-hop-limit 2
+```
+
+When no credentials can be found, the server logs `CredentialsProviderError: Could not load credentials from any providers` on the first upload, while the UI only shows a generic error.
+
+### Bucket permissions
+
+An upload is first written to a pending path, validated, then copied to its final path, and the pending object is deleted. The policy therefore needs more than `s3:PutObject`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::my-twenty-bucket"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:AbortMultipartUpload"
+      ],
+      "Resource": "arn:aws:s3:::my-twenty-bucket/*"
+    }
+  ]
+}
+```
+
+`s3:ListBucket` is used to delete folders, for example when a workspace is deleted. Without it, S3 answers requests for missing objects with access denied instead of not found, so the server cannot tell a missing file from a permissions problem.
+
+### Endpoint and addressing
+
+Twenty always uses path-style addressing, so requests go to `https://endpoint/bucket/key`. For native AWS S3 leave `STORAGE_S3_ENDPOINT` unset: the SDK builds `https://s3.{region}.amazonaws.com` from `STORAGE_S3_REGION`, which is why a mistyped region surfaces as a DNS error rather than an S3 error. Set the endpoint only for S3-compatible services, or when the server reaches S3 through a VPC interface endpoint.
+
+### CORS
+
+When `STORAGE_S3_PRESIGNED_URL_ENABLED` is `true`, browsers talk to the bucket directly. Downloads are `GET` requests, and uploads are `PUT` requests that carry a `Content-Type` header, which makes the browser send a preflight request first. The bucket's CORS policy must therefore allow your Twenty origin, both methods and that header:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://crm.example.com"],
+    "AllowedMethods": ["GET", "PUT"],
+    "AllowedHeaders": ["Content-Type"],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
+
+Without presigned URLs, all file traffic goes through the server and the bucket needs no CORS configuration.
+
+### Troubleshooting
+
+Upload failures reach the UI as a generic error. The underlying S3 error is in the server logs (`docker compose logs server`) and in the GraphQL response visible in the browser's network tab.
 
 ## Logic Functions & Code Interpreter
 

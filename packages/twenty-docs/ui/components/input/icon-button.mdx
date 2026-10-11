@@ -7,7 +7,7 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import IconButtonReference from '/snippets/ui/generated/components/input/icon-button.mdx';
 
-`IconButton` composes [Button](/ui/primitives/input/button) with a square or round surface. Pass the icon as children and provide an `aria-label` describing the action. Icon content is decorative and hidden from assistive technology.
+`IconButton` composes [Button](/ui/primitives/input/button) with a square or round surface. Pass the icon as children and provide an accessible name with `aria-label` or `aria-labelledby`. Icon content is decorative and hidden from assistive technology.
 
 ## Usage
 
@@ -35,9 +35,36 @@ Sizes are `xs` (20px), `sm` (24px), and `md` (32px). The defaults are `md`, `out
   height={620}
 />
 
+## Accessible names
+
+Use `aria-label` for a name supplied directly on the control. When visible text already names the action, use `aria-labelledby` to reference it instead. At least one naming prop is required.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LabelledSearchButton = () => (
+  <>
+    <Text render={<span />} id="records-search-label">
+      Search records
+    </Text>
+    <IconButton aria-labelledby="records-search-label" tooltip="Find a record">
+      <IconSearch />
+    </IconButton>
+  </>
+);
+```
+
+<StoryEmbed
+  title="Icon button named by visible text"
+  storyId="ui-components-iconbutton--labelled-by"
+  height={180}
+/>
+
 ## Tooltip
 
-Add `tooltip` to show text on hover and keyboard focus. Keep `aria-label` as the accessible name of the action. Disabled and loading buttons retain hover tooltips.
+Add `tooltip` to show text on hover and keyboard focus. Keep `aria-label` or `aria-labelledby` as the accessible name of the action. Disabled and loading buttons retain hover tooltips.
 
 ```tsx
 import { IconButton } from 'twenty-ui/components/input';
@@ -116,13 +143,19 @@ export const RecordActions = () => (
 );
 ```
 
-[ButtonGroup](/ui/primitives/input/button-group) supplies size, variant, color, and adjoining corners. Individual buttons do not need a position prop.
+[ButtonGroup](/ui/primitives/input/button-group) supplies defaults for size, variant, and color, plus adjoining corners. Explicit child props take precedence independently, including `size="xs"`. Individual buttons do not need a position prop.
+
+<StoryEmbed
+  storyId="ui-components-iconbutton--grouped-overrides"
+  title="Individual icon button appearance in a group"
+  height={180}
+/>
 
 ## Links and forms
 
-Use `href` to render an anchor. The caller can provide a custom `render` element, including its own router link. Supply `href` to select link semantics; the renderer must preserve an anchor. Without `href`, preserve a native button. Neither `nativeButton` nor `role` is part of the public button interface. Disabled links cannot activate. Routing stays in the application.
+Without a custom `render`, `href` renders an anchor unless `nativeButton` is explicitly true. For a custom navigation anchor or router link, set `nativeButton={false}` and `role="link"`. The renderer can own its destination without an IconButton `href`. Keep `nativeButton` true for a custom native button, and use false for a non-native action element. Explicit nativeButton and role props are preserved. Disabled and loading links cannot activate. Routing stays in the application.
 
-Native attributes, event handlers, refs, and render composition pass through to Button. The default is `type="button"`; set `type="submit"` explicitly for form submission.
+Native button and anchor attributes, event handlers, event details, refs, and render composition pass through to Button. The ref receives the actual root element. Tooltip composition preserves that root and its accessible name. The default is `type="button"`; set `type="submit"` explicitly for form submission.
 
 ## Props
 
