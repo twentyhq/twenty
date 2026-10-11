@@ -269,9 +269,19 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: '0 12px 32px rgba(0, 0, 0, 0.35)',
     display: 'grid',
     gap: 12,
+    gridTemplateRows: 'auto auto minmax(0, 1fr) auto',
+    height: 'min(640px, calc(100% - 32px))',
     maxWidth: 460,
     padding: 16,
     width: '100%',
+  },
+  pickerResults: {
+    alignContent: 'start',
+    display: 'grid',
+    gap: 8,
+    minHeight: 0,
+    overflowY: 'auto',
+    paddingRight: 4,
   },
   searchResult: {
     background: 'var(--t-background-secondary)',
@@ -286,8 +296,6 @@ const styles: Record<string, CSSProperties> = {
   },
   contact: { color: 'var(--t-font-color-secondary)', fontSize: 12 },
   membershipAvailable: { color: 'var(--t-color-green)', fontSize: 12 },
-  membershipUnavailable: { color: 'var(--t-color-red)', fontSize: 12 },
-  disabledSearchResult: { cursor: 'not-allowed', opacity: 0.65 },
   error: { color: 'var(--t-color-red)', padding: 16 },
   success: {
     background: 'var(--t-background-secondary)',
@@ -387,8 +395,6 @@ const getMatchingMembership = (
   person: PersonOption,
   sessionForm: SessionForm,
 ): MembershipOption | null => {
-  if (sessionForm.id === null) return null;
-
   const sessionStartsAt = new Date(sessionForm.startsAt);
   if (Number.isNaN(sessionStartsAt.getTime())) return null;
 
@@ -404,6 +410,8 @@ const getMatchingMembership = (
           membership.activatedAt !== null &&
           membership.activatedAt <= sessionStartsAt.toISOString() &&
           (membership.expiresOn === null || membership.expiresOn >= sessionDate) &&
+          (sessionForm.productId === '' ||
+            membership.product?.id === sessionForm.productId) &&
           membership.product?.sessionFormat === sessionForm.sessionFormat,
       ) ?? null
   );
@@ -436,6 +444,7 @@ const ClassSchedule = () => {
   const [isPersonPickerOpen, setIsPersonPickerOpen] = useState(false);
   const [personSearch, setPersonSearch] = useState('');
   const [personResults, setPersonResults] = useState<PersonOption[]>([]);
+  const [selectedPeople, setSelectedPeople] = useState<PersonOption[]>([]);
   const [isPersonSearchLoading, setIsPersonSearchLoading] = useState(false);
   const [isParticipantsLoading, setIsParticipantsLoading] = useState(false);
   const [participantVersion, setParticipantVersion] = useState(0);
@@ -517,6 +526,31 @@ const ClassSchedule = () => {
   };
 
   const activeParticipants = participants.filter(isActiveParticipant);
+  const availablePersonSlots = Math.max(
+    0,
+    Number(sessionForm?.capacity ?? 0) -
+      (sessionForm?.id === null
+        ? pendingParticipants.length
+        : activeParticipants.length),
+  );
+  const availablePersonResults = useMemo(() => {
+    if (sessionForm === null) return [];
+
+    return personResults
+      .filter(
+        (person) =>
+          !activeParticipants.some(
+            (participant) => participant.person?.id === person.id,
+          ) &&
+          !pendingParticipants.some(
+            (pendingParticipant) => pendingParticipant.id === person.id,
+          ) &&
+          getMatchingMembership(person, sessionForm) !== null,
+      )
+      .sort((firstPerson, secondPerson) =>
+        getPersonLabel(firstPerson).localeCompare(getPersonLabel(secondPerson), 'ru'),
+      );
+  }, [activeParticipants, pendingParticipants, personResults, sessionForm]);
   const isFutureSession =
     sessionForm !== null && new Date(sessionForm.startsAt).getTime() > Date.now();
   const splitBooking = activeParticipants.find(
@@ -629,26 +663,25 @@ const ClassSchedule = () => {
   }, [participantVersion, sessionForm?.id, sessionForm?.sessionFormat]);
 
   const searchPeople = useCallback(async (searchTerm: string) => {
-    if (searchTerm.trim().length < 2) {
-      setPersonResults([]);
-      return;
-    }
-
     setIsPersonSearchLoading(true);
     try {
-      const searchPattern = `%${escapeForIlike(searchTerm.trim())}%`;
+      const normalizedSearchTerm = searchTerm.trim();
+      const searchPattern = `%${escapeForIlike(normalizedSearchTerm)}%`;
       const response = (await new CoreApiClient().query({
         people: {
           __args: {
-            filter: {
-              or: [
-                { name: { firstName: { ilike: searchPattern } } },
-                { name: { lastName: { ilike: searchPattern } } },
-                { emails: { primaryEmail: { ilike: searchPattern } } },
-                { phones: { primaryPhoneNumber: { ilike: searchPattern } } },
-              ],
-            },
-            first: 10,
+            filter:
+              normalizedSearchTerm === ''
+                ? {}
+                : {
+                    or: [
+                      { name: { firstName: { ilike: searchPattern } } },
+                      { name: { lastName: { ilike: searchPattern } } },
+                      { emails: { primaryEmail: { ilike: searchPattern } } },
+                      { phones: { primaryPhoneNumber: { ilike: searchPattern } } },
+                    ],
+                  },
+            first: 100,
           },
           edges: {
             node: {
@@ -696,6 +729,11 @@ const ClassSchedule = () => {
   useEffect(() => {
     if (!isPersonPickerOpen) return;
 
+    if (personSearch === '') {
+      void searchPeople('');
+      return;
+    }
+
     const searchTimeout = window.setTimeout(() => {
       void searchPeople(personSearch);
     }, 300);
@@ -706,7 +744,6 @@ const ClassSchedule = () => {
   const createRegularBooking = async (
     person: PersonOption,
     classSessionId: string,
-    bookedCount: number,
   ): Promise<boolean> => {
     if (sessionForm === null) return false;
     const membership = getMatchingMembership(person, sessionForm);
@@ -714,30 +751,18 @@ const ClassSchedule = () => {
       return false;
     }
     try {
-      await new CoreApiClient().mutation({
-        createStudioBooking: {
-          __args: {
-            data: {
-              name: `Запись · ${getPersonLabel(person)}`,
-              bookingType: 'REGULAR',
-              status: 'BOOKED',
-              bookedAt: new Date().toISOString(),
-              consumesVisit: false,
-              personId: person.id,
-              membershipId: membership.id,
-              productId: membership.product.id,
-              classSessionId,
-            },
-          },
-          id: true,
-        },
-      } as never);
-      await new CoreApiClient().mutation({
-        updateClassSession: {
-          __args: { id: classSessionId, data: { bookedCount } },
-          id: true,
-        },
-      } as never);
+      const result = await new RestApiClient().post<{
+        message?: string;
+        success: boolean;
+      }>('/s/studio/bookings/create', {
+        classSessionId,
+        idempotencyKey: `regular-booking:${person.id}:${classSessionId}`,
+        membershipId: membership.id,
+        personId: person.id,
+      });
+      if (!result.success) {
+        throw new Error(result.message ?? 'Не удалось зарезервировать посещение.');
+      }
       return true;
     } catch (saveError) {
       void enqueueSnackbar({
@@ -749,56 +774,65 @@ const ClassSchedule = () => {
     }
   };
 
-  const addParticipant = async (person: PersonOption): Promise<boolean> => {
-    if (sessionForm === null) return false;
-    const currentParticipantCount =
-      sessionForm.id === null
-        ? pendingParticipants.length
-        : activeParticipants.length;
-    if (currentParticipantCount >= Number(sessionForm.capacity)) {
-      await enqueueSnackbar({
-        message: 'Все места на занятии уже заняты.',
-        variant: 'error',
-      });
-      return false;
-    }
-    if (
-      activeParticipants.some((participant) => participant.person?.id === person.id) ||
-      pendingParticipants.some((pendingParticipant) => pendingParticipant.id === person.id)
-    ) {
-      await enqueueSnackbar({ message: 'Клиент уже добавлен.', variant: 'error' });
-      return false;
+  const toggleSelectedPerson = (person: PersonOption) => {
+    const isSelected = selectedPeople.some(
+      (selectedPerson) => selectedPerson.id === person.id,
+    );
+
+    if (isSelected) {
+      setSelectedPeople((currentPeople) =>
+        currentPeople.filter((currentPerson) => currentPerson.id !== person.id),
+      );
+      return;
     }
 
-    const membership = getMatchingMembership(person, sessionForm);
-    if (membership === null || membership.product === null) {
-      await enqueueSnackbar({
-        message: `У клиента нет действующего пакета на формат «${getSessionFormatLabel(sessionForm.sessionFormat)}».`,
+    if (selectedPeople.length >= availablePersonSlots) {
+      void enqueueSnackbar({
+        message: 'Нельзя выбрать больше клиентов, чем свободных мест.',
         variant: 'error',
       });
-      return false;
+      return;
+    }
+
+    setSelectedPeople((currentPeople) => [...currentPeople, person]);
+  };
+
+  const addSelectedPeople = async () => {
+    if (sessionForm === null || selectedPeople.length === 0) return;
+
+    if (selectedPeople.length > availablePersonSlots) {
+      await enqueueSnackbar({
+        message: 'Недостаточно свободных мест на занятии.',
+        variant: 'error',
+      });
+      return;
     }
 
     if (sessionForm.id === null) {
-      setPendingParticipants((currentParticipants) => [
-        ...currentParticipants,
-        person,
+      setPendingParticipants((currentPeople) => [
+        ...currentPeople,
+        ...selectedPeople,
       ]);
+      setSelectedPeople([]);
       setPersonSearch('');
-      return true;
+      setPersonResults([]);
+      setIsPersonPickerOpen(false);
+      return;
     }
 
-    const wasAdded = await createRegularBooking(
-      person,
-      sessionForm.id,
-      activeParticipants.length + 1,
-    );
-    if (wasAdded) {
-      setParticipantVersion((currentParticipantVersion) => currentParticipantVersion + 1);
-      setReloadVersion((currentReloadVersion) => currentReloadVersion + 1);
-      setPersonSearch('');
+    for (const person of selectedPeople) {
+      const wasAdded = await createRegularBooking(person, sessionForm.id);
+      if (!wasAdded) return;
     }
-    return wasAdded;
+
+    setSelectedPeople([]);
+    setPersonSearch('');
+    setPersonResults([]);
+    setIsPersonPickerOpen(false);
+    setParticipantVersion((currentParticipantVersion) =>
+      currentParticipantVersion + 1,
+    );
+    setReloadVersion((currentReloadVersion) => currentReloadVersion + 1);
   };
 
   const createSplitBooking = async (
@@ -910,7 +944,6 @@ const ClassSchedule = () => {
                 idempotencyKey: cancellationKey,
                 reason: 'Отмена занятия студией',
                 membershipId: membership.id,
-                bookingId: splitBooking.id,
               },
             },
             id: true,
@@ -961,19 +994,18 @@ const ClassSchedule = () => {
           return;
         }
       } else {
-        for (const participant of activeParticipants) {
-          await new CoreApiClient().mutation({
-            updateStudioBooking: {
-              __args: {
-                id: participant.id,
-                data: {
-                  status: 'CANCELLED_BY_STUDIO',
-                  cancelledAt: new Date().toISOString(),
-                },
-              },
-              id: true,
-            },
-          } as never);
+        for (const participant of participants) {
+          const result = await new RestApiClient().post<{
+            message?: string;
+            success: boolean;
+          }>('/s/studio/bookings/cancel', {
+            bookingId: participant.id,
+            cancelledAt: new Date().toISOString(),
+            idempotencyKey: `schedule-studio-cancel:${participant.id}`,
+          });
+          if (!result.success) {
+            throw new Error(result.message ?? 'Не удалось освободить резерв клиента.');
+          }
         }
       }
       await new CoreApiClient().mutation({
@@ -1094,12 +1126,8 @@ const ClassSchedule = () => {
             return;
           }
         } else {
-          for (const [index, participant] of pendingParticipants.entries()) {
-            const wasAdded = await createRegularBooking(
-              participant,
-              classSessionId,
-              index + 1,
-            );
+          for (const participant of pendingParticipants) {
+            const wasAdded = await createRegularBooking(participant, classSessionId);
             if (!wasAdded) {
               return;
             }
@@ -1400,7 +1428,16 @@ const ClassSchedule = () => {
                 </>
               ) : null}
               {sessionForm.sessionFormat !== 'SPLIT_EQUIPMENT' && (sessionForm.id === null ? pendingParticipants.length : activeParticipants.length) < Number(sessionForm.capacity) ? (
-                <button style={styles.button} type="button" onClick={() => setIsPersonPickerOpen(true)}>Добавить клиента</button>
+                <button
+                  style={styles.button}
+                  type="button"
+                  onClick={() => {
+                    setSelectedPeople([]);
+                    setIsPersonPickerOpen(true);
+                  }}
+                >
+                  Добавить клиента
+                </button>
               ) : null}
             </div>
             {successMessage !== null ? (
@@ -1470,55 +1507,62 @@ const ClassSchedule = () => {
               value={personSearch}
               onChange={(event) => setPersonSearch(event.target.value)}
             />
-            {personSearch.trim().length < 2 ? <span>Введите минимум 2 символа.</span> : null}
-            {isPersonSearchLoading ? <span>Поиск клиентов…</span> : null}
-            {!isPersonSearchLoading && personSearch.trim().length >= 2
-              ? personResults
-                  .filter(
-                    (person) =>
-                      !activeParticipants.some(
-                        (participant) => participant.person?.id === person.id,
-                      ) &&
-                      !pendingParticipants.some(
-                        (pendingParticipant) => pendingParticipant.id === person.id,
-                      ),
-                  )
-                  .map((person) => {
-                    const membership = getMatchingMembership(person, sessionForm);
+            <div style={styles.pickerResults}>
+              {isPersonSearchLoading ? <span>Загрузка клиентов…</span> : null}
+              {!isPersonSearchLoading
+                ? availablePersonResults.map((person) => {
+                      const membership = getMatchingMembership(person, sessionForm);
+                      const isSelected = selectedPeople.some(
+                        (selectedPerson) => selectedPerson.id === person.id,
+                      );
 
-                    return (
-                      <button
-                        key={person.id}
-                        disabled={membership === null}
-                        style={{
-                          ...styles.searchResult,
-                          ...(membership === null ? styles.disabledSearchResult : {}),
-                        }}
-                        type="button"
-                        onClick={() =>
-                          void addParticipant(person).then((wasAdded) => {
-                            if (wasAdded) setIsPersonPickerOpen(false);
-                          })
-                        }
-                      >
-                        <strong>{getPersonLabel(person)}</strong>
-                        <span style={styles.contact}>{getPersonContact(person)}</span>
-                        {membership === null ? (
-                          <span style={styles.membershipUnavailable}>
-                            Нет действующего пакета на {getSessionFormatLabel(sessionForm.sessionFormat)}
+                      return (
+                        <label
+                          key={person.id}
+                          style={styles.searchResult}
+                        >
+                          <span>
+                            <input
+                              checked={isSelected}
+                              disabled={!isSelected && selectedPeople.length >= availablePersonSlots}
+                              type="checkbox"
+                              onChange={() => toggleSelectedPerson(person)}
+                            />{' '}
+                            <strong>{getPersonLabel(person)}</strong>
                           </span>
-                        ) : (
+                          <span style={styles.contact}>{getPersonContact(person)}</span>
                           <span style={styles.membershipAvailable}>
-                            {membership.product?.name} · доступно: {membership.visitsAvailable}
+                            {membership?.product?.name} · доступно: {membership?.visitsAvailable}
                           </span>
-                        )}
-                      </button>
-                    );
-                  })
-              : null}
-            {!isPersonSearchLoading && personSearch.trim().length >= 2 && personResults.length === 0 ? <span>Клиенты не найдены.</span> : null}
+                        </label>
+                      );
+                    })
+                : null}
+              {!isPersonSearchLoading && availablePersonResults.length === 0 ? (
+                <span>Подходящие клиенты не найдены.</span>
+              ) : null}
+            </div>
             <div style={styles.formActions}>
-              <button style={styles.button} type="button" onClick={() => { setIsPersonPickerOpen(false); setPersonSearch(''); setPersonResults([]); }}>Закрыть</button>
+              <button
+                style={styles.button}
+                type="button"
+                onClick={() => {
+                  setSelectedPeople([]);
+                  setIsPersonPickerOpen(false);
+                  setPersonSearch('');
+                  setPersonResults([]);
+                }}
+              >
+                Закрыть
+              </button>
+              <button
+                style={styles.activeButton}
+                type="button"
+                disabled={selectedPeople.length === 0}
+                onClick={() => void addSelectedPeople()}
+              >
+                Добавить выбранных ({selectedPeople.length})
+              </button>
             </div>
           </div>
         </div>

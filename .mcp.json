@@ -19,7 +19,7 @@
       "env": {}
     },
       "twenty_prod": {
-      "url": "http://crm.lan/mcp",
+      "url": "http://crm.lan/mcp_disable",
       "type": "http",
       "headers": {
         "Authorization": "Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijk3NTk3OGEzLTE2YzYtNGJmNS1hZTJiLTI2YjQ5MDA1YTM3ZiJ9.eyJzdWIiOiIwNDU4ZmExZi01MDZhLTQ3YzgtYTUxYS00MTJiODg4ZmE4M2EiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMDQ1OGZhMWYtNTA2YS00N2M4LWE1MWEtNDEyYjg4OGZhODNhIiwiaWF0IjoxNzkxMzkwODU0LCJleHAiOjQ5NDQ5OTA4NTIsImp0aSI6IjdmNmUyODM2LWNhNTgtNDM1Zi04NmQ4LTczMjE4M2Q2MTMwMyJ9.6vlAZqGP2j_oEVG7HgTJwi56bWg179RGJQmOSBcsagg5SlX3X1fXs6aLBwKVTNjQ3Gunfqa8ULNvyPP2ly9xKA"
