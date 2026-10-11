@@ -75,6 +75,7 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
 
     renderChatView();
 
+    expect(updateAgentChatThreadInboxState).toHaveBeenCalledTimes(1);
     expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
       threadIds: [THREAD_ID],
       action: 'READ',
