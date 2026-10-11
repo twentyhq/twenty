@@ -1,5 +1,5 @@
-import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { useRender } from '@base-ui/react/use-render';
+import { isBoolean, isString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
 
@@ -18,20 +18,18 @@ export const Chip = ({
   color = 'primary',
   shape = 'square',
   weight = 'regular',
-  disabled = false,
   onClick,
   clickable = isDefined(onClick),
-  nativeButton = true,
   startElement,
   endElement,
   endElementDivider = false,
   maxWidth,
-  tooltipLabel,
+  truncate = true,
+  tooltipContent,
+  tooltipDelay,
+  isTooltipMultiline,
   tooltipPlace,
   alwaysShowTooltip = false,
-  isLabelHidden = false,
-  forceEmptyText = false,
-  emptyLabel = 'Untitled',
   className,
   style,
   render,
@@ -39,20 +37,15 @@ export const Chip = ({
   ...props
 }: ChipProps) => {
   const hasContent =
-    isDefined(children) && children !== '' && children !== false;
+    isDefined(children) && !isBoolean(children) && children !== '';
+  const textProps = isString(children)
+    ? { text: children, tooltipContent }
+    : { text: children ?? false, tooltipContent: tooltipContent ?? '' };
 
   return useRender({
-    render: isDefined(onClick) ? (
-      <ButtonPrimitive
-        render={render}
-        disabled={disabled}
-        nativeButton={nativeButton}
-      />
-    ) : (
-      render
-    ),
+    render,
     ref,
-    state: { size, variant, color, shape, weight, disabled, clickable },
+    state: { size, variant, color, shape, weight, clickable, truncate },
     props: {
       ...props,
       onClick,
@@ -68,24 +61,18 @@ export const Chip = ({
       children: (
         <>
           {startElement}
-          {!isLabelHidden &&
-            (hasContent ? (
-              typeof children === 'string' ? (
-                <OverflowingTextWithTooltip
-                  style={size === 'md' ? MEDIUM_LABEL_STYLE : undefined}
-                  text={children}
-                  tooltipContent={tooltipLabel}
-                  tooltipPlace={tooltipPlace}
-                  alwaysShowTooltip={alwaysShowTooltip}
-                />
-              ) : (
-                <span className={styles.content}>{children}</span>
-              )
-            ) : (
-              !forceEmptyText && (
-                <span className={styles.emptyLabel}>{emptyLabel}</span>
-              )
-            ))}
+          {hasContent && (
+            <OverflowingTextWithTooltip
+              {...textProps}
+              render={<span />}
+              style={size === 'md' ? MEDIUM_LABEL_STYLE : undefined}
+              truncate={truncate}
+              tooltipDelay={tooltipDelay}
+              isTooltipMultiline={isTooltipMultiline}
+              tooltipPlace={tooltipPlace}
+              alwaysShowTooltip={alwaysShowTooltip}
+            />
+          )}
           {isDefined(endElement) && endElement !== false && (
             <>
               {endElementDivider && (

@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "O tipo de gatilho automatizado do workflow"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "O campo do fluxo de trabalho não pertence ao objeto referenciado."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "O seletor de registos do fluxo de trabalho tem de fazer referência a um objeto."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "O fluxo de trabalho faz referência a metadados que não estão disponíveis para esta aplicação."
 

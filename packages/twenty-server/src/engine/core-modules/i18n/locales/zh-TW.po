@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "工作流程自動化觸發類型"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "工作流程欄位不屬於所參照的物件。"
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "工作流程記錄選擇器必須參照一個物件。"
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "工作流程參照了此應用程式無法使用的中繼資料。"
 

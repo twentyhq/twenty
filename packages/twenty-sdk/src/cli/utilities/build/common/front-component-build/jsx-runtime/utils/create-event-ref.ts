@@ -31,9 +31,9 @@ export const createEventRef = (
   }
 
   return Object.assign(eventRef, {
-    _eventProps: events,
+    _eventHandlers: events,
     _outerWinningCloneEvents: outerWinningCloneEvents,
-    _userRef: userRef,
+    _innerRef: userRef,
     _eventSource: source,
   });
 };

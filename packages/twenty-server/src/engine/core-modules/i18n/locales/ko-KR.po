@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "워크플로 자동 트리거 유형"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "워크플로 필드가 참조된 객체에 속하지 않습니다."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "워크플로 레코드 선택기는 객체를 참조해야 합니다."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "워크플로가 이 애플리케이션에서 사용할 수 없는 메타데이터를 참조합니다."
 

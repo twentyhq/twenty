@@ -353,12 +353,17 @@ export const useFrontComponentExecutionContext = ({
       }
 
       if (params.page === SidePanelPages.ViewFrontComponent) {
-        const recordContext = isDefined(params.objectNameSingular)
-          ? {
-              objectNameSingular: params.objectNameSingular,
-              recordId: params.recordId,
-            }
-          : undefined;
+        const recordContext =
+          isDefined(params.objectNameSingular) ||
+          isDefined(params.selectedRecordIds) ||
+          isDefined(params.recordId)
+            ? {
+                objectNameSingular: params.objectNameSingular,
+                selectedRecordIds:
+                  params.selectedRecordIds ??
+                  (isDefined(params.recordId) ? [params.recordId] : undefined),
+              }
+            : undefined;
 
         openFrontComponentInSidePanel({
           frontComponentId: params.frontComponentId,

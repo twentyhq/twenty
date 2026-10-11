@@ -7,7 +7,7 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
 
-`ListItem` supplies the visual layout shared by list and menu rows. Use [Menu](/ui/primitives/surfaces/menu) or [Select](/ui/primitives/input/select) when you need their selection and keyboard behavior.
+`ListItem` supplies the visual layout shared by list and menu rows. It renders a `div` by default for passive content. Use [ListItemButton](/ui/components/navigation/list-item-button) for ordinary action rows. Compose `ListItem` with an anchor for navigation or with a custom semantic owner when needed. Use [Menu](/ui/primitives/surfaces/menu), [Dropdown](/ui/components/navigation/dropdown), or [Select](/ui/primitives/input/select) when you need a complete popup or selection owner.
 
 <StoryEmbed
   storyId="ui-navigation-listitem--default"
@@ -36,33 +36,122 @@ ListItem
 | `actions`                             | Optional                         | Adds trailing content, such as a separately focusable action.                   |
 | `indicator`, `shortcut`, `hasSubmenu` | Optional                         | Configure built-in selection marks, shortcut hints, and the submenu indicator.  |
 
-The row supplies layout. Use `render` to choose its element and semantics. For a row with independent action buttons, keep the row itself non-interactive so those buttons remain separate controls.
+The row supplies layout. `render` accepts an element or a callback that receives native props and visual state. Spread those props onto the actual root when using a callback. Native attributes, event handlers, `className`, `style`, and `ref` reach that root. For a row with independent action buttons, keep the row itself non-interactive so those buttons remain separate controls.
 
 ## Action row
 
+Use [ListItemButton](/ui/components/navigation/list-item-button) to pair row styling with native button interaction. Pass `disabled` once to control both appearance and activation.
+
 ```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { IconCopy } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
-type DuplicateActionProps = { onDuplicate: () => void };
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
 
-export const DuplicateAction = ({ onDuplicate }: DuplicateActionProps) => (
-  <ListItem
-    render={<button type="button" />}
-    startIcon={<IconCopy aria-hidden />}
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    startIcon={<IconCopy />}
     description="Create a copy"
     onClick={onDuplicate}
   >
     Duplicate
+  </ListItemButton>
+);
+```
+
+A custom button owner can still compose `ListItem` through `render`. That owner supplies native focus, Enter and Space activation, and disabled behavior. `ListItem.disabled` supplies only the matching visual style. `shortcut` displays hints; your application registers the shortcuts.
+
+<StoryEmbed
+  storyId="ui-navigation-listitem--button-owner"
+  title="Custom button composition"
+  height={160}
+/>
+
+## Navigation and explicit links
+
+Pass an anchor through `render` when the entire row navigates. Put anchor attributes, including `href`, `target`, and `rel`, on that element.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const DocumentationLink = () => (
+  <ListItem render={<a href="https://twenty.com/developers" />}>
+    Typography documentation
   </ListItem>
 );
 ```
 
-The default element is a `div`. Use `render` to give an interactive row appropriate semantics, such as a button or link. `shortcut` displays shortcut hints; your application must register the shortcuts.
+<StoryEmbed
+  storyId="ui-navigation-listitem--link-owner"
+  title="Link row"
+  height={160}
+/>
+
+String labels stay text, including URL-shaped strings. ListItem does not create links. To link part of a non-interactive row, supply an anchor as caller-owned content. Keep that row as a `div` to avoid nested links or buttons. String labels retain their truncation and overflow tooltip; custom content can use [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip) with an explicit rendered anchor.
+
+Links do not have a native `disabled` attribute. If a destination is unavailable, the link owner must supply the appropriate semantics, tab order, and navigation policy. Styling it with `ListItem.disabled` alone does not prevent navigation.
+
+## Popup item owner
+
+Use `Menu.Item`, `Dropdown.ActionItem`, or `Dropdown.OptionItem` inside their respective popup owner. These parts already compose the ListItem layout and expose its visual slots. The popup owner supplies roles, focus, keyboard navigation, activation, and disabled behavior.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Menu } from 'twenty-ui/primitives/surfaces';
+
+type RecordActionsProps = { onDuplicate: () => void };
+
+export const RecordActions = ({ onDuplicate }: RecordActionsProps) => (
+  <Menu.Root>
+    <Menu.Trigger render={<Button>Record actions</Button>} />
+    <Menu.Popup>
+      <Menu.Item onClick={onDuplicate}>Duplicate record</Menu.Item>
+      <Menu.Item disabled>Unavailable action</Menu.Item>
+    </Menu.Popup>
+  </Menu.Root>
+);
+```
+
+<StoryEmbed
+  storyId="ui-navigation-listitem--menu-owner"
+  title="Menu item owner"
+  height={260}
+/>
+
+## Native event policy
+
+ListItem forwards native event objects and handlers. Clicks bubble normally, including clicks on trailing action controls. Put any intentional boundary on the interactive owner or caller's handler.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type OpenRecordProps = { onOpen: () => void };
+
+export const OpenRecord = ({ onOpen }: OpenRecordProps) => (
+  <ListItem
+    render={<button type="button" />}
+    onClick={(event) => {
+      event.stopPropagation();
+      onOpen();
+    }}
+  >
+    Open record
+  </ListItem>
+);
+```
+
+The caller also owns any `preventDefault()` policy, such as preventing a link's navigation. Passing `onClick` does not add a role, make a `div` keyboard-operable, or change propagation.
 
 ## Settings row
 
-Use [SettingsRow](/ui/components/settings/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and applies disabled behavior to both.
+Use [SettingsRow](/ui/components/settings/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and uses the switch’s disabled state for the row’s appearance.
 
 ## Selection indicator
 
@@ -86,11 +175,11 @@ export const ShowArchivedToggle = () => {
 };
 ```
 
-`selected`, `focused`, and `disabled` control row styling. The `check` and `checkbox` indicators are visual; use a real [Checkbox](/ui/primitives/input/checkbox) for a form control. When using a disabled button or link through `render`, also supply the element's appropriate disabled behavior and semantics.
+`selected`, `focused`, and `disabled` control row styling. They do not register actions, move DOM focus, add accessible roles or states, or suppress events. The `check` and `checkbox` indicators are decorative; use a real [Checkbox](/ui/primitives/input/checkbox) for a form control. Set `aria-pressed`, `aria-selected`, or other state semantics on the owner that needs them.
 
 ## Picker rows
 
-Selection belongs to the parent. `ListItem` has no uncontrolled selection state: pass `selected` and update it from `onClick`. Use `indicator="check"` for a single choice and `indicator="checkbox"` for multiple choices. Both indicators are decorative and share the row's click handler.
+Selection belongs to the parent. `ListItem` has no uncontrolled selection state: pass `selected` and update it from `onClick`. Use `indicator="check"` for a single choice and `indicator="checkbox"` for multiple choices. Both indicators are decorative; the interactive owner handles activation.
 
 In an existing listbox, pass `role="option"` and `aria-selected`, and keep focus and arrow-key handling in the listbox. For a complete selection widget, use [Select](/ui/primitives/input/select). Standalone selection buttons can use `aria-pressed`, as in these examples.
 
@@ -177,7 +266,7 @@ export const TeammateButtons = () => {
 };
 ```
 
-The checkbox indicator is not a form control and does not submit a value. Use [Checkbox](/ui/primitives/input/checkbox) when you need form participation. Supply `disabled` to both the row and its rendered native button to prevent activation and remove it from the tab order.
+The checkbox indicator is not a form control and does not submit a value. Use [Checkbox](/ui/primitives/input/checkbox) when you need form participation. Set native `disabled` on the rendered button to prevent activation and remove it from the tab order. Also pass `ListItem.disabled` for its visual appearance.
 
 ## Slots
 
@@ -215,7 +304,7 @@ Use `shortcutJoinLabel` to customize the text between sequential shortcut steps.
 
 ## Props
 
-The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+The reference is generated from the public component types. Native `div` attributes and handlers are accepted, including accessible names and native events. Put button- or anchor-specific attributes on the element supplied through `render`. Both `ref` and the rendered element's ref target the actual DOM root.
 
 <ListItemReference />
 

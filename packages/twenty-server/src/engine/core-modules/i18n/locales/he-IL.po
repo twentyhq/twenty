@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "סוג הטריגר האוטומטי של זרימת העבודה"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "שדה תהליך העבודה אינו שייך לאובייקט שאליו בוצעה הפניה."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "בורר הרשומות של תהליך העבודה חייב להפנות לאובייקט."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "תהליך העבודה מפנה למטא-נתונים שאינם זמינים ליישום זה."
 

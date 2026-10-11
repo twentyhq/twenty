@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "Το είδος αυτόματης σκανδάλης της ροής εργασίας"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "Το πεδίο ροής εργασίας δεν ανήκει στο αναφερόμενο αντικείμενο."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "Ο επιλογέας εγγραφής ροής εργασίας πρέπει να αναφέρεται σε ένα αντικείμενο."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Η ροή εργασίας αναφέρεται σε μεταδεδομένα που δεν είναι διαθέσιμα για αυτή την εφαρμογή."
 

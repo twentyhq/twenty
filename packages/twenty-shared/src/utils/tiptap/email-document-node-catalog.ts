@@ -85,7 +85,9 @@ export const EMAIL_DOCUMENT_NODE_CATALOG = {
 export type EmailDocumentNodeType = keyof typeof EMAIL_DOCUMENT_NODE_CATALOG;
 
 export type RenderedEmailDocumentNodeType = {
-  [TNodeType in EmailDocumentNodeType]: (typeof EMAIL_DOCUMENT_NODE_CATALOG)[TNodeType]['renderMode'] extends 'node'
+  [
+    TNodeType in EmailDocumentNodeType
+  ]: (typeof EMAIL_DOCUMENT_NODE_CATALOG)[TNodeType]['renderMode'] extends 'node'
     ? TNodeType
     : never;
 }[EmailDocumentNodeType];

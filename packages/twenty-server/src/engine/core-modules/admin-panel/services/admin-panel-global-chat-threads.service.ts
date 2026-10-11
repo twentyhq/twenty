@@ -2,7 +2,9 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import chunk from 'lodash.chunk';
 import { Repository } from 'typeorm';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import {
   ASK_QUESTION_TOOL_NAME,
   ASK_QUESTIONS_TOOL_NAME,
@@ -46,6 +48,8 @@ type GlobalChatThreadRawRow = {
   updatedAt: Date;
 };
 
+const ADMIN_CHAT_REPORT_WORKSPACE_BATCH_SIZE = 25;
+
 const COLUMN_BY_SORT_FIELD: Record<
   AdminChatThreadSortField,
   'messageCount' | 'userReplyCount' | 'createdAt' | 'updatedAt'
@@ -60,7 +64,10 @@ const COLUMN_BY_SORT_FIELD: Record<
 export class AdminPanelGlobalChatThreadsService {
   constructor(
     @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceRepository: Pick<
+      Repository<WorkspaceEntity>,
+      'find'
+    >,
     @Inject(AgentHistoryWorkspaceStorageService)
     private readonly historyStorage: Pick<
       AgentHistoryWorkspaceStorageService,
@@ -97,35 +104,38 @@ export class AdminPanelGlobalChatThreadsService {
       );
     };
 
-    await this.historyStorage.runReadOnlyReport(
-      workspaces.map((workspace) => workspace.id),
-      async ({ manager, partitions }) => {
-        // Fence for the 2.46 cross-upgrade window: turns only have a status
-        // once the 2.46 commands reached their workspace. Remove once 2.46
-        // leaves the window.
-        const schemasWithTurnStatus = new Set(
-          (
-            await manager.query<{ schemaName: string }[]>(
-              `SELECT table_schema AS "schemaName" FROM information_schema.columns
-               WHERE table_name = 'agentTurn' AND column_name = 'status' AND table_schema = ANY($1::text[])`,
-              [
-                partitions.map(({ workspaceIds }) =>
-                  getWorkspaceSchemaName(workspaceIds[0]),
-                ),
-              ],
-            )
-          ).map(({ schemaName }) => schemaName),
-        );
+    // Release earlier workspace locks before scanning the next batch so upgrades can proceed.
+    for (const workspaceBatch of chunk(
+      workspaces,
+      ADMIN_CHAT_REPORT_WORKSPACE_BATCH_SIZE,
+    )) {
+      await this.historyStorage.runReadOnlyReport(
+        workspaceBatch.map((workspace) => workspace.id),
+        async ({ manager, partitions }) => {
+          if (!isNonEmptyArray(partitions)) {
+            return;
+          }
 
-        for (
-          let offsetIndex = 0;
-          offsetIndex < partitions.length;
-          offsetIndex += 25
-        ) {
+          // Fence for the 2.46 cross-upgrade window: turns only have a status
+          // once the 2.46 commands reached their workspace. Remove once 2.46
+          // leaves the window.
+          const schemasWithTurnStatus = new Set(
+            (
+              await manager.query<{ schemaName: string }[]>(
+                `SELECT table_schema AS "schemaName" FROM information_schema.columns
+                 WHERE table_name = 'agentTurn' AND column_name = 'status' AND table_schema = ANY($1::text[])`,
+                [
+                  partitions.map(({ workspaceIds }) =>
+                    getWorkspaceSchemaName(workspaceIds[0]),
+                  ),
+                ],
+              )
+            ).map(({ schemaName }) => schemaName),
+          );
+
           const parameters: unknown[] = [];
-          const queries = partitions
-            .slice(offsetIndex, offsetIndex + 25)
-            .map(({ workspaceIds, table }, partitionIndex) => {
+          const queries = partitions.map(
+            ({ workspaceIds, table }, partitionIndex) => {
               const search = args.searchTerm?.trim().replace(/[\\%_]/g, '\\$&');
               const hasErrorSql = schemasWithTurnStatus.has(
                 getWorkspaceSchemaName(workspaceIds[0]),
@@ -167,7 +177,8 @@ export class AdminPanelGlobalChatThreadsService {
                 partitionIndex,
               );
               return `(${query.replace(/\$(\d+)/g, (_, position: string) => `$${Number(position) + parameterOffset}`)})`;
-            });
+            },
+          );
           const rows = await manager.query<
             (GlobalChatThreadRawRow & {
               totalCount: string;
@@ -182,9 +193,9 @@ export class AdminPanelGlobalChatThreadsService {
           candidates = [...candidates, ...rows]
             .sort(compare)
             .slice(0, offset + limit);
-        }
-      },
-    );
+        },
+      );
+    }
     const threads = candidates.slice(offset, offset + limit);
     return {
       threads,

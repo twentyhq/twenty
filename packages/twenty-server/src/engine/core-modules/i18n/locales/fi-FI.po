@@ -12533,7 +12533,7 @@ msgid "The workflow automated trigger type"
 msgstr "Työnkulun automatisoidun laukaisimen tyyppi"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "Työnkulun kenttä ei kuulu viitattuun objektiin."
 
@@ -12555,7 +12555,7 @@ msgid "The workflow record picker must reference an object."
 msgstr "Työnkulun tietuevalitsimen on viitattava objektiin."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Työnkulku viittaa metatietoihin, jotka eivät ole tämän sovelluksen käytettävissä."
 

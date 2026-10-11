@@ -226,7 +226,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
                   to={linkToRecord}
                   onClick={openRecord}
                   triggerEvent="CLICK"
-                  tooltipLabel={overflowChipTooltipLabel}
+                  tooltipContent={overflowChipTooltipLabel}
                   tooltipPlace={'top'}
                   alwaysShowTooltip
                   variant="soft"
@@ -235,7 +235,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
                 </LinkChip>
               ) : (
                 <Chip
-                  tooltipLabel={overflowChipTooltipLabel}
+                  tooltipContent={overflowChipTooltipLabel}
                   tooltipPlace={'top'}
                   alwaysShowTooltip
                   variant="soft"
