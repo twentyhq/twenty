@@ -63,19 +63,17 @@ export class RunAgentAttachmentService {
     });
 
     const resolvedEntries = await Promise.all(
-      files.map(
-        async (file): Promise<[string, ResolvedRunAgentAttachment]> => [
-          file.id,
-          {
-            mediaType: file.mimeType,
-            url: await this.fileUrlService.signFileByIdUrl({
-              fileId: file.id,
-              workspaceId,
-              fileFolder: FileFolder.AgentChat,
-            }),
-          },
-        ],
-      ),
+      files.map(async (file): Promise<[string, ResolvedRunAgentAttachment]> => [
+        file.id,
+        {
+          mediaType: file.mimeType,
+          url: await this.fileUrlService.signFileByIdUrl({
+            fileId: file.id,
+            workspaceId,
+            fileFolder: FileFolder.AgentChat,
+          }),
+        },
+      ]),
     );
 
     return new Map(resolvedEntries);

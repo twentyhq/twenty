@@ -25,9 +25,11 @@ type OneToManyRelationValue<
 
 type OneToManyMetadataRelationsProperties = {
   [TSourceMetadataName in AllMetadataName]: {
-    [TRelationProperty in ExtractEntityOneToManyEntityRelationProperties<
-      MetadataEntity<TSourceMetadataName>
-    >]: OneToManyRelationValue<TSourceMetadataName, TRelationProperty>;
+    [
+      TRelationProperty in ExtractEntityOneToManyEntityRelationProperties<
+        MetadataEntity<TSourceMetadataName>
+      >
+    ]: OneToManyRelationValue<TSourceMetadataName, TRelationProperty>;
   };
 };
 

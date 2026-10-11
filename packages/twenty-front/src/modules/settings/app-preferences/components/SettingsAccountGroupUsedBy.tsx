@@ -40,13 +40,11 @@ export const SettingsAccountGroupUsedBy = ({
 
   const nativeUsages = getNativeAccountAppsUsingAccount(
     group.nativeAccount,
-  ).map(
-    (app): Usage => ({
-      key: app.id,
-      title: t(app.name),
-      icon: <app.Icon size={theme.icon.size.md} />,
-    }),
-  );
+  ).map((app): Usage => ({
+    key: app.id,
+    title: t(app.name),
+    icon: <app.Icon size={theme.icon.size.md} />,
+  }));
 
   const applicationIds = new Set(
     group.appAccounts.map((account) => account.applicationId).filter(isDefined),
