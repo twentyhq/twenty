@@ -2,6 +2,7 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { hydrateRecordFiltersFromFieldMetadata } from '@/object-record/record-filter/utils/hydrateRecordFiltersFromFieldMetadata';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -41,6 +42,10 @@ export const WorkflowFindRecordsFiltersEffect = ({
     currentRecordFilterGroupsComponentState,
   );
 
+  const setUnresolvedRecordFilters = useSetAtomComponentState(
+    unresolvedRecordFiltersComponentState,
+  );
+
   const flattenedFieldMetadataItems = useAtomStateValue(
     flattenedFieldMetadataItemsSelector,
   );
@@ -58,17 +63,20 @@ export const WorkflowFindRecordsFiltersEffect = ({
       !hasInitializedCurrentRecordFilters &&
       isDefined(defaultValue?.recordFilters)
     ) {
-      setCurrentRecordFilters(
+      const { recordFilters, unresolvedRecordFilters } =
         hydrateRecordFiltersFromFieldMetadata({
           persistedRecordFilters: defaultValue.recordFilters,
           fieldMetadataItems: flattenedFieldMetadataItems,
-        }),
-      );
+        });
+
+      setCurrentRecordFilters(recordFilters);
+      setUnresolvedRecordFilters(unresolvedRecordFilters);
       setShouldSetAdvancedFilterDropdownStates(true);
       setHasInitializedCurrentRecordFilters(true);
     }
   }, [
     setCurrentRecordFilters,
+    setUnresolvedRecordFilters,
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
     defaultValue?.recordFilters,

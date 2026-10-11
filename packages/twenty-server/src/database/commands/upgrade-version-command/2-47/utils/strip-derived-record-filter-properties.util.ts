@@ -34,9 +34,9 @@ export const stripDerivedChartRecordFilterProperties = ({
 }): Record<string, unknown> =>
   pickPersistedRecordFilterProperties(recordFilter);
 
-// Find Records filters are now validated on every workflow write, so the
-// filters written through the API without an id or with a non-string value
-// are completed rather than left blocking the version
+// Find Records filters are validated on every workflow write, so filters
+// written through the API without an id or with a non-string value are
+// completed rather than left blocking every save of their version
 export const stripDerivedFindRecordsRecordFilterProperties = ({
   recordFilter,
   index,

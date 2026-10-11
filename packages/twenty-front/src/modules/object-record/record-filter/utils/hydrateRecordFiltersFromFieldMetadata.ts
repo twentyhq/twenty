@@ -12,37 +12,47 @@ export const hydrateRecordFiltersFromFieldMetadata = ({
 }: {
   persistedRecordFilters: SetOptional<PersistedRecordFilter, 'id'>[];
   fieldMetadataItems: FieldMetadataItem[];
-}): RecordFilter[] =>
-  persistedRecordFilters.flatMap((persistedRecordFilter) => {
+}): {
+  recordFilters: RecordFilter[];
+  unresolvedRecordFilters: PersistedRecordFilter[];
+} => {
+  const recordFilters: RecordFilter[] = [];
+  const unresolvedRecordFilters: PersistedRecordFilter[] = [];
+
+  for (const persistedRecordFilter of persistedRecordFilters) {
+    const persistedRecordFilterWithId: PersistedRecordFilter = {
+      id: persistedRecordFilter.id ?? v4(),
+      fieldMetadataId: persistedRecordFilter.fieldMetadataId,
+      operand: persistedRecordFilter.operand,
+      value: persistedRecordFilter.value,
+      recordFilterGroupId: persistedRecordFilter.recordFilterGroupId,
+      positionInRecordFilterGroup:
+        persistedRecordFilter.positionInRecordFilterGroup,
+      subFieldName: persistedRecordFilter.subFieldName,
+      relationTargetFieldMetadataId:
+        persistedRecordFilter.relationTargetFieldMetadataId,
+    };
+
     const recordFilterTypeAndLabel =
       getRecordFilterTypeAndLabelFromFieldMetadata({
-        fieldMetadataId: persistedRecordFilter.fieldMetadataId,
+        fieldMetadataId: persistedRecordFilterWithId.fieldMetadataId,
         relationTargetFieldMetadataId:
-          persistedRecordFilter.relationTargetFieldMetadataId,
+          persistedRecordFilterWithId.relationTargetFieldMetadataId,
         fieldMetadataItems,
       });
 
-    // Same as view filters: a filter whose field no longer resolves is
-    // ignored when the query is computed, so it is not shown either
     if (!isDefined(recordFilterTypeAndLabel)) {
-      return [];
+      unresolvedRecordFilters.push(persistedRecordFilterWithId);
+      continue;
     }
 
-    return [
-      {
-        id: persistedRecordFilter.id ?? v4(),
-        fieldMetadataId: persistedRecordFilter.fieldMetadataId,
-        operand: persistedRecordFilter.operand,
-        value: persistedRecordFilter.value,
-        displayValue: persistedRecordFilter.value,
-        recordFilterGroupId: persistedRecordFilter.recordFilterGroupId,
-        positionInRecordFilterGroup:
-          persistedRecordFilter.positionInRecordFilterGroup,
-        subFieldName: persistedRecordFilter.subFieldName,
-        relationTargetFieldMetadataId:
-          persistedRecordFilter.relationTargetFieldMetadataId,
-        type: recordFilterTypeAndLabel.type,
-        label: recordFilterTypeAndLabel.label,
-      },
-    ];
-  });
+    recordFilters.push({
+      ...persistedRecordFilterWithId,
+      displayValue: persistedRecordFilterWithId.value,
+      type: recordFilterTypeAndLabel.type,
+      label: recordFilterTypeAndLabel.label,
+    });
+  }
+
+  return { recordFilters, unresolvedRecordFilters };
+};

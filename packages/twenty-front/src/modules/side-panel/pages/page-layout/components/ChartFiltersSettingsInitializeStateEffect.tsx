@@ -2,6 +2,7 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { hydrateRecordFiltersFromFieldMetadata } from '@/object-record/record-filter/utils/hydrateRecordFiltersFromFieldMetadata';
 import { hasInitializedChartFiltersComponentState } from '@/side-panel/pages/page-layout/states/hasInitializedChartFiltersComponentState';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
@@ -29,6 +30,10 @@ export const ChartFiltersSettingsInitializeStateEffect = ({
     currentRecordFilterGroupsComponentState,
   );
 
+  const setUnresolvedRecordFilters = useSetAtomComponentState(
+    unresolvedRecordFiltersComponentState,
+  );
+
   const flattenedFieldMetadataItems = useAtomStateValue(
     flattenedFieldMetadataItemsSelector,
   );
@@ -43,12 +48,14 @@ export const ChartFiltersSettingsInitializeStateEffect = ({
 
   useEffect(() => {
     if (!hasInitializedChartFilters && isDefined(initialChartFilters)) {
-      setCurrentRecordFilters(
+      const { recordFilters, unresolvedRecordFilters } =
         hydrateRecordFiltersFromFieldMetadata({
           persistedRecordFilters: initialChartFilters.recordFilters ?? [],
           fieldMetadataItems: flattenedFieldMetadataItems,
-        }),
-      );
+        });
+
+      setCurrentRecordFilters(recordFilters);
+      setUnresolvedRecordFilters(unresolvedRecordFilters);
       setCurrentRecordFilterGroups(
         initialChartFilters.recordFilterGroups ?? [],
       );
@@ -59,6 +66,7 @@ export const ChartFiltersSettingsInitializeStateEffect = ({
   }, [
     setCurrentRecordFilters,
     setCurrentRecordFilterGroups,
+    setUnresolvedRecordFilters,
     setHasInitializedChartFilters,
     hasInitializedChartFilters,
     initialChartFilters,

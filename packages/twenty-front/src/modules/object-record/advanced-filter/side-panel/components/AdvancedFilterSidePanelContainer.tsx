@@ -2,6 +2,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { AdvancedFilterSidePanelCreateRootFilterButton } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton';
 import { AdvancedFilterSidePanelRecordFilterColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterColumn';
 import { AdvancedFilterSidePanelRecordFilterGroupColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterGroupColumn';
+import { AdvancedFilterSidePanelUnresolvedRecordFilterColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelUnresolvedRecordFilterColumn';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
@@ -46,10 +47,12 @@ export const AdvancedFilterSidePanelContainer = ({
     rootLevelRecordFilterGroupComponentSelector,
   );
 
-  const { childRecordFiltersAndRecordFilterGroups } =
-    useChildRecordFiltersAndRecordFilterGroups({
-      recordFilterGroupId: rootRecordFilterGroup?.id,
-    });
+  const {
+    childRecordFiltersAndRecordFilterGroups,
+    childUnresolvedRecordFilters,
+  } = useChildRecordFiltersAndRecordFilterGroups({
+    recordFilterGroupId: rootRecordFilterGroup?.id,
+  });
 
   return (
     <AdvancedFilterContext.Provider
@@ -83,6 +86,19 @@ export const AdvancedFilterSidePanelContainer = ({
                     recordFilterIndex={recordFilterGroupChildIndex}
                   />
                 ),
+            )}
+            {childUnresolvedRecordFilters.map(
+              (unresolvedRecordFilter, unresolvedRecordFilterIndex) => (
+                <AdvancedFilterSidePanelUnresolvedRecordFilterColumn
+                  key={unresolvedRecordFilter.id}
+                  recordFilterGroup={rootRecordFilterGroup}
+                  unresolvedRecordFilter={unresolvedRecordFilter}
+                  recordFilterIndex={
+                    childRecordFiltersAndRecordFilterGroups.length +
+                    unresolvedRecordFilterIndex
+                  }
+                />
+              ),
             )}
           </StyledChildContainer>
           {!readonly && (

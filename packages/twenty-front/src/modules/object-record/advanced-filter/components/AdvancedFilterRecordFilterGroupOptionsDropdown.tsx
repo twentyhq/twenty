@@ -3,6 +3,7 @@ import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/adva
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
+import { useRemoveUnresolvedRecordFilter } from '@/object-record/record-filter/hooks/useRemoveUnresolvedRecordFilter';
 
 import { IconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -21,17 +22,25 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
   const dropdownId = `advanced-filter-record-filter-group-options-${recordFilterGroupId}`;
 
   const { removeRecordFilter } = useRemoveRecordFilter();
+  const { removeUnresolvedRecordFilter } = useRemoveUnresolvedRecordFilter();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
   const { removeRootRecordFilterGroupIfEmpty } =
     useRemoveRootRecordFilterGroupIfEmpty();
 
-  const { childRecordFilters } = useChildRecordFiltersAndRecordFilterGroups({
-    recordFilterGroupId,
-  });
+  const { childRecordFilters, childUnresolvedRecordFilters } =
+    useChildRecordFiltersAndRecordFilterGroups({
+      recordFilterGroupId,
+    });
 
   const handleRemove = () => {
-    for (const childRecordFilter of childRecordFilters ?? []) {
+    for (const childRecordFilter of childRecordFilters) {
       removeRecordFilter({ recordFilterId: childRecordFilter.id });
+    }
+
+    for (const childUnresolvedRecordFilter of childUnresolvedRecordFilters) {
+      removeUnresolvedRecordFilter({
+        recordFilterId: childUnresolvedRecordFilter.id,
+      });
     }
 
     removeRecordFilterGroup(recordFilterGroupId);

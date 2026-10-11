@@ -1,4 +1,5 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { SidePanelInformationBanner } from '@/side-panel/components/SidePanelInformationBanner/SidePanelInformationBanner';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
@@ -13,9 +14,16 @@ export const ChartFiltersDeletedFieldsWarning = ({
     currentRecordFiltersComponentState,
   );
 
-  const deletedFieldFiltersCount = currentRecordFilters.filter(
-    (recordFilter) => !validFieldMetadataIds.has(recordFilter.fieldMetadataId),
-  ).length;
+  const unresolvedRecordFilters = useAtomComponentStateValue(
+    unresolvedRecordFiltersComponentState,
+  );
+
+  const deletedFieldFiltersCount =
+    unresolvedRecordFilters.length +
+    currentRecordFilters.filter(
+      (recordFilter) =>
+        !validFieldMetadataIds.has(recordFilter.fieldMetadataId),
+    ).length;
 
   if (deletedFieldFiltersCount === 0) {
     return null;

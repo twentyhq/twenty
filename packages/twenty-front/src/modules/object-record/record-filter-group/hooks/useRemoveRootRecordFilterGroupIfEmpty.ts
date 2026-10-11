@@ -1,6 +1,7 @@
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,13 +15,20 @@ export const useRemoveRootRecordFilterGroupIfEmpty = () => {
     currentRecordFiltersComponentState,
   );
 
+  const unresolvedRecordFilters = useAtomComponentStateCallbackState(
+    unresolvedRecordFiltersComponentState,
+  );
+
   const store = useStore();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
 
   const removeRootRecordFilterGroupIfEmpty = () => {
     const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
 
-    const existingRecordFilters = store.get(currentRecordFilters);
+    const existingRecordFilters = [
+      ...store.get(currentRecordFilters),
+      ...store.get(unresolvedRecordFilters),
+    ];
 
     const rootRecordFilterGroup = existingRecordFilterGroups.find(
       (existingRecordFilterGroup) =>

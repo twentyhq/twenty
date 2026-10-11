@@ -3,7 +3,9 @@ import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/
 import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
 
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
+import { useRemoveUnresolvedRecordFilter } from '@/object-record/record-filter/hooks/useRemoveUnresolvedRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { IconButton } from 'twenty-ui/components/input';
@@ -25,36 +27,53 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
   const dropdownId = `advanced-filter-record-filter-options-${recordFilterId}`;
 
   const { removeRecordFilter } = useRemoveRecordFilter();
+  const { removeUnresolvedRecordFilter } = useRemoveUnresolvedRecordFilter();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
 
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
+  const unresolvedRecordFilters = useAtomComponentStateValue(
+    unresolvedRecordFiltersComponentState,
+  );
+
   const currentRecordFilter = currentRecordFilters.find(
     (recordFilter) => recordFilter.id === recordFilterId,
   );
 
-  const { childRecordFiltersAndRecordFilterGroups } =
-    useChildRecordFiltersAndRecordFilterGroups({
-      recordFilterGroupId: currentRecordFilter?.recordFilterGroupId,
-    });
+  const recordFilterGroupId = (
+    currentRecordFilter ??
+    unresolvedRecordFilters.find(
+      (unresolvedRecordFilter) => unresolvedRecordFilter.id === recordFilterId,
+    )
+  )?.recordFilterGroupId;
+
+  const {
+    childRecordFiltersAndRecordFilterGroups,
+    childUnresolvedRecordFilters,
+  } = useChildRecordFiltersAndRecordFilterGroups({
+    recordFilterGroupId,
+  });
 
   const { removeRootRecordFilterGroupIfEmpty } =
     useRemoveRootRecordFilterGroupIfEmpty();
 
   const handleRemove = () => {
     const isOnlyViewFilterInGroup =
-      childRecordFiltersAndRecordFilterGroups?.length === 1;
+      childRecordFiltersAndRecordFilterGroups.length +
+        childUnresolvedRecordFilters.length ===
+      1;
 
-    if (
-      isDefined(currentRecordFilter?.recordFilterGroupId) &&
-      isOnlyViewFilterInGroup
-    ) {
-      removeRecordFilterGroup(currentRecordFilter.recordFilterGroupId);
+    if (isDefined(recordFilterGroupId) && isOnlyViewFilterInGroup) {
+      removeRecordFilterGroup(recordFilterGroupId);
     }
 
-    removeRecordFilter({ recordFilterId: recordFilterId });
+    if (isDefined(currentRecordFilter)) {
+      removeRecordFilter({ recordFilterId });
+    } else {
+      removeUnresolvedRecordFilter({ recordFilterId });
+    }
 
     removeRootRecordFilterGroupIfEmpty();
   };

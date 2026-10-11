@@ -26,34 +26,43 @@ describe('hydrateRecordFiltersFromFieldMetadata', () => {
         persistedRecordFilters: [persistedRecordFilter],
         fieldMetadataItems: [ownerFieldMetadataItem],
       }),
-    ).toEqual([
-      {
-        ...persistedRecordFilter,
-        subFieldName: undefined,
-        relationTargetFieldMetadataId: undefined,
-        type: 'RELATION',
-        label: 'Owner',
-        displayValue: '{{trigger.ownerId}}',
-      },
-    ]);
+    ).toEqual({
+      recordFilters: [
+        {
+          ...persistedRecordFilter,
+          type: 'RELATION',
+          label: 'Owner',
+          displayValue: '{{trigger.ownerId}}',
+        },
+      ],
+      unresolvedRecordFilters: [],
+    });
   });
 
-  it('should drop a filter whose field no longer exists', () => {
+  it('should set apart a filter whose field no longer exists', () => {
+    const filterOnDeletedField = {
+      ...persistedRecordFilter,
+      fieldMetadataId: 'deleted-field-id',
+    };
+
     expect(
       hydrateRecordFiltersFromFieldMetadata({
-        persistedRecordFilters: [
-          { ...persistedRecordFilter, fieldMetadataId: 'deleted-field-id' },
-        ],
+        persistedRecordFilters: [filterOnDeletedField],
         fieldMetadataItems: [ownerFieldMetadataItem],
       }),
-    ).toEqual([]);
+    ).toEqual({
+      recordFilters: [],
+      unresolvedRecordFilters: [filterOnDeletedField],
+    });
   });
 
   it('should give an id to a filter persisted without one', () => {
     const { id: _id, ...persistedRecordFilterWithoutId } =
       persistedRecordFilter;
 
-    const [recordFilter] = hydrateRecordFiltersFromFieldMetadata({
+    const {
+      recordFilters: [recordFilter],
+    } = hydrateRecordFiltersFromFieldMetadata({
       persistedRecordFilters: [persistedRecordFilterWithoutId],
       fieldMetadataItems: [ownerFieldMetadataItem],
     });

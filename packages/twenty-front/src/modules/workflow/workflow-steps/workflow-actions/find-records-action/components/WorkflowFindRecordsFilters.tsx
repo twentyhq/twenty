@@ -3,6 +3,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { dehydrateRecordFilters } from '@/object-record/record-filter/utils/dehydrateRecordFilters';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
@@ -29,6 +30,10 @@ export const WorkflowFindRecordsFilters = ({
     currentRecordFiltersComponentState,
   );
 
+  const unresolvedRecordFilters = useAtomComponentStateCallbackState(
+    unresolvedRecordFiltersComponentState,
+  );
+
   const store = useStore();
 
   const onUpdate = useCallback(() => {
@@ -38,11 +43,22 @@ export const WorkflowFindRecordsFilters = ({
 
     const newFilter = {
       recordFilterGroups: existingRecordFilterGroups,
-      recordFilters: dehydrateRecordFilters(existingRecordFilters),
+      // Filters on deleted fields are kept so the step keeps failing instead
+      // of silently running without them
+      recordFilters: [
+        ...dehydrateRecordFilters(existingRecordFilters),
+        ...store.get(unresolvedRecordFilters),
+      ],
     } satisfies FindRecordsActionFilter;
 
     onChange(newFilter);
-  }, [currentRecordFilterGroups, currentRecordFilters, onChange, store]);
+  }, [
+    currentRecordFilterGroups,
+    currentRecordFilters,
+    unresolvedRecordFilters,
+    onChange,
+    store,
+  ]);
 
   return (
     <AdvancedFilterSidePanelContainer
