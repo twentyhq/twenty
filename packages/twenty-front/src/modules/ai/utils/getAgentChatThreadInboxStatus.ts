@@ -9,27 +9,27 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 // thread back whichever write committed last. Snooze is an archive with a
 // wake-up time; the server unarchives the thread when it passes and keeps the
 // snooze as what brought it back. A member who unsubscribed keeps the thread
-// under done whatever happens in it. A chat in a channel is the member's only
-// once they follow it or file it themselves; until then it is the channel's.
+// under done whatever happens in it. A chat the member can open but does not
+// follow stays out of their inbox until they take part in it or file it, and
+// only has unread messages once they have opened it.
 export const getAgentChatThreadInboxStatus = ({
   lastActivityAt,
   participant,
-  isInChannel,
 }: {
   lastActivityAt: string | null | undefined;
   participant: AgentChatThreadParticipantFieldsFragment | undefined;
-  isInChannel: boolean;
 }): Omit<AgentChatThreadInboxStatus, 'isAssignedToMe' | 'isChannelCopy'> => {
   const isUnread =
     isDefined(lastActivityAt) &&
-    (!isDefined(participant?.lastReadAt) ||
+    isDefined(participant) &&
+    (!isDefined(participant.lastReadAt) ||
       isAfter(lastActivityAt, participant.lastReadAt));
-  const isSubscribed = participant?.isSubscribed ?? !isInChannel;
+  const isSubscribed = participant?.isSubscribed ?? false;
   const isMentioned = isDefined(participant?.lastMentionedAt);
   const archivedAt = participant?.archivedAt;
   const snoozedUntil = participant?.snoozedUntil;
 
-  if (!isSubscribed && isInChannel && !isDefined(archivedAt)) {
+  if (!isSubscribed && !isDefined(archivedAt)) {
     return {
       scope: 'NONE',
       isUnread,
