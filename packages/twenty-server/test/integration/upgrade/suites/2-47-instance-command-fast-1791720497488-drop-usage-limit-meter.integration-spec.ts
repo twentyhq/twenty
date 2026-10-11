@@ -5,12 +5,16 @@ import { DropUsageLimitMeterFastInstanceCommand } from 'src/database/commands/up
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
 
 describe('2-47 fast instance command 1791720497488 - DropUsageLimitMeterFastInstanceCommand (integration)', () => {
-  const command = new DropUsageLimitMeterFastInstanceCommand();
+  const flush = jest.fn();
+  const command = new DropUsageLimitMeterFastInstanceCommand({
+    flush,
+  } as unknown as WorkspaceCacheService);
   let queryRunner: QueryRunner;
   let spenderId: string;
 
@@ -90,6 +94,7 @@ describe('2-47 fast instance command 1791720497488 - DropUsageLimitMeterFastInst
   };
 
   beforeEach(async () => {
+    flush.mockReset();
     spenderId = v4();
     queryRunner =
       global.workflowTestServices.coreDataSource.createQueryRunner();
@@ -119,9 +124,10 @@ describe('2-47 fast instance command 1791720497488 - DropUsageLimitMeterFastInst
       [pendingId]: 'quantity',
     });
     expect(await findCompatibilityTriggerCount()).toBe(1);
+    expect(flush).not.toHaveBeenCalled();
   });
 
-  it('drops meter and its trigger and requires a unit once every quota has one', async () => {
+  it('drops meter and its trigger, requires a unit and flushes usage limits caches once every quota has one', async () => {
     const tokenId = await insertUsageLimit({
       resourceType: UsageResourceType.AI,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
@@ -145,6 +151,9 @@ describe('2-47 fast instance command 1791720497488 - DropUsageLimitMeterFastInst
       [tokenId]: UsageUnit.TOKEN,
       [creditId]: UsageUnit.CREDIT,
     });
+    expect(flush).toHaveBeenCalledWith(SEED_APPLE_WORKSPACE_ID, [
+      'usageLimits',
+    ]);
     await expect(
       insertUsageLimit({
         resourceType: UsageResourceType.WORKFLOW,
