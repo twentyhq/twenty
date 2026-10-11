@@ -233,8 +233,7 @@ describe('StreamAgentChatJob', () => {
       update: jest.fn().mockResolvedValue({ affected: 1 }),
       query: jest.fn().mockImplementation(async (_workspaceId, work) =>
         work({
-          storage: 'core',
-          table: () => 'core."agentChatThread"',
+          table: () => '"workspace"."agentChatThread"',
           manager: { query: threadUsageQuery },
         }),
       ),
