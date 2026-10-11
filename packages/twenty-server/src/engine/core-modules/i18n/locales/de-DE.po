@@ -9839,11 +9839,6 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "Lesen und schreiben"
 
-#. js-lingui-id: e2WMO+
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Read, archive and snooze are not available yet. Try again in a few minutes."
-msgstr "Lesen, Archivieren und Schlummern sind noch nicht verfügbar. Versuchen Sie es in einigen Minuten erneut."
-
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
