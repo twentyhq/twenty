@@ -1099,9 +1099,20 @@ describe('Chat thread participant state through the authenticated API', () => {
       [threadId, randomUUID()],
     );
 
+    // Read state is only tracked for participants, so a chat shared without a
+    // row for the member is open but read
     expect(await findOpenThreadsSummary()).toMatchObject({
       openThreadCount: before.openThreadCount + 1,
       needsInputThreadCount: before.needsInputThreadCount + 1,
+      hasUnreadOpenThread: before.hasUnreadOpenThread,
+    });
+
+    await runInboxAction('UNREAD', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      openThreadCount: before.openThreadCount + 1,
       hasUnreadOpenThread: true,
     });
 

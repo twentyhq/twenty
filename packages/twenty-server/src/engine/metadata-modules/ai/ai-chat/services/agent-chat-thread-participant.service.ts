@@ -410,7 +410,8 @@ export class AgentChatThreadParticipantService {
   }
 
   // Over every chat the member can open, the way the inbox lists them; a chat
-  // without the member's row is in their inbox, unread
+  // without the member's row is in their inbox, read, since read state is only
+  // tracked for participants
   async findOpenThreadsSummary({
     workspaceId,
     workspaceMemberId,
@@ -449,7 +450,7 @@ export class AgentChatThreadParticipantService {
         >(
           `WITH open_thread AS (
              SELECT thread."assigneeId", thread."pendingQuestionMessageId", participant."lastMentionedAt",
-               thread."lastActivityAt" IS NOT NULL
+               thread."lastActivityAt" IS NOT NULL AND participant.id IS NOT NULL
                  AND (participant."lastReadAt" IS NULL OR thread."lastActivityAt" > participant."lastReadAt") AS "isUnread"
              FROM (${readableThreads.getQuery()}) thread
              LEFT JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant

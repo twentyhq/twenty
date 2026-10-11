@@ -33,7 +33,7 @@ const getStatus = ({
   });
 
 describe('getAgentChatThreadInboxStatus', () => {
-  it('keeps a thread nobody acted on in the inbox, unread', () => {
+  it('keeps a thread the member does not participate in in the inbox, read', () => {
     expect(
       getAgentChatThreadInboxStatus({
         lastActivityAt: '2026-10-01T09:00:00.000Z',
@@ -41,7 +41,7 @@ describe('getAgentChatThreadInboxStatus', () => {
       }),
     ).toEqual({
       scope: 'INBOX',
-      isUnread: true,
+      isUnread: false,
       isSubscribed: true,
       isMentioned: false,
       event: null,

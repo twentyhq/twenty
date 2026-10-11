@@ -9,7 +9,8 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 // thread back whichever write committed last. Snooze is an archive with a
 // wake-up time; the server unarchives the thread when it passes and keeps the
 // snooze as what brought it back. A member who unsubscribed keeps the thread
-// under done whatever happens in it.
+// under done whatever happens in it. Read state is only tracked for
+// participants, so a member without a row has nothing unread.
 export const getAgentChatThreadInboxStatus = ({
   lastActivityAt,
   participant,
@@ -19,7 +20,8 @@ export const getAgentChatThreadInboxStatus = ({
 }): Omit<AgentChatThreadInboxStatus, 'isAssignedToMe'> => {
   const isUnread =
     isDefined(lastActivityAt) &&
-    (!isDefined(participant?.lastReadAt) ||
+    isDefined(participant) &&
+    (!isDefined(participant.lastReadAt) ||
       isAfter(lastActivityAt, participant.lastReadAt));
   const isSubscribed = participant?.isSubscribed ?? true;
   const isMentioned = isDefined(participant?.lastMentionedAt);
