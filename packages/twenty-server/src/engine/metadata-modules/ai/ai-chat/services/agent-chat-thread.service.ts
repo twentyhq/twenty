@@ -384,21 +384,33 @@ export class AgentChatThreadService {
       return;
     }
 
-    await this.threadRepository.query(args.workspaceId, ({ manager, table }) =>
-      manager.query(
-        `WITH moved_thread AS (
-           UPDATE ${table('agentChatThread')}
-           SET "channelId" = $2::uuid,
-             "channelArchivedAt" = NULL,
-             "channelSnoozedUntil" = NULL,
-             "updatedAt" = now()
-           WHERE id = $1
-           RETURNING id
-         )
-         SELECT id FROM moved_thread`,
-        [args.threadId, channelId],
-      ),
+    // The owner is checked again under the row lock, as removing a member
+    // from the workspace clears it on their channel chats
+    const movedThreadIds = await this.threadRepository.query(
+      args.workspaceId,
+      ({ manager, table }) =>
+        manager.query<{ id: string }[]>(
+          `WITH moved_thread AS (
+             UPDATE ${table('agentChatThread')}
+             SET "channelId" = $2::uuid,
+               "channelArchivedAt" = NULL,
+               "channelSnoozedUntil" = NULL,
+               "updatedAt" = now()
+             WHERE id = $1
+               AND ($2::uuid IS NOT NULL OR "workspaceMemberId" IS NOT NULL)
+             RETURNING id
+           )
+           SELECT id FROM moved_thread`,
+          [args.threadId, channelId],
+        ),
     );
+
+    if (movedThreadIds.length === 0) {
+      throw new AiException(
+        'A chat without an owner cannot leave its channel',
+        AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL,
+      );
+    }
 
     await this.threadRecordEventService.emitThreadUpdated({
       workspaceId: args.workspaceId,

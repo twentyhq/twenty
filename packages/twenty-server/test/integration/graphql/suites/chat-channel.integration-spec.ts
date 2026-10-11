@@ -23,7 +23,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
-const { JANE, JONY } = WORKSPACE_MEMBER_DATA_SEED_IDS;
+const { JANE, JONY, PHIL } = WORKSPACE_MEMBER_DATA_SEED_IDS;
 
 type ChannelVisibility = 'PUBLIC' | 'PRIVATE';
 
@@ -418,6 +418,35 @@ describe('Chat channels through the authenticated API', () => {
       await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).not.toContain(threadId);
     expect(await readMemberIds(channelId)).toEqual([JANE]);
+  });
+
+  it('lets members add people to a public channel, and only its managers to a private one', async () => {
+    const publicChannelId = await createChannel('PUBLIC', [JONY]);
+    const privateChannelId = await createChannel('PRIVATE', [JONY]);
+
+    expectNoErrors(
+      await makeMetadataApiRequest(
+        {
+          query: ADD_MEMBERS,
+          variables: { channelId: publicChannelId, workspaceMemberIds: [PHIL] },
+        },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      ),
+    );
+
+    const privateResponse = await makeMetadataApiRequest(
+      {
+        query: ADD_MEMBERS,
+        variables: { channelId: privateChannelId, workspaceMemberIds: [PHIL] },
+      },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(privateResponse.body.errors[0].extensions.code).toBe('FORBIDDEN');
+    expect(await readMemberIds(publicChannelId)).toEqual(
+      [JANE, JONY, PHIL].sort(),
+    );
+    expect(await readMemberIds(privateChannelId)).toEqual([JANE, JONY].sort());
   });
 
   it('lets anyone join a public channel once', async () => {

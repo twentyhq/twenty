@@ -42,8 +42,8 @@ const buildTriageChange = (
 };
 
 // A chat in a channel has a shared copy, which the channel triages, and a
-// copy for each member who follows it. As in Front, an action changes the
-// copy of the view it is taken from: the channel view changes the shared
+// copy for each member who follows it. An action changes the copy of the
+// view it is taken from: the channel view changes the shared
 // copy and the actor's own copy if they follow the chat, a personal view
 // changes the actor's copy, and the assignee acting anywhere also changes
 // the shared copy. Other members' copies are never touched.
