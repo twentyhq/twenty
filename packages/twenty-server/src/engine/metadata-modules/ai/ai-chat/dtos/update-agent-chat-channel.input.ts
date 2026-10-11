@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 
 @InputType('UpdateAgentChatChannelInput')
@@ -15,4 +16,7 @@ export class UpdateAgentChatChannelInput {
 
   @Field(() => AgentChatChannelVisibility, { nullable: true })
   visibility?: AgentChatChannelVisibility;
+
+  @Field(() => [UUIDScalarType], { nullable: true })
+  roleIds?: string[];
 }

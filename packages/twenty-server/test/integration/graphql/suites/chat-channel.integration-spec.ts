@@ -6,6 +6,7 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -44,7 +45,7 @@ const CREATE_CHANNEL = parse(
 );
 
 const UPDATE_CHANNEL = parse(
-  `mutation UpdateChannel($channelId: UUID!, $input: UpdateAgentChatChannelInput!) { updateAgentChatChannel(channelId: $channelId, input: $input) { id name visibility } }`,
+  `mutation UpdateChannel($channelId: UUID!, $input: UpdateAgentChatChannelInput!) { updateAgentChatChannel(channelId: $channelId, input: $input) { id name visibility roleIds } }`,
 );
 
 const DELETE_CHANNEL = parse(
@@ -263,12 +264,18 @@ describe('Chat channels through the authenticated API', () => {
     visibility: ChannelVisibility,
     memberIds: string[] = [],
     token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    roleIds: string[] = [],
   ): Promise<string> => {
     const response = await makeMetadataApiRequest(
       {
         query: CREATE_CHANNEL,
         variables: {
-          input: { name: `  Channel ${randomUUID()} `, visibility, memberIds },
+          input: {
+            name: `  Channel ${randomUUID()} `,
+            visibility,
+            memberIds,
+            roleIds,
+          },
         },
       },
       token,
@@ -418,6 +425,78 @@ describe('Chat channels through the authenticated API', () => {
       await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).not.toContain(threadId);
     expect(await readMemberIds(channelId)).toEqual([JANE]);
+  });
+
+  it('opens a private channel to everyone holding one of its roles', async () => {
+    const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
+    const channelId = await createChannel(
+      'PRIVATE',
+      [],
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      [memberRoleId],
+    );
+    const threadId = await createThreadInChannel(channelId);
+
+    expect(
+      await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toContain(threadId);
+    expect(
+      (await getChannelSummaries(APPLE_JONY_MEMBER_ACCESS_TOKEN)).find(
+        (summary) => summary.channelId === channelId,
+      ),
+    ).toEqual({ channelId, openCount: 1, hasUnreadOpen: true });
+
+    // Holding the role is enough to shape the channel, not to change who is in it
+    expectNoErrors(
+      await makeMetadataApiRequest(
+        {
+          query: UPDATE_CHANNEL,
+          variables: { channelId, input: { name: 'Renamed through a role' } },
+        },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      ),
+    );
+
+    const roleChangeResponse = await makeMetadataApiRequest(
+      {
+        query: UPDATE_CHANNEL,
+        variables: { channelId, input: { roleIds: [] } },
+      },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(roleChangeResponse.body.errors[0].extensions.code).toBe('FORBIDDEN');
+
+    const updateResponse = await makeMetadataApiRequest({
+      query: UPDATE_CHANNEL,
+      variables: { channelId, input: { roleIds: [] } },
+    });
+
+    expectNoErrors(updateResponse);
+    expect(updateResponse.body.data.updateAgentChatChannel.roleIds).toEqual([]);
+    expect(
+      await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).not.toContain(threadId);
+    expect(
+      (await getChannelSummaries(APPLE_JONY_MEMBER_ACCESS_TOKEN)).map(
+        (summary) => summary.channelId,
+      ),
+    ).not.toContain(channelId);
+  });
+
+  it('refuses a role from outside the workspace', async () => {
+    const response = await makeMetadataApiRequest({
+      query: CREATE_CHANNEL,
+      variables: {
+        input: {
+          name: 'Channel with an unknown role',
+          visibility: 'PRIVATE',
+          roleIds: [randomUUID()],
+        },
+      },
+    });
+
+    expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
   });
 
   it('lets members add people to a public channel, and only its managers to a private one', async () => {

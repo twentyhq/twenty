@@ -17,9 +17,11 @@ import {
   throwAgentChatChannelManagementForbidden,
   throwAgentChatChannelNotFound,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-errors.util';
+import { findAgentChatChannelRoleIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-channel-role-ids.util';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import { insertAgentChatChannelMembers } from 'src/engine/metadata-modules/ai/ai-chat/utils/insert-agent-chat-channel-members.util';
 import { writeAgentChatChannelGeneralAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/write-agent-chat-channel-general-access.util';
+import { writeAgentChatChannelRoleAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/write-agent-chat-channel-role-access.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatChannelMemberWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-channel-member.workspace-entity';
@@ -29,21 +31,25 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ChannelChanges = {
   name?: string;
   icon?: string | null;
   color?: string | null;
   visibility?: AgentChatChannelVisibility;
+  roleIds?: string[];
 };
+
+type ChannelWithRoles = AgentChatChannelWorkspaceEntity & { roleIds: string[] };
 
 const CHANNEL_COLUMNS = `id, name, icon, color, visibility, "createdAt", "updatedAt", "deletedAt"`;
 
 // Channels are written in SQL so each membership and its grant land
 // together: a member reads and replies in a private channel through the
-// READ_WRITE grant their membership carries, everyone does in a public one
-// through its general access, and its creator manages it through an owner
-// grant.
+// READ_WRITE grant their membership carries or one given to their role,
+// everyone does in a public one through its general access, and its creator
+// manages it through an owner grant.
 @Injectable()
 export class AgentChatChannelService {
   constructor(
@@ -53,6 +59,7 @@ export class AgentChatChannelService {
     private readonly channelAccessService: AgentChatChannelAccessService,
     private readonly channelRecordEventService: AgentChatChannelRecordEventService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async createChannel({
@@ -63,6 +70,7 @@ export class AgentChatChannelService {
     color,
     visibility,
     memberIds,
+    roleIds,
   }: {
     workspaceId: string;
     workspaceMemberId: string;
@@ -71,11 +79,14 @@ export class AgentChatChannelService {
     color: string | null;
     visibility: AgentChatChannelVisibility;
     memberIds: string[];
-  }): Promise<AgentChatChannelWorkspaceEntity> {
+    roleIds: string[];
+  }): Promise<ChannelWithRoles> {
     await this.sharingService.getAuthContext({
       workspaceId,
       workspaceMemberId,
     });
+
+    const validRoleIds = await this.validateRoleIds(workspaceId, roleIds);
 
     const { channelObjectMetadataId } =
       await this.channelAccessService.findChannelObjectMetadataIds(workspaceId);
@@ -119,6 +130,14 @@ export class AgentChatChannelService {
           channelObjectMetadataId,
         });
 
+        await writeAgentChatChannelRoleAccess({
+          manager,
+          workspaceId,
+          channelId: channel.id,
+          roleIds: validRoleIds,
+          channelObjectMetadataId,
+        });
+
         const members = await insertAgentChatChannelMembers({
           manager,
           workspaceId,
@@ -144,19 +163,19 @@ export class AgentChatChannelService {
       recordsAfter: members,
     });
 
-    return channel;
+    return { ...channel, roleIds: validRoleIds };
   }
 
   // Members rename a channel and change its icon; only who manages it
   // changes who can join it. The channel stays locked from reading its
-  // visibility to writing the grant that follows it, so concurrent changes
-  // cannot leave the grant and the visibility apart
+  // visibility and roles to writing the grants that follow them, so
+  // concurrent changes cannot leave the grants and the channel apart
   async updateChannel({
     changes,
     ...args
   }: AgentChatChannelAccessArgs & {
     changes: ChannelChanges;
-  }): Promise<AgentChatChannelWorkspaceEntity> {
+  }): Promise<ChannelWithRoles> {
     await this.channelAccessService.assertMemberOrManager(args);
 
     const canManage = await this.channelAccessService.canManageChannel(args);
@@ -165,8 +184,11 @@ export class AgentChatChannelService {
         args.workspaceId,
       );
     const { channelTable } = getAgentChatChannelTables(args.workspaceId);
+    const requestedRoleIds = isDefined(changes.roleIds)
+      ? await this.validateRoleIds(args.workspaceId, changes.roleIds)
+      : undefined;
 
-    const { before, after } = await this.threadRepository.query(
+    const { before, after, roleIds } = await this.threadRepository.query(
       args.workspaceId,
       async ({ manager }) => {
         const [before] = await manager.query<AgentChatChannelWorkspaceEntity[]>(
@@ -184,9 +206,33 @@ export class AgentChatChannelService {
           isDefined(changes.visibility) &&
           changes.visibility !== before.visibility;
 
-        if (isVisibilityChanged && !canManage) {
+        const currentRoleIds = await findAgentChatChannelRoleIds({
+          manager,
+          workspaceId: args.workspaceId,
+          channelId: args.channelId,
+        });
+        const areRolesChanged =
+          isDefined(requestedRoleIds) &&
+          (requestedRoleIds.length !== currentRoleIds.length ||
+            requestedRoleIds.some(
+              (roleId) => !currentRoleIds.includes(roleId),
+            ));
+
+        if ((isVisibilityChanged || areRolesChanged) && !canManage) {
           throwAgentChatChannelManagementForbidden();
         }
+
+        if (areRolesChanged) {
+          await writeAgentChatChannelRoleAccess({
+            manager,
+            workspaceId: args.workspaceId,
+            channelId: args.channelId,
+            roleIds: requestedRoleIds,
+            channelObjectMetadataId,
+          });
+        }
+
+        const roleIds = areRolesChanged ? requestedRoleIds : currentRoleIds;
 
         const assignments: string[] = [];
         const parameters: (string | null)[] = [args.channelId];
@@ -209,14 +255,16 @@ export class AgentChatChannelService {
           assign('visibility', changes.visibility);
         }
 
-        if (assignments.length === 0) {
-          return { before, after: before };
+        // A role change still bumps the channel, so its event reaches the
+        // sidebars it adds or removes the channel from
+        if (assignments.length === 0 && !areRolesChanged) {
+          return { before, after: before, roleIds };
         }
 
         const [after] = await manager.query<AgentChatChannelWorkspaceEntity[]>(
           `WITH updated_channel AS (
              UPDATE ${channelTable}
-             SET ${assignments.join(', ')}, "updatedAt" = now()
+             SET ${[...assignments, '"updatedAt" = now()'].join(', ')}
              WHERE id = $1
              RETURNING ${CHANNEL_COLUMNS}
            )
@@ -234,7 +282,7 @@ export class AgentChatChannelService {
           });
         }
 
-        return { before, after };
+        return { before, after, roleIds };
       },
     );
 
@@ -248,7 +296,7 @@ export class AgentChatChannelService {
       });
     }
 
-    return after;
+    return { ...after, roleIds };
   }
 
   // A channel's chats would read through nothing once it is gone, so they
@@ -531,6 +579,47 @@ export class AgentChatChannelService {
     );
 
     return channel ?? throwAgentChatChannelNotFound();
+  }
+
+  // Whoever sets up a channel may not see the roles settings, so the roles a
+  // channel can open to are listed here
+  async findAssignableRoles(
+    workspaceId: string,
+  ): Promise<{ id: string; label: string; icon: string | null }[]> {
+    const { flatRoleMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatRoleMaps'],
+    );
+
+    return Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((role) => role.canBeAssignedToUsers)
+      .map(({ id, label, icon }) => ({ id, label, icon: icon ?? null }))
+      .sort((left, right) => left.label.localeCompare(right.label));
+  }
+
+  private async validateRoleIds(
+    workspaceId: string,
+    roleIds: string[],
+  ): Promise<string[]> {
+    const { flatRoleMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatRoleMaps'],
+    );
+    const uniqueRoleIds = [...new Set(roleIds)];
+
+    if (
+      uniqueRoleIds.some(
+        (roleId) => !isDefined(flatRoleMaps.universalIdentifierById[roleId]),
+      )
+    ) {
+      throw new AiException(
+        'A channel can only be open to roles of its workspace',
+        AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE,
+      );
+    }
+
+    return uniqueRoleIds;
   }
 
   private validateName(name: string): string {

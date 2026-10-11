@@ -59,6 +59,7 @@ export type AgentChatChannel = {
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
+  roleIds: Array<Scalars['UUID']['output']>;
   visibility: AgentChatChannelVisibility;
 };
 
@@ -67,6 +68,13 @@ export enum AgentChatChannelAssignmentFilter {
   ASSIGNED_TO_ME = 'ASSIGNED_TO_ME',
   UNASSIGNED = 'UNASSIGNED'
 }
+
+export type AgentChatChannelRole = {
+  __typename?: 'AgentChatChannelRole';
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  label: Scalars['String']['output'];
+};
 
 export type AgentChatChannelSummary = {
   __typename?: 'AgentChatChannelSummary';
@@ -1386,6 +1394,7 @@ export type CreateAgentChatChannelInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   memberIds?: Array<Scalars['UUID']['input']>;
   name: Scalars['String']['input'];
+  roleIds?: Array<Scalars['UUID']['input']>;
   visibility?: AgentChatChannelVisibility;
 };
 
@@ -5422,6 +5431,7 @@ export type PublicWorkspaceDataSummary = {
 
 export type Query = {
   __typename?: 'Query';
+  agentChatChannelRoles: Array<AgentChatChannelRole>;
   agentChatChannelSummaries: Array<AgentChatChannelSummary>;
   agentChatChannelThreadIds: AgentChatChannelThreadIds;
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary;
@@ -6845,6 +6855,7 @@ export type UpdateAgentChatChannelInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  roleIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
   visibility?: InputMaybe<AgentChatChannelVisibility>;
 };
 
