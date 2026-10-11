@@ -5,7 +5,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatFormCard } from '@/ai/components/AiChatFormCard';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
@@ -35,15 +34,11 @@ const meta: Meta<typeof AiChatFormCard> = {
   component: AiChatFormCard,
   decorators: [
     (Story) => (
-      <AgentChatComponentInstanceContext.Provider
-        value={{ instanceId: 'agentChatFormCardStory' }}
-      >
-        <StoreSeeder>
-          <StyledContainer>
-            <Story />
-          </StyledContainer>
-        </StoreSeeder>
-      </AgentChatComponentInstanceContext.Provider>
+      <StoreSeeder>
+        <StyledContainer>
+          <Story />
+        </StyledContainer>
+      </StoreSeeder>
     ),
     ToastDecorator,
     ComponentDecorator,

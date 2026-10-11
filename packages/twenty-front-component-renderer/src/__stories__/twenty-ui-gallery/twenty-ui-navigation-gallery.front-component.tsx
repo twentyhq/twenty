@@ -51,14 +51,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem multiple selection',
     node: (
-      <ListItem
-        className=""
-        role="option"
-        aria-selected={false}
-        selected={false}
-        indicator="checkbox"
-        onClick={() => {}}
-      >
+      <ListItem className="" selected={false} indicator="checkbox">
         <OverflowingTextWithTooltip text={'Multi select'} />
       </ListItem>
     ),
@@ -66,13 +59,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem multiple avatar selection',
     node: (
-      <ListItem
-        role="option"
-        aria-selected={true}
-        selected={true}
-        indicator="checkbox"
-        onClick={() => {}}
-      >
+      <ListItem selected={true} indicator="checkbox">
         <OverflowingTextWithTooltip text={'Multi avatar'} />
       </ListItem>
     ),
@@ -80,13 +67,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem multiple tag selection',
     node: (
-      <ListItem
-        onClick={() => {}}
-        role="option"
-        aria-selected={false}
-        selected={false}
-        indicator="checkbox"
-      >
+      <ListItem selected={false} indicator="checkbox">
         <Tag color={'blue'}>{'Tag'}</Tag>
       </ListItem>
     ),
@@ -96,7 +77,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     node: (
       <ListItem
         startIcon={<IconUser />}
-        onClick={() => {}}
         render={<button type="button" />}
         hasSubmenu
       >
@@ -107,13 +87,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem selection',
     node: (
-      <ListItem
-        onClick={() => {}}
-        role="option"
-        aria-selected={true}
-        selected={true}
-        indicator="check"
-      >
+      <ListItem selected={true} indicator="check">
         <OverflowingTextWithTooltip text={'Select'} />
       </ListItem>
     ),
@@ -121,13 +95,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem avatar selection',
     node: (
-      <ListItem
-        onClick={() => {}}
-        role="option"
-        aria-selected={true}
-        selected={true}
-        indicator="check"
-      >
+      <ListItem selected={true} indicator="check">
         <OverflowingTextWithTooltip text={'Select avatar'} />
       </ListItem>
     ),
@@ -136,9 +104,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     name: 'ListItem color selection',
     node: (
       <ListItem
-        onClick={() => {}}
-        role="option"
-        aria-selected={true}
         selected={true}
         indicator="check"
         startIcon={<ColorSample colorName={'blue'} />}
@@ -150,13 +115,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem tag selection',
     node: (
-      <ListItem
-        onClick={() => {}}
-        role="option"
-        aria-selected={true}
-        selected={true}
-        indicator="check"
-      >
+      <ListItem selected={true} indicator="check">
         <Tag color={'blue'} borderStyle="dashed" variant={'soft'}>
           {'Select tag'}
         </Tag>

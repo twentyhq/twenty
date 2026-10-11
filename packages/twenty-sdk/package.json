@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.46.0",
+  "version": "2.47.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -106,7 +106,6 @@
     "rollup-plugin-dts": "^6.4.1",
     "ts-morph": "^25.0.0",
     "tsc-alias": "^1.8.16",
-    "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
     "vite": "^8.0.0",

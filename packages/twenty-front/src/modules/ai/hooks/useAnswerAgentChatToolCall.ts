@@ -7,7 +7,9 @@ import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { findToolPartOutput } from '@/ai/utils/findToolPartOutput';
-import { getAgentChatThreadAtoms } from '@/ai/utils/getAgentChatThreadAtoms';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
@@ -43,8 +45,12 @@ export const useAnswerAgentChatToolCall = () => {
         return false;
       }
 
-      const { messagesAtom, errorAtom, isAwaitingFirstChunkAtom } =
-        getAgentChatThreadAtoms(threadId);
+      const messagesAtom = agentChatMessagesFamilyState.atomFamily({
+        threadId,
+      });
+      const errorAtom = agentChatErrorFamilyState.atomFamily({ threadId });
+      const isAwaitingFirstChunkAtom =
+        agentChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
 
       const previousToolOutput = findToolPartOutput({
         messages: store.get(messagesAtom),

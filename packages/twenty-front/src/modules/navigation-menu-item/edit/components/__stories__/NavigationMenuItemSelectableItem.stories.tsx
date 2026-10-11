@@ -74,7 +74,7 @@ export const IgnoresDisabledDestination: Story = {
 
     await expect(
       await canvas.findByRole('menuitem', { name: 'Unavailable destination' }),
-    ).toHaveAttribute('aria-disabled', 'true');
+    ).toBeDisabled();
     await userEvent.click(await canvas.findByText('Unavailable destination'));
     await expect(onChooseUnavailableDestination).not.toHaveBeenCalled();
 

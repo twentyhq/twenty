@@ -39,8 +39,8 @@ const LEAVE_CHANNEL = parse(
   `mutation Leave($channelId: UUID!) { leaveAgentChatChannel(channelId: $channelId) }`,
 );
 
-const INBOX_THREAD_IDS = parse(
-  `query Ids($view: AgentChatInboxViewInput!) { agentChatInboxThreadIds(view: $view, first: 200) { threadIds } }`,
+const CHANNEL_THREAD_IDS = parse(
+  `query Ids($channelId: UUID!, $status: AgentChatChannelThreadStatus) { agentChatChannelThreadIds(channelId: $channelId, status: $status, first: 200) { threadIds } }`,
 );
 
 type ListedChannel = {
@@ -63,18 +63,16 @@ const listChannels = async (
 };
 
 const findSystemThreadIds = async (
-  channelStatus: 'OPEN' | 'DONE',
+  status: 'OPEN' | 'DONE',
 ): Promise<string[]> => {
   const response = await makeMetadataApiRequest({
-    query: INBOX_THREAD_IDS,
-    variables: {
-      view: { kind: 'CHANNEL', channelId: SYSTEM_CHANNEL_ID, channelStatus },
-    },
+    query: CHANNEL_THREAD_IDS,
+    variables: { channelId: SYSTEM_CHANNEL_ID, status },
   });
 
   expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.agentChatInboxThreadIds.threadIds;
+  return response.body.data.agentChatChannelThreadIds.threadIds;
 };
 
 describe('Default chat channels', () => {
@@ -140,7 +138,7 @@ describe('Default chat channels', () => {
         workflowId: randomUUID(),
         workflowName: 'Nightly cleanup',
       },
-      workspaceMemberId: null,
+      workspaceMemberIds: [],
       threadKey: randomUUID(),
       title: 'Nightly cleanup',
     });

@@ -20,7 +20,7 @@ import {
   isSelectableLayout,
 } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { RecordTableWidgetLayoutMenuItems } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableWidgetLayoutMenuItems';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -40,7 +40,7 @@ import {
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
@@ -55,7 +55,7 @@ const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
 export const FieldWidgetLayoutDropdownContent = () => {
   const { t } = useLingui();
 
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
@@ -256,7 +256,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
               handleSelectDisplayMode(displayMode);
             }}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === displayMode}
               onClick={() => {
                 handleSelectDisplayMode(displayMode);
@@ -270,7 +270,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
               }
             >
               {displayModeLabels[displayMode]}
-            </ListItem>
+            </ListItemButton>
           </SelectableListItem>
         ))}
         {hasEmbeddedViewLayouts && (

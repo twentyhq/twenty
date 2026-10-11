@@ -56,6 +56,7 @@ const buildApplication = (
   applicationRegistrationId: null,
   applicationRegistration: null,
   canBeUninstalled: true,
+  isUninstallBlockedByOtherWorkspaceInstallations: false,
   autoUpgrade: false,
   defaultRoleId: null,
   settingsCustomTabFrontComponentId: null,

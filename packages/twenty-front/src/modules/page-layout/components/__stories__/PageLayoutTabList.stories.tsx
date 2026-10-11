@@ -12,7 +12,8 @@ import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/stat
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { SidePanelPageLayoutInfoContent } from '@/side-panel/components/SidePanelPageLayoutInfoContent';
+import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
+import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelTargetProvider';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -210,7 +211,7 @@ const PageLayoutTabListPlayground = ({
           <SidePanelPageComponentInstanceContext.Provider
             value={{ instanceId: sidePanelPageInfo.instanceId }}
           >
-            <SidePanelPageLayoutInfoContent pageLayoutId="instance-id" />
+            <SidePanelPageLayoutInfo pageLayoutId="instance-id" />
           </SidePanelPageComponentInstanceContext.Provider>
         )}
     </StyledContainer>
@@ -292,11 +293,22 @@ const meta: Meta<typeof PageLayoutTabListPlayground> = {
               targetRecordIdentifier: undefined,
             }}
           >
-            <TabListComponentInstanceContext.Provider
-              value={{ instanceId: 'page-layout-tab-list-story' }}
+            <PageLayoutSidePanelTargetProvider
+              pageLayoutId="instance-id"
+              targetRecordIdentifier={{
+                id: 'record-id',
+                targetObjectNameSingular:
+                  args.presentation === 'identifier-bar'
+                    ? 'company'
+                    : 'dashboard',
+              }}
             >
-              <Story />
-            </TabListComponentInstanceContext.Provider>
+              <TabListComponentInstanceContext.Provider
+                value={{ instanceId: 'page-layout-tab-list-story' }}
+              >
+                <Story />
+              </TabListComponentInstanceContext.Provider>
+            </PageLayoutSidePanelTargetProvider>
           </LayoutRenderingProvider>
         </PageLayoutComponentInstanceContext.Provider>
       </PageLayoutEditModeProviderContext>

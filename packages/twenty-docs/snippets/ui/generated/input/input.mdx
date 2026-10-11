@@ -21,18 +21,19 @@
 </ParamField>
 
 <ParamField body="onValueChange" type="((value: string, eventDetails: { reason: &quot;none&quot;; event: Event; cancel: () =&gt; void; allowPropagation: () =&gt; void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) =&gt; void)">
-  Callback fired when the `value` changes. Use when controlled.
+  Receives the next string value and Base UI details, including the native event, reason and cancellation methods.
+</ParamField>
+
+<ParamField body="ref" type="Ref&lt;HTMLInputElement&gt;">
+  Ref to the native input element.
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, InputState&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
-
-  Accepts a `ReactElement` or a function that returns the element to render.
+  Composes the native input with a custom element or render callback. Forward the supplied props and ref to an input.
 </ParamField>
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;">
-  Visual size of the input. Inside an `InputGroup`, the group's size applies.
+  Visual size. Explicit input size takes precedence over the InputGroup default, then md applies. Group layout still sets the surrounding height.
 </ParamField>
 
 <ParamField body="style" type="CSSProperties | ((state: InputState) =&gt; CSSProperties | undefined)">

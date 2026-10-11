@@ -13,9 +13,11 @@ import {
 } from 'ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
 import {
+  ASK_QUESTION_TOOL_NAME,
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   type ExtendedUIMessage,
   PROPOSE_TOOL_CALL_TOOL_NAME,
+  REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import {
   isDefined,
@@ -77,6 +79,8 @@ import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billi
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
+import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
+import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -331,15 +335,14 @@ export class AgentAsyncExecutorService {
     toolLoadingStrategy = 'preload',
     priorMessages = [],
     pausingTools = {},
-    canProposeToolCalls = false,
+    canAskHumans = false,
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
     // a continued conversation, with the tool calls and results plain run messages cannot carry
     priorMessages?: ExtendedUIMessage[];
     pausingTools?: ToolSet;
-    // offers propose_tool_call over the registry tools the agent can call itself, or emails without an agent
-    canProposeToolCalls?: boolean;
+    canAskHumans?: boolean;
     baseSystemPrompt: string;
     workspaceId: string;
     executionContext: AgentRunExecutionContext;
@@ -493,15 +496,24 @@ export class AgentAsyncExecutorService {
           modalities,
         });
 
-      // an agent proposes its own tools; a step without an agent has none, so it proposes only emails
-      const offeredPausingTools: ToolSet =
-        canProposeToolCalls && (!isDefined(agent) || isDefined(proposableTools))
+      const offeredPausingTools: ToolSet = {
+        ...pausingTools,
+        ...(canAskHumans
           ? {
-              ...pausingTools,
+              [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
+                isWorkspaceSetupThread: false,
+              }),
+              [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+            }
+          : {}),
+        // an agent proposes its own tools; a step without an agent has none, so it proposes only emails
+        ...(canAskHumans && (!isDefined(agent) || isDefined(proposableTools))
+          ? {
               [PROPOSE_TOOL_CALL_TOOL_NAME]:
                 this.buildProposeToolCallTool(proposableTools),
             }
-          : pausingTools;
+          : {}),
+      };
       const offeredToolNames = Object.keys(offeredPausingTools);
 
       const textResponse = await generateText({

@@ -260,17 +260,19 @@ export const RecordDetailRelationRecordsListItem = ({
           </DropdownRoot>
         )}
       </RecordDetailRecordsListItemContainer>
-      <Collapsible containAnimation={false} isExpanded={isExpanded}>
-        <RecordFieldList
-          instanceId={`${scopeInstanceId}-relation-${relationRecord.id}`}
-          objectNameSingular={relationObjectMetadataNameSingular}
-          objectRecordId={relationRecord.id}
-          showDuplicatesSection={false}
-          showRelationSections={false}
-          excludeCreatedAtAndUpdatedAt={true}
-          excludeFieldMetadataIds={[relationFieldMetadataId]}
-        />
-      </Collapsible>
+      <Collapsible.Root open={isExpanded}>
+        <Collapsible.Panel containAnimation={false}>
+          <RecordFieldList
+            instanceId={`${scopeInstanceId}-relation-${relationRecord.id}`}
+            objectNameSingular={relationObjectMetadataNameSingular}
+            objectRecordId={relationRecord.id}
+            showDuplicatesSection={false}
+            showRelationSections={false}
+            excludeCreatedAtAndUpdatedAt={true}
+            excludeFieldMetadataIds={[relationFieldMetadataId]}
+          />
+        </Collapsible.Panel>
+      </Collapsible.Root>
       {createPortal(
         <ConfirmationDialog
           dialogId={getDeleteRelationModalId(relationRecord.id)}

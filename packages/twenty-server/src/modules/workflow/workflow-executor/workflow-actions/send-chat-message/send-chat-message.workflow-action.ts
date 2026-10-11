@@ -19,12 +19,14 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { resolveConversationThreadKey } from 'src/modules/workflow/workflow-executor/utils/resolve-conversation-thread-key.util';
 import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
 import { type WorkflowSendChatMessageActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/workflow-send-chat-message-action-input.type';
+import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 @Injectable()
 export class SendChatMessageWorkflowAction implements WorkflowAction {
   constructor(
     private readonly agentCallerConversationService: AgentCallerConversationService,
     private readonly workflowRunInboxSenderService: WorkflowRunInboxSenderWorkspaceService,
+    private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
   ) {}
 
   async execute({
@@ -80,7 +82,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       workspaceId: runInfo.workspaceId,
       sender,
       message: {
-        workspaceMemberId,
+        workspaceMemberIds: [workspaceMemberId],
         threadKey,
         // a conversation shared by key holds every run's messages, so each run keys its own
         idempotencyKey:
@@ -90,6 +92,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
         title: isNonEmptyString(title) ? title : step.name,
         text,
       },
+      fallbackThreadKey: `${threadKey}:${runInfo.workflowRunId}:${currentStepId}`,
       awaitedToolCall: isDefined(toolCall)
         ? {
             ...toolCall,
@@ -97,6 +100,13 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
               workflowRunId: runInfo.workflowRunId,
               stepId: currentStepId,
             }),
+            waitOnAnswer: (postedCall) =>
+              this.workflowStepWaitWorkspaceService.arm({
+                workspaceId: runInfo.workspaceId,
+                workflowRunId: runInfo.workflowRunId,
+                stepId: currentStepId,
+                wait: { type: 'ANSWER', ...postedCall },
+              }),
           }
         : undefined,
     });
@@ -109,9 +119,15 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
           'The recipient deleted this conversation, so the action cannot be approved',
           WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
         );
-      // the step waits for the member, and the engine hands it their answer
+      // the step waits for the member, and their answer resolves the wait
       case 'AWAITING':
-        return { wait: { type: 'CALLBACK' } };
+        return {
+          wait: {
+            type: 'ANSWER',
+            threadId: delivery.threadId,
+            toolCallId: delivery.toolCallId,
+          },
+        };
       case 'ANSWERED':
         return { result: { threadId: delivery.threadId, ...delivery.answer } };
     }

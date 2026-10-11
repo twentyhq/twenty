@@ -10,11 +10,11 @@ import {
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 
 import { CREATE_PENDING_WAKE_UP_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/create-pending-wake-up-table-upgrade-command-name.constant';
-import { type PendingWakeUpOwnerType } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-type.type';
+import { ADD_PAYLOAD_TO_PENDING_WAKE_UP_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-payload-to-pending-wake-up-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
-// Waits resolved by time or by a record event, so they survive a lost queue job or a restart.
+// Waits resolved by time, a record event or an answer, so they survive a lost queue job or a restart.
 // Deleting the row is how a resolution claims it, so a wake-up resolves once.
 @Entity({ name: 'pendingWakeUp', schema: 'core' })
 @WasIntroducedInUpgrade({
@@ -28,7 +28,7 @@ export class PendingWakeUpEntity extends WorkspaceRelatedEntity {
   id: string;
 
   @Column({ type: 'varchar' })
-  ownerType: PendingWakeUpOwnerType;
+  ownerType: string;
 
   @Column({ type: 'uuid' })
   ownerId: string;
@@ -38,6 +38,13 @@ export class PendingWakeUpEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'jsonb' })
   condition: PendingWakeUpCondition;
+
+  // what the owner needs to resume, which only its handler reads
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_PAYLOAD_TO_PENDING_WAKE_UP_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  payload: object | null;
 
   @Column({ type: 'varchar', nullable: true })
   eventName: string | null;

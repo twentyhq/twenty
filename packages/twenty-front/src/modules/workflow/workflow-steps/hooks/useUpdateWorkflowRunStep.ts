@@ -8,7 +8,10 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { UPDATE_WORKFLOW_RUN_STEP } from '@/workflow/graphql/mutations/updateWorkflowRunStep';
 import { type WorkflowRun, type WorkflowStep } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -75,7 +78,7 @@ export const useUpdateWorkflowRunStep = () => {
       },
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       state: true,
     };
     updateRecordFromCache({

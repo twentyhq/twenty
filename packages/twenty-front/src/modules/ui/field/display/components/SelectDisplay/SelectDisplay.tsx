@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -7,21 +8,20 @@ type SelectDisplayProps = {
   color: ThemeColor | 'transparent';
   label: string;
   Icon?: IconComponent;
-  preventPadding?: boolean;
 };
 
-export const SelectDisplay = ({
-  color,
-  label,
-  Icon,
-  preventPadding,
-}: SelectDisplayProps) => (
-  <Tag
-    preventShrink
+const StyledSelectTag = styled(Tag)`
+  && {
+    min-width: fit-content;
+  }
+`;
+
+export const SelectDisplay = ({ color, label, Icon }: SelectDisplayProps) => (
+  <StyledSelectTag
+    truncate={false}
     color={color}
     startIcon={isDefined(Icon) ? <Icon /> : undefined}
-    preventPadding={preventPadding}
   >
     {label}
-  </Tag>
+  </StyledSelectTag>
 );

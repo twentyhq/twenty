@@ -30,6 +30,7 @@ Field.Root
 | Part                                  | Requirement         | Purpose                                                                      |
 | ------------------------------------- | ------------------- | ---------------------------------------------------------------------------- |
 | `Root`                                | Required            | Shares the name, disabled state, and validation with the control.            |
+| `Item`                                | Optional for groups | Associates each radio or checkbox with its own label and description.        |
 | `Label`                               | Recommended         | Supplies a visible, associated label. An accessible name is always required. |
 | `Input` or another integrated control | Required            | Receives user input and connects to the field.                               |
 | `Control`                             | Alternative control | Provides an unstyled input when you do not use an integrated control.        |
@@ -78,6 +79,48 @@ export const UsernameField = ({ error }: UsernameFieldProps) => (
 ```
 
 Keep error messages actionable and provide a visible label even when the control has a placeholder.
+
+## Grouped controls
+
+Use `Field.Item` inside a radio or checkbox group to associate each choice with its own label and description. Keep the group's label outside the items. An item can be disabled independently; a disabled `Field.Root` disables every item.
+
+<StoryEmbed
+  storyId="ui-input-field--grouped-items"
+  title="Field items"
+  height={360}
+/>
+
+```tsx
+import { Field, Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const NotificationsField = () => (
+  <Field.Root name="notifications">
+    <Field.Label>Notifications</Field.Label>
+    <RadioGroup defaultValue="important">
+      <Field.Item>
+        <Field.Label>Important updates</Field.Label>
+        <Radio value="important" />
+        <Field.Description>
+          Only messages that need your attention
+        </Field.Description>
+      </Field.Item>
+      <Field.Item disabled>
+        <Field.Label>Daily digest</Field.Label>
+        <Radio value="digest" />
+        <Field.Description>Coming soon</Field.Description>
+      </Field.Item>
+    </RadioGroup>
+  </Field.Root>
+);
+```
+
+## Native integration and types
+
+Field preserves Base UI validation timing, custom validation, controlled and uncontrolled control values, and value-change event details. `Validity` exposes the validation result through its children function. Integrated controls retain their native form behavior.
+
+`Root`, `Item`, `Label`, `Control`, `Description`, and `Error` forward native props, refs, and `render` composition. Their default elements are a div, div, label, input, paragraph, and div respectively. `Validity` does not render its own element.
+
+Import `FieldRootProps`, `FieldItemProps`, `FieldLabelProps`, `FieldControlProps`, `FieldDescriptionProps`, `FieldErrorProps`, and `FieldValidityProps` from `twenty-ui/primitives/input` for the corresponding upstream part contracts.
 
 ## Props
 

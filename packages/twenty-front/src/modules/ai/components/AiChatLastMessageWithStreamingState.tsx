@@ -1,37 +1,35 @@
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
-import { agentChatLastMessageIdComponentSelector } from '@/ai/states/selectors/agentChatLastMessageIdComponentSelector';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { agentChatLastMessageIdSelector } from '@/ai/states/selectors/agentChatLastMessageIdSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const AiChatLastMessageWithStreamingState = () => {
-  const lastMessageId = useAtomComponentSelectorValue(
-    agentChatLastMessageIdComponentSelector,
+  const agentChatLastMessageId = useAtomStateValue(
+    agentChatLastMessageIdSelector,
   );
 
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
-  const agentChatIsStreaming = useAtomComponentFamilyStateValue(
-    agentChatIsStreamingComponentFamilyState,
+  const agentChatIsStreaming = useAtomFamilyStateValue(
+    agentChatIsStreamingFamilyState,
     { threadId: agentChatDisplayedThread },
   );
-  const agentChatError = useAtomComponentFamilyStateValue(
-    agentChatErrorComponentFamilyState,
-    { threadId: agentChatDisplayedThread },
-  );
+  const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
+    threadId: agentChatDisplayedThread,
+  });
 
-  if (!isDefined(lastMessageId)) {
+  if (!isDefined(agentChatLastMessageId)) {
     return null;
   }
 
   return (
     <AiChatMessage
-      messageId={lastMessageId}
+      messageId={agentChatLastMessageId}
       isLastMessageStreaming={agentChatIsStreaming}
       error={agentChatError ?? undefined}
     />

@@ -76,6 +76,20 @@ const RUN_INPUT: AgentRunnerRunInput = {
   },
 };
 
+const SUSPENSION = {
+  caller: RUN_INPUT.caller,
+  runSpec: RUN_INPUT.spec,
+  summary: null,
+  continuationCount: 0,
+};
+
+const CONTINUATION = {
+  workspaceId: 'workspace-id',
+  threadId: 'thread-id',
+  wakeUpId: 'wake-up-id',
+  outcome: { type: 'ANSWERED' as const, answer: { result: {} } },
+};
+
 const buildService = (execution = buildExecution()) => {
   const agentAsyncExecutorService = {
     executeAgent: jest.fn().mockResolvedValue(execution),
@@ -90,19 +104,38 @@ const buildService = (execution = buildExecution()) => {
     loadMessages: jest.fn().mockResolvedValue(PRIOR_MESSAGES),
   };
 
+  const agentRunSuspensionService = {
+    assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
+    closeAwaitedCalls: jest.fn().mockResolvedValue(undefined),
+    suspend: jest.fn().mockResolvedValue(undefined),
+    settle: jest.fn().mockResolvedValue(undefined),
+    recordWaitOutcome: jest.fn().mockResolvedValue(undefined),
+  };
+  const callerHandler = {
+    getWaitingState: jest.fn().mockResolvedValue('WAITING'),
+    buildExecutionContext: jest
+      .fn()
+      .mockResolvedValue(RUN_INPUT.executionContext),
+  };
+
+  const pendingWakeUpService = {
+    find: jest.fn().mockResolvedValue({
+      condition: { type: 'ANSWER', threadId: 'thread-id' },
+      payload: SUSPENSION,
+    }),
+    claim: jest.fn().mockResolvedValue(null),
+    cancel: jest.fn().mockResolvedValue([]),
+  };
+
   jest.spyOn(Logger.prototype, 'error').mockImplementation();
 
   const service = new AgentRunnerService(
     agentAsyncExecutorService as never,
     agentRunConversationService as never,
     conversationReaderService as never,
-    {
-      assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
-      closeAwaitedCalls: jest.fn().mockResolvedValue(undefined),
-    } as never,
-    {} as never,
-    {} as never,
-    {} as never,
+    agentRunSuspensionService as never,
+    { getHandlerOrThrow: () => callerHandler } as never,
+    pendingWakeUpService as never,
     {} as never,
   );
 
@@ -111,6 +144,9 @@ const buildService = (execution = buildExecution()) => {
     agentAsyncExecutorService,
     agentRunConversationService,
     conversationReaderService,
+    agentRunSuspensionService,
+    callerHandler,
+    pendingWakeUpService,
   };
 };
 
@@ -180,14 +216,8 @@ describe('AgentRunnerService', () => {
         spec: { ...RUN_INPUT.spec, capabilities: { canAskHumans } },
       });
 
-      const [{ pausingTools, canProposeToolCalls }] =
-        agentAsyncExecutorService.executeAgent.mock.calls[0];
-
-      expect(canProposeToolCalls).toBe(canAskHumans);
-      expect(Object.keys(pausingTools)).toEqual(
-        canAskHumans
-          ? expect.arrayContaining(['ask_question', 'request_form'])
-          : expect.not.arrayContaining(['ask_question', 'request_form']),
+      expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+        expect.objectContaining({ canAskHumans }),
       );
     },
   );
@@ -259,6 +289,198 @@ describe('AgentRunnerService', () => {
         status: 'FAILED',
         error: 'Agent stopped: no more available credits.',
       },
+    });
+  });
+
+  it('suspends a run that asked a question on an answer to it', async () => {
+    const { service, agentRunConversationService, agentRunSuspensionService } =
+      buildService(buildExecution({ isPaused: true }));
+
+    agentRunConversationService.closeTurn.mockResolvedValue({
+      isAwaitingAnswer: true,
+    });
+
+    const { outcome } = await service.run(RUN_INPUT);
+
+    expect(outcome).toEqual({ status: 'SUSPENDED' });
+    expect(agentRunSuspensionService.suspend).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      condition: { type: 'ANSWER', threadId: 'thread-id' },
+      suspension: expect.objectContaining({
+        caller: RUN_INPUT.caller,
+        runSpec: RUN_INPUT.spec,
+        continuationCount: 0,
+      }),
+    });
+    expect(agentRunSuspensionService.closeAwaitedCalls).not.toHaveBeenCalled();
+  });
+
+  it('stops a continued run that keeps pausing and closes what it asked', async () => {
+    const {
+      service,
+      agentRunConversationService,
+      agentRunSuspensionService,
+      conversationReaderService,
+      pendingWakeUpService,
+    } = buildService(buildExecution({ isPaused: true }));
+
+    agentRunConversationService.closeTurn.mockResolvedValue({
+      isAwaitingAnswer: true,
+    });
+    pendingWakeUpService.find.mockResolvedValue({
+      condition: { type: 'ANSWER', threadId: 'thread-id' },
+      payload: { ...SUSPENSION, continuationCount: 49 },
+    });
+
+    await service.continue(CONTINUATION);
+
+    expect(agentRunConversationService.withThreadLock).toHaveBeenCalledTimes(1);
+    expect(pendingWakeUpService.claim).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      wakeUpId: 'wake-up-id',
+    });
+    expect(conversationReaderService.loadMessages).toHaveBeenCalled();
+    expect(agentRunSuspensionService.suspend).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.closeAwaitedCalls).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      isAwaitingAnswer: true,
+    });
+    expect(agentRunSuspensionService.settle).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: 'thread-id',
+        outcome: {
+          status: 'FAILED',
+          error: 'Agent stopped: it paused more than 50 times in one run.',
+        },
+      }),
+    );
+  });
+
+  it('drops a continuation whose caller stopped waiting', async () => {
+    const { service, callerHandler, agentAsyncExecutorService } =
+      buildService();
+
+    callerHandler.getWaitingState.mockResolvedValue('GONE');
+
+    await service.continue(CONTINUATION);
+
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('continues a pause once, as a second continuation finds its wake-up removed', async () => {
+    const { service, pendingWakeUpService, agentAsyncExecutorService } =
+      buildService();
+
+    pendingWakeUpService.find.mockResolvedValue(null);
+
+    await service.continue(CONTINUATION);
+
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('continues a run again when the worker running it died, as its wake-up is still there', async () => {
+    const {
+      service,
+      pendingWakeUpService,
+      agentAsyncExecutorService,
+      agentRunSuspensionService,
+    } = buildService();
+
+    agentAsyncExecutorService.executeAgent.mockReturnValueOnce(
+      new Promise(() => {}),
+    );
+
+    void service.continue(CONTINUATION);
+
+    while (agentAsyncExecutorService.executeAgent.mock.calls.length === 0) {
+      await Promise.resolve();
+    }
+
+    expect(pendingWakeUpService.claim).not.toHaveBeenCalled();
+
+    await service.continue(CONTINUATION);
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledTimes(2);
+    expect(agentRunSuspensionService.settle).toHaveBeenCalledTimes(1);
+    expect(pendingWakeUpService.claim).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      wakeUpId: 'wake-up-id',
+    });
+  });
+
+  it('keeps the wake-up of a run whose caller could not be handed the outcome', async () => {
+    const { service, pendingWakeUpService, agentRunSuspensionService } =
+      buildService();
+
+    agentRunSuspensionService.settle.mockRejectedValue(new Error('db down'));
+
+    await expect(service.continue(CONTINUATION)).rejects.toThrow('db down');
+
+    expect(pendingWakeUpService.claim).not.toHaveBeenCalled();
+  });
+
+  it('fails the run when its answer could not be delivered', async () => {
+    const { service, agentRunSuspensionService, agentAsyncExecutorService } =
+      buildService();
+
+    await service.continue({
+      ...CONTINUATION,
+      outcome: { type: 'ANSWERED', answer: { error: 'answer lost' } },
+    });
+
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.settle).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'answer lost' },
+        isAwaitingAnswer: true,
+      }),
+    );
+  });
+
+  it('fails a claimed run whose caller cannot be read, rather than dropping it', async () => {
+    const { service, callerHandler, agentRunSuspensionService } =
+      buildService();
+
+    callerHandler.getWaitingState.mockRejectedValue(new Error('db down'));
+
+    await service.continue(CONTINUATION);
+
+    expect(agentRunSuspensionService.settle).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'db down' },
+      }),
+    );
+  });
+
+  it('drops the pause of a continued run whose caller stopped waiting while it ran', async () => {
+    const {
+      service,
+      callerHandler,
+      agentRunConversationService,
+      agentRunSuspensionService,
+      pendingWakeUpService,
+    } = buildService(buildExecution({ isPaused: true }));
+
+    agentRunConversationService.closeTurn.mockResolvedValue({
+      isAwaitingAnswer: true,
+    });
+    callerHandler.getWaitingState
+      .mockResolvedValueOnce('WAITING')
+      .mockResolvedValueOnce('GONE');
+
+    await service.continue(CONTINUATION);
+
+    expect(agentRunSuspensionService.suspend).toHaveBeenCalled();
+    expect(pendingWakeUpService.cancel).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      owner: { type: 'AGENT_RUN', id: 'thread-id' },
+    });
+    expect(agentRunSuspensionService.closeAwaitedCalls).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      isAwaitingAnswer: true,
     });
   });
 });

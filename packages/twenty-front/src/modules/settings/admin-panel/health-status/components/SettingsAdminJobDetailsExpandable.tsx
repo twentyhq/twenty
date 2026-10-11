@@ -73,65 +73,69 @@ export const SettingsAdminJobDetailsExpandable = ({
   const isAnyNode = () => true;
 
   return (
-    <Collapsible isExpanded={isExpanded} dimension="height">
-      <StyledDetailsContainer>
-        {hasFailedReason && (
-          <StyledSection>
-            <StyledSectionTitle>{t`Error Message`}</StyledSectionTitle>
-            <StyledPreformattedText>{job.failedReason}</StyledPreformattedText>
-          </StyledSection>
-        )}
+    <Collapsible.Root open={isExpanded}>
+      <Collapsible.Panel dimension="height">
+        <StyledDetailsContainer>
+          {hasFailedReason && (
+            <StyledSection>
+              <StyledSectionTitle>{t`Error Message`}</StyledSectionTitle>
+              <StyledPreformattedText>
+                {job.failedReason}
+              </StyledPreformattedText>
+            </StyledSection>
+          )}
 
-        {hasStacktrace && job.stackTrace && (
-          <StyledSection>
-            <StyledSectionTitle>{t`Stack Trace`}</StyledSectionTitle>
-            <StyledPreformattedText>
-              {job.stackTrace.join('\n')}
-            </StyledPreformattedText>
-          </StyledSection>
-        )}
+          {hasStacktrace && job.stackTrace && (
+            <StyledSection>
+              <StyledSectionTitle>{t`Stack Trace`}</StyledSectionTitle>
+              <StyledPreformattedText>
+                {job.stackTrace.join('\n')}
+              </StyledPreformattedText>
+            </StyledSection>
+          )}
 
-        {hasReturnValue && (
-          <StyledSection>
-            <StyledSectionTitle>{t`Return Value`}</StyledSectionTitle>
-            <JsonTree
-              value={job.returnValue}
-              shouldExpandNodeInitially={isAnyNode}
-              emptyArrayLabel={t`Empty Array`}
-              emptyObjectLabel={t`Empty Object`}
-              emptyStringLabel={t`[empty string]`}
-              arrowButtonCollapsedLabel={t`Expand`}
-              arrowButtonExpandedLabel={t`Collapse`}
-              onNodeValueClick={copyToClipboard}
-            />
-          </StyledSection>
-        )}
+          {hasReturnValue && (
+            <StyledSection>
+              <StyledSectionTitle>{t`Return Value`}</StyledSectionTitle>
+              <JsonTree
+                value={job.returnValue}
+                shouldExpandNodeInitially={isAnyNode}
+                emptyArrayLabel={t`Empty Array`}
+                emptyObjectLabel={t`Empty Object`}
+                emptyStringLabel={t`[empty string]`}
+                arrowButtonCollapsedLabel={t`Expand`}
+                arrowButtonExpandedLabel={t`Collapse`}
+                onNodeValueClick={copyToClipboard}
+              />
+            </StyledSection>
+          )}
 
-        {hasData && (
-          <StyledSection>
-            <StyledSectionTitle>{t`Job Data`}</StyledSectionTitle>
-            <JsonTree
-              value={job.data}
-              shouldExpandNodeInitially={isAnyNode}
-              emptyArrayLabel={t`Empty Array`}
-              emptyObjectLabel={t`Empty Object`}
-              emptyStringLabel={t`[empty string]`}
-              arrowButtonCollapsedLabel={t`Expand`}
-              arrowButtonExpandedLabel={t`Collapse`}
-              onNodeValueClick={copyToClipboard}
-            />
-          </StyledSection>
-        )}
+          {hasData && (
+            <StyledSection>
+              <StyledSectionTitle>{t`Job Data`}</StyledSectionTitle>
+              <JsonTree
+                value={job.data}
+                shouldExpandNodeInitially={isAnyNode}
+                emptyArrayLabel={t`Empty Array`}
+                emptyObjectLabel={t`Empty Object`}
+                emptyStringLabel={t`[empty string]`}
+                arrowButtonCollapsedLabel={t`Expand`}
+                arrowButtonExpandedLabel={t`Collapse`}
+                onNodeValueClick={copyToClipboard}
+              />
+            </StyledSection>
+          )}
 
-        {hasLogs && (
-          <StyledSection>
-            <StyledSectionTitle>{t`Logs`}</StyledSectionTitle>
-            {job.logs?.map((log, index) => (
-              <StyledLogEntry key={index}>{log}</StyledLogEntry>
-            ))}
-          </StyledSection>
-        )}
-      </StyledDetailsContainer>
-    </Collapsible>
+          {hasLogs && (
+            <StyledSection>
+              <StyledSectionTitle>{t`Logs`}</StyledSectionTitle>
+              {job.logs?.map((log, index) => (
+                <StyledLogEntry key={index}>{log}</StyledLogEntry>
+              ))}
+            </StyledSection>
+          )}
+        </StyledDetailsContainer>
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

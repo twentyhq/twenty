@@ -169,6 +169,25 @@ describe('transformAggregateRawValueIntoAggregateDisplayValue', () => {
     ).toBe('230.4k');
   });
 
+  it('should return rating average rounded to one decimal', () => {
+    const mockRatingFieldMetadataItem = {
+      ...mockCompanyEmployeesFieldMetadataItem,
+      type: FieldMetadataType.RATING,
+    } as FieldMetadataItem;
+
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: mockRatingFieldMetadataItem,
+        aggregateOperation: AggregateOperations.AVG,
+        aggregateRawValue: '3.4285714285714286',
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+      }),
+    ).toBe('3.4');
+  });
+
   it('should return correct number formatted value', () => {
     expect(
       transformAggregateRawValueIntoAggregateDisplayValue({

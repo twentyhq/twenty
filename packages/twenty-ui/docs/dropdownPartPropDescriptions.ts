@@ -42,6 +42,15 @@ const DROPDOWN_ITEM_PROP_DESCRIPTIONS = {
 export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
   Root: DROPDOWN_ROOT_PROP_DESCRIPTIONS,
   Content: {
+    container:
+      'Portal destination, using the scoped theme when omitted. Explicit null waits for a target, matching Popover.Portal.',
+    keepMounted: 'Keeps the popup mounted while closed.',
+    side: 'Preferred side of the anchor. Defaults to bottom, or inline-end in a submenu.',
+    align: 'Alignment along the anchor. Defaults to start.',
+    sideOffset:
+      'Distance from the anchor. Defaults to 0. Accepts a number or positioning function.',
+    alignOffset:
+      'Offset along the alignment axis. Accepts a number or positioning function.',
     width: 'CSS width of the popup. Numbers are in pixels.',
   } satisfies Partial<Record<keyof DropdownContentProps, string>>,
   ActionItem: {

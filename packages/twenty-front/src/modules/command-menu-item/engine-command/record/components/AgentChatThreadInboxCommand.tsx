@@ -1,34 +1,21 @@
 import { useAgentChatChannelThreadTriage } from '@/ai/hooks/useAgentChatChannelThreadTriage';
-import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
+import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
+import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 type AgentChatThreadInboxCommandProps = {
-  action:
-    | 'read'
-    | 'unread'
-    | 'done'
-    | 'reopen'
-    | 'snooze'
-    | 'assign'
-    | 'subscribe'
-    | 'unsubscribe';
+  action: AgentChatInboxAction | 'assign';
 };
 
 export const AgentChatThreadInboxCommand = ({
   action,
 }: AgentChatThreadInboxCommandProps) => {
   const { selectedRecords } = useHeadlessCommandContextApi();
-  const {
-    markAgentChatThreadAsRead,
-    markAgentChatThreadAsUnread,
-    archiveAgentChatThread,
-    moveAgentChatThreadToInbox,
-    subscribeToAgentChatThread,
-    unsubscribeFromAgentChatThread,
-  } = useAgentChatThreadParticipants();
+  const { updateAgentChatThreadInboxState } =
+    useUpdateAgentChatThreadInboxState();
   const { markAgentChatThreadAsDoneInChannel, reopenAgentChatThreadInChannel } =
     useAgentChatChannelThreadTriage();
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
@@ -46,7 +33,7 @@ export const AgentChatThreadInboxCommand = ({
       (record) => record.inboxStatus?.isChannelCopy ?? false,
     );
 
-    if (action === 'snooze') {
+    if (action === AgentChatInboxAction.SNOOZE) {
       return openSnoozeAiChatInSidePanel(threadIds, { isInChannel });
     }
 
@@ -54,24 +41,23 @@ export const AgentChatThreadInboxCommand = ({
       return openAssignAiChatInSidePanel(threadIds);
     }
 
-    const updateThread = {
-      read: markAgentChatThreadAsRead,
-      unread: markAgentChatThreadAsUnread,
-      done: isInChannel
-        ? markAgentChatThreadAsDoneInChannel
-        : archiveAgentChatThread,
-      reopen: isInChannel
-        ? reopenAgentChatThreadInChannel
-        : moveAgentChatThreadToInbox,
-      subscribe: subscribeToAgentChatThread,
-      unsubscribe: unsubscribeFromAgentChatThread,
-    }[action];
+    if (
+      isInChannel &&
+      (action === AgentChatInboxAction.ARCHIVE ||
+        action === AgentChatInboxAction.MOVE_TO_INBOX)
+    ) {
+      await Promise.all(
+        threadIds.map(
+          action === AgentChatInboxAction.ARCHIVE
+            ? markAgentChatThreadAsDoneInChannel
+            : reopenAgentChatThreadInChannel,
+        ),
+      );
 
-    // One at a time: a failed update reloads every chat's state, which would
-    // undo the optimistic change of an update still on its way
-    for (const threadId of threadIds) {
-      await updateThread(threadId);
+      return;
     }
+
+    await updateAgentChatThreadInboxState({ threadIds, action });
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

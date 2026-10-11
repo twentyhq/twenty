@@ -248,12 +248,16 @@ export const OnboardingFreeCreditsPill = ({
               <IconInfoCircle size={theme.icon.size.md} color="currentColor" />
             </StyledInfoPart>
           </Popover.Trigger>
-          <Popover.Popup side="bottom" align="end" aria-label={t`Free credits`}>
-            <OnboardingFreeCreditsPopoverContent
-              earnedCredits={earnedCredits}
-              earnedCreditsByStep={earnedCreditsByStep}
-            />
-          </Popover.Popup>
+          <Popover.Portal>
+            <Popover.Positioner side="bottom" align="end">
+              <Popover.Popup aria-label={t`Free credits`}>
+                <OnboardingFreeCreditsPopoverContent
+                  earnedCredits={earnedCredits}
+                  earnedCreditsByStep={earnedCreditsByStep}
+                />
+              </Popover.Popup>
+            </Popover.Positioner>
+          </Popover.Portal>
         </Popover.Root>
       </StyledPillAnchor>
       <Tooltip.Root

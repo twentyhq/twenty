@@ -33,7 +33,7 @@ export class AgentChatChannelListService {
     workspaceMemberId: string;
   }): Promise<AgentChatChannelListItemDTO[]> {
     // Before the channels upgrade reaches the workspace there are none
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
+    if (!(await this.sharingService.hasChannels(workspaceId))) {
       return [];
     }
 

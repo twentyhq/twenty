@@ -1587,10 +1587,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
       expect(
         await global.testDataSource.query(
-          `SELECT "ownerType", "ownerKey" FROM core."pendingWakeUp" WHERE "ownerId" = (SELECT id FROM core."agentRunSuspension" WHERE "threadId" = $1)`,
+          `SELECT "ownerType", condition->>'type' AS "conditionType" FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
           [threadId],
         ),
-      ).toEqual([{ ownerType: 'AGENT_RUN', ownerKey: 'wait-1' }]);
+      ).toEqual([{ ownerType: 'AGENT_RUN', conditionType: 'TIME' }]);
 
       const run = await waitForRun(runId, 'COMPLETED');
 
@@ -1605,7 +1605,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ).toContain('The wait is over.');
       expect(
         await global.testDataSource.query(
-          `SELECT id FROM core."agentRunSuspension" WHERE "threadId" = $1`,
+          `SELECT id FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
           [threadId],
         ),
       ).toEqual([]);
@@ -1617,11 +1617,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       // the shape a step paused by 2.45 left behind
       await global.testDataSource.query(
-        `DELETE FROM core."agentRunSuspension" WHERE "threadId" = $1`,
+        `DELETE FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
         [threadId],
-      );
-      await global.testDataSource.query(
-        `UPDATE "${schema}"."agentMessagePart" SET "toolOutput" = "toolOutput" - 'awaitedByCaller' WHERE "toolCallId" = 'ask-1'`,
       );
       await global.testDataSource.query(
         `UPDATE "${schema}"."workflowRun" SET state = jsonb_set(state, ARRAY['stepInfos', $2::text], (state->'stepInfos'->$2::text) - 'wait' || jsonb_build_object('threadId', $3::text)) WHERE id = $1`,
@@ -1777,8 +1774,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
       expect(continueJobData).toMatchObject({
         workspaceId,
-        suspensionId: expect.any(String),
-        resumeCount: 0,
+        threadId,
+        wakeUpId: expect.any(String),
+        outcome: { type: 'ANSWERED' },
       });
 
       // The decision a parallel branch finishing in that window takes.

@@ -24,6 +24,8 @@ export type { DropdownSubmenuTriggerProps } from './Dropdown/types/DropdownSubme
 export type { DropdownTitleProps } from './Dropdown/types/DropdownTitleProps';
 export type { DropdownTriggerProps } from './Dropdown/types/DropdownTriggerProps';
 export type { DropdownType } from './Dropdown/types/DropdownType';
+export { ListItemButton } from './ListItemButton/ListItemButton';
+export type { ListItemButtonProps } from './ListItemButton/types/ListItemButtonProps';
 export { DEFAULT_COLOR_LABELS } from './MenuItem/constants/DefaultColorLabels';
 export { MenuItem } from './MenuItem/MenuItem';
 export type { ColorLabels } from './MenuItem/types/ColorLabels';

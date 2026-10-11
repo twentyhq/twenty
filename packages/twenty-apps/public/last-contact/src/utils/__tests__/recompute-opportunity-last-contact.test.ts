@@ -58,7 +58,9 @@ describe('recomputeOpportunitiesLastContact', () => {
   });
 
   it('clears the opportunity last contact when there is no point of contact', async () => {
-    client = buildClient([{ id: OPPORTUNITY_ID, pointOfContact: null }]);
+    client = buildClient([
+      { id: OPPORTUNITY_ID, ...POINT_OF_CONTACT, pointOfContact: null },
+    ]);
 
     await recomputeOpportunitiesLastContact(client as never, [OPPORTUNITY_ID]);
 
@@ -92,6 +94,44 @@ describe('recomputeOpportunitiesLastContact', () => {
         (record: { id: string }) => record.id,
       ),
     ).toEqual([OPPORTUNITY_ID, OTHER_OPPORTUNITY_ID]);
+  });
+
+  it('leaves out an opportunity whose last contact already matches', async () => {
+    client = buildClient([
+      {
+        id: OPPORTUNITY_ID,
+        lastContactAt: '2026-06-10T09:00:00Z',
+        lastContactItemMessageId: MESSAGE_ID,
+        lastContactItemCalendarEventId: null,
+        pointOfContact: POINT_OF_CONTACT,
+      },
+      { id: OTHER_OPPORTUNITY_ID, pointOfContact: POINT_OF_CONTACT },
+    ]);
+
+    await recomputeOpportunitiesLastContact(client as never, [
+      OPPORTUNITY_ID,
+      OTHER_OPPORTUNITY_ID,
+    ]);
+
+    expect(
+      client.mutation.mock.calls[0][0].createOpportunities.__args.data.map(
+        (record: { id: string }) => record.id,
+      ),
+    ).toEqual([OTHER_OPPORTUNITY_ID]);
+  });
+
+  it('skips the write when no opportunity changes', async () => {
+    client = buildClient([
+      {
+        id: OPPORTUNITY_ID,
+        ...POINT_OF_CONTACT,
+        pointOfContact: POINT_OF_CONTACT,
+      },
+    ]);
+
+    await recomputeOpportunitiesLastContact(client as never, [OPPORTUNITY_ID]);
+
+    expect(client.mutation).not.toHaveBeenCalled();
   });
 
   it('leaves out an opportunity that no longer exists', async () => {

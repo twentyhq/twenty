@@ -6,7 +6,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { ChartManualSortSubMenuContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent';
 import { X_SORT_BY_OPTIONS } from '@/side-panel/pages/page-layout/constants/XSortByOptions';
 import { useGraphXSortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { filterSortOptionsByFieldType } from '@/side-panel/pages/page-layout/utils/filterSortOptionsByFieldType';
@@ -23,7 +23,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   type BarChartConfiguration,
   GraphOrderBy,
@@ -32,7 +32,7 @@ import {
 
 export const ChartSortBySelectionDropdownContent = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { updateCurrentWidgetConfig } =
@@ -184,7 +184,7 @@ export const ChartSortBySelectionDropdownContent = () => {
                 handleSelect(sortOption.value);
               }}
             >
-              <ListItem
+              <ListItemButton
                 focused={selectedItemId === sortOption.value}
                 onClick={() => {
                   handleSelect(sortOption.value);
@@ -219,7 +219,7 @@ export const ChartSortBySelectionDropdownContent = () => {
                       configuration.aggregateOperation ?? undefined,
                   })}
                 />
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           );
         })}

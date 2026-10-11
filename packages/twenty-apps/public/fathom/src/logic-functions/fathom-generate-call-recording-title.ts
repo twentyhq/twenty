@@ -1,15 +1,15 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { FATHOM_GENERATE_CALL_RECORDING_TITLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { fathomGenerateCallRecordingTitlePayloadSchema } from 'src/logic-functions/schemas/fathom-generate-call-recording-title-payload.schema';
+import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
 import { renameFathomCallRecording } from 'src/logic-functions/utils/rename-fathom-call-recording.util';
 
 export const fathomGenerateCallRecordingTitleHandler = async (
   payload: unknown,
 ) =>
   renameFathomCallRecording({
-    coreApiClient: new CoreApiClient({ runAs: 'application' }),
+    coreApiClient: createFathomCoreApiClient(),
     payload: fathomGenerateCallRecordingTitlePayloadSchema.parse(payload),
   });
 

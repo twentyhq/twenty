@@ -3,10 +3,10 @@ import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationDrawerAiChatTriageItem } from '@/ai/components/NavigationDrawerAiChatTriageItem';
+import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { agentChatOpenThreadsSummarySelector } from '@/ai/states/selectors/agentChatOpenThreadsSummarySelector';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
@@ -37,7 +37,7 @@ export const NavigationDrawerAiChatTriageSection = () => {
     needsInputThreadCount,
     hasUnreadMentionThread,
     hasUnreadAssignedThread,
-  } = useAtomStateValue(agentChatOpenThreadsSummarySelector);
+  } = useAgentChatOpenThreadsSummary();
 
   const getOpenSubItemState = (index: number) =>
     getNavigationSubItemLeftAdornment({

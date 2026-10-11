@@ -88,7 +88,7 @@ export class AgentChatDefaultChannelService {
 
   // A default channel that already exists stays as its members made it
   async ensureDefaultChannels(workspaceId: string): Promise<void> {
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
+    if (!(await this.sharingService.hasChannels(workspaceId))) {
       return;
     }
 
@@ -180,7 +180,7 @@ export class AgentChatDefaultChannelService {
     workspaceId: string;
     workspaceMemberIds: string[];
   }): Promise<void> {
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
+    if (!(await this.sharingService.hasChannels(workspaceId))) {
       return;
     }
 
@@ -225,7 +225,7 @@ export class AgentChatDefaultChannelService {
   // Null once System is gone, leaving those conversations out of every inbox
   // as before channels existed
   async findSystemChannelId(workspaceId: string): Promise<string | null> {
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
+    if (!(await this.sharingService.hasChannels(workspaceId))) {
       return null;
     }
 

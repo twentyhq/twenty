@@ -10,10 +10,7 @@ import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentCh
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
-import {
-  AgentChatInboxViewKind,
-  GetAgentChatInboxThreadIdsDocument,
-} from '~/generated-metadata/graphql';
+import { GetAgentChatChannelThreadIdsDocument } from '~/generated-metadata/graphql';
 
 const AGENT_CHAT_CHANNEL_THREADS_PAGE_SIZE = 30;
 
@@ -45,21 +42,18 @@ export const useLoadAgentChatChannelThreads = () => {
       const page = (
         await apolloClient
           .query({
-            query: GetAgentChatInboxThreadIdsDocument,
+            query: GetAgentChatChannelThreadIdsDocument,
             variables: {
-              view: {
-                kind: AgentChatInboxViewKind.CHANNEL,
-                channelId: channelView.channelId,
-                channelStatus: channelView.channelStatus,
-                assignment: channelView.assignment,
-              },
+              channelId: channelView.channelId,
+              status: channelView.channelStatus,
+              assignment: channelView.assignment,
               first: AGENT_CHAT_CHANNEL_THREADS_PAGE_SIZE,
               after: isFetchMore ? listBeforeRequest?.endCursor : null,
             },
             fetchPolicy: 'network-only',
           })
           .catch(() => undefined)
-      )?.data?.agentChatInboxThreadIds;
+      )?.data?.agentChatChannelThreadIds;
 
       if (!isDefined(page)) {
         return;

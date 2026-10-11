@@ -1,7 +1,6 @@
 import { useRender } from '@base-ui/react/use-render';
 import { isString } from '@sniptt/guards';
 import { clsx } from 'clsx';
-import { type MouseEvent } from 'react';
 
 import { IconCheck, IconChevronRight } from '@ui/icon';
 import { Shortcut } from '@ui/primitives/typography/Shortcut/Shortcut';
@@ -32,24 +31,9 @@ export const ListItem = ({
   children,
   render,
   ref,
-  onClick,
   ...props
 }: ListItemProps) => {
   const hasDescription = isRenderableSlot(description);
-
-  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (disabled) {
-      event.preventDefault();
-      return;
-    }
-
-    if (!isDefined(onClick)) {
-      return;
-    }
-
-    event.stopPropagation();
-    onClick(event);
-  };
 
   return useRender({
     render,
@@ -59,8 +43,6 @@ export const ListItem = ({
       ...props,
       'data-actions-visibility': actionsVisibility,
       className: clsx(styles.root, className),
-      'aria-disabled': disabled || undefined,
-      onClick: handleClick,
       children: (
         <>
           {indicator === 'checkbox' && (
