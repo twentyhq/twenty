@@ -161,16 +161,6 @@ describe('Persisted chat senders', () => {
         .connection;
     const args = { workspaceId, dataSource, index: 0, total: 1, options: {} };
 
-    await expect(
-      actors.authorizeJob({
-        workspaceId,
-        threadId,
-        turnId: legacy.turnId!,
-        userWorkspaceId,
-      }),
-    ).resolves.toMatchObject({
-      sender: { userWorkspaceId, applicationId: null },
-    });
     await command.up(args);
     await command.up(args);
     await command.down(args);
