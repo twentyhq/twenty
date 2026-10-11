@@ -13,11 +13,11 @@ export const useCanRetryCurrentAiChatTurn = () => {
   const lastUserMessage = agentChatDisplayedThreadMessages.findLast(
     (message) => message.role === 'user' && message.status !== 'queued',
   );
-  const senderId = lastUserMessage?.metadata?.senderUserWorkspaceId;
+  const senderId = lastUserMessage?.metadata?.senderWorkspaceMemberId;
 
   return (
     !isReadOnly &&
     isDefined(senderId) &&
-    senderId === currentWorkspaceMember?.userWorkspaceId
+    senderId === currentWorkspaceMember?.id
   );
 };
