@@ -41,14 +41,16 @@ type ResolvedUniversalIdentifiers<
   T extends AllMetadataName,
   TProvidedKeys extends Extract<MetadataManyToOneJoinColumn<T>, string>,
 > = {
-  [K in keyof ManyToOneConfig<T> as ManyToOneConfig<T>[K] extends {
-    foreignKey: infer FK extends string;
-    universalForeignKey: infer UFK extends string;
-  }
-    ? FK extends TProvidedKeys
-      ? UFK
+  [
+    K in keyof ManyToOneConfig<T> as ManyToOneConfig<T>[K] extends {
+      foreignKey: infer FK extends string;
+      universalForeignKey: infer UFK extends string;
+    }
+      ? FK extends TProvidedKeys
+        ? UFK
+        : never
       : never
-    : never]: ManyToOneConfig<T>[K] extends { isNullable: true }
+  ]: ManyToOneConfig<T>[K] extends { isNullable: true }
     ? string | null
     : string;
 };

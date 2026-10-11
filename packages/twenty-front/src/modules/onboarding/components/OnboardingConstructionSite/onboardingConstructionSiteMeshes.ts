@@ -67,9 +67,10 @@ const buildCubeVertices = () => {
 
   return toVertexData(
     faces.flatMap(({ normal, corners }) =>
-      [0, 1, 2, 0, 2, 3].map(
-        (cornerIndex): Vertex => [...corners[cornerIndex], ...normal],
-      ),
+      [0, 1, 2, 0, 2, 3].map((cornerIndex): Vertex => [
+        ...corners[cornerIndex],
+        ...normal,
+      ]),
     ),
   );
 };
