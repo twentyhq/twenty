@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { type CreatedCoreWorkflow } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -53,11 +53,7 @@ const createCompleteWorkflowSchema = z.object({
 
 type CreateCompleteWorkflowToolDeps = Pick<
   WorkflowToolDependencies,
-  | 'coreWorkflowMutationService'
-  | 'coreWorkflowVersionListService'
-  | 'coreWorkflowVersionMutationService'
-  | 'coreWorkflowVersionWriteService'
-  | 'coreWorkflowLifecycleService'
+  'coreWorkflowMutationService' | 'coreWorkflowLifecycleService'
 >;
 
 export const createCreateCompleteWorkflowTool = (
@@ -76,6 +72,7 @@ CRITICAL SCHEMA REQUIREMENTS:
 - RICH_TEXT fields (e.g. a note/task "body") MUST be an object, not a string: { "markdown": "your text, may contain {{variables}}" }. A bare string is rejected.
 - Use "trigger" as the id for the trigger step in edges
 - Step positions are computed automatically; do not provide coordinates
+- settings.outputSchema can be {}: Twenty derives each step's output schema from its settings
 
 ITERATOR steps (loops):
 - An edge leaving an ITERATOR only enters the loop body when it carries sourceConnectionOptions: { connectedStepType: "ITERATOR", settings: { isConnectedToLoop: true } }. Without it the target is placed after the loop instead.
@@ -117,96 +114,73 @@ Call validate_workflow once when the workflow is complete, before activating.`,
     }>;
     activate?: boolean;
   }) => {
-    try {
-      const { workspaceId } = context;
+    let createdWorkflow: CreatedCoreWorkflow;
 
+    try {
       assertStepTypesAreSupported(parameters.steps);
 
-      const coreWorkflow =
-        await deps.coreWorkflowMutationService.createWorkflow({
-          workspaceId,
+      createdWorkflow =
+        await deps.coreWorkflowMutationService.createWorkflowWithContent({
+          workspaceId: context.workspaceId,
           createdBy: context.actorContext ?? DEFAULT_AGENT_WORKFLOW_ACTOR,
           userWorkspaceId: undefined,
           name: parameters.name,
+          trigger: parameters.trigger,
+          steps: parameters.steps,
+          edges: parameters.edges ?? [],
         });
-
-      const coreWorkflowVersionId = await findInitialDraftCoreVersionIdOrThrow({
-        deps,
-        workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        coreWorkflowId: coreWorkflow.id,
-      });
-
-      const { coreWorkflowVersion } =
-        await deps.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-          {
-            workspaceId,
-            userWorkspaceId: context.userWorkspaceId,
-            coreWorkflowVersionId,
-          },
-        );
-
-      await deps.coreWorkflowVersionWriteService.writeContentAndMirror({
-        workspaceId,
-        coreWorkflowVersionId,
-        expectedVersion: coreWorkflowVersion,
-        trigger: parameters.trigger,
-        steps: parameters.steps,
-      });
-
-      for (const edge of parameters.edges ?? []) {
-        await deps.coreWorkflowVersionMutationService.createEdge({
-          userWorkspaceId: context.userWorkspaceId,
-          source: edge.source,
-          target: edge.target,
-          sourceConnectionOptions: edge.sourceConnectionOptions,
-          coreWorkflowVersionId,
-          workspaceId,
-        });
-      }
-
-      await deps.coreWorkflowVersionMutationService.autoLayoutCoreWorkflowVersion(
-        {
-          workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
-          coreWorkflowVersionId,
-        },
-      );
-
-      if (parameters.activate) {
-        await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
-          workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
-          coreWorkflowVersionId,
-        });
-      }
-
-      return {
-        success: true,
-        message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
-        result: {
-          coreWorkflowId: coreWorkflow.id,
-          coreWorkflowVersionId,
-          name: parameters.name,
-          stepIds: parameters.steps.map((step) => step.id),
-        },
-        recordReferences: isDefined(coreWorkflow.workspaceWorkflowId)
-          ? [
-              {
-                objectNameSingular: 'workflow',
-                recordId: coreWorkflow.workspaceWorkflowId,
-                displayName: parameters.name,
-              },
-            ]
-          : [],
-      };
     } catch (error) {
       return {
         success: false,
-        message: `Failed to create workflow "${parameters.name}": ${error.message}`,
+        message: `Failed to create workflow "${parameters.name}", nothing was created: ${error.message}`,
         error: error.message,
       };
     }
+
+    const { coreWorkflow, coreWorkflowVersionId } = createdWorkflow;
+
+    const result = {
+      coreWorkflowId: coreWorkflow.id,
+      coreWorkflowVersionId,
+      name: parameters.name,
+      stepIds: parameters.steps.map((step) => step.id),
+    };
+
+    const recordReferences = isDefined(coreWorkflow.workspaceWorkflowId)
+      ? [
+          {
+            objectNameSingular: 'workflow',
+            recordId: coreWorkflow.workspaceWorkflowId,
+            displayName: parameters.name,
+          },
+        ]
+      : [];
+
+    if (parameters.activate) {
+      try {
+        await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          coreWorkflowVersionId,
+        });
+      } catch (error) {
+        // the workflow exists at this point, so the ids are returned to fix it rather than create a duplicate
+        return {
+          success: false,
+          message: `Workflow "${parameters.name}" was created as a draft but could not be activated: ${error.message}. Do not create it again: fix the draft (coreWorkflowVersionId ${coreWorkflowVersionId}), call validate_workflow, then activate_workflow_version.`,
+          error: error.message,
+          result,
+          recordReferences,
+        };
+      }
+    }
+
+    return {
+      success: true,
+      message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
+      result,
+      recordReferences,
+    };
   },
 });
 
@@ -235,36 +209,4 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
       WorkflowVersionStepExceptionCode.INVALID_REQUEST,
     );
   }
-};
-
-const findInitialDraftCoreVersionIdOrThrow = async ({
-  deps,
-  workspaceId,
-  userWorkspaceId,
-  coreWorkflowId,
-}: {
-  deps: CreateCompleteWorkflowToolDeps;
-  workspaceId: string;
-  userWorkspaceId: string | undefined;
-  coreWorkflowId: string;
-}): Promise<string> => {
-  const coreWorkflowVersions =
-    await deps.coreWorkflowVersionListService.findManyByCoreWorkflowId({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowId,
-    });
-
-  const draftVersion = coreWorkflowVersions.find(
-    (version) => version.status === CoreWorkflowVersionStatus.DRAFT,
-  );
-
-  if (!isDefined(draftVersion)) {
-    throw new WorkflowVersionStepException(
-      `Created workflow '${coreWorkflowId}' has no initial draft version`,
-      WorkflowVersionStepExceptionCode.NOT_FOUND,
-    );
-  }
-
-  return draftVersion.id;
 };
