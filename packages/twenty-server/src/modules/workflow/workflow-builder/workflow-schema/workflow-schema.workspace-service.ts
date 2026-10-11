@@ -652,7 +652,7 @@ export class WorkflowSchemaWorkspaceService {
         });
       } catch (error) {
         this.logger.warn(
-          `Falling back to the default iterator item schema for '${items}': ${error instanceof Error ? error.message : String(error)}`,
+          `Falling back to the default iterator item schema for '${items}' in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
         );
 
         return DEFAULT_ITERATOR_CURRENT_ITEM;
