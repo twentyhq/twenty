@@ -45,7 +45,17 @@ const THREADS: {
       snoozedUntil: '2026-10-02T09:00:00.000Z',
     },
   },
-  { id: 'unread', deletedAt: null, participant: undefined },
+  {
+    id: 'unread',
+    deletedAt: null,
+    participant: { ...READ, lastReadAt: null, archivedAt: null },
+  },
+  { id: 'not-followed', deletedAt: null, participant: undefined },
+  {
+    id: 'opened-not-followed',
+    deletedAt: null,
+    participant: { ...READ, archivedAt: null, isSubscribed: false },
+  },
   {
     id: 'snoozed',
     deletedAt: null,

@@ -40,31 +40,18 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 type BuildParticipantWriteQuery = (tables: {
   participantTable: string;
   threadTable: string;
-  isSubscribedByDefault: string;
 }) => string;
 
-// SQL over the chat aliased "thread": a member reading or filing a channel
-// chat they do not follow gets a row without following it, and any other
-// chat is theirs to follow
-const buildIsSubscribedByDefault = (hasChannels: boolean) =>
-  hasChannels ? 'thread."channelId" IS NULL' : 'true';
-
 // A snooze whose end is already due, which its queued end may have checked
-// before this write, is saved as ended. A snoozed thread is meant to come
-// back, so snoozing follows it again
-const buildArchiveQuery: BuildParticipantWriteQuery = ({
-  participantTable,
-  threadTable,
-  isSubscribedByDefault,
-}) =>
+// before this write, is saved as ended. Filing a thread, done or snoozed,
+// follows it, so new activity or the snooze's end brings it back
+const buildArchiveQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
   `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil", "isSubscribed")
-   SELECT thread.id, $2, CASE WHEN $3::timestamptz <= clock_timestamp() THEN NULL ELSE clock_timestamp() END, $3,
-     $3::timestamptz IS NOT NULL OR ${isSubscribedByDefault}
-   FROM ${threadTable} thread WHERE thread.id = $1
+   VALUES ($1, $2, CASE WHEN $3::timestamptz <= clock_timestamp() THEN NULL ELSE clock_timestamp() END, $3, true)
    ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
      "archivedAt" = EXCLUDED."archivedAt",
      "snoozedUntil" = EXCLUDED."snoozedUntil",
-     "isSubscribed" = participant."isSubscribed" OR EXCLUDED."snoozedUntil" IS NOT NULL,
+     "isSubscribed" = true,
      "updatedAt" = now()
    RETURNING *`;
 
@@ -75,27 +62,18 @@ const INBOX_ACTION_QUERIES: Record<
   AgentChatInboxAction,
   BuildParticipantWriteQuery
 > = {
-  // Read up to what the thread holds now, never past it, and never back
-  [AgentChatInboxAction.READ]: ({
-    participantTable,
-    threadTable,
-    isSubscribedByDefault,
-  }) =>
+  // Read up to what the thread holds now, never past it, and never back.
+  // Reading or marking unread tracks a chat without following it
+  [AgentChatInboxAction.READ]: ({ participantTable, threadTable }) =>
     `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
-     SELECT thread.id, $2, thread."lastActivityAt", ${isSubscribedByDefault}
-     FROM ${threadTable} thread WHERE thread.id = $1
+     SELECT thread.id, $2, thread."lastActivityAt", false FROM ${threadTable} thread WHERE thread.id = $1
      ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
        "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
        "updatedAt" = now()
      RETURNING *`,
-  [AgentChatInboxAction.UNREAD]: ({
-    participantTable,
-    threadTable,
-    isSubscribedByDefault,
-  }) =>
+  [AgentChatInboxAction.UNREAD]: ({ participantTable }) =>
     `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
-     SELECT thread.id, $2, NULL, ${isSubscribedByDefault}
-     FROM ${threadTable} thread WHERE thread.id = $1
+     VALUES ($1, $2, NULL, false)
      ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
        "lastReadAt" = NULL,
        "updatedAt" = now()
@@ -437,9 +415,8 @@ export class AgentChatThreadParticipantService {
     return rows[0];
   }
 
-  // Over every chat the member can open, the way the inbox lists them; a chat
-  // without the member's row is in their inbox, unread, unless it is in a
-  // channel
+  // Over the chats the member can open and follows, the way the inbox lists
+  // them
   async findOpenThreadsSummary({
     workspaceId,
     workspaceMemberId,
@@ -451,7 +428,6 @@ export class AgentChatThreadParticipantService {
       workspaceId,
       workspaceMemberId,
     });
-    const hasChannels = await this.sharingService.hasChannels(workspaceId);
 
     const [summary] = await this.workspaceOrmManager
       .executeInWorkspaceContext(() => {
@@ -464,10 +440,6 @@ export class AgentChatThreadParticipantService {
           .select([])
           .addSelect('"thread"."id"', 'id')
           .addSelect('"thread"."lastActivityAt"', 'lastActivityAt')
-          .addSelect(
-            hasChannels ? '"thread"."channelId"' : 'NULL::uuid',
-            'channelId',
-          )
           .addSelect('"thread"."assigneeId"', 'assigneeId')
           .addSelect(
             '"thread"."pendingQuestionMessageId"',
@@ -486,9 +458,9 @@ export class AgentChatThreadParticipantService {
                thread."lastActivityAt" IS NOT NULL
                  AND (participant."lastReadAt" IS NULL OR thread."lastActivityAt" > participant."lastReadAt") AS "isUnread"
              FROM (${readableThreads.getQuery()}) thread
-             LEFT JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
+             JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
                ON participant."threadId" = thread.id AND participant."workspaceMemberId" = :summaryWorkspaceMemberId
-             WHERE COALESCE(participant."isSubscribed", ${buildIsSubscribedByDefault(hasChannels)})
+             WHERE participant."isSubscribed"
                AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt")
            )
            SELECT
@@ -616,9 +588,6 @@ export class AgentChatThreadParticipantService {
   ): Promise<AgentChatThreadParticipantRow[]> {
     const objectMetadataId =
       await this.sharingService.getParticipantObjectMetadataId(workspaceId);
-    const isSubscribedByDefault = buildIsSubscribedByDefault(
-      await this.sharingService.hasChannels(workspaceId),
-    );
 
     const writes = await this.threadRepository.query(
       workspaceId,
@@ -629,7 +598,6 @@ export class AgentChatThreadParticipantService {
                participantTable:
                  getAgentChatThreadParticipantTable(workspaceId),
                threadTable: table('agentChatThread'),
-               isSubscribedByDefault,
              })}
            ), owner_share AS (
              ${buildAgentChatThreadParticipantOwnerShareInsert({

@@ -502,13 +502,13 @@ describe('Chat channels through the authenticated API', () => {
       jonyOpenThreadCount,
     );
 
-    // Filing a chat they do not follow does not follow it either
+    // Filing it follows it, so new activity brings it back to his inbox
     expectNoErrors(
       await runInboxAction('ARCHIVE', threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     );
 
     expect(await readMemberCopy(threadId, JONY)).toMatchObject({
-      isSubscribed: false,
+      isSubscribed: true,
     });
 
     expectNoErrors(
