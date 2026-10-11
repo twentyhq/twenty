@@ -16,6 +16,7 @@ import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { isFlatFieldMetadataEligibleForRecordForm } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/is-flat-field-metadata-eligible-for-record-form.util';
 import { addMorphFieldsForLegacyManifest } from 'src/engine/core-modules/application/application-manifest/utils/add-morph-fields-for-legacy-manifest.util';
+import { moveLegacyMorphViewFieldsToOwner } from 'src/engine/core-modules/application/application-manifest/utils/move-legacy-morph-view-fields-to-owner.util';
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -623,6 +624,40 @@ describe('independent morph fields', () => {
     ).toEqual(renamedGroup);
   });
 
+  it('merges legacy manifest columns of one morph group into a single owner column', () => {
+    const maps = fixture();
+    const template = Object.values(maps.flatViewFieldMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .find((field) => field.fieldMetadataId === maps.group.id)!;
+    const legacyColumns = maps.targets.slice(0, 2).map((target, index) => ({
+      ...template,
+      universalIdentifier: `legacy-column-${index}`,
+      fieldMetadataUniversalIdentifier: target.universalIdentifier,
+      position: 5 - index,
+      size: 200 + index,
+    }));
+    const flatViewFieldMaps = createMaps(legacyColumns);
+    moveLegacyMorphViewFieldsToOwner({
+      flatViewFieldMaps,
+      logicalIdentifierByTargetIdentifier: new Map(
+        maps.targets.map((target) => [
+          target.universalIdentifier,
+          maps.group.universalIdentifier,
+        ]),
+      ),
+    });
+    expect(
+      Object.values(flatViewFieldMaps.byUniversalIdentifier).filter(isDefined),
+    ).toEqual([
+      expect.objectContaining({
+        universalIdentifier: legacyColumns[1].universalIdentifier,
+        fieldMetadataUniversalIdentifier: maps.group.universalIdentifier,
+        position: 4,
+        size: 201,
+      }),
+    ]);
+  });
+
   it.each([false, true])(
     'allows missing owners only for internal standard migrations (system build: %s)',
     (isSystemBuild) => {
@@ -746,13 +781,16 @@ describe('independent morph fields', () => {
         now: maps.group.createdAt,
         workspaceId: maps.group.workspaceId,
       });
-      for (const column of columns) {
-        expect(
-          result.flatViewFieldMaps.byUniversalIdentifier[
-            column.universalIdentifier
-          ]?.fieldMetadataUniversalIdentifier,
-        ).toBe(maps.group.universalIdentifier);
-      }
+      expect(
+        Object.values(result.flatViewFieldMaps.byUniversalIdentifier)
+          .filter(isDefined)
+          .map((viewField) => [
+            viewField.universalIdentifier,
+            viewField.fieldMetadataUniversalIdentifier,
+          ]),
+      ).toEqual([
+        [columns[0].universalIdentifier, maps.group.universalIdentifier],
+      ]);
       expect(
         result.flatFieldMetadataMaps.byUniversalIdentifier[
           maps.group.universalIdentifier

@@ -20,8 +20,11 @@ const ROLE_ID = v4();
 const MORPH_ID = v4();
 const TARGET_ID = v4();
 const INVERSE_ID = v4();
+const SECOND_TARGET_ID = v4();
+const SECOND_INVERSE_ID = v4();
 const VIEW_ID = v4();
 const VIEW_FIELD_ID = v4();
+const SECOND_VIEW_FIELD_ID = v4();
 
 const manifest = buildBaseManifest({
   appId: APPLICATION_ID,
@@ -56,6 +59,34 @@ const manifest = buildBaseManifest({
         relationTargetFieldMetadataUniversalIdentifier: TARGET_ID,
         universalSettings: { relationType: RelationType.ONE_TO_MANY },
       },
+      {
+        universalIdentifier: SECOND_TARGET_ID,
+        objectUniversalIdentifier: STANDARD_OBJECTS.person.universalIdentifier,
+        type: FieldMetadataType.MORPH_RELATION,
+        name: 'legacyRelatedOpportunity',
+        label: 'Legacy related',
+        morphId: MORPH_ID,
+        relationTargetObjectMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.universalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier: SECOND_INVERSE_ID,
+        universalSettings: {
+          relationType: RelationType.MANY_TO_ONE,
+          joinColumnName: 'legacyRelatedOpportunityId',
+          onDelete: RelationOnDeleteAction.SET_NULL,
+        },
+      },
+      {
+        universalIdentifier: SECOND_INVERSE_ID,
+        objectUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.universalIdentifier,
+        type: FieldMetadataType.RELATION,
+        name: 'legacyRelatedPeople',
+        label: 'Legacy related people',
+        relationTargetObjectMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.person.universalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier: SECOND_TARGET_ID,
+        universalSettings: { relationType: RelationType.ONE_TO_MANY },
+      },
     ],
     views: [
       {
@@ -69,6 +100,13 @@ const manifest = buildBaseManifest({
             universalIdentifier: VIEW_FIELD_ID,
             fieldMetadataUniversalIdentifier: TARGET_ID,
             position: 0,
+            isVisible: true,
+            size: 150,
+          },
+          {
+            universalIdentifier: SECOND_VIEW_FIELD_ID,
+            fieldMetadataUniversalIdentifier: SECOND_TARGET_ID,
+            position: 1,
             isVisible: true,
             size: 150,
           },
@@ -94,7 +132,7 @@ describe('Legacy morph application manifests', () => {
     });
   }, 60000);
 
-  it('preserves the logical field and its saved column across repeated imports on standard objects', async () => {
+  it('merges target columns into one logical field column across repeated imports on standard objects', async () => {
     let ownerId: string | undefined;
     for (let iteration = 0; iteration < 2; iteration++) {
       const { errors } = await syncApplication({
@@ -131,10 +169,17 @@ describe('Legacy morph application manifests', () => {
         expectToFail: false,
       });
       expect(
-        columns.getViewFields.find(
-          (column) => column.universalIdentifier === VIEW_FIELD_ID,
-        )?.fieldMetadataId,
-      ).toBe(ownerId);
+        columns.getViewFields
+          .filter((column) =>
+            [VIEW_FIELD_ID, SECOND_VIEW_FIELD_ID].includes(
+              column.universalIdentifier,
+            ),
+          )
+          .map((column) => [
+            column.universalIdentifier,
+            column.fieldMetadataId,
+          ]),
+      ).toEqual([[VIEW_FIELD_ID, ownerId]]);
     }
   }, 60000);
 });

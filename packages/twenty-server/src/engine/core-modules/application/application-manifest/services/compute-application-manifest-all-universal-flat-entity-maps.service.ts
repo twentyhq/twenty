@@ -11,6 +11,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { addMorphFieldsForLegacyManifest } from 'src/engine/core-modules/application/application-manifest/utils/add-morph-fields-for-legacy-manifest.util';
+import { moveLegacyMorphViewFieldsToOwner } from 'src/engine/core-modules/application/application-manifest/utils/move-legacy-morph-view-fields-to-owner.util';
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
@@ -704,15 +705,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    for (const viewField of Object.values(
-      allUniversalFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
-    )) {
-      if (!isDefined(viewField)) continue;
-      viewField.fieldMetadataUniversalIdentifier =
-        legacyMorphFieldIdentifiers.get(
-          viewField.fieldMetadataUniversalIdentifier,
-        ) ?? viewField.fieldMetadataUniversalIdentifier;
-    }
+    moveLegacyMorphViewFieldsToOwner({
+      flatViewFieldMaps: allUniversalFlatEntityMaps.flatViewFieldMaps,
+      logicalIdentifierByTargetIdentifier: legacyMorphFieldIdentifiers,
+    });
 
     return allUniversalFlatEntityMaps;
   }
