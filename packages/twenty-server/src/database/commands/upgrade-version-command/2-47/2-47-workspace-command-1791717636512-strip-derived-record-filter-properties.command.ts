@@ -131,9 +131,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       ? await this.rewriteRows({
           dataSource,
           isDryRun,
-          selectQuery: `SELECT id, steps AS value FROM "${schemaName}"."workflowVersion" WHERE steps @> '[{"type":"FIND_RECORDS"}]'`,
-          selectParameters: [],
-          updateQuery: `UPDATE "${schemaName}"."workflowVersion" SET steps = $1::jsonb WHERE id = $2`,
+          tableName: `"${schemaName}"."workflowVersion"`,
+          columnName: 'steps',
+          whereClause: `steps @> '[{"type":"FIND_RECORDS"}]'`,
+          whereParameters: [],
           mapValue: (steps) =>
             mapFindRecordsStepRecordFilters(
               steps,
@@ -147,9 +148,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
         ? await this.rewriteRows({
             dataSource,
             isDryRun,
-            selectQuery: `SELECT id, state AS value FROM "${schemaName}"."workflowRun" WHERE jsonb_path_exists(state, $1::jsonpath)`,
-            selectParameters: [INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH],
-            updateQuery: `UPDATE "${schemaName}"."workflowRun" SET state = $1::jsonb WHERE id = $2`,
+            tableName: `"${schemaName}"."workflowRun"`,
+            columnName: 'state',
+            whereClause: 'jsonb_path_exists(state, $1::jsonpath)',
+            whereParameters: [INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH],
             mapValue: (state) => this.mapWorkflowRunState(state, rewrite),
           })
         : 0;
@@ -157,9 +159,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
     const coreWorkflowVersionCount = await this.rewriteRows({
       dataSource,
       isDryRun,
-      selectQuery: `SELECT id, steps AS value FROM core."workflowVersion" WHERE "workspaceId" = $1 AND steps @> '[{"type":"FIND_RECORDS"}]'`,
-      selectParameters: [workspaceId],
-      updateQuery: `UPDATE core."workflowVersion" SET steps = $1::jsonb WHERE id = $2`,
+      tableName: 'core."workflowVersion"',
+      columnName: 'steps',
+      whereClause: `"workspaceId" = $1 AND steps @> '[{"type":"FIND_RECORDS"}]'`,
+      whereParameters: [workspaceId],
       mapValue: (steps) =>
         mapFindRecordsStepRecordFilters(
           steps,
@@ -170,9 +173,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
     const chartWidgetCount = await this.rewriteRows({
       dataSource,
       isDryRun,
-      selectQuery: `SELECT id, configuration AS value FROM core."pageLayoutWidget" WHERE "workspaceId" = $1 AND configuration -> 'filter' IS NOT NULL`,
-      selectParameters: [workspaceId],
-      updateQuery: `UPDATE core."pageLayoutWidget" SET configuration = $1::jsonb WHERE id = $2`,
+      tableName: 'core."pageLayoutWidget"',
+      columnName: 'configuration',
+      whereClause: `"workspaceId" = $1 AND configuration -> 'filter' IS NOT NULL`,
+      whereParameters: [workspaceId],
       mapValue: (configuration) =>
         mapChartWidgetRecordFilters(configuration, rewrite.mapChartRecordFilter),
     });
@@ -218,36 +222,64 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
   private async rewriteRows({
     dataSource,
     isDryRun,
-    selectQuery,
-    selectParameters,
-    updateQuery,
+    tableName,
+    columnName,
+    whereClause,
+    whereParameters,
     mapValue,
   }: {
     dataSource: DataSource;
     isDryRun: boolean;
-    selectQuery: string;
-    selectParameters: unknown[];
-    updateQuery: string;
+    tableName: string;
+    columnName: string;
+    whereClause: string;
+    whereParameters: unknown[];
     mapValue: (value: unknown) => { value: unknown; hasChanged: boolean };
   }): Promise<number> {
     const rows: { id: string; value: unknown }[] = await dataSource.query(
-      selectQuery,
-      selectParameters,
+      `SELECT id, ${columnName} AS value FROM ${tableName} WHERE ${whereClause}`,
+      whereParameters,
     );
+
+    const rowIdsToRewrite = rows
+      .filter((row) => mapValue(row.value).hasChanged)
+      .map((row) => row.id);
+
+    if (isDryRun) {
+      return rowIdsToRewrite.length;
+    }
 
     let rewrittenCount = 0;
 
-    for (const row of rows) {
-      const { value, hasChanged } = mapValue(row.value);
+    for (const rowId of rowIdsToRewrite) {
+      // Workers and servers keep writing while workspaces upgrade, so the row
+      // is mapped again under a lock to never overwrite a newer value
+      const hasRewritten = await dataSource.transaction(async (manager) => {
+        const [lockedRow]: { value: unknown }[] = await manager.query(
+          `SELECT ${columnName} AS value FROM ${tableName} WHERE id = $1 FOR UPDATE`,
+          [rowId],
+        );
 
-      if (!hasChanged) {
-        continue;
-      }
+        if (!isDefined(lockedRow)) {
+          return false;
+        }
 
-      rewrittenCount += 1;
+        const { value, hasChanged } = mapValue(lockedRow.value);
 
-      if (!isDryRun) {
-        await dataSource.query(updateQuery, [JSON.stringify(value), row.id]);
+        if (!hasChanged) {
+          return false;
+        }
+
+        await manager.query(
+          `UPDATE ${tableName} SET ${columnName} = $1::jsonb WHERE id = $2`,
+          [JSON.stringify(value), rowId],
+        );
+
+        return true;
+      });
+
+      if (hasRewritten) {
+        rewrittenCount += 1;
       }
     }
 

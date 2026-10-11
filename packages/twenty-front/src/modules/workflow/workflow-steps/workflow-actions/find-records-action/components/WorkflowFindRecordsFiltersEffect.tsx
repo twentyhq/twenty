@@ -1,5 +1,6 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
+import { attachUngroupedRecordFiltersToRootRecordFilterGroup } from '@/object-record/record-filter-group/utils/attachUngroupedRecordFiltersToRootRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
@@ -7,7 +8,6 @@ import { hydrateRecordFiltersFromFieldMetadata } from '@/object-record/record-fi
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/types/FindRecordsActionFilter';
 import { useEffect, useState } from 'react';
@@ -23,14 +23,6 @@ export const WorkflowFindRecordsFiltersEffect = ({
     setHasInitializedCurrentRecordFilters,
   ] = useAtomComponentFamilyState(
     hasInitializedCurrentRecordFiltersComponentFamilyState,
-    {},
-  );
-
-  const [
-    hasInitializedCurrentRecordFilterGroups,
-    setHasInitializedCurrentRecordFilterGroups,
-  ] = useAtomComponentFamilyState(
-    hasInitializedCurrentRecordFilterGroupsComponentFamilyState,
     {},
   );
 
@@ -59,44 +51,35 @@ export const WorkflowFindRecordsFiltersEffect = ({
   ] = useState(false);
 
   useEffect(() => {
-    if (
-      !hasInitializedCurrentRecordFilters &&
-      isDefined(defaultValue?.recordFilters)
-    ) {
-      const { recordFilters, unresolvedRecordFilters } =
-        hydrateRecordFiltersFromFieldMetadata({
-          persistedRecordFilters: defaultValue.recordFilters,
-          fieldMetadataItems: flattenedFieldMetadataItems,
-        });
-
-      setCurrentRecordFilters(recordFilters);
-      setUnresolvedRecordFilters(unresolvedRecordFilters);
-      setShouldSetAdvancedFilterDropdownStates(true);
-      setHasInitializedCurrentRecordFilters(true);
+    if (hasInitializedCurrentRecordFilters || !isDefined(defaultValue)) {
+      return;
     }
+
+    const { recordFilters: persistedRecordFilters, recordFilterGroups } =
+      attachUngroupedRecordFiltersToRootRecordFilterGroup({
+        recordFilters: defaultValue.recordFilters ?? [],
+        recordFilterGroups: defaultValue.recordFilterGroups ?? [],
+      });
+
+    const { recordFilters, unresolvedRecordFilters } =
+      hydrateRecordFiltersFromFieldMetadata({
+        persistedRecordFilters,
+        fieldMetadataItems: flattenedFieldMetadataItems,
+      });
+
+    setCurrentRecordFilters(recordFilters);
+    setUnresolvedRecordFilters(unresolvedRecordFilters);
+    setCurrentRecordFilterGroups(recordFilterGroups);
+    setShouldSetAdvancedFilterDropdownStates(true);
+    setHasInitializedCurrentRecordFilters(true);
   }, [
-    setCurrentRecordFilters,
-    setUnresolvedRecordFilters,
-    hasInitializedCurrentRecordFilters,
-    setHasInitializedCurrentRecordFilters,
-    defaultValue?.recordFilters,
+    defaultValue,
     flattenedFieldMetadataItems,
-  ]);
-
-  useEffect(() => {
-    if (
-      !hasInitializedCurrentRecordFilterGroups &&
-      isDefined(defaultValue?.recordFilterGroups) &&
-      defaultValue.recordFilterGroups.length > 0
-    ) {
-      setCurrentRecordFilterGroups(defaultValue.recordFilterGroups ?? []);
-      setHasInitializedCurrentRecordFilterGroups(true);
-    }
-  }, [
+    hasInitializedCurrentRecordFilters,
     setCurrentRecordFilterGroups,
-    hasInitializedCurrentRecordFilterGroups,
-    setHasInitializedCurrentRecordFilterGroups,
-    defaultValue?.recordFilterGroups,
+    setCurrentRecordFilters,
+    setHasInitializedCurrentRecordFilters,
+    setUnresolvedRecordFilters,
   ]);
 
   useEffect(() => {

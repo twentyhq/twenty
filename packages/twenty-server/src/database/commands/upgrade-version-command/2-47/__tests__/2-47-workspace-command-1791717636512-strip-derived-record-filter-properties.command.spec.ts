@@ -50,37 +50,55 @@ const buildChartConfiguration = (recordFilters: object[]) => ({
   filter: { recordFilters, recordFilterGroups: [] },
 });
 
+type Row = { id: string; value: unknown };
+
 type Rows = {
-  workspaceWorkflowVersions?: { id: string; value: unknown }[];
-  workflowRuns?: { id: string; value: unknown }[];
-  coreWorkflowVersions?: { id: string; value: unknown }[];
-  chartWidgets?: { id: string; value: unknown }[];
+  workspaceWorkflowVersions?: Row[];
+  workflowRuns?: Row[];
+  coreWorkflowVersions?: Row[];
+  chartWidgets?: Row[];
 };
 
-const setup = (rows: Rows) => {
-  const query = jest.fn(async (sql: string, _parameters?: unknown[]) => {
+const setup = (rows: Rows, lockedRows: Rows = rows) => {
+  const getTableRows = (sql: string, tableRows: Rows) => {
+    if (sql.includes('"workflowRun"')) {
+      return tableRows.workflowRuns ?? [];
+    }
+
+    if (sql.includes('core."workflowVersion"')) {
+      return tableRows.coreWorkflowVersions ?? [];
+    }
+
+    if (sql.includes('"workflowVersion"')) {
+      return tableRows.workspaceWorkflowVersions ?? [];
+    }
+
+    if (sql.includes('core."pageLayoutWidget"')) {
+      return tableRows.chartWidgets ?? [];
+    }
+
+    return [];
+  };
+
+  const query = jest.fn(async (sql: string, parameters?: unknown[]) => {
     if (!sql.startsWith('SELECT')) {
       return [];
     }
 
-    if (sql.includes('"workflowRun"')) {
-      return rows.workflowRuns ?? [];
+    if (sql.includes('FOR UPDATE')) {
+      return getTableRows(sql, lockedRows).filter(
+        (row) => row.id === parameters?.[0],
+      );
     }
 
-    if (sql.includes('core."workflowVersion"')) {
-      return rows.coreWorkflowVersions ?? [];
-    }
-
-    if (sql.includes('"workflowVersion"')) {
-      return rows.workspaceWorkflowVersions ?? [];
-    }
-
-    if (sql.includes('core."pageLayoutWidget"')) {
-      return rows.chartWidgets ?? [];
-    }
-
-    return [];
+    return getTableRows(sql, rows);
   });
+
+  const transaction = jest.fn(
+    async (
+      runInTransaction: (manager: { query: typeof query }) => Promise<unknown>,
+    ) => runInTransaction({ query }),
+  );
 
   const workspaceCacheService = {
     getOrRecompute: jest.fn(async () => ({
@@ -124,7 +142,7 @@ const setup = (rows: Rows) => {
 
   const args = (dryRun = false) => ({
     workspaceId: WORKSPACE_ID,
-    dataSource: { query } as unknown as DataSource,
+    dataSource: { query, transaction } as unknown as DataSource,
     options: { dryRun },
     index: 0,
     total: 1,
@@ -200,6 +218,65 @@ describe('StripDerivedRecordFilterPropertiesCommand', () => {
     expect(
       workspaceCacheService.invalidateAndRecompute,
     ).not.toHaveBeenCalled();
+  });
+
+  it('should rewrite the value locked at write time rather than the one first read', async () => {
+    const concurrentlyAddedRecordFilter = {
+      ...legacyRecordFilter,
+      id: 'concurrently-added-filter-id',
+    };
+
+    const { command, args, getUpdates } = setup(
+      {
+        workspaceWorkflowVersions: [
+          { id: 'version-id', value: buildSteps([legacyRecordFilter]) },
+        ],
+      },
+      {
+        workspaceWorkflowVersions: [
+          {
+            id: 'version-id',
+            value: buildSteps([
+              legacyRecordFilter,
+              concurrentlyAddedRecordFilter,
+            ]),
+          },
+        ],
+      },
+    );
+
+    await command.runOnWorkspace(args());
+
+    expect(getUpdates('"workflowVersion"')).toEqual([
+      {
+        id: 'version-id',
+        value: buildSteps([
+          persistedRecordFilter,
+          { ...persistedRecordFilter, id: 'concurrently-added-filter-id' },
+        ]),
+      },
+    ]);
+  });
+
+  it('should skip a row that was already rewritten when it is locked', async () => {
+    const { command, args, query } = setup(
+      {
+        workspaceWorkflowVersions: [
+          { id: 'version-id', value: buildSteps([legacyRecordFilter]) },
+        ],
+      },
+      {
+        workspaceWorkflowVersions: [
+          { id: 'version-id', value: buildSteps([persistedRecordFilter]) },
+        ],
+      },
+    );
+
+    await command.runOnWorkspace(args());
+
+    expect(
+      query.mock.calls.filter(([sql]) => sql.startsWith('UPDATE')),
+    ).toHaveLength(0);
   });
 
   it('should give the same id to a filter persisted without one in both workflow version copies', async () => {

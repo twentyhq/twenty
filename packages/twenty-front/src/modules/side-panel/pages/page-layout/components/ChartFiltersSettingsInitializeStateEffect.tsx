@@ -1,5 +1,6 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
+import { attachUngroupedRecordFiltersToRootRecordFilterGroup } from '@/object-record/record-filter-group/utils/attachUngroupedRecordFiltersToRootRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
@@ -48,17 +49,21 @@ export const ChartFiltersSettingsInitializeStateEffect = ({
 
   useEffect(() => {
     if (!hasInitializedChartFilters && isDefined(initialChartFilters)) {
+      const { recordFilters: persistedRecordFilters, recordFilterGroups } =
+        attachUngroupedRecordFiltersToRootRecordFilterGroup({
+          recordFilters: initialChartFilters.recordFilters ?? [],
+          recordFilterGroups: initialChartFilters.recordFilterGroups ?? [],
+        });
+
       const { recordFilters, unresolvedRecordFilters } =
         hydrateRecordFiltersFromFieldMetadata({
-          persistedRecordFilters: initialChartFilters.recordFilters ?? [],
+          persistedRecordFilters,
           fieldMetadataItems: flattenedFieldMetadataItems,
         });
 
       setCurrentRecordFilters(recordFilters);
       setUnresolvedRecordFilters(unresolvedRecordFilters);
-      setCurrentRecordFilterGroups(
-        initialChartFilters.recordFilterGroups ?? [],
-      );
+      setCurrentRecordFilterGroups(recordFilterGroups);
 
       setShouldSetAdvancedFilterDropdownStates(true);
       setHasInitializedChartFilters(true);
