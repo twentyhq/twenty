@@ -411,7 +411,7 @@ export class AgentChatThreadParticipantService {
 
   // Over every chat the member can open, the way the inbox lists them; a chat
   // without the member's row is in their inbox, read, since read state is only
-  // tracked for participants
+  // tracked for participants, which a member becomes by opening the chat
   async findOpenThreadsSummary({
     workspaceId,
     workspaceMemberId,
