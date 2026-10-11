@@ -71,15 +71,15 @@ describe('Persisted chat senders', () => {
     }
     const response = await makeMetadataApiRequest({
       query: parse(
-        `query($threadId: UUID!) { chatMessages(threadId: $threadId) { id senderUserWorkspaceId } }`,
+        `query($threadId: UUID!) { chatMessages(threadId: $threadId) { id senderWorkspaceMemberId } }`,
       ),
       variables: { threadId },
     });
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.chatMessages).toEqual(
       expect.arrayContaining([
-        { id: message.id, senderUserWorkspaceId: userWorkspaceId },
-        { id: queued.id, senderUserWorkspaceId: userWorkspaceId },
+        { id: message.id, senderWorkspaceMemberId: workspaceMemberId },
+        { id: queued.id, senderWorkspaceMemberId: workspaceMemberId },
       ]),
     );
     await expect(
@@ -161,16 +161,6 @@ describe('Persisted chat senders', () => {
         .connection;
     const args = { workspaceId, dataSource, index: 0, total: 1, options: {} };
 
-    await expect(
-      actors.authorizeJob({
-        workspaceId,
-        threadId,
-        turnId: legacy.turnId!,
-        userWorkspaceId,
-      }),
-    ).resolves.toMatchObject({
-      sender: { userWorkspaceId, applicationId: null },
-    });
     await command.up(args);
     await command.up(args);
     await command.down(args);

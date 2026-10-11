@@ -119,7 +119,6 @@ export type AgentMessage = {
   parts: Array<AgentMessagePart>;
   processedAt?: Maybe<Scalars['DateTime']['output']>;
   role: Scalars['String']['output'];
-  senderUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   senderWorkspaceMemberId?: Maybe<Scalars['UUID']['output']>;
   status: Scalars['String']['output'];
   threadId: Scalars['UUID']['output'];

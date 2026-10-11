@@ -86,7 +86,6 @@ export interface AgentMessage {
     parts: AgentMessagePart[]
     processedAt?: Scalars['DateTime']
     role: Scalars['String']
-    senderUserWorkspaceId?: Scalars['UUID']
     senderWorkspaceMemberId?: Scalars['UUID']
     status: Scalars['String']
     threadId: Scalars['UUID']
@@ -4008,7 +4007,6 @@ export interface AgentMessageGenqlSelection{
     parts?: AgentMessagePartGenqlSelection
     processedAt?: boolean | number
     role?: boolean | number
-    senderUserWorkspaceId?: boolean | number
     senderWorkspaceMemberId?: boolean | number
     status?: boolean | number
     threadId?: boolean | number
