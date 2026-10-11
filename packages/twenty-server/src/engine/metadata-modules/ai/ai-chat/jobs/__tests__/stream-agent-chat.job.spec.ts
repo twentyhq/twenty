@@ -304,9 +304,6 @@ describe('StreamAgentChatJob', () => {
         .fn()
         .mockReturnValue({ modelId: 'openai/gpt-5.6-luna' }),
     };
-    const sharingService = {
-      hasInboxState: jest.fn().mockResolvedValue(true),
-    };
     const sender = {
       userWorkspaceId: 'user-workspace-id',
       applicationId: null,
@@ -354,13 +351,11 @@ describe('StreamAgentChatJob', () => {
         streamHeartbeatService as never,
         eventPublisherService as never,
         metricsService as never,
-        { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
       ),
       threadService as never,
       metricsService as never,
       aiModelRegistryService as never,
       actorService as never,
-      sharingService as never,
       turnRecorderService as never,
     );
 
