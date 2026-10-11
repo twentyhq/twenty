@@ -107,11 +107,13 @@ const renderThinkingStepsDisplay = ({
   isLastMessageStreaming,
   parts,
   isTrailingWhileStreaming = false,
+  workDurationMs,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   hasAssistantTextResponseStarted?: boolean;
   isTrailingWhileStreaming?: boolean;
+  workDurationMs?: number | null;
 }) => {
   return render(
     <ThemeProvider colorScheme="light">
@@ -120,6 +122,7 @@ const renderThinkingStepsDisplay = ({
         isLastMessageStreaming={isLastMessageStreaming}
         hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
         isTrailingWhileStreaming={isTrailingWhileStreaming}
+        workDurationMs={workDurationMs}
       />
     </ThemeProvider>,
   );
@@ -210,6 +213,20 @@ describe('ThinkingStepsDisplay', () => {
     expect(summaryButton).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByText('Thought')).toBeNull();
     expect(screen.queryByText('Completed reasoning content')).toBeNull();
+  });
+
+  it('should summarize done state with the work duration when known', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
+      workDurationMs: 83_000,
+      parts: [createToolPart(), createReasoningPart()],
+    });
+
+    expect(
+      screen.getByRole('button', { name: 'Worked for 1m 23s' }),
+    ).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText(/steps/i)).toBeNull();
   });
 
   it('should keep done state expanded while streaming before answer text starts', () => {

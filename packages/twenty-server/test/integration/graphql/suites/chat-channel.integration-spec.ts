@@ -27,20 +27,17 @@ const { JANE, JONY } = WORKSPACE_MEMBER_DATA_SEED_IDS;
 
 type ChannelVisibility = 'PUBLIC' | 'PRIVATE';
 
-type InboxView = {
-  kind:
-    | 'RECENT'
-    | 'OPEN'
-    | 'NEEDS_INPUT'
-    | 'MENTIONS'
-    | 'ASSIGNED'
-    | 'SNOOZED'
-    | 'DONE'
-    | 'CHANNEL';
-  channelId?: string;
-  channelStatus?: 'OPEN' | 'SNOOZED' | 'DONE';
+type ChannelThreadsFilter = {
+  status?: 'OPEN' | 'SNOOZED' | 'DONE';
   assignment?: 'ANY' | 'UNASSIGNED' | 'ASSIGNED_TO_ME';
 };
+
+type InboxAction =
+  | 'READ'
+  | 'ARCHIVE'
+  | 'SNOOZE'
+  | 'MOVE_TO_INBOX'
+  | 'SUBSCRIBE';
 
 const CREATE_CHANNEL = parse(
   `mutation CreateChannel($input: CreateAgentChatChannelInput!) { createAgentChatChannel(input: $input) { id name icon color visibility } }`,
@@ -73,10 +70,12 @@ const MOVE_THREAD = parse(
   `mutation Move($threadId: UUID!, $channelId: UUID) { moveAgentChatThreadToChannel(threadId: $threadId, channelId: $channelId) }`,
 );
 
-const THREAD_MUTATION = (name: string, returnsParticipant = false) =>
-  parse(
-    `mutation Run($threadId: UUID!) { ${name}(threadId: $threadId)${returnsParticipant ? ' { id }' : ''} }`,
-  );
+const THREAD_MUTATION = (name: string) =>
+  parse(`mutation Run($threadId: UUID!) { ${name}(threadId: $threadId) }`);
+
+const UPDATE_INBOX_STATE = parse(
+  `mutation Update($threadIds: [UUID!]!, $action: AgentChatInboxAction!, $snoozedUntil: DateTime) { updateAgentChatThreadInboxState(threadIds: $threadIds, action: $action, snoozedUntil: $snoozedUntil) { id } }`,
+);
 
 const SNOOZE_IN_CHANNEL = parse(
   `mutation Snooze($threadId: UUID!, $snoozedUntil: DateTime!) { snoozeAgentChatThreadInChannel(threadId: $threadId, snoozedUntil: $snoozedUntil) }`,
@@ -86,12 +85,16 @@ const ASSIGN = parse(
   `mutation Assign($threadId: UUID!, $assigneeWorkspaceMemberId: UUID) { assignAgentChatThread(threadId: $threadId, assigneeWorkspaceMemberId: $assigneeWorkspaceMemberId) }`,
 );
 
-const INBOX_THREAD_IDS = parse(
-  `query Ids($view: AgentChatInboxViewInput!, $first: Int, $after: String) { agentChatInboxThreadIds(view: $view, first: $first, after: $after) { threadIds hasNextPage endCursor } }`,
+const CHANNEL_THREAD_IDS = parse(
+  `query Ids($channelId: UUID!, $status: AgentChatChannelThreadStatus, $assignment: AgentChatChannelAssignmentFilter, $first: Int, $after: String) { agentChatChannelThreadIds(channelId: $channelId, status: $status, assignment: $assignment, first: $first, after: $after) { threadIds hasNextPage endCursor } }`,
 );
 
-const INBOX_SUMMARY = parse(
-  `query Summary { agentChatInboxSummary { openCount hasUnreadOpen needsInputCount hasUnreadMention hasUnreadAssigned channels { channelId openCount hasUnreadOpen } } }`,
+const CHANNEL_SUMMARIES = parse(
+  `query Summaries { agentChatChannelSummaries { channelId openCount hasUnreadOpen } }`,
+);
+
+const OPEN_THREADS_SUMMARY = parse(
+  `query Summary { agentChatOpenThreadsSummary { openThreadCount hasUnreadOpenThread } }`,
 );
 
 // Outlasts any test, yet within the delay the test queue fast-forwards
@@ -117,23 +120,27 @@ const runThreadMutation = (
   token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ) =>
   makeMetadataApiRequest(
+    { query: THREAD_MUTATION(name), variables: { threadId } },
+    token,
+  );
+
+const runInboxAction = (
+  action: InboxAction,
+  threadId: string,
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  snoozedUntil: string | null = null,
+) =>
+  makeMetadataApiRequest(
     {
-      query: THREAD_MUTATION(
-        name,
-        [
-          'archiveAgentChatThread',
-          'moveAgentChatThreadToInbox',
-          'subscribeToAgentChatThread',
-          'markAgentChatThreadAsRead',
-        ].includes(name),
-      ),
-      variables: { threadId },
+      query: UPDATE_INBOX_STATE,
+      variables: { threadIds: [threadId], action, snoozedUntil },
     },
     token,
   );
 
-const findThreadIds = async (
-  view: InboxView,
+const findChannelThreadIds = async (
+  channelId: string,
+  filter: ChannelThreadsFilter = {},
   token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
   page: { first?: number; after?: string } = {},
 ): Promise<{
@@ -143,37 +150,59 @@ const findThreadIds = async (
 }> => {
   const response = await makeMetadataApiRequest(
     {
-      query: INBOX_THREAD_IDS,
-      variables: { view, ...page, first: page.first ?? 200 },
+      query: CHANNEL_THREAD_IDS,
+      variables: { channelId, ...filter, ...page, first: page.first ?? 200 },
     },
     token,
   );
 
   expectNoErrors(response);
 
-  return response.body.data.agentChatInboxThreadIds;
+  return response.body.data.agentChatChannelThreadIds;
 };
 
-const getSummary = async (token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN) => {
+const getChannelSummaries = async (
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+): Promise<
+  { channelId: string; openCount: number; hasUnreadOpen: boolean }[]
+> => {
   const response = await makeMetadataApiRequest(
-    { query: INBOX_SUMMARY },
+    { query: CHANNEL_SUMMARIES },
     token,
   );
 
   expectNoErrors(response);
 
-  return response.body.data.agentChatInboxSummary as {
-    openCount: number;
-    hasUnreadOpen: boolean;
-    needsInputCount: number;
-    hasUnreadMention: boolean;
-    hasUnreadAssigned: boolean;
-    channels: {
-      channelId: string;
-      openCount: number;
-      hasUnreadOpen: boolean;
-    }[];
-  };
+  return response.body.data.agentChatChannelSummaries;
+};
+
+const getOpenThreadCount = async (
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+): Promise<number> => {
+  const response = await makeMetadataApiRequest(
+    { query: OPEN_THREADS_SUMMARY },
+    token,
+  );
+
+  expectNoErrors(response);
+
+  return response.body.data.agentChatOpenThreadsSummary.openThreadCount;
+};
+
+// The member's own copy: null when they have no row yet
+const readMemberCopy = async (threadId: string, workspaceMemberId: string) => {
+  const [row]: {
+    isSubscribed: boolean;
+    archivedAt: Date | null;
+    snoozedUntil: Date | null;
+  }[] = await global.testDataSource.query(
+    `SELECT "isSubscribed", "archivedAt", "snoozedUntil"
+     FROM ${SCHEMA}."agentChatThreadParticipant"
+     WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+    [threadId, workspaceMemberId],
+  );
+
+  return row ?? null;
 };
 
 const listReadableThreadIds = async (token: string): Promise<string[]> => {
@@ -319,17 +348,17 @@ describe('Chat channels through the authenticated API', () => {
     ).toContain(threadId);
     expect(
       (
-        await findThreadIds(
-          { kind: 'CHANNEL', channelId },
+        await findChannelThreadIds(
+          channelId,
+          {},
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         )
       ).threadIds,
     ).toEqual([threadId]);
 
-    // Replying needs write access, which subscribing also checks
     expectNoErrors(
-      await runThreadMutation(
-        'subscribeToAgentChatThread',
+      await runInboxAction(
+        'SUBSCRIBE',
         threadId,
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       ),
@@ -345,10 +374,7 @@ describe('Chat channels through the authenticated API', () => {
     ).not.toContain(threadId);
 
     const viewResponse = await makeMetadataApiRequest(
-      {
-        query: INBOX_THREAD_IDS,
-        variables: { view: { kind: 'CHANNEL', channelId } },
-      },
+      { query: CHANNEL_THREAD_IDS, variables: { channelId } },
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
@@ -409,11 +435,9 @@ describe('Chat channels through the authenticated API', () => {
 
     expect(await readMemberIds(channelId)).toEqual([JANE, JONY].sort());
 
-    const summary = await getSummary(APPLE_JONY_MEMBER_ACCESS_TOKEN);
+    const summaries = await getChannelSummaries(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 
-    expect(summary.channels.map(({ channelId }) => channelId)).toContain(
-      channelId,
-    );
+    expect(summaries.map(({ channelId }) => channelId)).toContain(channelId);
   });
 
   it('leaves who joins a private channel and who sees it to its managers', async () => {
@@ -460,42 +484,49 @@ describe('Chat channels through the authenticated API', () => {
     expect(deleteResponse.body.errors[0].extensions.code).toBe('FORBIDDEN');
   });
 
-  it('keeps chats a member only reads in a channel out of their own views', async () => {
+  it('keeps chats a member only reads in a channel out of their own inbox', async () => {
     const channelId = await createChannel('PUBLIC', [JONY]);
+    const jonyOpenThreadCount = await getOpenThreadCount(
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
     const threadId = await createThreadInChannel(channelId);
 
     expectNoErrors(
-      await runThreadMutation(
-        'markAgentChatThreadAsRead',
-        threadId,
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      ),
+      await runInboxAction('READ', threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     );
 
-    for (const kind of ['RECENT', 'OPEN', 'DONE', 'SNOOZED'] as const) {
-      expect(
-        (await findThreadIds({ kind }, APPLE_JONY_MEMBER_ACCESS_TOKEN))
-          .threadIds,
-      ).not.toContain(threadId);
-    }
+    expect(await readMemberCopy(threadId, JONY)).toMatchObject({
+      isSubscribed: false,
+    });
+    expect(await getOpenThreadCount(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toBe(
+      jonyOpenThreadCount,
+    );
+
+    // Filing a chat they do not follow does not follow it either
+    expectNoErrors(
+      await runInboxAction('ARCHIVE', threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    );
+
+    expect(await readMemberCopy(threadId, JONY)).toMatchObject({
+      isSubscribed: false,
+    });
 
     expectNoErrors(
-      await runThreadMutation(
-        'subscribeToAgentChatThread',
+      await runInboxAction(
+        'MOVE_TO_INBOX',
         threadId,
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       ),
     );
 
-    expect(
-      (await findThreadIds({ kind: 'OPEN' }, APPLE_JONY_MEMBER_ACCESS_TOKEN))
-        .threadIds,
-    ).toContain(threadId);
-
-    // The creator follows the chat they started
-    expect((await findThreadIds({ kind: 'OPEN' })).threadIds).toContain(
-      threadId,
+    expect(await getOpenThreadCount(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toBe(
+      jonyOpenThreadCount + 1,
     );
+    // The creator follows the chat they started
+    expect(await readMemberCopy(threadId, JANE)).toMatchObject({
+      isSubscribed: true,
+      archivedAt: null,
+    });
   });
 
   it('files a chat for the channel, and for whoever files it if they follow it', async () => {
@@ -511,32 +542,17 @@ describe('Chat channels through the authenticated API', () => {
     );
 
     expect(
-      (
-        await findThreadIds({
-          kind: 'CHANNEL',
-          channelId,
-          channelStatus: 'DONE',
-        })
-      ).threadIds,
+      (await findChannelThreadIds(channelId, { status: 'DONE' })).threadIds,
     ).toEqual([threadId]);
     expect(
-      (
-        await findThreadIds({
-          kind: 'CHANNEL',
-          channelId,
-          channelStatus: 'OPEN',
-        })
-      ).threadIds,
+      (await findChannelThreadIds(channelId, { status: 'OPEN' })).threadIds,
     ).toEqual([]);
     // Jane follows it but did not file it, so it stays open for her
-    expect((await findThreadIds({ kind: 'OPEN' })).threadIds).toContain(
-      threadId,
-    );
+    expect((await readMemberCopy(threadId, JANE))?.archivedAt).toBeNull();
     // Jony did not follow it, so filing it for the channel leaves him out
     expect(
-      (await findThreadIds({ kind: 'DONE' }, APPLE_JONY_MEMBER_ACCESS_TOKEN))
-        .threadIds,
-    ).not.toContain(threadId);
+      (await readMemberCopy(threadId, JONY))?.archivedAt ?? null,
+    ).toBeNull();
 
     expectNoErrors(
       await runThreadMutation('reopenAgentChatThreadInChannel', threadId),
@@ -545,24 +561,13 @@ describe('Chat channels through the authenticated API', () => {
       await runThreadMutation('markAgentChatThreadAsDoneInChannel', threadId),
     );
 
-    expect((await findThreadIds({ kind: 'DONE' })).threadIds).toContain(
-      threadId,
-    );
+    expect((await readMemberCopy(threadId, JANE))?.archivedAt).not.toBeNull();
 
     await touchThread(threadId);
 
     expect(
-      (
-        await findThreadIds({
-          kind: 'CHANNEL',
-          channelId,
-          channelStatus: 'OPEN',
-        })
-      ).threadIds,
+      (await findChannelThreadIds(channelId, { status: 'OPEN' })).threadIds,
     ).toEqual([threadId]);
-    expect((await findThreadIds({ kind: 'OPEN' })).threadIds).toContain(
-      threadId,
-    );
   });
 
   it('refuses channel triage on a chat outside any channel', async () => {
@@ -587,40 +592,53 @@ describe('Chat channels through the authenticated API', () => {
     );
 
     expect(
-      (
-        await findThreadIds({
-          kind: 'CHANNEL',
-          channelId,
-          assignment: 'UNASSIGNED',
-        })
-      ).threadIds,
+      (await findChannelThreadIds(channelId, { assignment: 'UNASSIGNED' }))
+        .threadIds,
     ).toEqual([]);
     expect(
       (
-        await findThreadIds(
-          { kind: 'CHANNEL', channelId, assignment: 'ASSIGNED_TO_ME' },
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        )
-      ).threadIds,
-    ).toEqual([threadId]);
-    expect(
-      (
-        await findThreadIds(
-          { kind: 'ASSIGNED' },
+        await findChannelThreadIds(
+          channelId,
+          { assignment: 'ASSIGNED_TO_ME' },
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         )
       ).threadIds,
     ).toEqual([threadId]);
 
     expectNoErrors(
-      await runThreadMutation(
-        'archiveAgentChatThread',
+      await runInboxAction('ARCHIVE', threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    );
+
+    expect((await readChannelState(threadId)).channelArchivedAt).not.toBeNull();
+
+    expectNoErrors(
+      await runInboxAction(
+        'SNOOZE',
+        threadId,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        buildFutureSnoozedUntil(),
+      ),
+    );
+
+    expect(
+      (await readChannelState(threadId)).channelSnoozedUntil,
+    ).not.toBeNull();
+
+    expectNoErrors(
+      await runInboxAction(
+        'MOVE_TO_INBOX',
         threadId,
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       ),
     );
 
-    expect((await readChannelState(threadId)).channelArchivedAt).not.toBeNull();
+    expect(await readChannelState(threadId)).toMatchObject({
+      channelArchivedAt: null,
+      channelSnoozedUntil: null,
+    });
+    expectNoErrors(
+      await runInboxAction('ARCHIVE', threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    );
 
     // Anyone else filing their own copy leaves the channel's alone
     expectNoErrors(
@@ -630,7 +648,7 @@ describe('Chat channels through the authenticated API', () => {
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       ),
     );
-    expectNoErrors(await runThreadMutation('archiveAgentChatThread', threadId));
+    expectNoErrors(await runInboxAction('ARCHIVE', threadId));
 
     expect((await readChannelState(threadId)).channelArchivedAt).toBeNull();
   });
@@ -657,18 +675,10 @@ describe('Chat channels through the authenticated API', () => {
     );
 
     expect(
-      (
-        await findThreadIds({
-          kind: 'CHANNEL',
-          channelId,
-          channelStatus: 'SNOOZED',
-        })
-      ).threadIds,
+      (await findChannelThreadIds(channelId, { status: 'SNOOZED' })).threadIds,
     ).toEqual([threadId]);
     // The creator follows it, so their own copy is snoozed too
-    expect((await findThreadIds({ kind: 'SNOOZED' })).threadIds).toContain(
-      threadId,
-    );
+    expect((await readMemberCopy(threadId, JANE))?.snoozedUntil).not.toBeNull();
 
     const snoozedUntil = new Date(Date.now() - 1000);
 
@@ -805,8 +815,12 @@ describe('Chat channels through the authenticated API', () => {
     expect(grants).toEqual([]);
   });
 
-  it('counts open chats for the member and for each channel they joined', async () => {
+  it('counts open chats for each channel the member joined, and their own only once they follow', async () => {
     const channelId = await createChannel('PUBLIC', [JONY]);
+    const janeOpenThreadCount = await getOpenThreadCount();
+    const jonyOpenThreadCount = await getOpenThreadCount(
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
     const threadId = await createThreadInChannel(channelId);
     const doneThreadId = await createThreadInChannel(channelId);
 
@@ -818,20 +832,23 @@ describe('Chat channels through the authenticated API', () => {
     );
     await touchThread(threadId);
 
-    const janeSummary = await getSummary();
-    const jonySummary = await getSummary(APPLE_JONY_MEMBER_ACCESS_TOKEN);
+    for (const token of [
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    ]) {
+      expect(
+        (await getChannelSummaries(token)).find(
+          (summary) => summary.channelId === channelId,
+        ),
+      ).toEqual({ channelId, openCount: 1, hasUnreadOpen: true });
+    }
 
-    expect(
-      janeSummary.channels.find((channel) => channel.channelId === channelId),
-    ).toEqual({ channelId, openCount: 1, hasUnreadOpen: true });
-    expect(
-      jonySummary.channels.find((channel) => channel.channelId === channelId),
-    ).toEqual({ channelId, openCount: 1, hasUnreadOpen: true });
-
-    const janeOpenThreadIds = (await findThreadIds({ kind: 'OPEN' })).threadIds;
-
-    expect(janeSummary.openCount).toBe(janeOpenThreadIds.length);
-    expect(janeSummary.hasUnreadOpen).toBe(true);
+    // Jane follows both chats she started, so filing one for the channel
+    // files her own copy too
+    expect(await getOpenThreadCount()).toBe(janeOpenThreadCount + 1);
+    expect(await getOpenThreadCount(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toBe(
+      jonyOpenThreadCount,
+    );
   });
 
   it('refuses channel writes through the record API', async () => {
@@ -917,15 +934,16 @@ describe('Chat channels through the authenticated API', () => {
     );
   });
 
-  it('pages a view by last activity', async () => {
+  it('pages a channel by last activity', async () => {
     const channelId = await createChannel('PUBLIC');
     const olderThreadId = await createThreadInChannel(channelId);
     const newerThreadId = await createThreadInChannel(channelId);
 
     await touchThread(newerThreadId);
 
-    const firstPage = await findThreadIds(
-      { kind: 'CHANNEL', channelId },
+    const firstPage = await findChannelThreadIds(
+      channelId,
+      {},
       APPLE_JANE_ADMIN_ACCESS_TOKEN,
       { first: 1 },
     );
@@ -935,8 +953,9 @@ describe('Chat channels through the authenticated API', () => {
       hasNextPage: true,
     });
 
-    const secondPage = await findThreadIds(
-      { kind: 'CHANNEL', channelId },
+    const secondPage = await findChannelThreadIds(
+      channelId,
+      {},
       APPLE_JANE_ADMIN_ACCESS_TOKEN,
       { first: 1, after: firstPage.endCursor! },
     );
@@ -947,8 +966,8 @@ describe('Chat channels through the authenticated API', () => {
     });
 
     const invalidResponse = await makeMetadataApiRequest({
-      query: INBOX_THREAD_IDS,
-      variables: { view: { kind: 'OPEN' }, after: 'not-a-cursor' },
+      query: CHANNEL_THREAD_IDS,
+      variables: { channelId, after: 'not-a-cursor' },
     });
 
     expect(invalidResponse.body.errors[0].extensions.code).toBe(

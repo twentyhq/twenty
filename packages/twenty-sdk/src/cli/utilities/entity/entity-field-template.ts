@@ -1,7 +1,7 @@
 import {
   FieldMetadataType,
   type RelationOnDeleteAction,
-  type RelationType,
+  RelationType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -38,6 +38,11 @@ export const getFieldBaseFile = ({
     const onDeleteSetting = hasOnDelete
       ? `, onDelete: OnDeleteAction.${data.onDelete}`
       : '';
+    // The manifest build rejects a MANY_TO_ONE relation without a join column.
+    const joinColumnNameSetting =
+      data.relationType === RelationType.MANY_TO_ONE
+        ? `, joinColumnName: '${data.name}Id'`
+        : '';
     const morphIdLine =
       data.type === FieldMetadataType.MORPH_RELATION
         ? `\n  morphId: '${v4()}',`
@@ -53,7 +58,7 @@ export default defineField({
   objectUniversalIdentifier: '${data.objectUniversalIdentifier}',
   relationTargetObjectMetadataUniversalIdentifier: '${data.relationTargetObjectMetadataUniversalIdentifier}',
   relationTargetFieldMetadataUniversalIdentifier: '${data.relationTargetFieldMetadataUniversalIdentifier}',
-  universalSettings: { relationType: RelationType.${data.relationType}${onDeleteSetting} },${morphIdLine}${descriptionLine}
+  universalSettings: { relationType: RelationType.${data.relationType}${onDeleteSetting}${joinColumnNameSetting} },${morphIdLine}${descriptionLine}
 });
 `;
   }

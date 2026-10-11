@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { hasAgentChatBeenOpenedState } from '@/ai/states/hasAgentChatBeenOpenedState';
+import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import {
   currentWorkspaceState,
   type CurrentWorkspace,
@@ -33,7 +33,7 @@ describe('useOpenAskAiPageInSidePanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jotaiStore.set(isSidePanelOpenedState.atom, false);
-    jotaiStore.set(hasAgentChatBeenOpenedState.atom, false);
+    jotaiStore.set(agentChatUISessionStartTimeState.atom, null);
     jotaiStore.set(currentWorkspaceState.atom, null);
     window.history.pushState({}, '', '/objects/companies');
   });
@@ -120,6 +120,6 @@ describe('useOpenAskAiPageInSidePanel', () => {
     });
 
     expect(navigateSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(hasAgentChatBeenOpenedState.atom)).toBe(false);
+    expect(jotaiStore.get(agentChatUISessionStartTimeState.atom)).toBeNull();
   });
 });

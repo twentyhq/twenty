@@ -45,11 +45,13 @@ Keep page layout in your application's styling.
 set `type="submit"` explicitly for form submission.
 
 Use `href` for a link. Supply `render` to choose a custom root, including an
-application-owned router link. The root must preserve a native button, or an
-anchor when `href` is set. Button derives the interaction behavior from `href`.
+application-owned router link. Set `nativeButton={false}` and `role="link"` for
+a navigation renderer. Custom native buttons keep `nativeButton` true.
 
 [ButtonGroup](/ui/primitives/input/button-group) can set a shared size, surface,
-and color. Consumer classes, including state functions, pass through to the root.
+and color. Explicit child appearance takes precedence over the group, followed by
+the component defaults. Consumer classes, including state functions, pass through
+to the root.
 
 ## Props
 

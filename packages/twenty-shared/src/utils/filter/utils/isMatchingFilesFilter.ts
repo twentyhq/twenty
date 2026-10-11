@@ -1,4 +1,5 @@
 import { type FilesFilter } from '@/types';
+import { isMatchingRawJsonFilter } from '@/utils/filter/utils/isMatchingRawJsonFilter';
 
 export const isMatchingFilesFilter = ({
   filesFilter,
@@ -9,16 +10,16 @@ export const isMatchingFilesFilter = ({
 }) => {
   switch (true) {
     case filesFilter.like !== undefined: {
-      const escapedPattern = filesFilter.like.replace(
-        /[.*+?^${}()|[\]\\]/g,
-        '\\$&',
-      );
-      const regexPattern = escapedPattern.replace(/%/g, '.*');
-      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'is');
-
-      const stringValue = JSON.stringify(value, null, 1);
-
-      return regexCaseInsensitive.test(stringValue);
+      return isMatchingRawJsonFilter({
+        rawJsonFilter: { like: filesFilter.like },
+        value,
+      });
+    }
+    case filesFilter.ilike !== undefined: {
+      return isMatchingRawJsonFilter({
+        rawJsonFilter: { ilike: filesFilter.ilike },
+        value,
+      });
     }
     case filesFilter.is !== undefined: {
       if (filesFilter.is === 'NULL') {

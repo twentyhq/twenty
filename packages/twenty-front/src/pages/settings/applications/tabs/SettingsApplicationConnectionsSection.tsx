@@ -66,7 +66,7 @@ export const SettingsApplicationConnectionsSection = ({
             <Section.Header
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
-              adornment={
+              actions={
                 isNonEmptyString(provider.logoUrl) ? (
                   <Avatar
                     shape="square"

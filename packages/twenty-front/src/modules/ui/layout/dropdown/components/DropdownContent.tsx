@@ -15,6 +15,7 @@ type DropdownContentProps = Pick<
   | 'collisionPadding'
   | 'width'
   | 'onKeyDown'
+  | 'onClick'
   | 'initialFocus'
   | 'finalFocus'
   | 'className'
@@ -32,6 +33,7 @@ export const DropdownContent = ({
   collisionPadding,
   width,
   onKeyDown,
+  onClick,
   initialFocus,
   finalFocus,
   className,
@@ -52,6 +54,7 @@ export const DropdownContent = ({
       collisionPadding={collisionPadding}
       width={width}
       onKeyDown={onKeyDown}
+      onClick={onClick}
       initialFocus={initialFocus}
       finalFocus={finalFocus}
       className={className}

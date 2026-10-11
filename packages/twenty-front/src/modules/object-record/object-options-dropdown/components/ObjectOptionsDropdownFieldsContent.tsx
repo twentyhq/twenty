@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -11,7 +12,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { IconChevronLeft, IconEyeOff } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownFieldsContent = () => {
   const { t } = useLingui();
@@ -45,12 +45,11 @@ export const ObjectOptionsDropdownFieldsContent = () => {
           <ViewFieldsVisibleDropdownSection />
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
-            <ListItem
+            <ListItemButton
               onClick={() => onContentChange('hiddenFields')}
               startIcon={<IconEyeOff />}
-              render={<button type="button" />}
               hasSubmenu
-            >{t`Hidden Fields`}</ListItem>
+            >{t`Hidden Fields`}</ListItemButton>
           </DropdownMenuItemsContainer>
         </>
       )}

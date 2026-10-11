@@ -1,6 +1,4 @@
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { useToast } from 'twenty-ui/components/feedback';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordCreationFormCancellationEffect } from '@/object-record/record-form/components/RecordCreationFormCancellationEffect';
 import {
@@ -33,7 +31,6 @@ export const RecordCreationFormProvider = ({
   children,
 }: RecordCreationFormProviderProps) => {
   const store = useStore();
-  const { enqueueToast } = useToast();
   const { removePageFromSidePanelHistory } = useSidePanelHistory();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -93,8 +90,6 @@ export const RecordCreationFormProvider = ({
           ),
         );
 
-        enqueueToast(getToastOptionsFromError({ error }));
-
         return { error };
       }
 
@@ -110,7 +105,7 @@ export const RecordCreationFormProvider = ({
 
       return {};
     },
-    [enqueueToast, pendingRecordCreations, removePageFromSidePanelHistory],
+    [pendingRecordCreations, removePageFromSidePanelHistory],
   );
 
   const requestRecordCreation = useCallback(

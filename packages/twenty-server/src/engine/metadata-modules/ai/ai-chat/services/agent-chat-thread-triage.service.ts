@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { In, IsNull, Not } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -8,6 +9,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-job-retry-options.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-recheck-minimum-delay-ms.constant';
 import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
+import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { END_AGENT_CHAT_CHANNEL_SNOOZE_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-channel-snooze-job-name.constant';
 import { type EndAgentChatChannelSnoozeJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-channel-snooze-job.types';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -23,6 +25,21 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+
+const buildTriageChange = (
+  action: AgentChatInboxAction,
+  snoozedUntil: Date | null,
+): AgentChatThreadTriageChange | null => {
+  switch (action) {
+    case AgentChatInboxAction.ARCHIVE:
+    case AgentChatInboxAction.MOVE_TO_INBOX:
+      return { action };
+    case AgentChatInboxAction.SNOOZE:
+      return isDefined(snoozedUntil) ? { action, snoozedUntil } : null;
+    default:
+      return null;
+  }
+};
 
 // A chat in a channel has a shared copy, which the channel triages, and a
 // copy for each member who follows it. As in Front, an action changes the
@@ -42,45 +59,68 @@ export class AgentChatThreadTriageService {
     private readonly delayedJobsQueueService: MessageQueueService,
   ) {}
 
-  async applyToMemberCopy({
-    change,
-    ...args
-  }: AgentChatThreadAccessArgs & {
-    change: AgentChatThreadTriageChange;
-  }): Promise<AgentChatThreadParticipantDTO> {
-    const threadBefore = await this.threadRepository.findOne(args.workspaceId, {
-      where: { id: args.threadId },
-    });
-    const isAssigneeOfChannelThread =
-      isDefined(threadBefore?.channelId) &&
-      threadBefore.assigneeId === args.workspaceMemberId;
+  async updateInboxState({
+    threadIds,
+    action,
+    snoozedUntil,
+    ...memberArgs
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    threadIds: string[];
+    action: AgentChatInboxAction;
+    snoozedUntil: Date | null;
+  }): Promise<AgentChatThreadParticipantDTO[]> {
+    const change = buildTriageChange(action, snoozedUntil);
+    const assignedChannelThreads =
+      isDefined(change) &&
+      (await this.sharingService.hasChannels(memberArgs.workspaceId))
+        ? await this.threadRepository.find(memberArgs.workspaceId, {
+            where: {
+              id: In(threadIds),
+              assigneeId: memberArgs.workspaceMemberId,
+              channelId: Not(IsNull()),
+            },
+          })
+        : [];
 
-    if (isAssigneeOfChannelThread) {
-      await this.prepareChannelCopyWrite({ ...args, change });
-    }
-
-    const channelCopyWrite = this.buildChannelCopyWrite({
-      ...args,
-      change,
-      isAssigneeOnly: true,
-    });
-
-    const participant = await this.writeMemberCopy({
-      ...args,
-      change,
-      writeThread: isAssigneeOfChannelThread
-        ? channelCopyWrite.write
-        : undefined,
-    });
-
-    if (isDefined(threadBefore) && channelCopyWrite.isWritten()) {
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId: args.workspaceId,
-        threadBefore,
+    if (!isDefined(change) || assignedChannelThreads.length === 0) {
+      return this.participantService.updateInboxState({
+        ...memberArgs,
+        threadIds,
+        action,
+        snoozedUntil,
       });
     }
 
-    return participant;
+    for (const thread of assignedChannelThreads) {
+      await this.prepareChannelCopyWrite({
+        ...memberArgs,
+        threadId: thread.id,
+        change,
+      });
+    }
+
+    const channelCopyWrite = this.buildChannelCopyWrite({
+      change,
+      workspaceMemberId: memberArgs.workspaceMemberId,
+      threadIds: assignedChannelThreads.map(({ id }) => id),
+      isAssigneeOnly: true,
+    });
+
+    const participants = await this.participantService.updateInboxState({
+      ...memberArgs,
+      threadIds,
+      action,
+      snoozedUntil,
+      writeThread: channelCopyWrite.write,
+    });
+
+    await this.emitChannelCopiesUpdated({
+      workspaceId: memberArgs.workspaceId,
+      threadsBefore: assignedChannelThreads,
+      writtenThreadIds: channelCopyWrite.writtenThreadIds,
+    });
+
+    return participants;
   }
 
   async applyToChannelCopy({
@@ -104,30 +144,35 @@ export class AgentChatThreadTriageService {
     await this.prepareChannelCopyWrite({ ...args, change });
 
     const channelCopyWrite = this.buildChannelCopyWrite({
-      ...args,
       change,
+      workspaceMemberId: args.workspaceMemberId,
+      threadIds: [args.threadId],
       isAssigneeOnly: false,
     });
 
     if (await this.participantService.isFollowing(args)) {
-      await this.writeMemberCopy({
-        ...args,
-        change,
+      await this.participantService.updateInboxState({
+        workspaceId: args.workspaceId,
+        workspaceMemberId: args.workspaceMemberId,
+        threadIds: [args.threadId],
+        action: change.action,
+        snoozedUntil:
+          change.action === AgentChatInboxAction.SNOOZE
+            ? change.snoozedUntil
+            : null,
         writeThread: channelCopyWrite.write,
       });
     } else {
-      await this.threadRepository.query(
-        args.workspaceId,
-        channelCopyWrite.write,
+      await this.threadRepository.query(args.workspaceId, (context) =>
+        channelCopyWrite.write({ ...context, threadId: args.threadId }),
       );
     }
 
-    if (channelCopyWrite.isWritten()) {
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId: args.workspaceId,
-        threadBefore,
-      });
-    }
+    await this.emitChannelCopiesUpdated({
+      workspaceId: args.workspaceId,
+      threadsBefore: [threadBefore],
+      writtenThreadIds: channelCopyWrite.writtenThreadIds,
+    });
   }
 
   // A snooze ends by moving the chat back to its channel's open chats. The
@@ -196,26 +241,6 @@ export class AgentChatThreadTriageService {
     });
   }
 
-  private writeMemberCopy({
-    change,
-    ...args
-  }: AgentChatThreadAccessArgs & {
-    change: AgentChatThreadTriageChange;
-    writeThread?: AgentChatThreadWriteStep;
-  }): Promise<AgentChatThreadParticipantDTO> {
-    switch (change.type) {
-      case 'DONE':
-        return this.participantService.archive(args);
-      case 'SNOOZE':
-        return this.participantService.snooze({
-          ...args,
-          snoozedUntil: change.snoozedUntil,
-        });
-      case 'REOPEN':
-        return this.participantService.moveToInbox(args);
-    }
-  }
-
   // Queued before the write, so no saved snooze lacks its end; the end of a
   // snooze that was never saved finds nothing to end
   private async prepareChannelCopyWrite({
@@ -224,7 +249,7 @@ export class AgentChatThreadTriageService {
   }: AgentChatThreadAccessArgs & {
     change: AgentChatThreadTriageChange;
   }): Promise<void> {
-    if (change.type !== 'SNOOZE') {
+    if (change.action !== AgentChatInboxAction.SNOOZE) {
       return;
     }
 
@@ -248,15 +273,26 @@ export class AgentChatThreadTriageService {
   // member copy's transaction when both change, so the two never disagree
   private buildChannelCopyWrite({
     change,
+    workspaceMemberId,
+    threadIds,
     isAssigneeOnly,
-    ...args
-  }: AgentChatThreadAccessArgs & {
+  }: {
     change: AgentChatThreadTriageChange;
+    workspaceMemberId: string;
+    threadIds: string[];
     isAssigneeOnly: boolean;
-  }): { write: AgentChatThreadWriteStep; isWritten: () => boolean } {
-    let isWritten = false;
+  }): { write: AgentChatThreadWriteStep; writtenThreadIds: Set<string> } {
+    const writtenThreadIds = new Set<string>();
 
-    const write: AgentChatThreadWriteStep = async ({ manager, table }) => {
+    const write: AgentChatThreadWriteStep = async ({
+      manager,
+      table,
+      threadId,
+    }) => {
+      if (!threadIds.includes(threadId)) {
+        return;
+      }
+
       const filedThreadIds = await manager.query<{ id: string }[]>(
         `WITH filed_thread AS (
            UPDATE ${table('agentChatThread')}
@@ -273,18 +309,41 @@ export class AgentChatThreadTriageService {
          )
          SELECT id FROM filed_thread`,
         [
-          args.threadId,
-          change.type !== 'REOPEN',
-          change.type === 'SNOOZE' ? change.snoozedUntil : null,
-          args.workspaceMemberId,
+          threadId,
+          change.action !== AgentChatInboxAction.MOVE_TO_INBOX,
+          change.action === AgentChatInboxAction.SNOOZE
+            ? change.snoozedUntil
+            : null,
+          workspaceMemberId,
           isAssigneeOnly,
         ],
       );
 
-      isWritten = filedThreadIds.length === 1;
+      if (filedThreadIds.length === 1) {
+        writtenThreadIds.add(threadId);
+      }
     };
 
-    return { write, isWritten: () => isWritten };
+    return { write, writtenThreadIds };
+  }
+
+  private async emitChannelCopiesUpdated({
+    workspaceId,
+    threadsBefore,
+    writtenThreadIds,
+  }: {
+    workspaceId: string;
+    threadsBefore: AgentChatThreadWorkspaceEntity[];
+    writtenThreadIds: Set<string>;
+  }): Promise<void> {
+    for (const threadBefore of threadsBefore) {
+      if (writtenThreadIds.has(threadBefore.id)) {
+        await this.threadRecordEventService.emitThreadUpdated({
+          workspaceId,
+          threadBefore,
+        });
+      }
+    }
   }
 
   private async scheduleChannelSnoozeEnd({

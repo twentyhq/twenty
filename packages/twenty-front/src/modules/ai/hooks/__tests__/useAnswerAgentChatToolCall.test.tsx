@@ -4,12 +4,11 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -27,13 +26,10 @@ jest.mock('@/ai/hooks/useAgentChatModelId', () => ({
   useAgentChatModelId: () => ({ modelIdForRequest: 'model-id' }),
 }));
 
-const key = {
-  instanceId: AGENT_CHAT_INSTANCE_ID,
-  familyKey: { threadId: 'thread-id' },
-};
-const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily(key);
+const key = { threadId: 'thread-id' };
+const messagesAtom = agentChatMessagesFamilyState.atomFamily(key);
 const isAwaitingFirstChunkAtom =
-  agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily(key);
+  agentChatIsAwaitingFirstChunkFamilyState.atomFamily(key);
 
 const PENDING_OUTPUT = { result: { questions: [], status: 'pending' } };
 const ANSWERED_OUTPUT = { result: { questions: [], status: 'answered' } };

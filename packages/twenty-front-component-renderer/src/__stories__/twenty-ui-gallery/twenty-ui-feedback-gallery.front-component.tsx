@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Callout, InlineBanner } from 'twenty-ui/components/feedback';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   Banner,
   Loader,
@@ -15,6 +15,7 @@ import {
   ComponentGallery,
   type GalleryEntry,
 } from '../shared/front-components/component-gallery';
+import { CalloutGalleryExample } from './callout-gallery-example';
 
 const FEEDBACK_ENTRIES: GalleryEntry[] = [
   {
@@ -40,9 +41,7 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Callout',
-    node: (
-      <Callout variant="info" title="Info" description="A short description." />
-    ),
+    node: <CalloutGalleryExample />,
   },
   {
     name: 'InlineBanner compact link',

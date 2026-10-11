@@ -12,13 +12,15 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AgentChatChannelDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel.dto';
-import { AgentChatInboxSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-inbox-summary.dto';
-import { AgentChatInboxThreadIdsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-inbox-thread-ids.dto';
-import { AgentChatInboxViewInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-inbox-view.input';
+import { AgentChatChannelSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-summary.dto';
+import { AgentChatChannelThreadIdsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-thread-ids.dto';
+import { AgentChatChannelAssignmentFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-assignment-filter.enum';
+import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-status.enum';
+import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { CreateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/create-agent-chat-channel.input';
 import { UpdateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/update-agent-chat-channel.input';
 import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
-import { AgentChatInboxViewService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-view.service';
+import { AgentChatChannelThreadsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-threads.service';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
@@ -45,20 +47,31 @@ export class AgentChatChannelResolver {
     private readonly channelService: AgentChatChannelService,
     private readonly threadService: AgentChatThreadService,
     private readonly triageService: AgentChatThreadTriageService,
-    private readonly inboxViewService: AgentChatInboxViewService,
+    private readonly channelThreadsService: AgentChatChannelThreadsService,
   ) {}
 
-  @Query(() => AgentChatInboxThreadIdsDTO)
-  async agentChatInboxThreadIds(
-    @Args('view', { type: () => AgentChatInboxViewInput })
-    view: AgentChatInboxViewInput,
+  @Query(() => AgentChatChannelThreadIdsDTO)
+  async agentChatChannelThreadIds(
+    @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
+    @Args('status', {
+      type: () => AgentChatChannelThreadStatus,
+      nullable: true,
+    })
+    status: AgentChatChannelThreadStatus | null,
+    @Args('assignment', {
+      type: () => AgentChatChannelAssignmentFilter,
+      nullable: true,
+    })
+    assignment: AgentChatChannelAssignmentFilter | null,
     @Args('first', { type: () => Int, nullable: true }) first: number | null,
     @Args('after', { type: () => String, nullable: true }) after: string | null,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatInboxThreadIdsDTO> {
-    return this.inboxViewService.findThreadIds({
-      view,
+  ): Promise<AgentChatChannelThreadIdsDTO> {
+    return this.channelThreadsService.findThreadIds({
+      channelId,
+      status,
+      assignment,
       first,
       after,
       workspaceMemberId,
@@ -66,12 +79,15 @@ export class AgentChatChannelResolver {
     });
   }
 
-  @Query(() => AgentChatInboxSummaryDTO)
-  async agentChatInboxSummary(
+  @Query(() => [AgentChatChannelSummaryDTO])
+  async agentChatChannelSummaries(
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatInboxSummaryDTO> {
-    return this.inboxViewService.getSummary({ workspaceMemberId, workspaceId });
+  ): Promise<AgentChatChannelSummaryDTO[]> {
+    return this.channelThreadsService.findSummaries({
+      workspaceMemberId,
+      workspaceId,
+    });
   }
 
   @Mutation(() => AgentChatChannelDTO)
@@ -229,7 +245,7 @@ export class AgentChatChannelResolver {
   ): Promise<boolean> {
     await this.triageService.applyToChannelCopy({
       threadId,
-      change: { type: 'DONE' },
+      change: { action: AgentChatInboxAction.ARCHIVE },
       workspaceMemberId,
       workspaceId,
     });
@@ -246,7 +262,7 @@ export class AgentChatChannelResolver {
   ): Promise<boolean> {
     await this.triageService.applyToChannelCopy({
       threadId,
-      change: { type: 'SNOOZE', snoozedUntil },
+      change: { action: AgentChatInboxAction.SNOOZE, snoozedUntil },
       workspaceMemberId,
       workspaceId,
     });
@@ -262,7 +278,7 @@ export class AgentChatChannelResolver {
   ): Promise<boolean> {
     await this.triageService.applyToChannelCopy({
       threadId,
-      change: { type: 'REOPEN' },
+      change: { action: AgentChatInboxAction.MOVE_TO_INBOX },
       workspaceMemberId,
       workspaceId,
     });

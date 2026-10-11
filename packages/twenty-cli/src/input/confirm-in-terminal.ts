@@ -1,4 +1,4 @@
-import { createInterface } from 'node:readline/promises';
+import { promptInTerminal } from '@/input/prompt-in-terminal';
 
 const YES_ANSWER_PATTERN = /^y(es)?$/i;
 
@@ -9,16 +9,10 @@ export const confirmInTerminal = async ({
   question: string;
   signal: AbortSignal;
 }) => {
-  const terminal = createInterface({
-    input: process.stdin,
-    output: process.stderr,
+  const answer = await promptInTerminal({
+    question: `${question} [y/N] `,
+    signal,
   });
 
-  try {
-    const answer = await terminal.question(`${question} [y/N] `, { signal });
-
-    return YES_ANSWER_PATTERN.test(answer.trim());
-  } finally {
-    terminal.close();
-  }
+  return YES_ANSWER_PATTERN.test(answer.trim());
 };

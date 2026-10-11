@@ -22,6 +22,19 @@ export const APP_ADD_COMMAND_DEFINITION: LocalCommandDefinition = {
       flags: '--name <name>',
       description: 'Definition name; also determines the generated filename',
     },
+    {
+      flags: '--create-view',
+      description: 'Create a table view for the new object',
+    },
+    {
+      flags: '--create-navigation-menu-item',
+      description: 'Create a navigation menu item for the new object',
+    },
+    {
+      flags: '--create-page-layout',
+      description:
+        'Create a record page layout and its fields view for the new object',
+    },
     { flags: '--name-plural <name>', description: 'Plural API name (object)' },
     {
       flags: '--label <label>',
@@ -65,6 +78,7 @@ export const APP_ADD_COMMAND_DEFINITION: LocalCommandDefinition = {
   examples: [
     'twenty app add',
     'twenty app add object --name invoice --name-plural invoices --no-input',
+    'twenty app add object --name invoice --name-plural invoices --create-view --create-navigation-menu-item --create-page-layout --no-input',
     'twenty app add field --name amount --type NUMBER --object <object-universal-identifier> --json',
     'twenty app add logic-function --name send-invoice --no-input',
     'twenty app add front-component --name invoice-panel --no-input',

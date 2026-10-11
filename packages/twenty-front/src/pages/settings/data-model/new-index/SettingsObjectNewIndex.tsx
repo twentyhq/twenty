@@ -22,6 +22,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Callout, useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconAlertTriangle } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { IndexType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -157,8 +158,13 @@ export const SettingsObjectNewIndex = () => {
         <SettingsPageContainer>
           <Section.Root>
             <Callout
-              variant="warning"
-              Icon={IconAlertTriangle}
+              status="warning"
+              icon={
+                <IconAlertTriangle
+                  size={themeCssVariables.icon.size.md}
+                  aria-hidden="true"
+                />
+              }
               title={t`Use indexes sparingly`}
               description={t`Each index speeds up reads on the fields it covers, but slows down every insert and update, and uses disk space. Only add an index when you know which queries it serves.`}
             />

@@ -107,6 +107,37 @@ export const ColumnSelection = () => {
 
 Tab focuses the checkbox and Space toggles it. Clicking its label also toggles it. Use `disabled` to prevent interaction, or `readOnly` when the value should remain unchanged while the control stays focusable. Keep meaning in the label rather than communicating it through color alone.
 
+## Parts and custom content
+
+`Checkbox` assembles the styled root and its default check and indeterminate icons. Use `Checkbox.Root` with `Checkbox.Indicator` to own the indicator content. Root owns state and box appearance; Indicator renders the content you supply.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { Checkbox } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Checkbox.Root aria-label="Updates" defaultChecked>
+    <Checkbox.Indicator>
+      <IconCheck aria-hidden />
+    </Checkbox.Indicator>
+  </Checkbox.Root>
+);
+```
+
+`CheckboxRootProps` and `CheckboxIndicatorProps` are public types exported from `twenty-ui/primitives/input`. Both parts accept native attributes, handlers, refs, `render`, and state-based `className` and `style` callbacks. Root's `ref` targets the visible control; `inputRef` targets the native input. The part ref targets its rendered element. Pass `nativeButton` with `render={<button />}` when replacing Root with a button. Appearance props belong on Root; explicit classes and styles are merged with the defaults.
+
+Indicator receives checked and indeterminate state, including transition state. Set `keepMounted` to retain an unchecked indicator in the DOM; the default styling hides it with opacity. Override its `style` or `className` for custom transitions.
+
+<StoryEmbed
+  storyId="ui-input-checkbox-parts--composition"
+  title="Checkbox part composition"
+  height={240}
+/>
+
+The callable assembly and its `CheckboxProps` type remain supported. Replace the assembly with Root and its part when supplying custom icons instead of appending another part to the assembly's children.
+
+For controlled form reset, handle the form's `onReset` and restore `checked` to your initial value. Base UI 1.8 does not restore uncontrolled component state on native form reset. `required`, `form`, `value`, and `uncheckedValue` keep the upstream native input behavior.
+
 ## Props
 
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.

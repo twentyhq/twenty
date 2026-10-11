@@ -3,15 +3,16 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { buildMissingStandardCommandMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-39/utils/build-missing-standard-command-menu-items-to-create.util';
+import { backfillAgentChatThreadInboxState } from 'src/database/commands/upgrade-version-command/2-46/utils/backfill-agent-chat-thread-inbox-state.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -32,56 +33,6 @@ const ASSIGNEE_INDEX_UNIVERSAL_IDENTIFIERS = [
 
 const ASSIGNEE_COMMAND_MENU_ITEM_NAMES = ['assignAiChat'] as const;
 
-// The assignee cannot unsubscribe, so Unsubscribe hides for them. Only an
-// expression still as the subscriptions command saved it is changed
-const UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES =
-  'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.isSubscribed", true)';
-
-const UNSUBSCRIBE_EXPRESSION_WITH_ASSIGNEES = `${UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES} and noneEquals(selectedRecords, "inboxStatus.isAssignedToMe", true)`;
-
-const buildUnsubscribeCommandMenuItemUpdates = ({
-  flatCommandMenuItemByUniversalIdentifier,
-  now,
-  direction,
-}: {
-  flatCommandMenuItemByUniversalIdentifier: Record<
-    string,
-    FlatCommandMenuItem | undefined
-  >;
-  now: string;
-  direction: 'up' | 'down';
-}): FlatCommandMenuItem[] => {
-  const commandMenuItem =
-    flatCommandMenuItemByUniversalIdentifier[
-      STANDARD_COMMAND_MENU_ITEMS.unsubscribeFromAiChat.universalIdentifier
-    ];
-  const [fromExpression, toExpression] =
-    direction === 'up'
-      ? [
-          UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES,
-          UNSUBSCRIBE_EXPRESSION_WITH_ASSIGNEES,
-        ]
-      : [
-          UNSUBSCRIBE_EXPRESSION_WITH_ASSIGNEES,
-          UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES,
-        ];
-
-  if (
-    !isDefined(commandMenuItem) ||
-    commandMenuItem.conditionalAvailabilityExpression !== fromExpression
-  ) {
-    return [];
-  }
-
-  return [
-    {
-      ...commandMenuItem,
-      conditionalAvailabilityExpression: toExpression,
-      updatedAt: now,
-    },
-  ];
-};
-
 @RegisteredWorkspaceCommand('2.46.0', 1791385745099)
 @Command({
   name: 'upgrade:2-46:add-agent-chat-thread-assignee',
@@ -93,6 +44,7 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly storage: AgentHistoryUpgradeStorageService,
   ) {
     super(workspaceIteratorService);
   }
@@ -163,29 +115,47 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
         now: new Date().toISOString(),
       });
 
-    const commandMenuItemsToUpdate = buildUnsubscribeCommandMenuItemUpdates({
-      flatCommandMenuItemByUniversalIdentifier:
-        flatCommandMenuItemMaps.byUniversalIdentifier,
-      now: new Date().toISOString(),
-      direction: 'up',
-    });
 
     const operationCount =
       fieldsToCreate.length +
       indexesToCreate.length +
-      commandMenuItemsToCreate.length +
-      commandMenuItemsToUpdate.length;
+      commandMenuItemsToCreate.length;
 
     if (operationCount === 0) {
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: creating ${fieldsToCreate.length} field(s), ${indexesToCreate.length} index(es) and ${commandMenuItemsToCreate.length} command menu item(s), and updating ${commandMenuItemsToUpdate.length} command menu item(s) for chat assignees`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: creating ${fieldsToCreate.length} field(s), ${indexesToCreate.length} index(es) and ${commandMenuItemsToCreate.length} command menu item(s) for chat assignees`,
     );
 
     if (options.dryRun ?? false) {
       return;
+    }
+
+    // The assignee opens the runtime's 2.46 chat fence. Until then chats were
+    // written to and created without inbox state, so the inbox backfill runs
+    // again for them first
+    const threadObject =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      ];
+    const participantObject =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier
+      ];
+
+    if (
+      fieldsToCreate.length > 0 &&
+      isDefined(threadObject) &&
+      isDefined(participantObject)
+    ) {
+      await backfillAgentChatThreadInboxState({
+        storage: this.storage,
+        workspaceId,
+        threadObjectMetadataId: threadObject.id,
+        participantObjectMetadataId: participantObject.id,
+      });
     }
 
     const result =
@@ -209,7 +179,7 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
             commandMenuItem: {
               flatEntityToCreate: commandMenuItemsToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: commandMenuItemsToUpdate,
+              flatEntityToUpdate: [],
             },
           },
         },
@@ -251,18 +221,11 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
           STANDARD_COMMAND_MENU_ITEMS[name].universalIdentifier
         ],
     ).filter(isDefined);
-    const commandMenuItemsToUpdate = buildUnsubscribeCommandMenuItemUpdates({
-      flatCommandMenuItemByUniversalIdentifier:
-        flatCommandMenuItemMaps.byUniversalIdentifier,
-      now: new Date().toISOString(),
-      direction: 'down',
-    });
 
     if (
       fieldsToDelete.length +
         indexesToDelete.length +
-        commandMenuItemsToDelete.length +
-        commandMenuItemsToUpdate.length ===
+        commandMenuItemsToDelete.length ===
       0
     ) {
       return;
@@ -297,7 +260,7 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
             commandMenuItem: {
               flatEntityToCreate: [],
               flatEntityToDelete: commandMenuItemsToDelete,
-              flatEntityToUpdate: commandMenuItemsToUpdate,
+              flatEntityToUpdate: [],
             },
           },
         },

@@ -8,10 +8,13 @@ import { type ButtonSize } from './ButtonSize';
 import { type ButtonVariant } from './ButtonVariant';
 
 export type ButtonProps = Omit<
-  ButtonPrimitive.Props,
-  'color' | 'nativeButton' | 'role'
+  ComponentPropsWithRef<typeof ButtonPrimitive>,
+  'color'
 > &
-  Pick<ComponentPropsWithRef<'a'>, 'href' | 'target' | 'rel' | 'download'> & {
+  Omit<
+    ComponentPropsWithRef<'a'>,
+    keyof ComponentPropsWithRef<typeof ButtonPrimitive>
+  > & {
     variant?: ButtonVariant;
     color?: ButtonColor;
     size?: ButtonSize;

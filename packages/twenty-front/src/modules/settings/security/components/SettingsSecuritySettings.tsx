@@ -160,7 +160,7 @@ export const SettingsSecuritySettings = () => {
             <Section.Header
               title={t`SSO`}
               description={t`Configure an SSO connection`}
-              adornment={<OrganizationAdornment />}
+              actions={<OrganizationAdornment />}
             />
             {hasSsoEntitlement ? (
               <SettingsSsoIdentitiesProvidersListCard />
@@ -218,7 +218,7 @@ export const SettingsSecuritySettings = () => {
           <Section.Header
             title={t`Audit Logs`}
             description={t`Configure how long audit logs are retained`}
-            adornment={<OrganizationAdornment />}
+            actions={<OrganizationAdornment />}
           />
           {hasEnterpriseAccess ? (
             <Card.Root rounded>

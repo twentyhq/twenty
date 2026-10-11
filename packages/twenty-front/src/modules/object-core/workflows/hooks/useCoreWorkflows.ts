@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -114,6 +114,11 @@ export const useCoreWorkflows = ({
   );
   const connection = (data ?? previousData)?.coreWorkflows;
 
+  const coreWorkflows = useMemo(
+    () => connection?.edges.map((edge) => edge.node) ?? [],
+    [connection],
+  );
+
   const { enqueueToast } = useToast();
 
   const fetchNextPage = async () => {
@@ -166,7 +171,7 @@ export const useCoreWorkflows = ({
   }, [fetchMore, loadedCount, refetch]);
 
   return {
-    coreWorkflows: connection?.edges.map((edge) => edge.node) ?? [],
+    coreWorkflows,
     totalCount: connection?.totalCount ?? 0,
     hasNextPage: connection?.pageInfo.hasNextPage ?? false,
     fetchNextPage,

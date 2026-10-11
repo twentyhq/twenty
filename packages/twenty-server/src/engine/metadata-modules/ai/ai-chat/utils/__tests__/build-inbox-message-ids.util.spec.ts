@@ -2,13 +2,12 @@ import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/uti
 
 const INPUT = {
   senderKey: 'application:application-id',
-  workspaceMemberId: 'workspace-member-id',
   threadKey: 'first-call-recording',
   idempotencyKey: 'first-call-recording',
 };
 
 describe('buildInboxMessageIds', () => {
-  it('returns the same ids for the same sender, member and keys', () => {
+  it('returns the same ids for the same sender and keys', () => {
     expect(buildInboxMessageIds(INPUT)).toEqual(buildInboxMessageIds(INPUT));
   });
 
@@ -47,7 +46,6 @@ describe('buildInboxMessageIds', () => {
 
   it.each([
     { senderKey: 'application:other-application-id' },
-    { workspaceMemberId: 'other-workspace-member-id' },
     { threadKey: 'other-thread' },
   ])('returns another thread when %o differs', (override) => {
     expect(buildInboxMessageIds({ ...INPUT, ...override }).threadId).not.toBe(

@@ -1,33 +1,20 @@
-import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
+import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
+import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 type AgentChatThreadInboxCommandProps = {
-  action:
-    | 'read'
-    | 'unread'
-    | 'done'
-    | 'reopen'
-    | 'snooze'
-    | 'assign'
-    | 'subscribe'
-    | 'unsubscribe';
+  action: AgentChatInboxAction | 'assign';
 };
 
 export const AgentChatThreadInboxCommand = ({
   action,
 }: AgentChatThreadInboxCommandProps) => {
   const { selectedRecords } = useHeadlessCommandContextApi();
-  const {
-    markAgentChatThreadAsRead,
-    markAgentChatThreadAsUnread,
-    archiveAgentChatThread,
-    moveAgentChatThreadToInbox,
-    subscribeToAgentChatThread,
-    unsubscribeFromAgentChatThread,
-  } = useAgentChatThreadParticipants();
+  const { updateAgentChatThreadInboxState } =
+    useUpdateAgentChatThreadInboxState();
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
   const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
 
@@ -38,7 +25,7 @@ export const AgentChatThreadInboxCommand = ({
       return;
     }
 
-    if (action === 'snooze') {
+    if (action === AgentChatInboxAction.SNOOZE) {
       return openSnoozeAiChatInSidePanel(threadIds);
     }
 
@@ -46,20 +33,7 @@ export const AgentChatThreadInboxCommand = ({
       return openAssignAiChatInSidePanel(threadIds);
     }
 
-    const updateThread = {
-      read: markAgentChatThreadAsRead,
-      unread: markAgentChatThreadAsUnread,
-      done: archiveAgentChatThread,
-      reopen: moveAgentChatThreadToInbox,
-      subscribe: subscribeToAgentChatThread,
-      unsubscribe: unsubscribeFromAgentChatThread,
-    }[action];
-
-    // One at a time: a failed update reloads every chat's state, which would
-    // undo the optimistic change of an update still on its way
-    for (const threadId of threadIds) {
-      await updateThread(threadId);
-    }
+    await updateAgentChatThreadInboxState({ threadIds, action });
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

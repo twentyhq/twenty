@@ -10,6 +10,7 @@ export const GET_CHAT_MESSAGES = gql`
       role
       status
       createdAt
+      processedAt
       parts {
         id
         messageId

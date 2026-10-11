@@ -251,7 +251,7 @@ export const LogConsoleDetailPanel = () => {
           <Section.Root>
             <Section.Header
               title={t`Message`}
-              adornment={
+              actions={
                 <LightButton
                   startIcon={<IconCopy />}
                   onClick={() => copyToClipboard(message)}
@@ -294,7 +294,7 @@ export const LogConsoleDetailPanel = () => {
         <Section.Root>
           <Section.Header
             title={t`Raw event`}
-            adornment={
+            actions={
               <LightButton
                 startIcon={<IconCopy />}
                 onClick={() =>

@@ -1,8 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
+import { getDefaultStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
 
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 
 const navigateAppMock = jest.fn();
 
@@ -35,13 +36,15 @@ describe('useProjectAiChatThreadToUrl', () => {
     );
   });
 
-  it('should clear the url param for a draft thread', () => {
+  it('should clear the url param for the new chat', () => {
     window.history.pushState(null, '', `/chat/${THREAD_A}`);
 
     const { result } = renderHook(() => useProjectAiChatThreadToUrl());
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+      result.current.projectAiChatThreadToUrl(
+        getDefaultStore().get(newAiChatThreadIdState.atom),
+      );
     });
 
     expect(navigateAppMock).toHaveBeenCalledWith(

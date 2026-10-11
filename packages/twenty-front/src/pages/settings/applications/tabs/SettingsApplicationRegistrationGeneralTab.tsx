@@ -28,6 +28,8 @@ export const SettingsApplicationRegistrationGeneralTab = ({
           action={
             <InlineBanner.Action
               href={`${location.pathname}${location.search}#config`}
+              nativeButton={false}
+              role="link"
               render={
                 <Link
                   to={{ search: location.search, hash: '#config' }}

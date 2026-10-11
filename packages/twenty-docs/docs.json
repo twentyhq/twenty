@@ -416,6 +416,7 @@
                       "developers/extend/apps/getting-started/project-structure",
                       "developers/extend/apps/getting-started/local-server",
                       "developers/extend/apps/getting-started/scaffolding",
+                      "developers/extend/apps/getting-started/good-practices",
                       "developers/extend/apps/getting-started/troubleshooting"
                     ]
                   },
@@ -462,8 +463,7 @@
                       "developers/extend/apps/logic/skills-and-agents",
                       "developers/extend/apps/logic/connections",
                       "developers/extend/apps/logic/messaging-channels",
-                      "developers/extend/apps/logic/credits",
-                      "developers/extend/apps/logic/good-practices"
+                      "developers/extend/apps/logic/credits"
                     ]
                   },
                   {
@@ -668,6 +668,7 @@
                       {
                         "group": "Navigation",
                         "pages": [
+                          "ui/components/navigation/list-item-button",
                           "ui/components/navigation/dropdown",
                           "ui/components/navigation/menu-items",
                           "ui/components/navigation/menu-picker",
@@ -6974,6 +6975,10 @@
     {
       "source": "/zh/developers/extend/apps/translations/overview",
       "destination": "/zh/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/developers/extend/apps/logic/good-practices",
+      "destination": "/developers/extend/apps/getting-started/good-practices"
     },
     {
       "source": "/developers/extend/capabilities/api",

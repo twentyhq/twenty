@@ -413,6 +413,20 @@ const SettingsAccounts = lazy(() =>
   })),
 );
 
+const SettingsAccountDetail = lazy(() =>
+  import('~/pages/settings/accounts/SettingsAccountDetail').then((module) => ({
+    default: module.SettingsAccountDetail,
+  })),
+);
+
+const SettingsNativeAccountApp = lazy(() =>
+  import('~/pages/settings/accounts/SettingsNativeAccountApp').then(
+    (module) => ({
+      default: module.SettingsNativeAccountApp,
+    }),
+  ),
+);
+
 const SettingsAccountsEmails = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
     default: module.SettingsAccountsEmails,
@@ -754,6 +768,14 @@ const createSettingsRouteElements = ({
       }
     >
       <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
+      <Route
+        path={SettingsPath.AccountDetail}
+        element={<SettingsAccountDetail />}
+      />
+      <Route
+        path={SettingsPath.NativeAccountApp}
+        element={<SettingsNativeAccountApp />}
+      />
       <Route
         path={SettingsPath.AccountsEmails}
         element={<SettingsAccountsEmails />}

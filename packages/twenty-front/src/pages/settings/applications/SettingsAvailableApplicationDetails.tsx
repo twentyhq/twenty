@@ -1,4 +1,3 @@
-import { themeCssVariables } from 'twenty-ui/theme';
 import { AppChip } from '@/applications/components/AppChip';
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
@@ -242,12 +241,7 @@ export const SettingsAvailableApplicationDetails = () => {
         <SettingsPageContainer overflow="visible">
           {isUnlisted && (
             <InlineBanner
-              icon={
-                <IconEyeOff
-                  size={themeCssVariables.icon.size.md}
-                  aria-hidden="true"
-                />
-              }
+              icon={<IconEyeOff aria-hidden="true" />}
             >{t`Application not listed on the marketplace. It was shared via a direct link`}</InlineBanner>
           )}
           {renderActiveTabContent()}

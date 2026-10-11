@@ -34,6 +34,7 @@ export class PendingWakeUpResolverService {
     workspaceId,
     wakeUpId,
     event,
+    answer,
     attempt = 0,
     recordReadAttempt = 0,
   }: ResumePendingWakeUpJobData): Promise<void> {
@@ -56,6 +57,7 @@ export class PendingWakeUpResolverService {
       await this.pendingWakeUpService.scheduleResolution({
         wakeUp,
         event,
+        answer,
         attempt: attempt + 1,
         delayMs: computeRetryDelayMs(attempt),
       });
@@ -83,20 +85,12 @@ export class PendingWakeUpResolverService {
       return;
     }
 
-    const claimedWakeUp = await this.pendingWakeUpService.claim({
-      workspaceId,
-      wakeUpId,
-    });
-
-    if (!isDefined(claimedWakeUp)) {
-      return;
-    }
-
     await handler.resolve({
-      claimedWakeUp,
+      wakeUp,
       outcome: buildPendingWakeUpOutcome({
-        condition: claimedWakeUp.condition,
+        condition: wakeUp.condition,
         event: readableEvent,
+        answer,
       }),
       owner: ownerState.owner,
       isOwnerGone: ownerState.status === 'GONE',

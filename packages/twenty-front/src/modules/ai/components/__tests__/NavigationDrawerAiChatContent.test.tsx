@@ -54,7 +54,13 @@ jest.mock(
 );
 
 jest.mock('@/ai/components/NavigationDrawerAiChatTriageSection', () => ({
-  NavigationDrawerAiChatTriageSection: () => null,
+  NavigationDrawerAiChatTriageSection: () => <nav aria-label="Triage" />,
+}));
+
+let mockIsAiChatInboxEnabled = true;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
 }));
 
 jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
@@ -89,6 +95,7 @@ const renderContent = () =>
 describe('NavigationDrawerAiChatContent', () => {
   beforeEach(() => {
     resetJotaiStore();
+    mockIsAiChatInboxEnabled = true;
     mockThreads = [
       buildThread('chat-1', 'Pipeline review'),
       buildThread('chat-2', 'Quarterly plan'),
@@ -108,6 +115,21 @@ describe('NavigationDrawerAiChatContent', () => {
     expect(within(favorites).getByText('Quarterly plan')).toBeInTheDocument();
     expect(within(recents).getByText('Pipeline review')).toBeInTheDocument();
     expect(within(recents).queryByText('Quarterly plan')).toBeNull();
+  });
+
+  it('shows the triage section with the inbox feature flag on', () => {
+    const { getByRole } = renderContent();
+
+    expect(getByRole('navigation', { name: 'Triage' })).toBeInTheDocument();
+  });
+
+  it('hides the triage section while the inbox feature flag is off', () => {
+    mockIsAiChatInboxEnabled = false;
+
+    const { queryByRole } = renderContent();
+
+    expect(queryByRole('navigation', { name: 'Triage' })).toBeNull();
+    expect(queryByRole('region', { name: 'Recent' })).toBeInTheDocument();
   });
 
   it('shows no Favorites section without favorite chats', () => {
