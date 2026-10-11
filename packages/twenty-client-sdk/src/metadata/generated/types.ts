@@ -327,6 +327,9 @@ export default {
             "role": [
                 1
             ],
+            "senderUserWorkspaceId": [
+                488
+            ],
             "senderWorkspaceMemberId": [
                 488
             ],

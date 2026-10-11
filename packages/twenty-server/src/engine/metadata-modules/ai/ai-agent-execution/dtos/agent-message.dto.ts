@@ -19,6 +19,11 @@ export class AgentMessageDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   agentId: string | null;
 
+  // Fronts cached from the release before still query it for up to a day,
+  // and a query naming an unknown field fails as a whole
+  @Field(() => UUIDScalarType, { nullable: true })
+  senderUserWorkspaceId: string | null;
+
   @Field(() => UUIDScalarType, { nullable: true })
   senderWorkspaceMemberId: string | null;
 
