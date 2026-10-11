@@ -8,6 +8,10 @@ import { updateOneOperationFactory } from 'test/integration/graphql/utils/update
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import {
+  dropLegacyChatMembershipColumns,
+  restoreLegacyChatMembershipColumns,
+} from 'test/integration/utils/restore-legacy-chat-membership-columns.util';
 import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
@@ -578,6 +582,7 @@ describe('Conversation sharing through the authenticated API', () => {
       id: owner.threadId,
       title: 'Upgrade ownership test',
     });
+    await restoreLegacyChatMembershipColumns(workspaceId);
     try {
       await command.down(options);
       expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
@@ -620,6 +625,7 @@ describe('Conversation sharing through the authenticated API', () => {
       await getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
         'AddWorkflowRunToChatThreadsCommand',
       ).up(options);
+      await dropLegacyChatMembershipColumns(workspaceId);
       await destroyAgentChatThread({ threadId: owner.threadId });
     }
   });
