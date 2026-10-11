@@ -11,7 +11,6 @@ import {
   combineFilters,
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
-  getFilterTypeFromFieldType,
   isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
@@ -232,7 +231,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
         value: convertViewFilterValueToString(viewFilter.value),
-        type: getFilterTypeFromFieldType(fieldMetadata.type),
         operand: viewFilter.operand,
         recordFilterGroupId: viewFilter.viewFilterGroupId,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,

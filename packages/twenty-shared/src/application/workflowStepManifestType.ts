@@ -17,6 +17,8 @@ import { workflowFindRecordsActionSettingsSchema } from '@/workflow/schemas/find
 import { workflowFormActionSettingsSchema } from '@/workflow/schemas/form-action-settings-schema';
 import { workflowFilterActionSettingsSchema } from '@/workflow/schemas/filter-action-settings-schema';
 import { workflowIfElseActionSettingsSchema } from '@/workflow/schemas/if-else-action-settings-schema';
+import { recordFilterGroupSchema } from '@/workflow/schemas/record-filter-group-schema';
+import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
 import { workflowPickRecordStrategySchema } from '@/workflow/schemas/pick-record-action-settings-schema';
 
@@ -44,6 +46,11 @@ const fieldReferenceSchema = z.looseObject({
 const stepFilterManifestSchema = stepFilterSchema
   .omit({ fieldMetadataId: true })
   .extend({ fieldMetadataUniversalIdentifier: z.uuid().optional() })
+  .strict();
+
+const recordFilterManifestSchema = recordFilterSchema
+  .omit({ fieldMetadataId: true, relationTargetFieldMetadataId: true })
+  .extend({ fieldMetadataUniversalIdentifier: z.uuid() })
   .strict();
 
 const recordObjectShape = { objectUniversalIdentifier: z.uuid() };
@@ -103,10 +110,8 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
         ...recordObjectShape,
         filter: z
           .strictObject({
-            recordFilterGroups: z
-              .array(z.record(z.string(), z.unknown()))
-              .optional(),
-            recordFilters: z.array(fieldReferenceSchema).optional(),
+            recordFilterGroups: z.array(recordFilterGroupSchema).optional(),
+            recordFilters: z.array(recordFilterManifestSchema).optional(),
           })
           .optional(),
         orderBy: z

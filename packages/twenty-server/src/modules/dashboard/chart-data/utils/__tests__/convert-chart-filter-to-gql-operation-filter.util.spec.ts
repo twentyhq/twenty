@@ -50,7 +50,6 @@ describe('convertChartFilterToGqlOperationFilter', () => {
             isCurrentWorkspaceMemberSelected: true,
             selectedRecordIds: [],
           }),
-          type: FieldMetadataType.RELATION,
         },
       ],
     };
@@ -79,7 +78,6 @@ describe('convertChartFilterToGqlOperationFilter', () => {
             isCurrentWorkspaceMemberSelected: true,
             selectedRecordIds: [],
           }),
-          type: FieldMetadataType.RELATION,
         },
       ],
     };

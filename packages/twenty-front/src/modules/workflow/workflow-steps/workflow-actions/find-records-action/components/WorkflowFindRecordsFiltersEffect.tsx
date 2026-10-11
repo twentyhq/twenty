@@ -60,7 +60,7 @@ export const WorkflowFindRecordsFiltersEffect = ({
     ) {
       setCurrentRecordFilters(
         hydrateRecordFiltersFromFieldMetadata({
-          recordFilters: defaultValue.recordFilters,
+          persistedRecordFilters: defaultValue.recordFilters,
           fieldMetadataItems: flattenedFieldMetadataItems,
         }),
       );

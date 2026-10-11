@@ -45,7 +45,7 @@ export const ChartFiltersSettingsInitializeStateEffect = ({
     if (!hasInitializedChartFilters && isDefined(initialChartFilters)) {
       setCurrentRecordFilters(
         hydrateRecordFiltersFromFieldMetadata({
-          recordFilters: initialChartFilters.recordFilters ?? [],
+          persistedRecordFilters: initialChartFilters.recordFilters ?? [],
           fieldMetadataItems: flattenedFieldMetadataItems,
         }),
       );

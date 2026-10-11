@@ -108,7 +108,6 @@ export class ViewQueryParamsService {
           id: viewFilter.id,
           fieldMetadataId: viewFilter.fieldMetadataId,
           value: convertViewFilterValueToString(viewFilter.value ?? ''),
-          type: field.type,
           recordFilterGroupId: viewFilter.viewFilterGroupId,
           operand: viewFilter.operand,
           subFieldName: viewFilter.subFieldName,
