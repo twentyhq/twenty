@@ -5,8 +5,6 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019631-add-agent-chat-thread-participant-object.command';
 import { type BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019632-backfill-agent-chat-thread-inbox-state.command';
-import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
-import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -14,9 +12,6 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-
-const getAgentChatThreadService = () =>
-  getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
 const RUN_ON_WORKSPACE_ARGS = {
   workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -56,13 +51,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   const legacyArchivedThreadId = randomUUID();
   const deletedThreadId = randomUUID();
   const deletedAgainThreadId = randomUUID();
-  const createdBeforeUpgradeThreadId = randomUUID();
-  let beforeUpgrade: {
-    createdThreadLastActivityAt: string | null;
-    recordedLastActivityAt: Date | null;
-  };
   const threadIds = [
-    createdBeforeUpgradeThreadId,
     sharedThreadId,
     emptyThreadId,
     legacyArchivedThreadId,
@@ -183,28 +172,6 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
     // What a workspace that has not run the 2.46 commands yet looks like
     await runCommand(backfillCommand, 'down');
     await runCommand(objectCommand, 'down');
-
-    const participantService =
-      getAppProviderByClassName<AgentChatThreadParticipantService>(
-        'AgentChatThreadParticipantService',
-      );
-    const createdThread = await getAgentChatThreadService().createThread({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      id: createdBeforeUpgradeThreadId,
-      title: 'Created before the upgrade',
-    });
-    const { lastActivityAt } = await participantService.recordMemberActivity({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      threadId: createdBeforeUpgradeThreadId,
-      text: 'Sent before the upgrade',
-    });
-
-    beforeUpgrade = {
-      createdThreadLastActivityAt: createdThread.lastActivityAt ?? null,
-      recordedLastActivityAt: lastActivityAt,
-    };
 
     await insertThread(sharedThreadId);
     await insertThread(emptyThreadId);
@@ -448,10 +415,5 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
     expect(await readOwnerShares()).toHaveLength(
       (await readParticipants()).length,
     );
-  });
-
-  it('keeps chats working on a workspace the upgrade has not reached yet', () => {
-    expect(beforeUpgrade.createdThreadLastActivityAt).toBeNull();
-    expect(beforeUpgrade.recordedLastActivityAt).toBeNull();
   });
 });

@@ -22,7 +22,6 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
-import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
 import {
   AiException,
   AiExceptionCode,
@@ -50,32 +49,20 @@ export class AgentChatSharingService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly upgradeFenceService: AgentHistoryUpgradeFenceService,
   ) {}
 
-  // Remove with AgentHistoryUpgradeFenceService once 2.46 leaves the window
-  async hasInboxState(workspaceId: string): Promise<boolean> {
-    return isDefined(await this.findParticipantObjectMetadataId(workspaceId));
-  }
-
-  async findParticipantObjectMetadataId(
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    if (
-      !(await this.upgradeFenceService.hasUpgradedAgentHistory(workspaceId))
-    ) {
-      return undefined;
-    }
-
+  async getParticipantObjectMetadataId(workspaceId: string): Promise<string> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]);
 
-    return findAgentChatFlatObjectMetadata(
-      flatObjectMetadataMaps,
-      'agentChatThreadParticipant',
-    )?.id;
+    return (
+      findAgentChatFlatObjectMetadata(
+        flatObjectMetadataMaps,
+        'agentChatThreadParticipant',
+      ) ?? throwAgentChatThreadNotFound()
+    ).id;
   }
 
   getReadableThread(args: AgentChatThreadAccessArgs) {
@@ -215,7 +202,7 @@ export class AgentChatSharingService {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
     const participantObjectMetadataId =
-      await this.findParticipantObjectMetadataId(args.workspaceId);
+      await this.getParticipantObjectMetadataId(args.workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -290,13 +277,9 @@ export class AgentChatSharingService {
     workspaceId: string;
     workspaceMemberId: string;
     threadIds: string[];
-    participantObjectMetadataId: string | undefined;
+    participantObjectMetadataId: string;
     isArchived?: boolean;
   }): Promise<AgentChatThreadWorkspaceEntity[]> {
-    if (!isDefined(participantObjectMetadataId)) {
-      return [];
-    }
-
     return manager.query<AgentChatThreadWorkspaceEntity[]>(
       `WITH thread AS (
          UPDATE ${table('agentChatThread')}

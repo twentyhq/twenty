@@ -68,7 +68,6 @@ const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
       messages {
         id
         role
-        isHidden
         parts {
           type
           orderIndex
@@ -168,20 +167,18 @@ describe('Admin panel global chat threads (integration)', () => {
   const insertMessage = async ({
     threadId,
     role,
-    isHidden = false,
     createdAt,
   }: {
     threadId: string;
     role: 'system' | 'user' | 'assistant';
-    isHidden?: boolean;
     createdAt: string;
   }): Promise<string> => {
     const id = randomUUID();
 
     await insertHistory(
       'agentMessage',
-      ['id', 'threadId', 'role', 'isHidden', 'createdAt'],
-      [id, threadId, role, isHidden, createdAt],
+      ['id', 'threadId', 'role', 'createdAt'],
+      [id, threadId, role, createdAt],
     );
 
     seededMessageIds.push(id);
@@ -369,8 +366,7 @@ describe('Admin panel global chat threads (integration)', () => {
     });
     await insertMessage({
       threadId: answeredQuestionThreadId,
-      role: 'user',
-      isHidden: true,
+      role: 'system',
       createdAt: '2026-01-01T00:04:00Z',
     });
 
@@ -405,8 +401,7 @@ describe('Admin panel global chat threads (integration)', () => {
     });
     await insertMessage({
       threadId: pendingQuestionThreadId,
-      role: 'user',
-      isHidden: true,
+      role: 'system',
       createdAt: '2026-01-01T00:06:00Z',
     });
 
@@ -718,10 +713,7 @@ describe('Admin panel global chat threads (integration)', () => {
 
       expect(result.thread.messageCount).toBe(2);
       expect(result.messages).toHaveLength(3);
-      expect(result.messages[0]).toMatchObject({
-        role: 'SYSTEM',
-        isHidden: false,
-      });
+      expect(result.messages[0]).toMatchObject({ role: 'SYSTEM' });
       expect(result.messages[0].parts[0].textContent).toBe(
         'kickoff prompt with company context',
       );

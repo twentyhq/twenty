@@ -46,11 +46,7 @@ const buildTurn = ({
   },
 ];
 
-const buildService = (
-  messages: unknown[],
-  failedTurnIds: string[] = [],
-  hasUpgradedAgentHistory = true,
-) => {
+const buildService = (messages: unknown[], failedTurnIds: string[] = []) => {
   const messageRepository = { find: jest.fn().mockResolvedValue(messages) };
   const turnRepository = {
     find: jest
@@ -68,11 +64,6 @@ const buildService = (
     turnRepository as never,
     fileUrlService as never,
     {} as never,
-    {
-      hasUpgradedAgentHistory: jest
-        .fn()
-        .mockResolvedValue(hasUpgradedAgentHistory),
-    } as never,
   );
 
   return { service, messageRepository, turnRepository, fileUrlService };
@@ -135,30 +126,6 @@ describe('AgentConversationReaderService', () => {
       'turn-1-user',
       'turn-1-assistant',
     ]);
-  });
-
-  it('keeps every turn of a workspace the 2.46 commands have not reached', async () => {
-    const { service, turnRepository } = buildService(
-      buildTurn({
-        turnId: 'turn-1',
-        senderUserWorkspaceId: MEMBER_A,
-        question: 'Who is our biggest customer?',
-        answer: 'Private Co',
-      }),
-      ['turn-1'],
-      false,
-    );
-
-    const messages = await service.loadMessages({
-      workspaceId: WORKSPACE_ID,
-      threadId: THREAD_ID,
-    });
-
-    expect(messages.map(({ id }) => id)).toEqual([
-      'turn-1-user',
-      'turn-1-assistant',
-    ]);
-    expect(turnRepository.find).not.toHaveBeenCalled();
   });
 
   it('keeps every part when no actor is given', async () => {
@@ -306,7 +273,6 @@ describe('AgentConversationReaderService.findToolPart', () => {
       {} as never,
       {} as never,
       messagePartRepository as never,
-      { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
     );
   };
 
