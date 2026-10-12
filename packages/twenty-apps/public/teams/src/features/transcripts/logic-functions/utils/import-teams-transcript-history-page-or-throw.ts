@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -69,28 +70,40 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
   accessToken,
   coreApiClient,
   transcripts,
+  importedSince,
 }: {
   accessToken: string;
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   transcripts: TeamsOccurrenceTranscript[];
+  importedSince: string;
 }): Promise<TeamsTranscriptHistoryPageCounts> => {
-  const pageTranscripts = transcripts.map((occurrenceTranscript) => ({
-    ...occurrenceTranscript,
-    callRecordingId: computeCallRecordingIdForTeamsTranscript(
-      occurrenceTranscript.transcript.id,
+  const pageTranscripts = [
+    ...new Map(
+      transcripts.map((occurrenceTranscript) => {
+        const callRecordingId = computeCallRecordingIdForTeamsTranscript(
+          occurrenceTranscript.transcript.id,
+        );
+
+        return [callRecordingId, { ...occurrenceTranscript, callRecordingId }];
+      }),
+    ).values(),
+  ];
+  const {
+    deletedCallRecordingIds,
+    completedCallRecordingIds,
+    importedCallRecordingIds,
+  } = await findDeletedAndCompletedCallRecordingIdsOrThrow({
+    coreApiClient,
+    callRecordingIds: pageTranscripts.map(
+      ({ callRecordingId }) => callRecordingId,
     ),
-  }));
-  const { deletedCallRecordingIds, completedCallRecordingIds } =
-    await findDeletedAndCompletedCallRecordingIdsOrThrow({
-      coreApiClient,
-      callRecordingIds: pageTranscripts.map(
-        ({ callRecordingId }) => callRecordingId,
-      ),
-    });
+    importedSince,
+  });
   const importableTranscripts = pageTranscripts.filter(
     ({ callRecordingId }) =>
       !deletedCallRecordingIds.has(callRecordingId) &&
-      !completedCallRecordingIds.has(callRecordingId),
+      !completedCallRecordingIds.has(callRecordingId) &&
+      !importedCallRecordingIds.has(callRecordingId),
   );
   const calendarEventIds = await findTeamsCalendarEventIdsOrThrow({
     accessToken,
@@ -124,7 +137,11 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
         },
       );
 
-      if (!isDefined(transcriptContent)) {
+      const transcriptEntries = isDefined(transcriptContent)
+        ? mapTeamsTranscriptToEntries(transcriptContent)
+        : [];
+
+      if (!isNonEmptyArray(transcriptEntries)) {
         unavailableCallRecordingIds.push(callRecordingId);
         continue;
       }
@@ -132,7 +149,7 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
       const fields = buildTeamsCallRecordingSyncFields({
         meeting,
         transcript,
-        transcriptEntries: mapTeamsTranscriptToEntries(transcriptContent),
+        transcriptEntries,
         calendarEventId: isDefined(calendarReference)
           ? calendarEventIds.get(calendarReference.eventExternalId)
           : undefined,
@@ -171,12 +188,13 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
 
   return {
     importedCount:
+      importedCallRecordingIds.size +
       importableTranscripts.length -
       unavailableCallRecordingIds.length -
       deletedDuringImportCallRecordingIds.length,
     skippedCount:
-      transcripts.length -
-      importableTranscripts.length +
+      deletedCallRecordingIds.size +
+      completedCallRecordingIds.size +
       deletedDuringImportCallRecordingIds.length,
     unavailableCount: unavailableCallRecordingIds.length,
   };

@@ -7,12 +7,14 @@ import { getDeletedAndCompletedCallRecordingIds } from 'src/features/transcripts
 export const findDeletedAndCompletedCallRecordingIdsOrThrow = async ({
   coreApiClient,
   callRecordingIds,
+  importedSince,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
   callRecordingIds: string[];
+  importedSince?: string;
 }): Promise<DeletedAndCompletedCallRecordingIds> => {
   if (callRecordingIds.length === 0) {
-    return getDeletedAndCompletedCallRecordingIds([]);
+    return getDeletedAndCompletedCallRecordingIds({ callRecordings: [] });
   }
 
   const result: {
@@ -29,11 +31,15 @@ export const findDeletedAndCompletedCallRecordingIdsOrThrow = async ({
         },
         first: callRecordingIds.length,
       },
-      edges: { node: { id: true, status: true, deletedAt: true } },
+      edges: {
+        node: { id: true, status: true, createdAt: true, deletedAt: true },
+      },
     },
   });
 
-  return getDeletedAndCompletedCallRecordingIds(
-    result.callRecordings?.edges?.map((edge) => edge.node) ?? [],
-  );
+  return getDeletedAndCompletedCallRecordingIds({
+    callRecordings:
+      result.callRecordings?.edges?.map((edge) => edge.node) ?? [],
+    importedSince,
+  });
 };
