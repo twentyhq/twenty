@@ -228,6 +228,7 @@ exports[`endpoint permission declarations should match the AuthPrincipalGuard an
   "CalendarChannelResolver.myCalendarChannels {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":true,"application":true,"oauthClient":true,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "CalendarChannelResolver.updateCalendarChannel {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":true,"application":true,"oauthClient":true,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "CallRecordingResolver.callRecordingIdForCalendarEvent {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":true,"application":true,"oauthClient":true,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
+  "CampaignTrackingController.handleOpenPixel {"applicationTarget":null,"authPrincipalGuards":[]}",
   "CampaignTrackingController.handleTrackedLinkClick {"applicationTarget":null,"authPrincipalGuards":[]}",
   "ChannelSyncResolver.startChannelSync {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":true,"application":true,"oauthClient":true,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "ClientConfigController.getClientConfig {"applicationTarget":null,"authPrincipalGuards":[]}",

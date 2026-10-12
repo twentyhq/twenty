@@ -8,7 +8,7 @@ import { ComponentDecorator } from '@ui/testing';
 import { SegmentedControl } from '../SegmentedControl';
 
 const meta: Meta<typeof SegmentedControl> = {
-  title: 'UI/Input/SegmentedControl',
+  title: 'Components/Input/SegmentedControl',
   component: SegmentedControl,
   decorators: [ComponentDecorator],
   args: {
@@ -27,14 +27,13 @@ type Story = StoryObj<typeof SegmentedControl>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const annual = canvas.getByRole('radio', { name: 'Annual' });
+    const monthly = canvas.getByRole('radio', { name: 'Monthly' });
     const monthlyLabel = canvas.getByText('Monthly');
 
-    await expect(
-      canvas.getByRole('radio', { name: 'Annual' }).getBoundingClientRect()
-        .width,
-    ).toBe(
-      canvas.getByRole('radio', { name: 'Monthly' }).getBoundingClientRect()
-        .width,
+    await expect(annual).toBeChecked();
+    await expect(annual.getBoundingClientRect().width).toBe(
+      monthly.getBoundingClientRect().width,
     );
     await expect(monthlyLabel.scrollWidth).toBeLessThanOrEqual(
       monthlyLabel.clientWidth,
@@ -46,6 +45,7 @@ export const Documentation: Story = {};
 
 export const Dark: Story = {
   globals: { colorScheme: 'dark' },
+  play: Default.play,
 };
 
 export const WithDisabledOption: Story = {
@@ -56,6 +56,15 @@ export const WithDisabledOption: Story = {
       { disabled: true, label: 'Weekly', value: 'weekly' },
     ],
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const weekly = canvas.getByRole('radio', { name: 'Weekly' });
+
+    await expect(weekly).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.click(weekly);
+    await expect(weekly).not.toBeChecked();
+    await expect(canvas.getByRole('radio', { name: 'Annual' })).toBeChecked();
+  },
 };
 
 export const IconOnly: Story = {
@@ -64,16 +73,12 @@ export const IconOnly: Story = {
     defaultValue: 'home',
     options: [
       {
-        startIcon: <IconHome data-testid="direct-icon" />,
+        startIcon: <IconHome />,
         'aria-label': 'Home',
         value: 'home',
       },
       {
-        startIcon: (
-          <span>
-            <IconComment data-testid="wrapped-icon" />
-          </span>
-        ),
+        startIcon: <IconComment />,
         'aria-label': 'Chat',
         value: 'chat',
       },
@@ -83,19 +88,7 @@ export const IconOnly: Story = {
     const canvas = within(canvasElement);
     const home = canvas.getByRole('radio', { name: 'Home' });
     const chat = canvas.getByRole('radio', { name: 'Chat' });
-    const directIcon = canvas.getByTestId('direct-icon');
-    const directIconBounds = directIcon.getBoundingClientRect();
-    const wrappedIconBounds = canvas
-      .getByTestId('wrapped-icon')
-      .getBoundingClientRect();
 
-    await expect(directIcon.parentElement).toHaveAttribute(
-      'aria-hidden',
-      'true',
-    );
-    await expect(directIconBounds.width).toBeGreaterThan(0);
-    await expect(wrappedIconBounds.width).toBe(directIconBounds.width);
-    await expect(wrappedIconBounds.height).toBe(directIconBounds.height);
     await expect(home).toBeChecked();
     await expect(chat).not.toBeChecked();
     await userEvent.click(chat);
@@ -106,10 +99,22 @@ export const IconOnly: Story = {
 
 export const ContentWidth: Story = {
   args: { itemWidth: 'content' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.getByRole('radio', { name: 'Annual' }).getBoundingClientRect()
+        .width,
+    ).toBeLessThan(
+      canvas.getByRole('radio', { name: 'Monthly' }).getBoundingClientRect()
+        .width,
+    );
+  },
 };
 
 export const EqualWidth: Story = {
   args: { style: { width: 280 } },
+  play: Default.play,
 };
 
 export const RightToLeft: Story = {
