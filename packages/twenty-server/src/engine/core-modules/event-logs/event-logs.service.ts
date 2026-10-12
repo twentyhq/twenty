@@ -11,7 +11,9 @@ import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import {
   EventLogsException,
@@ -37,23 +39,38 @@ export class EventLogsService {
     private readonly clickHouseService: ClickHouseService,
     private readonly billingService: BillingService,
     private readonly enterprisePlanService: EnterprisePlanService,
+    private readonly eventLogRetentionService: EventLogRetentionService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async queryEventLogs(
-    workspaceId: string,
+    workspace: Pick<WorkspaceEntity, 'id' | 'eventLogRetentionDays'>,
     input: EventLogQueryInput,
     { callingApplicationId }: { callingApplicationId?: string } = {},
   ): Promise<EventLogQueryResult> {
+    const workspaceId = workspace.id;
+
     await this.validateAccess(workspaceId, input.table);
 
     const limit = Math.min(input.first ?? 100, MAX_LIMIT);
     const tableName = getClickHouseTableName(input.table);
     const eventFieldName = EVENT_LOG_TYPES[input.table].eventFieldName;
 
-    const whereClauses: string[] = ['"workspaceId" = {workspaceId:String}'];
-    const params: Record<string, unknown> = { workspaceId };
+    const retentionStartDate =
+      await this.eventLogRetentionService.getRetentionStartDate({
+        workspaceId,
+        workspaceRetentionInDays: workspace.eventLogRetentionDays,
+      });
+
+    const whereClauses: string[] = [
+      '"workspaceId" = {workspaceId:String}',
+      '"timestamp" >= {retentionStartDate:DateTime64(3)}',
+    ];
+    const params: Record<string, unknown> = {
+      workspaceId,
+      retentionStartDate: formatDateTimeForClickHouse(retentionStartDate),
+    };
 
     if (
       input.table === EventLogTable.APPLICATION_LOG &&
@@ -195,7 +212,7 @@ export class EventLogsService {
 
     if (!hasAccess) {
       throw new EventLogsException(
-        'Audit logs require an Enterprise subscription.',
+        'Audit logs require an Organization subscription.',
         EventLogsExceptionCode.NO_ENTITLEMENT,
       );
     }

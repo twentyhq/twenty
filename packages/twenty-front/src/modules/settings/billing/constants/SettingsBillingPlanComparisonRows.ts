@@ -195,10 +195,29 @@ export const SETTINGS_BILLING_PLAN_COMPARISON_ROWS = [
     type: 'feature',
   },
   {
+    featureLabel: msg`Record change logs`,
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
+    },
+    type: 'feature',
+  },
+  {
     featureLabel: msg`Audit logs`,
     plans: {
       [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
       [BillingPlanKey.PRO]: { kind: 'excluded' },
+    },
+    type: 'feature',
+  },
+  {
+    featureLabel: msg`Log retention`,
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: {
+        kind: 'text',
+        text: msg`Custom, up to 3 years`,
+      },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`2 hours` },
     },
     type: 'feature',
   },
@@ -314,6 +333,14 @@ export const SETTINGS_BILLING_PLAN_COMPARISON_ROWS = [
   },
   {
     featureLabel: msg`MCP server`,
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
+    },
+    type: 'feature',
+  },
+  {
+    featureLabel: msg`App logs`,
     plans: {
       [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
       [BillingPlanKey.PRO]: { kind: 'included' },

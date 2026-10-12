@@ -10,8 +10,8 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
 import { type AddressInputProps } from '@/ui/field/input/types/AddressInputProps';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
-import { Autocomplete } from 'twenty-ui/primitives/input';
 import { isDefined } from 'twenty-shared/utils';
+import { Autocomplete } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 

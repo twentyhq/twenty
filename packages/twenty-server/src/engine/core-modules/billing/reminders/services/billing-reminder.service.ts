@@ -19,6 +19,7 @@ import { Between, Repository } from 'typeorm';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import {
   BILLING_RENEWAL_REMINDER_SENT_KEY,
   BILLING_TRIAL_REMINDER_SENT_KEY,
@@ -91,6 +92,10 @@ export class BillingReminderService {
     );
 
     for (const subscription of trialingSubscriptions) {
+      if (isSendInvoiceSubscription(subscription)) {
+        continue;
+      }
+
       const trialEnd = subscription.trialEnd;
 
       if (!isDefined(trialEnd)) {

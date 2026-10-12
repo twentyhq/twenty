@@ -9,6 +9,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
@@ -559,7 +560,7 @@ describe('application workflow execution permissions', () => {
       input: {
         recipients: { to: 'recipient@example.com' },
         subject: 'Application workflow permissions',
-        body: 'Should never be sent',
+        body: JSON.stringify(buildEmailDocument('Should never be sent')),
       },
       runToken: await buildJaneTokenThroughApplication(APP_ID),
     });
