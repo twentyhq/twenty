@@ -41,7 +41,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ring {
+  .ring[data-indeterminate] {
     animation: none;
   }
 

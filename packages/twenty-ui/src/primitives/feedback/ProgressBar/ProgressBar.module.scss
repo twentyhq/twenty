@@ -58,7 +58,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .indicator {
-    animation: none;
     transition: none;
+
+    &[data-indeterminate] {
+      animation: none;
+    }
   }
 }
