@@ -15,6 +15,10 @@ export const runTeamsAssistantAgent = async ({
   workspaceMemberId: string;
   deadlineAtMs: number;
 }): Promise<string> => {
+  if (deadlineAtMs <= Date.now()) {
+    throw new Error('Teams deadline passed before the agent could start');
+  }
+
   let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
 
   const deadline = new Promise<never>((_, reject) => {

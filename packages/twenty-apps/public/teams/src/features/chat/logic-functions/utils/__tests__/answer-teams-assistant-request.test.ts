@@ -93,6 +93,7 @@ describe('answerTeamsAssistantRequest', () => {
   it('should answer as the matched workspace member and mark the request done', async () => {
     await expect(answer()).resolves.toEqual({ status: 'answered' });
 
+    expect(runAgentMock).toHaveBeenCalledTimes(1);
     expect(runAgentMock).toHaveBeenCalledWith(
       expect.objectContaining({
         requestText: REQUEST.requestText,
