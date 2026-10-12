@@ -35,6 +35,7 @@ export const createGeometryWakeSources = (
     createInputMediaFeatureChangeObserver(onWake);
 
   let rootContainer: Element | null = null;
+  let portalLayer: Element | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
   let rootAncestorMutationObserver: MutationObserver | null = null;
@@ -52,7 +53,11 @@ export const createGeometryWakeSources = (
       return false;
     }
 
-    return rootContainer.contains(target) || target.contains(rootContainer);
+    return (
+      rootContainer.contains(target) ||
+      target.contains(rootContainer) ||
+      portalLayer?.contains(target) === true
+    );
   };
 
   const handleAnimationEvent = (event: Event): void => {
@@ -220,7 +225,9 @@ export const createGeometryWakeSources = (
     resizeObservedNodes.clear();
   };
 
-  const attachPortalLayerSources = (): void => {
+  const attachPortalLayerSources = (nextPortalLayer: Element): void => {
+    portalLayer = nextPortalLayer;
+
     if (arePortalLayerSourcesAttached) {
       return;
     }
@@ -238,6 +245,7 @@ export const createGeometryWakeSources = (
       return;
     }
 
+    portalLayer = null;
     arePortalLayerSourcesAttached = false;
     syncScrollListener();
     disconnectRootAncestorMutations();
