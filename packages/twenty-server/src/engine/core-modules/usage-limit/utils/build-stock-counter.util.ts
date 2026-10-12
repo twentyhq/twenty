@@ -15,7 +15,6 @@ export const buildStockCounter = ({
     limitValue: limit.limitValue,
     unit: limit.unit,
     resourceType: limit.resourceType,
-    operationType: limit.operationType,
     spenderType: limit.spenderType,
     spenderId: normalizeSpenderId(limit.spenderId),
   };

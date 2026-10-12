@@ -39,7 +39,6 @@ import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
 import { type StockScope } from 'src/engine/core-modules/usage-limit/types/stock-scope.type';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -76,7 +75,6 @@ export class FileStorageService {
     await this.usageLimitStockService.releaseStock({
       workspaceId,
       resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId },
       cost: { [UsageUnit.BYTE]: bytes, [UsageUnit.FILE]: quantity },
     });
@@ -92,7 +90,6 @@ export class FileStorageService {
     await this.usageLimitStockService.invalidateStock({
       workspaceId,
       resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId },
     });
   }
@@ -113,7 +110,6 @@ export class FileStorageService {
     await this.usageLimitStockService.assertStockAvailable({
       workspaceId,
       resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId },
       cost: delta,
       computeUsedStock: (scope) =>
@@ -256,7 +252,6 @@ export class FileStorageService {
     const scope = {
       workspaceId,
       resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId },
     };
 

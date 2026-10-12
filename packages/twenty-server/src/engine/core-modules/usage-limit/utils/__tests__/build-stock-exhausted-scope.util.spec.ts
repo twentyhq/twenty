@@ -1,6 +1,5 @@
 import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/stock-counter.type';
 import { buildStockExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-stock-exhausted-scope.util';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
@@ -10,7 +9,6 @@ const COUNTER: StockCounter = {
   limitValue: 10,
   unit: UsageUnit.FILE,
   resourceType: UsageResourceType.STORAGE,
-  operationType: UsageOperationType.STORAGE_FILE,
   spenderType: 'workspace',
   spenderId: null,
 };

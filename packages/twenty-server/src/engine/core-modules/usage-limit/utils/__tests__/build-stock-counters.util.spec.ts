@@ -47,8 +47,7 @@ const build = ({
   buildStockCounters({
     workspaceId: WORKSPACE_ID,
     resourceType: UsageResourceType.STORAGE,
-    operationType: UsageOperationType.STORAGE_FILE,
-    spenders,
+    usageSpenders: spenders,
     limits,
     stockLimitDefaults,
   });
@@ -106,15 +105,6 @@ describe('buildStockCounters', () => {
       ]);
     },
   );
-
-  it('preserves the default for a different operation', () => {
-    expect(
-      build({
-        limits: [buildLimit({ operationType: UsageOperationType.API_REQUEST })],
-        stockLimitDefaults: [buildDefault()],
-      }),
-    ).toEqual([expect.objectContaining({ isDefault: true })]);
-  });
 
   it('keys a workspace limit and the default it suppresses on one held count', () => {
     const [limitCounter] = build({ limits: [buildLimit({ limitValue: 500 })] });
