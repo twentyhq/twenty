@@ -342,7 +342,7 @@ export class ApplicationTarballService {
     const previousTarballFileId = existingRegistration?.tarballFileId ?? null;
 
     const appRegistration = isDefined(existingRegistration)
-      ? this.assertTarballCanReplaceRegistration({
+      ? await this.assertTarballCanReplaceRegistration({
           registration: existingRegistration,
           incomingVersion: packageJson?.version,
           universalIdentifier,
@@ -542,7 +542,7 @@ export class ApplicationTarballService {
     };
   }
 
-  private assertTarballCanReplaceRegistration({
+  private async assertTarballCanReplaceRegistration({
     registration,
     incomingVersion,
     universalIdentifier,
@@ -550,7 +550,7 @@ export class ApplicationTarballService {
     registration: ApplicationRegistrationEntity;
     incomingVersion: string | undefined;
     universalIdentifier: string;
-  }): ApplicationRegistrationEntity {
+  }): Promise<ApplicationRegistrationEntity> {
     if (
       registration.sourceType !== ApplicationRegistrationSourceType.LOCAL &&
       registration.sourceType !== ApplicationRegistrationSourceType.TARBALL
@@ -582,6 +582,25 @@ export class ApplicationTarballService {
           ],
         );
       }
+    }
+
+    // The progression check only sees the registration's latest version, which
+    // an unversioned upload clears; a recorded version stays immutable either way
+    if (
+      isDefined(incomingVersion) &&
+      isDefined(
+        await this.applicationRegistrationVersionService.findOneByApplicationRegistrationIdAndVersion(
+          {
+            applicationRegistrationId: registration.id,
+            version: incomingVersion,
+          },
+        ),
+      )
+    ) {
+      throw new ApplicationRegistrationException(
+        `Cannot deploy ${universalIdentifier}@${incomingVersion}: this version is already published. Please bump the version in package.json.`,
+        ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS,
+      );
     }
 
     return registration;

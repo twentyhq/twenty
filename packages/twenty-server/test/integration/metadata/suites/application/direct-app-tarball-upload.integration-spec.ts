@@ -307,6 +307,47 @@ describe('Direct app tarball upload', () => {
     ]);
   });
 
+  it('refuses to publish a recorded version again after an unversioned upload', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const first = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+    );
+
+    expect(first.completion.errors).toBeUndefined();
+
+    const unversioned = await deployTarball(
+      await createAppTarball({
+        'manifest.json': buildManifest(universalIdentifier),
+        'package.json': JSON.stringify({ name: 'direct-tarball-app' }),
+      }),
+    );
+
+    expect(unversioned.completion.errors).toBeUndefined();
+
+    const registrationId = first.completion.data!.completeAppTarballUpload.id;
+
+    expect(
+      (await findRegistrationRow(registrationId)).latestAvailableVersion,
+    ).toBeNull();
+
+    const republished = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+      { expectToFail: true },
+    );
+
+    expect(
+      republished.completion.errors?.some((error: { message: string }) =>
+        error.message.includes('already published'),
+      ),
+    ).toBe(true);
+
+    expect(await findFileRow(republished.uploadTarget.fileId)).toBeNull();
+    expect(await findVersionRows(registrationId)).toMatchObject([
+      { version: '1.0.0', tarballFileId: first.uploadTarget.fileId },
+    ]);
+  });
+
   it('refuses a version that does not progress and drops the promoted file', async () => {
     const universalIdentifier = crypto.randomUUID();
 
