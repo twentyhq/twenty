@@ -542,7 +542,49 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Menu/Menu.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/menu',
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Positioner',
+      'Popup',
+      'Arrow',
+      'Backdrop',
+      'Viewport',
+      'Item',
+      'LinkItem',
+      'CheckboxItem',
+      'CheckboxItemIndicator',
+      'RadioGroup',
+      'RadioItem',
+      'RadioItemIndicator',
+      'Group',
+      'GroupLabel',
+      'Separator',
+      'SubmenuRoot',
+      'SubmenuTrigger',
+    ],
+    partPropDefaults: {
+      Positioner: {
+        side: 'bottom (root), inline-end (submenu)',
+        align: 'start',
+        sideOffset: '8 (root), 0 (submenu)',
+        alignOffset: '0 (root), -4 (submenu)',
+      },
+    },
     partPropDescriptions: {
+      Portal: {
+        container:
+          'Portal destination. When omitted, uses the scoped theme container or the upstream default. Explicit null waits for a destination; elements, shadow roots and refs retain their upstream behavior.',
+      },
+      Positioner: {
+        side: 'Side of the anchor. Defaults to bottom for a root menu and inline-end for a submenu.',
+        align: 'Alignment along the anchor. Defaults to start.',
+        sideOffset:
+          'Distance from the anchor, as pixels or an upstream offset function. Defaults to 8 for a root menu and 0 for a submenu.',
+        alignOffset:
+          'Offset along the alignment axis, as pixels or an upstream offset function. Defaults to 0 for a root menu and -4 for a submenu.',
+      },
       Item: {
         shortcutJoinLabel:
           'Text between sequential shortcut steps. Defaults to `then`.',

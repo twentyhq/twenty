@@ -136,35 +136,49 @@ export const MenuShortcutLabels: Story = {
   render: () => (
     <Menu.Root>
       <Menu.Trigger render={<Button>Open shortcuts</Button>} />
-      <Menu.Popup aria-label="Shortcuts">
-        <Menu.Item shortcut={[['G'], ['D']]}>Default</Menu.Item>
-        <Menu.Item shortcut={[['G'], ['A']]} shortcutJoinLabel="followed by">
-          Action
-        </Menu.Item>
-        <Menu.CheckboxItem shortcut={[['G'], ['C']]} shortcutJoinLabel="next">
-          Checkbox
-        </Menu.CheckboxItem>
-        <Menu.RadioGroup value="radio">
-          <Menu.RadioItem
-            value="radio"
-            shortcut={[['G'], ['R']]}
-            shortcutJoinLabel="afterwards"
-          >
-            Radio
-          </Menu.RadioItem>
-        </Menu.RadioGroup>
-        <Menu.SubmenuRoot>
-          <Menu.SubmenuTrigger
-            shortcut={[['G'], ['S']]}
-            shortcutJoinLabel="and"
-          >
-            Submenu
-          </Menu.SubmenuTrigger>
-          <Menu.Popup>
-            <Menu.Item>Nested action</Menu.Item>
+      <Menu.Portal>
+        <Menu.Positioner>
+          <Menu.Popup aria-label="Shortcuts">
+            <Menu.Item shortcut={[['G'], ['D']]}>Default</Menu.Item>
+            <Menu.Item
+              shortcut={[['G'], ['A']]}
+              shortcutJoinLabel="followed by"
+            >
+              Action
+            </Menu.Item>
+            <Menu.CheckboxItem
+              shortcut={[['G'], ['C']]}
+              shortcutJoinLabel="next"
+            >
+              Checkbox
+            </Menu.CheckboxItem>
+            <Menu.RadioGroup value="radio">
+              <Menu.RadioItem
+                value="radio"
+                shortcut={[['G'], ['R']]}
+                shortcutJoinLabel="afterwards"
+              >
+                Radio
+              </Menu.RadioItem>
+            </Menu.RadioGroup>
+            <Menu.SubmenuRoot>
+              <Menu.SubmenuTrigger
+                shortcut={[['G'], ['S']]}
+                shortcutJoinLabel="and"
+              >
+                Submenu
+              </Menu.SubmenuTrigger>
+              <Menu.Portal>
+                <Menu.Positioner>
+                  <Menu.Popup>
+                    <Menu.Item>Nested action</Menu.Item>
+                  </Menu.Popup>
+                </Menu.Positioner>
+              </Menu.Portal>
+            </Menu.SubmenuRoot>
           </Menu.Popup>
-        </Menu.SubmenuRoot>
-      </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
     </Menu.Root>
   ),
   play: async ({ canvasElement }) => {

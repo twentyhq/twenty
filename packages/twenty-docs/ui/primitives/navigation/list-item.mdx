@@ -111,10 +111,14 @@ type RecordActionsProps = { onDuplicate: () => void };
 export const RecordActions = ({ onDuplicate }: RecordActionsProps) => (
   <Menu.Root>
     <Menu.Trigger render={<Button>Record actions</Button>} />
-    <Menu.Popup>
-      <Menu.Item onClick={onDuplicate}>Duplicate record</Menu.Item>
-      <Menu.Item disabled>Unavailable action</Menu.Item>
-    </Menu.Popup>
+    <Menu.Portal>
+      <Menu.Positioner>
+        <Menu.Popup>
+          <Menu.Item onClick={onDuplicate}>Duplicate record</Menu.Item>
+          <Menu.Item disabled>Unavailable action</Menu.Item>
+        </Menu.Popup>
+      </Menu.Positioner>
+    </Menu.Portal>
   </Menu.Root>
 );
 ```

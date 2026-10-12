@@ -24,11 +24,15 @@ const PortalsExample = () => {
     <TwentyUiGalleryCard title="Portals">
       <Menu.Root>
         <Menu.Trigger>Open menu</Menu.Trigger>
-        <Menu.Popup>
-          {MENU_ITEM_LABELS.map((menuItemLabel) => (
-            <Menu.Item key={menuItemLabel}>{menuItemLabel}</Menu.Item>
-          ))}
-        </Menu.Popup>
+        <Menu.Portal>
+          <Menu.Positioner>
+            <Menu.Popup>
+              {MENU_ITEM_LABELS.map((menuItemLabel) => (
+                <Menu.Item key={menuItemLabel}>{menuItemLabel}</Menu.Item>
+              ))}
+            </Menu.Popup>
+          </Menu.Positioner>
+        </Menu.Portal>
       </Menu.Root>
       <Button onClick={() => setIsOpen(!isOpen)}>Toggle popup</Button>
       <Button onClick={() => setIsOversizedOpen(!isOversizedOpen)}>

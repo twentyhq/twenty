@@ -2,22 +2,27 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useId, useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
+import { Button } from '@ui/primitives/input/Button/Button';
 import { ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Menu } from '../Menu';
-import { type MenuPopupProps } from '../types/MenuPopupProps';
+import { type MenuPortalProps } from '../types/MenuPortalProps';
 
-const PortalMenu = ({ container }: Pick<MenuPopupProps, 'container'>) => {
+const PortalMenu = ({ container }: Pick<MenuPortalProps, 'container'>) => {
   const triggerId = useId();
 
   return (
     <Menu.Root open triggerId={triggerId}>
-      <Menu.Trigger id={triggerId}>Options</Menu.Trigger>
-      <Menu.Popup container={container}>
-        <Menu.Item>Export</Menu.Item>
-        <Menu.Item>Share</Menu.Item>
-      </Menu.Popup>
+      <Menu.Trigger id={triggerId} render={<Button>Options</Button>} />
+      <Menu.Portal container={container}>
+        <Menu.Positioner>
+          <Menu.Popup>
+            <Menu.Item>Export</Menu.Item>
+            <Menu.Item>Share</Menu.Item>
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
     </Menu.Root>
   );
 };
@@ -118,9 +123,9 @@ const DeferredContainerMenu = () => {
   return (
     <ThemeProvider colorScheme="light" applyToRoot={false}>
       <PortalMenu container={container} />
-      <button type="button" onClick={() => setShowContainer(true)}>
+      <Button onClick={() => setShowContainer(true)}>
         Create portal container
-      </button>
+      </Button>
       {showContainer && (
         <div
           ref={setContainer}

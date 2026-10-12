@@ -27,6 +27,13 @@ const writeGeneratedFile = ({
   fs.writeFileSync(file, content, 'utf8');
 };
 
+const ROOT_TYPE_EXPORT_OVERRIDES = [
+  {
+    name: 'MenuItemProps',
+    source: 'components/navigation/MenuItem/types/MenuItemProps',
+    prerequisite: 'primitives/surfaces/Menu/types/MenuItemProps',
+  },
+];
 const INDEX_FILENAME = 'index';
 const PACKAGE_JSON_FILENAME = 'package.json';
 const NX_PROJECT_CONFIGURATION_FILENAME = 'project.json';
@@ -545,6 +552,13 @@ const getRootBarrelModuleNames = (moduleDirectories: string[]) =>
     .map(getModuleName)
     .filter((moduleName) => !STANDALONE_MODULES.includes(moduleName));
 
+const getRootTypeExportOverrides = () =>
+  ROOT_TYPE_EXPORT_OVERRIDES.filter(({ source, prerequisite }) =>
+    [source, prerequisite].every((file) =>
+      fs.existsSync(path.join(SRC_PATH, `${file}.ts`)),
+    ),
+  ).map(({ name, source }) => `export type { ${name} } from './${source}';`);
+
 const generateRootBarrel = (
   moduleDirectories: string[],
 ): createTypeScriptFileArgs => {
@@ -554,6 +568,7 @@ const generateRootBarrel = (
     ...getRootBarrelModuleNames(moduleDirectories).map(
       (moduleName) => `export * from './${moduleName}';`,
     ),
+    ...getRootTypeExportOverrides(),
   ].join('\n');
 
   return { path: SRC_PATH, content, filename: INDEX_FILENAME };
@@ -562,9 +577,12 @@ const generateRootBarrel = (
 const generateIndividualEntry = (
   moduleDirectories: string[],
 ): createTypeScriptFileArgs => {
-  const content = getRootBarrelModuleNames(moduleDirectories)
-    .map((moduleName) => `export * from './${moduleName}';`)
-    .join('\n');
+  const content = [
+    ...getRootBarrelModuleNames(moduleDirectories).map(
+      (moduleName) => `export * from './${moduleName}';`,
+    ),
+    ...getRootTypeExportOverrides(),
+  ].join('\n');
 
   return { path: SRC_PATH, content, filename: INDIVIDUAL_ENTRY_FILENAME };
 };

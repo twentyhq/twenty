@@ -14,3 +14,4 @@ export * from './icon';
 export * from './primitives';
 export * from './theme';
 export * from './utilities';
+export type { MenuItemProps } from './components/navigation/MenuItem/types/MenuItemProps';

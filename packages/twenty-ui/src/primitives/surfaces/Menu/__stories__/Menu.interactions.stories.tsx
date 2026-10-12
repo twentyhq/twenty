@@ -2,35 +2,50 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ReactNode, useId, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { Button } from '@ui/primitives/input/Button/Button';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { Menu } from '../Menu';
 import { type MenuPopupProps } from '../types/MenuPopupProps';
+import { type MenuPortalProps } from '../types/MenuPortalProps';
+import { type MenuPositionerProps } from '../types/MenuPositionerProps';
 import { type MenuRootProps } from '../types/MenuRootProps';
 
 type MenuExampleProps = Omit<MenuRootProps, 'children'> & {
   children?: ReactNode;
   popupProps?: MenuPopupProps;
+  portalProps?: MenuPortalProps;
+  positionerProps?: MenuPositionerProps;
 };
 
-const MenuExample = ({ children, popupProps, ...props }: MenuExampleProps) => {
+const MenuExample = ({
+  children,
+  popupProps,
+  portalProps,
+  positionerProps,
+  ...props
+}: MenuExampleProps) => {
   const triggerId = useId();
 
   return (
     <>
       <Menu.Root defaultTriggerId={triggerId} {...props}>
-        <Menu.Trigger id={triggerId}>Options</Menu.Trigger>
-        <Menu.Popup {...popupProps}>
-          {children ?? (
-            <>
-              <Menu.Item>Duplicate</Menu.Item>
-              <Menu.Item>Archive</Menu.Item>
-              <Menu.Item>Delete</Menu.Item>
-            </>
-          )}
-        </Menu.Popup>
+        <Menu.Trigger id={triggerId} render={<Button>Options</Button>} />
+        <Menu.Portal {...portalProps}>
+          <Menu.Positioner {...positionerProps}>
+            <Menu.Popup {...popupProps}>
+              {children ?? (
+                <>
+                  <Menu.Item>Duplicate</Menu.Item>
+                  <Menu.Item>Archive</Menu.Item>
+                  <Menu.Item>Delete</Menu.Item>
+                </>
+              )}
+            </Menu.Popup>
+          </Menu.Positioner>
+        </Menu.Portal>
       </Menu.Root>
-      <button type="button">Outside</button>
+      <Button>Outside</Button>
     </>
   );
 };
@@ -268,9 +283,7 @@ const ControlledMenu = (props: MenuExampleProps) => {
   return (
     <>
       <MenuExample {...props} open={open} />
-      <button type="button" onClick={() => setOpen(false)}>
-        Apply closed state
-      </button>
+      <Button onClick={() => setOpen(false)}>Apply closed state</Button>
     </>
   );
 };
@@ -360,14 +373,23 @@ export const UncontrolledSelection: Story = {
   },
 };
 
-const SubmenuExample = ({ popupProps, ...props }: MenuExampleProps) => (
+const SubmenuExample = ({
+  popupProps,
+  portalProps,
+  positionerProps,
+  ...props
+}: MenuExampleProps) => (
   <MenuExample {...props}>
     <Menu.SubmenuRoot>
       <Menu.SubmenuTrigger>More</Menu.SubmenuTrigger>
-      <Menu.Popup {...popupProps}>
-        <Menu.Item>Export</Menu.Item>
-        <Menu.Item>Share</Menu.Item>
-      </Menu.Popup>
+      <Menu.Portal {...portalProps}>
+        <Menu.Positioner {...positionerProps}>
+          <Menu.Popup {...popupProps}>
+            <Menu.Item>Export</Menu.Item>
+            <Menu.Item>Share</Menu.Item>
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
     </Menu.SubmenuRoot>
   </MenuExample>
 );
@@ -410,7 +432,7 @@ export const KeyboardSubmenu: Story = {
 
 export const HoverSubmenu: Story = {
   parameters: { container: { width: 480, height: 400 } },
-  args: { popupProps: { side: 'top', align: 'end' } },
+  args: { positionerProps: { side: 'top', align: 'end' } },
   render: (args) => (
     <div style={{ paddingTop: 160, paddingInlineStart: 160 }}>
       <SubmenuExample {...args} />
@@ -470,7 +492,7 @@ export const DisabledRoot: Story = {
 };
 
 export const KeepMounted: Story = {
-  args: { defaultOpen: true, popupProps: { keepMounted: true } },
+  args: { defaultOpen: true, portalProps: { keepMounted: true } },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     expect(await body.findByRole('menu')).toBeVisible();

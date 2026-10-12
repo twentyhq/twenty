@@ -28,14 +28,22 @@ export const DirectionalMenusExample = ({
       >
         <Menu.Root>
           <Menu.Trigger render={<Button>Open menu</Button>} />
-          <Menu.Popup>
-            <Menu.SubmenuRoot>
-              <Menu.SubmenuTrigger>Menu export</Menu.SubmenuTrigger>
+          <Menu.Portal>
+            <Menu.Positioner>
               <Menu.Popup>
-                <Menu.Item>Menu CSV</Menu.Item>
+                <Menu.SubmenuRoot>
+                  <Menu.SubmenuTrigger>Menu export</Menu.SubmenuTrigger>
+                  <Menu.Portal>
+                    <Menu.Positioner>
+                      <Menu.Popup>
+                        <Menu.Item>Menu CSV</Menu.Item>
+                      </Menu.Popup>
+                    </Menu.Positioner>
+                  </Menu.Portal>
+                </Menu.SubmenuRoot>
               </Menu.Popup>
-            </Menu.SubmenuRoot>
-          </Menu.Popup>
+            </Menu.Positioner>
+          </Menu.Portal>
         </Menu.Root>
         <Dropdown.Root type="menu">
           <Dropdown.Trigger render={<Button>Open dropdown</Button>} />

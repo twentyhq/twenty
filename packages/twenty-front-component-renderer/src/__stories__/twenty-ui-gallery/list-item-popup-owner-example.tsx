@@ -11,29 +11,33 @@ export const ListItemPopupOwnerExample = () => {
     <>
       <Menu.Root>
         <Menu.Trigger render={<Button>Preference actions</Button>} />
-        <Menu.Popup>
-          <Menu.Item
-            nativeButton
-            render={<button type="button" />}
-            description="Popup owner"
-            onClick={() => setActivations((count) => count + 1)}
-            ref={(element) => {
-              if (isDefined(element)) {
-                element.dataset.refTag = element.tagName;
-              }
-            }}
-          >
-            Enable notifications
-          </Menu.Item>
-          <Menu.Item
-            disabled
-            nativeButton
-            render={<button type="button" />}
-            onClick={() => setActivations((count) => count + 1)}
-          >
-            Unavailable notifications
-          </Menu.Item>
-        </Menu.Popup>
+        <Menu.Portal>
+          <Menu.Positioner>
+            <Menu.Popup>
+              <Menu.Item
+                nativeButton
+                render={<button type="button" />}
+                description="Popup owner"
+                onClick={() => setActivations((count) => count + 1)}
+                ref={(element) => {
+                  if (isDefined(element)) {
+                    element.dataset.refTag = element.tagName;
+                  }
+                }}
+              >
+                Enable notifications
+              </Menu.Item>
+              <Menu.Item
+                disabled
+                nativeButton
+                render={<button type="button" />}
+                onClick={() => setActivations((count) => count + 1)}
+              >
+                Unavailable notifications
+              </Menu.Item>
+            </Menu.Popup>
+          </Menu.Positioner>
+        </Menu.Portal>
       </Menu.Root>
       <Text aria-label="Popup activations">
         Popup activations: {activations}

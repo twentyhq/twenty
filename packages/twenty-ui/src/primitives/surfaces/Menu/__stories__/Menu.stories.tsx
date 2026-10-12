@@ -98,10 +98,14 @@ const MenuSubmenuContent = ({
       <Menu.SubmenuTrigger startIcon={<IconDownload />}>
         Export
       </Menu.SubmenuTrigger>
-      <Menu.Popup container={container}>
-        <Menu.Item>CSV file</Menu.Item>
-        <Menu.Item>Excel file</Menu.Item>
-      </Menu.Popup>
+      <Menu.Portal container={container}>
+        <Menu.Positioner>
+          <Menu.Popup>
+            <Menu.Item>CSV file</Menu.Item>
+            <Menu.Item>Excel file</Menu.Item>
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
     </Menu.SubmenuRoot>
     <Menu.Item startIcon={<IconShare />}>Share</Menu.Item>
   </>
@@ -125,7 +129,11 @@ const MenuStory = ({ content = 'basic', ...props }: MenuStoryProps) => {
         style={{ alignSelf: 'flex-start' }}
         render={<Button>Options</Button>}
       />
-      <Menu.Popup>{MENU_STORY_CONTENT[content]}</Menu.Popup>
+      <Menu.Portal>
+        <Menu.Positioner>
+          <Menu.Popup>{MENU_STORY_CONTENT[content]}</Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
     </Menu.Root>
   );
 };
@@ -272,9 +280,11 @@ const MenuCatalogCell = ({ content = 'basic' }: MenuStoryProps) => {
           aria-label={`${content} options`}
           render={<Button>Options</Button>}
         />
-        <Menu.Popup container={cellElement} side="bottom" align="start">
-          {contentByType[content]}
-        </Menu.Popup>
+        <Menu.Portal container={cellElement}>
+          <Menu.Positioner side="bottom" align="start">
+            <Menu.Popup>{contentByType[content]}</Menu.Popup>
+          </Menu.Positioner>
+        </Menu.Portal>
       </Menu.Root>
     </div>
   );

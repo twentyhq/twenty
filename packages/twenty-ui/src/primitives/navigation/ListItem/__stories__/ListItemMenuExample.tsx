@@ -9,12 +9,16 @@ type ListItemMenuExampleProps = {
 export const ListItemMenuExample = ({ onClick }: ListItemMenuExampleProps) => (
   <Menu.Root>
     <Menu.Trigger render={<Button>Record actions</Button>} />
-    <Menu.Popup>
-      <Menu.Item onClick={onClick}>Duplicate record</Menu.Item>
-      <Menu.Item disabled onClick={onClick}>
-        Unavailable action
-      </Menu.Item>
-      <Menu.Item>Export record</Menu.Item>
-    </Menu.Popup>
+    <Menu.Portal>
+      <Menu.Positioner>
+        <Menu.Popup>
+          <Menu.Item onClick={onClick}>Duplicate record</Menu.Item>
+          <Menu.Item disabled onClick={onClick}>
+            Unavailable action
+          </Menu.Item>
+          <Menu.Item>Export record</Menu.Item>
+        </Menu.Popup>
+      </Menu.Positioner>
+    </Menu.Portal>
   </Menu.Root>
 );

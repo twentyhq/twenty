@@ -10,12 +10,21 @@ const MenuRootWrapper = ({ children }: { children: ReactNode }) => (
   <Menu.Root>{children}</Menu.Root>
 );
 const OpenMenuWrapper = ({ children }: { children: ReactNode }) => (
-  <Menu.Root open>{children}</Menu.Root>
+  <Menu.Root open>
+    <Menu.Portal>
+      <Menu.Positioner>{children}</Menu.Positioner>
+    </Menu.Portal>
+  </Menu.Root>
+);
+const MenuPortalWrapper = ({ children }: { children: ReactNode }) => (
+  <Menu.Root open>
+    <Menu.Portal>{children}</Menu.Portal>
+  </Menu.Root>
 );
 const MenuPopupWrapper = ({ children }: { children: ReactNode }) => (
-  <Menu.Root open>
+  <OpenMenuWrapper>
     <Menu.Popup>{children}</Menu.Popup>
-  </Menu.Root>
+  </OpenMenuWrapper>
 );
 const MenuRadioGroupWrapper = ({ children }: { children: ReactNode }) => (
   <MenuPopupWrapper>
@@ -102,4 +111,65 @@ runComponentConformance({
   refInstanceOf: HTMLDivElement,
   wrapper: MenuPopupWrapper,
   ownClassName: styles.separator,
+});
+
+runComponentConformance({
+  name: 'Menu.Portal',
+  element: <Menu.Portal />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: ({ children }) => <Menu.Root open>{children}</Menu.Root>,
+});
+runComponentConformance({
+  name: 'Menu.Positioner',
+  element: <Menu.Positioner />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: MenuPortalWrapper,
+  ownClassName: styles.positioner,
+});
+runComponentConformance({
+  name: 'Menu.Arrow',
+  element: <Menu.Arrow />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: MenuPopupWrapper,
+});
+runComponentConformance({
+  name: 'Menu.Backdrop',
+  element: <Menu.Backdrop />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: MenuPortalWrapper,
+});
+runComponentConformance({
+  name: 'Menu.LinkItem',
+  element: <Menu.LinkItem href="/records">Records</Menu.LinkItem>,
+  refInstanceOf: HTMLAnchorElement,
+  wrapper: MenuPopupWrapper,
+  renderPropTagName: 'a',
+});
+runComponentConformance({
+  name: 'Menu.CheckboxItemIndicator',
+  element: <Menu.CheckboxItemIndicator />,
+  refInstanceOf: HTMLSpanElement,
+  wrapper: ({ children }) => (
+    <MenuPopupWrapper>
+      <Menu.CheckboxItem defaultChecked>{children}</Menu.CheckboxItem>
+    </MenuPopupWrapper>
+  ),
+});
+runComponentConformance({
+  name: 'Menu.RadioItemIndicator',
+  element: <Menu.RadioItemIndicator />,
+  refInstanceOf: HTMLSpanElement,
+  wrapper: ({ children }) => (
+    <MenuPopupWrapper>
+      <Menu.RadioGroup defaultValue="selected">
+        <Menu.RadioItem value="selected">{children}</Menu.RadioItem>
+      </Menu.RadioGroup>
+    </MenuPopupWrapper>
+  ),
+});
+runComponentConformance({
+  name: 'Menu.Viewport',
+  element: <Menu.Viewport />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: MenuPopupWrapper,
 });
