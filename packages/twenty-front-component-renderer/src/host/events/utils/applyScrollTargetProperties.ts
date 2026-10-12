@@ -15,4 +15,10 @@ export const applyScrollTargetProperties = ({
   if (isNumber(target.scrollLeft)) {
     serializedEvent.scrollLeft = target.scrollLeft;
   }
+  if (isNumber(target.scrollWidth)) {
+    serializedEvent.scrollWidth = target.scrollWidth;
+  }
+  if (isNumber(target.clientWidth)) {
+    serializedEvent.clientWidth = target.clientWidth;
+  }
 };
