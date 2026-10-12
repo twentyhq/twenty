@@ -1,5 +1,5 @@
 import { type RecordGqlFields } from 'twenty-shared/types';
-import { useCoreWorkflowRunRecordGqlFields } from '@/object-core/workflows/hooks/useCoreWorkflowRunRecordGqlFields';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
@@ -7,11 +7,14 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { RECORD_FIELD_DISPLAY_OVERRIDES } from '@/object-record/record-field/ui/constants/RecordFieldDisplayOverrides';
+import { getActiveRecordFieldDisplayOverrides } from '@/object-record/record-field/ui/utils/getActiveRecordFieldDisplayOverrides';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { filterDuplicatesById, isDefined } from 'twenty-shared/utils';
 
 type UseRecordsUsefulGqlFields = {
@@ -36,9 +39,7 @@ export const useRelevantRecordsGqlFields = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const coreWorkflowRunRecordGqlFields = useCoreWorkflowRunRecordGqlFields(
-    objectMetadataItem.nameSingular,
-  );
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const visibleRecordFieldMetadataItems = visibleRecordFields
     .map(
@@ -76,6 +77,20 @@ export const useRelevantRecordsGqlFields = ({
     depth: 1,
   });
 
+  const recordFieldDisplayOverrideGqlFields =
+    getActiveRecordFieldDisplayOverrides({
+      recordFieldDisplayOverrides: RECORD_FIELD_DISPLAY_OVERRIDES,
+      objectNameSingular: objectMetadataItem.nameSingular,
+      fieldNames: fieldMetadataItemsToUse.map((field) => field.name),
+      currentWorkspace,
+    }).reduce<RecordGqlFields>(
+      (recordGqlFields, recordFieldDisplayOverride) => ({
+        ...recordGqlFields,
+        ...recordFieldDisplayOverride.recordGqlFields,
+      }),
+      {},
+    );
+
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
   const imageIdentifierFieldMetadataItem =
@@ -93,7 +108,7 @@ export const useRelevantRecordsGqlFields = ({
       : {}),
     ...(hasPosition ? { position: true } : {}),
     ...allDepthOneGqlFields,
-    ...coreWorkflowRunRecordGqlFields,
+    ...recordFieldDisplayOverrideGqlFields,
     createdAt: true,
     updatedAt: true,
     deletedAt: true,

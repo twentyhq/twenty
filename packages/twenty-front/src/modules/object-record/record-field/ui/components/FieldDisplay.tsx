@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 
+import { useRecordFieldDisplayOverride } from '@/object-record/record-field/ui/hooks/useRecordFieldDisplayOverride';
 import { ActorFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ActorFieldDisplay';
 import { ArrayFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ArrayFieldDisplay';
 import { BooleanFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/BooleanFieldDisplay';
@@ -68,8 +69,19 @@ export const FieldDisplay = () => {
     isLabelIdentifier,
   );
 
+  const recordFieldDisplayOverride = useRecordFieldDisplayOverride({
+    objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
+    fieldName: fieldDefinition.metadata.fieldName,
+  });
+
   if (isDefined(isForbidden) && isForbidden) {
     return <ForbiddenFieldDisplay />;
+  }
+
+  if (isDefined(recordFieldDisplayOverride)) {
+    const { DisplayComponent } = recordFieldDisplayOverride;
+
+    return <DisplayComponent />;
   }
 
   return isChipDisplay ? (
