@@ -771,14 +771,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
       const warmedAt = Date.now();
 
-      const warmedEntries = coldIndexes.flatMap((index, position) => {
-        const warmValue = warmValues[position];
-
-        return isDefined(warmValue) &&
-          counters[index].periodEnd.getTime() > warmedAt
-          ? [{ index, warmValue }]
-          : [];
-      });
+      const warmedEntries = coldIndexes.flatMap((index, position) =>
+        counters[index].periodEnd.getTime() > warmedAt
+          ? [{ index, warmValue: warmValues[position] }]
+          : [],
+      );
 
       const warmedValues = await this.runWarmAndConsumeScript({
         counters: warmedEntries.map(({ index }) => counters[index]),
@@ -795,10 +792,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
         consumedValues[index] = warmedValues[position];
       });
 
-      return {
-        consumedValues,
-        isDegraded: warmValues.some((warmValue) => !isDefined(warmValue)),
-      };
+      return { consumedValues, isDegraded: false };
     } catch (error) {
       this.logger.error(
         `Usage quota warm degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
@@ -836,26 +830,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
   }: {
     workspaceId: string;
     counters: QuotaCounter[];
-  }): Promise<(number | null)[]> {
+  }): Promise<number[]> {
     const rowsReadsByPeriodGroup = new Map<
       string,
       Promise<UsageConsumptionRow[]>
     >();
-
-    for (const counter of counters) {
-      if (counter.kind === 'allowance') {
-        continue;
-      }
-
-      const periodGroupKey = buildPeriodGroupKey(counter);
-
-      if (!rowsReadsByPeriodGroup.has(periodGroupKey)) {
-        rowsReadsByPeriodGroup.set(
-          periodGroupKey,
-          this.fetchConsumptionRows({ workspaceId, counter }),
-        );
-      }
-    }
 
     return Promise.all(
       counters.map(async (counter) => {
@@ -865,13 +844,15 @@ export class UsageLimitQuotaService implements OnModuleInit {
           );
         }
 
-        const rows = await rowsReadsByPeriodGroup.get(
-          buildPeriodGroupKey(counter),
-        );
+        const periodGroupKey = buildPeriodGroupKey(counter);
 
-        return isDefined(rows)
-          ? computeQuotaConsumed({ rows, scope: counter })
-          : null;
+        const rowsRead =
+          rowsReadsByPeriodGroup.get(periodGroupKey) ??
+          this.fetchConsumptionRows({ workspaceId, counter });
+
+        rowsReadsByPeriodGroup.set(periodGroupKey, rowsRead);
+
+        return computeQuotaConsumed({ rows: await rowsRead, scope: counter });
       }),
     );
   }
