@@ -130,6 +130,27 @@ describe('AgentTriggerRunnerService', () => {
     );
   });
 
+  it("should restrict the agent's role to its application's default role", async () => {
+    findApplication.mockResolvedValue({
+      id: 'application-id',
+      name: 'App',
+      defaultRoleId: 'application-role-id',
+    });
+
+    await service.run(JOB_DATA);
+
+    expect(runAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        executionContext: expect.objectContaining({
+          rolePermissionConfig: {
+            intersectionOf: [AGENT_ROLE_ID, 'application-role-id'],
+          },
+          additionalRoleRestrictionIds: ['application-role-id'],
+        }),
+      }),
+    );
+  });
+
   it.each([
     ['the agent was deleted', () => findAgent.mockResolvedValue(null)],
     [

@@ -89,10 +89,10 @@ describe('Classify step activation (e2e)', () => {
       },
     });
 
-    classifyStep = (await createCoreWorkflowVersionStep({
+    classifyStep = await createCoreWorkflowVersionStep<ClassifyStep>({
       coreWorkflowVersionId,
       stepType: 'CLASSIFY',
-    })) as ClassifyStep;
+    });
   });
 
   afterAll(async () => {

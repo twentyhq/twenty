@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Button } from 'twenty-ui/primitives/input';
-import { Menu } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
@@ -22,14 +22,16 @@ const PortalsExample = () => {
 
   return (
     <TwentyUiGalleryCard title="Portals">
-      <Menu.Root>
-        <Menu.Trigger>Open menu</Menu.Trigger>
-        <Menu.Popup>
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger render={<Button>Open menu</Button>} />
+        <Dropdown.Content>
           {MENU_ITEM_LABELS.map((menuItemLabel) => (
-            <Menu.Item key={menuItemLabel}>{menuItemLabel}</Menu.Item>
+            <Dropdown.ActionItem key={menuItemLabel}>
+              {menuItemLabel}
+            </Dropdown.ActionItem>
           ))}
-        </Menu.Popup>
-      </Menu.Root>
+        </Dropdown.Content>
+      </Dropdown.Root>
       <Button onClick={() => setIsOpen(!isOpen)}>Toggle popup</Button>
       <Button onClick={() => setIsOversizedOpen(!isOversizedOpen)}>
         Fill portal area

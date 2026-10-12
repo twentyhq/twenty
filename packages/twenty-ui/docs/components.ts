@@ -1,3 +1,4 @@
+import { SELECT_PART_PROP_DESCRIPTIONS } from './selectPartPropDescriptions';
 import { CHECKBOX_PROP_DESCRIPTIONS } from './checkboxPropDescriptions';
 import { SWITCH_PROP_DESCRIPTIONS } from './switchPropDescriptions';
 import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
@@ -20,6 +21,7 @@ import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
+import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
@@ -191,9 +193,9 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'SegmentedControl',
-    source: 'primitives/input/SegmentedControl/SegmentedControl.tsx',
-    entryPoint: 'twenty-ui/primitives/input',
-    slug: 'input/segmented-control',
+    source: 'components/input/SegmentedControl/SegmentedControl.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/segmented-control',
     propDescriptions: SEGMENTED_CONTROL_PROP_DESCRIPTIONS,
   },
   {
@@ -331,11 +333,51 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: INPUT_GROUP_PROP_DESCRIPTIONS,
   },
   {
-    name: 'NumberStepper',
-    source: 'primitives/input/NumberStepper/NumberStepper.tsx',
+    name: 'NumberField',
+    source: 'primitives/input/NumberField/NumberField.tsx',
     entryPoint: 'twenty-ui/primitives/input',
-    slug: 'input/number-stepper',
+    slug: 'input/number-field',
+    parts: [
+      'Root',
+      'Group',
+      'Input',
+      'Decrement',
+      'Increment',
+      'ScrubArea',
+      'ScrubAreaCursor',
+    ],
+    partPropDescriptions: NUMBER_FIELD_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Root: {
+        defaultValue: 'empty',
+        step: '1',
+        smallStep: '0.1',
+        largeStep: '10',
+        allowOutOfRange: 'false',
+        allowWheelScrub: 'false',
+        snapOnStep: 'false',
+        required: 'false',
+        disabled: 'false',
+        readOnly: 'false',
+      },
+      Decrement: { nativeButton: 'true' },
+      Increment: { nativeButton: 'true' },
+      ScrubArea: { direction: 'horizontal', pixelSensitivity: '2' },
+    },
+  },
+  {
+    name: 'NumberStepper',
+    source: 'components/input/NumberStepper/NumberStepper.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/number-stepper',
     propDescriptions: NUMBER_STEPPER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      step: '1',
+      allowOutOfRange: 'false',
+      showButtons: 'true',
+      decrementLabel: 'Decrease value',
+      incrementLabel: 'Increase value',
+    },
   },
   {
     name: 'Textarea',
@@ -360,7 +402,9 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Radio/Radio.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio',
+    parts: ['Root', 'Indicator'],
     propDescriptions: RADIO_PROP_DESCRIPTIONS,
+    propDefaults: { size: 'sm', variant: 'default' },
   },
   {
     name: 'RadioGroup',
@@ -373,10 +417,37 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Autocomplete/Autocomplete.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/autocomplete',
+    partPropOverrides: {
+      Root: {
+        items: {
+          type: 'readonly TItem[] | readonly { items: readonly TItem[] }[]',
+          required: false,
+        },
+        filteredItems: {
+          type: 'readonly TItem[] | readonly { items: readonly TItem[] }[]',
+        },
+        filter: {
+          type: 'AutocompleteRootProps<TItem>["filter"]',
+        },
+        itemToStringValue: {
+          type: '(itemValue: TItem) => string',
+        },
+        onItemHighlighted: {
+          type: '(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void',
+        },
+      },
+    },
     partPropDescriptions: {
       Root: {
         items:
-          'Items to display in the list. Nullish entries are not supported.',
+          'Flat items or groups with an items array. Preserves the upstream item type; nullish entries are not supported.',
+      },
+      Value: {
+        children:
+          'Content or render function receiving the current input text.',
+      },
+      Collection: {
+        children: 'Render function receiving each filtered item and its index.',
       },
       Input: {
         size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
@@ -384,8 +455,16 @@ export const DOCUMENTED_COMPONENTS = [
       Popup: {
         width:
           'Width of the popup. Overrides its default minimum anchor width.',
+      },
+      Portal: {
         container:
-          'Element the popup is portaled into. Defaults to the theme portal container.',
+          'Portal destination. Omitted uses the scoped theme container; explicit null waits without rendering. Element, ShadowRoot and ref targets pass through to Base UI.',
+      },
+      Positioner: {
+        ref: 'Ref to the positioning div, separate from Popup and Portal.',
+        sideOffset:
+          'Distance from the anchor. Defaults to 8; supports functional offsets.',
+        align: 'Alignment relative to the anchor. Defaults to start.',
       },
     },
   },
@@ -394,6 +473,8 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Select/Select.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/select',
+    partPropDescriptions: SELECT_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: { Trigger: { size: 'md' } },
   },
   {
     name: 'Slider',
@@ -536,31 +617,6 @@ export const DOCUMENTED_COMPONENTS = [
     ],
     partPropDescriptions: ALERT_DIALOG_PART_PROP_DESCRIPTIONS,
     partPropDefaults: { Popup: { size: 'md' } },
-  },
-  {
-    name: 'Menu',
-    source: 'primitives/surfaces/Menu/Menu.tsx',
-    entryPoint: 'twenty-ui/primitives/surfaces',
-    slug: 'surfaces/menu',
-    partPropDescriptions: {
-      Item: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-      },
-      CheckboxItem: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-      },
-      RadioItem: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-      },
-      SubmenuTrigger: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-        onClick: 'The click handler for the submenu trigger.',
-      },
-    },
   },
   {
     name: 'Popover',
