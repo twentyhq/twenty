@@ -98,14 +98,14 @@ const StyledTable = styled.div<{
 
   div.header-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
     background-color: ${themeCssVariables.background.primary};
-    left: 0px;
+    inset-inline-start: 0px;
     position: sticky;
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
   }
 
   div.header-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
     background-color: ${themeCssVariables.background.primary};
-    left: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     position: sticky;
     top: 0;
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
@@ -113,35 +113,35 @@ const StyledTable = styled.div<{
 
   div.header-cell.${getRecordTableColumnFieldWidthClassName(0)} {
     background-color: ${themeCssVariables.background.primary};
-    left: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
     position: sticky;
-    right: 0;
+    inset-inline-end: 0;
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
   div.table-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
-    left: 0px;
+    inset-inline-start: 0px;
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
-    left: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell-0-0 {
-    left: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
     position: sticky;
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
   div.table-cell.${getRecordTableColumnFieldWidthClassName(0)} {
-    left: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
 
@@ -199,13 +199,13 @@ const StyledTable = styled.div<{
       overflow-clip-margin: 4px;
     }
 
-    // Pins the content at the table's left edge so the name holds still and truncates from the right.
+    // Pins the content at the table's start edge so the name holds still and truncates at its end.
     // Must stay zero-width, or sticky's containing-block constraint drags it along with the cell.
     div.table-cell.${getRecordTableColumnFieldWidthClassName(0)}
     > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
     div.table-cell-0-0
     > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
-      left: calc(
+      inset-inline-start: calc(
         var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
           var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
       );
@@ -222,7 +222,7 @@ const StyledTable = styled.div<{
     > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
     > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME} {
       height: 100%;
-      left: 0;
+      inset-inline-start: 0;
       position: absolute;
       top: 0;
       width: calc(
@@ -237,7 +237,7 @@ const StyledTable = styled.div<{
     .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
     div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)}
     .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
-      left: calc(
+      inset-inline-start: calc(
         var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
           var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
       );
