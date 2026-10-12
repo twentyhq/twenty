@@ -193,13 +193,13 @@ export const EnterprisePlanModal = () => {
               value={selectedInterval}
               onValueChange={setSelectedInterval}
             >
-              <Radio variant="card" value="monthly" render={<div />}>
+              <Radio variant="card" value="monthly">
                 <StyledIntervalCardContent>
                   <StyledIntervalTitle>{t`Monthly`}</StyledIntervalTitle>
                   <StyledIntervalSubtitle>{`$${MONTHLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
                 </StyledIntervalCardContent>
               </Radio>
-              <Radio variant="card" value="yearly" render={<div />}>
+              <Radio variant="card" value="yearly">
                 <StyledIntervalCardContent>
                   <StyledIntervalTitle>{t`Yearly`}</StyledIntervalTitle>
                   <StyledIntervalSubtitle>{`$${YEARLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>

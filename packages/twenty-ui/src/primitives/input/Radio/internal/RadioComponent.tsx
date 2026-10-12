@@ -13,10 +13,12 @@ export const RadioComponent = <TValue,>({
   className,
   size = 'sm',
   variant = 'default',
+  render = variant === 'card' ? <div /> : undefined,
   ...props
 }: RadioProps<TValue>) => (
   <RadioRoot
     {...props}
+    render={render}
     className={mergeClassNames(
       clsx(styles.root, styles[size], variant === 'card' && styles.card),
       className,

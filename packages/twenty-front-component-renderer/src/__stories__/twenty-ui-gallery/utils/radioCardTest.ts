@@ -12,7 +12,7 @@ export const radioCardTest: TwentyUiGalleryPlayFunction = async ({
   const basic = plan.getByRole('radio', { name: 'Basic plan' });
   const pro = plan.getByRole('radio', { name: 'Pro plan' });
 
-  expect(basic.tagName).toBe('SPAN');
+  expect(basic.tagName).toBe('DIV');
   expect(basic).toBeChecked();
   expect(pro.tagName).toBe('BUTTON');
   expect(pro).toHaveAttribute('type', 'button');

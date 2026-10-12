@@ -64,11 +64,11 @@ export const StorageChoice = () => (
 );
 ```
 
-Both root forms render a span with radio semantics and an adjacent hidden native input. `ref` targets the rendered root; `inputRef` targets the input. `Radio.Indicator` renders a span and its ref targets that element. `render`, state-based `className` and `style`, native attributes and event handlers retain their upstream contracts. The public types include `RadioProps`, `RadioRootProps`, `RadioRootState`, `RadioIndicatorProps` and `RadioIndicatorState`.
+Standard radios and `Radio.Root` render a span with radio semantics and an adjacent hidden native input. Card radios render a div. `ref` targets the rendered root; `inputRef` targets the input. `Radio.Indicator` renders a span and its ref targets that element. `render`, state-based `className` and `style`, native attributes and event handlers retain their upstream contracts. The public types include `RadioProps`, `RadioRootProps`, `RadioRootState`, `RadioIndicatorProps` and `RadioIndicatorState`.
 
 ## Card options
 
-Use `variant="card"` for full-width options with an inset radio indicator. The visual variant keeps the same span target as a standard radio. Use `render` to choose another element explicitly. When that element is a native button, also set `nativeButton`. Keep interactive controls outside the card content.
+Use `variant="card"` for full-width options with an inset radio indicator. Card radios keep their div root by default. Use `render` to choose another element explicitly. When that element is a native button, also set `nativeButton`. Keep interactive controls outside the card content.
 
 <StoryEmbed
   storyId="ui-input-radio--cards-documentation"
