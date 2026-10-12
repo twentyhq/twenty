@@ -198,6 +198,32 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect(result.href).toBe('https://twenty.com');
   });
 
+  it.each(['form', 'Form', 'FORM'])(
+    'should block %s attributes from assigning host form ownership',
+    (formAttributeName) => {
+      for (const htmlTag of [
+        'input',
+        'button',
+        'select',
+        'textarea',
+        'fieldset',
+        'output',
+        'div',
+      ]) {
+        const result = buildHostReactPropsFromRemoteProps({
+          remoteProps: {
+            [formAttributeName]: 'host-preferences',
+            name: 'guest-choice',
+            required: true,
+          },
+          htmlTag,
+        });
+
+        expect(result).toEqual({ name: 'guest-choice', required: true });
+      }
+    },
+  );
+
   it('should forward arbitrary aria-* and data-* attributes', () => {
     const result = buildHostReactPropsFromRemoteProps({
       remoteProps: {

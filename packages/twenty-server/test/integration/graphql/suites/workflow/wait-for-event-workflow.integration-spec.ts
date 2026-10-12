@@ -4,6 +4,7 @@ import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
+  findCoreWorkflowVersion,
   updateCoreWorkflowVersionStep,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -22,7 +23,6 @@ import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/work
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -64,31 +64,6 @@ describe('Wait for event workflow (e2e)', () => {
   let waitStepId: string | null = null;
   let watchedCompanyId: string | null = null;
   let otherCompanyId: string | null = null;
-
-  const getCoreWorkflowVersion = async (): Promise<{
-    trigger: unknown;
-    steps: WorkflowAction[];
-    workspaceWorkflowVersionId: string | null;
-  }> => {
-    const response = await graphql(
-      `
-        query CoreWorkflowVersionById($coreWorkflowVersionId: UUID!) {
-          coreWorkflowVersionById(
-            coreWorkflowVersionId: $coreWorkflowVersionId
-          ) {
-            trigger
-            steps
-            workspaceWorkflowVersionId
-          }
-        }
-      `,
-      { coreWorkflowVersionId },
-    );
-
-    expect(response.body.errors).toBeUndefined();
-
-    return response.body.data.coreWorkflowVersionById;
-  };
 
   const createCompany = async (name: string): Promise<string> => {
     const response = await graphql(
@@ -182,7 +157,9 @@ describe('Wait for event workflow (e2e)', () => {
 
   it('pauses on the event and resumes with the record once it happens', async () => {
     const { trigger, steps, workspaceWorkflowVersionId } =
-      await getCoreWorkflowVersion();
+      await findCoreWorkflowVersion({
+        coreWorkflowVersionId: coreWorkflowVersionId!,
+      });
 
     createdWorkflowRunId = v4();
 
@@ -191,7 +168,7 @@ describe('Wait for event workflow (e2e)', () => {
       stepInfos: {
         trigger: { status: 'NOT_STARTED', result: {} },
         ...Object.fromEntries(
-          steps.map((step) => [step.id, { status: 'NOT_STARTED' }]),
+          (steps ?? []).map((step) => [step.id, { status: 'NOT_STARTED' }]),
         ),
       },
     };
