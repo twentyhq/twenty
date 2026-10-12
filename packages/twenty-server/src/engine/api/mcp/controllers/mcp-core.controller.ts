@@ -22,6 +22,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
+import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
 import { getMcpRequestLogFields } from 'src/engine/api/mcp/utils/get-mcp-request-log-fields.util';
 import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
@@ -94,7 +95,7 @@ export class McpCoreController {
       ...(isDefined(mcpToolName) && { 'mcp.tool_name': mcpToolName }),
     });
 
-    const authContext = {
+    const authContext: McpCoreQueryContext = {
       workspace,
       userId: user?.id,
       userWorkspaceId,

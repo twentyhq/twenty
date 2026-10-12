@@ -26,6 +26,7 @@ import {
   LIST_SKILLS_TOOL_NAME,
   listSkillsInputSchema,
 } from 'src/engine/api/mcp/tools/list-skills.tool';
+import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
 import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
@@ -389,15 +390,7 @@ export class McpProtocolService {
       application,
       agentRoleRestriction,
       isDirectMode,
-    }: {
-      workspace: FlatWorkspace;
-      userId?: string;
-      userWorkspaceId?: string;
-      apiKey: FlatApiKey | undefined;
-      application?: FlatApplication;
-      agentRoleRestriction?: AgentRoleRestriction;
-      isDirectMode: boolean;
-    },
+    }: McpCoreQueryContext,
     sseWriter?: (data: Record<string, unknown>) => void,
   ): Promise<Record<string, unknown> | null> {
     try {
