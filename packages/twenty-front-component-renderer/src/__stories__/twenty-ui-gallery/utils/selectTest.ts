@@ -14,9 +14,9 @@ export const selectTest: TwentyUiGalleryPlayFunction = async ({
 
   const trigger = canvas.getByRole('combobox', { name: 'Account stage' });
   const status = canvas.getByRole('status', { name: 'Stage selection' });
-  const form = canvas.getByRole('form', {
+  const form = canvas.getByRole<HTMLFormElement>('form', {
     name: 'Account classification',
-  }) as HTMLFormElement;
+  });
 
   expect(trigger.tagName).toBe('BUTTON');
   expect(trigger).toHaveAttribute('data-native-trigger', 'stage');
