@@ -32,10 +32,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Application workflows`,
     description: msg`Allow applications to install workflows and start new workflow runs.`,
   },
-  [FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED]: {
-    label: msg`Workflow index page`,
-    description: msg`Use the dedicated workflow index page to browse workflows and their versions.`,
-  },
   [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: {
     label: msg`AI chat sharing dropdown`,
     description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
