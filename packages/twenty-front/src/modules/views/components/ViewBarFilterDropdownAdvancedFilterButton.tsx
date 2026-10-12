@@ -27,12 +27,12 @@ import { flushSync } from 'react-dom';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/icon';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
-const StyledPillContainer = styled.span`
-  & > span {
+const StyledBadgeContainer = styled.span`
+  > span[data-badge-size] {
     background: ${themeCssVariables.color.blue3};
     color: ${themeCssVariables.color.blue};
   }
@@ -155,9 +155,9 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         focused={isSelectedItemId}
         endIcon={
           advancedFilterQuerySubFilterCount > 0 ? (
-            <StyledPillContainer>
-              <Pill label={advancedFilterQuerySubFilterCount.toString()} />
-            </StyledPillContainer>
+            <StyledBadgeContainer>
+              <Badge>{advancedFilterQuerySubFilterCount.toString()}</Badge>
+            </StyledBadgeContainer>
           ) : undefined
         }
       >{t`Advanced filter`}</ListItemButton>

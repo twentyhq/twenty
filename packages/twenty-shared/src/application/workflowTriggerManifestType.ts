@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { isDefined } from '@/utils/validation/isDefined';
+import { workflowCronTriggerSchema } from '@/workflow/schemas/cron-trigger-schema';
 
 const manualTriggerAvailabilityManifestSchema = z.discriminatedUnion('type', [
   z.strictObject({ type: z.literal('GLOBAL') }),
@@ -12,6 +13,29 @@ const manualTriggerAvailabilityManifestSchema = z.discriminatedUnion('type', [
     type: z.literal('BULK_RECORDS'),
     objectUniversalIdentifier: z.uuid(),
   }),
+]);
+
+const [
+  dailyCronSettingsSchema,
+  hourlyCronSettingsSchema,
+  minutelyCronSettingsSchema,
+  customCronSettingsSchema,
+] = workflowCronTriggerSchema.shape.settings.options;
+
+const cronTriggerSettingsManifestSchema = z.discriminatedUnion('type', [
+  dailyCronSettingsSchema
+    .omit({ outputSchema: true })
+    .extend({ schedule: dailyCronSettingsSchema.shape.schedule.strict() })
+    .strict(),
+  hourlyCronSettingsSchema
+    .omit({ outputSchema: true })
+    .extend({ schedule: hourlyCronSettingsSchema.shape.schedule.strict() })
+    .strict(),
+  minutelyCronSettingsSchema
+    .omit({ outputSchema: true })
+    .extend({ schedule: minutelyCronSettingsSchema.shape.schedule.strict() })
+    .strict(),
+  customCronSettingsSchema.omit({ outputSchema: true }).strict(),
 ]);
 
 const workflowTriggerManifestOptions = [
@@ -39,6 +63,12 @@ const workflowTriggerManifestOptions = [
         }
       })
       .optional(),
+  }),
+  z.strictObject({
+    universalIdentifier: z.uuid(),
+    type: z.literal('CRON'),
+    nextStepIds: z.array(z.uuid()).min(1),
+    settings: cronTriggerSettingsManifestSchema,
   }),
 ] as const;
 

@@ -529,44 +529,44 @@
     ]
   },
   {
-    "name": "Pill",
+    "name": "Badge",
     "entryPoint": "twenty-ui/primitives/data-display",
-    "slug": "data-display/pill",
+    "slug": "data-display/badge",
     "props": [
       {
-        "name": "className",
-        "type": "string",
+        "name": "children",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the pill."
+        "description": "Caller-provided text, numbers, icons, or other inline content."
       },
       {
         "name": "color",
-        "type": "\"inherit\" | \"tertiary\"",
+        "type": "\"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
         "required": false,
         "defaultValue": "tertiary",
-        "description": "Text color. `inherit` takes the parent color and font weight on a tinted background."
+        "description": "Neutral tertiary, inherited text, primary accent, or secondary treatment."
       },
       {
-        "name": "Icon",
-        "type": "IconComponent",
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Icon component rendered before the label at 12px. Import icons from `twenty-ui/icon`."
+        "description": "Replaces the default span. Native props, handlers, and the ref target the rendered element."
       },
       {
-        "name": "label",
-        "type": "string",
+        "name": "shape",
+        "type": "\"circle\" | \"pill\"",
         "required": false,
-        "defaultValue": null,
-        "description": "Short text displayed inside the pill."
+        "defaultValue": "pill",
+        "description": "Rounded pill label or fixed circle with width equal to its height. Use pill for longer content."
       },
       {
         "name": "size",
-        "type": "\"md\" | \"sm\"",
+        "type": "\"md\" | \"sm\" | \"xs\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Pill size. `md` uses a larger font, height and icon."
+        "description": "Compact height, font size, and spacing: xs, sm, or md."
       }
     ]
   },
@@ -5516,6 +5516,39 @@
             "required": true,
             "defaultValue": null,
             "description": "The value of the Tab."
+          }
+        ]
+      },
+      {
+        "name": "Indicator",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: TabsIndicatorState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TabsIndicatorState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "renderBeforeHydration",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to render itself before React hydrates.\nThis minimizes the time that the indicator isn't visible after server-side rendering."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TabsIndicatorState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           }
         ]
       },
@@ -11514,7 +11547,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Padding of the tab content: sm or md."
+        "description": "Padding of the tab content: sm or md. Explicit size takes precedence over the ButtonGroup size, then sm applies."
       },
       {
         "name": "startIcon",
@@ -11711,34 +11744,6 @@
         "required": false,
         "defaultValue": null,
         "description": "JSON value to display. Supply value or entries, not both."
-      }
-    ]
-  },
-  {
-    "name": "NotificationCounter",
-    "entryPoint": "twenty-ui/components/data-display",
-    "slug": "components/data-display/notification-counter",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the badge."
-      },
-      {
-        "name": "count",
-        "type": "number",
-        "required": true,
-        "defaultValue": null,
-        "description": "Number to display as supplied, without clamping or hiding zero."
-      },
-      {
-        "name": "variant",
-        "type": "\"primary\" | \"secondary\"",
-        "required": false,
-        "defaultValue": "primary",
-        "description": "Primary or secondary badge styling."
       }
     ]
   },
