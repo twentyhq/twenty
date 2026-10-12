@@ -1,3 +1,4 @@
+import { isFunction } from '@sniptt/guards';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
@@ -41,6 +42,10 @@ const meta: Meta<typeof RadioExample> = {
 
 export default meta;
 type Story = StoryObj<typeof RadioExample>;
+
+const numericValueChange =
+  fn<NonNullable<RadioGroupProps<number>['onValueChange']>>();
+const nativeButtonClick = fn();
 
 export const Keyboard: Story = {
   decorators: [ComponentDecorator],
@@ -153,37 +158,60 @@ export const CanceledChange: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('radio', { name: 'Cherry' }));
     await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).toHaveBeenCalledWith(
+      'cherry',
+      expect.objectContaining({ isCanceled: true }),
+    );
     await expect(canvas.getByRole('radio', { name: 'Apple' })).toBeChecked();
-    await expect(
-      canvas.getByRole('radio', { name: 'Cherry' }),
-    ).not.toBeChecked();
+    const cherry = canvas.getByRole('radio', { name: 'Cherry' });
+    await expect(cherry).not.toBeChecked();
+    await expect(cherry.nextElementSibling).not.toBeChecked();
   },
 };
 
-const ControlledExample = ({ onValueChange }: RadioGroupProps) => {
-  const [value, setValue] = useState('apple');
+const ControlledExample = ({ onValueChange }: RadioGroupProps<number>) => {
+  const [value, setValue] = useState(0);
 
   return (
     <>
-      <RadioExample value={value} onValueChange={onValueChange} />
-      <Button onClick={() => setValue('cherry')}>Apply Cherry</Button>
+      <RadioGroup
+        aria-label="Number"
+        value={value}
+        onValueChange={onValueChange}
+      >
+        <Radio.Root value={0}>Zero</Radio.Root>
+        <Radio.Root value={1}>One</Radio.Root>
+      </RadioGroup>
+      <Button onClick={() => setValue(1)}>Apply One</Button>
     </>
   );
 };
 
 export const Controlled: Story = {
   decorators: [ComponentDecorator],
-  render: (args) => <ControlledExample {...args} />,
-  play: async ({ canvasElement, args }) => {
+  beforeEach: () => {
+    numericValueChange.mockClear();
+  },
+  render: () => <ControlledExample onValueChange={numericValueChange} />,
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('radio', { name: 'Cherry' }));
-    await expect(args.onValueChange).toHaveBeenCalledWith(
-      'cherry',
-      expect.anything(),
+    const one = canvas.getByRole('radio', { name: 'One' });
+    await userEvent.click(one);
+    await expect(numericValueChange).toHaveBeenCalledTimes(1);
+    await expect(numericValueChange).toHaveBeenCalledWith(
+      1,
+      expect.objectContaining({
+        reason: 'none',
+        event: expect.objectContaining({ type: 'click' }),
+      }),
     );
-    await expect(canvas.getByRole('radio', { name: 'Apple' })).toBeChecked();
-    await userEvent.click(canvas.getByRole('button', { name: 'Apply Cherry' }));
-    await expect(canvas.getByRole('radio', { name: 'Cherry' })).toBeChecked();
+    await expect(canvas.getByRole('radio', { name: 'Zero' })).toBeChecked();
+    await expect(one).not.toBeChecked();
+    await expect(one.nextElementSibling).not.toBeChecked();
+    await userEvent.click(canvas.getByRole('button', { name: 'Apply One' }));
+    await expect(one).toBeChecked();
+    await expect(one.nextElementSibling).toBeChecked();
+    await expect(numericValueChange).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -193,6 +221,7 @@ const FormExample = ({ variant }: Pick<RadioProps, 'variant'>) => {
 
   return (
     <form
+      aria-label="Preferences"
       onSubmit={(event) => {
         event.preventDefault();
         setSubmitted(
@@ -230,25 +259,37 @@ export const Form: Story = {
   render: () => <FormExample />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      canvas.getByRole('radiogroup', { name: 'Fruit' }),
-    ).toHaveAttribute('aria-required', 'true');
+    const form = canvas.getByRole<HTMLFormElement>('form', {
+      name: 'Preferences',
+    });
+    const group = canvas.getByRole('radiogroup', { name: 'Fruit' });
+    await expect(group).toHaveAttribute('aria-required', 'true');
+    await expect(group).toHaveAccessibleDescription('Choose one fruit');
     await userEvent.click(canvas.getByRole('radio', { name: 'Cherry' }));
+    await expect(new FormData(form).get('fruit')).toBe('cherry');
     await userEvent.click(canvas.getByRole('button', { name: 'Submit' }));
     await expect(
       canvas.getByRole('status', { name: 'Submitted fruit' }),
     ).toHaveTextContent(/^cherry$/);
     await userEvent.click(canvas.getByRole('button', { name: 'Reset' }));
     await expect(canvas.getByRole('radio', { name: 'Apple' })).toBeChecked();
+    await expect(
+      canvas.getByRole('radio', { name: 'Cherry' }),
+    ).not.toBeChecked();
+    await expect(new FormData(form).get('fruit')).toBe('apple');
   },
 };
 
-const InputRefExample = () => {
+const InputRefExample = ({ onValueChange }: RadioGroupProps<number>) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <>
-      <RadioGroup defaultValue={0} aria-label="Number">
+      <RadioGroup
+        defaultValue={0}
+        aria-label="Number"
+        onValueChange={onValueChange}
+      >
         <Radio value={0}>Zero</Radio>
         <Radio value={1} inputRef={inputRef}>
           One
@@ -261,14 +302,36 @@ const InputRefExample = () => {
 
 export const NumericValuesAndInputRef: Story = {
   decorators: [ComponentDecorator],
-  render: () => <InputRefExample />,
+  beforeEach: () => {
+    numericValueChange.mockClear();
+  },
+  render: () => <InputRefExample onValueChange={numericValueChange} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const one = canvas.getByRole('radio', { name: 'One' });
     await expect(canvas.getByRole('radio', { name: 'Zero' })).toBeChecked();
     await userEvent.click(canvas.getByRole('button', { name: 'Focus One' }));
-    await expect(canvas.getByRole('radio', { name: 'One' })).toHaveFocus();
+    await expect(one).toHaveFocus();
+    await userEvent.click(one);
+    await userEvent.click(one);
     await userEvent.keyboard(' ');
-    await expect(canvas.getByRole('radio', { name: 'One' })).toBeChecked();
+    await expect(one).toBeChecked();
+    await expect(one.nextElementSibling).toBeChecked();
+    await expect(canvas.getByRole('radio', { name: 'Zero' })).not.toBeChecked();
+    await expect(numericValueChange).toHaveBeenCalledTimes(1);
+    await expect(numericValueChange).toHaveBeenCalledWith(
+      1,
+      expect.objectContaining({
+        reason: 'none',
+        event: expect.objectContaining({ type: 'click' }),
+        isCanceled: false,
+        isPropagationAllowed: false,
+        trigger: undefined,
+      }),
+    );
+    const eventDetails = numericValueChange.mock.calls[0]?.[1];
+    await expect(isFunction(eventDetails?.cancel)).toBe(true);
+    await expect(isFunction(eventDetails?.allowPropagation)).toBe(true);
   },
 };
 
@@ -364,15 +427,31 @@ export const CompleteParts: Story = {
   render: (args) => (
     <RadioGroup {...args} aria-label="Fruit" render={<fieldset />}>
       <Radio.Root value="apple">
-        <Radio.Indicator keepMounted render={<strong />} aria-hidden>
-          Selected
-        </Radio.Indicator>
+        <Radio.Indicator
+          keepMounted
+          aria-hidden
+          className={({ checked }) => (checked ? 'selected' : 'unselected')}
+          style={({ checked }) => ({ opacity: checked ? 1 : 0.75 })}
+          render={(props, state) => (
+            <strong {...props} data-active={state.checked}>
+              {state.checked ? 'Selected' : 'Unselected'}
+            </strong>
+          )}
+        />
         Apple
       </Radio.Root>
       <Radio.Root value="cherry">
-        <Radio.Indicator keepMounted render={<strong />} aria-hidden>
-          Selected
-        </Radio.Indicator>
+        <Radio.Indicator
+          keepMounted
+          aria-hidden
+          className={({ checked }) => (checked ? 'selected' : 'unselected')}
+          style={({ checked }) => ({ opacity: checked ? 1 : 0.75 })}
+          render={(props, state) => (
+            <strong {...props} data-active={state.checked}>
+              {state.checked ? 'Selected' : 'Unselected'}
+            </strong>
+          )}
+        />
         Cherry
       </Radio.Root>
     </RadioGroup>
@@ -387,12 +466,24 @@ export const CompleteParts: Story = {
     await expect(cherry.querySelector('strong')).toHaveAttribute(
       'data-unchecked',
     );
+    await expect(cherry.querySelector('strong')).toHaveClass('unselected');
+    await expect(cherry.querySelector('strong')).toHaveStyle({
+      opacity: '0.75',
+    });
     await userEvent.tab();
     await userEvent.keyboard('{Enter}');
     await expect(args.onValueChange).not.toHaveBeenCalled();
     await userEvent.keyboard('{ArrowRight}');
     await expect(cherry).toHaveFocus();
     await expect(cherry).toBeChecked();
+    await expect(cherry.nextElementSibling).toBeChecked();
+    await expect(cherry.querySelector('strong')).toHaveTextContent('Selected');
+    await expect(cherry.querySelector('strong')).toHaveClass('selected');
+    await expect(cherry.querySelector('strong')).toHaveStyle({ opacity: '1' });
+    await expect(cherry.querySelector('strong')).toHaveAttribute(
+      'data-active',
+      'true',
+    );
     await expect(cherry.querySelector('strong')).toHaveAttribute(
       'data-checked',
     );
@@ -405,6 +496,9 @@ export const CompleteParts: Story = {
 
 export const NativeButtonCards: Story = {
   decorators: [ComponentDecorator],
+  beforeEach: () => {
+    nativeButtonClick.mockClear();
+  },
   args: { defaultValue: 'apple' },
   render: (args) => (
     <RadioGroup {...args} aria-label="Fruit">
@@ -419,6 +513,7 @@ export const NativeButtonCards: Story = {
       <Radio
         variant="card"
         value="cherry"
+        onClick={nativeButtonClick}
         nativeButton
         render={<button type="button" />}
       >
@@ -431,10 +526,45 @@ export const NativeButtonCards: Story = {
     const apple = canvas.getByRole('radio', { name: 'Apple' });
     const cherry = canvas.getByRole('radio', { name: 'Cherry' });
     await expect(apple.tagName).toBe('BUTTON');
-    await userEvent.tab();
+    await userEvent.click(cherry);
+    await expect(cherry).toBeChecked();
+    await expect(cherry.nextElementSibling).toBeChecked();
+    await expect(nativeButtonClick).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await userEvent.keyboard('{ArrowLeft}');
+    await expect(apple).toBeChecked();
     await userEvent.keyboard('{ArrowRight}');
     await expect(cherry).toHaveFocus();
     await expect(cherry).toBeChecked();
-    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).toHaveBeenCalledTimes(3);
+  },
+};
+
+export const IndicatorMounting: Story = {
+  decorators: [ComponentDecorator],
+  args: { defaultValue: 'apple' },
+  render: (args) => (
+    <RadioGroup {...args} aria-label="Fruit">
+      <Radio.Root value="apple" aria-label="Apple">
+        <Radio.Indicator aria-hidden>Apple indicator</Radio.Indicator>
+        Apple
+      </Radio.Root>
+      <Radio.Root value="cherry" aria-label="Cherry">
+        <Radio.Indicator aria-hidden>Cherry indicator</Radio.Indicator>
+        Cherry
+      </Radio.Root>
+    </RadioGroup>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Apple indicator')).toBeVisible();
+    await expect(
+      canvas.queryByText('Cherry indicator'),
+    ).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole('radio', { name: 'Cherry' }));
+    await expect(canvas.getByText('Cherry indicator')).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.queryByText('Apple indicator')).not.toBeInTheDocument(),
+    );
   },
 };

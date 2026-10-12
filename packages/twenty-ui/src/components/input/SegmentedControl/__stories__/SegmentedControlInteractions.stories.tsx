@@ -1,3 +1,4 @@
+import { isFunction } from '@sniptt/guards';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
@@ -25,6 +26,21 @@ const ControlledExample = (props: SegmentedControlProps<string>) => {
         }}
       />
       <output aria-label="Selected appearance">{appearance}</output>
+    </>
+  );
+};
+
+const CallerAppliedExample = (props: SegmentedControlProps<string>) => {
+  const [appearance, setAppearance] = useState('system');
+
+  return (
+    <>
+      <SegmentedControl
+        {...props}
+        defaultValue={undefined}
+        value={appearance}
+      />
+      <Button onClick={() => setAppearance('dark')}>Apply Dark</Button>
     </>
   );
 };
@@ -86,7 +102,11 @@ const meta: Meta<typeof SegmentedControl> = {
 export default meta;
 type Story = StoryObj<typeof SegmentedControl>;
 
+const onUncontrolledValueChange =
+  fn<NonNullable<SegmentedControlProps<string>['onValueChange']>>();
+
 export const Uncontrolled: Story = {
+  args: { onValueChange: onUncontrolledValueChange },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const dark = canvas.getByRole('radio', { name: 'Dark' });
@@ -103,10 +123,17 @@ export const Uncontrolled: Story = {
       canvas.getByRole('radio', { name: 'System' }),
     ).not.toBeChecked();
     await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(canvas.queryByRole('tab')).toBeNull();
     await expect(args.onValueChange).toHaveBeenCalledWith(
       'dark',
-      expect.anything(),
+      expect.objectContaining({
+        reason: 'none',
+        event: expect.objectContaining({ type: 'click' }),
+      }),
     );
+    await expect(
+      isFunction(onUncontrolledValueChange.mock.calls[0]?.[1].cancel),
+    ).toBe(true);
   },
 };
 
@@ -232,6 +259,56 @@ export const Controlled: Story = {
     await expect(args.onValueChange).toHaveBeenCalledWith(
       'dark',
       expect.objectContaining({ reason: 'none' }),
+    );
+  },
+};
+
+export const ControlledSelection: Story = {
+  render: (args) => <CallerAppliedExample {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const system = canvas.getByRole('radio', { name: 'System' });
+    const dark = canvas.getByRole('radio', { name: 'Dark' });
+
+    await userEvent.click(dark);
+
+    await expect(system).toBeChecked();
+    await expect(dark).not.toBeChecked();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).toHaveBeenCalledWith(
+      'dark',
+      expect.objectContaining({
+        reason: 'none',
+        event: expect.objectContaining({ type: 'click' }),
+      }),
+    );
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Apply Dark' }));
+
+    await expect(dark).toBeChecked();
+    await expect(system).not.toBeChecked();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const CanceledChange: Story = {
+  args: {
+    onValueChange: fn<
+      NonNullable<SegmentedControlProps<string>['onValueChange']>
+    >((_value, eventDetails) => eventDetails.cancel()),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const dark = canvas.getByRole('radio', { name: 'Dark' });
+
+    await userEvent.click(dark);
+
+    await expect(canvas.getByRole('radio', { name: 'System' })).toBeChecked();
+    await expect(dark).not.toBeChecked();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).toHaveBeenCalledWith(
+      'dark',
+      expect.objectContaining({ reason: 'none', isCanceled: true }),
     );
   },
 };
