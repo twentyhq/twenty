@@ -12,19 +12,47 @@
 
 </div>
 
-A CLI and SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
+The SDK for defining and building applications that extend [Twenty CRM](https://twenty.com).
 
-> The Twenty CLI is also available as its own package, [`twenty`](https://www.npmjs.com/package/twenty). Install it with `npm install -g twenty` to work with your workspaces from the terminal, and to create, build and sync apps with `twenty app init`, `twenty app apply` and `twenty app dev`. See its [README](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/README.md).
+> The CLI bundled with `twenty-sdk` is deprecated. Use the standalone [`twenty`](https://www.npmjs.com/package/twenty) CLI for new development. SDK library imports, including `twenty-sdk/define`, `twenty-sdk/front-component`, and `twenty-sdk/build`, remain supported. Keep `twenty-sdk` in your app dependencies.
 
 ## Quick start
 
-The recommended way to start is with [create-twenty-app](https://www.npmjs.com/package/create-twenty-app):
-
 ```bash
-npx create-twenty-app@latest my-twenty-app
+npm install -g twenty
+twenty app init my-twenty-app
 cd my-twenty-app
-yarn twenty dev
+yarn install
+twenty auth login --url https://your-workspace.twenty.com --use
+twenty app apply --create
+twenty app dev
 ```
+
+The standalone CLI needs Node.js 24.5 or later. App projects pin Yarn 4, enable Corepack before running `yarn install`. See the [CLI README](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/README.md) for setup details.
+
+## Migrate from the SDK CLI
+
+Install `twenty` globally and run it directly from your terminal. If you previously installed `twenty-sdk` globally, uninstall that global copy first because both packages provide a `twenty` executable. Keep the app's local `twenty-sdk` dependency for its library imports.
+
+`yarn twenty`, `npx twenty`, and package scripts can still select the app-local SDK executable. Use the globally installed `twenty` directly and run `twenty doctor --offline` to check executable ownership. For CI or package scripts, use the standalone CLI's explicit executable path if local binaries take precedence.
+
+Common command replacements:
+
+| SDK CLI                     | Standalone CLI                                      |
+| --------------------------- | --------------------------------------------------- |
+| `yarn twenty remote:add`    | `twenty auth login --url <url> --name <name> --use` |
+| `yarn twenty remote:list`   | `twenty remote list`                                |
+| `yarn twenty dev`           | `twenty app dev`                                    |
+| `yarn twenty plan`          | `twenty app plan`                                   |
+| `yarn twenty apply`         | `twenty app apply`                                  |
+| `yarn twenty dev:build`     | `twenty app build`                                  |
+| `yarn twenty dev:typecheck` | `twenty app typecheck`                              |
+| `yarn twenty dev:add`       | `twenty app add`                                    |
+| `yarn twenty app:uninstall` | `twenty app uninstall`                              |
+
+These are workflow replacements, not flag-compatible aliases. Use `--path <appPath>` instead of a positional app path. For new apps, pass `--create` or approve the interactive registration prompt when first applying or starting dev mode; object and field deletions require confirmation or `--yes`. Read the [command reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) before updating automation.
+
+Existing SDK commands and `twenty-sdk/cli` imports remain available during the transition. The executable prints a deprecation warning to stderr; library imports do not. Workflows that need SDK-only commands such as `app:publish` can continue using them. `create-twenty-app` is unchanged by this deprecation.
 
 ## Documentation
 
@@ -41,33 +69,25 @@ Guides in this repository:
 
 ## Manual installation
 
-If you are adding `twenty-sdk` to an existing project instead of using `create-twenty-app`:
+To use the SDK in an existing app:
 
 ```bash
-yarn add twenty-sdk twenty-client-sdk
+yarn add -D twenty-sdk
+yarn add twenty-client-sdk
 ```
 
-Then add a `twenty` script to your `package.json`:
-
-```json
-{
-  "scripts": {
-    "twenty": "twenty"
-  }
-}
-```
-
-Run `yarn twenty help` to see all available commands.
+Use `twenty-sdk/define` for entity definitions and `twenty-client-sdk` when your app needs an API client. Install and invoke the standalone CLI separately, as above.
 
 ## Configuration
 
-The CLI stores credentials per remote in `~/.twenty/config.json`. Run `yarn twenty remote:add` to configure a remote, or `yarn twenty remote:list` to see existing ones.
+The standalone CLI stores saved workspace connections in `~/.twenty/config.json`. Run `twenty auth login` to sign in and `twenty auth status` to check the selected connection.
 
 ## Troubleshooting
 
-- Auth errors: run `yarn twenty remote:add` to re-authenticate.
-- Typings out of date: restart `yarn twenty dev` to refresh the client and types.
-- Not seeing changes in dev: make sure dev mode is running (`yarn twenty dev`).
+- Deprecation warning still shown: your command resolved to the SDK's executable. Check shell aliases and run the standalone `twenty doctor --offline` to inspect PATH precedence.
+- Auth errors: run `twenty auth login` to re-authenticate.
+- Typings out of date: run `twenty app apply` to regenerate the client after syncing.
+- Not seeing changes in dev: make sure `twenty app dev` is running.
 
 ## Contributing
 
@@ -91,7 +111,7 @@ npx nx run twenty-sdk:dev
 npx nx run twenty-sdk:build
 ```
 
-### Running the CLI locally
+### Running the deprecated SDK CLI locally
 
 ```bash
 npx nx run twenty-sdk:start -- <command>

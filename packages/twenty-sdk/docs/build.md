@@ -90,6 +90,6 @@ Cancellation is checked before generation starts and after the generator settles
 
 ## Existing SDK commands
 
-The existing `twenty` binary and `twenty-sdk/cli` exports remain available. This API adds no executable, changes no command names, and requires no command migration.
+The CLI bundled with `twenty-sdk` is deprecated in favor of the standalone `twenty` package. Its executable and `twenty-sdk/cli` exports remain available during the transition. See the [CLI migration guide](../README.md#migrate-from-the-sdk-cli). This deprecation does not affect `twenty-sdk/build` or other SDK library imports.
 
 Existing builds retain their output directory, symlink-copy behavior, typecheck implementation and error formatting. Snapshot isolation and the stricter configuration checks above apply to the new build operations.
