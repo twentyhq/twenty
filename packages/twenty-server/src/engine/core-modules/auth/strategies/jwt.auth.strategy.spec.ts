@@ -35,12 +35,14 @@ describe('JwtAuthStrategy', () => {
   let userStore: Record<string, any>;
   let applicationStore: Record<string, Record<string, any>>;
   let apiKeyStore: Record<string, Record<string, any>>;
+  let roleTargetByAgentIdStore: Record<string, Record<string, any>>;
 
   beforeEach(() => {
     workspaceStore = {};
     userStore = {};
     applicationStore = {};
     apiKeyStore = {};
+    roleTargetByAgentIdStore = {};
 
     userWorkspaceRepository = {
       findOne: jest.fn(),
@@ -98,6 +100,11 @@ describe('JwtAuthStrategy', () => {
 
           if (cacheKeys.includes('apiKeyMap')) {
             result.apiKeyMap = apiKeyStore[workspaceId] ?? {};
+          }
+
+          if (cacheKeys.includes('flatRoleTargetByAgentIdMaps')) {
+            result.flatRoleTargetByAgentIdMaps =
+              roleTargetByAgentIdStore[workspaceId] ?? {};
           }
 
           return result;
@@ -554,6 +561,49 @@ describe('JwtAuthStrategy', () => {
         expect(e.code).toBe(AuthExceptionCode.APPLICATION_NOT_FOUND);
       }
     });
+
+    it.each([
+      {
+        title: 'its role',
+        roleTargets: { 'agent-id': { roleId: 'agent-role-id' } },
+        expectedRoleId: 'agent-role-id',
+      },
+      {
+        title: 'nothing when it has no role',
+        roleTargets: {},
+        expectedRoleId: null,
+      },
+    ])(
+      'should restrict an application token carrying an agent to $title',
+      async ({ roleTargets, expectedRoleId }) => {
+        const applicationId = randomUUID();
+        const workspaceId = randomUUID();
+        const workspace = new WorkspaceEntity();
+
+        workspace.id = workspaceId;
+        workspaceStore[workspaceId] = workspace;
+        applicationStore[workspaceId] = {
+          [applicationId]: { id: applicationId },
+        };
+        roleTargetByAgentIdStore[workspaceId] = roleTargets;
+
+        strategy = createStrategy();
+
+        const result = await strategy.validate({
+          sub: applicationId,
+          type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+          applicationId,
+          workspaceId,
+          agentId: 'agent-id',
+        } as JwtPayload);
+
+        expect(result.application).toEqual({ id: applicationId });
+        expect(result.agentRoleRestriction).toEqual({
+          agentId: 'agent-id',
+          roleId: expectedRoleId,
+        });
+      },
+    );
 
     it('should reject an application token bound to a user that cannot be resolved', async () => {
       const validApplicationId = randomUUID();

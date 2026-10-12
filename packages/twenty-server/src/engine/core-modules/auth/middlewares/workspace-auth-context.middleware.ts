@@ -54,6 +54,7 @@ export class WorkspaceAuthContextMiddleware implements NestMiddleware {
         workspaceMemberId: req.workspaceMemberId,
         workspaceMember: req.workspaceMember,
         application: req.application,
+        agentRoleRestriction: req.agentRoleRestriction,
       });
     }
 
@@ -61,6 +62,7 @@ export class WorkspaceAuthContextMiddleware implements NestMiddleware {
       return buildApplicationAuthContext({
         workspace: req.workspace!,
         application: req.application,
+        agentRoleRestriction: req.agentRoleRestriction,
       });
     }
 

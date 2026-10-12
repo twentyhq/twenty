@@ -2,6 +2,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
 import { type JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
@@ -15,6 +16,7 @@ declare module 'express-serve-static-core' {
     user?: FlatAuthContextUser | null;
     apiKey?: FlatApiKey | null;
     application?: FlatApplication | null;
+    agentRoleRestriction?: AgentRoleRestriction;
     userWorkspace?: FlatUserWorkspace;
     locale: keyof typeof APP_LOCALES;
     workspace?: FlatWorkspace;
