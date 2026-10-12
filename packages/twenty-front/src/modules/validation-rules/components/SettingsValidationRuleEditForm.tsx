@@ -22,6 +22,8 @@ import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/bu
 import { getValidationRuleFormValues } from '@/validation-rules/utils/getValidationRuleFormValues';
 import { getValidationRuleSaveErrorMessage } from '@/validation-rules/utils/getValidationRuleSaveErrorMessage';
 import { isValidationRuleFormSubmittable } from '@/validation-rules/utils/isValidationRuleFormSubmittable';
+import { mergeServerValidationRuleFormValues } from '@/validation-rules/utils/mergeServerValidationRuleFormValues';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const DELETE_VALIDATION_RULE_MODAL_ID = 'validation-rule-edit-delete';
 
@@ -52,6 +54,25 @@ export const SettingsValidationRuleEditForm = ({
   const [values, setValues] = useState<ValidationRuleFormValues>(() =>
     getValidationRuleFormValues(validationRule),
   );
+  const [serverFormValues, setServerFormValues] =
+    useState<ValidationRuleFormValues>(() =>
+      getValidationRuleFormValues(validationRule),
+    );
+  const [formKey, setFormKey] = useState(0);
+
+  const nextServerFormValues = getValidationRuleFormValues(validationRule);
+
+  if (!isDeeplyEqual(nextServerFormValues, serverFormValues)) {
+    setServerFormValues(nextServerFormValues);
+    setValues((currentValues) =>
+      mergeServerValidationRuleFormValues({
+        formValues: currentValues,
+        previousServerFormValues: serverFormValues,
+        nextServerFormValues,
+      }),
+    );
+    setFormKey((previousFormKey) => previousFormKey + 1);
+  }
 
   const fields = buildValidationRuleFieldDescriptors({
     objectMetadataItem,
@@ -65,9 +86,19 @@ export const SettingsValidationRuleEditForm = ({
   const handleSave = async () => {
     try {
       await updateValidationRule({
-        variables: { input: { id: validationRule.id, update: values } },
+        variables: {
+          input: {
+            id: validationRule.id,
+            update: { ...values, isActive: true },
+          },
+        },
       });
-      enqueueToast({ variant: 'success', children: t`Rule updated.` });
+      enqueueToast({
+        variant: 'success',
+        children: validationRule.isActive
+          ? t`Rule updated.`
+          : t`Rule activated.`,
+      });
       navigateToObjectValidationRules();
     } catch (error) {
       enqueueToast({
@@ -121,12 +152,14 @@ export const SettingsValidationRuleEditForm = ({
       objectMetadataItem={objectMetadataItem}
       breadcrumbLabel={validationRule.name}
       stepLabel={t`Edit rule`}
+      saveLabel={validationRule.isActive ? t`Save` : t`Activate`}
       isSaveDisabled={
         isSaving || !isValidationRuleFormSubmittable({ values, fields })
       }
       onSave={handleSave}
     >
       <SettingsValidationRuleForm
+        key={formKey}
         objectMetadataItem={objectMetadataItem}
         fields={fields}
         editorFields={editorFields}

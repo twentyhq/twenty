@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  ValidateIf,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -38,11 +39,13 @@ export class CreateValidationRuleInput {
   icon?: string | null;
 
   @IsString()
+  @ValidateIf((input: CreateValidationRuleInput) => input.isActive !== false)
   @IsNotEmpty()
   @Field()
   expression: string;
 
   @IsString()
+  @ValidateIf((input: CreateValidationRuleInput) => input.isActive !== false)
   @IsNotEmpty()
   @Field()
   message: string;

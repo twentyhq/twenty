@@ -184,7 +184,7 @@ export class ValidationRuleToolsFactory {
       },
       update_validation_rule: {
         description:
-          'Update a validation rule. Only the provided properties change. An invalid expression is rejected with the reason.',
+          'Update a validation rule. Only the provided properties change. An active rule rejects an invalid expression with the reason; an inactive rule only checks it when activated, so check it first with validate_validation_rule_expression.',
         inputSchema: UpdateValidationRuleInputSchema,
         execute: async ({
           id,

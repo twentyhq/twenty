@@ -122,10 +122,9 @@ export const useAgentChat = () => {
         ? browsingContext !== null
         : JSON.stringify(browsingContext) !==
           JSON.stringify(lastSentBrowsingContext);
-    const browsingContextToSend =
-      isBrowsingContextChanged || isDefined(browsingContext?.openForm)
-        ? browsingContext
-        : null;
+    const browsingContextToSend = isBrowsingContextChanged
+      ? browsingContext
+      : null;
     const messageId = v4();
     const optimisticMessageCreatedAt = new Date().toISOString();
     const rollbackOptimisticRestore = applyOptimisticRestore({

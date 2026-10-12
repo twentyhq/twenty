@@ -179,12 +179,15 @@ export class ValidationRuleService {
         { workspaceId },
       );
 
-    const bindings = compileValidationRuleExpressionOrThrow({
-      expression: input.expression,
-      objectMetadataId: input.objectMetadataId,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
+    const bindings =
+      (input.isActive ?? true)
+        ? compileValidationRuleExpressionOrThrow({
+            expression: input.expression,
+            objectMetadataId: input.objectMetadataId,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          })
+        : {};
 
     const flatValidationRuleToCreate =
       fromCreateValidationRuleInputToFlatValidationRuleToCreate({
@@ -232,9 +235,10 @@ export class ValidationRuleService {
       input.update.expression ?? existingFlatValidationRule.expression;
     const isActive =
       input.update.isActive ?? existingFlatValidationRule.isActive;
+    const isExpressionChanged =
+      expression !== existingFlatValidationRule.expression;
     const shouldCompile =
-      expression !== existingFlatValidationRule.expression ||
-      (isActive && !existingFlatValidationRule.isActive);
+      isActive && (isExpressionChanged || !existingFlatValidationRule.isActive);
 
     const bindings = shouldCompile
       ? compileValidationRuleExpressionOrThrow({
@@ -243,7 +247,9 @@ export class ValidationRuleService {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         })
-      : existingFlatValidationRule.bindings;
+      : isExpressionChanged
+        ? {}
+        : existingFlatValidationRule.bindings;
 
     const flatValidationRuleToUpdate =
       fromUpdateValidationRuleInputToFlatValidationRuleToUpdate({

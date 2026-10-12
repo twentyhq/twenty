@@ -84,6 +84,10 @@ export class FlatValidationRuleValidatorService {
       });
     }
 
+    if (!universalFlatValidationRule.isActive) {
+      return errors;
+    }
+
     if (!isNonEmptyString(universalFlatValidationRule.message.trim())) {
       errors.push({
         code: ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_INPUT,

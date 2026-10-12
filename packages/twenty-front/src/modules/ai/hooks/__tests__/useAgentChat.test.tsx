@@ -2,15 +2,12 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
-import type { Store } from 'jotai/vanilla/store';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatLastSentBrowsingContextFamilyState } from '@/ai/states/agentChatLastSentBrowsingContextFamilyState';
-import { aiChatOpenFormState } from '@/ai/states/aiChatOpenFormState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -43,19 +40,10 @@ const DRAFT_MENTIONING_COMPANY =
     label: 'Acme',
   });
 
-const sentChatMessageVariables: Record<string, unknown>[] = [];
-
 const buildSendChatMessageMock = (
   outcome: 'sent' | 'failed',
 ): MockedResponse => ({
-  request: {
-    query: SendChatMessageDocument,
-    variables: (variables: Record<string, unknown>) => {
-      sentChatMessageVariables.push(variables);
-
-      return true;
-    },
-  },
+  request: { query: SendChatMessageDocument, variables: () => true },
   ...(outcome === 'sent'
     ? {
         result: {
@@ -77,18 +65,15 @@ const readPersistedDrafts = () =>
 const renderAgentChat = ({
   persistedDrafts,
   sendChatMessageOutcomes,
-  onInitializeJotaiStore,
 }: {
   persistedDrafts: Record<string, string>;
   sendChatMessageOutcomes: ('sent' | 'failed')[];
-  onInitializeJotaiStore?: (store: Store) => void;
 }) => {
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: sendChatMessageOutcomes.map(buildSendChatMessageMock),
     onInitializeJotaiStore: (store) => {
       store.set(aiModelsState.atom, [{ modelId: 'model', label: 'Model' }]);
       store.set(newAiChatThreadIdState.atom, THREAD_ID);
-      onInitializeJotaiStore?.(store);
     },
   });
 
@@ -127,47 +112,6 @@ const send = async (result: {
 describe('useAgentChat', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    sentChatMessageVariables.length = 0;
-  });
-
-  it('sends the page context with every message while a form is open', async () => {
-    window.history.pushState(
-      {},
-      '',
-      '/settings/objects/companies/new-validation-rule',
-    );
-    const openForm = {
-      formId: 'form-1',
-      description: 'Validation rule on the Company object',
-      fields: [{ name: 'name', description: 'Short rule name' }],
-    };
-    const browsingContext = {
-      type: 'settingsPage' as const,
-      path: '/settings/objects/companies/new-validation-rule',
-      openForm,
-    };
-
-    const result = renderAgentChat({
-      persistedDrafts: {
-        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
-      },
-      sendChatMessageOutcomes: ['sent'],
-      onInitializeJotaiStore: (store) => {
-        store.set(aiChatOpenFormState.atom, { ...openForm, onFill: jest.fn() });
-        store.set(
-          agentChatLastSentBrowsingContextFamilyState.atomFamily(THREAD_ID),
-          browsingContext,
-        );
-      },
-    });
-
-    await send(result);
-
-    window.history.pushState({}, '', '/');
-
-    expect(sentChatMessageVariables.at(-1)?.browsingContext).toEqual(
-      browsingContext,
-    );
   });
 
   it('files a chat started from a record under it once its message is sent', async () => {

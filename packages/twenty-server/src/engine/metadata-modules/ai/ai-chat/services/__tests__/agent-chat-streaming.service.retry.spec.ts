@@ -232,7 +232,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
   it('retries from the page the person sent the message from', async () => {
     const browsingContext = {
       type: 'settingsPage',
-      path: '/settings/objects/companies/new-validation-rule',
+      path: '/settings/objects/companies/validation-rules/rule-1',
     };
     const { service, messageQueueService, browsingContextService } =
       buildService();
