@@ -19,7 +19,6 @@ export type { JsonTreeProps } from './JsonTree/types/JsonTreeProps';
 export type { ShouldExpandNodeInitiallyProps } from './JsonTree/types/ShouldExpandNodeInitiallyProps';
 export { MetricRow } from './MetricRow/MetricRow';
 export type { MetricRowProps } from './MetricRow/types/MetricRowProps';
-export { NotificationCounter } from './NotificationCounter/NotificationCounter';
 export { TintedIconTile } from './TintedIconTile/TintedIconTile';
 export type { TintedIconTileProps } from './TintedIconTile/types/TintedIconTileProps';
 export type { IconTileColorShades } from './TintedIconTile/utils/getIconTileColorShades';

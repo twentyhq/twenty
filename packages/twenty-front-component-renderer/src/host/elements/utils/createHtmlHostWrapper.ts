@@ -4,6 +4,7 @@ import React from 'react';
 import { ACKNOWLEDGED_NATIVE_EDIT_SEQUENCE_BRIDGE_PROPERTY } from '@/constants/AcknowledgedNativeEditSequenceBridgeProperty';
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { useCaretPreservingElementRef } from '@/host/caret/hooks/useCaretPreservingElementRef';
+import { HostImageElement } from '@/host/components/HostImageElement';
 import { useHtmlHostElementProps } from '@/host/elements/hooks/useHtmlHostElementProps';
 import { createCaretPreservingElement } from '@/host/caret/utils/createCaretPreservingElement';
 import { createPlainHostElement } from '@/host/elements/utils/createPlainHostElement';
@@ -31,6 +32,10 @@ const CARET_PRESERVING_TAGS = new Set(['input', 'textarea']);
 type WrapperProps = { children?: React.ReactNode } & Record<string, unknown>;
 
 export const createHtmlHostWrapper = (htmlTag: string) => {
+  if (htmlTag === 'img') {
+    return HostImageElement;
+  }
+
   const isVoid = VOID_ELEMENTS.has(htmlTag);
 
   if (!CARET_PRESERVING_TAGS.has(htmlTag)) {

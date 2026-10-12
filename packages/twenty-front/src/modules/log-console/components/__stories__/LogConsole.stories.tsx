@@ -570,7 +570,7 @@ export const TimeRangeMenu: Story = {
 
     expect(
       await screen.findByRole('option', { name: 'Last 90 days' }),
-    ).toHaveAttribute('aria-disabled', 'true');
+    ).toBeDisabled();
   },
 };
 

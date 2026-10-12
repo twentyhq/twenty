@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { SERIALIZED_EVENT_TARGET_PROPERTY_KEYS } from '@/remote/elements/constants/SerializedEventTargetPropertyKeys';
 import { acknowledgeNativeEdit } from '@/remote/elements/utils/acknowledgeNativeEdit';
 import { applySelectedOptionIndexes } from '@/remote/elements/utils/applySelectedOptionIndexes';
+import { installFilesResetOnValueClear } from '@/remote/elements/utils/installFilesResetOnValueClear';
 import { isNativeEditAcknowledged } from '@/remote/elements/utils/isNativeEditAcknowledged';
 import { uncheckOtherRadioButtons } from '@/remote/elements/utils/uncheckOtherRadioButtons';
 import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
@@ -38,6 +39,10 @@ export const applySerializedEventTargetProperties = ({
     if (key in eventData) {
       Reflect.set(element, key, eventData[key]);
     }
+  }
+
+  if (isDefined(eventData.files)) {
+    installFilesResetOnValueClear(element);
   }
 
   const selectionState = readInputSelectionState(eventData);

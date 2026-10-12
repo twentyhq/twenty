@@ -4,11 +4,12 @@ import { type InputClickActivationContext } from '@/polyfills/dom/types/InputCli
 import { type NodeWithOwnerDocument } from '@/polyfills/dom/types/NodeWithOwnerDocument';
 import { resolveInputClickActivationType } from '@/polyfills/dom/utils/resolveInputClickActivationType';
 import { runCheckboxClickActivation } from '@/polyfills/dom/utils/runCheckboxClickActivation';
+import { runFileInputClickActivation } from '@/polyfills/dom/utils/runFileInputClickActivation';
 import { runRadioButtonClickActivation } from '@/polyfills/dom/utils/runRadioButtonClickActivation';
 import { isHostOriginatedEvent } from '@/polyfills/events/utils/isHostOriginatedEvent';
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
 
-type ActivatableInputElement = EventTarget &
+type ActivatableInputElement = Element &
   SelectorElementLike &
   NodeWithOwnerDocument;
 
@@ -43,6 +44,10 @@ export const installInputClickActivationPolyfill = (
 
       if (activationType === 'checkbox') {
         return runCheckboxClickActivation(clickActivationContext);
+      }
+
+      if (activationType === 'file') {
+        return runFileInputClickActivation(clickActivationContext);
       }
 
       return runRadioButtonClickActivation(clickActivationContext);

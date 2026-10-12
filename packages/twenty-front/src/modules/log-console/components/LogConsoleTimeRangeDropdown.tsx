@@ -9,7 +9,7 @@ import {
   IconChevronLeft,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
@@ -97,7 +97,7 @@ export const LogConsoleTimeRangeDropdown = ({
         disabled={isWithinRetention}
         side="right"
       >
-        <ListItem
+        <ListItemButton
           role="option"
           aria-selected={itemTimeRange === timeRange}
           selected={itemTimeRange === timeRange}
@@ -106,7 +106,7 @@ export const LogConsoleTimeRangeDropdown = ({
           onClick={() => selectTimeRange(itemTimeRange)}
         >
           {getTimeRangeLabel(itemTimeRange)}
-        </ListItem>
+        </ListItemButton>
       </Tooltip>
     );
   };
@@ -139,7 +139,7 @@ export const LogConsoleTimeRangeDropdown = ({
             </DropdownMenuHeader>
             <DropdownMenuItemsContainer scrollable={false}>
               {timeZoneOptions.map((timeZoneOption) => (
-                <ListItem
+                <ListItemButton
                   key={timeZoneOption.value}
                   role="option"
                   aria-selected={timeZoneOption.value === logConsoleTimeZone}
@@ -148,7 +148,7 @@ export const LogConsoleTimeRangeDropdown = ({
                   onClick={() => setLogConsoleTimeZone(timeZoneOption.value)}
                 >
                   {timeZoneOption.label}
-                </ListItem>
+                </ListItemButton>
               ))}
             </DropdownMenuItemsContainer>
           </LegacyDropdownContent>
@@ -166,7 +166,7 @@ export const LogConsoleTimeRangeDropdown = ({
             </DropdownMenuItemsContainer>
             <DropdownMenuSeparator />
             <DropdownMenuItemsContainer scrollable={false}>
-              <ListItem
+              <ListItemButton
                 description={plural(retentionInDays, {
                   one: '# day',
                   other: '# days',
@@ -176,15 +176,15 @@ export const LogConsoleTimeRangeDropdown = ({
                 onClick={openRetentionSettings}
               >
                 {t`Retention`}
-              </ListItem>
-              <ListItem
+              </ListItemButton>
+              <ListItemButton
                 description={selectedTimeZoneLabel}
                 descriptionPlacement="end"
                 hasSubmenu
                 onClick={() => setIsTimeZoneMenuOpen(true)}
               >
                 {t`Time zone`}
-              </ListItem>
+              </ListItemButton>
             </DropdownMenuItemsContainer>
           </LegacyDropdownContent>
         )

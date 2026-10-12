@@ -57,7 +57,7 @@ export const WorkspaceSettings = () => (
 
 ## Row content and accessible text
 
-`children`, `startElement`, and `description` accept caller-owned nodes. The children supply the switch's accessible name, and the description supplies its accessible description. Keep content inside the label non-interactive. For navigation or action rows, use [ListItem](/ui/primitives/navigation/list-item) with a button or link.
+`children`, `startElement`, and `description` accept caller-owned nodes. The children supply the switch's accessible name, and the description supplies its accessible description. Keep content inside the label non-interactive. Use [ListItemButton](/ui/components/navigation/list-item-button) for action rows, or compose [ListItem](/ui/primitives/navigation/list-item) with a link for navigation.
 
 <StoryEmbed
   storyId="ui-components-settingsrow--with-description"

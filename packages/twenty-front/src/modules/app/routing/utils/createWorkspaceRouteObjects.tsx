@@ -1,7 +1,5 @@
 import { lazy } from 'react';
-import { Navigate } from 'react-router-dom';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { AppPath } from 'twenty-shared/types';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
 import {
@@ -178,7 +176,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.Dpa,
-      element: <Navigate to={getSettingsPath(SettingsPath.LegalDpa)} replace />,
+      element: null,
     },
     {
       path: AppPath.NotFoundWildcard,

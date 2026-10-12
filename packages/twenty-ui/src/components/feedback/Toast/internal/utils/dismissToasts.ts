@@ -11,9 +11,8 @@ export const dismissToasts = ({
   toastsToClose: ToastEntry[];
   nextToasts?: ToastEntry[];
 }) => {
-  const toasts = nextToasts.map(
-    (toast): ToastEntry =>
-      toastsToClose.includes(toast) ? { ...toast, status: 'closing' } : toast,
+  const toasts = nextToasts.map((toast): ToastEntry =>
+    toastsToClose.includes(toast) ? { ...toast, status: 'closing' } : toast,
   );
 
   const isToasterMounted = store.state.mountedToasterCount > 0;

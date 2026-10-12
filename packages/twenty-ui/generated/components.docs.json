@@ -529,44 +529,44 @@
     ]
   },
   {
-    "name": "Pill",
+    "name": "Badge",
     "entryPoint": "twenty-ui/primitives/data-display",
-    "slug": "data-display/pill",
+    "slug": "data-display/badge",
     "props": [
       {
-        "name": "className",
-        "type": "string",
+        "name": "children",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the pill."
+        "description": "Caller-provided text, numbers, icons, or other inline content."
       },
       {
         "name": "color",
-        "type": "\"inherit\" | \"tertiary\"",
+        "type": "\"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
         "required": false,
         "defaultValue": "tertiary",
-        "description": "Text color. `inherit` takes the parent color and font weight on a tinted background."
+        "description": "Neutral tertiary, inherited text, primary accent, or secondary treatment."
       },
       {
-        "name": "Icon",
-        "type": "IconComponent",
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Icon component rendered before the label at 12px. Import icons from `twenty-ui/icon`."
+        "description": "Replaces the default span. Native props, handlers, and the ref target the rendered element."
       },
       {
-        "name": "label",
-        "type": "string",
+        "name": "shape",
+        "type": "\"circle\" | \"pill\"",
         "required": false,
-        "defaultValue": null,
-        "description": "Short text displayed inside the pill."
+        "defaultValue": "pill",
+        "description": "Rounded pill label or fixed circle with width equal to its height. Use pill for longer content."
       },
       {
         "name": "size",
-        "type": "\"md\" | \"sm\"",
+        "type": "\"md\" | \"sm\" | \"xs\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Pill size. `md` uses a larger font, height and icon."
+        "description": "Compact height, font size, and spacing: xs, sm, or md."
       }
     ]
   },
@@ -2688,9 +2688,486 @@
     ]
   },
   {
-    "name": "NumberStepper",
+    "name": "NumberField",
     "entryPoint": "twenty-ui/primitives/input",
-    "slug": "input/number-stepper",
+    "slug": "input/number-field",
+    "props": [],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "allowOutOfRange",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Allows typed, pasted, and autofilled values outside min and max. Native range validation still applies; step interactions remain bounded."
+          },
+          {
+            "name": "allowWheelScrub",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Allows wheel adjustments while the visible input is focused and hovered. Defaults to false."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composed NumberField parts and supporting content."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: NumberFieldRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its NumberField state."
+          },
+          {
+            "name": "defaultValue",
+            "type": "number",
+            "required": false,
+            "defaultValue": "empty",
+            "description": "Initial uncontrolled number. Omit to start empty; the public type accepts a number."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Prevents interaction and excludes the value from form submission."
+          },
+          {
+            "name": "form",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the form owning the hidden native number input."
+          },
+          {
+            "name": "format",
+            "type": "NumberFormatOptions",
+            "required": false,
+            "defaultValue": null,
+            "description": "Intl.NumberFormat options for display and parsing, including currency, units, percent, grouping, and precision. Explicit rounding options can normalize the committed value on blur."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID associated with the visible input. Generated when omitted."
+          },
+          {
+            "name": "inputRef",
+            "type": "Ref<HTMLInputElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the hidden native number input used for submission and validation. Use Input.ref to focus the visible text input."
+          },
+          {
+            "name": "largeStep",
+            "type": "number",
+            "required": false,
+            "defaultValue": "10",
+            "description": "Amount used while Shift is held. Defaults to 10."
+          },
+          {
+            "name": "locale",
+            "type": "LocalesArgument",
+            "required": false,
+            "defaultValue": null,
+            "description": "Locale or locale list used to format and parse numbers. Defaults to the runtime locale."
+          },
+          {
+            "name": "max",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inclusive maximum for stepping and native range validation."
+          },
+          {
+            "name": "min",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inclusive minimum for stepping and native range validation."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Name of the raw numeric value submitted by the hidden input."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: number | null, eventDetails: NumberFieldRootChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Receives the next number or null and change details with the native event, reason, cancellation and propagation methods, and optional stepping direction."
+          },
+          {
+            "name": "onValueCommitted",
+            "type": "((value: number | null, eventDetails: NumberFieldRootCommitEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Receives the committed number or null and generic details containing event and reason. Typing commits on blur; pointer steps and scrubbing commit on release; keyboard and wheel changes commit immediately."
+          },
+          {
+            "name": "readOnly",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Prevents changes while keeping the visible input focusable."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the root div, or the element composed through Root.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, NumberFieldRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "required",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Requires a numeric value for native form submission."
+          },
+          {
+            "name": "smallStep",
+            "type": "number",
+            "required": false,
+            "defaultValue": "0.1",
+            "description": "Amount used while Alt is held. Defaults to 0.1."
+          },
+          {
+            "name": "snapOnStep",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Snaps step interactions to multiples of the active step. Defaults to false."
+          },
+          {
+            "name": "step",
+            "type": "number | \"any\"",
+            "required": false,
+            "defaultValue": "1",
+            "description": "Base amount for buttons, arrow keys, wheel, and scrubbing. Use any to disable native step validation while stepping by 1."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: NumberFieldRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its NumberField state."
+          },
+          {
+            "name": "value",
+            "type": "number | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled raw numeric value. Use null for an empty field."
+          }
+        ]
+      },
+      {
+        "name": "Group",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "The visible input and any increment or decrement controls."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: NumberFieldGroupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its NumberField state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the group div, or the element composed through Group.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, NumberFieldGroupState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: NumberFieldGroupState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its NumberField state."
+          }
+        ]
+      },
+      {
+        "name": "Input",
+        "props": [
+          {
+            "name": "aria-roledescription",
+            "type": "string",
+            "required": false,
+            "defaultValue": "Number field",
+            "description": "Describes the role to assistive technology. Defaults to Number field; use Field.Label, aria-label, or aria-labelledby for the accessible name."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: NumberFieldInputState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its NumberField state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLInputElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the visible native text input."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, NumberFieldInputState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the visible text input with an element or render callback. Forward the supplied props and ref to an input. Customize layout through Root or Group."
+          },
+          {
+            "name": "size",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native input size attribute. Use styles to customize visual dimensions."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: NumberFieldInputState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its NumberField state."
+          }
+        ]
+      },
+      {
+        "name": "Increment",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Visible content for the increment control. Supply its accessible name."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: NumberFieldIncrementState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its NumberField state."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether render composes a native button. Set false for a custom non-button element so Base UI supplies button interaction."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the increment button, or the element composed through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, NumberFieldIncrementState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: NumberFieldIncrementState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its NumberField state."
+          }
+        ]
+      },
+      {
+        "name": "Decrement",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Visible content for the decrement control. Supply its accessible name."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: NumberFieldDecrementState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its NumberField state."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether render composes a native button. Set false for a custom non-button element so Base UI supplies button interaction."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the decrement button, or the element composed through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, NumberFieldDecrementState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: NumberFieldDecrementState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its NumberField state."
+          }
+        ]
+      },
+      {
+        "name": "ScrubArea",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Content the user can drag to adjust the number, plus an optional ScrubAreaCursor."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: NumberFieldScrubAreaState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its NumberField state."
+          },
+          {
+            "name": "direction",
+            "type": "\"horizontal\" | \"vertical\"",
+            "required": false,
+            "defaultValue": "horizontal",
+            "description": "Pointer movement direction used for scrubbing."
+          },
+          {
+            "name": "pixelSensitivity",
+            "type": "number",
+            "required": false,
+            "defaultValue": "2",
+            "description": "Pixels of pointer movement needed for a step. Larger values reduce sensitivity."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLSpanElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the scrub area span, or the element composed through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, NumberFieldScrubAreaState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: NumberFieldScrubAreaState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its NumberField state."
+          },
+          {
+            "name": "teleportDistance",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional distance from the scrub area center at which the pointer loops around."
+          }
+        ]
+      },
+      {
+        "name": "ScrubAreaCursor",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Custom cursor content shown during supported pointer-lock scrubbing."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: NumberFieldScrubAreaCursorState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its NumberField state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLSpanElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the cursor span portaled to the document body while active. Null while absent."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, NumberFieldScrubAreaCursorState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: NumberFieldScrubAreaCursorState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its NumberField state."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "NumberStepper",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/number-stepper",
     "props": [
       {
         "name": "allowOutOfRange",
@@ -2784,6 +3261,13 @@
         "description": "Called with the next number or null and event details when the numeric value changes. Clearing reports null; incomplete text does not report a number."
       },
       {
+        "name": "onValueCommitted",
+        "type": "((value: number | null, eventDetails: NumberFieldRootCommitEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the committed number or null and generic event details after an edit is committed. Details contain the native event and reason, without change cancellation methods."
+      },
+      {
         "name": "readOnly",
         "type": "boolean",
         "required": false,
@@ -2802,7 +3286,7 @@
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, NumberFieldInputState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Composes the visible text input with an element or render callback. Forward the supplied props and ref to an input. Use a separate element to customize the surrounding layout."
       },
       {
         "name": "required",
@@ -5263,7 +5747,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Prevents clicks and applies the disabled style."
+        "description": "Applies disabled styling only. Set native disabled behavior and accessible semantics on the button, link, or popup item owner."
       },
       {
         "name": "endIcon",
@@ -5277,7 +5761,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Applies the highlighted style, for example to the focused item of a list."
+        "description": "Applies highlighted styling without moving DOM focus or handling keyboard navigation."
       },
       {
         "name": "hasSubmenu",
@@ -5294,18 +5778,25 @@
         "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the actual DOM root, including a composed native button or link."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ListItemState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Composes the row with an element or render callback. The owner supplies interaction semantics, native attributes, and behavior."
       },
       {
         "name": "selected",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Whether the item is selected. Shows the check or checkbox indicator when\n`indicator` is set."
+        "description": "Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner."
       },
       {
         "name": "shortcut",
@@ -5509,6 +6000,39 @@
             "required": true,
             "defaultValue": null,
             "description": "The value of the Tab."
+          }
+        ]
+      },
+      {
+        "name": "Indicator",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: TabsIndicatorState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TabsIndicatorState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "renderBeforeHydration",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to render itself before React hydrates.\nThis minimizes the time that the indicator isn't visible after server-side rendering."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TabsIndicatorState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           }
         ]
       },
@@ -11330,6 +11854,111 @@
     ]
   },
   {
+    "name": "ListItemButton",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/list-item-button",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"danger\" | \"neutral\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Color of the text and icons. `danger` marks a destructive action."
+      },
+      {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Supporting text, placed according to `descriptionPlacement`."
+      },
+      {
+        "name": "descriptionPlacement",
+        "type": "\"end\" | \"inline\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Where the description renders: inline after the content or at the end of\nthe row."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables activation and applies the matching row appearance."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered after the content."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Keeps a disabled button focusable with aria-disabled while preventing activation."
+      },
+      {
+        "name": "focused",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Highlights the row without moving DOM focus."
+      },
+      {
+        "name": "hasSubmenu",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays a decorative submenu indicator."
+      },
+      {
+        "name": "indicator",
+        "type": "\"check\" | \"checkbox\" | \"none\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native HTMLButtonElement."
+      },
+      {
+        "name": "selected",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays decorative shortcut hints. The caller registers the shortcuts."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon rendered before the content."
+      }
+    ]
+  },
+  {
     "name": "TabButton",
     "entryPoint": "twenty-ui/components/navigation",
     "slug": "components/navigation/tab-button",
@@ -11402,7 +12031,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Padding of the tab content: sm or md."
+        "description": "Padding of the tab content: sm or md. Explicit size takes precedence over the ButtonGroup size, then sm applies."
       },
       {
         "name": "startIcon",
@@ -11599,34 +12228,6 @@
         "required": false,
         "defaultValue": null,
         "description": "JSON value to display. Supply value or entries, not both."
-      }
-    ]
-  },
-  {
-    "name": "NotificationCounter",
-    "entryPoint": "twenty-ui/components/data-display",
-    "slug": "components/data-display/notification-counter",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the badge."
-      },
-      {
-        "name": "count",
-        "type": "number",
-        "required": true,
-        "defaultValue": null,
-        "description": "Number to display as supplied, without clamping or hiding zero."
-      },
-      {
-        "name": "variant",
-        "type": "\"primary\" | \"secondary\"",
-        "required": false,
-        "defaultValue": "primary",
-        "description": "Primary or secondary badge styling."
       }
     ]
   },

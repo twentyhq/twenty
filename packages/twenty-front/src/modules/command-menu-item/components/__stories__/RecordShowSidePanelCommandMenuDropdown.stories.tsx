@@ -158,7 +158,7 @@ export const AsyncExportShowsProgressAndPreventsRepeatedExecution: Story = {
     const exportAction = await canvas.findByRole('menuitem', {
       name: /Export 37%/,
     });
-    expect(exportAction).toHaveAttribute('aria-disabled', 'true');
+    expect(exportAction).toBeDisabled();
     await userEvent.click(exportAction);
 
     expect(jotaiStore.get(headlessCommandContextApisState.atom)).toBe(

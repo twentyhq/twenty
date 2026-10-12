@@ -80,6 +80,16 @@ describe('2-46 workspace command - add agent chat thread assignee (integration)'
     await getAppProviderByClassName<AddAgentChatThreadSubscriptionsCommand>(
       'AddAgentChatThreadSubscriptionsCommand',
     ).up(RUN_ON_WORKSPACE_ARGS);
+    // 2.47 dropped the column the inbox backfill run by up still reads
+    await global.testDataSource.query(
+      `ALTER TABLE ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentMessage" ADD COLUMN IF NOT EXISTS "isHidden" boolean NOT NULL DEFAULT false`,
+    );
+  });
+
+  afterAll(async () => {
+    await global.testDataSource.query(
+      `ALTER TABLE ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentMessage" DROP COLUMN IF EXISTS "isHidden"`,
+    );
   });
 
   it('removes the assignee, its index and the command on down', async () => {

@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
@@ -6,6 +7,7 @@ import { multipleRecordPickerIsSelectedComponentFamilySelector } from '@/object-
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableListNativeItemRef } from '@/ui/layout/selectable-list/hooks/useSelectableListNativeItemRef';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -14,7 +16,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type SearchRecord } from '~/generated/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -29,6 +30,8 @@ export const MultipleRecordPickerMenuItemContent = ({
   objectMetadataItem,
   onChange,
 }: MultipleRecordPickerMenuItemContentProps) => {
+  const nativeItemRef = useSelectableListNativeItemRef(searchRecord.recordId);
+
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
@@ -76,7 +79,8 @@ export const MultipleRecordPickerMenuItemContent = ({
       key={searchRecord.recordId}
       onEnter={() => handleSelectChange(!isRecordSelectedWithObjectItem)}
     >
-      <ListItem
+      <ListItemButton
+        ref={nativeItemRef}
         focused={isSelectedItemId}
         role="option"
         aria-selected={isRecordSelectedWithObjectItem}
@@ -99,7 +103,7 @@ export const MultipleRecordPickerMenuItemContent = ({
         }
       >
         {displayText}
-      </ListItem>
+      </ListItemButton>
     </SelectableListItem>
   );
 };

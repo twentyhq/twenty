@@ -84,4 +84,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`AI chat inbox`,
     description: msg`Turn the AI tab into an inbox to triage, assign, snooze and follow chats, and let workflows route agent questions to a member.`,
   },
+  [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
+    label: msg`App preferences`,
+    description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
+  },
 };

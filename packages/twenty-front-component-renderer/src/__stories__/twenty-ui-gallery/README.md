@@ -9,15 +9,21 @@ so Dropdown-based popups never open there.
 The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels and controlled multiline value updates in React and Preact.
 Textarea auto-resize remains a renderer limitation. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. These stale reads can also produce cumulative height growth instead of fitting the current content. The field fixture verifies values, refs, events and accessibility without treating incidental height changes as resize acceptance. Standalone Textarea browser checks pass.
 
+NumberField checks locale formatting and localized paste, controlled empty values, uncontrolled typing, bounds, keyboard commits, pointer value changes, callback event details, accessible labels, native forms, refs and render composition in both runtimes. Sequential typing after clearing a formatted value can reset the caret and insert subsequent digits before earlier input. Formatted pointer edits can also restore stale display values when host blur races the worker update. Pointer button release does not emit its commit callback, although host blur can emit an input-blur commit. ScrubArea can enter its scrubbing state, but drag movement and release do not reach the worker window listeners; pointer lock and the custom scrub cursor are also unavailable. These renderer limits apply independently of the standalone React NumberField browser checks.
+
 Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused React/Preact cases check controlled trigger requests, native attributes, Button render composition, DOM refs and callback reasons. These checks do not establish popup visibility, geometry or dismissal support. The omitted-container popup still requires C04/C05/C07 renderer acceptance.
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
+
+ListItemButton checks native action activation, selected state, refs and events, disabled and focusable disabled behavior, ordinary bubbling, caller-owned propagation boundaries, and independent sibling controls in React and Preact. ListItem keeps its default div presentational, including visual disabled, selected and focused state and caller-owned content. Its React/Preact cases check native button/link owners, actual root refs, pointer and keyboard activation, focus handlers, disabled native buttons, event bubbling and explicit propagation boundaries. URL text stays plain unless the caller supplies a link. Menu.Item checks visible pointer activation, disabled behavior and click-to-close. Popup keyboard navigation, outside dismissal and focus restoration remain outside this fixture. The retained overflow-tooltip check re-enters after renderer measurements arrive, so it does not establish first-hover geometry acceptance.
 
 Tag and Status retain their presentational span when a native click handler is supplied. Their focused React/Preact fixtures check explicit native button/link composition, keyboard activation, disabled owners, refs, caller-owned links and native handlers. Tag checks positive truncation and native padding styles; Status checks controlled loading, caller-owned busy state and a decorative loader without an implicit live region.
 
 Card composition checks native part props and DOM refs, customized anatomy, ordinary display semantics, independent nested controls, button keyboard activation and disabled state, and explicit link ownership in both runtimes.
 
 AvatarGroup checks derived counts, partially loaded totals, custom overflow and surviving keyed child state. Its native button and link (`target="_blank"`) verify refs, focus and pointer/keyboard activation in React and Preact.
+
+Badge checks ordinary node content, compact sizes, colors and circle shape. Its React and Preact fixtures keep count clamping and zero visibility in the caller, and verify native span attributes, refs and pointer handlers plus explicit button and link render composition with keyboard activation.
 
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
@@ -37,17 +43,19 @@ effect within the interaction timeout.
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `twenty-ui-field-controls`       | Field, Input, InputGroup, Textarea                                                                                                      |
 | `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)          |
+| `twenty-ui-number-field`         | NumberField (locale formatting and paste, controlled/uncontrolled values, callback details, native forms and refs, bounds and render composition) |
 | `twenty-ui-autocomplete`         | Autocomplete (caret keys, controlled editing, composition, filtering, disabled state, Empty; `TwentyUiAutocomplete.stories.tsx`)        |
 | `twenty-ui-display-helpers`      | Text                                                                                                                                    |
 | `twenty-ui-avatar-controls`      | Avatar (stable presentational root, compound fallback, refs, explicit button/link composition and native keyboard/disabled behavior)    |
 | `twenty-ui-avatar-group`         | AvatarGroup (derived and partial totals, custom overflow, keyed child state, native refs and explicit button/link composition)          |
+| `twenty-ui-badge`                | Badge (node content, appearance, caller-owned counts, native span refs and explicit button/link composition)                             |
 | `twenty-ui-tag-controls`         | Tag (stable presentational root, positive truncation, native spacing, node content, refs and explicit button/link composition)          |
 | `twenty-ui-status-controls`      | Status (stable presentational root, loading/busy state, node content, refs and explicit button/link composition)                        |
 | `twenty-ui-avatar-image`         | Avatar Root/Image/Fallback (image labels/attributes/refs, loading callbacks, decoded images, fallback, replacement and unmount/remount) |
-| `twenty-ui-image-input`          | ImageInput                                                                                                                              |
-| `twenty-ui-list-item`            | ListItem                                                                                                                                |
+| `twenty-ui-image-input`          | ImageInput (native chooser, readable files, preview URLs, reset and ownership cleanup) |
+| `twenty-ui-list-item`            | ListItemButton and ListItem (native action composition, visual rows, explicit button/link/Menu.Item owners, refs/events/focus/keyboard, disabled behavior and sibling controls)            |
 | `twenty-ui-settings-row`         | SettingsRow                                                                                                                             |
-| `twenty-ui-tabs`                 | Tabs                                                                                                                                    |
+| `twenty-ui-tabs`                 | Tabs and TabButton                                                                                                                      |
 | `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                         |
 | `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                      |
 | `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                          |
@@ -122,12 +130,46 @@ through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
 currentNode without callback filters; document Selection and DOM Range are
 outside this scope.
 
-`ImageInput` calls `onFileSelect` when a file is selected. Applications own
-validation, uploads, progress, cancellation, and supplied preview URLs. Native
-chooser activation and readable `File` contents in React and Preact still depend
-on [C08 support](https://github.com/twentyhq/twenty/pull/27588).
-`userEvent.upload` checks selection handling and does not prove native chooser
-activation.
+## ImageInput file selection
+
+`ImageInputFileSelection.stories.tsx` mounts two independent SDK-built renderers.
+Its stories are tagged `!test`, so the Vitest run skips them and the native
+Chromium tests below exercise them instead. These tests wait for a browser
+`filechooser` event after trusted pointer, Enter and Space activation on both
+selection buttons. A worker `input.click()` on a file input asks the host to
+open the chooser. The host opens it with `showPicker()`, so the worker click is
+the only click the input receives, once per trusted click inside the same
+renderer, within one second of that click and while the browser still has
+transient user activation. Synthetic events and clicks in another renderer do
+not count.
+
+Selected files cross the existing event transport as native `File` objects,
+including metadata, `text()` and `arrayBuffer()` contents, and `ImageInput`
+passes them to `onFileSelect`. Reset clears both the native selection and the
+worker input's File references without invalidating a File retained by the
+callback, so the same file can be selected again. The tests cover disabled and
+uploading controls, empty chooser results, callback replacement, renderer
+isolation and teardown. Empty results are supplied through Playwright's
+intercepted chooser; operating-system dialog dismissal and other browser engines
+are not covered by these tests.
+
+A worker-created object URL assigned to `img.src` carries its `Blob` to the host.
+Each mounted image owns a host URL and revokes it on source replacement or
+unmount. As in browsers, revoking the worker URL keeps an image that already
+uses it and only stops later assignments, so revoking once the image has loaded
+is safe. Applications own validation, uploads, progress, cancellation and their
+worker URLs. Other object URL consumers are outside this adapter's scope.
+
+To run these tests, serve the built Storybook on port 6008 or set
+`STORYBOOK_URL`, then run from the repository root:
+
+```sh
+npx nx run twenty-front-component-renderer:storybook:test:file-selection
+```
+
+The renderer Storybook CI job runs this uncached target after the gallery
+checks. `userEvent.upload` in the gallery story checks selection handling and
+does not prove native chooser activation.
 
 ## Dialog policy
 
@@ -136,6 +178,27 @@ Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popov
 ## Known sandbox limitations
 
 An invisible popup is not a compatibility pass.
+
+Tabs still depends on C05 geometry acceptance for Indicator measurements and
+physical activation direction. The worker lazily requests host snapshots on
+first geometry reads and has no ResizeObserver to remeasure the initial
+Indicator. Its first inactive-tab read returns a zero rectangle while the
+active tab already has a snapshot, so a forward selection initially reports
+`left` instead of `right`. The fixture pins both the zero-width Indicator and
+incorrect initial direction with known-failure assertions while checking
+selection, callback values/reasons, focus, panel relationships and native
+composition. Passing these stories does not establish Indicator visibility or
+physical-direction accuracy in the renderer.
+
+Native anchor Enter activation also remains a separate renderer limitation.
+Base UI recognizes native links by `tagName === 'A'`, while worker refs retain
+the remote element name `HTML-A`. It therefore synthesizes a click in addition
+to the host anchor's native click. The route fixture preserves exact pointer
+counts, pins the observed duplicate Enter callback, and keeps the expected
+single Enter callback as a known-failure assertion. Pointer activation, native
+link attributes, refs, `aria-current`, and disabled callback suppression pass;
+single keyboard activation remains pending renderer integration. Local
+fragment links use `target="_self"` to keep navigation inside the story iframe.
 
 SettingsRow's flat Switch props target the control. Its controlled composition
 uses `nativeButton` and an actual button through `render`, preserving one change
@@ -158,7 +221,6 @@ expected-to-fail by the runner.
 
 | Component                                                                                             | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ImageInput                                                                                            | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx).                                                                                                                                                         |
 | Popover, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                                            |
 | Slider                                                                                                | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch.                                                                                                                                                                                                                                                                                                                                                |
 | Responsive hooks                                                                                      | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
@@ -208,7 +270,15 @@ worker. `HTMLElement.click()` dispatches a local click, and a click dispatched
 inside the worker on a checkbox or radio input toggles it and fires `input` and
 `change`, which is how Base UI's Switch, Checkbox and Radio variants
 activate. Tabs, SettingsRow, Switch, Checkbox and RadioGroup therefore cover
-activation and disabled items in both runtimes. Events that happen outside the
+activation and disabled items in both runtimes. The Tabs fixture also verifies
+manual focus versus activation, uncontrolled automatic activation, canceled
+changes, disabled skipping, vertical and RTL navigation, looping boundaries,
+panel labeling and mounted-panel hiding, native/render composition and actual
+refs. Default panel IDs preserve automatic tab/panel relationships. Base UI 1.8
+registers a generated panel ID even when an explicit `id` is supplied, so the
+controlled fixture pairs its explicit panel IDs with matching native
+`aria-controls` on each tab. Its TabButton controls retain route links with
+`aria-current` and adjacent button actions without tab-panel semantics. Events that happen outside the
 component never reach the worker, so dismissal on a press elsewhere on the page
 is not covered.
 

@@ -6778,18 +6778,6 @@ msgctxt "fieldMetadata.label"
 msgid "Is Full Day"
 msgstr "Este întreaga zi"
 
-#. js-lingui-id: tiNFAr
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Is Hidden"
-msgstr "Este ascuns"
-
-#. js-lingui-id: q42yQK
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Is Hidden"
-msgstr "Este ascuns"
-
 #. js-lingui-id: fenRdq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -7059,18 +7047,6 @@ msgstr "ID-ul ultimei versiuni publicate"
 msgctxt "fieldMetadata.label"
 msgid "Last read at"
 msgstr "Citit ultima dată la"
-
-#. js-lingui-id: 2zq4LZ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Last Stream Error"
-msgstr "Ultima eroare de flux"
-
-#. js-lingui-id: 9/jQvG
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Last Stream Error"
-msgstr "Ultima eroare de flux"
 
 #. js-lingui-id: 94QD51
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -9839,11 +9815,6 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "Citire și scriere"
 
-#. js-lingui-id: e2WMO+
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Read, archive and snooze are not available yet. Try again in a few minutes."
-msgstr "Citirea, arhivarea și amânarea nu sunt încă disponibile. Încercați din nou peste câteva minute."
-
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10878,18 +10849,6 @@ msgstr "ID aplicație expeditor"
 msgctxt "fieldMetadata.label"
 msgid "Sender application ID"
 msgstr "ID aplicație expeditor"
-
-#. js-lingui-id: kfnrYJ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Sender workspace membership ID"
-msgstr "ID abonament la spațiul de lucru al expeditorului"
-
-#. js-lingui-id: YDV32g
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Sender workspace membership ID"
-msgstr "ID abonament la spațiul de lucru al expeditorului"
 
 #. js-lingui-id: ZYK68w
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -12533,7 +12492,7 @@ msgid "The workflow automated trigger type"
 msgstr "Tipul declanșatorului automatizat al fluxului de lucru"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "Câmpul fluxului de lucru nu aparține obiectului la care se face referire."
 
@@ -12555,9 +12514,14 @@ msgid "The workflow record picker must reference an object."
 msgstr "Selectorul de înregistrări al fluxului de lucru trebuie să facă referire la un obiect."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Fluxul de lucru face referire la metadate care nu sunt disponibile pentru această aplicație."
+
+#. js-lingui-id: W+A2pa
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
+msgid "The workflow schedule is invalid."
+msgstr "Programarea fluxului de lucru este nevalidă."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -14258,18 +14222,6 @@ msgstr "Fusul orar al utilizatorului"
 #: src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util.ts
 msgid "User was not created with email/password"
 msgstr "Utilizatorul nu a fost creat cu email/parolă"
-
-#. js-lingui-id: 2S1QaS
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "User Workspace ID"
-msgstr "ID spațiu de lucru utilizator"
-
-#. js-lingui-id: UBndQ2
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "User Workspace ID"
-msgstr "ID spațiu de lucru utilizator"
 
 #. js-lingui-id: lUEEso
 #: src/engine/core-modules/auth/auth.exception.ts
