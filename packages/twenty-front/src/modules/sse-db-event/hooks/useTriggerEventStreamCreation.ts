@@ -13,6 +13,7 @@ import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestr
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
+import { isCurrentEventStream } from '@/sse-db-event/utils/isCurrentEventStream';
 import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { captureException } from '@sentry/react';
@@ -75,9 +76,6 @@ export const useTriggerEventStreamCreation = () => {
     );
 
     let hasReceivedFirstEvent = false;
-
-    const isCurrentEventStream = () =>
-      store.get(sseEventStreamIdState.atom) === newSseEventStreamId;
 
     const handleFirstEventReceived = () => {
       if (hasReceivedFirstEvent) {
@@ -171,7 +169,9 @@ export const useTriggerEventStreamCreation = () => {
           store.set(shouldDestroyEventStreamState.atom, true);
         },
         complete: () => {
-          if (!isCurrentEventStream()) {
+          if (
+            !isCurrentEventStream({ store, eventStreamId: newSseEventStreamId })
+          ) {
             return;
           }
 

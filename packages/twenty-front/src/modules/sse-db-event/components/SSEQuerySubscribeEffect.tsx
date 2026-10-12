@@ -5,6 +5,7 @@ import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQuery
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
+import { isCurrentEventStream } from '@/sse-db-event/utils/isCurrentEventStream';
 import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { captureException } from '@sentry/react';
@@ -72,9 +73,6 @@ export const SSEQuerySubscribeEffect = () => {
       return;
     }
 
-    const isCurrentEventStream = () =>
-      store.get(sseEventStreamIdState.atom) === sseEventStreamId;
-
     const requiredQueryListeners = store.get(requiredQueryListenersState.atom);
     const activeQueryListeners = store.get(activeQueryListenersState.atom);
 
@@ -101,7 +99,7 @@ export const SSEQuerySubscribeEffect = () => {
           },
         });
 
-        if (!isCurrentEventStream()) {
+        if (!isCurrentEventStream({ store, eventStreamId: sseEventStreamId })) {
           return;
         }
 
@@ -113,7 +111,7 @@ export const SSEQuerySubscribeEffect = () => {
         }
       }
     } catch (error) {
-      if (isCurrentEventStream()) {
+      if (isCurrentEventStream({ store, eventStreamId: sseEventStreamId })) {
         handleError(error);
       }
 
@@ -132,9 +130,6 @@ export const SSEQuerySubscribeEffect = () => {
     if (!isDefined(sseEventStreamId)) {
       return;
     }
-
-    const isCurrentEventStream = () =>
-      store.get(sseEventStreamIdState.atom) === sseEventStreamId;
 
     const freshRequiredQueryListeners = store.get(
       requiredQueryListenersState.atom,
@@ -167,7 +162,7 @@ export const SSEQuerySubscribeEffect = () => {
           },
         });
 
-        if (!isCurrentEventStream()) {
+        if (!isCurrentEventStream({ store, eventStreamId: sseEventStreamId })) {
           return;
         }
 
@@ -179,7 +174,7 @@ export const SSEQuerySubscribeEffect = () => {
         }
       }
     } catch (error) {
-      if (isCurrentEventStream()) {
+      if (isCurrentEventStream({ store, eventStreamId: sseEventStreamId })) {
         handleError(error);
       }
 
