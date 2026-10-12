@@ -4,6 +4,7 @@ import { isPlainObject } from 'twenty-shared/utils';
 
 import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 import { applyInputSelectionRequest } from '@/host/caret/utils/applyInputSelectionRequest';
+import { isOlderThanLatestNativeEdit } from '@/host/caret/utils/isOlderThanLatestNativeEdit';
 
 export const applyNewInputSelectionCommands = ({
   element,
@@ -23,7 +24,8 @@ export const applyNewInputSelectionCommands = ({
       continue;
     }
 
-    const { sequence, request } = selectionCommand;
+    const { sequence, request, acknowledgedNativeEditSequence } =
+      selectionCommand;
 
     if (
       !isNumber(sequence) ||
@@ -33,6 +35,16 @@ export const applyNewInputSelectionCommands = ({
     }
 
     appliedSelectionSequenceRef.current = sequence;
+
+    const isCommandOlderThanLatestNativeEdit = isOlderThanLatestNativeEdit({
+      hostElement: element,
+      nativeEditSequence: acknowledgedNativeEditSequence,
+    });
+
+    if (isCommandOlderThanLatestNativeEdit) {
+      continue;
+    }
+
     applyInputSelectionRequest({ element, request });
   }
 };
