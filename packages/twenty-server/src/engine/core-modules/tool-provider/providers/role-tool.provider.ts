@@ -59,9 +59,9 @@ export class RoleToolProvider implements ToolProvider {
     const { rolePermissionConfig } = context;
     // a config that allows nothing holds no role the caller acts with
     const permissionConfigRoleIds =
-      'intersectionOf' in rolePermissionConfig
-        ? (getRoleIdsToIntersect(rolePermissionConfig.intersectionOf) ?? [])
-        : [];
+      'shouldBypassPermissionChecks' in rolePermissionConfig
+        ? []
+        : (getRoleIdsToIntersect(rolePermissionConfig.intersectionOf) ?? []);
     const callerRoleIds = new Set([...permissionConfigRoleIds, context.roleId]);
 
     return this.roleToolWorkspaceService.generateRoleTools({

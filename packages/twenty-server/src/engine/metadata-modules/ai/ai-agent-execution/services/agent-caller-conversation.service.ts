@@ -274,9 +274,9 @@ export class AgentCallerConversationService {
         .buildExecutionContext({ workspaceId, caller });
 
     const roleIds =
-      'intersectionOf' in rolePermissionConfig
-        ? getRoleIdsToIntersect(rolePermissionConfig.intersectionOf)
-        : null;
+      'shouldBypassPermissionChecks' in rolePermissionConfig
+        ? null
+        : getRoleIdsToIntersect(rolePermissionConfig.intersectionOf);
 
     const toolContext = {
       workspaceId,
