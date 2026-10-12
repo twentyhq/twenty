@@ -11,11 +11,19 @@ import { ConnectionProviderEntity } from 'src/engine/core-modules/application/co
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { type AppConnectionDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/app-connection.dto';
 import { isConnectionHiddenFromRequestUser } from 'src/engine/core-modules/application/connection-provider/connections/utils/is-connection-hidden-from-request-user.util';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  ConnectedAccountRefreshAccessTokenException,
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import {
+  type ConnectedAccountTokens,
+  ConnectedAccountRefreshTokensService,
+} from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ListArgs = {
@@ -37,6 +45,14 @@ type GetArgs = {
   workspaceId: string;
   requestUserWorkspaceId: string | null;
   id: string;
+};
+
+type RefreshAndMapArgs = {
+  account: ConnectedAccountEntity;
+  workspaceId: string;
+  providerById: Map<string, ConnectionProviderEntity>;
+  idByUserWorkspaceId: FlatWorkspaceMemberMaps['idByUserWorkspaceId'];
+  findAuthorizedAccount: () => Promise<ConnectedAccountEntity | null>;
 };
 
 @Injectable()
@@ -103,14 +119,20 @@ export class ApplicationConnectionsListService {
 
     const refreshed = await Promise.all(
       accounts.map((account) =>
-        this.refreshAndMap(
+        this.refreshAndMap({
           account,
           workspaceId,
           providerById,
-          flatWorkspaceMemberMaps.idByUserWorkspaceId[
-            account.userWorkspaceId
-          ] ?? null,
-        ),
+          idByUserWorkspaceId: flatWorkspaceMemberMaps.idByUserWorkspaceId,
+          findAuthorizedAccount: () =>
+            this.connectedAccountRepository.findOne({
+              where: this.buildPrivacyWhere(
+                { ...baseWhere, id: account.id },
+                requestUserWorkspaceId,
+                filter.visibility,
+              ),
+            }),
+        }),
       ),
     );
 
@@ -123,19 +145,25 @@ export class ApplicationConnectionsListService {
     requestUserWorkspaceId,
     id,
   }: GetArgs): Promise<AppConnectionDto> {
-    const account = await this.connectedAccountRepository.findOne({
-      where: {
-        id,
-        applicationId,
-        workspaceId,
-        provider: ConnectedAccountProvider.APP,
-      },
-    });
+    const findAuthorizedAccount = async () => {
+      const account = await this.connectedAccountRepository.findOne({
+        where: {
+          id,
+          applicationId,
+          workspaceId,
+          provider: ConnectedAccountProvider.APP,
+        },
+      });
 
-    if (
-      !isDefined(account) ||
-      isConnectionHiddenFromRequestUser({ account, requestUserWorkspaceId })
-    ) {
+      return isDefined(account) &&
+        !isConnectionHiddenFromRequestUser({ account, requestUserWorkspaceId })
+        ? account
+        : null;
+    };
+
+    const account = await findAuthorizedAccount();
+
+    if (!isDefined(account)) {
       throw new ConnectionProviderException(
         `Connection ${id} not found`,
         ConnectionProviderExceptionCode.CONNECTION_NOT_FOUND,
@@ -159,13 +187,13 @@ export class ApplicationConnectionsListService {
         'flatWorkspaceMemberMaps',
       ]);
 
-    const dto = await this.refreshAndMap(
+    const dto = await this.refreshAndMap({
       account,
       workspaceId,
-      new Map([[provider.id, provider]]),
-      flatWorkspaceMemberMaps.idByUserWorkspaceId[account.userWorkspaceId] ??
-        null,
-    );
+      providerById: new Map([[provider.id, provider]]),
+      idByUserWorkspaceId: flatWorkspaceMemberMaps.idByUserWorkspaceId,
+      findAuthorizedAccount,
+    });
 
     if (!isDefined(dto)) {
       throw new ConnectionProviderException(
@@ -212,12 +240,13 @@ export class ApplicationConnectionsListService {
     ];
   }
 
-  private async refreshAndMap(
-    account: ConnectedAccountEntity,
-    workspaceId: string,
-    providerById: Map<string, ConnectionProviderEntity>,
-    workspaceMemberId: string | null,
-  ): Promise<AppConnectionDto | null> {
+  private async refreshAndMap({
+    account,
+    workspaceId,
+    providerById,
+    idByUserWorkspaceId,
+    findAuthorizedAccount,
+  }: RefreshAndMapArgs): Promise<AppConnectionDto | null> {
     const provider = isDefined(account.connectionProviderId)
       ? providerById.get(account.connectionProviderId)
       : undefined;
@@ -235,26 +264,34 @@ export class ApplicationConnectionsListService {
     }
 
     try {
-      const encryptedTokens = await this.refreshTokensService.resolveTokens(
+      const resolved = await this.resolveTokensForAuthorizedAccount({
         account,
         workspaceId,
-      );
+        findAuthorizedAccount,
+      });
+
+      if (!isDefined(resolved)) {
+        return null;
+      }
+
+      const { account: authorizedAccount, encryptedTokens } = resolved;
 
       return {
-        id: account.id,
+        id: authorizedAccount.id,
         providerName: provider.name,
-        name: account.name ?? account.handle,
-        handle: account.handle,
-        visibility: account.visibility as 'user' | 'workspace',
-        userWorkspaceId: account.userWorkspaceId,
-        workspaceMemberId,
+        name: authorizedAccount.name ?? authorizedAccount.handle,
+        handle: authorizedAccount.handle,
+        visibility: authorizedAccount.visibility as 'user' | 'workspace',
+        userWorkspaceId: authorizedAccount.userWorkspaceId,
+        workspaceMemberId:
+          idByUserWorkspaceId[authorizedAccount.userWorkspaceId] ?? null,
         accessToken: this.connectedAccountTokenEncryptionService.decrypt({
           ciphertext: encryptedTokens.accessToken,
           workspaceId,
         }),
-        scopes: account.scopes ?? provider.oauthConfig?.scopes ?? [],
-        authFailedAt: account.authFailedAt?.toISOString() ?? null,
-        authFailedReason: account.authFailedReason,
+        scopes: authorizedAccount.scopes ?? provider.oauthConfig?.scopes ?? [],
+        authFailedAt: authorizedAccount.authFailedAt?.toISOString() ?? null,
+        authFailedReason: authorizedAccount.authFailedReason,
       };
     } catch (error) {
       this.logger.warn(
@@ -263,5 +300,52 @@ export class ApplicationConnectionsListService {
 
       return null;
     }
+  }
+
+  // A refresh that lost to a concurrent write must not hand out credentials
+  // the caller was never authorized for, so the row is re-read through the
+  // caller's own privacy predicate, once.
+  private async resolveTokensForAuthorizedAccount({
+    account,
+    workspaceId,
+    findAuthorizedAccount,
+  }: Pick<
+    RefreshAndMapArgs,
+    'account' | 'workspaceId' | 'findAuthorizedAccount'
+  >): Promise<{
+    account: ConnectedAccountEntity;
+    encryptedTokens: ConnectedAccountTokens;
+  } | null> {
+    try {
+      return {
+        account,
+        encryptedTokens: await this.refreshTokensService.resolveTokens(
+          account,
+          workspaceId,
+        ),
+      };
+    } catch (error) {
+      if (
+        !(error instanceof ConnectedAccountRefreshAccessTokenException) ||
+        error.code !==
+          ConnectedAccountRefreshAccessTokenExceptionCode.CREDENTIALS_CHANGED_DURING_REFRESH
+      ) {
+        throw error;
+      }
+    }
+
+    const authorizedAccount = await findAuthorizedAccount();
+
+    if (!isDefined(authorizedAccount)) {
+      return null;
+    }
+
+    return {
+      account: authorizedAccount,
+      encryptedTokens: await this.refreshTokensService.resolveTokens(
+        authorizedAccount,
+        workspaceId,
+      ),
+    };
   }
 }

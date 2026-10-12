@@ -149,20 +149,25 @@ export class ConnectedAccountRefreshTokensService {
       connectedAccount.provider === ConnectedAccountProvider.APP &&
       updateResult.affected === 0
     ) {
-      const latestAccount = await this.connectedAccountRepository.findOneBy({
+      const isStillActive = await this.connectedAccountRepository.existsBy({
         id: connectedAccount.id,
         workspaceId,
         archivedAt: IsNull(),
       });
 
-      if (!isDefined(latestAccount)) {
+      if (!isStillActive) {
         throw new ConnectedAccountRefreshAccessTokenException(
           'The app connection was disconnected during token refresh.',
           ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND,
         );
       }
 
-      return this.getExistingEncryptedTokens(latestAccount, workspaceId);
+      // The caller authorized the row it read; the winning write may have
+      // changed its owner or visibility, so it must re-read and re-authorize.
+      throw new ConnectedAccountRefreshAccessTokenException(
+        `Connected account ${connectedAccount.id} in workspace ${workspaceId} changed during token refresh`,
+        ConnectedAccountRefreshAccessTokenExceptionCode.CREDENTIALS_CHANGED_DURING_REFRESH,
+      );
     }
 
     return {

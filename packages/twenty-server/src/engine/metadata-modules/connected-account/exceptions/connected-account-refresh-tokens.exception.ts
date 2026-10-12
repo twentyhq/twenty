@@ -10,6 +10,7 @@ export enum ConnectedAccountRefreshAccessTokenExceptionCode {
   PROVIDER_NOT_SUPPORTED = 'PROVIDER_NOT_SUPPORTED',
   TEMPORARY_NETWORK_ERROR = 'TEMPORARY_NETWORK_ERROR',
   ACCESS_TOKEN_NOT_FOUND = 'ACCESS_TOKEN_NOT_FOUND',
+  CREDENTIALS_CHANGED_DURING_REFRESH = 'CREDENTIALS_CHANGED_DURING_REFRESH',
 }
 
 const getConnectedAccountRefreshAccessTokenExceptionUserFriendlyMessage = (
@@ -26,6 +27,8 @@ const getConnectedAccountRefreshAccessTokenExceptionUserFriendlyMessage = (
       return msg`A temporary network error occurred.`;
     case ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND:
       return msg`Access token not found.`;
+    case ConnectedAccountRefreshAccessTokenExceptionCode.CREDENTIALS_CHANGED_DURING_REFRESH:
+      return msg`The connection changed while its access token was being refreshed.`;
     default:
       assertUnreachable(code);
   }

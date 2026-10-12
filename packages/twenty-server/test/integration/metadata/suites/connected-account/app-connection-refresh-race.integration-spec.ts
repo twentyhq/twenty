@@ -9,6 +9,8 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { type ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -21,6 +23,7 @@ import { type ConnectedAccountRefreshTokensService } from 'src/modules/connected
 describe('app token refresh overlapping connection changes', () => {
   let application: ApplicationWithAppConnection;
   let service: ConnectedAccountRefreshTokensService;
+  let connectionsListService: ApplicationConnectionsListService;
   let encryptionService: ConnectedAccountTokenEncryptionService;
 
   const tokenResponse = () =>
@@ -63,12 +66,22 @@ describe('app token refresh overlapping connection changes', () => {
     accounts().findOneByOrFail({ id: application.connectedAccountId });
   const refresh = async () =>
     service.resolveTokens(await readAccount(), SEED_APPLE_WORKSPACE_ID);
+  const getConnectionAs = (requestUserWorkspaceId: string) =>
+    connectionsListService.getOne({
+      applicationId: application.applicationId,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      requestUserWorkspaceId,
+      id: application.connectedAccountId,
+    });
 
   beforeAll(async () => {
     application = await setupApplicationWithAppConnection({
       name: 'Connection refresh races',
     });
     service = getAppProviderByClassName('ConnectedAccountRefreshTokensService');
+    connectionsListService = getAppProviderByClassName(
+      'ApplicationConnectionsListService',
+    );
     encryptionService = getAppProviderByClassName(
       'ConnectedAccountTokenEncryptionService',
     );
@@ -102,6 +115,7 @@ describe('app token refresh overlapping connection changes', () => {
       authFailedAt: null,
       authFailedReason: null,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      visibility: 'workspace',
     });
     tokenRequest.mockReset().mockImplementation(async () => tokenResponse());
 
@@ -152,7 +166,7 @@ describe('app token refresh overlapping connection changes', () => {
     );
   });
 
-  it('preserves the new authorization and owner when an older refresh finishes', async () => {
+  it('keeps the new authorization and returns no credentials when an older refresh finishes', async () => {
     const { requestStarted, respond } = pauseTokenResponse();
     const refreshing = refresh();
 
@@ -170,9 +184,8 @@ describe('app token refresh overlapping connection changes', () => {
     });
     respond(tokenResponse());
 
-    expect(await refreshing).toEqual({
-      accessToken: replacementAccessToken,
-      refreshToken: replacementRefreshToken,
+    await expect(refreshing).rejects.toMatchObject({
+      code: ConnectedAccountRefreshAccessTokenExceptionCode.CREDENTIALS_CHANGED_DURING_REFRESH,
     });
     expect(await readAccount()).toMatchObject({
       accessToken: replacementAccessToken,
@@ -180,6 +193,65 @@ describe('app token refresh overlapping connection changes', () => {
       lastCredentialsRefreshedAt: replacementTimestamp,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
     });
+  });
+
+  it('does not hand the caller a connection another member reconnected as personal during refresh', async () => {
+    const { requestStarted, respond } = pauseTokenResponse();
+    const gettingConnection = getConnectionAs(
+      USER_WORKSPACE_DATA_SEED_IDS.JANE,
+    );
+
+    await requestStarted;
+
+    const replacementAccessToken = encrypt('personal-access');
+    const replacementRefreshToken = encrypt('personal-refresh');
+    const replacementTimestamp = new Date();
+
+    await accounts().update(application.connectedAccountId, {
+      accessToken: replacementAccessToken,
+      refreshToken: replacementRefreshToken,
+      lastCredentialsRefreshedAt: replacementTimestamp,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+      visibility: 'user',
+    });
+    respond(tokenResponse());
+
+    await expect(gettingConnection).rejects.toMatchObject({
+      code: ConnectionProviderExceptionCode.REFRESH_FAILED,
+    });
+    expect(tokenRequest).toHaveBeenCalledTimes(1);
+    expect(await readAccount()).toMatchObject({
+      accessToken: replacementAccessToken,
+      refreshToken: replacementRefreshToken,
+      lastCredentialsRefreshedAt: replacementTimestamp,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+      visibility: 'user',
+    });
+  });
+
+  it('serves the reconnected credentials when the caller may still use the connection', async () => {
+    const { requestStarted, respond } = pauseTokenResponse();
+    const gettingConnection = getConnectionAs(
+      USER_WORKSPACE_DATA_SEED_IDS.JANE,
+    );
+
+    await requestStarted;
+
+    await accounts().update(application.connectedAccountId, {
+      accessToken: encrypt('shared-access'),
+      refreshToken: encrypt('shared-refresh'),
+      lastCredentialsRefreshedAt: new Date(),
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+    });
+    respond(tokenResponse());
+
+    expect(await gettingConnection).toMatchObject({
+      id: application.connectedAccountId,
+      accessToken: 'shared-access',
+      visibility: 'workspace',
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+    });
+    expect(tokenRequest).toHaveBeenCalledTimes(1);
   });
 
   it('cannot put credentials back after a connection was disconnected during refresh', async () => {
