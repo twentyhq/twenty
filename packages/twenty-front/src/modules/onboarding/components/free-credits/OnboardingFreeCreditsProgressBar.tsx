@@ -29,7 +29,9 @@ const StyledProgressBar = styled.div`
   }
 
   @media (prefers-reduced-motion: reduce) {
-    animation: none;
+    &[data-grow-in] {
+      animation: none;
+    }
   }
 `;
 
