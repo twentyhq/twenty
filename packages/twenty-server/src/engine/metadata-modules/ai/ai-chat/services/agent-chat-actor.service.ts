@@ -142,6 +142,7 @@ export class AgentChatActorService {
         workspaceId,
         userWorkspaceId: sender.userWorkspaceId,
         applicationId: sender.applicationId ?? undefined,
+        agentRoleRestriction: authContext.agentRoleRestriction,
         setting: PermissionFlagType.AI,
       }))
     ) {

@@ -343,6 +343,7 @@ export class AuthService {
       workspaceId: workspace.id,
       setting: PermissionFlagType.SSO_BYPASS,
       applicationId: undefined,
+      agentRoleRestriction: undefined,
     });
   }
 

@@ -11,6 +11,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { applyAgentRoleRestriction } from 'src/engine/core-modules/auth/utils/apply-agent-role-restriction.util';
 import { findRequestAgentRoleRestriction } from 'src/engine/core-modules/auth/utils/find-request-agent-role-restriction.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -95,12 +96,14 @@ export class PermissionsService {
     setting,
     apiKeyId,
     applicationId,
+    agentRoleRestriction,
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
     setting: PermissionFlagType;
     apiKeyId?: string;
     applicationId: string | undefined;
+    agentRoleRestriction: AgentRoleRestriction | undefined;
   }): Promise<boolean> {
     const {
       userWorkspaceRoleMap,
@@ -124,8 +127,12 @@ export class PermissionsService {
       flatRoleMaps,
     });
 
+    // The request's own restriction still applies, so a caller passing none cannot widen the token
     const roleIds = applyAgentRoleRestriction({
-      roleIds: flatRoles.map((flatRole) => flatRole.id),
+      roleIds: applyAgentRoleRestriction({
+        roleIds: flatRoles.map((flatRole) => flatRole.id),
+        agentRoleRestriction,
+      }),
       agentRoleRestriction: findRequestAgentRoleRestriction({
         userWorkspaceId,
         apiKeyId,

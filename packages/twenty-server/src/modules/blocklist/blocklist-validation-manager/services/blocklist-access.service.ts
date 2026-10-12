@@ -68,6 +68,7 @@ export class BlocklistAccessService {
       setting: PermissionFlagType.WORKSPACE,
       workspaceId: context.workspaceId,
       applicationId: context.applicationId,
+      agentRoleRestriction: context.agentRoleRestriction,
     });
   }
 

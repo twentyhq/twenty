@@ -53,6 +53,7 @@ export class ConnectedAccountOAuthService {
         workspaceId,
         setting: PermissionFlagType.CONNECTED_ACCOUNTS,
         applicationId: undefined,
+        agentRoleRestriction: undefined,
       });
 
     if (!canConnectAccount) {

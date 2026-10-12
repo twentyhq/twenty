@@ -12,6 +12,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
@@ -34,6 +35,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthAgentRoleRestriction } from 'src/engine/decorators/auth/auth-agent-role-restriction.decorator';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -124,12 +126,14 @@ export class BillingResolver {
     }: BillingCheckoutSessionInput,
     @AuthApiKey() apiKey?: ApiKeyEntity,
     @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
+    @AuthAgentRoleRestriction() agentRoleRestriction?: AgentRoleRestriction,
   ) {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
       apiKeyId: apiKey?.id,
       applicationId: application?.id,
+      agentRoleRestriction,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -193,12 +197,14 @@ export class BillingResolver {
     @Args('idempotencyKey', { type: () => String }) idempotencyKey: string,
     @AuthApiKey() apiKey?: ApiKeyEntity,
     @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
+    @AuthAgentRoleRestriction() agentRoleRestriction?: AgentRoleRestriction,
   ): Promise<BillingPaymentIntentDTO> {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
       apiKeyId: apiKey?.id,
       applicationId: application?.id,
+      agentRoleRestriction,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -545,12 +551,14 @@ export class BillingResolver {
     userWorkspaceId,
     apiKeyId,
     applicationId,
+    agentRoleRestriction,
     workspaceActivationStatus,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     apiKeyId?: string;
     applicationId?: string;
+    agentRoleRestriction: AgentRoleRestriction | undefined;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
@@ -571,6 +579,7 @@ export class BillingResolver {
         setting: PermissionFlagType.BILLING,
         apiKeyId,
         applicationId,
+        agentRoleRestriction,
       });
 
     if (!userHasPermission) {

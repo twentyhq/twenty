@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import {
   NavigationMenuItemException,
   NavigationMenuItemExceptionCode,
@@ -24,12 +25,14 @@ export class NavigationMenuItemAccessService {
     workspaceId,
     apiKeyId,
     applicationId,
+    agentRoleRestriction,
     inputUserWorkspaceId,
   }: {
     userWorkspaceId: string | undefined;
     workspaceId: string;
     apiKeyId: string | undefined;
     applicationId: string | undefined;
+    agentRoleRestriction: AgentRoleRestriction | undefined;
     inputUserWorkspaceId: string | undefined;
   }): Promise<boolean> {
     if (!isDefined(inputUserWorkspaceId)) {
@@ -40,6 +43,7 @@ export class NavigationMenuItemAccessService {
           setting: PermissionFlagType.LAYOUTS,
           apiKeyId,
           applicationId,
+          agentRoleRestriction,
         });
 
       if (!hasPermission) {
@@ -70,12 +74,14 @@ export class NavigationMenuItemAccessService {
     workspaceId,
     apiKeyId,
     applicationId,
+    agentRoleRestriction,
     existingUserWorkspaceId,
   }: {
     userWorkspaceId: string | undefined;
     workspaceId: string;
     apiKeyId: string | undefined;
     applicationId: string | undefined;
+    agentRoleRestriction: AgentRoleRestriction | undefined;
     existingUserWorkspaceId: string | null | undefined;
   }): Promise<boolean> {
     if (!isDefined(existingUserWorkspaceId)) {
@@ -86,6 +92,7 @@ export class NavigationMenuItemAccessService {
           setting: PermissionFlagType.LAYOUTS,
           apiKeyId,
           applicationId,
+          agentRoleRestriction,
         });
 
       if (!hasPermission) {
@@ -123,12 +130,14 @@ export class NavigationMenuItemAccessService {
     workspaceId,
     apiKeyId,
     applicationId,
+    agentRoleRestriction,
     existingUserWorkspaceId,
   }: {
     userWorkspaceId: string | undefined;
     workspaceId: string;
     apiKeyId: string | undefined;
     applicationId: string | undefined;
+    agentRoleRestriction: AgentRoleRestriction | undefined;
     existingUserWorkspaceId: string | null | undefined;
   }): Promise<boolean> {
     if (!isDefined(existingUserWorkspaceId)) {
@@ -139,6 +148,7 @@ export class NavigationMenuItemAccessService {
           setting: PermissionFlagType.LAYOUTS,
           apiKeyId,
           applicationId,
+          agentRoleRestriction,
         });
 
       if (!hasPermission) {

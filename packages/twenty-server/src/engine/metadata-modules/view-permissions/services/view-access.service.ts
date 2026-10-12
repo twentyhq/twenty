@@ -96,6 +96,7 @@ export class ViewAccessService {
     userWorkspaceId,
     apiKeyId,
     applicationId,
+    agentRoleRestriction,
   }: ViewAccessContext): Promise<boolean> {
     // An unauthenticated request must surface the view-specific denial below
     // rather than the generic one userHasWorkspaceSettingPermission throws
@@ -108,6 +109,7 @@ export class ViewAccessService {
       userWorkspaceId,
       apiKeyId,
       applicationId,
+      agentRoleRestriction,
       setting: PermissionFlagType.VIEWS,
     });
   }

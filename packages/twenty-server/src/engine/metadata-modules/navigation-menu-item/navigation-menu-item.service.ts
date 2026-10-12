@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -147,12 +148,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentRoleRestriction,
   }: {
     input: CreateNavigationMenuItemInput;
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentRoleRestriction?: AgentRoleRestriction;
   }): Promise<NavigationMenuItemDTO> {
     const createdItems = await this.createMany({
       inputs: [input],
@@ -160,6 +163,7 @@ export class NavigationMenuItemService {
       authUserWorkspaceId,
       authApiKeyId,
       authApplicationId,
+      authAgentRoleRestriction,
     });
 
     const created = createdItems[0];
@@ -180,12 +184,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentRoleRestriction,
   }: {
     inputs: CreateNavigationMenuItemInput[];
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentRoleRestriction?: AgentRoleRestriction;
   }): Promise<NavigationMenuItemDTO[]> {
     if (inputs.length === 0) {
       return [];
@@ -198,6 +204,7 @@ export class NavigationMenuItemService {
           workspaceId,
           apiKeyId: authApiKeyId,
           applicationId: authApplicationId,
+          agentRoleRestriction: authAgentRoleRestriction,
           inputUserWorkspaceId: input.userWorkspaceId,
         },
       );
@@ -319,12 +326,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentRoleRestriction,
   }: {
     input: UpdateNavigationMenuItemInput & { id: string };
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentRoleRestriction?: AgentRoleRestriction;
   }): Promise<NavigationMenuItemDTO> {
     const { id, ...update } = input;
 
@@ -334,6 +343,7 @@ export class NavigationMenuItemService {
       authUserWorkspaceId,
       authApiKeyId,
       authApplicationId,
+      authAgentRoleRestriction,
     });
 
     const updated = updatedItems[0];
@@ -354,12 +364,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentRoleRestriction,
   }: {
     inputs: UpdateOneNavigationMenuItemInput[];
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentRoleRestriction?: AgentRoleRestriction;
   }): Promise<NavigationMenuItemDTO[]> {
     if (inputs.length === 0) {
       return [];
@@ -401,6 +413,7 @@ export class NavigationMenuItemService {
             workspaceId,
             apiKeyId: authApiKeyId,
             applicationId: authApplicationId,
+            agentRoleRestriction: authAgentRoleRestriction,
             existingUserWorkspaceId: existingNavigationMenuItem.userWorkspaceId,
           },
         );
@@ -465,12 +478,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentRoleRestriction,
   }: {
     id: string;
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentRoleRestriction?: AgentRoleRestriction;
   }): Promise<NavigationMenuItemDTO> {
     const deletedItems = await this.deleteMany({
       ids: [id],
@@ -478,6 +493,7 @@ export class NavigationMenuItemService {
       authUserWorkspaceId,
       authApiKeyId,
       authApplicationId,
+      authAgentRoleRestriction,
     });
 
     const deleted = deletedItems[0];
@@ -498,12 +514,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentRoleRestriction,
   }: {
     ids: string[];
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentRoleRestriction?: AgentRoleRestriction;
   }): Promise<NavigationMenuItemDTO[]> {
     if (ids.length === 0) {
       return [];
@@ -552,6 +570,7 @@ export class NavigationMenuItemService {
           workspaceId,
           apiKeyId: authApiKeyId,
           applicationId: authApplicationId,
+          agentRoleRestriction: authAgentRoleRestriction,
           existingUserWorkspaceId: flatNavigationMenuItemRoot.userWorkspaceId,
         },
       );

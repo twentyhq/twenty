@@ -17,6 +17,7 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
+import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
@@ -158,11 +159,13 @@ export class MessageChannelMetadataService {
     userWorkspaceId,
     workspaceId,
     applicationId,
+    agentRoleRestriction,
   }: {
     id: string;
     userWorkspaceId: string;
     workspaceId: string;
     applicationId?: string;
+    agentRoleRestriction?: AgentRoleRestriction;
   }): Promise<MessageChannelEntity> {
     const messageChannel = await this.findByIdOrThrow({ id, workspaceId });
 
@@ -185,6 +188,7 @@ export class MessageChannelMetadataService {
         userWorkspaceId,
         workspaceId,
         applicationId,
+        agentRoleRestriction,
       });
 
     if (!isAdministrableByCaller) {

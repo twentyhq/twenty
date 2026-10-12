@@ -270,6 +270,20 @@ describe('SettingsPermissionGuard', () => {
       },
     );
 
+    it('should deny with PERMISSION_DENIED when the request restriction reaches the check without a request context', async () => {
+      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+      mockGqlContext.req.agentRoleRestriction = {
+        agentId: 'agent-id',
+        roleId: 'agent-role-id',
+      };
+
+      await expect(
+        guard.canActivate(mockExecutionContext),
+      ).rejects.toMatchObject({
+        code: PermissionsExceptionCode.PERMISSION_DENIED,
+      });
+    });
+
     it('should reject with NO_AUTHENTICATION_CONTEXT when the application does not exist', async () => {
       mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
       mockGqlContext.req.application = { id: 'unknown-application-id' };

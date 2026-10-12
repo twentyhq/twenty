@@ -7,7 +7,9 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthAgentRoleRestriction } from 'src/engine/decorators/auth/auth-agent-role-restriction.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -100,12 +102,14 @@ export class ConnectedAccountResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
+    @AuthAgentRoleRestriction() agentRoleRestriction?: AgentRoleRestriction,
   ): Promise<ConnectedAccountPublicDTO> {
     await this.connectedAccountMetadataService.verifyAdministrableByCaller({
       id,
       userWorkspaceId,
       workspaceId: workspace.id,
       applicationId: application?.id,
+      agentRoleRestriction,
     });
 
     const deleted = await this.connectedAccountMetadataService.delete({
@@ -123,12 +127,14 @@ export class ConnectedAccountResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
+    @AuthAgentRoleRestriction() agentRoleRestriction?: AgentRoleRestriction,
   ): Promise<ConnectedAccountPublicDTO> {
     await this.connectedAccountMetadataService.verifyAdministrableByCaller({
       id,
       userWorkspaceId,
       workspaceId: workspace.id,
       applicationId: application?.id,
+      agentRoleRestriction,
     });
 
     const disconnected = await this.connectedAccountMetadataService.disconnect({

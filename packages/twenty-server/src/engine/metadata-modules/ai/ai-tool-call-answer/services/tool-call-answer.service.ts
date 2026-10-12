@@ -555,9 +555,9 @@ export class ToolCallAnswerService {
     workspaceId: string;
   }): Promise<void> {
     const requestAuthContext = workspaceAuthContextStorage.getStore();
-    const applicationId =
+    const requestUserAuthContext =
       isDefined(requestAuthContext) && isUserAuthContext(requestAuthContext)
-        ? requestAuthContext.application?.id
+        ? requestAuthContext
         : undefined;
 
     const hasPermission =
@@ -565,7 +565,8 @@ export class ToolCallAnswerService {
         userWorkspaceId,
         workspaceId,
         setting,
-        applicationId,
+        applicationId: requestUserAuthContext?.application?.id,
+        agentRoleRestriction: requestUserAuthContext?.agentRoleRestriction,
       });
 
     if (!hasPermission) {

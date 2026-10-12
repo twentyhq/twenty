@@ -21,6 +21,7 @@ import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/applica
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
+import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
@@ -58,6 +59,7 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { AuthAgentRoleRestriction } from 'src/engine/decorators/auth/auth-agent-role-restriction.decorator';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -176,6 +178,8 @@ export class WorkspaceResolver {
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
+    @AuthAgentRoleRestriction()
+    agentRoleRestriction: AgentRoleRestriction | undefined,
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({
@@ -186,6 +190,7 @@ export class WorkspaceResolver {
         userWorkspaceId,
         apiKey,
         application,
+        agentRoleRestriction,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
