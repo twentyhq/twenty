@@ -12521,7 +12521,7 @@ msgstr "Der Workflow verweist auf Metadaten, die dieser Anwendung nicht zur Verf
 #. js-lingui-id: W+A2pa
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
 msgid "The workflow schedule is invalid."
-msgstr ""
+msgstr "Der Workflow-Zeitplan ist ungültig."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
