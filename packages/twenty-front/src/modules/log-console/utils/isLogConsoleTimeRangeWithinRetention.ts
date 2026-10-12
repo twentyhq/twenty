@@ -5,23 +5,23 @@ import { type LogConsoleTimeRange } from '@/log-console/types/LogConsoleTimeRang
 
 export const isLogConsoleTimeRangeWithinRetention = ({
   timeRange,
-  retentionInDays,
+  retentionInHours,
 }: {
   timeRange: LogConsoleTimeRange;
-  retentionInDays: number;
+  retentionInHours: number;
 }) => {
   if (timeRange === 'today') {
-    return retentionInDays >= 1;
+    return retentionInHours >= 24;
   }
 
   if (timeRange === 'yesterday') {
-    return retentionInDays >= 2;
+    return retentionInHours >= 48;
   }
 
   return (
     Temporal.Duration.compare(
       LOG_CONSOLE_TIME_RANGE_PRESETS[timeRange].duration,
-      { days: retentionInDays },
+      { hours: retentionInHours },
     ) <= 0
   );
 };

@@ -6778,18 +6778,6 @@ msgctxt "fieldMetadata.label"
 msgid "Is Full Day"
 msgstr "És un dia sencer"
 
-#. js-lingui-id: tiNFAr
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Is Hidden"
-msgstr "Està ocult"
-
-#. js-lingui-id: q42yQK
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Is Hidden"
-msgstr "Està ocult"
-
 #. js-lingui-id: fenRdq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -7059,18 +7047,6 @@ msgstr "ID de l'última versió publicada"
 msgctxt "fieldMetadata.label"
 msgid "Last read at"
 msgstr "Llegit per última vegada el"
-
-#. js-lingui-id: 2zq4LZ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Last Stream Error"
-msgstr "Últim error del flux"
-
-#. js-lingui-id: 9/jQvG
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Last Stream Error"
-msgstr "Últim error del flux"
 
 #. js-lingui-id: 94QD51
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -9839,11 +9815,6 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "Lectura i escriptura"
 
-#. js-lingui-id: e2WMO+
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Read, archive and snooze are not available yet. Try again in a few minutes."
-msgstr "Llegir, arxivar i posposar encara no estan disponibles. Torna-ho a provar d'aquí a uns minuts."
-
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10878,18 +10849,6 @@ msgstr "ID de l'aplicació remitent"
 msgctxt "fieldMetadata.label"
 msgid "Sender application ID"
 msgstr "ID de l'aplicació remitent"
-
-#. js-lingui-id: kfnrYJ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Sender workspace membership ID"
-msgstr "ID de la pertinença a l'espai de treball del remitent"
-
-#. js-lingui-id: YDV32g
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Sender workspace membership ID"
-msgstr "ID de la pertinença a l'espai de treball del remitent"
 
 #. js-lingui-id: ZYK68w
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -12533,7 +12492,7 @@ msgid "The workflow automated trigger type"
 msgstr "El tipus de desencadenant automatitzat del flux de treball"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "El camp del flux de treball no pertany a l'objecte referenciat."
 
@@ -12555,9 +12514,14 @@ msgid "The workflow record picker must reference an object."
 msgstr "El selector de registres del flux de treball ha de fer referència a un objecte."
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "El flux de treball fa referència a metadades que no estan disponibles per a aquesta aplicació."
+
+#. js-lingui-id: W+A2pa
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
+msgid "The workflow schedule is invalid."
+msgstr "El calendari del flux de treball no és vàlid."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -14258,18 +14222,6 @@ msgstr "Zona horària de l'usuari"
 #: src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util.ts
 msgid "User was not created with email/password"
 msgstr "L'usuari no va ser creat amb correu electrònic/contrasenya"
-
-#. js-lingui-id: 2S1QaS
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "User Workspace ID"
-msgstr "ID de l'espai de treball de l'usuari"
-
-#. js-lingui-id: UBndQ2
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "User Workspace ID"
-msgstr "ID de l'espai de treball de l'usuari"
 
 #. js-lingui-id: lUEEso
 #: src/engine/core-modules/auth/auth.exception.ts

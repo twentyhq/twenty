@@ -1,6 +1,6 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, Pill } from 'twenty-ui/primitives/data-display';
+import { Avatar, Badge } from 'twenty-ui/primitives/data-display';
 
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
@@ -19,5 +19,5 @@ export const getTabListItemContent = ({
         )}
       </>
     ) : undefined,
-  badge: isString(pill) ? <Pill label={pill} /> : pill,
+  badge: isString(pill) ? <Badge>{pill}</Badge> : pill,
 });

@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
@@ -27,12 +27,12 @@ import { flushSync } from 'react-dom';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/icon';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
-const StyledPillContainer = styled.span`
-  & > span {
+const StyledBadgeContainer = styled.span`
+  > span[data-badge-size] {
     background: ${themeCssVariables.color.blue3};
     color: ${themeCssVariables.color.blue};
   }
@@ -149,18 +149,18 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER}
       onEnter={handleClick}
     >
-      <ListItem
+      <ListItemButton
         onClick={handleClick}
         startIcon={<IconFilter />}
         focused={isSelectedItemId}
         endIcon={
           advancedFilterQuerySubFilterCount > 0 ? (
-            <StyledPillContainer>
-              <Pill label={advancedFilterQuerySubFilterCount.toString()} />
-            </StyledPillContainer>
+            <StyledBadgeContainer>
+              <Badge>{advancedFilterQuerySubFilterCount.toString()}</Badge>
+            </StyledBadgeContainer>
           ) : undefined
         }
-      >{t`Advanced filter`}</ListItem>
+      >{t`Advanced filter`}</ListItemButton>
     </SelectableListItem>
   );
 };

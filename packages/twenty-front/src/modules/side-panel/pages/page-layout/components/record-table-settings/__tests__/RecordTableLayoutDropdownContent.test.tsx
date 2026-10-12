@@ -67,8 +67,8 @@ jest.mock(
     useAtomComponentStateValue: jest.fn(() => null),
   }),
 );
-jest.mock('twenty-ui/primitives/navigation', () => ({
-  ListItem: ({
+jest.mock('twenty-ui/components/navigation', () => ({
+  ListItemButton: ({
     description,
     disabled,
     onClick,

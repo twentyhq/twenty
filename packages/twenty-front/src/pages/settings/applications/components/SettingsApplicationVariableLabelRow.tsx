@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconInfoCircle } from 'twenty-ui/icon';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -39,7 +39,7 @@ export const SettingsApplicationVariableLabelRow = ({
   return (
     <StyledLabelRow>
       <StyledLabel>{isNonEmptyString(label) ? label : variableKey}</StyledLabel>
-      {isDeprecated && <Pill label={t`Deprecated`} />}
+      {isDeprecated && <Badge>{t`Deprecated`}</Badge>}
       {isNonEmptyString(description) && (
         <Tooltip
           content={description}

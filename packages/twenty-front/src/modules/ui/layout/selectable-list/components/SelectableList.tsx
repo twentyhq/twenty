@@ -1,7 +1,8 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useCallback, useState } from 'react';
 
 import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
 import { useSyncSelectableListItems } from '@/ui/layout/selectable-list/hooks/internal/useSyncSelectableListItems';
+import { SelectableListNativeItemRefsContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListNativeItemRefsContext';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { SelectableListContextProvider } from '@/ui/layout/selectable-list/states/contexts/SelectableListContext';
 
@@ -24,7 +25,28 @@ export const SelectableList = ({
   focusId,
   shouldPreselectFirstItem = true,
 }: SelectableListProps) => {
-  useSelectableListHotKeys(selectableListInstanceId, focusId, onSelect);
+  const [nativeItemRefs] = useState(() => new Map<string, HTMLElement>());
+
+  const focusNativeItem = useCallback(
+    (itemId: string) => {
+      for (const nativeItem of nativeItemRefs.values()) {
+        if (nativeItem !== document.activeElement) {
+          continue;
+        }
+
+        nativeItemRefs.get(itemId)?.focus();
+        break;
+      }
+    },
+    [nativeItemRefs],
+  );
+
+  useSelectableListHotKeys({
+    instanceId: selectableListInstanceId,
+    focusId,
+    onSelect,
+    onNavigate: focusNativeItem,
+  });
 
   useSyncSelectableListItems({
     selectableListInstanceId,
@@ -39,9 +61,11 @@ export const SelectableList = ({
         instanceId: selectableListInstanceId,
       }}
     >
-      <SelectableListContextProvider value={{ focusId }}>
-        {children}
-      </SelectableListContextProvider>
+      <SelectableListNativeItemRefsContext.Provider value={nativeItemRefs}>
+        <SelectableListContextProvider value={{ focusId }}>
+          {children}
+        </SelectableListContextProvider>
+      </SelectableListNativeItemRefsContext.Provider>
     </SelectableListComponentInstanceContext.Provider>
   );
 };

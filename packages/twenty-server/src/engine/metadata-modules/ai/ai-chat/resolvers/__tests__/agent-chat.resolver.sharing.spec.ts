@@ -84,7 +84,6 @@ const buildResolver = () => {
     recordEvents as never,
     {} as never,
     threadService,
-    { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
   );
   const streaming = {
     streamAgentChat: jest
@@ -125,6 +124,14 @@ const buildResolver = () => {
     ),
     threadLifecycle,
     { findLatestTurnError: jest.fn().mockResolvedValue(null) } as never,
+    {
+      getOrRecompute: jest.fn().mockResolvedValue({
+        flatWorkspaceMemberMaps: {
+          byId: { 'sender-member': { userId: 'sender-user' } },
+          userWorkspaceIdByUserId: { 'sender-user': 'sender-user-workspace' },
+        },
+      }),
+    } as never,
   );
   return {
     resolver,
@@ -442,6 +449,29 @@ describe('Shared conversation API boundaries', () => {
     ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
     expect(redis.getClient).not.toHaveBeenCalled();
     expect(threadRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('names message senders by their membership for fronts cached from the release before', async () => {
+    const { resolver, messages } = buildResolver();
+    messages.find.mockResolvedValue([
+      { id: 'from-member', senderWorkspaceMemberId: 'sender-member' },
+      { id: 'from-agent', senderWorkspaceMemberId: null },
+    ]);
+
+    await expect(
+      resolver.chatMessages(THREAD_ID, VIEWER_ID, workspace),
+    ).resolves.toEqual([
+      {
+        id: 'from-member',
+        senderWorkspaceMemberId: 'sender-member',
+        senderUserWorkspaceId: 'sender-user-workspace',
+      },
+      {
+        id: 'from-agent',
+        senderWorkspaceMemberId: null,
+        senderUserWorkspaceId: null,
+      },
+    ]);
   });
 
   it('does not read messages or catchup after access is revoked', async () => {

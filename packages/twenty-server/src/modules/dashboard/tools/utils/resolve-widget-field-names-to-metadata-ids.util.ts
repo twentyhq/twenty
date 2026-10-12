@@ -4,7 +4,7 @@ import {
   type ChartRecordFilter,
   type ChartRecordFilterGroup,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-by-object-id-and-name-key.util';
@@ -168,7 +168,7 @@ const resolveChartFilterFieldNamesToIds = (
         operand: rest.operand,
         value,
         displayValue: value,
-        type: field?.type ?? '',
+        type: isDefined(field) ? getFilterTypeFromFieldType(field.type) : '',
         recordFilterGroupId,
         positionInRecordFilterGroup,
         ...(isDefined(rest.subFieldName)

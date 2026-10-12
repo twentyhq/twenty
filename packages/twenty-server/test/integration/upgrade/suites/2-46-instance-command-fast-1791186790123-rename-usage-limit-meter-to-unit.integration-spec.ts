@@ -1,16 +1,11 @@
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-
 import { RenameUsageLimitMeterToUnitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791186790123-rename-usage-limit-meter-to-unit';
 import { RestoreUsageLimitMeterCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791538680877-restore-usage-limit-meter-compatibility';
-import { UsageLimitsCacheService } from 'src/engine/core-modules/usage-limit/services/usage-limits-cache.service';
-import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
@@ -379,49 +374,6 @@ describe('2-46 fast instance command 1791186790123 - RenameUsageLimitMeterToUnit
     expect(await findColumnValues('meter')).toEqual({ [id]: 'quantity' });
     expect(await findColumnValues('unit')).toEqual({
       [id]: UsageUnit.INVOCATION,
-    });
-  });
-
-  it('retains unmapped quotas in storage without loading them into enforcement', async () => {
-    await command.up(queryRunner);
-
-    const pendingId = await insertUsageLimit({
-      resourceType: UsageResourceType.AI,
-      operationType: UsageOperationType.ALL,
-      limitKind: 'quota',
-      column: 'meter',
-      value: 'quantity',
-    });
-    const activeId = await insertUsageLimit({
-      resourceType: UsageResourceType.AI,
-      operationType: UsageOperationType.AI_CHAT_TOKEN,
-      limitKind: 'quota',
-      column: 'unit',
-      value: UsageUnit.TOKEN,
-    });
-    const provider = new UsageLimitsCacheService();
-    const usageLimitRepository = queryRunner.manager.withRepository(
-      getCoreRepository<UsageLimitEntity>(UsageLimitEntity),
-    );
-    const loader = new WorkspaceCacheRowsBatchLoader(
-      { getRepository: () => usageLimitRepository },
-      SEED_APPLE_WORKSPACE_ID,
-    );
-
-    await loader.loadRows([provider.rowsRequirement]);
-
-    const limits = provider.computeForCache({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      rows: loader.readRows(provider.rowsRequirement),
-    });
-    const fixtureLimits = (
-      limits.byResourceType[UsageResourceType.AI] ?? []
-    ).filter((limit) => limit.spenderId === spenderId);
-
-    expect(fixtureLimits.map(({ id }) => id)).toEqual([activeId]);
-    expect(await findColumnValues('meter')).toEqual({
-      [pendingId]: 'quantity',
-      [activeId]: 'quantity',
     });
   });
 

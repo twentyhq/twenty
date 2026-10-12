@@ -14,7 +14,6 @@ import {
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { buildReleaseStreamClaimQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-release-stream-claim-query.util';
-import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -35,7 +34,6 @@ export class AgentChatStreamRecoveryService {
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
-    private readonly upgradeFenceService: AgentHistoryUpgradeFenceService,
   ) {}
 
   async releaseStreamClaim({
@@ -74,22 +72,17 @@ export class AgentChatStreamRecoveryService {
   }: AgentChatStreamClaim & {
     turnError?: StreamErrorPayload;
   }): Promise<boolean> {
-    const hasAgentTurnRunFields =
-      await this.upgradeFenceService.hasUpgradedAgentHistory(workspaceId);
-
     return this.threadRepository.query(
       workspaceId,
       async ({ manager, table }) => {
         const releasedThreads = await manager.query<{ id: string }[]>(
-          buildReleaseStreamClaimQuery({ table, hasAgentTurnRunFields }),
-          hasAgentTurnRunFields
-            ? [
-                threadId,
-                streamId,
-                isDefined(turnError) ? AgentTurnStatus.FAILED : null,
-                isDefined(turnError) ? JSON.stringify(turnError) : null,
-              ]
-            : [threadId, streamId],
+          buildReleaseStreamClaimQuery({ table }),
+          [
+            threadId,
+            streamId,
+            isDefined(turnError) ? AgentTurnStatus.FAILED : null,
+            isDefined(turnError) ? JSON.stringify(turnError) : null,
+          ],
         );
 
         return releasedThreads.length > 0;

@@ -1,3 +1,4 @@
+import { SELECT_PART_PROP_DESCRIPTIONS } from './selectPartPropDescriptions';
 import { CHECKBOX_PROP_DESCRIPTIONS } from './checkboxPropDescriptions';
 import { SWITCH_PROP_DESCRIPTIONS } from './switchPropDescriptions';
 import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
@@ -11,7 +12,6 @@ import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions'
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
 import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
 import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
-import { NOTIFICATION_COUNTER_PROP_DESCRIPTIONS } from './notificationCounterPropDescriptions';
 import { TINTED_ICON_TILE_PROP_DESCRIPTIONS } from './tintedIconTilePropDescriptions';
 import { CALLOUT_PROP_DESCRIPTIONS } from './calloutPropDescriptions';
 import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
@@ -21,6 +21,7 @@ import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
+import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
@@ -63,7 +64,7 @@ import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescri
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
 import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
 import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
-import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
+import { BADGE_PROP_DESCRIPTIONS } from './badgePropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
 import { RESIZE_HANDLE_PROP_DESCRIPTIONS } from './resizeHandlePropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
@@ -151,11 +152,13 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: COLOR_SAMPLE_PROP_DESCRIPTIONS,
   },
   {
-    name: 'Pill',
-    source: 'primitives/data-display/Pill/Pill.tsx',
+    name: 'Badge',
+    nativeProps: 'span',
+    source: 'primitives/data-display/Badge/Badge.tsx',
     entryPoint: 'twenty-ui/primitives/data-display',
-    slug: 'data-display/pill',
-    propDescriptions: PILL_PROP_DESCRIPTIONS,
+    slug: 'data-display/badge',
+    propDescriptions: BADGE_PROP_DESCRIPTIONS,
+    propDefaults: { size: 'sm', color: 'tertiary', shape: 'pill' },
   },
   {
     name: 'Banner',
@@ -330,11 +333,51 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: INPUT_GROUP_PROP_DESCRIPTIONS,
   },
   {
-    name: 'NumberStepper',
-    source: 'primitives/input/NumberStepper/NumberStepper.tsx',
+    name: 'NumberField',
+    source: 'primitives/input/NumberField/NumberField.tsx',
     entryPoint: 'twenty-ui/primitives/input',
-    slug: 'input/number-stepper',
+    slug: 'input/number-field',
+    parts: [
+      'Root',
+      'Group',
+      'Input',
+      'Decrement',
+      'Increment',
+      'ScrubArea',
+      'ScrubAreaCursor',
+    ],
+    partPropDescriptions: NUMBER_FIELD_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Root: {
+        defaultValue: 'empty',
+        step: '1',
+        smallStep: '0.1',
+        largeStep: '10',
+        allowOutOfRange: 'false',
+        allowWheelScrub: 'false',
+        snapOnStep: 'false',
+        required: 'false',
+        disabled: 'false',
+        readOnly: 'false',
+      },
+      Decrement: { nativeButton: 'true' },
+      Increment: { nativeButton: 'true' },
+      ScrubArea: { direction: 'horizontal', pixelSensitivity: '2' },
+    },
+  },
+  {
+    name: 'NumberStepper',
+    source: 'components/input/NumberStepper/NumberStepper.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/number-stepper',
     propDescriptions: NUMBER_STEPPER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      step: '1',
+      allowOutOfRange: 'false',
+      showButtons: 'true',
+      decrementLabel: 'Decrease value',
+      incrementLabel: 'Increase value',
+    },
   },
   {
     name: 'Textarea',
@@ -395,6 +438,8 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Select/Select.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/select',
+    partPropDescriptions: SELECT_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: { Trigger: { size: 'md' } },
   },
   {
     name: 'Slider',
@@ -426,6 +471,15 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
     propDescriptions: {
+      ref: 'Ref to the actual DOM root, including a composed native button or link.',
+      selected:
+        'Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner.',
+      focused:
+        'Applies highlighted styling without moving DOM focus or handling keyboard navigation.',
+      disabled:
+        'Applies disabled styling only. Set native disabled behavior and accessible semantics on the button, link, or popup item owner.',
+      render:
+        'Composes the row with an element or render callback. The owner supplies interaction semantics, native attributes, and behavior.',
       shortcutJoinLabel:
         'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
@@ -739,6 +793,27 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: CODE_EDITOR_HEADER_PROP_DESCRIPTIONS,
   },
   {
+    name: 'ListItemButton',
+    source: 'components/navigation/ListItemButton/ListItemButton.tsx',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/list-item-button',
+    propDescriptions: {
+      ref: 'Ref to the native HTMLButtonElement.',
+      disabled: 'Disables activation and applies the matching row appearance.',
+      focusableWhenDisabled:
+        'Keeps a disabled button focusable with aria-disabled while preventing activation.',
+      selected:
+        'Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics.',
+      focused: 'Highlights the row without moving DOM focus.',
+      shortcut:
+        'Displays decorative shortcut hints. The caller registers the shortcuts.',
+      shortcutJoinLabel:
+        'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
+      hasSubmenu: 'Displays a decorative submenu indicator.',
+    },
+    propDefaults: { type: 'button', disabled: 'false' },
+  },
+  {
     name: 'TabButton',
     source: 'components/navigation/TabButton/TabButton.tsx',
     entryPoint: 'twenty-ui/components/navigation',
@@ -748,8 +823,9 @@ export const DOCUMENTED_COMPONENTS = [
       active:
         'Highlights the current destination or an action associated with the active tab. Does not change the control role.',
       badge: 'Content following the label and trailing icon, such as a count.',
-      size: 'Padding of the tab content: sm or md.',
+      size: 'Padding of the tab content: sm or md. Explicit size takes precedence over the ButtonGroup size, then sm applies.',
     },
+    propDefaults: { size: 'sm' },
   },
   {
     name: 'AvatarGroup',
@@ -771,14 +847,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/data-display',
     slug: 'components/data-display/json-tree',
     propDescriptions: JSON_TREE_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'NotificationCounter',
-    source:
-      'components/data-display/NotificationCounter/NotificationCounter.tsx',
-    entryPoint: 'twenty-ui/components/data-display',
-    slug: 'components/data-display/notification-counter',
-    propDescriptions: NOTIFICATION_COUNTER_PROP_DESCRIPTIONS,
   },
   {
     name: 'TintedIconTile',
