@@ -45,6 +45,7 @@ export type RoleManifest = SyncableEntityOptions & {
   icon?: string;
   canUpdateAllSettings?: boolean;
   canAccessAllTools?: boolean;
+  canAccessAllAgentChatChannels?: boolean;
   canReadAllObjectRecords?: boolean;
   canUpdateAllObjectRecords?: boolean;
   canSoftDeleteAllObjectRecords?: boolean;
