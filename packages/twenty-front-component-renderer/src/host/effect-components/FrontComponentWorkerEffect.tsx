@@ -9,6 +9,7 @@ import { type HostFocusController } from '@/host/focus/types/HostFocusController
 import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
 import { createPointerCaptureAwareRemoteConnection } from '@/host/events/utils/createPointerCaptureAwareRemoteConnection';
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
+import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
 import { createImageLoadingHost } from '@/host/image-loading/utils/createImageLoadingHost';
@@ -44,6 +45,7 @@ type FrontComponentWorkerEffectProps = {
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   hostFocusController: HostFocusController;
   pointerCaptureController: HostPointerCaptureController;
+  hostScrollController: HostScrollController;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 };
@@ -51,6 +53,7 @@ type FrontComponentWorkerEffectProps = {
 export const FrontComponentWorkerEffect = ({
   hostFocusController,
   pointerCaptureController,
+  hostScrollController,
   componentUrl,
   applicationAccessToken,
   apiUrl,
@@ -201,6 +204,7 @@ export const FrontComponentWorkerEffect = ({
       imageLoadingHost.dispose();
       fileInputHost.dispose();
       hostFocusController.reset();
+      hostScrollController.reset();
       window.removeEventListener('message', handleSandboxMessage);
       setThread(null);
       channel.port1.close();
@@ -220,6 +224,7 @@ export const FrontComponentWorkerEffect = ({
     geometryTracker,
     hostFocusController,
     pointerCaptureController,
+    hostScrollController,
     mediaSessionHost,
     setError,
     setReceiver,
