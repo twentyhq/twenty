@@ -90,6 +90,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
     const curatedUid = 'a1b2c3d4-0000-0000-0000-000000000001';
     const serverCompatibleUid = crypto.randomUUID();
     const serverIncompatibleUid = crypto.randomUUID();
+    const blankServerRangeUid = crypto.randomUUID();
 
     // Insert all data before queries so the in-memory cache is populated once
     // with complete data rather than being stale for later tests.
@@ -152,6 +153,15 @@ describe('Marketplace Catalog Sync (integration)', () => {
           application: { requiredServerVersionRange: '>=999.0.0' },
         },
       });
+
+      await insertCatalogRegistration({
+        universalIdentifier: blankServerRangeUid,
+        name: 'Blank Server Range App',
+        sourcePackage: '@test/blank-server-range-app',
+        manifest: {
+          application: { requiredServerVersionRange: ' ' },
+        },
+      });
     });
 
     it('should return npm-sourced registrations from the database', async () => {
@@ -197,6 +207,17 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
       expect(appIds).toContain(serverCompatibleUid);
       expect(appIds).not.toContain(serverIncompatibleUid);
+    });
+
+    it('should list apps that declare no required server version', async () => {
+      const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
+      const appIds = res.body.data.findManyMarketplaceApps.map(
+        (app: { id: string }) => app.id,
+      );
+
+      expect(appIds).toEqual(
+        expect.arrayContaining([npmUid, curatedUid, blankServerRangeUid]),
+      );
     });
   });
 

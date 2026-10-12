@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import semver from 'semver';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { isDefined } from 'twenty-shared/utils';
@@ -51,7 +52,7 @@ export class ApplicationVersionValidationService {
   ): Promise<VersionValidationResult[]> {
     const hasValidRequiredServerVersion = requiredServerVersions.some(
       (requiredServerVersion) =>
-        isDefined(requiredServerVersion) &&
+        this.isRequiredServerVersionDeclared(requiredServerVersion) &&
         isDefined(semver.validRange(requiredServerVersion)),
     );
 
@@ -61,7 +62,7 @@ export class ApplicationVersionValidationService {
 
     return requiredServerVersions.map(
       (requiredServerVersion): VersionValidationResult => {
-        if (!isDefined(requiredServerVersion)) {
+        if (!this.isRequiredServerVersionDeclared(requiredServerVersion)) {
           return { compatible: true };
         }
 
@@ -89,7 +90,7 @@ export class ApplicationVersionValidationService {
     requiredServerVersion: string | undefined;
     workspaceId: string;
   }): Promise<VersionValidationResult> {
-    if (!isDefined(requiredServerVersion)) {
+    if (!this.isRequiredServerVersionDeclared(requiredServerVersion)) {
       return { compatible: true };
     }
 
@@ -171,6 +172,12 @@ export class ApplicationVersionValidationService {
     }
 
     return { allowed: true };
+  }
+
+  private isRequiredServerVersionDeclared(
+    requiredServerVersion: string | undefined,
+  ): requiredServerVersion is string {
+    return isNonEmptyString(requiredServerVersion?.trim());
   }
 
   private validateVersionAgainstRange({
