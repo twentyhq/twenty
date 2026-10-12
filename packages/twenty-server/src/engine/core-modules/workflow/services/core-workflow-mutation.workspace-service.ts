@@ -634,10 +634,9 @@ export class CoreWorkflowMutationWorkspaceService {
           .softDelete({ id: In(mirrorWorkflowIds) });
       }, authContext);
 
-      await this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
+      await this.workflowCommonWorkspaceService.deleteWorkflowSubEntities({
         workflowIds: mirrorWorkflowIds,
         workspaceId,
-        operation: 'delete',
       });
     }
 
