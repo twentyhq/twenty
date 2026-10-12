@@ -8,8 +8,55 @@ import { RESIZE_HANDLE_DEFAULTS } from '@ui/primitives/layout/ResizeHandle/inter
 
 import { CODE_EDITOR_DEFAULT_HEIGHT } from './constants/CodeEditorDefaultHeight';
 
+type ResizedCodeEditorHeight = {
+  sourceHeight: number | string;
+  value: number;
+};
+
 const getBoundedHeight = (height: number) =>
   clamp(height, RESIZE_HANDLE_DEFAULTS.min, RESIZE_HANDLE_DEFAULTS.max);
+
+const getResizableHeight = ({
+  height,
+  resizedHeight,
+}: {
+  height: number | string;
+  resizedHeight: ResizedCodeEditorHeight | undefined;
+}) => {
+  if (resizedHeight?.sourceHeight === height) {
+    return resizedHeight.value;
+  }
+
+  if (isNumber(height)) {
+    return getBoundedHeight(height);
+  }
+
+  return CODE_EDITOR_DEFAULT_HEIGHT;
+};
+
+const getCurrentHeight = ({
+  height,
+  resizableHeight,
+  contentHeight,
+  shouldUseResizableHeight,
+  shouldAutoHeight,
+}: {
+  height: number | string;
+  resizableHeight: number;
+  contentHeight: number | undefined;
+  shouldUseResizableHeight: boolean;
+  shouldAutoHeight: boolean;
+}) => {
+  if (shouldUseResizableHeight) {
+    return resizableHeight;
+  }
+
+  if (shouldAutoHeight) {
+    return contentHeight ?? height;
+  }
+
+  return height;
+};
 
 export const useCodeEditorHeight = ({
   height,
@@ -22,18 +69,13 @@ export const useCodeEditorHeight = ({
   autoHeight: boolean;
   editor: editor.IStandaloneCodeEditor | undefined;
 }) => {
-  const [resizedHeight, setResizedHeight] = useState<{
-    sourceHeight: number | string;
-    value: number;
-  }>();
+  const [resizedHeight, setResizedHeight] = useState<ResizedCodeEditorHeight>();
   const [contentHeight, setContentHeight] = useState<number>();
   const shouldAutoHeight = autoHeight && !resizable;
   const hasResizedHeight = resizedHeight?.sourceHeight === height;
-  const resizableHeight = hasResizedHeight
-    ? resizedHeight.value
-    : isNumber(height)
-      ? getBoundedHeight(height)
-      : CODE_EDITOR_DEFAULT_HEIGHT;
+  const shouldUseResizableHeight =
+    resizable && (hasResizedHeight || isNumber(height));
+  const resizableHeight = getResizableHeight({ height, resizedHeight });
 
   useEffect(() => {
     if (!resizable || !isDefined(editor)) {
@@ -78,13 +120,13 @@ export const useCodeEditorHeight = ({
   }, [editor, shouldAutoHeight]);
 
   return {
-    currentHeight: resizable
-      ? hasResizedHeight || isNumber(height)
-        ? resizableHeight
-        : height
-      : shouldAutoHeight
-        ? (contentHeight ?? height)
-        : height,
+    currentHeight: getCurrentHeight({
+      height,
+      resizableHeight,
+      contentHeight,
+      shouldUseResizableHeight,
+      shouldAutoHeight,
+    }),
     resizableHeight,
     setResizableHeight: (value: number) => {
       setResizedHeight({ sourceHeight: height, value });
