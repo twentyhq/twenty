@@ -12,6 +12,7 @@ type SettingsRadioSettingsCardProps<Option extends { value: string }> = {
   onChange: (nextValue: Option['value']) => void;
   options: Option[];
   value: Option['value'];
+  disabled?: boolean;
 };
 
 const StyledCardContentContainer = styled.div`
@@ -69,6 +70,7 @@ export const SettingsRadioSettingsCard = <
   onChange,
   options,
   value,
+  disabled = false,
 }: SettingsRadioSettingsCardProps<Option>) => {
   const groupId = useId();
   const { i18n } = useLingui();
@@ -78,6 +80,7 @@ export const SettingsRadioSettingsCard = <
       name={name}
       value={value}
       onValueChange={onChange}
+      disabled={disabled}
       onKeyDown={(event) => {
         if (
           !(event.target instanceof HTMLElement) ||

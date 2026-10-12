@@ -1,8 +1,10 @@
-import { type IconComponent } from '@ui/icon/types/IconComponent';
+import { type useRender } from '@base-ui/react/use-render';
+import { type ReactNode } from 'react';
 
-export type TintedIconTileProps = {
-  Icon: IconComponent;
+export type TintedIconTileProps = Omit<
+  useRender.ComponentProps<'div'>,
+  'children' | 'color'
+> & {
+  icon: ReactNode;
   color?: string | null;
-  size?: number;
-  stroke?: number;
 };

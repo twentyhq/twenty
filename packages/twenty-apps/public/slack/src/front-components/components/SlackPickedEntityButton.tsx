@@ -1,10 +1,6 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-sdk/utils';
-import { Avatar } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { type SlackPickerOptionAvatar } from 'src/front-components/components/SlackPickerDropdownPanel';
 
 const StyledPickedEntity = styled.button`
   align-items: center;
@@ -50,7 +46,6 @@ const StyledMeta = styled.span`
 type SlackPickedEntityButtonProps = {
   name: string;
   meta?: string;
-  avatar?: SlackPickerOptionAvatar;
   changeLabel: string;
   onChangeRequest: () => void;
   disabled?: boolean;
@@ -59,7 +54,6 @@ type SlackPickedEntityButtonProps = {
 export const SlackPickedEntityButton = ({
   name,
   meta,
-  avatar,
   changeLabel,
   onChangeRequest,
   disabled,
@@ -70,14 +64,6 @@ export const SlackPickedEntityButton = ({
     disabled={disabled}
     aria-label={changeLabel}
   >
-    {isDefined(avatar) && (
-      <Avatar
-        placeholder={avatar.placeholder}
-        placeholderColorSeed={avatar.placeholderColorSeed}
-        type={avatar.type}
-        size="md"
-      />
-    )}
     <StyledDetails>
       <StyledName>{name}</StyledName>
       {isNonEmptyString(meta) && <StyledMeta>{meta}</StyledMeta>}

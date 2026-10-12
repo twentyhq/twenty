@@ -3,6 +3,7 @@ import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 export type UsageLimitRestResponseBody = {
   statusCode: number;
@@ -16,6 +17,7 @@ export type UsageLimitRestResponseBody = {
     operationType: UsageOperationType;
   };
   limit: number;
+  unit?: UsageUnit;
   remaining: number;
   periodCount: number | null;
   periodUnit: PeriodUnit | null;

@@ -195,6 +195,7 @@ export type {
 } from './ObjectRecordGroupBy';
 export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
+export { ObjectSharingReach } from './ObjectSharingReach';
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export { OpenRecordIn } from './OpenRecordIn';
@@ -240,6 +241,7 @@ export type {
   WorkflowVersionConfiguration,
   WorkflowRunConfiguration,
   ChatThreadsConfiguration,
+  ChatConfiguration,
   PageLayoutWidgetConfiguration,
 } from './page-layout/PageLayoutWidgetConfiguration';
 export type {
@@ -257,7 +259,7 @@ export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOptio
 export type { QueryCursorDirection } from './QueryCursorDirection';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
-export type { RecordGqlFieldsDeprecated } from './RecordGqlFieldsDeprecated';
+export type { RecordGqlFields } from './RecordGqlFields';
 export type {
   UUIDFilterValue,
   IsFilter,
@@ -292,7 +294,6 @@ export type {
   LeafObjectRecordFilter,
   RecordGqlOperationFilter,
 } from './RecordGqlOperationFilter';
-export type { RecordGqlOperationGqlRecordFields } from './RecordGqlOperationGqlRecordFields';
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
 export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature';
 export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';

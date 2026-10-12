@@ -3,14 +3,14 @@ import { styled } from '@linaria/react';
 
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
-import { RecordCalendarEscapeHotkeyEffect } from '@/object-record/record-calendar/components/RecordCalendarEscapeHotkeyEffect';
 import { RecordCalendarTopBar } from '@/object-record/record-calendar/components/RecordCalendarTopBar';
 import { RECORD_CALENDAR_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-calendar/constants/RecordCalendarClickOutsideListenerId';
 import { RecordCalendarGrid } from '@/object-record/record-calendar/grid/components/RecordCalendarGrid';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
-import { useRecordCalendarSelection } from '@/object-record/record-calendar/states/selectors/useRecordCalendarSelection';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
+import { RecordSelectionEscapeHotkeyEffect } from '@/object-record/record-selection/components/RecordSelectionEscapeHotkeyEffect';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { DIALOG_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/dialog/constants/DialogBackdropClickOutsideId';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from '@/ui/navigation/link/constants/LinkChipClickOutsideId';
@@ -35,16 +35,15 @@ export const RecordCalendar = () => {
     RecordCalendarComponentInstanceContext,
   );
 
-  const { resetRecordCalendarSelection } =
-    useRecordCalendarSelection(recordCalendarId);
+  const { resetRecordSelection } = useResetRecordSelection(recordCalendarId);
 
   const recordIndexCalendarLayout = useAtomComponentStateValue(
     recordIndexCalendarLayoutComponentState,
   );
 
   useEffect(() => {
-    resetRecordCalendarSelection();
-  }, [resetRecordCalendarSelection, recordIndexCalendarLayout]);
+    resetRecordSelection();
+  }, [resetRecordSelection, recordIndexCalendarLayout]);
 
   useListenClickOutside({
     excludedClickOutsideIds: [
@@ -57,14 +56,12 @@ export const RecordCalendar = () => {
     ],
     listenerId: RECORD_CALENDAR_CLICK_OUTSIDE_LISTENER_ID,
     refs: [],
-    callback: () => {
-      resetRecordCalendarSelection();
-    },
+    callback: resetRecordSelection,
   });
 
   return (
     <StyledContainerContainer>
-      <RecordCalendarEscapeHotkeyEffect recordCalendarId={recordCalendarId} />
+      <RecordSelectionEscapeHotkeyEffect />
       <RecordCalendarTopBar />
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-record-calendar-${recordCalendarId}`}

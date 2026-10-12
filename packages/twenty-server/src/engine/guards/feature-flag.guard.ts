@@ -3,69 +3,45 @@ import {
   type ExecutionContext,
   ForbiddenException,
   Injectable,
+  mixin,
+  type Type,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { type FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { TypedReflect } from 'src/utils/typed-reflect';
 
-export const FEATURE_FLAG_KEY = 'feature-flag-metadata-args';
+export const FeatureFlagGuard = (
+  featureFlag: FeatureFlagKey,
+): Type<CanActivate> => {
+  @Injectable()
+  class FeatureFlagMixin implements CanActivate {
+    constructor(private readonly featureFlagService: FeatureFlagService) {}
 
-export function RequireFeatureFlag(featureFlag: FeatureFlagKey) {
-  return (
-    target: object,
-    _propertyKey?: string,
-    descriptor?: PropertyDescriptor,
-  ) => {
-    TypedReflect.defineMetadata(
-      FEATURE_FLAG_KEY,
-      featureFlag,
-      descriptor?.value || target,
-    );
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+      const ctx = GqlExecutionContext.create(context);
+      const workspaceId = ctx.getContext().req.workspace?.id;
 
-    return descriptor;
-  };
-}
+      if (!isDefined(workspaceId)) {
+        return false;
+      }
 
-@Injectable()
-export class FeatureFlagGuard implements CanActivate {
-  constructor(
-    private readonly reflector: Reflector,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+      const isEnabled = await this.featureFlagService.isFeatureEnabled(
+        featureFlag,
+        workspaceId,
+      );
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const ctx = GqlExecutionContext.create(context);
-    const request = ctx.getContext().req;
-    const workspaceId = request.workspace?.id;
+      if (!isEnabled) {
+        throw new ForbiddenException(
+          `Feature flag "${featureFlag}" is not enabled for this workspace`,
+        );
+      }
 
-    if (!workspaceId) {
-      return false;
-    }
-
-    const featureFlag = this.reflector.get<FeatureFlagKey>(
-      FEATURE_FLAG_KEY,
-      context.getHandler(),
-    );
-
-    if (!featureFlag) {
       return true;
     }
-
-    const isEnabled = await this.featureFlagService.isFeatureEnabled(
-      featureFlag,
-      workspaceId,
-    );
-
-    if (!isEnabled) {
-      throw new ForbiddenException(
-        `Feature flag "${featureFlag}" is not enabled for this workspace`,
-      );
-    }
-
-    return true;
   }
-}
+
+  return mixin(FeatureFlagMixin);
+};

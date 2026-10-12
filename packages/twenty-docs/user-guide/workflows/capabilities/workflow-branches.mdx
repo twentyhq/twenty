@@ -29,9 +29,20 @@ Each branch is independent. Adding a branch doesn't affect other existing paths 
 
 Branches appear as parallel paths in the workflow editor. You can drag nodes to rearrange the visual layout without affecting execution.
 
-## Conditional Branches
+## If/Else Branches
 
-Since all branches run by default, use **Filter** nodes to control which paths actually execute:
+For mutually exclusive paths — where you want exactly one branch to run, not several — add an **If/else** action instead of splitting the canvas manually.
+
+**Configuration**:
+- The first branch (**If**) has a filter condition
+- Click **Add route** to insert additional **Else if** branches, each with its own condition
+- The last branch (**Else**) has no condition and catches everything the other branches didn't match
+
+**How it works**: Conditions are evaluated in order, top to bottom. The workflow continues down the first branch whose condition matches; every other branch is skipped.
+
+## Conditional Branches (Manual, with Filter)
+
+If/else covers most cases, but you can also build the same pattern by hand: since all manually created branches run by default, use **Filter** nodes to control which paths actually execute:
 
 | Branch | Filter Condition | Action |
 |--------|------------------|--------|

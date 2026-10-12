@@ -1,4 +1,5 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { useState } from 'react';
+import { type NavigationMenuItemMenuMode } from '@/navigation-menu-item/edit/types/NavigationMenuItemMenuMode';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconDotsVertical,
@@ -6,12 +7,10 @@ import {
   IconPlus,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type NavigationMenuItemFolderNavigationDrawerItemDropdownProps = {
   folderId: string;
@@ -27,44 +26,47 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
   onDelete,
 }: NavigationMenuItemFolderNavigationDrawerItemDropdownProps) => {
   const { t } = useLingui();
+  const [mode, setMode] = useState<NavigationMenuItemMenuMode>({
+    type: 'actions',
+  });
   const dropdownId = `navigation-menu-item-folder-edit-${folderId}`;
 
   return (
     <NavigationMenuItemMenu
       section="favorite"
       dropdownId={dropdownId}
-      clickableComponent={
+      trigger={
         <LightIconButton emphasis="subtle" aria-label={t`More options`}>
           <IconDotsVertical />
         </LightIconButton>
       }
-      dropdownPlacement="bottom-start"
+      mode={mode}
+      onModeChange={setMode}
+      onOpen={() => setMode({ type: 'actions' })}
+      side="bottom"
       renderMenu={({ onClose, onAdd }) => (
-        <LegacyDropdownContent
-          widthInPixels={GenericDropdownContentWidth.Large}
-        >
-          <DropdownMenuItemsContainer>
-            <ListItem
-              startIcon={<IconEdit />}
-              onClick={() => {
-                onClose();
-                onEdit();
-              }}
-            >{t`Edit`}</ListItem>
-            <ListItem
-              startIcon={<IconPlus />}
-              onClick={() => onAdd({ folderId, position: itemCount })}
-            >{t`Add menu item`}</ListItem>
-            <ListItem
-              startIcon={<IconTrash />}
-              onClick={() => {
-                onClose();
-                onDelete();
-              }}
-              color="danger"
-            >{t`Remove from sidebar`}</ListItem>
-          </DropdownMenuItemsContainer>
-        </LegacyDropdownContent>
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            startIcon={<IconEdit />}
+            onClick={() => {
+              onClose();
+              onEdit();
+            }}
+          >{t`Edit`}</Dropdown.ActionItem>
+          <Dropdown.ActionItem
+            startIcon={<IconPlus />}
+            closeOnClick={false}
+            onClick={() => onAdd({ folderId, position: itemCount })}
+          >{t`Add menu item`}</Dropdown.ActionItem>
+          <Dropdown.ActionItem
+            startIcon={<IconTrash />}
+            onClick={() => {
+              onClose();
+              onDelete();
+            }}
+            color="danger"
+          >{t`Remove from sidebar`}</Dropdown.ActionItem>
+        </Dropdown.Section>
       )}
     />
   );

@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { jsonSchema } from 'ai';
 import { type JSONSchema7 } from 'json-schema';
 import { z } from 'zod';
@@ -55,6 +56,15 @@ export const createExecuteToolTool = (
     'Execute a tool by name with arguments. Call learn_tools first to discover the required input schema.',
   inputSchema: executeToolInputSchema,
   execute: async (parameters: ExecuteToolInput): Promise<ToolOutput> => {
+    if (!isNonEmptyString(parameters?.toolName)) {
+      return {
+        success: false,
+        message: 'Tool name is required',
+        error:
+          'Tool name is required. Pass the tool name confirmed by learn_tools as toolName.',
+      };
+    }
+
     const { toolName, arguments: args = {} } = parameters;
 
     if (options?.isToolAllowed?.(toolName) === false) {

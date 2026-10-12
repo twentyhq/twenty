@@ -3,8 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FindManySkillsForSuggestionDocument } from '~/generated-metadata/graphql';
 
-// Skill references only carry an id and a label, so the icon comes from the
-// cached skill catalog; the query is skipped when no skill is referenced.
+// Skill references only carry an id and a label, so the icon comes from the cached catalog
 export const useSkillIcon = (skillId: string | null): string | null => {
   const { data } = useQuery(FindManySkillsForSuggestionDocument, {
     skip: !isDefined(skillId),

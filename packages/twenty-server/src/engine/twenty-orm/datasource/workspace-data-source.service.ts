@@ -25,9 +25,7 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-// node-postgres parses a `date` column into a JS Date (which serializes with a
-// time component). Workspace DATE fields are date-only, so parse them as the raw
-// 'YYYY-MM-DD' string Postgres returns, matching the v1 TypeORM datasource.
+// Workspace DATE fields are date-only: keep Postgres's raw 'YYYY-MM-DD' instead of a JS Date, like the v1 datasource
 const DATE_ONLY_POOL_TYPES: PoolConfig['types'] = {
   getTypeParser: ((oid: number, format?: unknown) =>
     oid === types.builtins.DATE
@@ -64,7 +62,7 @@ export class WorkspaceDataSourceService
     });
 
     this.databasePoolMetricsService.registerPool({
-      poolName: DatabasePoolName.WorkspaceV2Primary,
+      poolName: DatabasePoolName.WorkspacePrimary,
       pool: this.primaryPool,
     });
 
@@ -79,7 +77,7 @@ export class WorkspaceDataSourceService
       });
 
       this.databasePoolMetricsService.registerPool({
-        poolName: DatabasePoolName.WorkspaceV2Replica,
+        poolName: DatabasePoolName.WorkspaceReplica,
         pool: this.replicaPool,
       });
     }
@@ -119,10 +117,12 @@ export class WorkspaceDataSourceService
         workspaceContext.flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps:
         workspaceContext.flatRowLevelPermissionPredicateGroupMaps,
+      flatValidationRuleMaps: workspaceContext.flatValidationRuleMaps,
       objectIdByNameSingular: workspaceContext.objectIdByNameSingular,
       featureFlagsMap: workspaceContext.featureFlagsMap,
       billingEntitlements: workspaceContext.billingEntitlements,
       userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
+      roleIdsWithAllRecordsAccess: workspaceContext.roleIdsWithAllRecordsAccess,
       apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
       eventEmitterService: this.workspaceEventEmitter,
       recordStock: this.workspaceRecordStockService,
@@ -162,10 +162,10 @@ export class WorkspaceDataSourceService
 
   async onApplicationShutdown(): Promise<void> {
     this.databasePoolMetricsService.unregisterPool(
-      DatabasePoolName.WorkspaceV2Primary,
+      DatabasePoolName.WorkspacePrimary,
     );
     this.databasePoolMetricsService.unregisterPool(
-      DatabasePoolName.WorkspaceV2Replica,
+      DatabasePoolName.WorkspaceReplica,
     );
 
     await this.primaryPool?.end();

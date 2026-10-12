@@ -3,8 +3,7 @@ import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/wo
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-// The settings schema requires uuids here, so these are fixed rather than
-// readable: a non-uuid would be refused for the wrong reason.
+// The settings schema requires uuids, and a non-uuid would be refused for the wrong reason.
 const SECOND_QUESTION_ID = '0f7f5f2e-6f1e-4c1e-9a3e-2b7d9a1c4e81';
 const BILLING_CRITERION_ID = '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
 const SUPPORT_CRITERION_ID = '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e';
@@ -193,8 +192,7 @@ describe('Classify step activation (e2e)', () => {
     );
   });
 
-  // A dot would be read as structure by the variable resolver, so an answer
-  // named this way could never be referenced downstream.
+  // The variable resolver reads a dot as structure, so the answer could never be referenced downstream.
   it('should refuse an answer name that is not a valid variable key', async () => {
     const response = await updateStep(
       workflowVersionId,

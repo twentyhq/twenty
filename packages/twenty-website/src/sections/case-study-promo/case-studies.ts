@@ -1,6 +1,4 @@
-// The canonical list of customer case studies, each a /customers/<slug> story.
-// The promo reads the count from here; the customers catalog and the
-// /customers/[slug] route family will grow per-entry content off the same list.
+// Mirrors the slugs in @/case-studies/case-study-catalog; the promo counts them, so keep both lists in sync.
 export const CASE_STUDY_SLUGS: readonly string[] = [
   '9dots',
   'alternative-partners',

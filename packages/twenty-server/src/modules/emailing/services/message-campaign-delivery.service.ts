@@ -194,18 +194,13 @@ export class MessageCampaignDeliveryService {
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({
-        id: messageId,
-        state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
-      })
-      .update()
-      .set({
-        state: CAMPAIGN_DELIVERY_STATE.FAILED,
-        failureReason: CAMPAIGN_FAILURE_REASON.RATE_LIMITED,
-      })
-      .returning(['id'])
-      .execute();
+      .update(
+        { id: messageId, state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES) },
+        {
+          state: CAMPAIGN_DELIVERY_STATE.FAILED,
+          failureReason: CAMPAIGN_FAILURE_REASON.RATE_LIMITED,
+        },
+      );
 
     if (failedDeliveries.length === 1) {
       this.logger.warn(
@@ -489,19 +484,14 @@ export class MessageCampaignDeliveryService {
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({
-        id: messageId,
-        state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
-      })
-      .update()
-      .set({
-        state: CAMPAIGN_DELIVERY_STATE.SENDING,
-        claimToken,
-        claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
-      })
-      .returning(['id'])
-      .execute();
+      .update(
+        { id: messageId, state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES) },
+        {
+          state: CAMPAIGN_DELIVERY_STATE.SENDING,
+          claimToken,
+          claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
+        },
+      );
 
     return claimedDeliveries.length === 1 ? claimToken : null;
   }
@@ -530,12 +520,10 @@ export class MessageCampaignDeliveryService {
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({ id: messageId, claimToken })
-      .update()
-      .set({ ...update, claimToken: null, claimExpiresAt: null })
-      .returning(['id'])
-      .execute();
+      .update(
+        { id: messageId, claimToken },
+        { ...update, claimToken: null, claimExpiresAt: null },
+      );
 
     return settledDeliveries.length;
   }

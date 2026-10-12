@@ -42,13 +42,8 @@ describe('successful user session creation on auth exchanges (integration)', () 
     firstSessionToken = sessionCookie.sessionToken;
     firstSessionCookieHeader = sessionCookie.cookieHeader;
 
-    // Pins name, sess_ prefix, attribute list and order in one place. The
-    // absences matter as much as the presences: no Secure and no __Host-
-    // (plain-http test deployment), and no Domain, which is what makes the
-    // cookie host-only so browsers never send it to sibling workspace
-    // subdomains. The secure boot pins its own shape in
-    // secure-deployment-session-cookie.integration-spec.ts, so this snapshot
-    // only applies to the insecure one.
+    // Insecure boot only (plain http: no Secure, no __Host-); secure-deployment/suites/secure-session-cookie.integration-spec.ts
+    // pins the secure shape. The absences matter: no Domain keeps the cookie host-only, off sibling workspace subdomains.
     if (!IS_SECURE_DEPLOYMENT) {
       expect(
         normalizeSessionCookieForSnapshot(sessionCookie.rawCookie),
@@ -96,15 +91,12 @@ describe('successful user session creation on auth exchanges (integration)', () 
 
     expect(session).toMatchObject({
       userId: expect.any(String),
-      // Bound to the workspace the GraphQL origin selected: the server-side
-      // half of workspace scoping, alongside the host-only cookie.
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userWorkspaceId: expect.any(String),
       isImpersonating: false,
       revokedAt: null,
       revokedReason: null,
-      // expect.any(Date) would fail: the entity's Date comes from the app's
-      // vm context, so it is not an instanceof the test context's Date.
+      // Not expect.any(Date): the entity's Date comes from the app's vm context.
       lastActiveAt: expect.anything(),
     });
 

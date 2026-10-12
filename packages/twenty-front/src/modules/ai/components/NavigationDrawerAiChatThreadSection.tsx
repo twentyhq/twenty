@@ -1,16 +1,13 @@
-import { type ReactNode } from 'react';
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
 
 export type NavigationDrawerAiChatThreadSectionProps = {
   sectionId: string;
   title: string;
-  threads: AgentChatThread[];
+  threads: AgentChatThreadListItem[];
   currentThreadId: string | null;
-  onThreadClick: (thread: AgentChatThread) => void;
-  rightIcon?: ReactNode;
-  alwaysShowRightIcon?: boolean;
+  onThreadClick: (thread: AgentChatThreadListItem) => void;
 };
 
 export const NavigationDrawerAiChatThreadSection = ({
@@ -19,16 +16,9 @@ export const NavigationDrawerAiChatThreadSection = ({
   threads,
   currentThreadId,
   onThreadClick,
-  rightIcon,
-  alwaysShowRightIcon = false,
 }: NavigationDrawerAiChatThreadSectionProps) => {
   return (
-    <CollapsibleNavigationDrawerSection
-      sectionId={sectionId}
-      label={title}
-      rightIcon={rightIcon}
-      alwaysShowRightIcon={alwaysShowRightIcon}
-    >
+    <CollapsibleNavigationDrawerSection sectionId={sectionId} label={title}>
       {threads.map((thread) => (
         <NavigationDrawerAiChatThreadItem
           key={thread.id}

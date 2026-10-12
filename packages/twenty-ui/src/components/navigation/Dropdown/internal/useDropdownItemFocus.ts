@@ -2,9 +2,11 @@ import { useDropdownContext } from './useDropdownContext';
 
 export const useDropdownItemFocus = ({
   id,
+  disabled,
   isSubmenuTrigger = false,
 }: {
   id: string;
+  disabled: boolean;
   isSubmenuTrigger?: boolean;
 }) => {
   const context = useDropdownContext();
@@ -15,9 +17,10 @@ export const useDropdownItemFocus = ({
   const setActiveItemId = isSubmenuTrigger
     ? context.setParentActiveItemId
     : context.setActiveItemId;
+  const isOutsideMenuRovingFocus = type === 'menu' && activeItemId !== id;
 
   return {
-    tabIndex: type === 'menu' && activeItemId !== id ? -1 : 0,
+    tabIndex: disabled || isOutsideMenuRovingFocus ? -1 : 0,
     activate: () => setActiveItemId?.(id),
   };
 };

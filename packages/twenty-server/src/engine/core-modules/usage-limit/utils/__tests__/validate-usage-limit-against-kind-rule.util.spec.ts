@@ -3,6 +3,7 @@ import { UsageLimitExceptionCode } from 'src/engine/core-modules/usage-limit/exc
 import { validateUsageLimitAgainstKindRule } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-kind-rule.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const validSpeedLimit: CreateUsageLimitInput = {
   resourceType: UsageResourceType.API,
@@ -12,7 +13,7 @@ const validSpeedLimit: CreateUsageLimitInput = {
   limitKind: 'speed',
   periodCount: 60,
   periodUnit: 'second',
-  meter: 'quantity',
+  unit: UsageUnit.REQUEST,
   limitValue: 100,
 };
 
@@ -24,7 +25,7 @@ const validQuotaLimit: CreateUsageLimitInput = {
   limitKind: 'quota',
   periodCount: 1,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   limitValue: 1_000_000,
 };
 
@@ -36,7 +37,7 @@ const validStockLimit: CreateUsageLimitInput = {
   limitKind: 'stock',
   periodCount: 1,
   periodUnit: 'lifetime',
-  meter: 'bytes',
+  unit: UsageUnit.BYTE,
   limitValue: 10_737_418_240,
 };
 
@@ -64,12 +65,26 @@ describe('validateUsageLimitAgainstKindRule', () => {
       ).not.toThrow();
     });
 
+    it('rejects a zero speed limit', () => {
+      rejects({ ...validSpeedLimit, limitValue: 0 });
+    });
+
     it('rejects a speed limit without a rolling window', () => {
       rejects({ ...validSpeedLimit, periodUnit: 'month' });
     });
 
-    it('rejects a speed limit metered on credits', () => {
-      rejects({ ...validSpeedLimit, meter: 'creditsUsedMicro' });
+    it('rejects a speed limit on every operation', () => {
+      expect(() =>
+        validateUsageLimitAgainstKindRule({
+          ...validSpeedLimit,
+          operationType: UsageOperationType.ALL,
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: UsageLimitExceptionCode.LIMIT_INVALID,
+          message: 'A speed limit targets a single operation, not ALL',
+        }),
+      );
     });
   });
 
@@ -77,6 +92,15 @@ describe('validateUsageLimitAgainstKindRule', () => {
     it('accepts a monthly credit quota', () => {
       expect(() =>
         validateUsageLimitAgainstKindRule(validQuotaLimit),
+      ).not.toThrow();
+    });
+
+    it('accepts a zero quota that blocks the usage', () => {
+      expect(() =>
+        validateUsageLimitAgainstKindRule({
+          ...validQuotaLimit,
+          limitValue: 0,
+        }),
       ).not.toThrow();
     });
 
@@ -98,15 +122,6 @@ describe('validateUsageLimitAgainstKindRule', () => {
       ).not.toThrow();
     });
 
-    it('accepts a quantity quota on one operation', () => {
-      expect(() =>
-        validateUsageLimitAgainstKindRule({
-          ...validQuotaLimit,
-          meter: 'quantity',
-        }),
-      ).not.toThrow();
-    });
-
     it('rejects a quota on a rolling window', () => {
       rejects({ ...validQuotaLimit, periodUnit: 'second' });
     });
@@ -122,33 +137,16 @@ describe('validateUsageLimitAgainstKindRule', () => {
     it('rejects a quota with a burst value', () => {
       rejects({ ...validQuotaLimit, burstValue: 200 });
     });
-
-    it('rejects a quota metered on bytes', () => {
-      rejects({ ...validQuotaLimit, meter: 'bytes' });
-    });
-
-    it('rejects a quantity quota covering every operation', () => {
-      rejects({
-        ...validQuotaLimit,
-        operationType: UsageOperationType.ALL,
-        meter: 'quantity',
-      });
-    });
   });
 
   describe('stock', () => {
+    it('rejects a zero stock limit', () => {
+      rejects({ ...validStockLimit, limitValue: 0 });
+    });
+
     it('accepts a workspace-wide stock on the operation that fills it', () => {
       expect(() =>
         validateUsageLimitAgainstKindRule(validStockLimit),
-      ).not.toThrow();
-    });
-
-    it('accepts a stock metered on a file count', () => {
-      expect(() =>
-        validateUsageLimitAgainstKindRule({
-          ...validStockLimit,
-          meter: 'quantity',
-        }),
       ).not.toThrow();
     });
 
@@ -176,10 +174,6 @@ describe('validateUsageLimitAgainstKindRule', () => {
 
     it('rejects a stock holding a burst value', () => {
       rejects({ ...validStockLimit, burstValue: 10 });
-    });
-
-    it('rejects a stock metered on credits', () => {
-      rejects({ ...validStockLimit, meter: 'creditsUsedMicro' });
     });
 
     it('rejects an application stock that names no application', () => {

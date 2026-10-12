@@ -13,9 +13,7 @@ const decodeTokenPayload = (
   };
 };
 
-// Returns the public URL for a file in the app's public/ directory.
-// Works in both logic functions and front components.
-// The path is relative to the public/ folder (e.g. "images/logo.png").
+// Path is relative to the app's public/ folder (e.g. "images/logo.png")
 export const getPublicAssetUrl = (path: string): string => {
   const apiUrl = process.env[DEFAULT_API_URL_NAME];
   const token = getApplicationAccessToken();

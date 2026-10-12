@@ -1,11 +1,11 @@
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
-import { MainButton } from 'twenty-ui/components';
+import { MainButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { t } from '@lingui/core/macro';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledFooterContainer = styled.div`
   > div {
@@ -35,7 +35,7 @@ export const StepNavigationButton = ({
   return (
     <StyledFooterContainer>
       <Dialog.Footer style={{ padding: 'var(--t-spacing-5)' }}>
-        {!isUndefinedOrNull(onBack) && (
+        {isDefined(onBack) && (
           <MainButton
             startIcon={isLoading ? <Loader /> : undefined}
             onClick={!isLoading ? onBack : undefined}
@@ -44,7 +44,7 @@ export const StepNavigationButton = ({
             {backTitle}
           </MainButton>
         )}
-        {!isUndefinedOrNull(onContinue) && (
+        {isDefined(onContinue) && (
           <MainButton
             startIcon={isLoading ? <Loader /> : undefined}
             onClick={!isLoading ? onContinue : undefined}

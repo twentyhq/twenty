@@ -11,10 +11,20 @@ const AlertDialogRootWrapper = ({ children }: { children: ReactNode }) => (
 const OpenAlertDialogWrapper = ({ children }: { children: ReactNode }) => (
   <AlertDialog.Root open>{children}</AlertDialog.Root>
 );
-const AlertDialogPopupWrapper = ({ children }: { children: ReactNode }) => (
+const AlertDialogPortalWrapper = ({ children }: { children: ReactNode }) => (
   <AlertDialog.Root open>
-    <AlertDialog.Popup initialFocus={false}>{children}</AlertDialog.Popup>
+    <AlertDialog.Portal>{children}</AlertDialog.Portal>
   </AlertDialog.Root>
+);
+const AlertDialogViewportWrapper = ({ children }: { children: ReactNode }) => (
+  <AlertDialogPortalWrapper>
+    <AlertDialog.Viewport>{children}</AlertDialog.Viewport>
+  </AlertDialogPortalWrapper>
+);
+const AlertDialogPopupWrapper = ({ children }: { children: ReactNode }) => (
+  <AlertDialogViewportWrapper>
+    <AlertDialog.Popup initialFocus={false}>{children}</AlertDialog.Popup>
+  </AlertDialogViewportWrapper>
 );
 
 runComponentConformance({
@@ -25,10 +35,30 @@ runComponentConformance({
   renderPropTagName: 'button',
 });
 runComponentConformance({
+  name: 'AlertDialog.Portal',
+  element: <AlertDialog.Portal />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: OpenAlertDialogWrapper,
+});
+runComponentConformance({
+  name: 'AlertDialog.Backdrop',
+  element: <AlertDialog.Backdrop />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: AlertDialogPortalWrapper,
+  ownClassName: styles.backdrop,
+});
+runComponentConformance({
+  name: 'AlertDialog.Viewport',
+  element: <AlertDialog.Viewport />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: AlertDialogPortalWrapper,
+  ownClassName: styles.viewport,
+});
+runComponentConformance({
   name: 'AlertDialog.Popup',
   element: <AlertDialog.Popup initialFocus={false} />,
   refInstanceOf: HTMLDivElement,
-  wrapper: OpenAlertDialogWrapper,
+  wrapper: AlertDialogViewportWrapper,
   ownClassName: styles.popup,
 });
 runComponentConformance({

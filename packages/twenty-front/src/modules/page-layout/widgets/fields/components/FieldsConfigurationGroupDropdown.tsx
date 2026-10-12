@@ -5,7 +5,8 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { getFieldsConfigurationGroupEditDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupEditDropdownId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

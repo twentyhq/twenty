@@ -4,8 +4,6 @@ import {
   type RelationAndMorphRelationFieldMetadataType,
 } from 'twenty-shared/types';
 
-export const MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION = 4;
-
 const RELATION_FIELD_TYPES: FieldMetadataType[] = [
   FieldMetadataType.RELATION,
   FieldMetadataType.MORPH_RELATION,

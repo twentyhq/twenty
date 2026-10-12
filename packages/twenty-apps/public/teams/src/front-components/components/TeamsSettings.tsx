@@ -3,7 +3,7 @@ import 'twenty-ui/theme-dark.css';
 import 'twenty-ui/theme-light.css';
 
 import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ChatSettings } from 'src/features/chat/front-components/ChatSettings';
 import { TranscriptSettings } from 'src/features/transcripts/front-components/TranscriptSettings';

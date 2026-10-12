@@ -1,10 +1,6 @@
 import { z } from 'zod';
 
-import { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from 'twenty-shared/ai';
-
-export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME };
-
-export const completeWorkspaceSetupInputSchema = z.object({});
+const completeWorkspaceSetupInputSchema = z.object({});
 
 type CompleteWorkspaceSetupOutput = {
   success: true;

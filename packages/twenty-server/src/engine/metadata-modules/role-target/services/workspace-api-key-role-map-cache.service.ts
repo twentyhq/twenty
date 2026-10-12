@@ -1,45 +1,33 @@
 import { Injectable } from '@nestjs/common';
 
-import { IsNull, Not } from 'typeorm';
-
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { WorkspaceDerivedCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-derived-cache-provider.service';
 
-import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
-import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
-
-const API_KEY_ROLE_ROWS_REQUIREMENT = {
-  roleTarget: {
-    columns: ['apiKeyId', 'roleId'],
-    where: { apiKeyId: Not(IsNull()) },
-  },
-} as const satisfies WorkspaceCacheRowsRequirement;
+import { WorkspaceDerivedCache } from 'src/engine/workspace-cache/decorators/workspace-derived-cache.decorator';
+import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 @Injectable()
-@WorkspaceCache('apiKeyRoleMap', { packingPonderation: 1 })
-export class WorkspaceApiKeyRoleMapCacheService extends WorkspaceCacheProvider<
-  Record<string, string>
+@WorkspaceDerivedCache('apiKeyRoleMap')
+export class WorkspaceApiKeyRoleMapCacheService extends WorkspaceDerivedCacheProvider<
+  'apiKeyRoleMap',
+  'flatRoleTargetMaps'
 > {
-  override readonly rowsRequirement = API_KEY_ROLE_ROWS_REQUIREMENT;
+  readonly sourceKeyName = 'flatRoleTargetMaps';
 
-  computeForCache({
-    rows,
-  }: WorkspaceCacheProviderContext<
-    typeof API_KEY_ROLE_ROWS_REQUIREMENT
-  >): Record<string, string> {
-    const { roleTarget: roleTargets } = rows;
+  protected computeFromSource(
+    flatRoleTargetMaps: WorkspaceCacheDataMap['flatRoleTargetMaps'],
+  ): Record<string, string> {
+    const apiKeyRoleMap: Record<string, string> = {};
 
-    return roleTargets.reduce(
-      (acc, { apiKeyId, roleId }) => {
-        if (isDefined(apiKeyId)) {
-          acc[apiKeyId] = roleId;
-        }
+    for (const flatRoleTarget of Object.values(
+      flatRoleTargetMaps.byUniversalIdentifier,
+    )) {
+      if (isDefined(flatRoleTarget?.apiKeyId)) {
+        apiKeyRoleMap[flatRoleTarget.apiKeyId] = flatRoleTarget.roleId;
+      }
+    }
 
-        return acc;
-      },
-      {} as Record<string, string>,
-    );
+    return apiKeyRoleMap;
   }
 }

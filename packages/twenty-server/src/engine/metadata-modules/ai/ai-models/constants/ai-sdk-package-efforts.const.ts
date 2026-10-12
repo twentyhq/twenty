@@ -31,10 +31,7 @@ type XaiEffort = NonNullable<
   XaiLanguageModelResponsesOptions['reasoningEffort']
 >;
 
-// What each SDK package can put on the wire, pinned to the SDK's own option
-// type where it has one; the OpenAI Responses model types it as a plain string.
-// A model's catalog entry lists what the model takes; only the intersection is
-// offered, so a level the SDK would reject is never forwarded.
+// intersected with each model's catalog efforts so a level the SDK would reject is never forwarded
 export const AI_SDK_PACKAGE_EFFORTS: Partial<
   Record<AiSdkPackage, readonly AiModelEffort[]>
 > = {

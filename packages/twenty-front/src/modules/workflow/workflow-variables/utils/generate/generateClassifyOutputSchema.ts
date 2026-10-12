@@ -60,8 +60,7 @@ const buildAnswerSchema = (
           label: 'Score',
           value: 0,
         },
-        // Native scores carry a distribution over level indices, so the picker
-        // advertises it the same way it does for a choice.
+        // Native scores carry a distribution over level indices, advertised like a choice's
         probabilities: buildProbabilitiesNode(
           question.criteria.map((_, level) => String(level)),
         ),
@@ -79,8 +78,7 @@ const buildAnswerSchema = (
   }
 };
 
-// Answers are keyed by the question's name, so a downstream step reads
-// {{stepId.answers.<name>.choice}} whatever model answered.
+// Keyed by question name, so downstream steps read {{stepId.answers.<name>.choice}} whatever model answered
 export const generateClassifyOutputSchema = (
   questions: WorkflowClassifyQuestion[],
 ): BaseOutputSchemaV2 => ({

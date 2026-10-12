@@ -1,9 +1,11 @@
+import { atom, useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 
 import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/SelectAutocompleteListDropDownId';
 import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
 import { usePlaceAutocomplete } from '@/geo-map/hooks/usePlaceAutocomplete';
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
+import { keepAddressFieldsEditedDuringAutofill } from '@/ui/field/input/utils/keepAddressFieldsEditedDuringAutofill';
 
 import { useCountryUtils } from './useCountryUtils';
 
@@ -12,6 +14,8 @@ export const useAddressAutocomplete = (
 ) => {
   const [typeOfAddressForAutocomplete, setTypeOfAddressForAutocomplete] =
     useState<string | null>(null);
+  const [latestPlaceSelectionIdAtom] = useState(() => atom(0));
+  const store = useStore();
 
   const { getPlaceDetailsData } = useGetPlaceApiData();
   const { findCountryNameByCountryCode } = useCountryUtils();
@@ -30,16 +34,43 @@ export const useAddressAutocomplete = (
   }, [closePlaceAutocomplete]);
 
   const autoFillInputsFromPlaceDetails = useCallback(
-    async (
-      placeId: string,
-      token: string,
-      addressStreet1?: string,
-      internalValue?: FieldAddressDraftValue,
-    ) => {
-      const placeData = await getPlaceDetailsData(placeId, token);
-      const countryName = findCountryNameByCountryCode(placeData?.country);
+    async ({
+      placeId,
+      token,
+      addressStreet1,
+      getInternalValue,
+    }: {
+      placeId: string;
+      token: string;
+      addressStreet1?: string;
+      getInternalValue?: () => FieldAddressDraftValue;
+    }): Promise<FieldAddressDraftValue | undefined> => {
+      const placeSelectionId = store.get(latestPlaceSelectionIdAtom) + 1;
+      store.set(latestPlaceSelectionIdAtom, placeSelectionId);
 
-      const updatedAddress = {
+      const isLatestPlaceSelection = () =>
+        placeSelectionId === store.get(latestPlaceSelectionIdAtom);
+
+      const internalValueAtSelection = getInternalValue?.();
+      const placeData = await getPlaceDetailsData(placeId, token).finally(
+        () => {
+          if (!isLatestPlaceSelection()) {
+            return;
+          }
+
+          resetPlaceAutocomplete();
+          setTypeOfAddressForAutocomplete(null);
+        },
+      );
+
+      if (!isLatestPlaceSelection()) {
+        return undefined;
+      }
+
+      const countryName = findCountryNameByCountryCode(placeData?.country);
+      const internalValue = getInternalValue?.();
+
+      const autofilledAddress = {
         addressStreet1:
           placeData?.street ||
           addressStreet1 ||
@@ -56,13 +87,19 @@ export const useAddressAutocomplete = (
           placeData?.location?.lng ?? internalValue?.addressLng ?? null,
       };
 
-      resetPlaceAutocomplete();
-      setTypeOfAddressForAutocomplete(null);
+      const updatedAddress = keepAddressFieldsEditedDuringAutofill({
+        autofilledAddress,
+        addressAtSelection: internalValueAtSelection,
+        currentAddress: internalValue,
+      });
+
       onChange?.(updatedAddress);
 
       return updatedAddress;
     },
     [
+      store,
+      latestPlaceSelectionIdAtom,
       getPlaceDetailsData,
       findCountryNameByCountryCode,
       resetPlaceAutocomplete,

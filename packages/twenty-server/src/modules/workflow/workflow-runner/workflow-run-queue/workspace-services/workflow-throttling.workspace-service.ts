@@ -20,21 +20,13 @@ export class WorkflowThrottlingWorkspaceService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async getRemainingRunsToEnqueueCount(workspaceId: string) {
-    return this.throttlerService.getAvailableTokensCount(
-      this.getWorkflowExecutionSoftThrottleCacheKey(workspaceId),
-      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT'),
-      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_TTL'),
-    );
-  }
-
   async consumeRemainingRunsToEnqueueCount(
     workspaceId: string,
-    runsToConsume: number,
-  ) {
-    await this.throttlerService.consumeTokens(
+    requestedRunCount: number,
+  ): Promise<number> {
+    return this.throttlerService.tokenBucketConsumeUpTo(
       this.getWorkflowExecutionSoftThrottleCacheKey(workspaceId),
-      runsToConsume,
+      requestedRunCount,
       this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT'),
       this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_TTL'),
     );
@@ -113,19 +105,28 @@ export class WorkflowThrottlingWorkspaceService {
     }, authContext);
   }
 
-  async acquireWorkflowEnqueueLock(
-    workspaceId: string,
+  async acquireWorkflowEnqueueLock({
+    workspaceId,
     ttlMs = 60_000,
-  ): Promise<boolean> {
+  }: {
+    workspaceId: string;
+    ttlMs?: number;
+  }): Promise<string | null> {
     const key = this.getWorkflowEnqueueRunningCacheKey(workspaceId);
 
-    return this.cacheStorage.acquireLock(key, ttlMs);
+    return this.cacheStorage.acquireLock({ key, ttl: ttlMs });
   }
 
-  async releaseWorkflowEnqueueLock(workspaceId: string): Promise<void> {
+  async releaseWorkflowEnqueueLock({
+    workspaceId,
+    lockOwnerToken,
+  }: {
+    workspaceId: string;
+    lockOwnerToken: string;
+  }): Promise<void> {
     const key = this.getWorkflowEnqueueRunningCacheKey(workspaceId);
 
-    await this.cacheStorage.releaseLock(key);
+    await this.cacheStorage.releaseLock({ key, ownerToken: lockOwnerToken });
   }
 
   private async setWorkflowRunNotStartedCount(

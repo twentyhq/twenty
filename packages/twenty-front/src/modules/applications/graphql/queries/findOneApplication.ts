@@ -6,6 +6,7 @@ export const FIND_ONE_APPLICATION = gql`
   query FindOneApplication($id: UUID!) {
     findOneApplication(id: $id) {
       ...ApplicationFields
+      isUninstallBlockedByOtherWorkspaceInstallations
     }
   }
 `;

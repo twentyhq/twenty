@@ -1,18 +1,22 @@
-import { getObjectPermissionsForObject } from '~/modules/object-metadata/utils/getObjectPermissionsForObject';
-
+import { objectPermissionsByObjectMetadataIdSelector } from '@/object-metadata/states/objectPermissionsByObjectMetadataIdSelector';
+import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
-import { type ObjectPermissions } from 'twenty-shared/types';
-import { useObjectPermissions } from './useObjectPermissions';
 
 export const useObjectPermissionsForObject = (
   objectMetadataId: string,
-): ObjectPermissions & { objectMetadataId: string } => {
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+): ObjectPermissionsWithObjectMetadataId => {
+  const objectPermissionsByObjectMetadataId = useAtomStateValue(
+    objectPermissionsByObjectMetadataIdSelector,
+  );
 
-  return useMemo(() => {
-    return getObjectPermissionsForObject(
-      objectPermissionsByObjectMetadataId,
-      objectMetadataId,
-    );
-  }, [objectPermissionsByObjectMetadataId, objectMetadataId]);
+  return useMemo(
+    () =>
+      getObjectPermissionsForObject(
+        objectPermissionsByObjectMetadataId,
+        objectMetadataId,
+      ),
+    [objectPermissionsByObjectMetadataId, objectMetadataId],
+  );
 };

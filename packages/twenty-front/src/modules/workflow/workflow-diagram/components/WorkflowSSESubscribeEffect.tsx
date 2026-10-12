@@ -31,8 +31,7 @@ export const WorkflowSSESubscribeEffect = ({
     setShouldWorkflowRefetchRequest(true);
   }, [setShouldWorkflowRefetchRequest]);
 
-  // Subset of the workflow query the page already runs, so the version ids
-  // are served from the Apollo cache without an extra request.
+  // Subset of the page's workflow query, so version ids come from the Apollo cache
   const { record: workflowWithVersionIds } = useFindOneRecord<{
     __typename: string;
     id: string;
@@ -61,11 +60,7 @@ export const WorkflowSSESubscribeEffect = ({
     onSseReconnected: requestWorkflowRefetch,
   });
 
-  // Creations cover new draft versions; updates cover step and trigger edits
-  // on the current draft (the AI chat, another user, another tab). Local
-  // workflow mutations do not dispatch these events, only SSE deliveries do,
-  // and refetching on an own-persist echo reseeds the diagram with the state
-  // it already shows.
+  // Local mutations do not dispatch these events, so this only follows remote edits (AI chat, other users or tabs)
   const handleWorkflowVersionOperationBrowserEvent = useCallback(
     (detail: ObjectRecordOperationBrowserEventDetail) => {
       if (detail.operation.type === 'create-one') {

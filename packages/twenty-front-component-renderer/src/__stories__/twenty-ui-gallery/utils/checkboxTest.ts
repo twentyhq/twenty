@@ -1,9 +1,7 @@
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 export const checkboxTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -35,10 +33,21 @@ export const checkboxTest: TwentyUiGalleryPlayFunction = async ({
   expect(errorHandler).not.toHaveBeenCalled();
 
   await userEvent.click(checkbox);
-  await expectSandboxErrors({
-    requiredErrors: [SANDBOX_ERROR_PATTERNS.POINTER_EVENT_CONSTRUCTOR],
-  });
-  expect(canvas.getByRole('status')).toHaveTextContent(
-    'Selection: unselected; Changes: 0',
+  await waitFor(() =>
+    expect(canvas.getByRole('status')).toHaveTextContent(
+      'Selection: selected; Changes: 1',
+    ),
   );
+  expect(checkbox).toBeChecked();
+
+  await userEvent.click(uncontrolled);
+  await waitFor(() => expect(uncontrolled).not.toBeChecked());
+  expect(canvas.getByRole('status')).toHaveTextContent(
+    /Composition: (click|change)\/true/,
+  );
+  expect(checkbox).toHaveAttribute('data-active', 'true');
+  const customPart = checkbox.querySelector('[data-active]');
+  expect(customPart).toHaveAttribute('data-active', 'true');
+  expect(canvas.getByText('Mixed selection')).toBeVisible();
+  expect(errorHandler).not.toHaveBeenCalled();
 };

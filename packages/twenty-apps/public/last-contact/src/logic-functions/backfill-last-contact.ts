@@ -1,11 +1,32 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 import { compare } from 'semver'
 
+import {
+  BACKFILL_MAX_STALLED_RUNS,
+  BACKFILL_MIN_CALL_INTERVAL_MS,
+  BACKFILL_RATE_LIMITED_RESUME_DELAY_MS,
+  BACKFILL_RUN_BUDGET_MS,
+} from 'src/constants/backfill';
+import { MEETING_INSTALL_LOOKBACK_MS } from 'src/constants/meeting-schedule';
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { getBackfillBatchSize } from 'src/utils/backfill-settings';
-import { runLastContactBackfill } from 'src/utils/run-last-contact-backfill';
+import { applyMeetingInteractions } from 'src/utils/apply-meeting-interactions';
+import { collectPersonMeetingParticipants } from 'src/utils/collect-person-meeting-participants';
+import { createPacedClient } from 'src/utils/create-paced-client';
+import { executeWithRetry } from 'src/utils/execute-with-retry';
+import { scheduleUpcomingPersonMeetings } from 'src/utils/schedule-meetings';
+import {
+  type BackfillCursor,
+  runLastContactBackfill,
+} from 'src/utils/run-last-contact-backfill';
 import { isDefined } from 'twenty-sdk/utils';
+
+type BackfillPayload = InstallPayload & {
+  resumeFrom?: BackfillCursor;
+  stalledRunCount?: number;
+};
 
 const shouldRunPostInstall = ({
   previousVersion,
@@ -22,34 +43,79 @@ const shouldRunPostInstall = ({
   return false
 }
 
-const handler = async ({
-   previousVersion,
-   newVersion
-}: InstallPayload): Promise<object> => {
-  if(!shouldRunPostInstall({
-    previousVersion,
-    newVersion
-  })) {
-    console.log('Post install skipped');
+const handler = async (payload: BackfillPayload): Promise<object> => {
+  const deadlineMs = Date.now() + BACKFILL_RUN_BUDGET_MS;
+  const client = createPacedClient(
+    new CoreApiClient(),
+    BACKFILL_MIN_CALL_INTERVAL_MS,
+  );
+  const { resumeFrom } = payload;
 
-    return {}
+  if (!isDefined(resumeFrom)) {
+    await scheduleUpcomingPersonMeetings(client);
+
+    const recentlyStartedParticipants = await collectPersonMeetingParticipants(
+      client,
+      { from: new Date(Date.now() - MEETING_INSTALL_LOOKBACK_MS), to: new Date() },
+    );
+
+    await applyMeetingInteractions(client, recentlyStartedParticipants);
+
+    if(!shouldRunPostInstall(payload)) {
+      console.log('Post install skipped');
+
+      return {};
+    }
+
+    console.log(
+      'Backfill params',
+      JSON.stringify({ batchSize: getBackfillBatchSize() }),
+    );
+  }
+
+  const { phases, pause } = await runLastContactBackfill(client, {
+    resumeFrom,
+    deadlineMs,
+  });
+
+  if (!isDefined(pause)) {
+    return { outcome: 'completed', phases };
+  }
+
+  const hasStalled =
+    pause.reason === 'rate-limited' && phases.every(({ count }) => count === 0);
+  const stalledRunCount = hasStalled ? (payload.stalledRunCount ?? 0) + 1 : 0;
+
+  if (stalledRunCount >= BACKFILL_MAX_STALLED_RUNS) {
+    throw new Error(
+      `Backfill stopped: ${stalledRunCount} runs in a row failed before finishing a batch at ${JSON.stringify(pause.resumeFrom)}`,
+    );
   }
 
   console.log(
-    'Backfill params',
-    JSON.stringify({ batchSize: getBackfillBatchSize() }),
+    'Backfill paused',
+    JSON.stringify({ reason: pause.reason, resumeFrom: pause.resumeFrom }),
   );
 
-  const phases = await runLastContactBackfill(new CoreApiClient());
+  await executeWithRetry(() =>
+    enqueueJobs({
+      logicFunctionUniversalIdentifier:
+        BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      jobs: [{ payload: { resumeFrom: pause.resumeFrom, stalledRunCount } }],
+      ...(pause.reason === 'rate-limited'
+        ? { delayMs: BACKFILL_RATE_LIMITED_RESUME_DELAY_MS }
+        : {}),
+    }),
+  );
 
-  return { outcome: 'completed', phases };
+  return { outcome: 'paused', phases, resumeFrom: pause.resumeFrom };
 };
 
 export default definePostInstallLogicFunction({
   universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-last-contact',
   description:
-    'Backfills last-contact fields on people, then opportunities, then companies after installation, one batch of records at a time within this run.',
+    'Schedules upcoming meetings, then backfills last-contact fields on people, then opportunities, then companies after installation, one batch of records at a time at a paced call rate. A run that reaches its time budget or keeps getting rate limited enqueues itself to resume from where it stopped, and the backfill stops after 5 runs in a row fail before finishing a batch.',
   timeoutSeconds: 900,
   shouldRunOnVersionUpgrade: true,
   handler,

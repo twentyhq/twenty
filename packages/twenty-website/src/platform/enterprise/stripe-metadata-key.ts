@@ -6,4 +6,7 @@ export const STRIPE_METADATA_KEY = {
   DEV_SERVER_ID: 'devServerId',
   DEV_SERVER_LAST_SEEN_AT: 'devServerLastSeenAt',
   RELEASE_TIMESTAMPS: 'releaseTimestamps',
+  TRIAL_SERVER_ID: 'trialServerId',
+  TRIAL_CARD_FINGERPRINT: 'trialCardFingerprint',
+  PRIOR_TRIAL_SUBSCRIPTION_ID: 'priorTrialSubscriptionId',
 } as const;

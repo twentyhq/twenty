@@ -7,7 +7,7 @@ exports[`Application file upload reservation should fail when applicationUnivers
     "subCode": "APPLICATION_NOT_FOUND",
     "userFriendlyMessage": "Application not found.",
   },
-  "message": "Application not found in workspace.",
+  "message": "No registration found for "<applicationUniversalIdentifier>". Create one first with createApplicationRegistration.",
   "name": "NotFoundError",
 }
 `;
@@ -16,9 +16,10 @@ exports[`Application file upload reservation should fail when applicationUnivers
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "applicationUniversalIdentifier should not be empty",
+  "message": "Application target "applicationUniversalIdentifier" must be a UUID",
   "name": "UserInputError",
 }
 `;

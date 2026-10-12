@@ -26,9 +26,11 @@ export const getActionIcon = (actionType: WorkflowActionType) => {
     case 'LOGIC_FUNCTION':
       return 'IconFunction';
     case 'FORM':
+    case 'SEND_CHAT_MESSAGE':
       return HUMAN_INPUT_ACTIONS.find((item) => item.type === actionType)?.icon;
     case 'ITERATOR':
     case 'DELAY':
+    case 'WAIT_FOR_EVENT':
     case 'FILTER':
     case 'IF_ELSE':
       return FLOW_ACTIONS.find((item) => item.type === actionType)?.icon;

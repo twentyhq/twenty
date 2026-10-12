@@ -19,8 +19,6 @@ const mockUseFileUpload = useFileUpload as jest.Mock;
 const buildAttachment = (id: string): EmailAttachment =>
   ({ id, name: `${id}.pdf` }) as EmailAttachment;
 
-// Captures the onUpload callback the hook hands to the file picker, so a test
-// can drive an upload the way the picker would.
 const setup = (uploadEmailAttachment: jest.Mock) => {
   let triggerUpload: ((files: File[]) => Promise<void>) | undefined;
 
@@ -93,8 +91,6 @@ describe('useAttachEmailFiles', () => {
 
     const appendToPreviousFiles = onFilesAttached.mock.calls[0][0];
 
-    // The setter is called with an updater, so whatever the list holds when the
-    // upload settles is what gets appended to.
     expect(typeof appendToPreviousFiles).toBe('function');
     expect(appendToPreviousFiles([buildAttachment('kept')])).toEqual([
       buildAttachment('kept'),

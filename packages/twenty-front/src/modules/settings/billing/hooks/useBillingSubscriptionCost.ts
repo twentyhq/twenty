@@ -4,8 +4,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 import { findBaseProductSubscriptionItem } from '@/settings/billing/utils/findBaseProductSubscriptionItem';
 
-// Centralizes the monthly/yearly bill breakdown so the subscription card and
-// the add-credits selector compute the same numbers from a single source.
 export const useBillingSubscriptionCost = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const subscription = currentWorkspace?.currentBillingSubscription;
@@ -18,11 +16,8 @@ export const useBillingSubscriptionCost = () => {
 
   const seats = baseProductSubscriptionItem?.quantity;
 
-  // Amounts come from the subscription's own prices rather than the catalog:
-  // superseded prices keep billing the workspaces already on them, so a
-  // workspace would otherwise be shown a total it is not charged. Per-seat is
-  // expressed at the subscription interval (full yearly amount for yearly
-  // subscriptions), so subtotals match the actual charge.
+  // Subscription prices, not the catalog: superseded prices keep billing the workspaces on them.
+  // Per-seat is per subscription interval (a full year for yearly), so subtotals match the charge.
   const perSeatAmountCents = baseProductSubscriptionItem?.unitAmount;
 
   const seatsSubtotalCents =

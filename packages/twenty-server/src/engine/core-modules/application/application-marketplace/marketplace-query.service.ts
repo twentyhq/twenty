@@ -19,13 +19,13 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 
 @Injectable()
 export class MarketplaceQueryService {
   constructor(
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationService: ApplicationService,
@@ -73,7 +73,7 @@ export class MarketplaceQueryService {
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration =
-      await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
         universalIdentifier,
       );
 

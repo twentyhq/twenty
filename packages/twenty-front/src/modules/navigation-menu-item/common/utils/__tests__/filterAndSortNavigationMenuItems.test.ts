@@ -62,6 +62,30 @@ describe('filterAndSortNavigationMenuItems', () => {
     ).toEqual([workflowRecordItem]);
   });
 
+  it('hides chat record items, which the chat menu lists', () => {
+    const chatObjectMetadataItem = {
+      id: 'chat-metadata-id',
+      nameSingular: 'agentChatThread',
+      isActive: true,
+    } as EnrichedObjectMetadataItem;
+    const chatRecordItem = {
+      ...workflowRecordItem,
+      id: 'chat-favorite-id',
+      targetRecordId: 'chat-record-id',
+      targetObjectMetadataId: 'chat-metadata-id',
+      targetRecordIdentifier: { id: 'chat-record-id', labelIdentifier: 'Chat' },
+    } as NavigationMenuItem;
+
+    expect(
+      filterAndSortNavigationMenuItems(
+        [chatRecordItem],
+        [],
+        [chatObjectMetadataItem],
+        false,
+      ),
+    ).toEqual([]);
+  });
+
   it('keeps other objects record items when the workflow core index page is enabled', () => {
     const personRecordItem = {
       id: 'person-favorite-id',

@@ -14,10 +14,6 @@ import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSwitch = styled(Switch)`
-  &[data-centered] {
-    align-self: center;
-  }
-
   &[data-advanced-mode] {
     color: ${themeCssVariables.color.yellow};
   }
@@ -58,7 +54,6 @@ type SettingsOptionCardContentSwitchProps = {
   divider?: boolean;
   disabled?: boolean;
   advancedMode?: boolean;
-  switchCentered?: boolean;
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
@@ -70,7 +65,6 @@ export const SettingsOptionCardContentSwitch = ({
   divider,
   disabled = false,
   advancedMode = false,
-  switchCentered = true,
   checked,
   onChange,
 }: SettingsOptionCardContentSwitchProps) => {
@@ -105,7 +99,6 @@ export const SettingsOptionCardContentSwitch = ({
             disabled={disabled}
             size="sm"
             data-advanced-mode={advancedMode || undefined}
-            data-centered={switchCentered || undefined}
           />
         </StyledSettingsCardSwitchButtonContainer>
       </StyledSettingsCardSwitchContent>

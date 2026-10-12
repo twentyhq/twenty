@@ -47,6 +47,14 @@ describe('useActiveNavigationDrawerMode', () => {
     expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
   });
 
+  it('is the AI mode on the inbox page', () => {
+    const { result } = renderActiveNavigationDrawerMode({
+      pathname: '/inbox',
+    });
+
+    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+  });
+
   it('is the AI mode when the chat history is open on another page', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/objects/people',

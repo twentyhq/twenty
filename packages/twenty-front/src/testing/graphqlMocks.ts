@@ -18,6 +18,7 @@ import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getP
 import { BILLING_PORTAL_SESSION } from '@/settings/billing/graphql/queries/billingPortalSession';
 import { GET_RESOURCE_CREDIT_USAGE } from '@/settings/billing/graphql/queries/getResourceCreditUsage';
 import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
+import { GET_ROLE } from '@/settings/roles/graphql/queries/getRoleQuery';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
@@ -57,8 +58,6 @@ const flatTaskRecords = mockedTaskRecords.map((record) =>
   getRecordFromRecordNode<Task>({ recordNode: record }),
 );
 
-// Wraps raw server-fetched records (which already have correct field shapes)
-// into a GraphQL connection response structure.
 const wrapRecordsAsConnection = (
   objectNameSingular: string,
   records: Record<string, unknown>[],
@@ -529,6 +528,15 @@ export const graphqlMocks = {
         data: {
           getRoles: mockedRoles,
           getPermissionFlags: [],
+        },
+      });
+    }),
+    graphql.query(getOperationName(GET_ROLE) ?? '', ({ variables }) => {
+      const role = mockedRoles.find((role) => role.id === variables.id);
+
+      return HttpResponse.json({
+        data: {
+          getRole: role ?? null,
         },
       });
     }),

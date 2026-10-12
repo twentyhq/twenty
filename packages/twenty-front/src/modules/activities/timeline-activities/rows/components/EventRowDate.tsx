@@ -7,9 +7,9 @@ import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
+import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 
 const StyledEventRowDate = styled.div`
   @media (max-width: ${MOBILE_VIEWPORT}px) {

@@ -1,3 +1,4 @@
+import { HTTPMethod } from 'twenty-shared/types';
 import request from 'supertest';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -24,7 +25,7 @@ const ECHO_HEADERS_BUILT_HANDLER_CODE = `export const main = async (event) => ev
 
 const echoHeadersRouteTriggerSettings = {
   path: '/echo-headers-route',
-  httpMethod: 'GET' as const,
+  httpMethod: HTTPMethod.GET,
   isAuthRequired: true,
   forwardedRequestHeaders: [CUSTOM_HEADER_NAME],
 };

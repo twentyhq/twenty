@@ -9,8 +9,7 @@ import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-to
 
 const CREDIT_AVAILABILITY_TIMEOUT_MS = 5_000;
 
-// A fresh object per call: the returned value is handed to app code, and a
-// shared constant could be mutated by one caller and observed by the next.
+// A fresh object per call, since app code could mutate a shared constant
 const available = (): CreditAvailability => ({ hasAvailableCredits: true });
 
 const parseCreditAvailability = (body: unknown): CreditAvailability | null => {
@@ -40,15 +39,7 @@ const parseCreditAvailability = (body: unknown): CreditAvailability | null => {
   return null;
 };
 
-// Asks whether the workspace can still spend, so an app can stop before doing
-// expensive work rather than finding out when a downstream call it did not
-// write throws. Mirrors the gate the platform applies to AI work and outbound
-// email.
-//
-// Fails open, like the platform's own usage read: a timeout, an unreachable
-// server or an unparseable body reports credits available rather than stopping
-// an app over an infrastructure hiccup. An app must not treat this as an
-// authorization decision, only as a hint worth honouring.
+// Fails open on timeouts or bad responses: a hint before expensive work, never an authorization decision
 export const getCreditAvailability = async (): Promise<CreditAvailability> => {
   const apiUrl = process.env[DEFAULT_API_URL_NAME];
   const token = getApplicationAccessToken();

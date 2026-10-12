@@ -17,9 +17,9 @@ import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage
 import { buildCustomQuota } from 'src/engine/core-modules/usage-limit/utils/build-custom-quota.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
-import { isQuotaMeter } from 'src/engine/core-modules/usage-limit/utils/is-quota-meter.util';
 import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/normalize-spender-id.util';
 import { groupSpenderIdsByType } from 'src/engine/core-modules/usage-limit/utils/group-spender-ids-by-type.util';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -64,11 +64,9 @@ export class UsageQuotaConsumptionService {
   }): Promise<UsageQuotaScopeConsumption | null> {
     const periodUnit = scope.periodUnit;
 
-    if (!isAnchoredPeriodUnit(periodUnit) || !isQuotaMeter(scope.meter)) {
+    if (!isAnchoredPeriodUnit(periodUnit)) {
       return null;
     }
-
-    const meter = scope.meter;
 
     const period = await this.usagePeriodService.findCurrentPeriod({
       workspaceId,
@@ -79,12 +77,15 @@ export class UsageQuotaConsumptionService {
       return null;
     }
 
+    const isCreditLimit = scope.unit === UsageUnit.CREDIT;
+
     try {
       const totals =
         await this.usageAnalyticsService.getConsumptionTotalsForScope({
           workspaceId,
           resourceType: scope.resourceType,
           operationType: scope.operationType,
+          unit: isCreditLimit ? null : scope.unit,
           spenderType: scope.spenderType,
           spenderId: normalizeSpenderId(scope.spenderId ?? ''),
           periodStart: period.periodStart,
@@ -93,7 +94,9 @@ export class UsageQuotaConsumptionService {
         });
 
       return {
-        consumedValue: Number(totals[meter]),
+        consumedValue: Number(
+          isCreditLimit ? totals.creditsUsedMicro : totals.quantity,
+        ),
         periodStart: period.periodStart,
         periodEnd: period.periodEnd,
       };

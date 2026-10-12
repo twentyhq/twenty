@@ -38,8 +38,7 @@ export const waitForSubscriptionRecovery = async <TWorkspaceBilling>({
       return { outcome: 'recovered', workspaceBilling };
     }
 
-    // Only a definite status that cannot recover ends the wait early, no
-    // status at all is not a verdict on the payment
+    // A missing status is no verdict on the payment, so only a definite unrecoverable one ends the wait
     if (
       isDefined(subscriptionStatus) &&
       !isSubscriptionPaymentOverdue(subscriptionStatus)

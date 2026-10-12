@@ -22,7 +22,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isAiModePath } from '~/utils/isAiModePath';
 
 export const useSwitchNavigationDrawerMode = () => {
   const isMobile = useIsMobile();
@@ -33,7 +33,7 @@ export const useSwitchNavigationDrawerMode = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const isSettingsDrawer = useIsSettingsDrawer();
   const isSettingsPage = useIsSettingsPage();
-  const isAiChatPage = isAiChatPath(location.pathname);
+  const isAiModePage = isAiModePath(location.pathname);
 
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
   const navigationDrawerExpandedMemorized = useAtomStateValue(
@@ -79,7 +79,7 @@ export const useSwitchNavigationDrawerMode = () => {
       return;
     }
 
-    if (isAiChatPage) {
+    if (isAiModePage) {
       returnFromExpandedAiChat();
     }
   };
@@ -90,8 +90,7 @@ export const useSwitchNavigationDrawerMode = () => {
     switchToNewChat();
   };
 
-  // The AI mode also covers the chat history listed next to another page, so it
-  // is the chat page rather than the active mode that makes a click a no-op.
+  // AI mode also lists chat history beside other pages, so only the chat and inbox pages make a click a no-op.
   const switchNavigationDrawerMode = (mode: NavigationDrawerActiveTab) => {
     switch (mode) {
       case NAVIGATION_DRAWER_TABS.NAVIGATION_MENU:
@@ -103,16 +102,13 @@ export const useSwitchNavigationDrawerMode = () => {
         switchToNavigationMenu();
         break;
       case NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY:
-        if (isAiChatPage) {
+        if (isAiModePage) {
           return;
         }
         switchToAiChat();
         break;
       case NAVIGATION_DRAWER_TABS.SETTINGS:
-        // The mobile settings drawer outlives the route that opened it, a
-        // browser back out of settings for one, so the page rather than the
-        // drawer says whether there is anywhere left to go. Desktop has no
-        // such split: there the two are the same thing.
+        // The mobile settings drawer can outlive its route (browser back), so check the page, not the drawer.
         if (isSettingsPage) {
           return;
         }

@@ -16,7 +16,6 @@ export const useActiveFieldMetadataItems = ({
             objectMetadataItem.readableFields.filter(
               (fieldMetadata) =>
                 isActiveFieldMetadataItem({ fieldMetadata }) ||
-                // Allow label identifier field even if it's a system field
                 fieldMetadata.id ===
                   objectMetadataItem.labelIdentifierFieldMetadataId,
             ),

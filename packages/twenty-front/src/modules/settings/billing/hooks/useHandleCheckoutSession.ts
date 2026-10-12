@@ -1,8 +1,11 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useToast } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   type BillingPlanKey,
   type SubscriptionInterval,
@@ -47,11 +50,19 @@ export const useHandleCheckoutSession = ({
         return;
       }
       redirect(data.checkoutSession.url);
-    } catch {
-      enqueueToast({
-        variant: 'error',
-        children: t`Checkout session error. Please retry or contact Twenty team`,
-      });
+    } catch (error) {
+      const toastOptions =
+        CombinedGraphQLErrors.is(error) &&
+        isDefined(error.errors[0]?.extensions?.userFriendlyMessage)
+          ? getToastOptionsFromError({ error })
+          : undefined;
+
+      enqueueToast(
+        toastOptions ?? {
+          variant: 'error',
+          children: t`Checkout session error. Please retry or contact Twenty team`,
+        },
+      );
     } finally {
       setIsSubmitting(false);
     }

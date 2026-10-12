@@ -33,8 +33,7 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
     return computePermissionIntersection(permissionsPerRole);
   }
 
-  // Multi-role union is unimplemented and every producer emits one role, so
-  // taking the first is exact rather than lossy.
+  // Multi-role union is unimplemented and every producer emits one role, so taking the first is exact
   if ('unionOf' in rolePermissionConfig) {
     const roleId = rolePermissionConfig.unionOf[0];
 

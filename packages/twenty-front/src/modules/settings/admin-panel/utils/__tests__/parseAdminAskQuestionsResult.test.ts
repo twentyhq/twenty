@@ -25,6 +25,41 @@ const buildPart = (
   }) as AdminChatThreadMessagePart;
 
 describe('parseAdminAskQuestionsResult', () => {
+  it('should read an answered ask_question call as a list of one', () => {
+    expect(
+      parseAdminAskQuestionsResult(
+        buildPart({
+          type: 'tool-ask_question',
+          toolName: 'ask_question',
+          toolOutput: {
+            success: true,
+            result: {
+              question: QUESTIONS[0],
+              status: 'answered',
+              answer: { selectedOptionIndices: [1] },
+            },
+          },
+        }),
+      ),
+    ).toEqual({
+      questions: QUESTIONS,
+      status: 'answered',
+      answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
+    });
+  });
+
+  it('should read a pending ask_question call from its input', () => {
+    expect(
+      parseAdminAskQuestionsResult(
+        buildPart({
+          type: 'tool-ask_question',
+          toolName: 'ask_question',
+          toolInput: QUESTIONS[0],
+        }),
+      ),
+    ).toEqual({ questions: QUESTIONS, status: 'pending' });
+  });
+
   it('should parse an answered tool output', () => {
     const result = parseAdminAskQuestionsResult(
       buildPart({

@@ -1,3 +1,4 @@
+import { type WorkflowManifest } from './workflowManifestType';
 import { type AppLocale } from '@/translations';
 
 import { type AgentManifest } from './agentManifestType';
@@ -33,6 +34,7 @@ export type TranslationsManifest = Partial<
 >;
 
 export type Manifest = {
+  workflows?: WorkflowManifest[];
   application: ApplicationManifest;
   objects: ObjectManifest[];
   fields: FieldManifest[];

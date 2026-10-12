@@ -221,8 +221,6 @@ describe('CookieSessionCsrfMiddleware', () => {
     expect(response.status).toHaveBeenCalledWith(403);
   });
 
-  // The middleware guards every route, so callers that never hold a session
-  // cookie must pass without needing a per-route exclusion.
   describe('callers that carry no session cookie', () => {
     it('should allow a third-party webhook POST sending no Origin', () => {
       const request = buildRequest({

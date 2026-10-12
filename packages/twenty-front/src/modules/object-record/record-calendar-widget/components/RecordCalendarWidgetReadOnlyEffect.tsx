@@ -16,13 +16,11 @@ export const RecordCalendarWidgetReadOnlyEffect = ({
     recordCalendarId,
   );
 
-  // Synchronized before paint so read-only widgets never flash (or
-  // briefly accept interaction on) their editable controls.
+  // Layout effect so read-only widgets never flash their editable controls.
   useLayoutEffect(() => {
     setIsRecordCalendarReadOnly(isReadOnly);
 
-    // Reset to the default on unmount so the flag cannot outlive the
-    // widget and leak into a later calendar mounted on the same instance id.
+    // Reset so the flag cannot leak into a later calendar on the same instance id.
     return () => {
       setIsRecordCalendarReadOnly(false);
     };

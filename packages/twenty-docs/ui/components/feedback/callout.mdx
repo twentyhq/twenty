@@ -1,0 +1,67 @@
+---
+title: Callout
+description: Feedback with node content, actions, and caller-owned dismissal.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CalloutReference from '/snippets/ui/generated/components/feedback/callout.mdx';
+
+`Callout` combines title, description, icon, and action nodes. Use `status` for `neutral`, `info`, `success`, `warning`, or `error`. It defaults to `info` and supports the `soft` appearance. The status selects a gray, blue, green, orange, or red palette; `color` overrides that palette without changing the meaning.
+
+```tsx
+import { useState } from 'react';
+import { Callout } from 'twenty-ui/components/feedback';
+import { IconAlertTriangle } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ImportNotice = ({ onReview }: { onReview: () => void }) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return (
+    <>
+      {isVisible && (
+        <Callout
+          status="warning"
+          title="Some records need attention"
+          description="Review the missing email addresses before importing."
+          icon={<IconAlertTriangle size={16} aria-hidden="true" />}
+          action={
+            <Callout.Action onClick={onReview}>
+              Review records
+            </Callout.Action>
+          }
+          onDismiss={() => setIsVisible(false)}
+          closeLabel="Dismiss import notice"
+        />
+      )}
+      <Button onClick={() => setIsVisible(true)}>Show notice</Button>
+    </>
+  );
+};
+```
+
+## Dismissal and labels
+
+Passing `onDismiss` exposes an accessible close button. Each pointer or keyboard activation calls it once. The callout remains rendered until its caller hides it. Omit `onDismiss` for a persistent message. `closeLabel` defaults to `Close`.
+
+Your application owns the content, actions, accessible names, and translations. Use `Callout.Action` for a small ghost button with regular font weight. It accepts Button props, including link attributes, disabled state, refs, and custom rendering; size and appearance are fixed. The action slot also accepts custom buttons, links, disabled controls, or multiple nodes. The default help icon is decorative; pass `icon={null}` to omit it or supply a node with appropriate accessible semantics. Twenty UI does not require an i18n provider.
+
+## Native integration
+
+Native attributes, `className`, `style`, and `ref` target the root `div`. Use `render` to compose a different root element or a callback receiving the root props and `{ status, variant, color }`. `title` and `description` are content slots. `fullWidth` removes the default 512px maximum width.
+
+The component adds no live-region role or announcements. Supply native `role`, `aria-live`, and other accessible attributes when the surrounding workflow requires them.
+
+## Migration
+
+Replace the previous semantic `variant` with `status`, and constructor `Icon` with an `icon` node. Replace `{ label, onClick }` action objects with `Callout.Action` or custom controls. Replace `isClosable` and `onClose` with `onDismiss`, and conditionally render the callout in the caller when dismissal should hide it. Existing translated content and action labels stay in the application.
+
+<StoryEmbed
+  storyId="ui-feedback-callout--default"
+  title="Callout example"
+  height={280}
+/>
+
+## Props
+
+<CalloutReference />

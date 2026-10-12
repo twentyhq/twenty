@@ -165,7 +165,6 @@ export class FlatSkillValidatorService {
       });
     }
 
-    // If only isActive is being updated on a standard skill, allow it
     if (
       isTwentyStandardSkill &&
       isDefined(isActiveUpdate) &&

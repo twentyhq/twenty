@@ -42,7 +42,7 @@ describe('RouteTriggerController', () => {
 
     handle.mockResolvedValue({
       response: { statusCode: 200, headers: {}, body: { ok: true } },
-      isIsolatedOrigin: false,
+      isPublicDomain: false,
     });
 
     await controller.post(request, response);
@@ -64,7 +64,7 @@ describe('RouteTriggerController', () => {
         headers: { 'Content-Type': 'text/html', 'Cache-Control': 'no-store' },
         body: '<h1>Hi</h1>',
       },
-      isIsolatedOrigin: false,
+      isPublicDomain: false,
     });
 
     await controller.get({} as never, response);
@@ -95,7 +95,7 @@ describe('RouteTriggerController', () => {
         },
         body: '<h1>Hi</h1>',
       },
-      isIsolatedOrigin: false,
+      isPublicDomain: false,
     });
 
     await controller.get({} as never, response);
@@ -115,7 +115,7 @@ describe('RouteTriggerController', () => {
     expect(response.setHeader).not.toHaveBeenCalledWith('X-Custom', 'foo');
   });
 
-  it('forwards every header when the request is served from an isolated origin', async () => {
+  it('forwards every header when the request is served from a public domain', async () => {
     const response = createResponseMock();
 
     handle.mockResolvedValue({
@@ -131,7 +131,7 @@ describe('RouteTriggerController', () => {
         },
         body: '<h1>Hi</h1>',
       },
-      isIsolatedOrigin: true,
+      isPublicDomain: true,
     });
 
     await controller.get({} as never, response);
@@ -160,7 +160,7 @@ describe('RouteTriggerController', () => {
 
     handle.mockResolvedValue({
       response: { statusCode: 200, headers: {}, body: null },
-      isIsolatedOrigin: false,
+      isPublicDomain: false,
     });
 
     await controller.get({} as never, response);
@@ -175,7 +175,7 @@ describe('RouteTriggerController', () => {
 
     handle.mockResolvedValue({
       response: { statusCode: 200, headers: {}, body: 'plain' },
-      isIsolatedOrigin: false,
+      isPublicDomain: false,
     });
 
     await controller.get({} as never, response);
@@ -192,7 +192,7 @@ describe('RouteTriggerController', () => {
 
     handle.mockResolvedValue({
       response: { statusCode: 200, headers: {}, body: { ok: true } },
-      isIsolatedOrigin: false,
+      isPublicDomain: false,
     });
 
     await controller.get({} as never, response);
@@ -209,7 +209,7 @@ describe('RouteTriggerController', () => {
         headers: { 'Content-Type': 'application/ld+json' },
         body: { ok: true },
       },
-      isIsolatedOrigin: false,
+      isPublicDomain: false,
     });
 
     await controller.get({} as never, response);

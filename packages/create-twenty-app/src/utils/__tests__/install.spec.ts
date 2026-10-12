@@ -6,9 +6,7 @@ type ExecCallback = (error: Error | null, stdout?: string) => void;
 
 jest.mock('child_process', () => ({ exec: jest.fn() }));
 
-// node's `exec` is overloaded and its widest overload does not accept this
-// callback shape, so take the mock from the module registry under the shape the
-// promisified call actually uses, rather than casting the imported binding.
+// node's `exec` overloads reject this callback shape, so take the mock typed as the promisified call uses it.
 const { exec: mockExec } = jest.requireMock<{
   exec: jest.Mock<void, [string, unknown, ExecCallback]>;
 }>('child_process');
@@ -53,9 +51,7 @@ const quarantineOutput = ({
 
 const APP_DIRECTORY = '/tmp/some-scaffolded-app';
 
-// The remediation is YAML the reader pastes into .yarnrc.yml, so assert it parses
-// rather than that it reads correctly: a scoped descriptor left unquoted looks
-// right in a substring check and is a YAML error in the file.
+// Parsed as YAML: an unquoted scoped descriptor passes a substring check but breaks .yarnrc.yml.
 const parseSuggestedYarnrc = (message: string) => {
   const lines = message.split('\n');
   const blockStart = lines.findIndex(
@@ -148,7 +144,6 @@ describe('install', () => {
     expect(parseSuggestedYarnrc(message)).toEqual({
       npmPreapprovedPackages: ['twenty-ui@2.41.0'],
     });
-    // Never advise lowering the gate itself.
     expect(message).not.toContain('npmMinimalAgeGate');
   });
 

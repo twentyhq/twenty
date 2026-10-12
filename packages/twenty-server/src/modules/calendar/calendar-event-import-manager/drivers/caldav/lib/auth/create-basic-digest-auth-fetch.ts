@@ -2,12 +2,6 @@ import DigestFetch from 'digest-fetch';
 import { getBasicAuthHeaders } from 'tsdav';
 import { isDefined } from 'twenty-shared/utils';
 
-/**
- * Decorates a base fetch with HTTP Basic + Digest authentication.
- *
- * Delegates RFC 7235 / RFC 7616 challenge parsing, hash computation,
- * and 401-then-retry orchestration to `digest-fetch`
- */
 export const createBasicDigestAuthFetch = (
   username: string,
   password: string,

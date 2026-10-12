@@ -7,8 +7,7 @@ export class IngestedAppMessageDTO {
   @Field()
   externalId: string;
 
-  // Stable across re-ingestion of the same externalId, so it is safe to hang
-  // timeline activities or app records off it.
+  // stable across re-ingestion, so safe to hang timeline activities or app records off
   @Field(() => UUIDScalarType)
   messageId: string;
 

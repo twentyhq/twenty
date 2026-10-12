@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
@@ -9,9 +10,10 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
@@ -36,8 +38,7 @@ const ORDER_BY_FIELD_BY_FIELD_NAME: Record<string, CoreWorkflowOrderByField> = {
   updatedAt: CoreWorkflowOrderByField.UPDATED_AT,
 };
 
-// Two refreshes racing each other would otherwise append the same page twice,
-// and the ids are what make the merge idempotent.
+// Merging by id keeps racing refreshes from appending the same page twice.
 const mergeFetchedCoreWorkflowPage = (
   previousResult: GetCoreWorkflowsQuery,
   { fetchMoreResult }: { fetchMoreResult: GetCoreWorkflowsQuery },
@@ -86,6 +87,8 @@ export const useCoreWorkflows = ({
     coreWorkflowsFilterSettingsState,
   );
 
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+
   const { userTimezone } = useUserTimezone();
   const filter = buildCoreWorkflowFilterInput({
     filterSettings: coreWorkflowsFilterSettings,
@@ -105,10 +108,16 @@ export const useCoreWorkflows = ({
         orderBy,
         orderByDirection,
         filter,
+        includeSystem: isAdvancedModeEnabled,
       },
     },
   );
   const connection = (data ?? previousData)?.coreWorkflows;
+
+  const coreWorkflows = useMemo(
+    () => connection?.edges.map((edge) => edge.node) ?? [],
+    [connection],
+  );
 
   const { enqueueToast } = useToast();
 
@@ -134,9 +143,7 @@ export const useCoreWorkflows = ({
 
   const loadedCount = connection?.edges.length ?? 0;
 
-  // A plain refetch re-runs the first page and drops what fetchMore accumulated,
-  // so ask for as many rows as are displayed and page back up to them when that
-  // is more than one request may return.
+  // A plain refetch drops fetchMore pages, so re-request every displayed row.
   const refetchLoadedCoreWorkflows = useCallback(async () => {
     const targetCount = Math.max(loadedCount, CORE_WORKFLOWS_PAGE_SIZE);
 
@@ -164,12 +171,13 @@ export const useCoreWorkflows = ({
   }, [fetchMore, loadedCount, refetch]);
 
   return {
-    coreWorkflows: connection?.edges.map((edge) => edge.node) ?? [],
+    coreWorkflows,
     totalCount: connection?.totalCount ?? 0,
     hasNextPage: connection?.pageInfo.hasNextPage ?? false,
     fetchNextPage,
     refetchLoadedCoreWorkflows,
     loading,
+    isInitialLoading: loading && !isDefined(connection),
     error,
   };
 };

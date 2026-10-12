@@ -225,11 +225,7 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
               ),
           );
 
-        // Dropping a column drops every physical index on it, so an index on a
-        // deleted field must go whatever its flags or owner. Join-column indexes
-        // backfilled before isSystemSideEffect existed are still flagged false,
-        // and skipping them left field-less indexMetadata rows whose name then
-        // collided when the field was recreated.
+        // dropping a column drops its physical indexes, so delete their metadata whatever the flags or owner
         const isEngineOwnedIndexOfObject =
           belongsToObject && flatIndexMetadata.isSystemSideEffect;
 

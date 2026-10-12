@@ -31,8 +31,7 @@ export class AdminPanelAiProviderService {
     private readonly defaultAiCatalogService: DefaultAiCatalogService,
   ) {}
 
-  // Counting here rather than reading the cached verdict keeps the admin panel
-  // exact, and refreshes what model resolution will use on its next read.
+  // Recomputed rather than cached so the admin panel is exact and model resolution refreshed
   async getCustomAiProviderAccess(): Promise<CustomAiProviderAccess> {
     return this.customAiProviderAccessService.computeAccess();
   }
@@ -84,8 +83,6 @@ export class AdminPanelAiProviderService {
     return masked;
   }
 
-  // Both configs arrive as untyped JSON from the GraphQL layer, so they are
-  // taken as unknown and given their shape by the schemas below.
   async addProvider({
     providerName,
     providerConfig,
@@ -99,9 +96,7 @@ export class AdminPanelAiProviderService {
       throw new UserInputError('Invalid provider name');
     }
 
-    // The GraphQL arg is untyped JSON, so an unsupported npm package would only
-    // surface later when the registry builds the provider, taking down model
-    // resolution for every provider on the instance.
+    // An invalid config would otherwise break model resolution for every provider on the instance
     const validatedProviderConfig =
       aiProviderConfigSchema.safeParse(providerConfig);
 
@@ -123,8 +118,7 @@ export class AdminPanelAiProviderService {
     return true;
   }
 
-  // Removal stays open so an instance that grows past the threshold can still
-  // clean up the providers it configured while it was under it.
+  // No access check so an instance past the threshold can still clean up its providers
   async removeProvider(providerName: string): Promise<boolean> {
     const customProviders = {
       ...this.twentyConfigService.get('AI_PROVIDERS'),

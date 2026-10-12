@@ -8,7 +8,7 @@ describe('getSyncErrorRecoveryHint', () => {
       'Application "x" is not installed in workspace "y". Install it first.',
     );
 
-    expect(hint).toContain('yarn twenty dev --once');
+    expect(hint).toContain('yarn twenty apply');
     expect(hint).toContain('register');
   });
 
@@ -17,7 +17,7 @@ describe('getSyncErrorRecoveryHint', () => {
       "Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020) failed",
     );
 
-    expect(hint).toContain('yarn twenty dev --once --dry-run');
+    expect(hint).toContain('yarn twenty plan');
     expect(hint).toContain('yarn twenty app:uninstall -y');
   });
 
@@ -26,7 +26,7 @@ describe('getSyncErrorRecoveryHint', () => {
       'Field with same universal identifier already exists in object',
     );
 
-    expect(hint).toContain('yarn twenty dev --once --dry-run');
+    expect(hint).toContain('yarn twenty plan');
   });
 
   it('returns undefined for an unrecognized error', () => {

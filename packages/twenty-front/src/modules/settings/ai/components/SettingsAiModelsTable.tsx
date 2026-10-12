@@ -8,12 +8,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Checkbox } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
+import { getModelIcon } from '@/ai/utils/getModelIcon';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -42,8 +42,7 @@ const StyledDeprecatedSuffix = styled.span`
   color: ${themeCssVariables.font.color.light};
 `;
 
-// An evaluation model cannot be chatted with or given to an agent, so a row
-// that looks like every other row would read as interchangeable with them.
+// Evaluation models can't chat or run agents, so their rows are badged apart.
 const StyledKindBadge = styled.span`
   background: ${themeCssVariables.background.transparent.light};
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -236,16 +235,19 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
 
       {anchorPrefix && hoveredModel && (
         <Tooltip.Root key={hoveredModel.modelId} open>
-          <Tooltip.Popup
-            anchor={hoveredRowRef}
-            side="top"
-            align="end"
-            sideOffset={8}
-            className={hoverCardTooltipClass}
-            maxWidth="320px"
-          >
-            <SettingsAiModelHoverCard model={hoveredModel} />
-          </Tooltip.Popup>
+          <Tooltip.Portal>
+            <Tooltip.Positioner
+              anchor={hoveredRowRef}
+              side="top"
+              align="end"
+              sideOffset={8}
+              style={{ maxWidth: '320px' }}
+            >
+              <Tooltip.Popup className={hoverCardTooltipClass}>
+                <SettingsAiModelHoverCard model={hoveredModel} />
+              </Tooltip.Popup>
+            </Tooltip.Positioner>
+          </Tooltip.Portal>
         </Tooltip.Root>
       )}
     </>

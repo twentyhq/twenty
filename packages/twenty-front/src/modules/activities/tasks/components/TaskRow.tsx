@@ -1,6 +1,8 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 
+import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
@@ -9,7 +11,6 @@ import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActiv
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 import { type Task } from '@/activities/types/Task';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -28,7 +29,9 @@ const StyledTaskBody = styled.div`
   max-width: calc(80% - ${themeCssVariables.spacing[2]});
   overflow: hidden;
   padding-bottom: 1px;
+  position: relative;
   text-overflow: ellipsis;
+  z-index: 1;
 `;
 
 const StyledTaskTitle = styled.div<{
@@ -68,7 +71,9 @@ const StyledRightSideContainer = styled.div`
 
 const StyledActivityTargetsContainer = styled.div`
   overflow: clip;
+  position: relative;
   width: 100%;
+  z-index: 1;
 `;
 
 const StyledPlaceholder = styled.div`
@@ -85,6 +90,8 @@ const StyledLeftSideContainer = styled.div`
 
 const StyledCheckboxContainer = styled.div`
   display: flex;
+  position: relative;
+  z-index: 1;
 `;
 
 export const TaskRow = ({ task }: { task: Task }) => {
@@ -109,6 +116,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
 
   return (
     <ActivityRow
+      label={isNonEmptyString(task.title) ? task.title : t`Task title`}
       onClick={() => {
         openRecordInSidePanel({
           recordId: task.id,
@@ -132,7 +140,10 @@ export const TaskRow = ({ task }: { task: Task }) => {
           {task.title || <StyledPlaceholder>{t`Task title`}</StyledPlaceholder>}
         </StyledTaskTitle>
         <StyledTaskBody>
-          <OverflowingTextWithTooltip text={body} />
+          <OverflowingTextWithTooltip
+            text={<LinkifiedText text={body} />}
+            tooltipContent={body}
+          />
         </StyledTaskBody>
       </StyledLeftSideContainer>
       <StyledRightSideContainer>
@@ -155,19 +166,13 @@ export const TaskRow = ({ task }: { task: Task }) => {
               maxWidth={200}
               isDisplayModeFixHeight
             >
-              <RecordFieldsScopeContextProvider
-                value={{
-                  scopeInstanceId: task.id,
-                }}
-              >
-                <StopPropagationContainer>
-                  <RecordFieldComponentInstanceContext.Provider
-                    value={{ instanceId: componentInstanceId }}
-                  >
-                    <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
-                  </RecordFieldComponentInstanceContext.Provider>
-                </StopPropagationContainer>
-              </RecordFieldsScopeContextProvider>
+              <StopPropagationContainer>
+                <RecordFieldComponentInstanceContext.Provider
+                  value={{ instanceId: componentInstanceId }}
+                >
+                  <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
+                </RecordFieldComponentInstanceContext.Provider>
+              </StopPropagationContainer>
             </FieldContextProvider>
           </StyledActivityTargetsContainer>
         }

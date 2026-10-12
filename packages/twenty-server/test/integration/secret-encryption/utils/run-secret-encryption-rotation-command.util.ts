@@ -33,11 +33,12 @@ const buildArgs = ({ site, batchSize, dryRun }: RotateArguments): string[] => {
 
 export const runSecretEncryptionRotationCommand = async (
   args: RotateArguments = {},
+  environmentOverrides: NodeJS.ProcessEnv = {},
 ): Promise<void> => {
   await new Promise<void>((resolve, reject) => {
     const child = spawn('node', [COMMAND_JS_PATH, ...buildArgs(args)], {
       cwd: TWENTY_SERVER_ROOT,
-      env: { ...process.env, NODE_ENV: 'test' },
+      env: { ...process.env, ...environmentOverrides, NODE_ENV: 'test' },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
 

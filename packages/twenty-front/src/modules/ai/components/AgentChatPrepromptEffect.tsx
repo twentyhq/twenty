@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { agentChatPrepromptState } from '@/ai/states/agentChatPrepromptState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
-import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -24,7 +24,7 @@ export const AgentChatPrepromptEffect = () => {
 
     const timeoutId = setTimeout(() => {
       if (mode === 'SEND') {
-        dispatchAgentChatSendMessageEvent();
+        dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
         dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
           content: '',
         });

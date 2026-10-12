@@ -280,12 +280,11 @@ export class MessageSuppressionService {
         }
 
         if (this.shouldEscalate(existing.reason, reason)) {
-          await suppressionRepository
-            .createQueryBuilder()
-            .where({ id: existing.id })
-            .update()
-            .set({ reason, source, providerEventId })
-            .execute();
+          await suppressionRepository.update(existing.id, {
+            reason,
+            source,
+            providerEventId,
+          });
         }
 
         return true;

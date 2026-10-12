@@ -12,7 +12,7 @@ it('serializes native workspace timestamps through the existing GraphQL Date sca
   const thread = {
     createdAt: timestamp,
     updatedAt: timestamp,
-    archivedAt: timestamp,
+    deletedAt: timestamp,
   } as AgentChatThreadWorkspaceEntity;
   const message = {
     createdAt: timestamp,
@@ -31,7 +31,11 @@ it('serializes native workspace timestamps through the existing GraphQL Date sca
     Array(6).fill(timestamp),
   );
   expect(
-    AgentChatResolver.prototype.deletedAt({ ...thread, archivedAt: null }),
+    AgentChatResolver.prototype.deletedAt({
+      ...thread,
+      deletedAt: null,
+      archivedAt: timestamp,
+    }),
   ).toBeNull();
   expect(
     AgentMessageResolver.prototype.processedAt({

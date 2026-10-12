@@ -32,11 +32,9 @@ export const DropdownSearchTargetEffect = ({
       attributes: true,
       attributeFilter: ['disabled', 'aria-disabled'],
     });
-    content.addEventListener('input', updateSearchTarget);
 
     return () => {
       observer.disconnect();
-      content.removeEventListener('input', updateSearchTarget);
       setSearchTargetId(undefined);
     };
   }, [content, setSearchTargetId]);

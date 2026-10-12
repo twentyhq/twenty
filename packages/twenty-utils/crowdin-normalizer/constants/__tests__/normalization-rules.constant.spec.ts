@@ -26,8 +26,6 @@ describe('NORMALIZATION_RULES', () => {
     ]);
   });
 
-  // Identifiers, links and code spans are an MDX concern; every other rule
-  // reads an ICU catalog and belongs to PO.
   it('runs every rule but the MDX-specific one against PO catalogs', () => {
     const mdxOnly = NORMALIZATION_RULES.filter(
       (rule) => !rule.formats.includes('po'),

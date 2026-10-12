@@ -2,7 +2,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type ObjectFieldManifest } from 'twenty-shared/application';
 import { TAG_COLORS } from 'twenty-shared/constants';
 import {
   isDefined,
@@ -10,6 +9,8 @@ import {
   isPlainObject,
   isTagColor,
 } from 'twenty-shared/utils';
+
+import { type ObjectFieldManifest } from '@/sdk/define/common/types/loose-shared-types.type';
 
 const getSelectOptionErrors = (field: ObjectFieldManifest): string[] => {
   if (!isFieldMetadataSelectKind(field.type) || !Array.isArray(field.options)) {
@@ -23,7 +24,11 @@ const getSelectOptionErrors = (field: ObjectFieldManifest): string[] => {
       ];
     }
 
-    if (!isDefined(option.color) || isTagColor(option.color)) {
+    if (
+      !('color' in option) ||
+      !isDefined(option.color) ||
+      isTagColor(option.color)
+    ) {
       return [];
     }
 

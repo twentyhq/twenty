@@ -1,4 +1,3 @@
-// Auth
 export { authLogin } from './login';
 export type { AuthLoginOptions } from './login';
 export { authLoginOAuth } from './login-oauth';
@@ -6,7 +5,6 @@ export type { AuthLoginOAuthOptions } from './login-oauth';
 export { authLogout } from './logout';
 export type { AuthLogoutOptions } from './logout';
 
-// App
 export { appBuild } from './build';
 export type { AppBuildOptions, AppBuildResult } from './build';
 export { appDeploy } from './deploy';
@@ -22,11 +20,9 @@ export type { AppPublishOptions, AppPublishResult } from './publish';
 export { appUninstall } from './uninstall';
 export type { AppUninstallOptions } from './uninstall';
 
-// Functions
 export { functionExecute } from './execute';
 export type { FunctionExecuteOptions } from './execute';
 
-// Server
 export { serverStart } from './server-start';
 export type { ServerStartOptions, ServerStartResult } from './server-start';
 export { serverUpgrade } from './server-upgrade';
@@ -45,13 +41,10 @@ export {
 export { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
 export { resolveHighestEngineVersion } from '@/cli/utilities/version/resolve-highest-engine-version';
 
-// Config
 export { ConfigService } from '@/cli/utilities/config/config-service';
 
-// Constants
 export { DEV_API_KEY, DEV_API_URL } from '@/cli/constants/dev-api-key';
 
-// Shared types and error codes
 export {
   APP_ERROR_CODES,
   AUTH_ERROR_CODES,

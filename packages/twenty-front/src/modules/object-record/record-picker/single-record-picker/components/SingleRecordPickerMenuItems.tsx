@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefined } from '@sniptt/guards';
@@ -24,7 +25,6 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export type SingleRecordPickerMenuItemsProps = {
   EmptyIcon?: IconComponent;
@@ -97,8 +97,7 @@ export const SingleRecordPickerMenuItems = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIds}
       focusId={focusId}
-      // The empty option leads the list, so preselecting it would make Enter
-      // detach the relation instead of picking a record.
+      // The empty option leads, so preselecting it would make Enter detach the relation.
       shouldPreselectFirstItem={!isDefined(emptyLabel)}
     >
       {emptyLabel && (
@@ -110,7 +109,7 @@ export const SingleRecordPickerMenuItems = ({
             onMorphItemSelected();
           }}
         >
-          <ListItem
+          <ListItemButton
             onClick={() => {
               setSingleRecordPickerSelectedId(undefined);
               onMorphItemSelected();
@@ -123,7 +122,7 @@ export const SingleRecordPickerMenuItems = ({
             startIcon={<SelectOptionIcon Icon={EmptyIcon} />}
           >
             {emptyLabel}
-          </ListItem>
+          </ListItemButton>
         </SelectableListItem>
       )}
       {singleRecordPickerShouldShowInitialLoading ? (

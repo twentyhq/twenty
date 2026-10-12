@@ -17,7 +17,8 @@ const WORKSPACE_SETTINGS_JSON = JSON.stringify(
 const handleChange = fn();
 
 const meta: Meta<typeof CodeEditor> = {
-  title: 'UI/Components/CodeEditor',
+  id: 'ui-components-codeeditor',
+  title: 'UI/Components/Code editor/CodeEditor',
   component: CodeEditor,
   args: {
     value: WORKSPACE_SETTINGS_JSON,
@@ -75,11 +76,11 @@ export const Documentation: Story = {
     <div style={{ width: '100%' }}>
       <CodeEditorHeader
         title="workspace.json"
-        rightNodes={[
-          <Button key="format" size="sm" variant="outline">
+        endElement={
+          <Button size="sm" variant="outline">
             Format
-          </Button>,
-        ]}
+          </Button>
+        }
       />
       <CodeEditor {...args} />
     </div>

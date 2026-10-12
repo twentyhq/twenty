@@ -7,7 +7,7 @@ import { type Temporal } from 'temporal-polyfill';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { turnPlainDateToShiftedDateInSystemTimeZone } from 'twenty-shared/utils';
 import { type ViewCalendarLayout } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 export const useRecordCalendarDaysRange = (
   selectedDate: Temporal.PlainDate,

@@ -32,8 +32,7 @@ export type StandardTimelineActivityTypeDefinition =
     happensAtFieldUniversalIdentifier?: string;
   };
 
-// Standard wildcard emitters supply platform fallbacks when no object-specific
-// type owns the slot. Application manifests require an object on every emitter.
+// Wildcard emitters are standard-only fallbacks; application manifests require an object on every emitter
 const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITION_SOURCES: StandardTimelineActivityTypeDefinitionSource[] =
   [
     {
@@ -301,8 +300,7 @@ const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITION_SOURCES: StandardTimelineActivi
     },
   ];
 
-// The normalized properties keep the committed 2.34 workspace command stable;
-// current builders and app declarations read the nested emit contract.
+// Normalized properties keep the committed 2.34 upgrade command stable
 export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivityTypeDefinition[] =
   STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITION_SOURCES.map((definition) => ({
     ...definition,

@@ -2,8 +2,6 @@ import { useComponentInstanceStateContext } from '@/ui/utilities/state/component
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { isNonEmptyString } from '@sniptt/guards';
 
-// Returns the id exactly as provided; see useAvailableComponentInstanceIdOrThrow
-// for why surface scoping belongs at the provider, not here.
 export const useAvailableComponentInstanceId = <
   T extends { instanceId: string },
 >(

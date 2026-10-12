@@ -4,9 +4,16 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { Injectable } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
+
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { In, type EntityManager, type FindOptionsWhere } from 'typeorm';
-import { RecordShareRowCause } from 'twenty-shared/types';
+import { In, Not, type EntityManager, type FindOptionsWhere } from 'typeorm';
+import {
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
 
 import {
   RecordShareException,
@@ -27,8 +34,7 @@ type RecordShareRepository = WorkspaceRepository<RecordShare>;
 export class RecordShareStorageService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  // Authorization and grant changes must share the caller's transaction.
-  // OWNER and APPLICATION grants are managed by their respective producers.
+  // Must share the caller's transaction; OWNER and APPLICATION grants are managed by their producers.
   async setManualShare({
     workspaceId,
     share,
@@ -112,15 +118,13 @@ export class RecordShareStorageService {
     if (recordIds.length === 0) {
       return;
     }
-    // History transactions can span core and workspace tables and must reuse
-    // their existing connection rather than open a separate ORM transaction.
+    // History transactions span core and workspace tables, so they must reuse their connection.
     await manager.query(
       `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[])`,
       [objectMetadataId, recordIds],
     );
   }
 
-  // Each criterion is ANDed, and a row matching any of them is deleted.
   async deleteMatching({
     workspaceId,
     criteria,
@@ -151,6 +155,104 @@ export class RecordShareStorageService {
   }): Promise<void> {
     await this.withRepository({ workspaceId, transactionScope }, (repository) =>
       repository.delete({ sourceId }),
+    );
+  }
+
+  // Without a custodian the departing member's grants are only dropped
+  async transferMemberGrants({
+    workspaceId,
+    objectMetadataIds,
+    fromWorkspaceMemberId,
+    toWorkspaceMemberId,
+  }: {
+    workspaceId: string;
+    objectMetadataIds: string[];
+    fromWorkspaceMemberId: string;
+    toWorkspaceMemberId: string | undefined;
+  }): Promise<void> {
+    const transferableRowCauses = In([
+      RecordShareRowCause.OWNER,
+      RecordShareRowCause.MANUAL,
+    ]);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
+          this.withRepository(
+            { workspaceId, transactionScope },
+            async (repository) => {
+              const fromMember = {
+                objectMetadataId: In(objectMetadataIds),
+                principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+                principalId: fromWorkspaceMemberId,
+                rowCause: transferableRowCauses,
+              };
+
+              if (isDefined(toWorkspaceMemberId)) {
+                const fullGrants = await repository.find({
+                  where: {
+                    ...fromMember,
+                    accessLevel: RecordShareAccessLevel.FULL,
+                  },
+                });
+                const fullGrantKeys = new Set(
+                  fullGrants.map(buildRecordShareRowKey),
+                );
+
+                for (const fullGrantsChunk of chunk(
+                  fullGrants,
+                  QUERY_MAX_RECORDS,
+                )) {
+                  await repository.insert(
+                    fullGrantsChunk.map((grant) => ({
+                      objectMetadataId: grant.objectMetadataId,
+                      recordId: grant.recordId,
+                      principalType: grant.principalType,
+                      principalId: toWorkspaceMemberId,
+                      accessLevel: grant.accessLevel,
+                      rowCause: grant.rowCause,
+                      sourceId: grant.sourceId,
+                    })),
+                    { onConflictDoNothing: true },
+                  );
+
+                  // The insert skips the rows the custodian already holds on
+                  // these records, which are raised to full access instead
+                  const custodianGrantIdsToRaise = (
+                    await repository.find({
+                      where: {
+                        principalType:
+                          RecordSharePrincipalType.WORKSPACE_MEMBER,
+                        principalId: toWorkspaceMemberId,
+                        recordId: In(
+                          fullGrantsChunk.map(
+                            (fullGrant) => fullGrant.recordId,
+                          ),
+                        ),
+                        rowCause: transferableRowCauses,
+                        accessLevel: Not(RecordShareAccessLevel.FULL),
+                      },
+                    })
+                  )
+                    .filter((grant) =>
+                      fullGrantKeys.has(buildRecordShareRowKey(grant)),
+                    )
+                    .map((grant) => grant.id);
+
+                  if (custodianGrantIdsToRaise.length > 0) {
+                    await repository.update(
+                      { id: In(custodianGrantIdsToRaise) },
+                      { accessLevel: RecordShareAccessLevel.FULL },
+                    );
+                  }
+                }
+              }
+
+              await repository.delete(fromMember);
+            },
+          ),
+        ),
+      buildSystemAuthContext(workspaceId),
     );
   }
 
@@ -218,3 +320,8 @@ export class RecordShareStorageService {
     );
   }
 }
+
+const buildRecordShareRowKey = (
+  recordShare: Pick<RecordShare, 'objectMetadataId' | 'recordId' | 'rowCause'>,
+) =>
+  `${recordShare.objectMetadataId}:${recordShare.recordId}:${recordShare.rowCause}`;

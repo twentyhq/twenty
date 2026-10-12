@@ -1,0 +1,1 @@
+export const MAX_PENDING_IMAGE_LOADS = 500;

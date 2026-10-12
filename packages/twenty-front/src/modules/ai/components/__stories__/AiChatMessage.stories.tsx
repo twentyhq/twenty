@@ -11,10 +11,8 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
 import { styled } from '@linaria/react';
@@ -29,8 +27,6 @@ const StyledConversationContainer = styled.div`
   max-width: 700px;
   padding: 24px;
 `;
-
-const INSTANCE_ID = 'agentChatStoryInstance';
 
 const mockUserMessage: ExtendedUIMessage = {
   id: 'msg-user-1',
@@ -236,6 +232,39 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
   ],
   metadata: {
     createdAt: new Date().toISOString(),
+    startedAt: '2026-01-01T10:00:00.000Z',
+    finishedAt: '2026-01-01T10:01:23.000Z',
+  },
+};
+
+const mockAnsweredForm: ExtendedUIMessage = {
+  id: 'msg-answered-form',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-request_form',
+      toolCallId: 'tool-request-form',
+      input: {
+        fields: [
+          { name: 'callDate', label: 'Call date', type: 'DATE' },
+          { name: 'summary', label: 'Summary', type: 'TEXT' },
+        ],
+      },
+      output: {
+        success: true,
+        result: {
+          status: 'answered',
+          values: {
+            callDate: '2026-09-29',
+            summary: 'Pipeline import first, SSO the week after.',
+          },
+        },
+      },
+      state: 'output-available',
+    },
+  ],
+  metadata: {
+    createdAt: new Date().toISOString(),
   },
 };
 
@@ -248,6 +277,7 @@ const allMockMessages = [
   mockCodeExecutionError,
   mockThinkingStepsStreaming,
   mockThinkingStepsDone,
+  mockAnsweredForm,
 ];
 
 const AgentChatMessagesSetterEffect = ({
@@ -263,36 +293,21 @@ const AgentChatMessagesSetterEffect = ({
     store.set(agentChatDisplayedThreadState.atom, currentThreadId);
 
     store.set(
-      agentChatMessagesComponentFamilyState.atomFamily({
-        instanceId: INSTANCE_ID,
-        familyKey: { threadId: currentThreadId },
-      }),
+      agentChatMessagesFamilyState.atomFamily({ threadId: currentThreadId }),
       messages,
     );
-
-    for (const message of messages) {
-      store.set(
-        agentChatMessageComponentFamilyState.atomFamily({
-          instanceId: INSTANCE_ID,
-          familyKey: message.id,
-        }),
-        message,
-      );
-    }
   }, [messages, store]);
 
   return null;
 };
 
-const AgentChatInstanceDecorator: Decorator = (Story) => (
-  <AgentChatComponentInstanceContext.Provider
-    value={{ instanceId: INSTANCE_ID }}
-  >
+const AgentChatMessagesDecorator: Decorator = (Story) => (
+  <>
     <AgentChatMessagesSetterEffect messages={allMockMessages} />
     <Suspense fallback={<MarkdownLoadingSkeleton />}>
       <Story />
     </Suspense>
-  </AgentChatComponentInstanceContext.Provider>
+  </>
 );
 
 const meta: Meta<typeof AiChatMessage> = {
@@ -302,7 +317,7 @@ const meta: Meta<typeof AiChatMessage> = {
     ComponentDecorator,
     RootDecorator,
     ToastDecorator,
-    AgentChatInstanceDecorator,
+    AgentChatMessagesDecorator,
   ],
   parameters: {
     container: { width: 700 },
@@ -354,9 +369,13 @@ export const ThinkingStepsDoneExpanded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const summaryButton = await canvas.findByRole('button', {
-      name: /2 steps/i,
+      name: /worked for 1m 23s/i,
     });
 
     await userEvent.click(summaryButton);
   },
+};
+
+export const AnsweredForm: Story = {
+  render: () => <AiChatMessage messageId={mockAnsweredForm.id} />,
 };

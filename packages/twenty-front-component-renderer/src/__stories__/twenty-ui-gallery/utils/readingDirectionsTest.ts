@@ -15,6 +15,21 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
       { timeout: MOUNT_TIMEOUT },
     );
     const content = within(scope);
+    for (const scopeName of ['Inherited', 'Nested']) {
+      const handle = content.getByRole('separator', {
+        name: `${scopeName} ${direction} resize`,
+      });
+      const isRightToLeft =
+        scopeName === 'Inherited' ? direction === 'rtl' : direction === 'ltr';
+      handle.focus();
+      await userEvent.keyboard('{ArrowRight}');
+      await waitFor(() =>
+        expect(handle).toHaveAttribute(
+          'aria-valuenow',
+          isRightToLeft ? '90' : '110',
+        ),
+      );
+    }
     const first = content.getByRole('button', { name: 'First action' });
     const last = content.getByRole('button', { name: 'Last action' });
     expect(getComputedStyle(scope).direction).toBe(direction);
@@ -22,6 +37,16 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
       first.getBoundingClientRect().left > last.getBoundingClientRect().left,
     ).toBe(direction === 'rtl');
     expect(getComputedStyle(first).borderStartEndRadius).toBe('0px');
+    const upcoming = content.getByRole('button', {
+      name: 'Upcoming action Soon',
+    });
+    expect(upcoming).toBeDisabled();
+    const upcomingLabel = content.getByText('Soon');
+    expect(
+      upcomingLabel.getBoundingClientRect().left <
+        upcoming.getBoundingClientRect().left +
+          upcoming.getBoundingClientRect().width / 2,
+    ).toBe(direction === 'rtl');
     const title = content.getByText('Account details');
     const description = content.getByText(
       'Review the information before continuing.',
@@ -32,17 +57,6 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
       expect(Math.abs(descriptionBox.left - titleBox.left)).toBeLessThan(1);
       expect(Math.abs(descriptionBox.right - titleBox.right)).toBeLessThan(1);
     });
-    await userEvent.click(content.getByRole('button', { name: 'Dark' }));
-    for (const variant of ['Light', 'Dark', 'System']) {
-      const badge = content.getByRole('button', {
-        name: variant,
-      }).nextElementSibling!;
-      await waitFor(() =>
-        expect(getComputedStyle(badge).visibility).toBe(
-          variant === 'Dark' ? 'visible' : 'hidden',
-        ),
-      );
-    }
     const row = content
       .getByText('A very long account name that must truncate')
       .closest('[data-indicator]')!;

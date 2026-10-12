@@ -22,13 +22,18 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 export const PriorityColor = () => (
   <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-    <ColorSample colorName="red" variant="circle" />
+    <ColorSample
+      colorName="red"
+      variant="circle"
+      render={<span />}
+      aria-hidden="true"
+    />
     High priority
   </Text>
 );
 ```
 
-`colorName` selects a theme palette entry for the fill and border. `variant` accepts `default`, `circle`, or `pipeline`. Omitting it uses the default shape.
+`colorName` selects a theme palette entry for the fill and border. `variant` accepts `default` or `circle`. Omitting it uses the default shape.
 
 ## Custom colors
 
@@ -38,13 +43,22 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 export const BrandColor = () => (
   <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-    <ColorSample colorName="blue" color="#2563eb" />
+    <ColorSample
+      colorName="blue"
+      color="#2563eb"
+      render={<span />}
+      aria-hidden="true"
+    />
     Brand blue
   </Text>
 );
 ```
 
-A custom `color` overrides the fill; `colorName` remains required and still determines the border color. `className` styles the swatch. Other native attributes and click handlers are not forwarded. To offer selectable colors, compose the swatch inside a labeled [ListItem](/ui/primitives/navigation/list-item).
+A custom `color` overrides the fill; `colorName` remains required and still determines the border color. Native props, `className`, `style`, and `ref` target the swatch div. `render` accepts an element or callback through Base UI composition, for example a span inside text. Consumer styles override the default fill, border, or geometry. Decorative swatches use `aria-hidden="true"`; a standalone meaningful swatch uses `role="img"` with `aria-label` or `aria-labelledby`. To offer selectable colors, compose the swatch inside a labeled [ListItem](/ui/primitives/navigation/list-item).
+
+## Migration
+
+`ColorSampleProps` and `ColorSampleVariant` remain available from the data-display family. The unused `pipeline` variant is removed. Product-specific indicators belong in the application, using native styles or composition. Default and circle swatches keep their existing appearance.
 
 ## Props
 

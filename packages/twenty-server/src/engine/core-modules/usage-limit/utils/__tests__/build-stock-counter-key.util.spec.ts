@@ -1,6 +1,7 @@
 import { buildStockCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter-key.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const WORKSPACE_ID = 'workspace-1';
 
@@ -13,7 +14,7 @@ const buildKey = (
     operationType: UsageOperationType.STORAGE_FILE,
     spenderType: 'workspace',
     spenderId: null,
-    meter: 'bytes',
+    unit: UsageUnit.BYTE,
     limitValue: 1000,
     ...overrides,
   });
@@ -21,19 +22,19 @@ const buildKey = (
 describe('buildStockCounterKey', () => {
   it('hashes on the workspace so every counter of a workspace shares a slot', () => {
     expect(buildKey()).toBe(
-      `{${WORKSPACE_ID}}:stock:STORAGE:STORAGE_FILE:workspace:-:bytes:1000`,
+      `{${WORKSPACE_ID}}:stock:STORAGE:STORAGE_FILE:workspace:-:BYTE:1000`,
     );
   });
 
   it('names an absent spender rather than leaving the segment empty', () => {
     expect(buildKey({ spenderType: 'application', spenderId: 'app-1' })).toBe(
-      `{${WORKSPACE_ID}}:stock:STORAGE:STORAGE_FILE:application:app-1:bytes:1000`,
+      `{${WORKSPACE_ID}}:stock:STORAGE:STORAGE_FILE:application:app-1:BYTE:1000`,
     );
   });
 
   it.each([
     ['operationType', { operationType: UsageOperationType.CALL_RECORDING }],
-    ['meter', { meter: 'quantity' as const }],
+    ['unit', { unit: UsageUnit.FILE }],
     ['spenderId', { spenderId: 'app-1' }],
     ['limitValue', { limitValue: 2000 }],
   ])(

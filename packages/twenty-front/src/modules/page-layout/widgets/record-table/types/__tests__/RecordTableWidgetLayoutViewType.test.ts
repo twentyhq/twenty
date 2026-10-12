@@ -60,7 +60,6 @@ describe('getRecordTableWidgetLayout', () => {
     expect(getRecordTableWidgetLayout(viewType)).toBe(expectedLayout);
   });
 
-  // A widget backed by a plain view keeps that view's layout.
   it.each([
     [ViewType.LIST, ViewType.LIST],
     [ViewType.KANBAN, ViewType.KANBAN],

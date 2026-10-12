@@ -1,14 +1,4 @@
-/**
- * Script to fix QA issues detected by Crowdin
- *
- * Fixes:
- * - Variables mismatch (translated placeholder names)
- * - Empty translations
- * - Tags mismatch
- *
- * Usage:
- *   CROWDIN_PERSONAL_TOKEN=xxx npx ts-node packages/twenty-utils/fix-qa-issues.ts
- */
+// Usage: CROWDIN_PERSONAL_TOKEN=xxx npx ts-node packages/twenty-utils/fix-qa-issues.ts
 
 const CROWDIN_BASE_URL = 'https://twenty.api.crowdin.com/api/v2';
 const CROWDIN_PROJECT_ID = 1;
@@ -131,7 +121,6 @@ function extractPlaceholders(text: string): string[] {
   return [...new Set(matches)];
 }
 
-// Fix translated placeholder names back to source names
 function fixPlaceholderNames(
   sourceText: string,
   translationText: string,
@@ -141,25 +130,21 @@ function fixPlaceholderNames(
 
   if (sourcePlaceholders.length === 0) return null;
 
-  // Check if any placeholders were translated
   const missingInTranslation = sourcePlaceholders.filter(
     (p) => !translationPlaceholders.includes(p),
   );
 
   if (missingInTranslation.length === 0) return null;
 
-  // Try to find translated versions and replace them
   let fixedText = translationText;
 
   for (const sourcePlaceholder of missingInTranslation) {
-    // Extract the name from source placeholder
     const sourceNameMatch = sourcePlaceholder.match(/\$?\{([^}]+)\}/);
 
     if (!sourceNameMatch) continue;
 
     const sourceName = sourceNameMatch[1];
 
-    // Find potential translations of this placeholder
     // Common patterns: {days} -> {jours}, {dae}, {dni}, {días}, etc.
     for (const transPlaceholder of translationPlaceholders) {
       const transNameMatch = transPlaceholder.match(/\$?\{([^}]+)\}/);
@@ -173,10 +158,7 @@ function fixPlaceholderNames(
         !sourcePlaceholders.includes(transPlaceholder) &&
         transName !== sourceName
       ) {
-        // Check if this looks like a translation of the source name
-        // (same position in ICU structure, similar pattern)
-
-        // For ICU plural messages, check if the placeholder appears in same position
+        // A matching occurrence count is the only evidence this is the translated source placeholder
         const sourcePattern = new RegExp(
           `\\{${sourceName}\\}`,
           'g',
@@ -187,7 +169,6 @@ function fixPlaceholderNames(
         const transMatches = translationText.match(transPattern)?.length || 0;
 
         if (sourceMatches > 0 && transMatches > 0 && sourceMatches === transMatches) {
-          // Replace translated placeholder with source placeholder
           fixedText = fixedText.replace(
             new RegExp(`\\{${transName}\\}`, 'g'),
             `{${sourceName}}`,
@@ -208,7 +189,6 @@ function fixPlaceholderNames(
     }
   }
 
-  // Return null if nothing changed
   if (fixedText === translationText) return null;
 
   return fixedText;
@@ -279,7 +259,6 @@ async function fixVariablesIssues(token: string): Promise<number> {
       console.log(`  Before: ${translation.text.slice(0, 60)}...`);
       console.log(`  After:  ${fixedText.slice(0, 60)}...`);
 
-      // Delete old translation and add fixed one
       await deleteTranslation(token, translation.translationId);
       await addTranslation(token, check.stringId, check.languageId, fixedText);
 
@@ -356,22 +335,18 @@ async function fixTagsIssues(token: string): Promise<number> {
         continue;
       }
 
-      // Extract tags from source and translation
       const sourceTags = sourceText.match(/<\/?[a-zA-Z][^>]*>/g) || [];
       const translationTags = translation.text.match(/<\/?[a-zA-Z][^>]*>/g) || [];
 
-      // If translation has extra tags not in source, remove them
       if (check.text.includes('extra formatting tags')) {
         let fixedText = translation.text;
 
         for (const tag of translationTags) {
           if (!sourceTags.includes(tag)) {
-            // Remove extra tag
             fixedText = fixedText.replace(new RegExp(tag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
           }
         }
 
-        // Clean up any double spaces
         fixedText = fixedText.replace(/\s+/g, ' ').trim();
 
         if (fixedText !== translation.text) {
@@ -409,13 +384,10 @@ async function main() {
 
   let totalFixed = 0;
 
-  // Fix variables issues
   totalFixed += await fixVariablesIssues(token);
 
-  // Fix empty translations
   totalFixed += await fixEmptyTranslations(token);
 
-  // Fix tags issues
   totalFixed += await fixTagsIssues(token);
 
   console.log(`\n=== Done! Fixed ${totalFixed} issues ===`);
@@ -425,4 +397,3 @@ main().catch((error) => {
   console.error('Error:', error);
   process.exit(1);
 });
-

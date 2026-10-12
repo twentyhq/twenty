@@ -5,8 +5,6 @@ import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
 
-// The summary is resolved from ApplicationRegistrationEntity instances loaded
-// through the Application.applicationRegistration relation.
 @MetadataResolver(() => ApplicationRegistrationSummaryDTO)
 export class ApplicationRegistrationSummaryResolver {
   constructor(

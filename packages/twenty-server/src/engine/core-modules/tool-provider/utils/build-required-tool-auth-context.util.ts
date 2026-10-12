@@ -14,7 +14,6 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 export const buildRequiredToolAuthContext = async ({
   context,
   userRepository,
-  userWorkspaceRepository,
   workspaceCacheService,
 }: {
   context: ToolProviderContext;
@@ -26,18 +25,16 @@ export const buildRequiredToolAuthContext = async ({
     );
   }
 
-  // The identity triple arrives as separate fields, so validate that the
-  // userWorkspace actually binds this user to this workspace, exactly like
-  // token-based auth does, before building an auth context from it.
-  const userWorkspace = await userWorkspaceRepository.findOne({
-    where: {
-      id: context.userWorkspaceId,
-      userId: context.userId,
-      workspaceId: context.workspaceId,
-    },
-  });
+  const { flatWorkspaceMemberMaps } =
+    await workspaceCacheService.getOrRecompute(context.workspaceId, [
+      'flatWorkspaceMemberMaps',
+    ]);
 
-  if (!isDefined(userWorkspace)) {
+  // The identity arrives as separate fields, so verify the userWorkspace binds this user to this workspace, as token auth does.
+  if (
+    flatWorkspaceMemberMaps.userWorkspaceIdByUserId[context.userId] !==
+    context.userWorkspaceId
+  ) {
     throw new AuthException(
       'User workspace not found',
       AuthExceptionCode.UNAUTHENTICATED,
@@ -54,11 +51,6 @@ export const buildRequiredToolAuthContext = async ({
       AuthExceptionCode.UNAUTHENTICATED,
     );
   }
-
-  const { flatWorkspaceMemberMaps } =
-    await workspaceCacheService.getOrRecompute(context.workspaceId, [
-      'flatWorkspaceMemberMaps',
-    ]);
 
   const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[user.id];
 

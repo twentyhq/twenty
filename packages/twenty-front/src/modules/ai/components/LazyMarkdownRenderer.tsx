@@ -1,161 +1,29 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import {
   StyledMarkdownContainer,
-  StyledParagraph,
   StyledSkeletonContainer,
-  StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
-import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
-import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { MarkdownRenderer } from '@/ai/components/MarkdownRenderer';
 import { EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE } from '@/ai/constants/EmptyMarkdownBlockSplitCache';
 import { getMarkdownBlocksIncrementally } from '@/ai/utils/getMarkdownBlocksIncrementally';
 import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferencesForMarkdown';
-import {
-  cloneElement,
-  isValidElement,
-  lazy,
-  memo,
-  Suspense,
-  useRef,
-} from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { getSafeUrl, isDefined } from 'twenty-shared/utils';
-import { useTheme } from 'twenty-ui/theme';
-
-const processChildrenForChatReferences = (
-  children: React.ReactNode,
-): React.ReactNode => {
-  if (typeof children === 'string') {
-    return <TextWithChatReferences text={children} />;
-  }
-
-  if (Array.isArray(children)) {
-    return children.map((child, index) => (
-      <span key={index}>{processChildrenForChatReferences(child)}</span>
-    ));
-  }
-
-  if (isValidElement<{ children?: React.ReactNode }>(children)) {
-    const childProps = children.props;
-
-    if (isDefined(childProps.children)) {
-      return cloneElement(children, {
-        children: processChildrenForChatReferences(childProps.children),
-      });
-    }
-  }
-
-  return children;
-};
-
-const createChatReferenceElement =
-  (Element: React.ElementType) =>
-  ({ children }: { children?: React.ReactNode }) => (
-    <Element>{processChildrenForChatReferences(children)}</Element>
-  );
-
-// react-markdown uses each entry as the JSX element type, so rebuilding this map
-// per render would remount every node on every streamed chunk.
-const MARKDOWN_COMPONENTS = {
-  table: ({ children }: { children?: React.ReactNode }) => (
-    <StyledTableScrollContainer>
-      <table>{children}</table>
-    </StyledTableScrollContainer>
-  ),
-  p: createChatReferenceElement(StyledParagraph),
-  td: createChatReferenceElement('td'),
-  th: createChatReferenceElement('th'),
-  li: createChatReferenceElement('li'),
-  h1: createChatReferenceElement('h1'),
-  h2: createChatReferenceElement('h2'),
-  h3: createChatReferenceElement('h3'),
-  h4: createChatReferenceElement('h4'),
-  h5: createChatReferenceElement('h5'),
-  h6: createChatReferenceElement('h6'),
-  a: ({
-    children,
-    href,
-    title,
-  }: {
-    children?: React.ReactNode;
-    href?: string;
-    title?: string;
-  }) => (
-    <a
-      className="markdown-link"
-      href={getSafeUrl(href)}
-      title={title}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {processChildrenForChatReferences(children)}
-    </a>
-  ),
-  code: ({
-    className,
-    children,
-  }: {
-    className?: string;
-    children?: React.ReactNode;
-  }) => <code className={className}>{children}</code>,
-  pre: ({ children }: { children?: React.ReactNode }) => (
-    <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
-  ),
-};
-
-const MARKDOWN_COMPONENTS_WITHOUT_IMAGES = {
-  ...MARKDOWN_COMPONENTS,
-  img: () => null,
-};
-
-const MarkdownRenderer = lazy(async () => {
-  const [{ default: Markdown }, { default: remarkGfm }] = await Promise.all([
-    import('react-markdown'),
-    import('remark-gfm'),
-  ]);
-
-  const remarkPlugins = [remarkGfm];
-
-  return {
-    default: ({
-      children,
-      noImage,
-    }: {
-      children: string;
-      noImage?: boolean;
-    }) => (
-      <Markdown
-        remarkPlugins={remarkPlugins}
-        components={
-          noImage ? MARKDOWN_COMPONENTS_WITHOUT_IMAGES : MARKDOWN_COMPONENTS
-        }
-      >
-        {children}
-      </Markdown>
-    ),
-  };
-});
+import { memo, Suspense, useRef } from 'react';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const MarkdownLoadingSkeleton = () => {
-  const theme = useTheme();
   return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={theme.border.radius.sm}
-    >
-      <StyledSkeletonContainer>
-        <Skeleton
-          width={200}
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-      </StyledSkeletonContainer>
-    </SkeletonTheme>
+    <StyledSkeletonContainer>
+      <SkeletonLine
+        borderRadius={themeCssVariables.border.radius.smRound}
+        width={200}
+        height={SKELETON_HEIGHT_SIZES.s}
+      />
+    </StyledSkeletonContainer>
   );
 };
 
-// Protecting per block behind the memo means only the streaming tail blocks
-// pay the reference-parsing cost on each flush; settled blocks never re-run it.
+// Memoized per block so only the streaming tail re-parses references on each flush.
 const MemoizedMarkdownBlock = memo(
   ({ blockText, noImage }: { blockText: string; noImage?: boolean }) => (
     <MarkdownRenderer noImage={noImage}>
@@ -173,8 +41,7 @@ export const LazyMarkdownContent = ({
   text,
   noImage,
 }: LazyMarkdownContentProps) => {
-  // Not state: the blocks are a pure function of `text`, the ref only caches
-  // the previous split so streaming appends skip re-tokenizing settled blocks.
+  // Not state: only caches the previous split so streaming appends skip settled blocks.
   // oxlint-disable-next-line twenty/no-state-useref
   const blockSplitCacheRef = useRef(EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE);
 

@@ -1,0 +1,1 @@
+export const ICON_PICKER_DEFAULT_VISIBLE_COUNT = 25;

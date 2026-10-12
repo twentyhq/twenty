@@ -136,21 +136,6 @@ xdescribe('findMany morph relation records', () => {
         type: FieldMetadataType.MORPH_RELATION,
       }),
     },
-    // {
-    //   title:
-    //     'should find many records with a MORPH_RELATION field type ONE_TO_MANY',
-    //   context: ({
-    //     objectMetadataId,
-    //     firstTargetObjectMetadataId,
-    //     secondTargetObjectMetadataId,
-    //   }) => ({
-    //     relationType: RelationType.ONE_TO_MANY,
-    //     objectMetadataId,
-    //     firstTargetObjectMetadataId,
-    //     secondTargetObjectMetadataId,
-    //     type: FieldMetadataType.MORPH_RELATION,
-    //   }),
-    // },
   ];
 
   it.each(eachTestingContextArray)('$title', async ({ context }) => {
@@ -188,28 +173,6 @@ xdescribe('findMany morph relation records', () => {
     }
   `;
 
-    // const ONE_TO_MANY_GQL_FIELDS = `
-    //   id
-    //   name
-    //   ownerPersonId
-    //   ownerPerson {
-    //     edges {
-    //       node {
-    //         id
-    //         name
-    //       }
-    //     }
-    //   }
-    //   ownerCompanyId
-    //   ownerCompany {
-    //     edges {
-    //       node {
-    //         id
-    //         name
-    //       }
-    //     }
-    //   }
-    // `;
     const graphqlOperation = findManyOperationFactory({
       objectMetadataSingularName: 'opportunityForMorphRelation',
       objectMetadataPluralName: 'opportunitiesForMorphRelation',
@@ -222,8 +185,6 @@ xdescribe('findMany morph relation records', () => {
     expect(
       response.body.data.opportunitiesForMorphRelation.edges,
     ).toBeDefined();
-    // const isManyToOne =
-    //   contextPayload.relationType === RelationType.MANY_TO_ONE;
 
     await deleteOneFieldMetadata({
       input: { idToDelete: createdField.id },

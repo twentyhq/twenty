@@ -271,13 +271,7 @@ export class MessageCampaignLifecycleService {
             { shouldBypassPermissionChecks: true },
             { shouldSkipEventEmission: true },
           );
-        return campaignDeliveryRepository
-          .createQueryBuilder()
-          .where(criteria)
-          .update()
-          .set(update)
-          .returning(['id'])
-          .execute();
+        return campaignDeliveryRepository.update(criteria, update);
       }, buildSystemAuthContext(workspaceId));
 
     return settledDeliveries.length;

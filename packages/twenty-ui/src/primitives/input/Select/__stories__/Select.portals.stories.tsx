@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
@@ -142,11 +142,11 @@ export const NullContainerWaits: Story = {
 export const RightToLeft: Story = {
   decorators: [ComponentDecorator],
   render: () => (
-    <TextDirectionProvider direction="rtl">
+    <DirectionProvider direction="rtl">
       <div dir="rtl">
         <SelectExample defaultValue="apple" />
       </div>
-    </TextDirectionProvider>
+    </DirectionProvider>
   ),
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole('combobox'));

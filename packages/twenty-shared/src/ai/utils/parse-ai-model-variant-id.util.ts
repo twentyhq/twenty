@@ -3,8 +3,7 @@ import { isAiModelEffort } from './is-ai-model-effort.util';
 
 const EFFORT_SEPARATOR = '@';
 
-// Catalog model names never contain `@` (Bedrock ids use `:`), so the last one
-// delimits the effort. Any other suffix is part of the id itself.
+// Catalog model names never contain `@` (Bedrock ids use `:`), so the last `@` delimits the effort.
 export const parseAiModelVariantId = (
   modelId: string,
 ): { modelId: string; effort?: AiModelEffort } => {

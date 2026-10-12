@@ -13,6 +13,12 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
+import { TwoFactorAuthenticationRecoveryService } from './services/two-factor-authentication-recovery.service';
+import {
+  TwoFactorAuthenticationException,
+  TwoFactorAuthenticationExceptionCode,
+} from './two-factor-authentication.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 import { type DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
 import { type InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
@@ -27,6 +33,10 @@ const createMockRepository = () => ({
 const createMockTwoFactorAuthenticationService = () => ({
   initiateStrategyConfiguration: jest.fn(),
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: jest.fn(),
+});
+
+const createMockTwoFactorAuthenticationRecoveryService = () => ({
+  assertEnrollmentNotReservedForRecoveryOrThrow: jest.fn(),
 });
 
 const createMockLoginTokenService = () => ({
@@ -45,6 +55,9 @@ describe('TwoFactorAuthenticationResolver', () => {
   let resolver: TwoFactorAuthenticationResolver;
   let twoFactorAuthenticationService: ReturnType<
     typeof createMockTwoFactorAuthenticationService
+  >;
+  let twoFactorAuthenticationRecoveryService: ReturnType<
+    typeof createMockTwoFactorAuthenticationRecoveryService
   >;
   let loginTokenService: ReturnType<typeof createMockLoginTokenService>;
   let userService: ReturnType<typeof createMockUserService>;
@@ -92,6 +105,14 @@ describe('TwoFactorAuthenticationResolver', () => {
           useFactory: createMockTwoFactorAuthenticationService,
         },
         {
+          provide: TwoFactorAuthenticationRecoveryService,
+          useFactory: createMockTwoFactorAuthenticationRecoveryService,
+        },
+        {
+          provide: PermissionsService,
+          useValue: {},
+        },
+        {
           provide: LoginTokenService,
           useFactory: createMockLoginTokenService,
         },
@@ -116,6 +137,9 @@ describe('TwoFactorAuthenticationResolver', () => {
       TwoFactorAuthenticationResolver,
     );
     twoFactorAuthenticationService = module.get(TwoFactorAuthenticationService);
+    twoFactorAuthenticationRecoveryService = module.get(
+      TwoFactorAuthenticationRecoveryService,
+    );
     loginTokenService = module.get(LoginTokenService);
     userService = module.get(UserService);
     workspaceDomainsService = module.get(WorkspaceDomainsService);
@@ -177,6 +201,48 @@ describe('TwoFactorAuthenticationResolver', () => {
         mockWorkspace.id,
         mockWorkspace.displayName,
       );
+    });
+
+    it('should refuse provisioning while enrollment is reserved for a recovery code redemption', async () => {
+      const restrictedException = new TwoFactorAuthenticationException(
+        'Enrollment reserved for recovery',
+        TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
+      );
+
+      twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow.mockRejectedValue(
+        restrictedException,
+      );
+
+      await expect(
+        resolver.initiateOTPProvisioning(mockInput, origin),
+      ).rejects.toBe(restrictedException);
+      expect(
+        twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow,
+      ).toHaveBeenCalledWith({
+        userId: mockUser.id,
+        workspaceId: mockWorkspace.id,
+      });
+      expect(
+        twoFactorAuthenticationService.initiateStrategyConfiguration,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should withhold the URI when a recovery is redeemed while provisioning runs', async () => {
+      const restrictedException = new TwoFactorAuthenticationException(
+        'Enrollment reserved for recovery',
+        TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
+      );
+
+      twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(restrictedException);
+
+      await expect(
+        resolver.initiateOTPProvisioning(mockInput, origin),
+      ).rejects.toBe(restrictedException);
+      expect(
+        twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow,
+      ).toHaveBeenCalledTimes(2);
     });
 
     it('should throw WORKSPACE_NOT_FOUND when workspace is not found', async () => {
@@ -250,6 +316,54 @@ describe('TwoFactorAuthenticationResolver', () => {
         mockWorkspace.id,
         mockWorkspace.displayName,
       );
+    });
+
+    it('should refuse provisioning while enrollment is reserved for a recovery code redemption', async () => {
+      const restrictedException = new TwoFactorAuthenticationException(
+        'Enrollment reserved for recovery',
+        TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
+      );
+
+      twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow.mockRejectedValue(
+        restrictedException,
+      );
+
+      await expect(
+        resolver.initiateOTPProvisioningForAuthenticatedUser(
+          mockUser,
+          mockWorkspace,
+        ),
+      ).rejects.toBe(restrictedException);
+      expect(
+        twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow,
+      ).toHaveBeenCalledWith({
+        userId: mockUser.id,
+        workspaceId: mockWorkspace.id,
+      });
+      expect(
+        twoFactorAuthenticationService.initiateStrategyConfiguration,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should withhold the URI when a recovery is redeemed while provisioning runs', async () => {
+      const restrictedException = new TwoFactorAuthenticationException(
+        'Enrollment reserved for recovery',
+        TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
+      );
+
+      twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(restrictedException);
+
+      await expect(
+        resolver.initiateOTPProvisioningForAuthenticatedUser(
+          mockUser,
+          mockWorkspace,
+        ),
+      ).rejects.toBe(restrictedException);
+      expect(
+        twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow,
+      ).toHaveBeenCalledTimes(2);
     });
 
     it('should throw INTERNAL_SERVER_ERROR when URI is missing', async () => {

@@ -13,10 +13,7 @@ const doesEventCarryFieldNames = ({
     ...(event.properties.updatedFields ?? []),
   ].some((fieldName) => fieldNames.has(fieldName));
 
-// A diff emptied by this filter yields no timeline activity at all: the rules
-// downstream drop updates that have nothing left to show. updatedFields is
-// filtered alongside it because the relation rules read that list instead of
-// the diff, and the two have to agree on what the event touched.
+// updatedFields is filtered too because the relation rules read it instead of the diff
 export const excludeNonAuditLoggedFieldsFromEvents = ({
   events,
   nonAuditLoggedFieldNames,

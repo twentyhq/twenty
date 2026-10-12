@@ -480,13 +480,7 @@ export const Empty: Story = {
   },
 };
 
-// Hovering a field mounts an interactive copy of the cell through
-// RecordInlineCellAnchoredPortal, which finds its anchor with
-// document.getElementById after resolving the list instance id through
-// useAvailableComponentInstanceIdOrThrow -- and that resolution surface-scopes
-// the id. If the list rendered its anchors from an unscoped id, the lookup
-// misses, nothing interactive mounts, and the click lands on the inert display
-// underneath: the cell highlights but no editor ever opens.
+// The anchored portal looks up a surface-scoped id; an unscoped anchor id would leave the cell inert.
 const openEditModeOnEmployees = async ({
   canvasElement,
 }: {

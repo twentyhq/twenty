@@ -4,6 +4,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { computeRequestActor } from 'src/engine/utils/compute-request-actor.util';
 import { type RequestTraceContext } from 'src/engine/utils/compute-request-trace-context.util';
+import { toLogfmt } from 'src/engine/utils/to-logfmt.util';
 
 const MAX_LOGGED_RESOLVERS_LENGTH = 512;
 const MAX_LOGGED_REQUEST_ID_LENGTH = 128;
@@ -27,6 +28,8 @@ export const buildApiAccessLogLine = ({
     method: request.method,
     url_path: urlPath,
     resolvers: formatResolvers(request.executedRootResolvers),
+    mcp_method: request.mcpMethod,
+    mcp_tool: request.mcpToolName,
     status: completed ? response.statusCode : undefined,
     aborted: completed ? undefined : true,
     duration_ms: durationMs,
@@ -86,16 +89,3 @@ const formatResolvers = (resolvers: string[] | undefined) => {
 
   return `${kept.join(',')},+${resolvers.length - kept.length}`;
 };
-
-const toLogfmt = (
-  fields: Record<string, string | number | boolean | undefined>,
-): string =>
-  Object.entries(fields)
-    .filter(([, value]) => isDefined(value))
-    .map(([key, value]) => `${key}=${quote(String(value))}`)
-    .join(' ');
-
-const quote = (value: string): string =>
-  isNonEmptyString(value) && !/[\s"=\\]/.test(value)
-    ? value
-    : `"${value.replace(/[\\"]/g, (character) => `\\${character}`)}"`;

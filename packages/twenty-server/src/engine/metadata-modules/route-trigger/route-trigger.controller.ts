@@ -37,11 +37,11 @@ export class RouteTriggerController {
     response: Response,
     httpMethod: HTTPMethod,
   ) {
-    const { response: triggerResponse, isIsolatedOrigin } =
+    const { response: triggerResponse, isPublicDomain } =
       await this.routeTriggerService.handle({ request, httpMethod });
 
     sendRouteTriggerResponse(response, triggerResponse, {
-      allowAllHeaders: isIsolatedOrigin,
+      allowAllHeaders: isPublicDomain,
     });
   }
 

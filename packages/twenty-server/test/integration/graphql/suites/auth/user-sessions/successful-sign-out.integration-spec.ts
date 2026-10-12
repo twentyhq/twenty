@@ -54,8 +54,7 @@ describe('successful sign-out (integration)', () => {
       UserSessionRevokedReason.UserSignOut,
     );
 
-    // Revocation invalidates the cache, so reuse fails immediately, not
-    // after the cache TTL.
+    // Revocation invalidates the cache, so reuse fails before the cache TTL.
     const reuseResponse = await postMetadataOperationWithHeaders(
       currentUserIdentityQueryFactory(),
       {
@@ -69,10 +68,7 @@ describe('successful sign-out (integration)', () => {
   });
 
   it('should not clear anything on a cookie-less sign-out, so a cross-site POST cannot log a visitor out', async () => {
-    // What a cross-site forgery actually looks like server-side: SameSite=Lax
-    // keeps the cookie off the request, and the attacker page's origin comes
-    // along. CSRF does not apply (no cookie), so the mutation runs and must
-    // still clear nothing.
+    // SameSite=Lax keeps the cookie off a cross-site request, so CSRF does not apply and the mutation runs.
     const response = await postMetadataOperationWithHeaders(
       signOutQueryFactory(),
       { originHeader: DISALLOWED_ORIGIN },

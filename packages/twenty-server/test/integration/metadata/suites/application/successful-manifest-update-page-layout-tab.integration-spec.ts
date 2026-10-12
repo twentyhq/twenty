@@ -7,7 +7,7 @@ import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-lay
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789139070588-migrate-canvas-tabs-to-vertical-list';
@@ -273,7 +273,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
         {
           universalIdentifier: TEST_WIDGET_ID,
           title: 'Timeline',
-          type: 'TIMELINE' as const,
+          type: WidgetType.TIMELINE,
           configuration: {
             configurationType: 'TIMELINE' as const,
           },

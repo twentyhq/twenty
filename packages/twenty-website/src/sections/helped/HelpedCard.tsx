@@ -66,10 +66,7 @@ const WordmarkRow = styled.div`
 // styled text is the same render without the asset.
 const Wordmark = styled.span`
   color: ${semanticColor.ink};
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -81,8 +78,6 @@ const Rule = styled.div`
   width: 100%;
 `;
 
-// The halftone model (target/spaceship/money) renders here with the
-// visual-runtime wave.
 const VisualShell = styled.div`
   background-color: ${color('black')};
   border-radius: ${radius(2)};

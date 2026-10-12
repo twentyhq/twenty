@@ -23,8 +23,7 @@ export const useMetadataTranslations = (
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
-  // A null value removes the stored translation, reverting the locale to
-  // shipped-or-canonical.
+  // null removes the stored translation, reverting the locale to the shipped or canonical label
   const saveTranslationRows = async (
     rowValues: MetadataTranslationRowValue[],
   ) => {

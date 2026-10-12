@@ -5,7 +5,7 @@ import {
 import { WorkflowEditActionEmailBase } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -32,6 +32,7 @@ const mockedConnectedAccounts = [
     lastSignedInAt: null,
     userWorkspaceId: '20202020-0687-4c41-b707-ed1bfca972a7',
     connectionProviderId: null,
+    applicationId: null,
     name: 'Tim Apple',
     visibility: 'SHARE_EVERYTHING',
     lastCredentialsRefreshedAt: null,
@@ -264,7 +265,25 @@ export const Default: Story = {
     expect(await canvas.findByText('To')).toBeVisible();
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
-    expect(await canvas.findByText('Advanced options')).toBeVisible();
+    for (const field of ['CC', 'BCC', 'In-Reply-To']) {
+      await userEvent.click(
+        await canvas.findByRole('button', { name: 'Advanced options' }),
+      );
+      await userEvent.click(
+        await screen.findByRole('menuitem', { name: `Add ${field}` }),
+      );
+
+      expect(await canvas.findByText(field)).toBeVisible();
+      await waitFor(() => {
+        expect(
+          screen.queryByRole('menu', { name: 'Advanced options' }),
+        ).not.toBeInTheDocument();
+      });
+    }
+
+    expect(
+      canvas.queryByRole('button', { name: 'Advanced options' }),
+    ).not.toBeInTheDocument();
   },
 };
 
@@ -426,5 +445,20 @@ export const VariableSenderSendEmail: Story = {
         'Pick an address to send from or set a workspace member as variable',
       ),
     ).toBeVisible();
+  },
+};
+
+export const ReadOnly: Story = {
+  args: {
+    action: CONFIGURED_SEND_EMAIL_ACTION,
+    actionOptions: { readonly: true },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Subject')).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Advanced options' }),
+    ).not.toBeInTheDocument();
   },
 };

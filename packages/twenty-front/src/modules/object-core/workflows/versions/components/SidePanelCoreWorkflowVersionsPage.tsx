@@ -47,7 +47,6 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
             label={coreWorkflowVersion.label}
             createdAt={coreWorkflowVersion.createdAt}
             status={coreWorkflowVersion.status}
-            isSelectable
             onSelect={() => {
               openCoreWorkflowVersionSidePanel({
                 coreWorkflowVersionId: coreWorkflowVersion.id,

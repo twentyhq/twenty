@@ -34,10 +34,14 @@ describe('buildHideAskAiInSidePanelCommandMenuItemUpdate', () => {
     });
   });
 
+  // The 2.44 chat record page work also hides Ask AI on chats; the 2.44
+  // command skips items this command already moved to that expression
   it('keeps the migrated expression synchronized with the standard definition', () => {
     expect(
       STANDARD_COMMAND_MENU_ITEMS.askAi.conditionalAvailabilityExpression,
-    ).toBe('permissionFlags.AI and not isInSidePanel');
+    ).toBe(
+      'permissionFlags.AI and not isInSidePanel and objectMetadataItem.nameSingular != "agentChatThread"',
+    );
   });
 
   it.each([

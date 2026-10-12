@@ -5,7 +5,12 @@ import { attachApplicationTarget } from 'src/engine/core-modules/application/uti
 
 // REST counterpart of ApplicationTargetArg: replaces @Param
 export const ApplicationTargetParam =
-  (paramName: string, target: ApplicationTargetKind): ParameterDecorator =>
+  (
+    paramName: string,
+    target: ApplicationTargetKind & {
+      requireApplicationRegistrationOwnership: boolean;
+    },
+  ): ParameterDecorator =>
   (prototype, propertyKey, parameterIndex) => {
     attachApplicationTarget({
       prototype,

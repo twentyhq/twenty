@@ -2,12 +2,15 @@ import {
   type RunAgentInput,
   type RunAgentResult,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
 
 const RUN_AGENT_MUTATION = `
   mutation RunAgent($input: RunAgentInput!) {
     runAgent(input: $input) {
+      threadId
+      status
       result
       error
       success
@@ -15,15 +18,28 @@ const RUN_AGENT_MUTATION = `
   }
 `;
 
-export const runAgent = async (
-  input: RunAgentInput,
-): Promise<RunAgentResult> => {
+export const runAgent = async ({
+  input,
+  ...rest
+}: RunAgentInput): Promise<RunAgentResult> => {
+  const variables = {
+    input: isDefined(input)
+      ? {
+          ...rest,
+          input:
+            typeof input === 'string'
+              ? [{ role: 'user', content: input }]
+              : input,
+        }
+      : rest,
+  };
+
   const { runAgent: result } = await postGraphqlRequest<
-    { input: RunAgentInput },
+    typeof variables,
     { runAgent: RunAgentResult }
   >({
     query: RUN_AGENT_MUTATION,
-    variables: { input },
+    variables,
     caller: 'runAgent',
   });
 

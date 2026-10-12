@@ -6,10 +6,23 @@ import { PlaceDetailsResultDTO } from 'src/engine/core-modules/geo-map/dtos/plac
 import { GeoMapService } from 'src/engine/core-modules/geo-map/services/geo-map.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 
 @MetadataResolver()
-@UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  NoPermissionGuard,
+)
 export class GeoMapResolver {
   constructor(private readonly geoMapService: GeoMapService) {}
 

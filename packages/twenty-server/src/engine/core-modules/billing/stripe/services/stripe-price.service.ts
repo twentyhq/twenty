@@ -30,8 +30,7 @@ export class StripePriceService {
     });
   }
 
-  // Superseding a price leaves the old one on the product forever, so the page
-  // this returns is not a safe bound on how many a product accumulates.
+  // Paginates fully: superseded prices stay on the product forever
   async getPricesByProductId(productId: string) {
     const prices: Stripe.Price[] = [];
 

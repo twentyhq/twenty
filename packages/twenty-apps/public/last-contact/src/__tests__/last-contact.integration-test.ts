@@ -1,18 +1,35 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+const { enqueueJobsMock } = vi.hoisted(() => ({ enqueueJobsMock: vi.fn() }));
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
+
+import {
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import onCalendarInteraction from 'src/logic-functions/on-calendar-interaction';
-import onCompanyCreated from 'src/logic-functions/on-company-created';
+import onMeetingHorizonReached from 'src/logic-functions/on-meeting-horizon-reached';
+import onMeetingSlotReached from 'src/logic-functions/on-meeting-slot-reached';
 import onEmailInteraction from 'src/logic-functions/on-email-interaction';
 import onOpportunityCreated from 'src/logic-functions/on-opportunity-created';
 import onOpportunityUpdated from 'src/logic-functions/on-opportunity-updated';
 import onPersonUpdated from 'src/logic-functions/on-person-updated';
+import { buildPersonAggregates } from 'src/utils/person-last-contact-aggregation';
 
 const calendarHandler = onCalendarInteraction.config.handler as (
   batch: unknown,
 ) => Promise<void>;
+const meetingSlotHandler = onMeetingSlotReached.config.handler as (payload: {
+  slotStart: string;
+  slotEnd: string;
+}) => Promise<void>;
+const meetingHorizonHandler = onMeetingHorizonReached.config
+  .handler as () => Promise<void>;
 const emailHandler = onEmailInteraction.config.handler as (
   batch: unknown,
 ) => Promise<void>;
@@ -20,9 +37,6 @@ const opportunityCreatedHandler = onOpportunityCreated.config.handler as (
   batch: unknown,
 ) => Promise<void>;
 const opportunityUpdatedHandler = onOpportunityUpdated.config.handler as (
-  batch: unknown,
-) => Promise<void>;
-const companyCreatedHandler = onCompanyCreated.config.handler as (
   batch: unknown,
 ) => Promise<void>;
 const personUpdatedHandler = onPersonUpdated.config.handler as (
@@ -342,6 +356,57 @@ const getPersonLastContact = async (
   };
 };
 
+const getPersonTimelineDiffFieldNames = async (
+  client: CoreApiClient,
+  personId: string,
+): Promise<string[]> => {
+  const result = await client.query({
+    timelineActivities: {
+      __args: { filter: { targetPersonId: { eq: personId } } },
+      edges: { node: { properties: true } },
+    },
+  });
+
+  const edges = (
+    result.timelineActivities as {
+      edges?: {
+        node: { properties?: { diff?: Record<string, unknown> } | null };
+      }[];
+    } | null
+  )?.edges;
+
+  return (edges ?? []).flatMap(({ node }) =>
+    Object.keys(node.properties?.diff ?? {}),
+  );
+};
+
+const TIMELINE_POLL_TIMEOUT_MS = 30_000;
+const TIMELINE_POLL_INTERVAL_MS = 500;
+
+// Timeline activities are written async by the worker, so an empty timeline proves nothing; a later field write gives the check something to wait for.
+const waitForPersonTimelineDiffFieldName = async (
+  client: CoreApiClient,
+  { personId, fieldName }: { personId: string; fieldName: string },
+): Promise<string[]> => {
+  const deadline = Date.now() + TIMELINE_POLL_TIMEOUT_MS;
+
+  while (Date.now() < deadline) {
+    const fieldNames = await getPersonTimelineDiffFieldNames(client, personId);
+
+    if (fieldNames.includes(fieldName)) {
+      return fieldNames;
+    }
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, TIMELINE_POLL_INTERVAL_MS),
+    );
+  }
+
+  throw new Error(
+    `No timeline activity for ${fieldName} on person ${personId} after ${TIMELINE_POLL_TIMEOUT_MS}ms`,
+  );
+};
+
 const expectColumns = (
   actual: PersonLastContact,
   expected: {
@@ -585,6 +650,9 @@ describe('last contact handlers', () => {
     });
     createdParticipantIds.push(participantId);
 
+    enqueueJobsMock.mockClear();
+    enqueueJobsMock.mockResolvedValue({ enqueued: true });
+
     await calendarHandler(
       calendarBatch(participantId, personId, calendarEventId),
     );
@@ -592,6 +660,70 @@ describe('last contact handlers', () => {
     expect(
       (await getPersonLastContact(client, personId)).lastContactAt,
     ).toBeNull();
+    expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
+    expect(enqueueJobsMock.mock.calls[0][0]).toMatchObject({
+      logicFunctionUniversalIdentifier:
+        MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+    });
+    const [{ payload }] = enqueueJobsMock.mock.calls[0][0].jobs;
+    expect(asTime(payload.slotStart)).toBeLessThanOrEqual(asTime(startsAt)!);
+    expect(asTime(payload.slotEnd)).toBeGreaterThan(asTime(startsAt)!);
+  });
+
+  it('should apply the meetings of a slot once it is reached', async () => {
+    const startsAt = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const calendarEventId = await createCalendarEvent(client, { startsAt });
+    createdCalendarEventIds.push(calendarEventId);
+    const participantId = await createCalendarEventParticipant(client, {
+      calendarEventId,
+      personId,
+    });
+    createdParticipantIds.push(participantId);
+
+    await meetingSlotHandler({
+      slotStart: new Date(Date.parse(startsAt) - 60 * 1000).toISOString(),
+      slotEnd: new Date(Date.parse(startsAt) + 60 * 1000).toISOString(),
+    });
+
+    const lastContact = await getPersonLastContact(client, personId);
+    expect(asTime(lastContact.lastContactAt)).toBe(asTime(startsAt));
+    expect(lastContact.lastContactItemCalendarEventId).toBe(calendarEventId);
+  });
+
+  it('should schedule upcoming person meetings when the horizon is reached', async () => {
+    const startsAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const calendarEventId = await createCalendarEvent(client, { startsAt });
+    createdCalendarEventIds.push(calendarEventId);
+    const participantId = await createCalendarEventParticipant(client, {
+      calendarEventId,
+      personId,
+    });
+    createdParticipantIds.push(participantId);
+
+    enqueueJobsMock.mockClear();
+    enqueueJobsMock.mockResolvedValue({ enqueued: true });
+
+    await meetingHorizonHandler();
+
+    const scheduledSlots = enqueueJobsMock.mock.calls
+      .map(([input]) => input)
+      .filter(
+        (input) =>
+          input.logicFunctionUniversalIdentifier ===
+          MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      )
+      .map((input) => input.jobs[0].payload);
+    expect(
+      scheduledSlots.some(
+        ({ slotStart, slotEnd }) =>
+          asTime(slotStart)! <= asTime(startsAt)! &&
+          asTime(slotEnd)! > asTime(startsAt)!,
+      ),
+    ).toBe(true);
   });
 
   it('should not set lastContactAt when the past calendar event is canceled', async () => {
@@ -671,6 +803,79 @@ describe('last contact handlers', () => {
       lastEmailId: messageId,
       lastMeetingId: null,
     });
+  });
+
+  it('aggregates a person backfill from nested participants', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const receivedAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
+    const startsAt = new Date(Date.now() - 7 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+    const calendarEventId = await recordMeeting({
+      personId,
+      workspaceMemberId,
+      startsAt,
+    });
+
+    const aggregate = (await buildPersonAggregates(client, [personId])).get(
+      personId,
+    );
+
+    expect(aggregate?.lastEmail?.id).toBe(messageId);
+    expect(aggregate?.lastMeeting?.id).toBe(calendarEventId);
+    expect(aggregate?.lastContactById).toBe(workspaceMemberId);
+    expect(asTime(aggregate?.lastOutboundAt)).toBe(asTime(receivedAt));
+    expect(asTime(aggregate?.lastInboundAt)).toBe(asTime(startsAt));
+  });
+
+  it('keeps last contact writes off the person timeline', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const receivedAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+
+    expect((await getPersonLastContact(client, personId)).lastEmailId).toBe(
+      messageId,
+    );
+
+    await client.mutation({
+      updatePerson: {
+        __args: { id: personId, data: { jobTitle: 'Timeline control' } },
+        id: true,
+      },
+    });
+
+    const timelineFieldNames = await waitForPersonTimelineDiffFieldName(
+      client,
+      { personId, fieldName: 'jobTitle' },
+    );
+
+    for (const fieldName of [
+      'lastContactAt',
+      'lastContactBy',
+      'lastContactById',
+      'lastContactItemMessage',
+      'lastContactItemMessageId',
+      'lastOutboundAt',
+      'lastEmail',
+      'lastEmailId',
+    ]) {
+      expect(timelineFieldNames).not.toContain(fieldName);
+    }
   });
 
   it('computes all columns for a single received (inbound) email', async () => {
@@ -1070,21 +1275,5 @@ describe('last contact handlers', () => {
     expect(companyContact.lastContactAt).toBeNull();
     expect(companyContact.lastContactItemMessageId).toBeNull();
     expect(companyContact.lastContactItemCalendarEventId).toBeNull();
-  });
-
-  it('leaves the company last contact empty when the company has no contacted people on creation', async () => {
-    const companyId = await createCompany(client);
-    createdCompanyIds.push(companyId);
-
-    await companyCreatedHandler(
-      buildBatch('company.created', companyId, { after: { id: companyId } }),
-    );
-
-    const companyContact = await getRelatedLastContact(
-      client,
-      'company',
-      companyId,
-    );
-    expect(companyContact.lastContactAt).toBeNull();
   });
 });

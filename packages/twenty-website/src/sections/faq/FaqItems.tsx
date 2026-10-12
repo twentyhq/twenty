@@ -40,8 +40,6 @@ const QuestionText = styled.span`
   transition: color ${DURATION.md} ${EASING.smooth};
 `;
 
-// The question marker is two stacked rectangle states (outline resting,
-// filled when hovered/open) — CSS, not SVG assets.
 const MarkerLayer = styled.span`
   border-radius: 1px;
   display: block;

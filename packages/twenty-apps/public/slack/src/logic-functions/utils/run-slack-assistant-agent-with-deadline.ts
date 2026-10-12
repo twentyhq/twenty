@@ -10,8 +10,9 @@ import { raceSlackAssistantAgentDeadline } from 'src/logic-functions/utils/race-
 
 type RunSlackAssistantAgentInput = Pick<
   RunAgentInput,
-  'agentUniversalIdentifier' | 'runAsWorkspaceMemberId'
+  'agentUniversalIdentifier'
 > & {
+  runAsWorkspaceMemberId: string;
   messages: SlackAssistantAgentMessage[];
   deadlineAtMs: number;
 };

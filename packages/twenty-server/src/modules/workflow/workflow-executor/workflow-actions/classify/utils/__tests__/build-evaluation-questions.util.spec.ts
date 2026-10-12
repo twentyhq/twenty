@@ -49,8 +49,7 @@ describe('buildEvaluationQuestions', () => {
     });
   });
 
-  // The editor seeds every added level with description: '', so this is the
-  // shape the UI actually sends, not an omitted field.
+  // The editor seeds every added level with description: ''
   it('should fall back to the level label when the editor left the description empty', () => {
     expect(
       buildEvaluationQuestions([
@@ -115,8 +114,7 @@ describe('buildEvaluationQuestions', () => {
     );
   });
 
-  // Options key a map, so a repeat would hand the model fewer choices than the
-  // step declares rather than failing.
+  // A repeat would silently hand the model fewer choices than declared
   it('should refuse a choice question listing the same option twice', () => {
     expect(() =>
       buildEvaluationQuestions([
@@ -139,8 +137,7 @@ describe('buildEvaluationQuestions', () => {
     );
   });
 
-  // Score levels are positional and keep their count, so a repeated label
-  // loses nothing.
+  // Score levels are positional, so a repeated label loses nothing
   it('should allow a score question repeating a level label', () => {
     expect(
       buildEvaluationQuestions([

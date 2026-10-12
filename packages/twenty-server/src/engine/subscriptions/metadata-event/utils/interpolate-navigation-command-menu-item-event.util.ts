@@ -16,9 +16,7 @@ type InterpolatableCommandMenuItemRecord = Record<string, unknown> & {
 
 const INTERPOLATED_FIELDS = ['label', 'shortLabel', 'icon'] as const;
 
-// NAVIGATION items are the only ones whose placeholders name another entity,
-// and the label that fills them is the target object's -- which is locale
-// dependent, so this runs at delivery on already-resolved values.
+// Runs at delivery because the target object label filling the placeholders is locale dependent
 export const interpolateNavigationCommandMenuItemEvent = ({
   record,
   flatObjectMetadataMaps,

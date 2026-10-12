@@ -106,18 +106,14 @@ const UUID_FILTER_OPERATOR_KEYS = new Set<string>([
   'neq',
 ]);
 
-// A filter on a relation field name either holds UUID operators applied to
-// the related record id, or field names of the related record to match
-// against the related record itself, like { person: { companyId: { in: [...] } } }
-// produced by view filters traversing a relation.
+// Either UUID operators on the related id, or nested field filters from view filters traversing a relation.
 const isNestedRelationFilter = (
   filterValue: unknown,
 ): filterValue is RecordGqlOperationFilter =>
   isObject(filterValue) &&
   Object.keys(filterValue).some((key) => !UUID_FILTER_OPERATOR_KEYS.has(key));
 
-// A record fetched through a relation often carries the related record
-// without its join column, like { list: { id } } and no listId.
+// Records fetched through a relation often carry { list: { id } } without listId.
 const getJoinColumnValue = ({
   record,
   joinColumnName,
@@ -149,10 +145,7 @@ const isRecordMatchingNestedRelationFilter = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
   isWithinNegatedFilter: boolean;
 }): boolean => {
-  // A null related record truthfully fails the nested predicate, matching
-  // the backend NOT EXISTS semantics. A related record that was not loaded
-  // leaves the outcome unknown: returning the negation parity keeps the
-  // record excluded whether or not a surrounding not flips the result.
+  // Null fails the nested predicate (backend NOT EXISTS); unloaded returns the negation parity to stay excluded.
   if (relationRecord === null) {
     return false;
   }
@@ -180,8 +173,7 @@ const isRecordMatchingNestedRelationFilter = ({
       isWithinNegatedFilter,
     });
 
-  // A to-many relation matches when any of its loaded records does, the way
-  // the backend EXISTS does.
+  // Matches when any loaded record does, like the backend EXISTS.
   return getLoadedRelationRecords({
     relationRecord,
     relationTargetObjectNameSingular:
@@ -192,9 +184,7 @@ const isRecordMatchingNestedRelationFilter = ({
   );
 };
 
-// A relation value is a single record for a to-one relation, and for a to-many
-// relation either an array of records or a connection, depending on whether
-// the record comes from the store or from a GraphQL response.
+// To-many values are an array (store) or a connection (GraphQL response).
 const getLoadedRelationRecords = ({
   relationRecord,
   relationTargetObjectNameSingular,

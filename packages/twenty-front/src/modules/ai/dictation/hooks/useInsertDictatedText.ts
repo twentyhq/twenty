@@ -3,10 +3,7 @@ import { type Editor } from '@tiptap/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-// Only settled text is written to the document. Interim results are shown
-// beside the composer instead, because tracking a replaceable range inside
-// ProseMirror breaks as soon as the user edits while dictating — and they do,
-// since the composer stays focused throughout.
+// Interim results stay outside the document: a replaceable range breaks when the user edits while dictating.
 export const useInsertDictatedText = (editor: Editor | null) =>
   useCallback(
     (text: string) => {
@@ -15,9 +12,6 @@ export const useInsertDictatedText = (editor: Editor | null) =>
       }
 
       const { from } = editor.state.selection;
-      // A bare string is parsed as HTML against the editor's schema, so a
-      // transcript containing "<b>" loses the tag and gains a mark. A text node
-      // writes what was actually said.
       const precedingCharacter = editor.state.doc.textBetween(
         Math.max(from - 1, 0),
         from,
@@ -26,6 +20,7 @@ export const useInsertDictatedText = (editor: Editor | null) =>
       const needsSeparator =
         isNonEmptyString(precedingCharacter) && !/\s/.test(precedingCharacter);
 
+      // A text node, not a string: a string parses as HTML, so "<b>" would become a mark.
       editor
         .chain()
         .focus()

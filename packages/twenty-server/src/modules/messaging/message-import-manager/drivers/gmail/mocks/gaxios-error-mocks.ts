@@ -89,7 +89,6 @@ const gaxiosErrorMocks = {
     response: undefined,
   },
 
-  // Helper function to get error by code
   getError: function (code: string) {
     switch (code) {
       case 'ECONNRESET':

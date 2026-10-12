@@ -1,10 +1,10 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { getWidgetMoveWithinTab } from '@/page-layout/utils/getWidgetMoveWithinTab';
+import { getAdjacentFitContentWidgetIndex } from '@/page-layout/utils/getAdjacentFitContentWidgetIndex';
 import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
+import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,8 +22,6 @@ export const useMovePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
   const store = useStore();
 
-  const featureFlags = useWorkspaceFeatureFlagsMap();
-
   const movePageLayoutWidget = useCallback(
     (widgetId: string, direction: 'up' | 'down') => {
       store.set(pageLayoutDraftState, (prev) => {
@@ -35,24 +33,28 @@ export const useMovePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           return prev;
         }
 
-        const widgetMove = getWidgetMoveWithinTab({
-          widgets: tab.widgets,
-          widgetId,
+        const sortedWidgets = sortWidgetsByVerticalListPosition(tab.widgets);
+        const currentIndex = sortedWidgets.findIndex(
+          (widget) => widget.id === widgetId,
+        );
+        const targetIndex = getAdjacentFitContentWidgetIndex({
+          widgets: sortedWidgets,
+          widgetIndex: currentIndex,
           direction,
-          featureFlags,
         });
 
-        if (!isDefined(widgetMove)) {
+        if (!isDefined(targetIndex)) {
           return prev;
         }
 
         return moveWidgetWithinTabInDraft(prev, {
           tabId: tab.id,
-          ...widgetMove,
+          fromIndex: currentIndex,
+          toIndex: targetIndex,
         });
       });
     },
-    [featureFlags, pageLayoutDraftState, store],
+    [pageLayoutDraftState, store],
   );
 
   return { movePageLayoutWidget };

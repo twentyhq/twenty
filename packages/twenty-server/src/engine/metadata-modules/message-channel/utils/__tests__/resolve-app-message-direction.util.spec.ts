@@ -42,9 +42,6 @@ describe('resolveAppMessageDirection', () => {
     ).toBe(MessageDirection.INCOMING);
   });
 
-  // A provider that spells one account differently across its profile and
-  // message payloads would otherwise mark everything the owner sent as
-  // incoming — the same reason the email path normalises its handles.
   it('still recognises the channel owner when the casing differs', () => {
     expect(
       resolveAppMessageDirection({

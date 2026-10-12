@@ -1,8 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-// The top-level id is the authoritative one where a mutation takes it: its
-// input extends a partial create input that also carries an optional id, and
-// only the argument routes the mutation.
+// The input also carries an optional id from the create input, but only the top-level argument routes the mutation
 export const resolveViewChildEntityId = ({
   args,
   params,

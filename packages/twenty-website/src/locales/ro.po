@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-16 16:20\n"
+"PO-Revision-Date: 2026-10-07 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -3816,6 +3816,11 @@ msgstr "Germania 🇩🇪"
 msgid "Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners."
 msgstr "Obține certificarea ca partener Twenty: o insignă verificată, un profil în director pe care clienții tăi îl pot verifica și rezumate de proiecte ale clienților potrivite pentru cei mai buni parteneri."
 
+#. js-lingui-id: zn+MlF
+#: src/platform/routing/static-website-routes.ts
+msgid "Get help with Twenty, whether you run it on our cloud or host it yourself, including the Twenty app for Slack."
+msgstr "Obține ajutor cu Twenty, indiferent dacă îl rulezi în cloudul nostru sau îl găzduiești singur, inclusiv aplicația Twenty pentru Slack."
+
 #. js-lingui-id: b+jRGN
 #: src/sections/partner-lead/PartnerDirectoryPanel.tsx
 #: src/sections/partner-hero/PartnerLeadHero.tsx
@@ -7416,8 +7421,14 @@ msgstr "Partener excelent"
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts
+#: src/app/[locale]/(site)/support/page.tsx
 msgid "Support"
 msgstr "Suport"
+
+#. js-lingui-id: RgtAtw
+#: src/platform/routing/static-website-routes.ts
+msgid "Support | Twenty"
+msgstr "Asistență | Twenty"
 
 #. js-lingui-id: Aq66kg
 #: src/partner-application/data/partner-country-options.ts

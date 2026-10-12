@@ -6,6 +6,7 @@ import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/ge
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
@@ -137,8 +138,20 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   };
 
   const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
+  const isSubjectVisible =
+    visibility === MessageChannelVisibility.SUBJECT ||
+    visibility === MessageChannelVisibility.SHARE_EVERYTHING;
+  const label =
+    isSubjectVisible && isNonEmptyString(thread.subject)
+      ? thread.subject
+      : t`Email thread`;
+
   return (
-    <ActivityRow onClick={handleThreadClick} disabled={isDisabled}>
+    <ActivityRow
+      onClick={handleThreadClick}
+      disabled={isDisabled}
+      label={label}
+    >
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar

@@ -1,5 +1,3 @@
-// Extracts the RFC 2822 Message-ID header from a raw email buffer.
-// Handles folded headers (continuation lines starting with whitespace).
 // MailComposer always generates this header; if missing, falls back to empty string.
 export const extractMessageIdFromBuffer = (messageBuffer: Buffer): string => {
   const headerSection = messageBuffer.toString('utf-8').split('\r\n\r\n')[0];

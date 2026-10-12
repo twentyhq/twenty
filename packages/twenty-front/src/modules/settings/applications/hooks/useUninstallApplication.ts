@@ -8,11 +8,11 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   FindUninstallApplicationJobStatusDocument,
   JobState,
-  TriggerUninstallApplicationJobDocument,
+  TriggerUninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 type UseUninstallApplicationArgs = {
@@ -25,8 +25,8 @@ export const useUninstallApplication = ({
   onCompleted,
 }: UseUninstallApplicationArgs = {}) => {
   const { enqueueToast } = useToast();
-  const [triggerUninstallApplicationJob, { loading: isTriggeringUninstall }] =
-    useMutation(TriggerUninstallApplicationJobDocument);
+  const [triggerUninstallApplication, { loading: isTriggeringUninstall }] =
+    useMutation(TriggerUninstallApplicationDocument);
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
   const { data: jobStatusData } = useQuery(
@@ -39,9 +39,15 @@ export const useUninstallApplication = ({
   );
 
   const runningJobStatus = jobStatusData?.findUninstallApplicationJobStatus;
-  const runningJobId =
-    isDefined(runningJobStatus) && !isTerminalJobState(runningJobStatus.state)
-      ? runningJobStatus.jobId
+  const runningJob =
+    isDefined(runningJobStatus) &&
+    !isTerminalJobState(runningJobStatus.state) &&
+    isDefined(universalIdentifier)
+      ? {
+          jobId: runningJobStatus.jobId,
+          context: universalIdentifier,
+          progress: runningJobStatus.progress ?? undefined,
+        }
       : undefined;
 
   const handleUninstallJobSettled = useCallback(
@@ -79,11 +85,8 @@ export const useUninstallApplication = ({
     [enqueueToast, onCompleted, setCurrentWorkspace],
   );
 
-  const { activeJobId, trackJob } = useTrackedQueueJob({
-    runningJob:
-      isDefined(runningJobId) && isDefined(universalIdentifier)
-        ? { jobId: runningJobId, context: universalIdentifier }
-        : undefined,
+  const { activeJobId, activeJobProgress, trackJob } = useTrackedQueueJob({
+    runningJob,
     onQueueJobSettled: handleUninstallJobSettled,
   });
 
@@ -93,11 +96,11 @@ export const useUninstallApplication = ({
     }
 
     try {
-      const { data } = await triggerUninstallApplicationJob({
+      const { data } = await triggerUninstallApplication({
         variables: { input: { universalIdentifier } },
       });
 
-      const jobId = data?.triggerUninstallApplicationJob.jobId;
+      const jobId = data?.triggerUninstallApplication.jobId;
 
       if (isDefined(jobId)) {
         trackJob({ jobId, context: universalIdentifier });
@@ -115,5 +118,6 @@ export const useUninstallApplication = ({
   return {
     uninstall,
     isUninstalling: isTriggeringUninstall || isDefined(activeJobId),
+    uninstallProgress: activeJobProgress,
   };
 };

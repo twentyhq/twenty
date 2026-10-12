@@ -14,6 +14,7 @@ export const buildStockExhaustedScope = ({
   spenderType: counter.spenderType,
   spenderId: counter.spenderId,
   operationType: counter.operationType,
+  unit: counter.unit,
   limitValue: counter.limitValue,
   remaining,
   periodCount: null,

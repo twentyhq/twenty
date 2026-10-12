@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should fail on invalid application variable scopes when changing the scope of an existing variable 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "applicationVariable": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_APPLICATION_VARIABLE_INPUT",
+              "message": "Application variable scope cannot be changed after creation",
+              "userFriendlyMessage": "Application variable scope cannot be changed",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "applicationVariable",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 applicationVariable",
+    "summary": {
+      "applicationVariable": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Application variable scope cannot be changed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid application variable scopes when syncing a variable with an unknown scope 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "applicationVariable": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_APPLICATION_VARIABLE_INPUT",
+              "message": "Application variable scope "TEAM" is invalid",
+              "userFriendlyMessage": "This application variable scope is not supported.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "key": "RECORD_MY_MEETINGS",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "applicationVariable",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 applicationVariable",
+    "summary": {
+      "applicationVariable": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This application variable scope is not supported.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

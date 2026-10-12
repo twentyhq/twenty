@@ -17,7 +17,9 @@ import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metada
 import {
   NavigationMenuItemType,
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   ViewFilterOperand,
+  WidgetType,
 } from 'twenty-shared/types';
 import { describe, expect, it } from 'vitest';
 
@@ -122,7 +124,7 @@ const buildPageLayout = (
   overrides: Partial<PageLayoutManifest> & { universalIdentifier: string },
 ): PageLayoutManifest => ({
   name: 'Overview',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: PET_UID,
   ...overrides,
 });
@@ -180,7 +182,7 @@ const buildManifestWithDocsPageLayout = (url: string): Manifest => ({
             {
               universalIdentifier: DOCS_WIDGET_UID,
               title: 'Docs',
-              type: 'IFRAME',
+              type: WidgetType.IFRAME,
               position: {
                 layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                 index: 0,

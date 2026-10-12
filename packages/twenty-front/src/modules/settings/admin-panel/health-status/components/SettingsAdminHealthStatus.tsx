@@ -11,7 +11,7 @@ import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
   GetSystemHealthStatusDocument,
 } from '~/generated-admin/graphql';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsAdminHealthStatus = () => {
   const apolloAdminClient = useApolloAdminClient();

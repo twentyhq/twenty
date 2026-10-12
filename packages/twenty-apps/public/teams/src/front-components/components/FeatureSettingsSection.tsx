@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useId } from 'react';
 import { useTranslate } from 'twenty-sdk/front-component';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSection = styled.section`
   color: ${() => themeCssVariables.font.color.primary};

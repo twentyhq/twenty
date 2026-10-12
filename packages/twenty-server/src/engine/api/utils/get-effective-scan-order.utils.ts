@@ -7,11 +7,7 @@ export type EffectiveScanOrder = {
   areNullsScannedLast: boolean;
 };
 
-// The single definition of the scan a paginated query performs: backward
-// pagination scans the exact reverse of the requested order, which flips both
-// the direction and the side the NULL block sits on. Both the SQL ORDER BY and
-// the keyset WHERE conditions must derive from this so they cannot disagree —
-// their prior independent encodings are how issue #24333 happened.
+// SQL ORDER BY and keyset WHERE conditions must both derive from this or they disagree (#24333)
 export const getEffectiveScanOrder = (
   direction: OrderByDirection,
   isForwardPagination: boolean,

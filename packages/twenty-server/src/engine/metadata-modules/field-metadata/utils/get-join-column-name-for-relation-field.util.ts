@@ -5,8 +5,7 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
-// The ORM derives relation columns from the field name, so fall back to it
-// when settings carry no explicit join column.
+// the ORM derives relation columns from the field name when no join column is set
 export const getJoinColumnNameForRelationField = (
   flatFieldMetadata: OrmFlatFieldMetadata,
 ): string => {

@@ -192,6 +192,33 @@ describe('parseEmailDocument', () => {
     expect(result.success).toBe(false);
   });
 
+  it('should accept text block styles and unset styles', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'heading',
+          attrs: { level: 1, style: { color: '#123456', textAlign: 'center' } },
+          content: [{ type: 'text', text: 'Hi' }],
+        },
+        { ...paragraph('Body'), attrs: { style: null } },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject a text block style with non-css keys', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [
+        { ...paragraph('Body'), attrs: { style: { 'font-size': '12px' } } },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('should reject columns with fewer than two columns', () => {
     const result = parseEmailDocument({
       type: 'doc',

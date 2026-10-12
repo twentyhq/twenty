@@ -1,7 +1,7 @@
 import { type DataSource } from 'typeorm';
 
 import { isEmptyUnprovisionedAgentHistoryWorkspace } from 'src/database/commands/upgrade-version-command/2-43/utils/is-empty-unprovisioned-agent-history-workspace.util';
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 
 describe('isEmptyUnprovisionedAgentHistoryWorkspace', () => {
   const workspaceId = '20202020-1111-4111-8111-111111111111';
@@ -14,7 +14,7 @@ describe('isEmptyUnprovisionedAgentHistoryWorkspace', () => {
   const dataSource = {
     createQueryRunner: () => runner,
   } as unknown as DataSource;
-  const agentHistoryStorageService = new AgentHistoryStorageService(dataSource);
+  const agentHistoryStorageService = new AgentHistoryUpgradeStorageService(dataSource);
 
   beforeEach(() => {
     jest.clearAllMocks();

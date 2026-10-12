@@ -11,6 +11,12 @@ import { v4 as uuidv4 } from 'uuid';
 const TEST_APP_ID = uuidv4();
 const UNKNOWN_APP_ID = uuidv4();
 
+const normalizeMessage = (message: string) =>
+  message.replace(
+    new RegExp(UNKNOWN_APP_ID, 'g'),
+    '<applicationUniversalIdentifier>',
+  );
+
 type TestContext = {
   applicationUniversalIdentifier: string;
   fileFolder: string;
@@ -171,7 +177,7 @@ describe('Upload application file should fail', () => {
 
       jest.useFakeTimers();
 
-      expectOneNotInternalServerErrorSnapshot({ errors });
+      expectOneNotInternalServerErrorSnapshot({ errors, normalizeMessage });
     },
     60000,
   );

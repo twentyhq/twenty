@@ -65,9 +65,7 @@ export class MessageQueueExplorer implements OnModuleInit {
 
     const groupedProcessors = this.groupProcessorsByQueueName(processors);
 
-    // Filter out empty entries: an explicit empty env value is parsed as ['']
-    // by the shared ARRAY transformer, which would otherwise turn an empty
-    // allowlist (meaning "all queues") into "no queues"
+    // The ARRAY transformer parses an empty env value as [''], which would turn "all queues" into "no queues".
     const enabledQueues = this.twentyConfigService
       .get('WORKER_ENABLED_QUEUES')
       .filter((queueName) => queueName.length > 0);

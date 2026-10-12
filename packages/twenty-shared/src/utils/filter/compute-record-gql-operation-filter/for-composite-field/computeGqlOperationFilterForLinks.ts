@@ -92,7 +92,6 @@ export const computeGqlOperationFilterForLinks = ({
       default: {
         throw new Error( // TODO
           `Unknown subfield name ${subFieldName}`,
-          // 'UNKNOWN_SUBFIELD_NAME',
         );
       }
     }

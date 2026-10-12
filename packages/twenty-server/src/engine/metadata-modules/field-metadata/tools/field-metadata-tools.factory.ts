@@ -9,14 +9,16 @@ import {
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { METADATA_TOOL_EXCLUDED_FIELD_NAMES } from 'src/engine/core-modules/tool-provider/constants/metadata-tool-excluded-field-names.constant';
 import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
-import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/normalize-icon-name.util';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getObjectMetadataIdByName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-object-metadata-id-by-name.util';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { isDefined } from 'twenty-shared/utils';
 
 const FIELD_STRIP_WHEN_NULLISH = [
@@ -223,8 +225,9 @@ export class FieldMetadataToolsFactory {
     });
 
     if (!isDefined(objectMetadataId)) {
-      throw new Error(
+      throw new ObjectMetadataException(
         `Object "${objectName}" not found. Use get_object_metadata to list available objects.`,
+        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
 
@@ -309,39 +312,32 @@ export class FieldMetadataToolsFactory {
           isRemoteCreation?: boolean;
           relationCreationPayload?: unknown;
         }) => {
-          try {
-            const { icon, relationCreationPayload, ...createFieldInput } =
-              parameters;
+          const { icon, relationCreationPayload, ...createFieldInput } =
+            parameters;
 
-            const flatFieldMetadata =
-              await this.fieldMetadataService.createOneField({
-                createFieldInput: {
-                  ...createFieldInput,
-                  icon:
-                    normalizeIconName(icon) ??
-                    FIELD_TYPE_DEFAULT_ICONS[parameters.type],
-                  relationCreationPayload: normalizeRelationCreationPayloadIcon(
-                    relationCreationPayload,
-                  ),
-                } as Parameters<
-                  typeof this.fieldMetadataService.createOneField
-                >[0]['createFieldInput'],
-                workspaceId,
-              });
+          const flatFieldMetadata =
+            await this.fieldMetadataService.createOneField({
+              createFieldInput: {
+                ...createFieldInput,
+                icon:
+                  normalizeIconName(icon) ??
+                  FIELD_TYPE_DEFAULT_ICONS[parameters.type],
+                relationCreationPayload: normalizeRelationCreationPayloadIcon(
+                  relationCreationPayload,
+                ),
+              } as Parameters<
+                typeof this.fieldMetadataService.createOneField
+              >[0]['createFieldInput'],
+              workspaceId,
+            });
 
-            return {
-              id: flatFieldMetadata.id,
-              name: flatFieldMetadata.name,
-              label: flatFieldMetadata.label,
-              type: flatFieldMetadata.type,
-              objectMetadataId: flatFieldMetadata.objectMetadataId,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return {
+            id: flatFieldMetadata.id,
+            name: flatFieldMetadata.name,
+            label: flatFieldMetadata.label,
+            type: flatFieldMetadata.type,
+            objectMetadataId: flatFieldMetadata.objectMetadataId,
+          };
         },
       },
       update_field_metadata: {
@@ -362,56 +358,40 @@ export class FieldMetadataToolsFactory {
           settings?: unknown;
           isLabelSyncedWithName?: boolean;
         }) => {
-          try {
-            const { id, icon, ...update } = parameters;
-            const normalizedIcon = normalizeIconName(icon);
+          const { id, icon, ...update } = parameters;
+          const normalizedIcon = normalizeIconName(icon);
 
-            const flatFieldMetadata =
-              await this.fieldMetadataService.updateOneField({
-                updateFieldInput: {
-                  id,
-                  ...update,
-                  ...(isDefined(normalizedIcon)
-                    ? { icon: normalizedIcon }
-                    : {}),
-                } as Parameters<
-                  typeof this.fieldMetadataService.updateOneField
-                >[0]['updateFieldInput'],
-                workspaceId,
-              });
+          const flatFieldMetadata =
+            await this.fieldMetadataService.updateOneField({
+              updateFieldInput: {
+                id,
+                ...update,
+                ...(isDefined(normalizedIcon) ? { icon: normalizedIcon } : {}),
+              } as Parameters<
+                typeof this.fieldMetadataService.updateOneField
+              >[0]['updateFieldInput'],
+              workspaceId,
+            });
 
-            return {
-              id: flatFieldMetadata.id,
-              name: flatFieldMetadata.name,
-              label: flatFieldMetadata.label,
-              type: flatFieldMetadata.type,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return {
+            id: flatFieldMetadata.id,
+            name: flatFieldMetadata.name,
+            label: flatFieldMetadata.label,
+            type: flatFieldMetadata.type,
+          };
         },
       },
       delete_field_metadata: {
         description: 'Delete a field by ID.',
         inputSchema: DeleteFieldMetadataInputSchema,
         execute: async (parameters: { id: string }) => {
-          try {
-            const flatFieldMetadata =
-              await this.fieldMetadataService.deleteOneField({
-                deleteOneFieldInput: { id: parameters.id },
-                workspaceId,
-              });
+          const flatFieldMetadata =
+            await this.fieldMetadataService.deleteOneField({
+              deleteOneFieldInput: { id: parameters.id },
+              workspaceId,
+            });
 
-            return { id: flatFieldMetadata.id, success: true };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return { id: flatFieldMetadata.id, success: true };
         },
       },
       create_many_field_metadata: {
@@ -436,31 +416,24 @@ export class FieldMetadataToolsFactory {
             relationCreationPayload?: unknown;
           }>;
         }) => {
-          try {
-            await this.fieldMetadataService.createManyFields({
-              createFieldInputs: parameters.fields.map(
-                ({ icon, relationCreationPayload, ...createFieldInput }) => ({
-                  ...createFieldInput,
-                  icon:
-                    normalizeIconName(icon) ??
-                    FIELD_TYPE_DEFAULT_ICONS[createFieldInput.type],
-                  relationCreationPayload: normalizeRelationCreationPayloadIcon(
-                    relationCreationPayload,
-                  ),
-                }),
-              ) as Parameters<
-                typeof this.fieldMetadataService.createManyFields
-              >[0]['createFieldInputs'],
-              workspaceId,
-            });
+          await this.fieldMetadataService.createManyFields({
+            createFieldInputs: parameters.fields.map(
+              ({ icon, relationCreationPayload, ...createFieldInput }) => ({
+                ...createFieldInput,
+                icon:
+                  normalizeIconName(icon) ??
+                  FIELD_TYPE_DEFAULT_ICONS[createFieldInput.type],
+                relationCreationPayload: normalizeRelationCreationPayloadIcon(
+                  relationCreationPayload,
+                ),
+              }),
+            ) as Parameters<
+              typeof this.fieldMetadataService.createManyFields
+            >[0]['createFieldInputs'],
+            workspaceId,
+          });
 
-            return true;
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return true;
         },
       },
       update_many_field_metadata: {
@@ -483,33 +456,26 @@ export class FieldMetadataToolsFactory {
             isLabelSyncedWithName?: boolean;
           }>;
         }) => {
-          try {
-            await Promise.all(
-              parameters.fields.map(async ({ id, icon, ...update }) => {
-                const normalizedIcon = normalizeIconName(icon);
+          await Promise.all(
+            parameters.fields.map(async ({ id, icon, ...update }) => {
+              const normalizedIcon = normalizeIconName(icon);
 
-                await this.fieldMetadataService.updateOneField({
-                  updateFieldInput: {
-                    id,
-                    ...update,
-                    ...(isDefined(normalizedIcon)
-                      ? { icon: normalizedIcon }
-                      : {}),
-                  } as Parameters<
-                    typeof this.fieldMetadataService.updateOneField
-                  >[0]['updateFieldInput'],
-                  workspaceId,
-                });
-              }),
-            );
+              await this.fieldMetadataService.updateOneField({
+                updateFieldInput: {
+                  id,
+                  ...update,
+                  ...(isDefined(normalizedIcon)
+                    ? { icon: normalizedIcon }
+                    : {}),
+                } as Parameters<
+                  typeof this.fieldMetadataService.updateOneField
+                >[0]['updateFieldInput'],
+                workspaceId,
+              });
+            }),
+          );
 
-            return true;
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return true;
         },
       },
       create_many_relation_fields: {
@@ -528,38 +494,31 @@ export class FieldMetadataToolsFactory {
             targetFieldIcon: string;
           }>;
         }) => {
-          try {
-            await this.fieldMetadataService.createManyFields({
-              createFieldInputs: parameters.relations.map((relation) => ({
-                objectMetadataId: relation.objectMetadataId,
-                type: FieldMetadataType.RELATION,
-                name: relation.name,
-                label: relation.label,
-                description: relation.description,
-                icon:
-                  normalizeIconName(relation.icon) ??
+          await this.fieldMetadataService.createManyFields({
+            createFieldInputs: parameters.relations.map((relation) => ({
+              objectMetadataId: relation.objectMetadataId,
+              type: FieldMetadataType.RELATION,
+              name: relation.name,
+              label: relation.label,
+              description: relation.description,
+              icon:
+                normalizeIconName(relation.icon) ??
+                FIELD_TYPE_DEFAULT_ICONS[FieldMetadataType.RELATION],
+              relationCreationPayload: {
+                type: relation.type,
+                targetObjectMetadataId: relation.targetObjectMetadataId,
+                targetFieldLabel: relation.targetFieldLabel,
+                targetFieldIcon:
+                  normalizeIconName(relation.targetFieldIcon) ??
                   FIELD_TYPE_DEFAULT_ICONS[FieldMetadataType.RELATION],
-                relationCreationPayload: {
-                  type: relation.type,
-                  targetObjectMetadataId: relation.targetObjectMetadataId,
-                  targetFieldLabel: relation.targetFieldLabel,
-                  targetFieldIcon:
-                    normalizeIconName(relation.targetFieldIcon) ??
-                    FIELD_TYPE_DEFAULT_ICONS[FieldMetadataType.RELATION],
-                },
-              })) as Parameters<
-                typeof this.fieldMetadataService.createManyFields
-              >[0]['createFieldInputs'],
-              workspaceId,
-            });
+              },
+            })) as Parameters<
+              typeof this.fieldMetadataService.createManyFields
+            >[0]['createFieldInputs'],
+            workspaceId,
+          });
 
-            return true;
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return true;
         },
       },
     };

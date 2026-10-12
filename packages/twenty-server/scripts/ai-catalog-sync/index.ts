@@ -57,8 +57,7 @@ const readCommittedModels = (filePath: string): GeneratedCatalog =>
     ? (JSON.parse(fs.readFileSync(filePath, 'utf-8')) as GeneratedCatalog)
     : {};
 
-// The vendors the shipped catalog carries are the ones the self-host spec
-// serves; nothing else needs to be fetched, checked or written.
+// The shipped catalog carries exactly the vendors the self-host spec serves
 const readVendors = (spec: CatalogSpec): string[] => {
   const vendors = [
     ...new Set(
@@ -68,8 +67,7 @@ const readVendors = (spec: CatalogSpec): string[] => {
     ),
   ];
 
-  // An empty list would fetch nothing, assert nothing and write an empty
-  // catalog over the real one, and the sync PR automerges.
+  // An empty list would write an empty catalog over the real one, and the sync PR automerges
   if (!isNonEmptyArray(vendors)) {
     throw new Error(
       `${SELF_HOST_SPEC_PATH} names no vendor to carry: every route lists models explicitly`,
@@ -99,8 +97,7 @@ const fetchModelsDev = async ({
   return data;
 };
 
-// A leaderboard outage must never break the model catalog, so a failed fetch
-// degrades to an empty index and the catalog is written without benchmarks.
+// A leaderboard outage must never break the model catalog, so a failed fetch degrades to an empty index
 const fetchBenchmarks = async (): Promise<BenchmarkIndex> => {
   const apiKey = process.env.ARTIFICIAL_ANALYSIS_API_KEY;
 
@@ -155,9 +152,7 @@ const main = async (): Promise<void> => {
 
   const fetched = await fetchBenchmarks();
 
-  // A failed fetch must not delete measurements we already published: the
-  // catalog PR is automerged, so an empty index would silently strip every
-  // benchmark until the next healthy run.
+  // The catalog PR automerges, so a failed fetch must not strip already published benchmarks
   const benchmarkIndex =
     fetched.size > 0 ? fetched : readCommittedBenchmarks(BENCHMARKS_PATH);
 
@@ -201,8 +196,7 @@ const main = async (): Promise<void> => {
   }
 
   await writeJson(MODELS_PATH, catalog);
-  // Self-host runs the same projection cloud does, from a spec that names the
-  // five direct routes and lets each serve its whole vendor.
+  // The spec names the five direct routes and lets each serve its whole vendor
   await writeJson(
     CATALOG_PATH,
     projectCatalog({ canonicalCatalog: catalog, spec: selfHostSpec }),

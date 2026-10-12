@@ -1,7 +1,7 @@
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Temporal } from 'temporal-polyfill';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -25,15 +25,15 @@ const RELATIVE_SUB_DAY_RANGE = {
   end: Temporal.ZonedDateTime.from('2023-01-01T03:00:00+00:00[UTC]'),
 };
 
-const DateTimePickerStory = () => {
+const DateTimePickerStory = ({
+  instanceId = 'story-date-time-picker',
+}: {
+  instanceId?: string;
+}) => {
   const [date, setDate] = useState<Temporal.ZonedDateTime | null>(INITIAL_DATE);
 
   return (
-    <DateTimePicker
-      instanceId="story-date-time-picker"
-      date={date}
-      onChange={setDate}
-    />
+    <DateTimePicker instanceId={instanceId} date={date} onChange={setDate} />
   );
 };
 
@@ -163,4 +163,30 @@ export const RelativeWithSubDayText: Story = {
       onRelativeDateChange={() => {}}
     />
   ),
+};
+
+export const OpensOnlyItsOwnMonthYearPanel: Story = {
+  render: () => (
+    <>
+      <DateTimePickerStory instanceId="first-date-time-picker" />
+      <DateTimePickerStory instanceId="second-date-time-picker" />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const [firstCalendarButton] = await canvas.findAllByRole(
+      'button',
+      { name: 'Select month and year' },
+      { timeout: 10000 },
+    );
+
+    await userEvent.click(firstCalendarButton);
+
+    await waitFor(() => {
+      expect(
+        body.getAllByRole('dialog', { name: 'Select month and year' }),
+      ).toHaveLength(1);
+    });
+  },
 };

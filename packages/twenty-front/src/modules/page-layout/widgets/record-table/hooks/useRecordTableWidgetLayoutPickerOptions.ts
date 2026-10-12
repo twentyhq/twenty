@@ -4,9 +4,6 @@ import { getRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/r
 import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
 import { isDefined } from 'twenty-shared/utils';
 
-// Which layouts a record table widget over this object can offer, plus the
-// fields a layout switch needs to seed. Both layout pickers ask this so they
-// cannot disagree about what is on offer.
 export const useRecordTableWidgetLayoutPickerOptions = (
   objectMetadataItem: EnrichedObjectMetadataItem | undefined,
 ) => {

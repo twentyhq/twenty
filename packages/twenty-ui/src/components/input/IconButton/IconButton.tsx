@@ -12,7 +12,7 @@ import { type IconButtonProps } from './types/IconButtonProps';
 
 export const IconButton = ({
   children,
-  size = 'md',
+  size,
   shape = 'square',
   className,
   tooltip,
@@ -24,13 +24,13 @@ export const IconButton = ({
   ...props
 }: IconButtonProps) => {
   const buttonGroup = useContext(ButtonGroupContext);
-  const resolvedSize = buttonGroup?.size ?? size;
+  const resolvedSize = size ?? buttonGroup?.size ?? 'md';
   const hasTooltip = isNonEmptyString(tooltip);
   const isDisabled = disabled || loading;
   const button = (
     <Button
       {...props}
-      size={size === 'xs' ? 'sm' : size}
+      size={resolvedSize === 'xs' ? 'sm' : resolvedSize}
       data-icon-size={resolvedSize}
       data-shape={shape}
       disabled={disabled}

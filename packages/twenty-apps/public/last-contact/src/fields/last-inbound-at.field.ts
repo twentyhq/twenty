@@ -18,4 +18,5 @@ export default defineField({
   icon: 'IconMessageDown',
   isNullable: true,
   isUIEditable: false,
+  isAuditLogged: false,
 });

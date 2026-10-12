@@ -94,8 +94,7 @@ export const RecordIdentifierBarTitle = ({
           shape: recordIdentifier?.avatarShape ?? 'circle',
         }}
         title={
-          // A writable title has to stay click-to-edit, so only a read-only one
-          // can double as a link to the record page.
+          // A writable title stays click-to-edit, so only a read-only one links to the record page.
           isInSidePanel && titleFieldContextValue.isRecordFieldReadOnly ? (
             <UndecoratedLink
               to={getAppPath(AppPath.RecordShowPage, {

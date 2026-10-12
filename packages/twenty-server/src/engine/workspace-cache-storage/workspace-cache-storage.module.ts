@@ -8,6 +8,6 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
     WorkspaceCacheStorageService,
     GetDataFromCacheWithRecomputeService,
   ],
-  exports: [WorkspaceCacheStorageService, GetDataFromCacheWithRecomputeService],
+  exports: [WorkspaceCacheStorageService],
 })
 export class WorkspaceCacheStorageModule {}

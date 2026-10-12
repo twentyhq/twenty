@@ -5,6 +5,7 @@ import { type Manifest } from 'twenty-shared/application';
 
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -60,6 +61,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationRegistrationService,
+        ApplicationRegistrationLookupService,
         {
           provide: getRepositoryToken(ApplicationRegistrationEntity),
           useValue: applicationRegistrationRepository,

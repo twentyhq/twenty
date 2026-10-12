@@ -4,6 +4,7 @@ import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/g
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { v4 as uuidv4 } from 'uuid';
 
+import { AUTH_PRINCIPAL_REFUSED_MESSAGE } from 'src/engine/guards/constants/auth-principal-refused-message.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -70,7 +71,10 @@ describe('application key-value store (e2e)', () => {
     });
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain('APPLICATION_ACCESS');
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+    expect(response.body.errors[0].message).toBe(
+      AUTH_PRINCIPAL_REFUSED_MESSAGE,
+    );
   });
 
   it('sets, reads, overwrites and deletes a WORKSPACE entry', async () => {

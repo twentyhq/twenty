@@ -15,34 +15,38 @@
   Allows the tooltip even when the text is not truncated.
 </ParamField>
 
-<ParamField body="displayedMaxRows" type="number">
-  Maximum displayed rows. Omit for single-line truncation; use a positive integer for multiline text.
-</ParamField>
-
 <ParamField body="isFocusable" type="boolean">
-  Adds a tab stop and opens the tooltip on focus or click.
+  Adds an optional tab stop. Native tabIndex and focusable render elements also open the tooltip on focus.
 </ParamField>
 
 <ParamField body="isTooltipMultiline" type="boolean">
   Preserves whitespace and line breaks in the tooltip.
 </ParamField>
 
-<ParamField body="size" type="&quot;large&quot; | &quot;small&quot;">
-  Small inherited text sizing or the large fixed-height treatment.
+<ParamField body="lineClamp" type="number">
+  Positive integer limiting visible lines, matching Text. Cannot be combined with `truncate`.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Replaces the default div. Native props, styles, handlers and ref target the displayed text, not the popup.
 </ParamField>
 
 <ParamField body="text" type="string | number | bigint | boolean | ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | Iterable&lt;ReactNode&gt; | ReactPortal | Promise&lt;...&gt; | null | undefined" required>
-  Text or React content to truncate. Non-string React content requires `tooltipContent`.
+  Caller-owned text or React content. Non-string content requires `tooltipContent`. URLs stay plain text.
 </ParamField>
 
 <ParamField body="tooltipContent" type="string">
-  Plain text displayed in the tooltip. Defaults to `text` when it is a nonempty string.
+  Plain text displayed in the tooltip. Defaults to nonempty string `text`.
 </ParamField>
 
 <ParamField body="tooltipDelay" type="number">
   Hover delay in milliseconds.
 </ParamField>
 
-<ParamField body="tooltipPlace" type="&quot;bottom&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;">
+<ParamField body="tooltipPlace" type="&quot;bottom&quot; | &quot;inline-end&quot; | &quot;inline-start&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;">
   Preferred side of the tooltip.
+</ParamField>
+
+<ParamField body="truncate" type="boolean">
+  Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`.
 </ParamField>

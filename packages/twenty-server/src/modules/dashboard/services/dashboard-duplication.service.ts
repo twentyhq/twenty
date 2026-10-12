@@ -31,8 +31,7 @@ import {
 } from 'src/modules/dashboard/exceptions/dashboard.exception';
 import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
-// A role-scoped read validates every column it selects, so reading the whole
-// row would refuse a duplication over a dashboard field it never copies
+// A role-scoped read validates every selected column, so reading the whole row would refuse over fields never copied
 const DUPLICATION_SOURCE_COLUMNS: (keyof DashboardWorkspaceEntity)[] = [
   'id',
   'title',
@@ -110,8 +109,7 @@ export class DashboardDuplicationService {
         );
       }
 
-      // The layout copy lives in the core schema, outside the dashboard
-      // insert, so a caller who may not create dashboards is refused before it
+      // The layout copy lives outside the dashboard insert, so refuse before creating it
       this.assertCanCreateDashboardOrThrow({
         workspaceContext,
         rolePermissionConfig,
@@ -189,8 +187,7 @@ export class DashboardDuplicationService {
     }
   }
 
-  // The layout lives in the core schema, outside the dashboard insert, so a
-  // refused or failed insert has to take the layout it was created for with it
+  // The layout lives in the core schema, outside the insert, so a refused or failed insert must remove it
   private async createDuplicatedDashboardOrRollback({
     originalDashboard,
     newPageLayoutId,

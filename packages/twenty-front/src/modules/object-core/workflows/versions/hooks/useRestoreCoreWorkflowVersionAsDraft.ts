@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { CoreWorkflowVersionStatus } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 

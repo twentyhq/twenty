@@ -5,8 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useMarkBillingPaymentMethodAsAdded = () => {
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
-  // Stripe confirms the setup intent before the payment method webhook lands,
-  // so the workspace billing state has to be updated client-side
+  // Stripe confirms the setup intent before the payment method webhook lands, so update the workspace client-side
   const markBillingPaymentMethodAsAdded = () => {
     setCurrentWorkspace((previousWorkspace) =>
       isDefined(previousWorkspace) &&

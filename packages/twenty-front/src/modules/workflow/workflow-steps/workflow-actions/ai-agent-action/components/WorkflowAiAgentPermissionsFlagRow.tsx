@@ -1,6 +1,7 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { t } from '@lingui/core/macro';
-import { LightIconButton, MenuItem } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { IconTrash } from 'twenty-ui/icon';
 
 type WorkflowAiAgentPermissionsFlagRowProps = {

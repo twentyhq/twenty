@@ -9,7 +9,6 @@ export const deleteRecordsByIds = async (
   }
 
   try {
-    // Create placeholders for parameterized query: $1, $2, $3, etc.
     const placeholders = recordIds
       .map((_, index) => `$${index + 1}`)
       .join(', ');

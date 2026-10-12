@@ -68,7 +68,7 @@ describe('validateOperationIsPermittedOrThrow - system objects permissions', () 
     operationType: OperationType;
     objectsPermissions?: ObjectsPermissions;
     updatedColumns?: string[];
-    selectedColumns?: string[] | '*';
+    selectedColumns?: string[];
   }) => {
     return validateOperationIsPermittedOrThrow({
       entityName: SYSTEM_OBJECT_NAME,
@@ -78,7 +78,6 @@ describe('validateOperationIsPermittedOrThrow - system objects permissions', () 
       flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
       objectIdByNameSingular,
       selectedColumns,
-      allFieldsSelected: false,
       updatedColumns,
     });
   };

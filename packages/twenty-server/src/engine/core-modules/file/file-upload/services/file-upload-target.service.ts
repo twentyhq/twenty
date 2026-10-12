@@ -64,8 +64,7 @@ export class FileUploadTargetService {
       resourcePath,
     });
 
-    // The prefix is added after the final path has passed validation, so a
-    // path close to the limit would only fail once the client tried to write.
+    // The prefix lengthens the path, so near-limit paths would otherwise fail only when the client writes.
     const pendingPathValidation = validateFilePath({
       resourcePath: pendingResourcePath,
       fileFolder,

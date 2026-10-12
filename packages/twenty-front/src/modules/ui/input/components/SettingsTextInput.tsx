@@ -1,10 +1,8 @@
 import { type FocusEventHandler, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
-import {
-  TextInput,
-  type TextInputComponentProps,
-} from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { type TextInputComponentProps } from '@/ui/input/types/TextInputComponentProps';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';

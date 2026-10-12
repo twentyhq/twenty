@@ -341,8 +341,7 @@ describe('useEmailRecipientsField', () => {
 
     expect(view.result.current.selectedChipIndices).toEqual([0, 1]);
 
-    // A drag moved a@example.com to the end; the selection has to follow the
-    // addresses rather than staying on positions 0 and 1.
+    // A drag moved a@example.com to the end; the selection must follow the addresses.
     view.rerender({
       recipients: [
         { address: 'b@example.com' },

@@ -3,8 +3,8 @@ import { useStore } from 'jotai';
 
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
-import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { dataLoadingStatusByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentState';
 import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -25,12 +25,12 @@ export const useLoadRecordsToVirtualRows = () => {
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const hasUserSelectedAllRows = useAtomComponentStateCallbackState(
-    hasUserSelectedAllRowsComponentState,
+  const hasUserSelectedAllRecords = useAtomComponentStateCallbackState(
+    hasUserSelectedAllRecordsComponentState,
   );
 
   const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
-    isRowSelectedComponentFamilyState,
+    isRecordSelectedComponentFamilyState,
   );
 
   const store = useStore();
@@ -43,7 +43,7 @@ export const useLoadRecordsToVirtualRows = () => {
       records: ObjectRecord[];
       startingRealIndex: number;
     }) => {
-      const isAllRowsSelected = store.get(hasUserSelectedAllRows);
+      const isAllRowsSelected = store.get(hasUserSelectedAllRecords);
 
       const currentRecordIdMap = store.get(recordIdByRealIndex);
       const newRecordIdMap = new Map(currentRecordIdMap);
@@ -89,7 +89,7 @@ export const useLoadRecordsToVirtualRows = () => {
       dataLoadingStatusByRealIndex,
       recordIndexRecordIdsByGroupFamilyState,
       isRowSelectedFamilyState,
-      hasUserSelectedAllRows,
+      hasUserSelectedAllRecords,
       store,
     ],
   );

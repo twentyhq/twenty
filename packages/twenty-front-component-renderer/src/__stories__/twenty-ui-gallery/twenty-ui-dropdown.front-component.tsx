@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 
@@ -25,8 +25,8 @@ const DropdownExample = () => {
             <Dropdown.Section>
               <Dropdown.ActionItem
                 page="assignees"
-                hotkeys={['G', 'A']}
-                hotkeysJoinLabel="followed by"
+                shortcut={[['G'], ['A']]}
+                shortcutJoinLabel="followed by"
               >
                 Assign person
               </Dropdown.ActionItem>
@@ -48,8 +48,8 @@ const DropdownExample = () => {
                 <Dropdown.OptionItem
                   key={assignee}
                   selected={selection === assignee}
-                  hotkeys={['G', assignee.charAt(0)]}
-                  hotkeysJoinLabel="next"
+                  shortcut={[['G'], [assignee.charAt(0)]]}
+                  shortcutJoinLabel="next"
                   onSelect={() => setSelection(assignee)}
                 >
                   {assignee}

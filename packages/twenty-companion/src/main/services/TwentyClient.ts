@@ -1,4 +1,4 @@
-import { getFunctionsBaseUrl } from '../../../../twenty-front/src/modules/settings/logic-functions/utils/getLogicFunctionHttpUrl';
+import { getFunctionsBaseUrl } from '../../../../twenty-front/src/modules/logic-functions/utils/getLogicFunctionHttpUrl';
 import { type SecureStore } from './SecureStore';
 import { type Credentials } from '../types/Credentials';
 import { refreshCredentials } from '../utils/refreshCredentials';

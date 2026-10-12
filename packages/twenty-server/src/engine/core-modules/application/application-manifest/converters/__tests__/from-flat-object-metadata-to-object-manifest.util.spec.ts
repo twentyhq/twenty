@@ -3,6 +3,7 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
 } from 'twenty-shared/types';
 
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
@@ -33,6 +34,7 @@ const OBJECT_MANIFEST: Required<ObjectManifest> = {
   writability: MetadataWritability.APPLICATION,
   readability: MetadataReadability.INHERITED,
   readabilityParentFieldUniversalIdentifiers: [PARENT_FIELD_UID],
+  sharingReach: ObjectSharingReach.WORKSPACE,
   openRecordIn: ObjectOpenRecordIn.RECORD_PAGE,
   labelIdentifierFieldMetadataUniversalIdentifier: LABEL_FIELD_UID,
   imageIdentifierFieldMetadataUniversalIdentifier: IMAGE_FIELD_UID,
@@ -69,6 +71,7 @@ describe('fromFlatObjectMetadataToObjectManifest', () => {
       writability: MetadataWritability.APPLICATION,
       readability: MetadataReadability.INHERITED,
       readabilityParentFieldUniversalIdentifiers: [PARENT_FIELD_UID],
+      sharingReach: ObjectSharingReach.WORKSPACE,
       openRecordIn: ObjectOpenRecordIn.SIDE_PANEL,
       labelIdentifierFieldMetadataUniversalIdentifier: LABEL_FIELD_UID,
       imageIdentifierFieldMetadataUniversalIdentifier: null,

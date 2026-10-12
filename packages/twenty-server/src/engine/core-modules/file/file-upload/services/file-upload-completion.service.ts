@@ -87,10 +87,7 @@ export class FileUploadCompletionService {
       }),
     };
 
-    // Only the quarantined object is ever evidence of this upload. Falling
-    // back to the final path would let an object left there by a previous
-    // upload of the same resource path complete an upload that never
-    // delivered any bytes.
+    // Never fall back to the final path: a previous upload's object there would complete an upload that sent nothing.
     const metadata =
       await this.fileStorageService.getFileMetadata(pendingLocation);
 
@@ -129,10 +126,7 @@ export class FileUploadCompletionService {
       metadata,
     });
 
-    // The presigned PUT stays usable until it expires, so the quarantined
-    // object can still be overwritten between the sniff above and this move.
-    // Promoting only the version that was inspected is what makes the
-    // recorded mimeType describe the bytes that end up at the final path.
+    // The presigned PUT can still overwrite quarantine after the sniff, so only the inspected version is promoted.
     await this.fileStorageService.move({
       from: pendingLocation,
       to: storageLocation,
@@ -148,12 +142,7 @@ export class FileUploadCompletionService {
       mimeType,
     });
 
-    // The cleanup cron claims a stale PENDING row by deleting it, then deletes
-    // its objects, so losing the row here means it won. The promoting copy may
-    // have landed after its sweep and be orphaned; it is deliberately left
-    // there rather than rolled back, because this path cannot prove the object
-    // is still the one it wrote, and deleting a later upload's bytes is far
-    // worse than leaking one object.
+    // Losing the row means the cleanup cron reaped it; leak the promoted object rather than risk deleting a later upload.
     if (affected === 0) {
       this.logger.warn(
         `File ${file.id} was reaped while completing; the object promoted to "${file.path}" may be orphaned`,
@@ -266,8 +255,7 @@ export class FileUploadCompletionService {
       file = await streamToBuffer(stream, MAX_SANITIZABLE_SVG_BYTES);
     } catch (error) {
       if (error instanceof StreamSizeExceededError) {
-        // Deliberately does not quote `size`: storage understated it, so
-        // repeating it here would contradict the failure being reported.
+        // Storage understated `size`, so quoting it would contradict this failure.
         throw buildSvgTooLargeException(
           `content exceeds the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
         );
@@ -292,14 +280,11 @@ export class FileUploadCompletionService {
       mimeType,
     });
 
-    // Rewriting the object gives it a new version identity, so the checksum
-    // read before sanitizing would no longer match on the promoting copy.
+    // Sanitizing rewrites the object, so the checksum read before no longer matches.
     const sanitizedMetadata =
       await this.fileStorageService.getFileMetadata(storageLocation);
 
-    // Returning no identity here would silently downgrade that copy to an
-    // unconditional one, so a backend that reported one before the rewrite
-    // has to report one after it.
+    // A missing identity would silently downgrade the promoting copy to an unconditional one.
     if (
       !isDefined(sanitizedMetadata) ||
       (isDefined(metadata.checksum) && !isDefined(sanitizedMetadata.checksum))

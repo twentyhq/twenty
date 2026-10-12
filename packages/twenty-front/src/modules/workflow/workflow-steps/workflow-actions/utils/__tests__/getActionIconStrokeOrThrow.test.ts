@@ -21,6 +21,7 @@ describe('getActionIconStrokeOrThrow', () => {
 
   it.each([
     'FORM',
+    'SEND_CHAT_MESSAGE',
     'ITERATOR',
     'EMPTY',
     'FILTER',

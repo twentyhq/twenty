@@ -5,8 +5,7 @@ type UserAgentMatcher = {
   pattern: RegExp;
 };
 
-// Order matters: several browsers embed competitor tokens in their user
-// agent (Edge and Opera contain "Chrome", Chrome contains "Safari").
+// Order matters: Edge and Opera user agents contain "Chrome", and Chrome's contains "Safari"
 const BROWSER_MATCHERS: UserAgentMatcher[] = [
   { label: 'Edge', pattern: /Edg(e|A|iOS)?\// },
   { label: 'Opera', pattern: /(OPR|Opera)\// },

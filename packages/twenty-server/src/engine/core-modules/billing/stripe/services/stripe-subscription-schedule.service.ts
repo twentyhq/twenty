@@ -120,7 +120,7 @@ export class StripeSubscriptionScheduleService {
       await this.getSubscriptionWithSchedule(stripeSubscriptionId);
 
     if (!isDefined(subscriptionWithSchedule.schedule)) {
-      return {};
+      return { subscription: subscriptionWithSchedule };
     }
 
     const { currentPhase, nextPhase } = this.getPhases(
@@ -132,10 +132,11 @@ export class StripeSubscriptionScheduleService {
         subscriptionWithSchedule.schedule.id,
       );
 
-      return {};
+      return { subscription: subscriptionWithSchedule };
     }
 
     return {
+      subscription: subscriptionWithSchedule,
       schedule: subscriptionWithSchedule.schedule,
       currentPhase,
       nextPhase,

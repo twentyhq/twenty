@@ -127,8 +127,7 @@ describe('buildRecurringChargeUsageEvents', () => {
     ).toEqual([]);
   });
 
-  // The declared rate is bounded per member, but the member count is not, so a
-  // legitimate rate can still multiply past what the platform will debit.
+  // The rate is bounded per member, but the member count is not
   it('should drop a per member charge whose multiplied total exceeds the period maximum', () => {
     const { events, rejectedCharges } = buildRecurringChargeUsageEvents({
       dueCharges: [SEAT_CHARGE],

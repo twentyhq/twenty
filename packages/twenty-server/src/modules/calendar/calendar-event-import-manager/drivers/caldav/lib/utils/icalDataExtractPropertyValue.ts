@@ -1,21 +1,12 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'class-validator';
 
-/**
- * Extracts the string value from an iCal property that may have parameters.
- * Per RFC 5545, properties can have parameters like LANGUAGE=de-DE, which causes
- * node-ical to return an object with `val` and `params` instead of a plain string.
- *
- * RFC 5545 Section 3.1.2 also allows multiple values in a single property.
- *
- * @see https://datatracker.ietf.org/doc/html/rfc5545#section-3.2 (Property Parameters)
- * @see https://datatracker.ietf.org/doc/html/rfc5545#section-3.1.2 (Multiple Values)
- */
+// node-ical returns an object with `val` and `params` instead of a plain string
+// when a property has parameters (RFC 5545 3.2, e.g. LANGUAGE=de-DE), and an
+// array when it has multiple values (RFC 5545 3.1.2).
 export const icalDataExtractPropertyValue = (
   property:
-    | string
-    | { val?: string; params?: Record<string, unknown> }
-    | undefined,
+    string | { val?: string; params?: Record<string, unknown> } | undefined,
   defaultValue = '',
 ): string => {
   if (!isDefined(property)) {

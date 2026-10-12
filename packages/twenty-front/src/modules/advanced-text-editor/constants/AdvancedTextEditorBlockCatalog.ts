@@ -2,14 +2,16 @@ import {
   createColumnBlockContent,
   createParagraphBlockContent,
 } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockContent';
-import { getAdvancedTextEditorContainerAppearanceSettings } from '@/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings';
-import { getAdvancedTextEditorTypographySettings } from '@/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings';
+import { getAdvancedTextEditorContainerAppearanceSettings } from '@/advanced-text-editor/utils/getAdvancedTextEditorContainerAppearanceSettings';
+import { getAdvancedTextEditorTextBlockSettings } from '@/advanced-text-editor/utils/getAdvancedTextEditorTextBlockSettings';
+import { getAdvancedTextEditorTypographySettings } from '@/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings';
 import { ButtonNode } from '@/advanced-text-editor/extensions/blocks/ButtonNode';
 import { ColumnNode } from '@/advanced-text-editor/extensions/blocks/ColumnNode';
 import { ColumnsNode } from '@/advanced-text-editor/extensions/blocks/ColumnsNode';
 import { DividerNode } from '@/advanced-text-editor/extensions/blocks/DividerNode';
 import { HtmlNode } from '@/advanced-text-editor/extensions/blocks/HtmlNode';
 import { SectionNode } from '@/advanced-text-editor/extensions/blocks/SectionNode';
+import { TextBlockStyle } from '@/advanced-text-editor/extensions/blocks/TextBlockStyle';
 import {
   type AdvancedTextEditorBlockDefinition,
   type AdvancedTextEditorBlockNodeType,
@@ -21,11 +23,27 @@ import {
   IconClick,
   IconCode,
   IconColumns,
+  IconH1,
   IconMinus,
   IconPhoto,
+  IconPilcrow,
 } from 'twenty-ui/icon';
 
 export const ADVANCED_TEXT_EDITOR_BLOCK_CATALOG = {
+  [TIPTAP_NODE_TYPES.PARAGRAPH]: {
+    label: msg`Text`,
+    icon: IconPilcrow,
+    extension: TextBlockStyle,
+    insertionRecipes: [],
+    settingsFields: getAdvancedTextEditorTextBlockSettings(),
+  },
+  [TIPTAP_NODE_TYPES.HEADING]: {
+    label: msg`Heading`,
+    icon: IconH1,
+    extension: null,
+    insertionRecipes: [],
+    settingsFields: getAdvancedTextEditorTextBlockSettings(),
+  },
   [TIPTAP_NODE_TYPES.SECTION]: {
     label: msg`Section`,
     icon: IconBox,

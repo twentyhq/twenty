@@ -17,8 +17,6 @@ describe('WORDLESS_TRANSLATION_RULE', () => {
     expect(detect('  .,;  ', 'Regenerate key')).toBe(true);
   });
 
-  // \w is ASCII-only in JavaScript, so a naive check would delete every
-  // translation in a non-Latin script.
   it.each([
     ['他們的值必須是唯一的', 'Chinese'],
     ['הערכים חייבים להיות ייחודיים', 'Hebrew'],
@@ -43,11 +41,8 @@ describe('WORDLESS_TRANSLATION_RULE', () => {
     expect(detect('{count}', '{count}')).toBe(false);
   });
 
-  // Ignoring placeholder names would catch a translation left as a bare
-  // {count}, but a dry run over ~200k strings found none of those and two
-  // Finnish translations that legitimately render a connector word as a
-  // symbol. Deleting a good translation is worse than keeping a thin one, so
-  // the rule reads the whole string.
+  // A ~200k-string dry run found no bare {count} translations but two valid Finnish symbol renderings;
+  // deleting a good translation is worse than keeping a thin one, so the rule reads the whole string.
   it('keeps a translation that renders a connector word as a symbol', () => {
     expect(detect('{0} / {1}', '{0} of {1}')).toBe(false);
     expect(detect(' /{intervalLabel}', ' per {intervalLabel}')).toBe(false);

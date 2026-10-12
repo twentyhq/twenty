@@ -4,5 +4,7 @@ declare const classNames: {
   readonly sm: 'sm';
   readonly md: 'md';
   readonly indicator: 'indicator';
+  readonly card: 'card';
+  readonly cardContent: 'cardContent';
 };
 export default classNames;

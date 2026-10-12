@@ -19,8 +19,8 @@ export type CreateStandardAgentContext = {
   modelId: ModelId;
   responseFormat: AgentResponseFormat;
   isCustom: boolean;
+  isSystem: boolean;
   modelConfiguration: ModelConfiguration | null;
-  evaluationInputs: string[];
 };
 
 export type CreateStandardAgentArgs = StandardBuilderArgs<'agent'> & {
@@ -38,8 +38,8 @@ export const createStandardAgentFlatMetadata = ({
     modelId,
     responseFormat,
     isCustom,
+    isSystem,
     modelConfiguration,
-    evaluationInputs,
   },
   workspaceId,
   twentyStandardApplicationId,
@@ -58,8 +58,9 @@ export const createStandardAgentFlatMetadata = ({
     modelId,
     responseFormat,
     isCustom,
+    isSystem,
     modelConfiguration,
-    evaluationInputs,
+    triggers: [],
     workspaceId,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:

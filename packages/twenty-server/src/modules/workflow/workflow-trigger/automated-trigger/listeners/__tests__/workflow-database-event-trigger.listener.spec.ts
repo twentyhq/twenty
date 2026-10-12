@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/types';
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
@@ -17,7 +18,6 @@ import { RecordShareStorageService } from 'src/engine/core-modules/record-share/
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
@@ -444,6 +444,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
                 rolesPermissions: {},
+                roleIdsWithAllRecordsAccess: [],
                 flatRowLevelPermissionPredicateMaps:
                   createEmptyFlatEntityMaps(),
                 flatRowLevelPermissionPredicateGroupMaps:
@@ -516,6 +517,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
                 rolesPermissions: {},
+                roleIdsWithAllRecordsAccess: [],
                 flatRowLevelPermissionPredicateMaps:
                   createEmptyFlatEntityMaps(),
                 flatRowLevelPermissionPredicateGroupMaps:
