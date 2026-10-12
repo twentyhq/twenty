@@ -67,7 +67,7 @@ export const createPointerCaptureAwareRemoteConnection = ({
 
         const forwardEvent = methodArguments[1];
 
-        if (!isFunction(forwardEvent)) {
+        if (!isFunction<RemoteSerializedEventListener, unknown>(forwardEvent)) {
           return;
         }
 
@@ -75,7 +75,7 @@ export const createPointerCaptureAwareRemoteConnection = ({
         const dispose = createCapturedPointerEventForwarder({
           element,
           pointerId,
-          forwardEvent: forwardEvent as RemoteSerializedEventListener,
+          forwardEvent,
           eventOwner: geometryTracker.findRemoteElementIdContainingNode,
           onDispose: () => {
             if (subscriptions.get(remoteElementId)?.dispose === dispose) {
