@@ -48,6 +48,7 @@
     "addressparser": "1.0.1",
     "ai": "7.0.126",
     "class-validator": "^0.14.0",
+    "entities": "^4.5.0",
     "expr-eval-fork": "3.0.3",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",

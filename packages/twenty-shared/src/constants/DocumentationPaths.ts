@@ -152,9 +152,12 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_INPUT_LIGHT_ICON_BUTTON:
     '/ui/components/input/light-icon-button',
   UI_COMPONENTS_INPUT_MAIN_BUTTON: '/ui/components/input/main-button',
+  UI_COMPONENTS_INPUT_NUMBER_STEPPER: '/ui/components/input/number-stepper',
   UI_COMPONENTS_INPUT_PHONE_COUNTRY_PICKER:
     '/ui/components/input/phone-country-picker',
   UI_COMPONENTS_INPUT_SEARCH_INPUT: '/ui/components/input/search-input',
+  UI_COMPONENTS_INPUT_SEGMENTED_CONTROL:
+    '/ui/components/input/segmented-control',
   UI_COMPONENTS_LAYOUT_ANIMATED_ICON_CROSSFADE:
     '/ui/components/layout/animated-icon-crossfade',
   UI_COMPONENTS_LAYOUT_OVERFLOWING_LIST:
@@ -191,11 +194,9 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_FIELD: '/ui/primitives/input/field',
   UI_PRIMITIVES_INPUT_INPUT: '/ui/primitives/input/input',
   UI_PRIMITIVES_INPUT_INPUT_GROUP: '/ui/primitives/input/input-group',
-  UI_PRIMITIVES_INPUT_NUMBER_STEPPER: '/ui/primitives/input/number-stepper',
+  UI_PRIMITIVES_INPUT_NUMBER_FIELD: '/ui/primitives/input/number-field',
   UI_PRIMITIVES_INPUT_RADIO: '/ui/primitives/input/radio',
   UI_PRIMITIVES_INPUT_RADIO_GROUP: '/ui/primitives/input/radio-group',
-  UI_PRIMITIVES_INPUT_SEGMENTED_CONTROL:
-    '/ui/primitives/input/segmented-control',
   UI_PRIMITIVES_INPUT_SELECT: '/ui/primitives/input/select',
   UI_PRIMITIVES_INPUT_SLIDER: '/ui/primitives/input/slider',
   UI_PRIMITIVES_INPUT_SWITCH: '/ui/primitives/input/switch',
@@ -212,7 +213,6 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_SURFACES_ALERT_DIALOG: '/ui/primitives/surfaces/alert-dialog',
   UI_PRIMITIVES_SURFACES_CARD: '/ui/primitives/surfaces/card',
   UI_PRIMITIVES_SURFACES_DIALOG: '/ui/primitives/surfaces/dialog',
-  UI_PRIMITIVES_SURFACES_MENU: '/ui/primitives/surfaces/menu',
   UI_PRIMITIVES_SURFACES_POPOVER: '/ui/primitives/surfaces/popover',
   UI_PRIMITIVES_SURFACES_TOOLTIP: '/ui/primitives/surfaces/tooltip',
   UI_PRIMITIVES_TYPOGRAPHY_HEADING: '/ui/primitives/typography/heading',

@@ -7,6 +7,7 @@ import {
   DEFAULT_AI_CHAT_MODEL_TIER,
   type AiModelTier,
 } from 'twenty-shared/ai';
+import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   Check,
@@ -156,7 +157,7 @@ export class WorkspaceEntity {
   trashRetentionDays: number;
 
   @Field()
-  @Column({ type: 'integer', default: 90 })
+  @Column({ type: 'integer', default: EVENT_LOG_RETENTION.defaultInDays })
   eventLogRetentionDays: number;
 
   @OneToMany(() => AppTokenEntity, (appToken) => appToken.workspace, {

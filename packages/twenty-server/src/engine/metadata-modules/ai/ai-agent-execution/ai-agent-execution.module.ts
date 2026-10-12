@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -44,6 +45,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AiBillingModule,
     AiAgentModule,
     AiAgentRoleModule,
+    ApiKeyModule,
     ApplicationLookupModule,
     CacheLockModule,
     FileUrlModule,
