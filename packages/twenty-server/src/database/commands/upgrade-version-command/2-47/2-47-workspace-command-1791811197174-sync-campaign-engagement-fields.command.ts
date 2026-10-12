@@ -44,7 +44,7 @@ const ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
     .universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.47.0', 1791789521847)
+@RegisteredWorkspaceCommand('2.47.0', 1791811197174)
 @Command({
   name: 'upgrade:2-47:sync-campaign-engagement-fields',
   description:
