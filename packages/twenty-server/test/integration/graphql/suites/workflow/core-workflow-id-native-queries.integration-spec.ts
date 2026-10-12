@@ -1,3 +1,4 @@
+import { deleteCoreWorkflows } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 
 const CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID = `
@@ -59,16 +60,7 @@ describe('core workflow id native queries (e2e)', () => {
   });
 
   afterAll(async () => {
-    await workflowGraphqlRequest(
-      `
-        mutation DestroyWorkflow($id: ID!) {
-          destroyWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: workspaceWorkflowId },
-    );
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });
 
   it('lists the versions by core workflow id, mirror ids included', async () => {
