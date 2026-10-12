@@ -874,12 +874,18 @@ type BillingSession {
 type BillingSubscription {
   billingSubscriptionItems: [BillingSubscriptionItem!]
   cancelAt: DateTime
+  collectionMethod: BillingSubscriptionCollectionMethod
   currentPeriodEnd: DateTime
   id: UUID!
   interval: SubscriptionInterval
   metadata: JSON!
   phases: [BillingSubscriptionSchedulePhase!]!
   status: SubscriptionStatus!
+}
+
+enum BillingSubscriptionCollectionMethod {
+  CHARGE_AUTOMATICALLY
+  SEND_INVOICE
 }
 
 type BillingSubscriptionItem {
