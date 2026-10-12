@@ -1,16 +1,16 @@
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 
-export const ADD_TO_COUNTERS_SCRIPT: CacheScript = {
-  name: 'usage-limit:add-to-counters',
+export const WARM_AND_CONSUME_QUOTA_COUNTERS_SCRIPT: CacheScript = {
+  name: 'usage-limit:warm-and-consume-quota-counters',
   source: `
 local amounts = cjson.decode(ARGV[1])
-local seeds = cjson.decode(ARGV[2])
+local warmValues = cjson.decode(ARGV[2])
 local pxs = cjson.decode(ARGV[3])
 local result = {}
 
 for i = 1, #KEYS do
-  if seeds[i] then
-    redis.call('SET', KEYS[i], seeds[i], 'NX', 'PX', pxs[i])
+  if warmValues[i] then
+    redis.call('SET', KEYS[i], warmValues[i], 'NX', 'PX', pxs[i])
   end
 
   if redis.call('EXISTS', KEYS[i]) == 1 then

@@ -10,7 +10,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { ADD_TO_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/add-to-counters-script.constant';
+import { WARM_AND_CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-quota-counters-script.constant';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
@@ -26,7 +26,7 @@ import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
-import { buildCounterScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-counter-script-arguments.util';
+import { buildConsumeScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-consume-script-arguments.util';
 import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
@@ -67,7 +67,7 @@ type QuotaConsumeArgs = {
   spenders: UsageSpenders;
 };
 
-type CounterAdditions = {
+type QuotaConsumeResult = {
   consumedValues: (number | null)[];
   isDegraded: boolean;
 };
@@ -242,7 +242,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
       const {
         consumedValues: [consumedValue],
-      } = await this.addToCounters({
+      } = await this.consumeCounters({
         workspaceId,
         counters: [counter],
         amounts: [0],
@@ -344,7 +344,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
         ...(isDefined(allowanceCounter) ? [allowanceCounter] : []),
       ];
 
-      const { consumedValues, isDegraded } = await this.addToCounters({
+      const { consumedValues, isDegraded } = await this.consumeCounters({
         workspaceId: args.workspaceId,
         counters,
         amounts: counters.map(() => 0),
@@ -395,7 +395,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
       const counters = debits.map((debit) => debit.counter);
 
-      const { consumedValues, isDegraded } = await this.addToCounters({
+      const { consumedValues, isDegraded } = await this.consumeCounters({
         workspaceId,
         counters,
         amounts: debits.map((debit) => debit.amount),
@@ -722,19 +722,22 @@ export class UsageLimitQuotaService implements OnModuleInit {
       (_, index) => !isDefined(storedValues[index]),
     );
 
-    const seeds = await this.readSeeds({ workspaceId, counters: coldCounters });
+    const warmValues = await this.fetchWarmValues({
+      workspaceId,
+      counters: coldCounters,
+    });
 
-    const seedByKey = new Map(
-      coldCounters.map((counter, index) => [counter.key, seeds[index]]),
+    const warmedValueByKey = new Map(
+      coldCounters.map((counter, index) => [counter.key, warmValues[index]]),
     );
 
     return counters.map(
       (counter, index) =>
-        storedValues[index] ?? seedByKey.get(counter.key) ?? null,
+        storedValues[index] ?? warmedValueByKey.get(counter.key) ?? null,
     );
   }
 
-  private async addToCounters({
+  private async consumeCounters({
     workspaceId,
     counters,
     amounts,
@@ -742,10 +745,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
     workspaceId: string;
     counters: QuotaCounter[];
     amounts: number[];
-  }): Promise<CounterAdditions> {
-    const consumedValues = await this.runAddToCountersScript({
+  }): Promise<QuotaConsumeResult> {
+    const consumedValues = await this.runWarmAndConsumeScript({
       counters,
-      entries: amounts.map((amount) => ({ amount, seed: null })),
+      entries: amounts.map((amount) => ({ amount, warm: null })),
     });
 
     const now = Date.now();
@@ -761,64 +764,65 @@ export class UsageLimitQuotaService implements OnModuleInit {
     }
 
     try {
-      const seeds = await this.readSeeds({
+      const warmValues = await this.fetchWarmValues({
         workspaceId,
         counters: coldIndexes.map((index) => counters[index]),
       });
 
-      const seededAt = Date.now();
+      const warmedAt = Date.now();
 
-      const seedsToWrite = coldIndexes.flatMap((index, position) => {
-        const seed = seeds[position];
+      const warmedEntries = coldIndexes.flatMap((index, position) => {
+        const warmValue = warmValues[position];
 
-        return isDefined(seed) && counters[index].periodEnd.getTime() > seededAt
-          ? [{ index, seed }]
+        return isDefined(warmValue) &&
+          counters[index].periodEnd.getTime() > warmedAt
+          ? [{ index, warmValue }]
           : [];
       });
 
-      const seededValues = await this.runAddToCountersScript({
-        counters: seedsToWrite.map(({ index }) => counters[index]),
-        entries: seedsToWrite.map(({ index, seed }) => ({
+      const warmedValues = await this.runWarmAndConsumeScript({
+        counters: warmedEntries.map(({ index }) => counters[index]),
+        entries: warmedEntries.map(({ index, warmValue }) => ({
           amount: amounts[index],
-          seed: {
-            value: seed,
-            pxMs: counters[index].periodEnd.getTime() - seededAt,
+          warm: {
+            value: warmValue,
+            pxMs: counters[index].periodEnd.getTime() - warmedAt,
           },
         })),
       });
 
-      seedsToWrite.forEach(({ index }, position) => {
-        consumedValues[index] = seededValues[position];
+      warmedEntries.forEach(({ index }, position) => {
+        consumedValues[index] = warmedValues[position];
       });
 
       return {
         consumedValues,
-        isDegraded: seeds.some((seed) => !isDefined(seed)),
+        isDegraded: warmValues.some((warmValue) => !isDefined(warmValue)),
       };
     } catch (error) {
       this.logger.error(
-        `Usage quota seed degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
+        `Usage quota warm degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
       );
 
       return { consumedValues, isDegraded: true };
     }
   }
 
-  private async runAddToCountersScript({
+  private async runWarmAndConsumeScript({
     counters,
     entries,
   }: {
     counters: QuotaCounter[];
-    entries: Parameters<typeof buildCounterScriptArguments>[0];
+    entries: Parameters<typeof buildConsumeScriptArguments>[0];
   }): Promise<(number | null)[]> {
     if (counters.length === 0) {
       return [];
     }
 
     const results = await this.cacheStorage.runScript<unknown[]>({
-      script: ADD_TO_COUNTERS_SCRIPT,
+      script: WARM_AND_CONSUME_QUOTA_COUNTERS_SCRIPT,
       keys: counters.map((counter) => counter.key),
-      args: buildCounterScriptArguments(entries),
+      args: buildConsumeScriptArguments(entries),
     });
 
     return results.map((result) =>
@@ -826,7 +830,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     );
   }
 
-  private async readSeeds({
+  private async fetchWarmValues({
     workspaceId,
     counters,
   }: {

@@ -1025,7 +1025,7 @@ describe('Usage quota consumption', () => {
     });
   });
 
-  it('still debits the warm counter and leaves the cold one unseeded when its ClickHouse read fails', async () => {
+  it('still debits the warm counter and leaves the cold one cold when its ClickHouse read fails', async () => {
     const { spenderId } = await saveCreditQuotaForNewSpender();
 
     await chargeRun({ spenderId, creditsUsedMicro: 600 });
