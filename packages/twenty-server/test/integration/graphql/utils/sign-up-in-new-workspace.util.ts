@@ -9,14 +9,12 @@ import { type SignUpDTO } from 'src/engine/core-modules/auth/dto/sign-up.dto';
 type SignUpOnNewWorkspaceUtilArgs = {
   accessToken: string;
   displayName?: string;
-  partner?: string;
   expectToFail?: boolean;
 };
 
 export const signUpInNewWorkspace = async ({
   accessToken,
   displayName = 'Test Workspace',
-  partner,
   expectToFail,
 }: SignUpOnNewWorkspaceUtilArgs): CommonResponseBody<{
   signUpInNewWorkspace: SignUpDTO;
@@ -42,7 +40,7 @@ export const signUpInNewWorkspace = async ({
   const response = await makeMetadataApiRequest(
     {
       query: mutation,
-      variables: { input: { displayName, partner } },
+      variables: { input: { displayName } },
     },
     accessToken,
   );
