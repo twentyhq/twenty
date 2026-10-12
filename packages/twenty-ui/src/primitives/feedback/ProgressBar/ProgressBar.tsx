@@ -1,8 +1,9 @@
-import { isFunction, isNonEmptyString, isString } from '@sniptt/guards';
+import { isFunction, isNonEmptyString } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
 
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
+import { getProgressIndicatorPercentage } from '../Progress/internal/getProgressIndicatorPercentage';
 import { Progress } from '../Progress/Progress';
 
 import styles from './ProgressBar.module.scss';
@@ -39,9 +40,10 @@ export const ProgressBar = ({
         className={styles.indicator}
         data-with-border-radius={withBorderRadius || undefined}
         render={(indicatorProps) => {
-          const percentage = isString(indicatorProps.style?.width)
-            ? Number.parseFloat(indicatorProps.style.width)
-            : 0;
+          const percentage = getProgressIndicatorPercentage({
+            width: indicatorProps.style?.width,
+            fallbackPercentage: 0,
+          });
           const hasMinimumFill =
             withMinimumFillWidth && percentage > 0 && percentage < 100;
 

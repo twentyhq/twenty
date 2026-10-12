@@ -1,5 +1,4 @@
-import { isString } from '@sniptt/guards';
-
+import { getProgressIndicatorPercentage } from '../../Progress/internal/getProgressIndicatorPercentage';
 import { Progress } from '../../Progress/Progress';
 import styles from '../ProgressRing.module.scss';
 import { type ProgressRingProps } from '../types/ProgressRingProps';
@@ -20,9 +19,10 @@ export const ProgressRingIndicator = ({
       className={styles.ring}
       aria-hidden="true"
       render={(indicatorProps) => {
-        const percentage = isString(indicatorProps.style?.width)
-          ? Number.parseFloat(indicatorProps.style.width)
-          : INDETERMINATE_PERCENTAGE;
+        const percentage = getProgressIndicatorPercentage({
+          width: indicatorProps.style?.width,
+          fallbackPercentage: INDETERMINATE_PERCENTAGE,
+        });
 
         return (
           <div
