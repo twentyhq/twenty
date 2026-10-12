@@ -26,7 +26,7 @@ const convertEmailBodiesInRows = (
     return hasChanged ? [{ id, steps: value }] : [];
   });
 
-@RegisteredWorkspaceCommand('2.47.0', 1791789508765)
+@RegisteredWorkspaceCommand('2.47.0', 1791811310066)
 @Command({
   name: 'upgrade:2-47:convert-workflow-email-bodies-to-email-documents',
   description:
