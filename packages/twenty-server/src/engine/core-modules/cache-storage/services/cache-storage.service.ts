@@ -1,6 +1,7 @@
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
 import { v4 } from 'uuid';
@@ -64,6 +65,29 @@ export class CacheStorageService {
 
   async del(key: string) {
     return this.cache.del(this.getKey(key));
+  }
+
+  // MULTI rather than GETDEL so it also runs on Redis versions before 6.2
+  async getAndDelete<TValue>(key: string): Promise<TValue | undefined> {
+    if (!this.isRedisCache(this.cache)) {
+      throw new CacheStorageException(
+        'getAndDelete is only supported with Redis cache',
+        CacheStorageExceptionCode.REDIS_CACHE_REQUIRED,
+      );
+    }
+
+    const prefixedKey = this.getKey(key);
+    const [value] = await this.cache.store.client
+      .multi()
+      .get(prefixedKey)
+      .del(prefixedKey)
+      .exec();
+
+    if (!isNonEmptyString(value)) {
+      return undefined;
+    }
+
+    return JSON.parse(value) as TValue;
   }
 
   async mdel(keys: string[]): Promise<void> {

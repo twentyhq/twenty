@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import crypto from 'crypto';
+
+import { isNonEmptyString } from '@sniptt/guards';
+import ms from 'ms';
 import { Repository } from 'typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -24,6 +28,9 @@ import { extractEmailFromIdTokenClaims } from 'src/engine/core-modules/applicati
 import { generatePkceVerifier } from 'src/engine/core-modules/application/connection-provider/utils/generate-pkce-verifier.util';
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -33,6 +40,14 @@ import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modu
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 
 const STATE_JWT_EXPIRES_IN = '10m';
+const STATE_TTL_MS = ms(STATE_JWT_EXPIRES_IN);
+const STATE_CACHE_KEY_PREFIX = 'app-oauth-state';
+
+// The PKCE verifier stays server-side: in the state JWT it would travel
+// through the provider alongside the code it is meant to protect.
+type AppOAuthStateCacheEntry = {
+  codeVerifier: string | null;
+};
 
 type AuthorizeArgs = {
   connectionProvider: ConnectionProviderEntity;
@@ -72,6 +87,8 @@ export class ConnectionProviderOAuthFlowService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectCacheStorage(CacheStorageNamespace.EngineAuthSession)
+    private readonly cacheStorage: CacheStorageService,
   ) {}
 
   async startAuthorizationFlow(
@@ -118,10 +135,18 @@ export class ConnectionProviderOAuthFlowService {
       connectionProvider.oauthConfig;
 
     const codeVerifier = usePkce ? generatePkceVerifier() : null;
+    const stateId = crypto.randomUUID();
+
+    await this.cacheStorage.set<AppOAuthStateCacheEntry>(
+      `${STATE_CACHE_KEY_PREFIX}:${stateId}`,
+      { codeVerifier },
+      STATE_TTL_MS,
+    );
 
     const state = await this.signState({
       sub: connectionProvider.id,
       type: JwtTokenTypeEnum.APP_OAUTH_STATE,
+      jti: stateId,
       connectionProviderId: connectionProvider.id,
       workspaceId,
       userId,
@@ -129,7 +154,6 @@ export class ConnectionProviderOAuthFlowService {
       visibility: args.visibility,
       reconnectingConnectedAccountId: args.reconnectingConnectedAccountId,
       redirectLocation: args.redirectLocation,
-      codeVerifier,
     });
 
     const callbackUrl = buildAppOAuthCallbackUrl(this.getServerUrl());
@@ -160,6 +184,18 @@ export class ConnectionProviderOAuthFlowService {
   async completeAuthorizationFlow(args: CallbackArgs): Promise<CallbackResult> {
     const statePayload = await this.verifyState(args.state);
 
+    const stateEntry =
+      await this.cacheStorage.getAndDelete<AppOAuthStateCacheEntry>(
+        `${STATE_CACHE_KEY_PREFIX}:${statePayload.jti}`,
+      );
+
+    if (!isDefined(stateEntry)) {
+      throw new ConnectionProviderException(
+        'OAuth state has already been used or has expired',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
+    }
+
     const provider = await this.oauthProviderService.findOneByIdOrThrow({
       id: statePayload.connectionProviderId,
       workspaceId: statePayload.workspaceId,
@@ -182,7 +218,7 @@ export class ConnectionProviderOAuthFlowService {
         clientSecret,
         code: args.code,
         redirectUri: callbackUrl,
-        codeVerifier: statePayload.codeVerifier,
+        codeVerifier: stateEntry.codeVerifier,
         contentType: provider.oauthConfig.tokenRequestContentType,
       });
     } catch (error) {
@@ -235,6 +271,10 @@ export class ConnectionProviderOAuthFlowService {
 
       if (verified.type !== JwtTokenTypeEnum.APP_OAUTH_STATE) {
         throw new Error('Wrong JWT type for OAuth state');
+      }
+
+      if (!isNonEmptyString(verified.jti)) {
+        throw new Error('OAuth state is missing its identifier');
       }
 
       return verified;

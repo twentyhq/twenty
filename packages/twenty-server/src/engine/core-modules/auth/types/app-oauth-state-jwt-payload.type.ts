@@ -3,6 +3,9 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-t
 
 export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.APP_OAUTH_STATE;
+  // Keys the single-use server-side entry holding the PKCE verifier, and is
+  // echoed by the browser-binding cookie.
+  jti: string;
   workspaceId: string;
   connectionProviderId: string;
   userId: string;
@@ -14,5 +17,4 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   // of creating a new one (used by the UI's "Reconnect" action).
   reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
-  codeVerifier: string | null;
 };
