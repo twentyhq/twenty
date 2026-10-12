@@ -270,7 +270,7 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
     const parts = componentParts.map((part) => {
       const declaration = part.valueDeclaration;
 
-      const isNamespaceExport = Boolean(part.flags & ts.SymbolFlags.Alias);
+      const isNamespaceExport = (part.flags & ts.SymbolFlags.Alias) !== 0;
       const isObjectPart =
         isDefined(declaration) && ts.isPropertyAssignment(declaration);
 
