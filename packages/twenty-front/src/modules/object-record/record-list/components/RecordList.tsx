@@ -1,5 +1,6 @@
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { RecordListArrowKeysHotkeyEffect } from '@/object-record/record-list/components/RecordListArrowKeysHotkeyEffect';
 import { RecordListBody } from '@/object-record/record-list/components/RecordListBody';
 import { RecordListDragDropProvider } from '@/object-record/record-list/components/RecordListDragDropProvider';
 import { RecordListFieldTooltip } from '@/object-record/record-list/components/RecordListFieldTooltip';
@@ -40,6 +41,7 @@ export const RecordList = () => {
     <StyledContainer ref={setContainerElement}>
       <RecordListResponsiveFieldsEffect containerElement={containerElement} />
       <RecordSelectionEscapeHotkeyEffect />
+      <RecordListArrowKeysHotkeyEffect containerElement={containerElement} />
       <RecordListSSESubscribeEffect />
       <RecordIndexRemoveSortingModal />
       <RecordListFieldTooltip>

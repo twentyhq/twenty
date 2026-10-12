@@ -20,11 +20,14 @@ import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
+import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
+import { RECORD_SELECTION_ARROW_KEY_HOTKEYS } from '@/object-record/record-selection/constants/RecordSelectionArrowKeyHotkeys';
+import { useRecordSelectionArrowKeyNavigation } from '@/object-record/record-selection/hooks/useRecordSelectionArrowKeyNavigation';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
@@ -33,6 +36,7 @@ import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/Animat
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -84,6 +88,7 @@ const AiChatInboxPageContent = () => {
   const { toggleRecordSelection } = useToggleRecordSelection();
   const threadListContainerRef = useRef<HTMLDivElement>(null);
   const { resetRecordSelection } = useResetRecordSelection();
+  const { fetchMoreAgentChatThreads } = useRefreshAgentChatThreads();
 
   // Rows hold a menu and a rename input, which a link cannot contain
   const selectThread = (nextThreadId: string | null) =>
@@ -119,6 +124,30 @@ const AiChatInboxPageContent = () => {
 
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
   };
+
+  // The list is not on screen beside a full page chat to load more as it
+  // scrolls, so reaching its last chat loads more, as the next button does
+  const handleActiveThreadChange = (nextThreadId: string) => {
+    selectThread(nextThreadId);
+
+    if (nextThreadId === threads.at(-1)?.id) {
+      void fetchMoreAgentChatThreads();
+    }
+  };
+
+  const { navigateWithArrowKey } = useRecordSelectionArrowKeyNavigation({
+    selectableItemsContainerRef: threadListContainerRef,
+    activeRecordId: selectedThreadId,
+    onActiveRecordChange: handleActiveThreadChange,
+  });
+
+  useGlobalHotkeys({
+    keys: RECORD_SELECTION_ARROW_KEY_HOTKEYS,
+    callback: navigateWithArrowKey,
+    containsModifier: false,
+    dependencies: [navigateWithArrowKey],
+    options: { enableOnContentEditable: false, enableOnFormTags: false },
+  });
 
   const handleThreadCheckboxClick = (
     { id }: AgentChatThreadRecord,
