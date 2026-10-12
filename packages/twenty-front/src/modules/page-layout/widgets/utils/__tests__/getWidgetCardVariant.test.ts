@@ -10,6 +10,7 @@ describe('getWidgetCardVariant', () => {
       expect(
         getWidgetCardVariant({
           isSideColumnContext: false,
+          isSoloFrontComponent: false,
           pageLayoutType,
         }),
       ).toBe('framed');
@@ -23,6 +24,7 @@ describe('getWidgetCardVariant', () => {
       expect(
         getWidgetCardVariant({
           isSideColumnContext: false,
+          isSoloFrontComponent: false,
           pageLayoutType,
         }),
       ).toBe('flush');
@@ -33,6 +35,7 @@ describe('getWidgetCardVariant', () => {
     expect(
       getWidgetCardVariant({
         isSideColumnContext: true,
+        isSoloFrontComponent: false,
         pageLayoutType: PageLayoutType.DASHBOARD,
       }),
     ).toBe('flush');

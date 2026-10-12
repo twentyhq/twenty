@@ -92,6 +92,8 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
 
   const variant = getWidgetCardVariant({
     isSideColumnContext,
+    isSoloFrontComponent:
+      presentation === 'solo' && widget.type === WidgetType.FRONT_COMPONENT,
     pageLayoutType: currentPageLayout.type,
   });
 

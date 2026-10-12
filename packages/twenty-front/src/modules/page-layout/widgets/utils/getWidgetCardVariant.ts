@@ -3,11 +3,13 @@ import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVa
 
 type GetWidgetCardVariantParams = {
   isSideColumnContext: boolean;
+  isSoloFrontComponent: boolean;
   pageLayoutType: PageLayoutType | null;
 };
 
 export const getWidgetCardVariant = ({
   isSideColumnContext,
+  isSoloFrontComponent,
   pageLayoutType,
 }: GetWidgetCardVariantParams): WidgetCardVariant => {
   if (isSideColumnContext) {
@@ -16,8 +18,9 @@ export const getWidgetCardVariant = ({
 
   switch (pageLayoutType) {
     case PageLayoutType.DASHBOARD:
-    case PageLayoutType.STANDALONE_PAGE:
       return 'framed';
+    case PageLayoutType.STANDALONE_PAGE:
+      return isSoloFrontComponent ? 'flush' : 'framed';
     case PageLayoutType.RECORD_PAGE:
     case PageLayoutType.RECORD_INDEX:
     case PageLayoutType.RECORD_FORM:
