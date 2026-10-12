@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type FormEvent, useId, useState } from 'react';
+import { type FormEvent, useId, useRef, useState } from 'react';
 import { enqueueSnackbar, useTranslate } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -14,6 +14,7 @@ import { TranscriptImportHistoryProgress } from 'src/features/transcripts/front-
 import { TEAMS_TRANSCRIPT_HISTORY_DEFAULT_DAYS } from 'src/features/transcripts/front-components/constants/teams-transcript-history-default-days';
 import { type TeamsTranscriptHistoryRouteRequest } from 'src/features/transcripts/front-components/types/teams-transcript-history-route-request.type';
 import { type TeamsTranscriptHistoryView } from 'src/features/transcripts/front-components/types/teams-transcript-history-view.type';
+import { formatTeamsTranscriptHistoryDate } from 'src/features/transcripts/front-components/utils/format-teams-transcript-history-date';
 import { getTeamsTranscriptHistoryFailureMessage } from 'src/features/transcripts/front-components/utils/get-teams-transcript-history-failure-message';
 import { getTeamsTranscriptHistoryPollDelayMilliseconds } from 'src/features/transcripts/front-components/utils/get-teams-transcript-history-poll-delay-milliseconds';
 import { getTeamsTranscriptHistoryRouteErrorMessage } from 'src/features/transcripts/front-components/utils/get-teams-transcript-history-route-error-message';
@@ -75,22 +76,39 @@ export const TranscriptImportHistorySection = () => {
   >();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pollCount, setPollCount] = useState(0);
+  const latestRequestIdRef = useRef(0);
 
   const days = parseTeamsTranscriptHistoryDays(daysDraft);
   const hasLoadError = isDefined(loadErrorCode);
-  const isCounting = !hasLoadError && view?.kind === 'counting';
-  const isImporting = !hasLoadError && view?.kind === 'importing';
+  const isCounting = view?.kind === 'counting';
+  const isImporting = view?.kind === 'importing';
   const pollDelayMilliseconds = getTeamsTranscriptHistoryPollDelayMilliseconds({
     view,
-    hasLoadError,
+    loadErrorCode,
   });
 
+  // A status reply that left before a later request must not overwrite what that request returned.
+  const startRequest = () => {
+    latestRequestIdRef.current += 1;
+
+    return latestRequestIdRef.current;
+  };
+
+  const isLatestRequest = (requestId: number) =>
+    requestId === latestRequestIdRef.current;
+
   const loadHistory = async () => {
+    const requestId = startRequest();
+
     try {
       const result = await postTeamsTranscriptHistoryRouteOrThrow({
         routePath: TEAMS_TRANSCRIPT_HISTORY_STATUS_ROUTE_PATH,
         body: {},
       });
+
+      if (!isLatestRequest(requestId)) {
+        return;
+      }
 
       if (result.success) {
         setView(getTeamsTranscriptHistoryView(result));
@@ -99,7 +117,9 @@ export const TranscriptImportHistorySection = () => {
         setLoadErrorCode(result.errorCode);
       }
     } catch {
-      setLoadErrorCode('unknown');
+      if (isLatestRequest(requestId)) {
+        setLoadErrorCode('unknown');
+      }
     } finally {
       setPollCount((previousPollCount) => previousPollCount + 1);
     }
@@ -118,12 +138,16 @@ export const TranscriptImportHistorySection = () => {
 
     setIsSubmitting(true);
 
+    const requestId = startRequest();
+
     try {
       const result = await postTeamsTranscriptHistoryRouteOrThrow(request);
 
       if (result.success) {
-        setView(getTeamsTranscriptHistoryView(result));
-        setLoadErrorCode(undefined);
+        if (isLatestRequest(requestId)) {
+          setView(getTeamsTranscriptHistoryView(result));
+          setLoadErrorCode(undefined);
+        }
       } else {
         enqueueSnackbar({
           message: getTeamsTranscriptHistoryRouteErrorMessage({
@@ -212,7 +236,10 @@ export const TranscriptImportHistorySection = () => {
         <StyledSettingsText>
           {isDefined(view.checkedThrough)
             ? t('Counting transcripts... checked back to {date}', {
-                date: new Date(view.checkedThrough).toLocaleDateString(locale),
+                date: formatTeamsTranscriptHistoryDate({
+                  date: view.checkedThrough,
+                  locale,
+                }),
               })
             : t('Counting transcripts...')}
         </StyledSettingsText>

@@ -68,11 +68,13 @@ connection. Reconnecting starts it again only when that import failed or
 stalled. For older ones, use **Import history** in **Settings > Applications >
 Microsoft Teams > Settings**: count the transcripts of up to the last 365 days
 first, then import them. Only members who can open the app settings see this
-section; every member's connection still imports its last 31 days when it
-connects. The import runs in the background, newest first, about one calendar
-page a minute. Use the **Sync Teams Transcript** action for a single transcript,
-such as one that Microsoft had not published about two and a half hours after
-the meeting or whose import keeps failing.
+section, and it imports the meetings of a connection they added themselves:
+their personal one, or a workspace-shared one they created. Every member's
+connection still imports its last 31 days when it connects. The import runs in
+the background, newest first, waiting a minute after each calendar page that
+imported transcripts. Use the **Sync Teams Transcript** action for a single
+transcript, such as one that Microsoft had not published about two and a half
+hours after the meeting or whose import keeps failing.
 
 Transcripts link to the meeting's calendar event when that calendar is synced in
 Twenty. An occurrence of a recurring meeting links to the series' event.

@@ -2,6 +2,7 @@ import { useTranslate } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type TeamsTranscriptHistoryView } from 'src/features/transcripts/front-components/types/teams-transcript-history-view.type';
+import { formatTeamsTranscriptHistoryDate } from 'src/features/transcripts/front-components/utils/format-teams-transcript-history-date';
 import { StyledSettingsFigureList } from 'src/front-components/components/StyledSettingsFigureList';
 import { StyledSettingsText } from 'src/front-components/components/StyledSettingsText';
 
@@ -25,7 +26,10 @@ export const TranscriptImportHistoryProgress = ({
     if (isDefined(view.checkedThrough)) {
       return t('Imported {importedCount}, checked back to {date}', {
         importedCount: view.importedCount,
-        date: new Date(view.checkedThrough).toLocaleDateString(locale),
+        date: formatTeamsTranscriptHistoryDate({
+          date: view.checkedThrough,
+          locale,
+        }),
       });
     }
 

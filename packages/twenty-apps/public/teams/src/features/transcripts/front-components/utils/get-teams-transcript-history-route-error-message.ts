@@ -14,7 +14,9 @@ export const getTeamsTranscriptHistoryRouteErrorMessage = ({
     case 'transcripts-not-enabled':
       return t('Turn on transcripts to import their history.');
     case 'not-connected':
-      return t('Connect a Microsoft Teams account first.');
+      return t(
+        'Add your own Microsoft Teams connection to import its history.',
+      );
     case 'reconnect-required':
       return t('Reconnect Microsoft Teams in the app settings.');
     case 'invalid-days':
