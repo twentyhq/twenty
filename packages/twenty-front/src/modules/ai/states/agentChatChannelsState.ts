@@ -1,10 +1,10 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
-import { type AgentChatChannelListItem } from '~/generated-metadata/graphql';
+import { type AgentChatChannel } from '~/generated-metadata/graphql';
 
-// The channels the member can read, joined ones first in their sidebar
-// order. Null until loaded
+// The channels open to the member, plus the others for who manages channels,
+// in the channels' order. Null until loaded
 export const agentChatChannelsState = createAtomState<
-  AgentChatChannelListItem[] | null
+  AgentChatChannel[] | null
 >({
   key: 'agentChatChannelsState',
   defaultValue: null,

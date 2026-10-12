@@ -2,6 +2,7 @@ import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
+import { acknowledgedNativeEditSequenceByRemoteElement } from '@/remote/elements/states/acknowledgedNativeEditSequenceByRemoteElement';
 import { type InputSelectionCommand } from '@/types/InputSelectionCommand';
 import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
 
@@ -54,7 +55,12 @@ export const createInputSelectionCommandQueue = () => {
       element,
       commands: [
         ...readPendingCommands(element),
-        { sequence: lastCommandSequence, request },
+        {
+          sequence: lastCommandSequence,
+          request,
+          acknowledgedNativeEditSequence:
+            acknowledgedNativeEditSequenceByRemoteElement.get(element),
+        },
       ],
     });
   };

@@ -30,7 +30,7 @@ export const buildAgentChatThreadStandardFlatIndexMetadatas = (
     ...args,
     context: {
       indexName: 'channelLastActivityIndex',
-      relatedFieldNames: ['channel', 'lastActivityAt'],
+      relatedFieldNames: ['channelId', 'lastActivityAt'],
       isUnique: false,
       indexWhereClause: null,
     },

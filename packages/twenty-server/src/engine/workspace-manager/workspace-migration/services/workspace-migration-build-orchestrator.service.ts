@@ -1,3 +1,5 @@
+import { WorkspaceMigrationAgentChatChannelActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel/workspace-migration-agent-chat-channel-actions-builder.service';
+import { WorkspaceMigrationAgentChatChannelRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel-role/workspace-migration-agent-chat-channel-role-actions-builder.service';
 import { WorkspaceMigrationSettingsMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/workspace-migration-settings-menu-item-actions-builder.service';
 import { WorkspaceMigrationWorkflowVersionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow-version/workspace-migration-workflow-version-actions-builder.service';
 import { WorkspaceMigrationWorkflowActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow/workspace-migration-workflow-actions-builder.service';
@@ -165,6 +167,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceMigrationWorkflowActionsBuilderService: WorkspaceMigrationWorkflowActionsBuilderService,
     workspaceMigrationWorkflowVersionActionsBuilderService: WorkspaceMigrationWorkflowVersionActionsBuilderService,
     workspaceMigrationSettingsMenuItemActionsBuilderService: WorkspaceMigrationSettingsMenuItemActionsBuilderService,
+    workspaceMigrationAgentChatChannelActionsBuilderService: WorkspaceMigrationAgentChatChannelActionsBuilderService,
+    workspaceMigrationAgentChatChannelRoleActionsBuilderService: WorkspaceMigrationAgentChatChannelRoleActionsBuilderService,
   ) {
     // Execution order: builders mutate optimisticAllFlatEntityMaps that downstream builders read, so do not reorder
     this.entityActionsBuilderTasksInExecutionOrder = [
@@ -311,6 +315,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.settingsMenuItem,
         workspaceMigrationSettingsMenuItemActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.agentChatChannel,
+        workspaceMigrationAgentChatChannelActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.agentChatChannelRole,
+        workspaceMigrationAgentChatChannelRoleActionsBuilderService,
       ),
     ];
   }

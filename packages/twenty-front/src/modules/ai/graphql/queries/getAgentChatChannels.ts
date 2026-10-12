@@ -7,12 +7,11 @@ export const GET_AGENT_CHAT_CHANNELS = gql`
       name
       icon
       color
-      visibility
-      isMember
-      canLeave
-      canManage
-      memberCount
+      position
+      isOpenToEveryone
       roleIds
+      isCustom
+      isAccessible
     }
   }
 `;

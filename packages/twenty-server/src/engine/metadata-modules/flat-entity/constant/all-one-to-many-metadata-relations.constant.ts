@@ -235,6 +235,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'rowLevelPermissionPredicateGroupUniversalIdentifiers',
     },
+    agentChatChannelRoles: {
+      metadataName: 'agentChatChannelRole',
+      flatEntityForeignKeyAggregator: 'agentChatChannelRoleIds',
+      universalFlatEntityForeignKeyAggregator:
+        'agentChatChannelRoleUniversalIdentifiers',
+    },
   },
   roleTarget: {},
   rolePermissionFlag: {},
@@ -309,6 +315,15 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   validationRule: {},
   workflow: {},
   workflowVersion: {},
+  agentChatChannel: {
+    channelRoles: {
+      metadataName: 'agentChatChannelRole',
+      flatEntityForeignKeyAggregator: 'channelRoleIds',
+      universalFlatEntityForeignKeyAggregator:
+        'channelRoleUniversalIdentifiers',
+    },
+  },
+  agentChatChannelRole: {},
 } as const satisfies OneToManyMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

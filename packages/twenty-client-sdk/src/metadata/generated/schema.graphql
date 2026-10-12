@@ -34,28 +34,18 @@ type AgentChatChannel {
   color: String
   icon: String
   id: UUID!
+  isAccessible: Boolean
+  isCustom: Boolean!
+  isOpenToEveryone: Boolean!
   name: String!
+  position: Float!
   roleIds: [UUID!]!
-  visibility: AgentChatChannelVisibility!
 }
 
 enum AgentChatChannelAssignmentFilter {
   ANY
   ASSIGNED_TO_ME
   UNASSIGNED
-}
-
-type AgentChatChannelListItem {
-  canLeave: Boolean!
-  canManage: Boolean!
-  color: String
-  icon: String
-  id: UUID!
-  isMember: Boolean!
-  memberCount: Int!
-  name: String!
-  roleIds: [UUID!]!
-  visibility: AgentChatChannelVisibility!
 }
 
 type AgentChatChannelRole {
@@ -80,11 +70,6 @@ enum AgentChatChannelThreadStatus {
   DONE
   OPEN
   SNOOZED
-}
-
-enum AgentChatChannelVisibility {
-  PRIVATE
-  PUBLIC
 }
 
 type AgentChatEvent {
@@ -271,6 +256,8 @@ type AiSystemPromptSection {
 
 enum AllMetadataName {
   agent
+  agentChatChannel
+  agentChatChannelRole
   applicationVariable
   commandMenuItem
   connectionProvider
@@ -826,6 +813,7 @@ enum BillingEntitlementKey {
   RLS
   SSO
   USAGE_LIMIT
+  VALIDATION_RULES
 }
 
 type BillingLicensedProduct implements BillingProductDTO {
@@ -929,12 +917,18 @@ type BillingSession {
 type BillingSubscription {
   billingSubscriptionItems: [BillingSubscriptionItem!]
   cancelAt: DateTime
+  collectionMethod: BillingSubscriptionCollectionMethod
   currentPeriodEnd: DateTime
   id: UUID!
   interval: SubscriptionInterval
   metadata: JSON!
   phases: [BillingSubscriptionSchedulePhase!]!
   status: SubscriptionStatus!
+}
+
+enum BillingSubscriptionCollectionMethod {
+  CHARGE_AUTOMATICALLY
+  SEND_INVOICE
 }
 
 type BillingSubscriptionItem {
@@ -1297,10 +1291,9 @@ input ConnectionParametersInput {
 input CreateAgentChatChannelInput {
   color: String
   icon: String
-  memberIds: [UUID!]! = []
+  isOpenToEveryone: Boolean! = true
   name: String!
   roleIds: [UUID!]! = []
-  visibility: AgentChatChannelVisibility! = PUBLIC
 }
 
 input CreateAgentInput {
@@ -1920,6 +1913,8 @@ enum EngineComponentKey {
   ACTIVATE_WORKFLOW
   ADD_NODE_WORKFLOW
   ADD_TO_FAVORITES
+  ADD_TO_MESSAGE_LIST
+  ADD_VIEW_TO_MESSAGE_LIST
   ASK_AI
   ASSIGN_AI_CHAT
   CANCEL_DASHBOARD_LAYOUT
@@ -3020,7 +3015,6 @@ enum ModelFamily {
 type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
-  addAgentChatChannelMembers(channelId: UUID!, workspaceMemberIds: [UUID!]!): Boolean!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
@@ -3168,13 +3162,10 @@ type Mutation {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   installApplication(universalIdentifier: String!, version: String): Application!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
-  joinAgentChatChannel(channelId: UUID!): Boolean!
-  leaveAgentChatChannel(channelId: UUID!): Boolean!
   markAgentChatThreadAsDoneInChannel(threadId: UUID!): Boolean!
   moveAgentChatThreadToChannel(channelId: UUID, threadId: UUID!): Boolean!
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
-  removeAgentChatChannelMember(channelId: UUID!, memberWorkspaceMemberId: UUID!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
   removeRecordShare(principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   removeRoleFromAgent(agentId: UUID!): Boolean!
@@ -3227,6 +3218,7 @@ type Mutation {
   syncMarketplaceCatalog: Boolean!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
+  triggerAddPeopleToMessageListJob(input: TriggerAddPeopleToMessageListJobInput!): TriggerAddPeopleToMessageListJobResult!
   triggerInstallApplication(input: TriggerInstallApplicationInput!): TriggerInstallApplicationResult!
   triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult! @deprecated(reason: "Use triggerInstallApplication instead")
   triggerUninstallApplication(input: TriggerUninstallApplicationInput!): TriggerUninstallApplicationResult!
@@ -3808,7 +3800,7 @@ type Query {
   agentChatChannelRoles: [AgentChatChannelRole!]!
   agentChatChannelSummaries: [AgentChatChannelSummary!]!
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
-  agentChatChannels: [AgentChatChannelListItem!]!
+  agentChatChannels: [AgentChatChannel!]!
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
@@ -4552,6 +4544,15 @@ type TransientToken {
   transientToken: AuthToken!
 }
 
+input TriggerAddPeopleToMessageListJobInput {
+  messageListId: UUID!
+  personFilter: JSON!
+}
+
+type TriggerAddPeopleToMessageListJobResult {
+  jobId: String!
+}
+
 input TriggerInstallApplicationInput {
   universalIdentifier: String!
 }
@@ -4658,9 +4659,10 @@ enum UnsubscribeTopicVisibility {
 input UpdateAgentChatChannelInput {
   color: String
   icon: String
+  isOpenToEveryone: Boolean
   name: String
+  position: Float
   roleIds: [UUID!]
-  visibility: AgentChatChannelVisibility
 }
 
 input UpdateAgentInput {

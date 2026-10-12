@@ -8,8 +8,6 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import {
   CreateAgentChatChannelDocument,
   DeleteAgentChatChannelDocument,
-  JoinAgentChatChannelDocument,
-  LeaveAgentChatChannelDocument,
   UpdateAgentChatChannelDocument,
   type UpdateAgentChatChannelInput,
 } from '~/generated-metadata/graphql';
@@ -62,18 +60,6 @@ export const useAgentChatChannelActions = () => {
     [runChannelMutation],
   );
 
-  const joinAgentChatChannel = useCallback(
-    (channelId: string) =>
-      runChannelMutation(JoinAgentChatChannelDocument, { channelId }),
-    [runChannelMutation],
-  );
-
-  const leaveAgentChatChannel = useCallback(
-    (channelId: string) =>
-      runChannelMutation(LeaveAgentChatChannelDocument, { channelId }),
-    [runChannelMutation],
-  );
-
   const deleteAgentChatChannel = useCallback(
     ({
       channelId,
@@ -92,8 +78,6 @@ export const useAgentChatChannelActions = () => {
   return {
     createAgentChatChannel,
     updateAgentChatChannel,
-    joinAgentChatChannel,
-    leaveAgentChatChannel,
     deleteAgentChatChannel,
   };
 };

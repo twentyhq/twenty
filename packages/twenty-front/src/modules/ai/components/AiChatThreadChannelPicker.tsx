@@ -16,7 +16,7 @@ type AiChatThreadChannelPickerProps = {
   dropdownId: string;
 };
 
-// Chats move between the channels the member joined. A chat without an owner
+// Chats move between the channels open to the member. A chat without an owner
 // has no one to fall back to, so it stays in a channel
 export const AiChatThreadChannelPicker = ({
   thread,
@@ -25,17 +25,19 @@ export const AiChatThreadChannelPicker = ({
   const { t } = useLingui();
   const channels = useAtomStateValue(agentChatChannelsState) ?? [];
   const { moveAgentChatThreadToChannel } = useMoveAgentChatThreadToChannel();
-  const joinedChannels = channels.filter(({ isMember }) => isMember);
+  const accessibleChannels = channels.filter(
+    ({ isAccessible }) => isAccessible,
+  );
   const currentChannelId = thread.channelId ?? null;
   const canLeaveChannels = isDefined(thread.workspaceMemberId);
 
-  if (joinedChannels.length === 0 && !isDefined(currentChannelId)) {
+  if (accessibleChannels.length === 0 && !isDefined(currentChannelId)) {
     return null;
   }
 
   const options = [
     ...(canLeaveChannels ? [{ id: null, name: t`No channel` }] : []),
-    ...joinedChannels.map(({ id, name }) => ({ id, name })),
+    ...accessibleChannels.map(({ id, name }) => ({ id, name })),
   ];
 
   return (

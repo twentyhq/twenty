@@ -420,6 +420,10 @@ export const STANDARD_OBJECTS = {
           'complainedCount',
           'recipients',
           'createdAt',
+          'uniqueClickCount',
+          'clickRate',
+          'uniqueOpenCount',
+          'openRate',
         ],
       }),
       messageCampaignRecordPageFields: buildStandardObjectRecordPageFieldsView({
@@ -436,6 +440,10 @@ export const STANDARD_OBJECTS = {
           'skippedCount',
           'bouncedCount',
           'complainedCount',
+          'uniqueClickCount',
+          'clickRate',
+          'uniqueOpenCount',
+          'openRate',
         ],
         viewFieldGroupNames: {
           stats: 'Stats',
@@ -1416,24 +1424,6 @@ export const STANDARD_OBJECTS = {
       },
       channelLastActivityIndex: {
         universalIdentifier: 'bd129bd1-db66-4c74-a64e-819d2edd3062',
-      },
-    },
-  },
-  agentChatChannel: {
-    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatChannel,
-    fields: STANDARD_OBJECT_FIELDS.agentChatChannel,
-    indexes: {},
-  },
-  agentChatChannelMember: {
-    universalIdentifier:
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatChannelMember,
-    fields: STANDARD_OBJECT_FIELDS.agentChatChannelMember,
-    indexes: {
-      channelWorkspaceMemberUniqueIndex: {
-        universalIdentifier: '71f41cff-9aff-42b3-bb8b-7efc8a265d67',
-      },
-      workspaceMemberIndex: {
-        universalIdentifier: '8f78d7a8-f06c-4428-809e-650ca7d59cd7',
       },
     },
   },

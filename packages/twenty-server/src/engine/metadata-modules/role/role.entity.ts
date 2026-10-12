@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel-role.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -73,6 +74,13 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
     (roleTargets: RoleTargetEntity) => roleTargets.role,
   )
   roleTargets: Relation<RoleTargetEntity[]>;
+
+  @OneToMany(
+    () => AgentChatChannelRoleEntity,
+    (agentChatChannelRole: AgentChatChannelRoleEntity) =>
+      agentChatChannelRole.role,
+  )
+  agentChatChannelRoles: Relation<AgentChatChannelRoleEntity[]>;
 
   @OneToMany(
     () => ObjectPermissionEntity,

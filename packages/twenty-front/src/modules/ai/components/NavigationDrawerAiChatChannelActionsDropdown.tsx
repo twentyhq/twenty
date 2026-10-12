@@ -4,8 +4,8 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconDotsVertical,
   IconEdit,
+  IconColorSwatch,
   IconLock,
-  IconLogout,
   IconTrash,
   IconWorld,
 } from 'twenty-ui/icon';
@@ -14,18 +14,17 @@ import { NavigationDrawerAiChatChannelRolesSubmenu } from '@/ai/components/Navig
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import {
-  type AgentChatChannelListItem,
-  AgentChatChannelVisibility,
+  type AgentChatChannel,
   type UpdateAgentChatChannelInput,
 } from '~/generated-metadata/graphql';
 
 type NavigationDrawerAiChatChannelActionsDropdownProps = {
-  channel: AgentChatChannelListItem;
-  destinationChannels: AgentChatChannelListItem[];
+  channel: AgentChatChannel;
+  destinationChannels: AgentChatChannel[];
   dropdownId: string;
   onRename: () => void;
+  onChangeAppearance: () => void;
   onUpdate: (input: UpdateAgentChatChannelInput) => void;
-  onLeave: () => void;
   onDelete: (destinationChannelId: string | null) => void;
 };
 
@@ -34,12 +33,11 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
   destinationChannels,
   dropdownId,
   onRename,
+  onChangeAppearance,
   onUpdate,
-  onLeave,
   onDelete,
 }: NavigationDrawerAiChatChannelActionsDropdownProps) => {
   const { t } = useLingui();
-  const isPublic = channel.visibility === AgentChatChannelVisibility.PUBLIC;
 
   return (
     <DropdownRoot type="menu" dropdownId={dropdownId}>
@@ -55,32 +53,46 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
           <Dropdown.ActionItem startIcon={<IconEdit />} onClick={onRename}>
             {t`Rename`}
           </Dropdown.ActionItem>
-          {channel.canManage && (
-            <>
-              <Dropdown.ActionItem
-                startIcon={isPublic ? <IconLock /> : <IconWorld />}
-                onClick={() =>
-                  onUpdate({
-                    visibility: isPublic
-                      ? AgentChatChannelVisibility.PRIVATE
-                      : AgentChatChannelVisibility.PUBLIC,
-                  })
-                }
-              >
-                {isPublic ? t`Make private` : t`Make public`}
-              </Dropdown.ActionItem>
-              <NavigationDrawerAiChatChannelRolesSubmenu
-                roleIds={channel.roleIds}
-                onChange={(roleIds) => onUpdate({ roleIds })}
-              />
-            </>
+          <Dropdown.ActionItem
+            startIcon={<IconColorSwatch />}
+            onClick={onChangeAppearance}
+          >
+            {t`Icon and color`}
+          </Dropdown.ActionItem>
+          <Dropdown.Submenu>
+            <Dropdown.SubmenuTrigger
+              startIcon={
+                channel.isOpenToEveryone ? <IconWorld /> : <IconLock />
+              }
+            >
+              {t`Access`}
+            </Dropdown.SubmenuTrigger>
+            <Dropdown.Content aria-label={t`Who reads this channel`}>
+              <Dropdown.Section label={t`Who reads this channel`}>
+                <Dropdown.OptionItem
+                  startIcon={<IconWorld />}
+                  selected={channel.isOpenToEveryone}
+                  onSelect={() => onUpdate({ isOpenToEveryone: true })}
+                >
+                  {t`Everyone`}
+                </Dropdown.OptionItem>
+                <Dropdown.OptionItem
+                  startIcon={<IconLock />}
+                  selected={!channel.isOpenToEveryone}
+                  onSelect={() => onUpdate({ isOpenToEveryone: false })}
+                >
+                  {t`Selected roles`}
+                </Dropdown.OptionItem>
+              </Dropdown.Section>
+            </Dropdown.Content>
+          </Dropdown.Submenu>
+          {!channel.isOpenToEveryone && (
+            <NavigationDrawerAiChatChannelRolesSubmenu
+              roleIds={channel.roleIds}
+              onChange={(roleIds) => onUpdate({ roleIds })}
+            />
           )}
-          {channel.canLeave && (
-            <Dropdown.ActionItem startIcon={<IconLogout />} onClick={onLeave}>
-              {t`Leave channel`}
-            </Dropdown.ActionItem>
-          )}
-          {channel.canManage &&
+          {channel.isCustom &&
             (destinationChannels.length === 0 ? (
               <Dropdown.ActionItem
                 color="danger"

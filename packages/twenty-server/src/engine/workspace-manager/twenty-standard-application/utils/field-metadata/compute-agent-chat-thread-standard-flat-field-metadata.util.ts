@@ -583,14 +583,14 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  // Set through the move mutation, which checks the member can write in
-  // both the chat and the channel
-  channel: {
-    ...createStandardRelationFieldFlatMetadata({
+  // Set through the move mutation, which also rewrites the grants the
+  // channel gives on the chat
+  channelId: {
+    ...createStandardFieldFlatMetadata({
       ...args,
       context: {
-        fieldName: 'channel',
-        type: FieldMetadataType.RELATION,
+        fieldName: 'channelId',
+        type: FieldMetadataType.UUID,
         label: i18nLabel(
           msg({ message: 'Channel', context: 'fieldMetadata.label' }),
         ),
@@ -601,16 +601,9 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
           }),
         ),
         icon: 'IconHash',
+        isSystem: true,
         isUIEditable: false,
         isNullable: true,
-        targetObjectName: 'agentChatChannel',
-        targetFieldName: 'threads',
-        morphId: null,
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-          onDelete: RelationOnDeleteAction.SET_NULL,
-          joinColumnName: 'channelId',
-        },
       },
     }),
     writability: MetadataWritability.SYSTEM,

@@ -357,6 +357,20 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
+  agentChatChannel: {
+    workspace: null,
+    application: null,
+  },
+  agentChatChannelRole: {
+    workspace: null,
+    application: null,
+    channel: {
+      foreignKey: 'channelId',
+    },
+    role: {
+      foreignKey: 'roleId',
+    },
+  },
 } as const satisfies ManyToOneMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

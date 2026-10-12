@@ -5,11 +5,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export const findAgentChatFlatObjectMetadata = (
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  standardObjectName:
-    | 'agentChatThread'
-    | 'agentChatThreadParticipant'
-    | 'agentChatChannel'
-    | 'agentChatChannelMember',
+  standardObjectName: 'agentChatThread' | 'agentChatThreadParticipant',
 ) =>
   flatObjectMetadataMaps.byUniversalIdentifier[
     STANDARD_OBJECTS[standardObjectName].universalIdentifier

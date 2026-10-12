@@ -1,17 +1,14 @@
 import { useCallback, useEffect } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useRefreshAgentChatChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
-import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
+import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
+import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -19,42 +16,15 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 // Changes come in bursts, as a message updates a chat and its members' rows
 const AGENT_CHAT_CHANNELS_REFRESH_DEBOUNCE_MS = 1000;
 
-const CHANNEL_OPERATION_SIGNATURE = {
-  objectNameSingular: CoreObjectNameSingular.AgentChatChannel,
-  variables: {},
-};
-
-const CHANNEL_MEMBER_OPERATION_SIGNATURE = {
-  objectNameSingular: CoreObjectNameSingular.AgentChatChannelMember,
-  variables: {},
-};
-
-// Channels and their counts follow changes made anywhere: a channel or a
-// membership changing reloads the list, a chat or a member's row changing
-// reloads the counts
+// Channels and their counts follow changes made anywhere: a channel or its
+// roles changing reloads the list, a chat or a member's row changing reloads
+// the counts
 export const AgentChatChannelsEffect = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
-  const channelObjectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    {
-      objectName: CoreObjectNameSingular.AgentChatChannel,
-      objectNameType: 'singular',
-    },
-  );
-  const channelMemberObjectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    {
-      objectName: CoreObjectNameSingular.AgentChatChannelMember,
-      objectNameType: 'singular',
-    },
-  );
-  const isEnabled =
-    hasAiPermission &&
-    !isWorkspaceSuspended &&
-    isDefined(channelObjectMetadataItem);
+  const isEnabled = hasAiPermission && !isWorkspaceSuspended;
 
   const { refreshAgentChatChannels, refreshAgentChatChannelSummaries } =
     useRefreshAgentChatChannels();
@@ -74,32 +44,25 @@ export const AgentChatChannelsEffect = () => {
     }
   }, [isEnabled, refreshAgentChatChannels]);
 
-  useListenToEventsForQuery({
-    queryId: 'agent-chat-channel-operations',
-    operationSignature: CHANNEL_OPERATION_SIGNATURE,
+  const handleChannelOperation = useCallback(() => {
+    if (isEnabled) {
+      debouncedRefreshChannels();
+    }
+  }, [debouncedRefreshChannels, isEnabled]);
+
+  useListenToMetadataOperationBrowserEvent({
+    metadataName: 'agentChatChannel',
+    onMetadataOperationBrowserEvent: handleChannelOperation,
     skip: !isEnabled,
-    onSseReconnected: refreshAgentChatChannels,
   });
-  useListenToEventsForQuery({
-    queryId: 'agent-chat-channel-member-operations',
-    operationSignature: CHANNEL_MEMBER_OPERATION_SIGNATURE,
-    skip: !isEnabled || !isDefined(channelMemberObjectMetadataItem),
+  useListenToMetadataOperationBrowserEvent({
+    metadataName: 'agentChatChannelRole',
+    onMetadataOperationBrowserEvent: handleChannelOperation,
+    skip: !isEnabled,
   });
-
-  const handleChannelOperation = useCallback(
-    () => debouncedRefreshChannels(),
-    [debouncedRefreshChannels],
-  );
-
-  useListenToObjectRecordOperationBrowserEvent({
-    onObjectRecordOperationBrowserEvent: handleChannelOperation,
-    objectMetadataItemId: channelObjectMetadataItem?.id,
-    enabled: isEnabled,
-  });
-  useListenToObjectRecordOperationBrowserEvent({
-    onObjectRecordOperationBrowserEvent: handleChannelOperation,
-    objectMetadataItemId: channelMemberObjectMetadataItem?.id,
-    enabled: isEnabled && isDefined(channelMemberObjectMetadataItem),
+  useListenToBrowserEvent({
+    eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
+    onBrowserEvent: handleChannelOperation,
   });
 
   const agentChatThreadRecordUpdateCount = useAtomStateValue(

@@ -125,14 +125,14 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
       'flatWorkspaceMemberMaps',
     ]);
 
-    const { flatObjectMetadataMaps } =
+    const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
       ]);
 
     await detachAgentChatChannelThreadsFromWorkspaceMember({
       threadRepository: this.agentChatThreadRepository,
-      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       workspaceId: workspace.id,
       workspaceMemberId: workspaceMember.id,
     });

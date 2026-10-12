@@ -400,14 +400,14 @@ export class UserService {
       },
     );
 
-    const { flatObjectMetadataMaps } =
+    const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
       ]);
 
     await detachAgentChatChannelThreadsFromWorkspaceMember({
       threadRepository: this.agentChatThreadRepository,
-      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       workspaceId,
       workspaceMemberId: workspaceMember.id,
     });

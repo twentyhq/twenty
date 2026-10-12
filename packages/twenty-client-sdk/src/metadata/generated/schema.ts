@@ -2,9 +2,9 @@
 export type Scalars = {
     String: string,
     Boolean: boolean,
+    Float: number,
     Int: number,
     ID: string,
-    Float: number,
     BigInt: any,
     ConnectionCursor: any,
     DateTime: string,
@@ -38,27 +38,16 @@ export interface AgentChatChannel {
     color?: Scalars['String']
     icon?: Scalars['String']
     id: Scalars['UUID']
+    isAccessible?: Scalars['Boolean']
+    isCustom: Scalars['Boolean']
+    isOpenToEveryone: Scalars['Boolean']
     name: Scalars['String']
+    position: Scalars['Float']
     roleIds: Scalars['UUID'][]
-    visibility: AgentChatChannelVisibility
     __typename: 'AgentChatChannel'
 }
 
 export type AgentChatChannelAssignmentFilter = 'ANY' | 'ASSIGNED_TO_ME' | 'UNASSIGNED'
-
-export interface AgentChatChannelListItem {
-    canLeave: Scalars['Boolean']
-    canManage: Scalars['Boolean']
-    color?: Scalars['String']
-    icon?: Scalars['String']
-    id: Scalars['UUID']
-    isMember: Scalars['Boolean']
-    memberCount: Scalars['Int']
-    name: Scalars['String']
-    roleIds: Scalars['UUID'][]
-    visibility: AgentChatChannelVisibility
-    __typename: 'AgentChatChannelListItem'
-}
 
 export interface AgentChatChannelRole {
     icon?: Scalars['String']
@@ -82,8 +71,6 @@ export interface AgentChatChannelThreadIds {
 }
 
 export type AgentChatChannelThreadStatus = 'DONE' | 'OPEN' | 'SNOOZED'
-
-export type AgentChatChannelVisibility = 'PRIVATE' | 'PUBLIC'
 
 export interface AgentChatEvent {
     event: Scalars['JSON']
@@ -240,7 +227,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -724,7 +711,7 @@ export interface BillingEntitlement {
     __typename: 'BillingEntitlement'
 }
 
-export type BillingEntitlementKey = 'AUDIT_LOGS' | 'CUSTOM_DOMAIN' | 'RECORD_SHARING' | 'RLS' | 'SSO' | 'USAGE_LIMIT'
+export type BillingEntitlementKey = 'AUDIT_LOGS' | 'CUSTOM_DOMAIN' | 'RECORD_SHARING' | 'RLS' | 'SSO' | 'USAGE_LIMIT' | 'VALIDATION_RULES'
 
 export interface BillingLicensedProduct {
     description: Scalars['String']
@@ -829,6 +816,7 @@ export interface BillingSession {
 export interface BillingSubscription {
     billingSubscriptionItems?: BillingSubscriptionItem[]
     cancelAt?: Scalars['DateTime']
+    collectionMethod?: BillingSubscriptionCollectionMethod
     currentPeriodEnd?: Scalars['DateTime']
     id: Scalars['UUID']
     interval?: SubscriptionInterval
@@ -837,6 +825,8 @@ export interface BillingSubscription {
     status: SubscriptionStatus
     __typename: 'BillingSubscription'
 }
+
+export type BillingSubscriptionCollectionMethod = 'CHARGE_AUTOMATICALLY' | 'SEND_INVOICE'
 
 export interface BillingSubscriptionItem {
     billingProduct: BillingProductDTO
@@ -1306,7 +1296,7 @@ export interface EmailsConfiguration {
     __typename: 'EmailsConfiguration'
 }
 
-export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ASK_AI' | 'ASSIGN_AI_CHAT' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
+export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ADD_TO_MESSAGE_LIST' | 'ADD_VIEW_TO_MESSAGE_LIST' | 'ASK_AI' | 'ASSIGN_AI_CHAT' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
 
 export interface EnqueueJobResult {
     enqueued: Scalars['Boolean']
@@ -2046,7 +2036,6 @@ export type ModelFamily = 'CLAUDE' | 'GEMINI' | 'GPT' | 'GROK' | 'MISTRAL'
 export interface Mutation {
     activateSkill: Skill
     activateWorkspace: Workspace
-    addAgentChatChannelMembers: Scalars['Boolean']
     addQueryToEventStream: Scalars['Boolean']
     assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
@@ -2196,13 +2185,10 @@ export interface Mutation {
     installApplication: Application
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
-    joinAgentChatChannel: Scalars['Boolean']
-    leaveAgentChatChannel: Scalars['Boolean']
     markAgentChatThreadAsDoneInChannel: Scalars['Boolean']
     moveAgentChatThreadToChannel: Scalars['Boolean']
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
-    removeAgentChatChannelMember: Scalars['Boolean']
     removeQueryFromEventStream: Scalars['Boolean']
     removeRecordShare: RecordSharingDTO
     removeRoleFromAgent: Scalars['Boolean']
@@ -2255,6 +2241,7 @@ export interface Mutation {
     syncMarketplaceCatalog: Scalars['Boolean']
     trackAnalytics: Analytics
     transferApplicationRegistrationOwnership: ApplicationRegistration
+    triggerAddPeopleToMessageListJob: TriggerAddPeopleToMessageListJobResult
     triggerInstallApplication: TriggerInstallApplicationResult
     /** @deprecated Use triggerInstallApplication instead */
     triggerInstallApplicationJob: TriggerInstallApplicationJobResult
@@ -2760,7 +2747,7 @@ export interface Query {
     agentChatChannelRoles: AgentChatChannelRole[]
     agentChatChannelSummaries: AgentChatChannelSummary[]
     agentChatChannelThreadIds: AgentChatChannelThreadIds
-    agentChatChannels: AgentChatChannelListItem[]
+    agentChatChannels: AgentChatChannel[]
     agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
@@ -3328,6 +3315,11 @@ export interface ToolIndexEntry {
 export interface TransientToken {
     transientToken: AuthToken
     __typename: 'TransientToken'
+}
+
+export interface TriggerAddPeopleToMessageListJobResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerAddPeopleToMessageListJobResult'
 }
 
 export interface TriggerInstallApplicationJobResult {
@@ -4020,24 +4012,12 @@ export interface AgentChatChannelGenqlSelection{
     color?: boolean | number
     icon?: boolean | number
     id?: boolean | number
+    isAccessible?: boolean | number
+    isCustom?: boolean | number
+    isOpenToEveryone?: boolean | number
     name?: boolean | number
+    position?: boolean | number
     roleIds?: boolean | number
-    visibility?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AgentChatChannelListItemGenqlSelection{
-    canLeave?: boolean | number
-    canManage?: boolean | number
-    color?: boolean | number
-    icon?: boolean | number
-    id?: boolean | number
-    isMember?: boolean | number
-    memberCount?: boolean | number
-    name?: boolean | number
-    roleIds?: boolean | number
-    visibility?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4853,6 +4833,7 @@ export interface BillingSessionGenqlSelection{
 export interface BillingSubscriptionGenqlSelection{
     billingSubscriptionItems?: BillingSubscriptionItemGenqlSelection
     cancelAt?: boolean | number
+    collectionMethod?: boolean | number
     currentPeriodEnd?: boolean | number
     id?: boolean | number
     interval?: boolean | number
@@ -5213,7 +5194,7 @@ export interface ConnectedImapSmtpCaldavAccountGenqlSelection{
 
 export interface ConnectionParametersInput {connectionSecurity?: (EmailConnectionSecurity | null),host: Scalars['String'],password?: (Scalars['String'] | null),port: Scalars['Float'],username?: (Scalars['String'] | null)}
 
-export interface CreateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),memberIds: Scalars['UUID'][],name: Scalars['String'],roleIds: Scalars['UUID'][],visibility: AgentChatChannelVisibility}
+export interface CreateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isOpenToEveryone: Scalars['Boolean'],name: Scalars['String'],roleIds: Scalars['UUID'][]}
 
 export interface CreateAgentInput {description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),label: Scalars['String'],modelConfiguration?: (Scalars['JSON'] | null),modelId: Scalars['String'],name?: (Scalars['String'] | null),prompt: Scalars['String'],responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
 
@@ -6299,7 +6280,6 @@ export interface MinimalViewGenqlSelection{
 export interface MutationGenqlSelection{
     activateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
-    addAgentChatChannelMembers?: { __args: {channelId: Scalars['UUID'], workspaceMemberIds: Scalars['UUID'][]} }
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
@@ -6449,13 +6429,10 @@ export interface MutationGenqlSelection{
     installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
-    joinAgentChatChannel?: { __args: {channelId: Scalars['UUID']} }
-    leaveAgentChatChannel?: { __args: {channelId: Scalars['UUID']} }
     markAgentChatThreadAsDoneInChannel?: { __args: {threadId: Scalars['UUID']} }
     moveAgentChatThreadToChannel?: { __args: {channelId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
-    removeAgentChatChannelMember?: { __args: {channelId: Scalars['UUID'], memberWorkspaceMemberId: Scalars['UUID']} }
     removeQueryFromEventStream?: { __args: {input: RemoveQueryFromEventStreamInput} }
     removeRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {principal: RecordSharePrincipalInput, target: RecordTargetInput} })
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
@@ -6508,6 +6485,7 @@ export interface MutationGenqlSelection{
     syncMarketplaceCatalog?: boolean | number
     trackAnalytics?: (AnalyticsGenqlSelection & { __args: {event?: (Scalars['String'] | null), name?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null), type: AnalyticsType} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
+    triggerAddPeopleToMessageListJob?: (TriggerAddPeopleToMessageListJobResultGenqlSelection & { __args: {input: TriggerAddPeopleToMessageListJobInput} })
     triggerInstallApplication?: (TriggerInstallApplicationResultGenqlSelection & { __args: {input: TriggerInstallApplicationInput} })
     /** @deprecated Use triggerInstallApplication instead */
     triggerInstallApplicationJob?: (TriggerInstallApplicationJobResultGenqlSelection & { __args: {input: TriggerInstallApplicationJobInput} })
@@ -7048,7 +7026,7 @@ export interface QueryGenqlSelection{
     agentChatChannelRoles?: AgentChatChannelRoleGenqlSelection
     agentChatChannelSummaries?: AgentChatChannelSummaryGenqlSelection
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
-    agentChatChannels?: AgentChatChannelListItemGenqlSelection
+    agentChatChannels?: AgentChatChannelGenqlSelection
     agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
@@ -7687,6 +7665,14 @@ export interface TransientTokenGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TriggerAddPeopleToMessageListJobInput {messageListId: Scalars['UUID'],personFilter: Scalars['JSON']}
+
+export interface TriggerAddPeopleToMessageListJobResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface TriggerInstallApplicationInput {universalIdentifier: Scalars['String']}
 
 export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String']}
@@ -7770,7 +7756,7 @@ export interface UnsubscribeTopicGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface UpdateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),name?: (Scalars['String'] | null),roleIds?: (Scalars['UUID'][] | null),visibility?: (AgentChatChannelVisibility | null)}
+export interface UpdateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isOpenToEveryone?: (Scalars['Boolean'] | null),name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),roleIds?: (Scalars['UUID'][] | null)}
 
 export interface UpdateAgentInput {description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],label?: (Scalars['String'] | null),modelConfiguration?: (Scalars['JSON'] | null),modelId?: (Scalars['String'] | null),name?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
 
@@ -8634,14 +8620,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAgentChatChannel = (obj?: { __typename?: any } | null): obj is AgentChatChannel => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannel"')
       return AgentChatChannel_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AgentChatChannelListItem_possibleTypes: string[] = ['AgentChatChannelListItem']
-    export const isAgentChatChannelListItem = (obj?: { __typename?: any } | null): obj is AgentChatChannelListItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannelListItem"')
-      return AgentChatChannelListItem_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10822,6 +10800,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const TriggerAddPeopleToMessageListJobResult_possibleTypes: string[] = ['TriggerAddPeopleToMessageListJobResult']
+    export const isTriggerAddPeopleToMessageListJobResult = (obj?: { __typename?: any } | null): obj is TriggerAddPeopleToMessageListJobResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerAddPeopleToMessageListJobResult"')
+      return TriggerAddPeopleToMessageListJobResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const TriggerInstallApplicationJobResult_possibleTypes: string[] = ['TriggerInstallApplicationJobResult']
     export const isTriggerInstallApplicationJobResult = (obj?: { __typename?: any } | null): obj is TriggerInstallApplicationJobResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerInstallApplicationJobResult"')
@@ -11289,11 +11275,6 @@ export const enumAgentChatChannelThreadStatus = {
    SNOOZED: 'SNOOZED' as const
 }
 
-export const enumAgentChatChannelVisibility = {
-   PRIVATE: 'PRIVATE' as const,
-   PUBLIC: 'PUBLIC' as const
-}
-
 export const enumAgentChatInboxAction = {
    ARCHIVE: 'ARCHIVE' as const,
    MOVE_TO_INBOX: 'MOVE_TO_INBOX' as const,
@@ -11337,6 +11318,8 @@ export const enumAiModelTier = {
 
 export const enumAllMetadataName = {
    agent: 'agent' as const,
+   agentChatChannel: 'agentChatChannel' as const,
+   agentChatChannelRole: 'agentChatChannelRole' as const,
    applicationVariable: 'applicationVariable' as const,
    commandMenuItem: 'commandMenuItem' as const,
    connectionProvider: 'connectionProvider' as const,
@@ -11437,7 +11420,8 @@ export const enumBillingEntitlementKey = {
    RECORD_SHARING: 'RECORD_SHARING' as const,
    RLS: 'RLS' as const,
    SSO: 'SSO' as const,
-   USAGE_LIMIT: 'USAGE_LIMIT' as const
+   USAGE_LIMIT: 'USAGE_LIMIT' as const,
+   VALIDATION_RULES: 'VALIDATION_RULES' as const
 }
 
 export const enumBillingPlanKey = {
@@ -11448,6 +11432,11 @@ export const enumBillingPlanKey = {
 export const enumBillingProductKey = {
    BASE_PRODUCT: 'BASE_PRODUCT' as const,
    RESOURCE_CREDIT: 'RESOURCE_CREDIT' as const
+}
+
+export const enumBillingSubscriptionCollectionMethod = {
+   CHARGE_AUTOMATICALLY: 'CHARGE_AUTOMATICALLY' as const,
+   SEND_INVOICE: 'SEND_INVOICE' as const
 }
 
 export const enumBillingUsageType = {
@@ -11535,6 +11524,8 @@ export const enumEngineComponentKey = {
    ACTIVATE_WORKFLOW: 'ACTIVATE_WORKFLOW' as const,
    ADD_NODE_WORKFLOW: 'ADD_NODE_WORKFLOW' as const,
    ADD_TO_FAVORITES: 'ADD_TO_FAVORITES' as const,
+   ADD_TO_MESSAGE_LIST: 'ADD_TO_MESSAGE_LIST' as const,
+   ADD_VIEW_TO_MESSAGE_LIST: 'ADD_VIEW_TO_MESSAGE_LIST' as const,
    ASK_AI: 'ASK_AI' as const,
    ASSIGN_AI_CHAT: 'ASSIGN_AI_CHAT' as const,
    CANCEL_DASHBOARD_LAYOUT: 'CANCEL_DASHBOARD_LAYOUT' as const,

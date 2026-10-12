@@ -68,8 +68,8 @@ export const STANDARD_OBJECT_FIELDS = {
     assignee: {
       universalIdentifier: 'e77858ef-4b01-4a32-b921-8b88b1fd3020',
     },
-    channel: {
-      universalIdentifier: '5ca89166-27aa-47b6-a72a-e6b8e5ee8364',
+    channelId: {
+      universalIdentifier: '5a3f55ff-a486-4a69-a673-7873deb306bd',
     },
     channelArchivedAt: {
       universalIdentifier: 'ec6f5b94-277e-4f06-85f9-08d724518eda',
@@ -109,29 +109,6 @@ export const STANDARD_OBJECT_FIELDS = {
     lastMentionedAt: {
       universalIdentifier: '52a54602-633f-496a-966a-9a70437fa887',
     },
-  },
-  agentChatChannel: {
-    ...buildStandardObjectBaseFields(
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatChannel,
-    ),
-    name: { universalIdentifier: '7f6437b5-95d5-44aa-9fcf-a381a2bf3c65' },
-    icon: { universalIdentifier: 'e24cad7e-fd14-46e3-b353-a3abf9eafba1' },
-    color: { universalIdentifier: 'b6ecf477-41c9-4df0-b699-16269a2936e7' },
-    visibility: {
-      universalIdentifier: '5398ec43-dfa3-4aac-80d7-9f9c382031c2',
-    },
-    threads: { universalIdentifier: '5dea92c2-d9f2-4c28-92fc-ad6a8b82d5d9' },
-    members: { universalIdentifier: '4a873332-b705-444a-8455-fcc4dec2f1f3' },
-  },
-  agentChatChannelMember: {
-    ...buildStandardObjectBaseFields(
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatChannelMember,
-    ),
-    channel: { universalIdentifier: 'f7f37494-96b5-4ae1-a7f5-4552a8cdd2dd' },
-    workspaceMember: {
-      universalIdentifier: '24215714-8c82-4890-be0d-721a8c87f2e9',
-    },
-    position: { universalIdentifier: 'aeb116a6-1873-45ea-8a30-82cca663aae4' },
   },
   agentChatThreadTarget: {
     ...buildStandardObjectBaseFields(
@@ -906,6 +883,18 @@ export const STANDARD_OBJECT_FIELDS = {
     skippedCount: {
       universalIdentifier: 'a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984',
     },
+    uniqueClickCount: {
+      universalIdentifier: 'd9a4e1c6-5b3f-4e0a-9c8d-4f7b9a3e6c12',
+    },
+    clickRate: {
+      universalIdentifier: '7999aebc-51f4-4b93-9925-717db707c703',
+    },
+    uniqueOpenCount: {
+      universalIdentifier: '865d188f-3178-4173-a986-80d01a8c7147',
+    },
+    openRate: {
+      universalIdentifier: '77529a55-d723-4c91-9df7-0190fd760e93',
+    },
     unsubscribeTopicId: {
       universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',
     },
@@ -1645,9 +1634,6 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     assignedAgentChatThreads: {
       universalIdentifier: 'a89c46f5-cdb7-40e9-9a87-a8ecf0818c3c',
-    },
-    agentChatChannelMemberships: {
-      universalIdentifier: 'f843966f-9652-40da-8bbe-5032c2077298',
     },
     timeZone: {
       universalIdentifier: '20202020-2d33-4c21-a86e-5943b050dd54',

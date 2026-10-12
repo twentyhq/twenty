@@ -621,6 +621,28 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
+  agentChatChannel: {
+    workspace: null,
+    application: null,
+  },
+  agentChatChannelRole: {
+    workspace: null,
+    application: null,
+    channel: {
+      metadataName: 'agentChatChannel',
+      foreignKey: 'channelId',
+      inverseOneToManyProperty: 'channelRoles',
+      isNullable: false,
+      universalForeignKey: 'channelUniversalIdentifier',
+    },
+    role: {
+      metadataName: 'role',
+      foreignKey: 'roleId',
+      inverseOneToManyProperty: 'agentChatChannelRoles',
+      isNullable: false,
+      universalForeignKey: 'roleUniversalIdentifier',
+    },
+  },
 } as const satisfies ManyToOneMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

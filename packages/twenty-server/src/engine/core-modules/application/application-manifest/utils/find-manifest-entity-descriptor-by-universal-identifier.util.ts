@@ -287,6 +287,14 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'validation rule',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
+  agentChatChannel: {
+    entityKind: 'chat channel',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  agentChatChannelRole: {
+    entityKind: 'chat channel role',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
 };
 
 const MANIFEST_ENTITY_REGISTRY_ENTRIES = Object.values(

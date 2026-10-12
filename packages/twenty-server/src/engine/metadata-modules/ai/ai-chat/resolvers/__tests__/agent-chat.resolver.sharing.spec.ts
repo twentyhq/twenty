@@ -73,6 +73,7 @@ const buildResolver = () => {
       emitParticipantCreated: jest.fn(),
     } as never,
     {} as never,
+    {} as never,
   );
   const chatService = new AgentChatService(
     threadRepository as never,

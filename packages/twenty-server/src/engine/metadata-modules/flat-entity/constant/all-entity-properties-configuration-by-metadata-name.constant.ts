@@ -2226,6 +2226,70 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  agentChatChannel: {
+    name: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    color: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    position: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isOpenToEveryone: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isCustom: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  agentChatChannelRole: {
+    channelId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'channelUniversalIdentifier',
+    },
+    roleId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'roleUniversalIdentifier',
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
 } as const satisfies {
   [P in AllMetadataName]: MetadataEntityPropertyConfiguration<P>;
 };
