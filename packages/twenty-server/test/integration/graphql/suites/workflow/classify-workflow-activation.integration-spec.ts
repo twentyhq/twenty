@@ -155,8 +155,9 @@ describe('Classify step activation (e2e)', () => {
     );
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].extensions.subCode).toBe(
-      'MALFORMED_WORKFLOW_VERSION',
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+    expect(response.body.errors[0].message).toContain(
+      'Workflow version is malformed',
     );
   });
 
