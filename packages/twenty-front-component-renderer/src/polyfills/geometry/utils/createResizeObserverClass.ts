@@ -136,12 +136,11 @@ export const createResizeObserverClass = ({
             geometryStore.getViewportSnapshot()?.devicePixelRatio ??
             DEFAULT_DEVICE_PIXEL_RATIO,
         });
-        const boxSizes =
-          observation.box === 'border-box'
-            ? entry.borderBoxSize
-            : observation.box === 'device-pixel-content-box'
-              ? entry.devicePixelContentBoxSize
-              : entry.contentBoxSize;
+        const boxSizes = {
+          'border-box': entry.borderBoxSize,
+          'device-pixel-content-box': entry.devicePixelContentBoxSize,
+          'content-box': entry.contentBoxSize,
+        }[observation.box];
         const size = boxSizes[0];
         const hasSizeChanged =
           size.inlineSize !== observation.lastSize?.inlineSize ||
