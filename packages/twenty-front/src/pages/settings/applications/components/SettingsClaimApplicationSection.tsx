@@ -29,7 +29,6 @@ import {
   SyncMarketplaceCatalogDocument,
 } from '~/generated-metadata/graphql';
 import { getClaimErrorContent } from '~/pages/settings/applications/utils/getClaimErrorContent';
-import { navigateWithPost } from '~/utils/navigateWithPost';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export const CLAIM_ERROR_CODE_SEARCH_PARAM = 'claimErrorCode';
@@ -168,13 +167,13 @@ export const SettingsClaimApplicationSection = () => {
         variables: { applicationRegistrationId: registration.id },
       });
 
-      const claimStartUrl = result.data?.githubClaimAuthorizationUrl;
+      const authorizationUrl = result.data?.githubClaimAuthorizationUrl;
 
-      if (!isDefined(claimStartUrl)) {
-        throw new Error(result.error?.message ?? 'Missing claim start URL');
+      if (!isDefined(authorizationUrl)) {
+        throw new Error(result.error?.message ?? 'Missing authorization URL');
       }
 
-      navigateWithPost(claimStartUrl);
+      window.location.href = authorizationUrl;
     } catch (error) {
       enqueueToast({
         variant: 'error',

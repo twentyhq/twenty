@@ -603,11 +603,13 @@ export class ApplicationRegistrationResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ): Promise<string> {
-    return this.applicationRegistrationClaimService.buildGithubClaimStartUrl({
-      applicationRegistrationId,
-      workspaceId,
-      userId: user?.id ?? null,
-    });
+    return this.applicationRegistrationClaimService.buildGithubAuthorizationUrl(
+      {
+        applicationRegistrationId,
+        workspaceId,
+        userId: user?.id ?? null,
+      },
+    );
   }
 
   @UseGuards(
