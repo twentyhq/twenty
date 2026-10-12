@@ -15,10 +15,12 @@ import {
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { type ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { type ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
@@ -29,6 +31,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { type MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
 
 const DEPARTING_USER_ID = uuidv4();
 const CUSTODIAN_USER_ID = uuidv4();
@@ -77,7 +80,22 @@ describe('app connection ownership transfer', () => {
       refreshToken: encrypt(`refresh-${userWorkspaceId}`),
     });
 
-  const createChannel = (connectedAccountId: string) =>
+  const createGoogleAccount = (userWorkspaceId: string) =>
+    accounts().save({
+      id: uuidv4(),
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      provider: ConnectedAccountProvider.GOOGLE,
+      userWorkspaceId,
+      visibility: 'workspace',
+      handle: 'mailbox@example.com',
+      accessToken: encrypt(`google-access-${userWorkspaceId}`),
+      refreshToken: encrypt(`google-refresh-${userWorkspaceId}`),
+    });
+
+  const createChannel = (
+    connectedAccountId: string,
+    webhookSubscriptionStatus = WebhookSubscriptionStatus.PENDING,
+  ) =>
     channels().save({
       id: uuidv4(),
       workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -88,7 +106,7 @@ describe('app connection ownership transfer', () => {
       pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
       syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
       isSyncEnabled: true,
-      webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+      webhookSubscriptionStatus,
     });
 
   const transfer = () =>
@@ -423,5 +441,121 @@ describe('app connection ownership transfer', () => {
         }).toString(),
       }),
     );
+  });
+
+  it('stops webhook subscriptions only for accounts still owned by the departing member once the lock is released', async () => {
+    const transferredAccount = await createGoogleAccount(DEPARTING_MEMBER_ID);
+    const reassignedAccount = await createGoogleAccount(DEPARTING_MEMBER_ID);
+
+    try {
+      const transferredChannel = await createChannel(
+        transferredAccount.id,
+        WebhookSubscriptionStatus.ACTIVE,
+      );
+      const reassignedChannel = await createChannel(
+        reassignedAccount.id,
+        WebhookSubscriptionStatus.ACTIVE,
+      );
+      const deleteSubscription = jest
+        .spyOn(
+          getAppProviderByClassName<MessagingWebhookSubscriptionService>(
+            'MessagingWebhookSubscriptionService',
+          ),
+          'deleteSubscription',
+        )
+        .mockResolvedValue(undefined);
+
+      await transferAfterConcurrentUpdate({
+        accountId: reassignedAccount.id,
+        changes: { userWorkspaceId: CUSTODIAN_MEMBER_ID },
+      });
+
+      expect(deleteSubscription).toHaveBeenCalledWith(
+        transferredChannel.id,
+        SEED_APPLE_WORKSPACE_ID,
+      );
+      expect(deleteSubscription).not.toHaveBeenCalledWith(
+        reassignedChannel.id,
+        expect.anything(),
+      );
+      expect(
+        await channels().findOneByOrFail({ id: reassignedChannel.id }),
+      ).toMatchObject({
+        isSyncEnabled: true,
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
+      });
+      expect(
+        await accounts().findOneByOrFail({ id: reassignedAccount.id }),
+      ).toMatchObject({
+        archivedAt: null,
+        accessToken: reassignedAccount.accessToken,
+      });
+      expect(
+        await accounts().findOneByOrFail({ id: transferredAccount.id }),
+      ).toMatchObject({
+        userWorkspaceId: CUSTODIAN_MEMBER_ID,
+        archivedAt: expect.anything(),
+        accessToken: null,
+        refreshToken: null,
+      });
+    } finally {
+      await accounts().delete({
+        id: In([transferredAccount.id, reassignedAccount.id]),
+      });
+    }
+  });
+
+  it('runs onDisconnect for transferred app connections while their credentials are still stored', async () => {
+    const departingAccount = await createAccount({
+      userWorkspaceId: DEPARTING_MEMBER_ID,
+    });
+    const custodianAccount = await createAccount({
+      userWorkspaceId: CUSTODIAN_MEMBER_ID,
+    });
+    const previouslyDisconnectedAccount = await createAccount({
+      userWorkspaceId: DEPARTING_MEMBER_ID,
+    });
+
+    await accounts().update(previouslyDisconnectedAccount.id, {
+      archivedAt: new Date(),
+      accessToken: null,
+      refreshToken: null,
+    });
+
+    const accessTokenSeenByHook = new Map<string, string | null>();
+    const runOnDisconnect = jest
+      .spyOn(
+        getAppProviderByClassName<ConnectionProviderLifecycleHookService>(
+          'ConnectionProviderLifecycleHookService',
+        ),
+        'runOnDisconnect',
+      )
+      .mockImplementation(async ({ connectedAccountId }) => {
+        const { accessToken } = await accounts().findOneByOrFail({
+          id: connectedAccountId,
+        });
+
+        accessTokenSeenByHook.set(connectedAccountId, accessToken);
+      });
+
+    await transfer();
+
+    expect(runOnDisconnect).toHaveBeenCalledTimes(1);
+    expect(runOnDisconnect).toHaveBeenCalledWith({
+      connectionProviderId: providerId,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      connectedAccountId: departingAccount.id,
+    });
+    expect(accessTokenSeenByHook.get(departingAccount.id)).toBe(
+      departingAccount.accessToken,
+    );
+    expect(accessTokenSeenByHook.has(custodianAccount.id)).toBe(false);
+    expect(
+      await accounts().findOneByOrFail({ id: departingAccount.id }),
+    ).toMatchObject({
+      archivedAt: expect.anything(),
+      accessToken: null,
+      refreshToken: null,
+    });
   });
 });

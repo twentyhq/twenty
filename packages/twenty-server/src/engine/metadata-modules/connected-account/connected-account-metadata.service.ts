@@ -374,23 +374,89 @@ export class ConnectedAccountMetadataService {
     toUserWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const connectedAccounts = await this.repository.find({
-      where: { userWorkspaceId: fromUserWorkspaceId, workspaceId },
-    });
+    // Decided under the lock so an account reassigned or reconnected while
+    // this waited is left alone; network side effects run after commit.
+    const transferredAccounts = await this.repository.manager.transaction(
+      async (entityManager) => {
+        const accountsToTransfer = await entityManager.find(
+          ConnectedAccountEntity,
+          {
+            where: { userWorkspaceId: fromUserWorkspaceId, workspaceId },
+            lock: { mode: 'pessimistic_write' },
+          },
+        );
 
-    if (connectedAccounts.length === 0) {
+        if (accountsToTransfer.length === 0) {
+          return [];
+        }
+
+        const transferredAccountIds = accountsToTransfer.map(
+          (account) => account.id,
+        );
+
+        await entityManager.update(
+          ConnectedAccountEntity,
+          { id: In(transferredAccountIds), workspaceId, archivedAt: IsNull() },
+          { archivedAt: new Date() },
+        );
+
+        await entityManager.update(
+          ConnectedAccountEntity,
+          { id: In(transferredAccountIds), workspaceId },
+          { userWorkspaceId: toUserWorkspaceId },
+        );
+
+        await entityManager.update(
+          MessageChannelEntity,
+          { connectedAccountId: In(transferredAccountIds), workspaceId },
+          { isSyncEnabled: false },
+        );
+
+        await entityManager.update(
+          CalendarChannelEntity,
+          { connectedAccountId: In(transferredAccountIds), workspaceId },
+          { isSyncEnabled: false },
+        );
+
+        await entityManager.update(
+          MessageChannelEntity,
+          {
+            connectedAccountId: In(transferredAccountIds),
+            workspaceId,
+            webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+          },
+          { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+        );
+
+        await entityManager.update(
+          CalendarChannelEntity,
+          {
+            connectedAccountId: In(transferredAccountIds),
+            workspaceId,
+            webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+          },
+          { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+        );
+
+        return accountsToTransfer;
+      },
+    );
+
+    if (transferredAccounts.length === 0) {
       return;
     }
 
-    const connectedAccountIds = connectedAccounts.map((account) => account.id);
+    const transferredAccountIds = transferredAccounts.map(
+      (account) => account.id,
+    );
 
     const [messageChannels, calendarChannels] = await Promise.all([
       this.messageChannelRepository.find({
-        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+        where: { connectedAccountId: In(transferredAccountIds), workspaceId },
         select: { id: true },
       }),
       this.calendarChannelRepository.find({
-        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+        where: { connectedAccountId: In(transferredAccountIds), workspaceId },
         select: { id: true },
       }),
     ]);
@@ -406,76 +472,39 @@ export class ConnectedAccountMetadataService {
       ),
     );
 
-    const transferredAccounts = await this.repository.manager.transaction(
-      async (entityManager) => {
-        const accountsToTransfer = await entityManager.find(
-          ConnectedAccountEntity,
-          {
-            where: {
-              id: In(connectedAccountIds),
-              workspaceId,
-              userWorkspaceId: fromUserWorkspaceId,
-            },
-            lock: { mode: 'pessimistic_write' },
-          },
-        );
+    for (const transferredAccount of transferredAccounts) {
+      // An account archived before the transfer ran its hook when disconnected.
+      if (
+        isDefined(transferredAccount.connectionProviderId) &&
+        !isDefined(transferredAccount.archivedAt)
+      ) {
+        await this.connectionProviderLifecycleHookService.runOnDisconnect({
+          connectionProviderId: transferredAccount.connectionProviderId,
+          workspaceId,
+          connectedAccountId: transferredAccount.id,
+        });
+      }
 
-        if (accountsToTransfer.length === 0) {
-          return [];
-        }
+      await this.appOAuthRevokeService.revokeIfApp(transferredAccount);
 
-        const transferredAccountIds = accountsToTransfer.map(
-          (account) => account.id,
-        );
-        await entityManager.update(
-          ConnectedAccountEntity,
-          { id: In(transferredAccountIds), workspaceId },
-          {
-            archivedAt: () => 'COALESCE("archivedAt", NOW())',
-            userWorkspaceId: toUserWorkspaceId,
-            accessToken: null,
-            refreshToken: null,
-            connectionParameters: null,
-          },
-        );
-
-        await entityManager.update(
-          MessageChannelEntity,
-          { connectedAccountId: In(transferredAccountIds), workspaceId },
-          { isSyncEnabled: false },
-        );
-
-        await entityManager.update(
-          CalendarChannelEntity,
-          { connectedAccountId: In(transferredAccountIds), workspaceId },
-          { isSyncEnabled: false },
-        );
-
-        await entityManager.update(
-          MessageChannelEntity,
-          {
-            connectedAccountId: In(transferredAccountIds),
-            workspaceId,
-            webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
-          },
-          { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
-        );
-
-        await entityManager.update(
-          CalendarChannelEntity,
-          {
-            connectedAccountId: In(transferredAccountIds),
-            workspaceId,
-            webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
-          },
-          { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
-        );
-        return accountsToTransfer;
-      },
-    );
-
-    for (const connectedAccount of transferredAccounts) {
-      await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+      // A reconnect that revived the account after the lock was released
+      // stamped new credentials, which must survive.
+      await this.repository.update(
+        {
+          id: transferredAccount.id,
+          workspaceId,
+          lastCredentialsRefreshedAt: isDefined(
+            transferredAccount.lastCredentialsRefreshedAt,
+          )
+            ? transferredAccount.lastCredentialsRefreshedAt
+            : IsNull(),
+        },
+        {
+          accessToken: null,
+          refreshToken: null,
+          connectionParameters: null,
+        },
+      );
     }
   }
 
