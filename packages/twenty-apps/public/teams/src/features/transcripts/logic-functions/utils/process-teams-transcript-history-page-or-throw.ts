@@ -194,6 +194,20 @@ export const processTeamsTranscriptHistoryPageOrThrow = async ({
       `[teams] failed transcript history page ${job.pageIndex} of run ${job.runId} for connected account ${job.connectedAccountId}: ${toErrorMessage(error)}`,
     );
 
-    return retryOrFailTeamsTranscriptHistoryPageOrThrow({ job, phase, error });
+    try {
+      return await retryOrFailTeamsTranscriptHistoryPageOrThrow({
+        job,
+        phase,
+        error,
+      });
+    } catch (recoveryError) {
+      if (recoveryError instanceof RetryableLogicFunctionError) {
+        throw recoveryError;
+      }
+
+      throw new RetryableLogicFunctionError(
+        `Could not record the failure of Teams transcript history page ${job.pageIndex}: ${toErrorMessage(recoveryError)}`,
+      );
+    }
   }
 };
