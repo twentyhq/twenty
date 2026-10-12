@@ -1,7 +1,8 @@
-import { type NumberField } from '@base-ui/react/number-field';
+import { type NumberFieldInputProps } from '@ui/primitives/input/NumberField/types/NumberFieldInputProps';
+import { type NumberFieldRootProps } from '@ui/primitives/input/NumberField/types/NumberFieldRootProps';
 
 export type NumberStepperProps = Omit<
-  NumberField.Input.Props,
+  NumberFieldInputProps,
   | 'children'
   | 'defaultValue'
   | 'disabled'
@@ -17,7 +18,7 @@ export type NumberStepperProps = Omit<
   | 'value'
 > &
   Pick<
-    NumberField.Root.Props,
+    NumberFieldRootProps,
     | 'allowOutOfRange'
     | 'defaultValue'
     | 'disabled'
@@ -25,6 +26,7 @@ export type NumberStepperProps = Omit<
     | 'min'
     | 'name'
     | 'onValueChange'
+    | 'onValueCommitted'
     | 'readOnly'
     | 'required'
     | 'value'

@@ -1,4 +1,3 @@
-import { NumberField } from '@base-ui/react/number-field';
 import { useControlled } from '@base-ui/utils/useControlled';
 import { useValueAsRef } from '@base-ui/utils/useValueAsRef';
 import { clsx } from 'clsx';
@@ -6,6 +5,8 @@ import { clsx } from 'clsx';
 import { IconMinus, IconPlus } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
+import { NumberField } from '@ui/primitives/input/NumberField/NumberField';
+import { type NumberFieldRootProps } from '@ui/primitives/input/NumberField/types/NumberFieldRootProps';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import { NUMBER_STEPPER_FORMAT } from './internal/constants/NumberStepperFormat';
@@ -17,6 +18,7 @@ export const NumberStepper = ({
   value,
   defaultValue,
   onValueChange,
+  onValueCommitted,
   allowOutOfRange = false,
   min,
   max,
@@ -42,7 +44,7 @@ export const NumberStepper = ({
   const currentValueRef = useValueAsRef(resolvedValue);
 
   const handleValueChange: NonNullable<
-    NumberField.Root.Props['onValueChange']
+    NumberFieldRootProps['onValueChange']
   > = (nextValue, eventDetails) => {
     if (nextValue === currentValueRef.current) {
       return;
@@ -73,6 +75,7 @@ export const NumberStepper = ({
     <NumberField.Root
       value={resolvedValue}
       onValueChange={handleValueChange}
+      onValueCommitted={onValueCommitted}
       min={min}
       max={max}
       allowOutOfRange={allowOutOfRange}
