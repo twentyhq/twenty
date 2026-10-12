@@ -778,6 +778,7 @@ export interface BillingSession {
 export interface BillingSubscription {
     billingSubscriptionItems?: BillingSubscriptionItem[]
     cancelAt?: Scalars['DateTime']
+    collectionMethod?: BillingSubscriptionCollectionMethod
     currentPeriodEnd?: Scalars['DateTime']
     id: Scalars['UUID']
     interval?: SubscriptionInterval
@@ -786,6 +787,8 @@ export interface BillingSubscription {
     status: SubscriptionStatus
     __typename: 'BillingSubscription'
 }
+
+export type BillingSubscriptionCollectionMethod = 'CHARGE_AUTOMATICALLY' | 'SEND_INVOICE'
 
 export interface BillingSubscriptionItem {
     billingProduct: BillingProductDTO
@@ -4737,6 +4740,7 @@ export interface BillingSessionGenqlSelection{
 export interface BillingSubscriptionGenqlSelection{
     billingSubscriptionItems?: BillingSubscriptionItemGenqlSelection
     cancelAt?: boolean | number
+    collectionMethod?: boolean | number
     currentPeriodEnd?: boolean | number
     id?: boolean | number
     interval?: boolean | number
@@ -11257,6 +11261,11 @@ export const enumBillingPlanKey = {
 export const enumBillingProductKey = {
    BASE_PRODUCT: 'BASE_PRODUCT' as const,
    RESOURCE_CREDIT: 'RESOURCE_CREDIT' as const
+}
+
+export const enumBillingSubscriptionCollectionMethod = {
+   CHARGE_AUTOMATICALLY: 'CHARGE_AUTOMATICALLY' as const,
+   SEND_INVOICE: 'SEND_INVOICE' as const
 }
 
 export const enumBillingUsageType = {
