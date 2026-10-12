@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconLock, IconUsers } from 'twenty-ui/icon';
 
 import { RECORD_SHARE_ACCESS_LEVEL_OPTIONS } from '@/object-record/record-sharing/constants/RecordShareAccessLevelOptions';

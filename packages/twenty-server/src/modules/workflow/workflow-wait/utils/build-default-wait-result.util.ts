@@ -1,7 +1,7 @@
-import { type WorkflowWaitOutcome } from 'src/modules/workflow/workflow-wait/types/workflow-wait-outcome.type';
+import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
 
 export const buildDefaultWaitResult = (
-  outcome: WorkflowWaitOutcome,
+  outcome: Exclude<PendingWakeUpOutcome, { type: 'ANSWERED' }>,
 ): object => {
   switch (outcome.type) {
     case 'TIME_ELAPSED':

@@ -158,6 +158,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'yearly',
+    description: msg`Get help with Twenty, whether you run it on our cloud or host it yourself, including the Twenty app for Slack.`,
+    id: 'support',
+    indexed: true,
+    path: '/support',
+    priority: 0.3,
+    title: msg`Support | Twenty`,
+  },
+  {
+    changeFrequency: 'yearly',
     description: msg`The terms governing your use of Twenty and its open source CRM services.`,
     id: 'terms',
     indexed: true,

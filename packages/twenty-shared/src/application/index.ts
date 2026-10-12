@@ -8,6 +8,13 @@
  */
 
 export type { AgentManifest } from './agentManifestType';
+export type {
+  AgentTriggerType,
+  AgentDatabaseEventTrigger,
+  AgentCronTrigger,
+  AgentTrigger,
+  AgentTriggerManifest,
+} from './agentTriggerType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
@@ -53,11 +60,17 @@ export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
   ApplicationVariableOption,
+  ApplicationVariableScope,
   ApplicationVariableValue,
   ApplicationVariable,
   ApplicationVariables,
 } from './applicationVariablesType';
-export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
+export {
+  APPLICATION_VARIABLE_FIELD_METADATA_TYPES,
+  APPLICATION_VARIABLE_SCOPES,
+  isApplicationVariableScope,
+  DEFAULT_APPLICATION_VARIABLE_SCOPE,
+} from './applicationVariablesType';
 export type { AppMessageChannel } from './appMessageChannelType';
 export type { AssetManifest } from './assetManifestType';
 export type {
@@ -66,6 +79,9 @@ export type {
 } from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
+export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
+export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
+export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from './constants/ApplicationWorkflowUnavailableStepTypes';
 export { ASSETS_DIR } from './constants/AssetDirectory';
@@ -135,6 +151,7 @@ export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get
 export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';
 export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-view-sort-universal-identifier.util';
 export { getViewUniversalIdentifier } from './deterministic-identifier/get-view-universal-identifier.util';
+export { getWorkflowCommandMenuItemUniversalIdentifier } from './deterministic-identifier/get-workflow-command-menu-item-universal-identifier.util';
 export { getWorkflowVersionUniversalIdentifier } from './deterministic-identifier/get-workflow-version-universal-identifier.util';
 export type {
   EnqueueJobOptions,
@@ -271,3 +288,8 @@ export type { WorkflowManifest } from './workflowManifestType';
 export { workflowManifestSchema } from './workflowManifestType';
 export type { WorkflowStepManifest } from './workflowStepManifestType';
 export { workflowStepManifestSchema } from './workflowStepManifestType';
+export type { WorkflowTriggerManifest } from './workflowTriggerManifestType';
+export {
+  APPLICATION_WORKFLOW_TRIGGER_TYPES,
+  workflowTriggerManifestSchema,
+} from './workflowTriggerManifestType';

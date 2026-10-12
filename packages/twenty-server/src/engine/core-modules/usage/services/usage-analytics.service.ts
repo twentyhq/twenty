@@ -340,7 +340,7 @@ export class UsageAnalyticsService {
       GROUP BY resourceId, resourceContext
     `;
 
-    const rows = await this.clickHouseService.select<
+    const rows = await this.clickHouseService.selectOrThrow<
       Record<'resourceId' | 'resourceContext', string>
     >(query, {
       workspaceId,

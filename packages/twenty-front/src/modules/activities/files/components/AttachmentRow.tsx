@@ -24,6 +24,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledLeftContent = styled.div`
   align-items: center;
@@ -39,6 +40,8 @@ const StyledRightContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing['0.5']};
+  position: relative;
+  z-index: 1;
 `;
 
 const StyledCalendarIconContainer = styled.div`
@@ -58,9 +61,11 @@ const StyledLink = styled.a`
   font-family: inherit;
   font-size: inherit;
   padding: 0;
+  position: relative;
   text-align: left;
   text-decoration: none;
   width: 100%;
+  z-index: 1;
 
   :hover {
     color: ${themeCssVariables.font.color.secondary};
@@ -73,7 +78,9 @@ const StyledLinkContainer = styled.div`
 `;
 
 const StyledTextInputContainer = styled.div`
+  position: relative;
   width: 100%;
+  z-index: 1;
 `;
 
 type AttachmentRowProps = {
@@ -168,7 +175,7 @@ export const AttachmentRow = ({
       return;
     }
 
-    window.open(safeFileUrl, '_blank', 'noopener,noreferrer');
+    openUrlInNewTab(safeFileUrl);
   };
 
   const handleFileLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -193,7 +200,11 @@ export const AttachmentRow = ({
         } as GenericFieldContextType
       }
     >
-      <ActivityRow onClick={handleRowClick} disabled={isEditing}>
+      <ActivityRow
+        onClick={handleRowClick}
+        disabled={isEditing}
+        label={`${attachmentFileName}${attachmentFileExtension}`}
+      >
         <StyledLeftContent>
           <FileIcon fileCategory={fileCategory} thumbnailUrl={fileUrl} />
           {isEditing ? (

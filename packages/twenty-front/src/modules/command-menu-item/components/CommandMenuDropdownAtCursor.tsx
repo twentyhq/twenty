@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { commandMenuDropdownPositionComponentState } from '@/command-menu-item/states/commandMenuDropdownPositionComponentState';

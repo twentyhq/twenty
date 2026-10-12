@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -20,11 +20,8 @@ import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/servi
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
-import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
-import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -42,7 +39,7 @@ import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// Workflow and Dashboard tools modules reach AiAgentExecutionModule, which forwardRefs back here,
+// Workflow and Dashboard tools modules reach AiAgentExecutionModule, which imports this module,
 // so their @Global() modules provide tokens consumed via @Optional() @Inject instead of being imported.
 
 @Module({
@@ -51,8 +48,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ToolModule,
     RecordCrudModule,
     FilesFieldModule,
-    AiModelsModule,
-    forwardRef(() => AiAgentExecutionModule),
     ObjectMetadataModule,
     FieldMetadataModule,
     PermissionsModule,
@@ -62,7 +57,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ViewSortModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    LogicFunctionModule,
     NavigationMenuItemModule,
     WebhookModule,
     RoleModule,
@@ -86,7 +80,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WebhookToolProvider,
     WorkflowToolProvider,
     {
-      // Only ToolProvider implementations; the native tool binder is exported separately.
       provide: TOOL_PROVIDERS,
       useFactory: (
         actionProvider: ActionToolProvider,

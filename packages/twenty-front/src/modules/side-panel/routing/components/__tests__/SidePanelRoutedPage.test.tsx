@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import { type FallbackProps } from 'react-error-boundary';
-
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 
 let mockLocation = {
@@ -44,7 +43,7 @@ jest.mock('@/app/routing/components/WorkspaceRoutes', () => ({
   },
 }));
 
-jest.mock('@/app/routing/components/WorkspaceRouteUnavailable', () => ({
+jest.mock('@/ui/layout/page/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div data-testid="route-unavailable" />,
 }));
 

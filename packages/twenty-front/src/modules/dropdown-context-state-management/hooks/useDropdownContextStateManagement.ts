@@ -1,23 +1,14 @@
 import { type ObjectOptionsDropdownContextValue } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
-import { type RecordGroupAggregateDropdownContextValue } from '@/object-record/record-group/types/RecordGroupAggregateDropdownContextValue';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type Context, useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-/**
- *
- * @deprecated This hook is deprecated because it uses context instead of jotai and synchronous hooks like we do in the application
- *
- * TODO: refactor this generic way to handle multiple pages in a dropdown with state management and specific code paths in a dedicated module, instead of using context with generic union types.
- */
 export const useDropdownContextStateManagement = <
-  T extends
-    | RecordGroupAggregateDropdownContextValue
-    | ObjectOptionsDropdownContextValue,
+  TDropdownContext extends ObjectOptionsDropdownContextValue,
 >({
   context,
 }: {
-  context: Context<T>;
+  context: Context<TDropdownContext>;
 }) => {
   const dropdownContext = useContext(context);
 

@@ -7,6 +7,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
+import {
+  APPLICATION_UNINSTALL_STEPS,
+  type ApplicationUninstallStep,
+} from 'src/engine/core-modules/application/application-install/constants/application-uninstall-steps.constant';
+import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
+import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { resolveSyncedApplicationCapabilities } from 'src/engine/core-modules/application/utils/resolve-synced-application-capabilities.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
@@ -363,10 +369,14 @@ export class ApplicationSyncService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook = true,
+    progressReporter = createApplicationLifecycleProgressReporter({
+      steps: APPLICATION_UNINSTALL_STEPS,
+    }),
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook?: boolean;
+    progressReporter?: ApplicationLifecycleProgressReporter<ApplicationUninstallStep>;
   }): Promise<WorkspaceMigration> {
     const application =
       await this.applicationService.findOneApplicationWithRelationsOrThrow({
@@ -386,6 +396,7 @@ export class ApplicationSyncService {
       workspaceId,
       applicationUniversalIdentifier,
       shouldRunUninstallHook,
+      progressReporter,
     });
   }
 
@@ -394,11 +405,13 @@ export class ApplicationSyncService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook,
+    progressReporter,
   }: {
     application: ApplicationEntity;
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook: boolean;
+    progressReporter: ApplicationLifecycleProgressReporter<ApplicationUninstallStep>;
   }): Promise<WorkspaceMigration> {
     if (shouldRunUninstallHook) {
       await this.applicationUninstallService.runUninstallHookBestEffort({
@@ -406,6 +419,8 @@ export class ApplicationSyncService {
         workspaceId,
       });
     }
+
+    await progressReporter.reportStepCompleted('UNINSTALL_HOOK');
 
     const flatEntityMapsCacheKeys = Object.values(ALL_METADATA_NAME).map(
       getMetadataFlatEntityMapsKey,
@@ -441,6 +456,8 @@ export class ApplicationSyncService {
         ]),
       );
 
+    await progressReporter.reportStepCompleted('COMPUTE_METADATA_TO_DELETE');
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromRecord(
         {
@@ -458,15 +475,21 @@ export class ApplicationSyncService {
       );
     }
 
+    await progressReporter.reportStepCompleted('RUN_WORKSPACE_MIGRATION');
+
     await this.applicationService.delete(
       applicationUniversalIdentifier,
       workspaceId,
     );
 
+    await progressReporter.reportStepCompleted('DELETE_APPLICATION');
+
     await this.cleanupApplicationRuntimeResources({
       workspaceId,
       applicationUniversalIdentifier,
     });
+
+    await progressReporter.reportStepCompleted('CLEANUP_RUNTIME_RESOURCES');
 
     return validateAndBuildResult.workspaceMigration;
   }

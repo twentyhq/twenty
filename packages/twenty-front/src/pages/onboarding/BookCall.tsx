@@ -15,7 +15,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { OnboardingStatus } from '~/generated-metadata/graphql';

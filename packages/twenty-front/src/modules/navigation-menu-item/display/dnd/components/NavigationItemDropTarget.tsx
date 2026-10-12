@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { type NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import { type NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 
 const StyledDropTarget = styled.div<{

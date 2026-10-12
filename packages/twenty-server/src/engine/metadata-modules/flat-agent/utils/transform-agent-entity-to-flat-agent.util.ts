@@ -39,6 +39,7 @@ export const transformAgentEntityToFlatAgent = ({
     universalIdentifier: agentEntity.universalIdentifier,
     applicationId: agentEntity.applicationId,
     modelConfiguration: agentEntity.modelConfiguration,
+    triggers: agentEntity.triggers,
     applicationUniversalIdentifier,
   };
 };

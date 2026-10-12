@@ -1,26 +1,34 @@
+import { useRender } from '@base-ui/react/use-render';
+import { clsx } from 'clsx';
+
 import { type CodeEditorHeaderProps } from './types/CodeEditorHeaderProps';
+
 import styles from './CodeEditorHeader.module.scss';
 
 export const CodeEditorHeader = ({
   title,
-  leftNodes,
-  rightNodes,
+  startElement,
+  endElement,
+  className,
+  render,
+  ref,
+  ...props
 }: CodeEditorHeaderProps) => {
-  return (
-    <div className={styles.editorHeader}>
-      <div className={styles.elementContainer}>
-        {leftNodes &&
-          leftNodes.map((leftButton, index) => {
-            return <div key={`left-${index}`}>{leftButton}</div>;
-          })}
-        {title}
-      </div>
-      <div className={styles.elementContainer}>
-        {rightNodes &&
-          rightNodes.map((rightButton, index) => {
-            return <div key={`right-${index}`}>{rightButton}</div>;
-          })}
-      </div>
-    </div>
-  );
+  return useRender({
+    render,
+    ref,
+    props: {
+      ...props,
+      className: clsx(styles.editorHeader, className),
+      children: (
+        <>
+          <div className={styles.elementContainer}>
+            {startElement}
+            {title}
+          </div>
+          <div className={styles.elementContainer}>{endElement}</div>
+        </>
+      ),
+    },
+  });
 };

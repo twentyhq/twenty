@@ -1,30 +1,35 @@
-import { StyledTintedIconTileContainer } from '@ui/components/data-display/TintedIconTile/internal/StyledTintedIconTileContainer/StyledTintedIconTileContainer';
-import { getIconTileColorShades } from '@ui/components/data-display/TintedIconTile/utils/getIconTileColorShades';
-import { DEFAULT_THEME_COLOR_FALLBACK, useTheme } from '@ui/theme';
+import { useRender } from '@base-ui/react/use-render';
+import { clsx } from 'clsx';
 
-import { isDefined } from '@ui/utilities/utils/isDefined';
+import { getIconTileColorShades } from '@ui/components/data-display/TintedIconTile/utils/getIconTileColorShades';
+import { DEFAULT_THEME_COLOR_FALLBACK } from '@ui/theme';
+
+import styles from './TintedIconTile.module.scss';
 import { type TintedIconTileProps } from './types/TintedIconTileProps';
 
 export const TintedIconTile = ({
-  Icon,
+  icon,
   color = DEFAULT_THEME_COLOR_FALLBACK,
-  size: sizeFromProps,
-  stroke: strokeFromProps,
+  className,
+  style,
+  render,
+  ref,
+  ...props
 }: TintedIconTileProps) => {
-  const theme = useTheme();
-  const style = getIconTileColorShades(color);
-  const iconSize = sizeFromProps ?? theme.icon.size.md;
-  const iconStroke = strokeFromProps ?? theme.icon.stroke.md;
-  const tileDimension = isDefined(sizeFromProps)
-    ? `${sizeFromProps}px`
-    : undefined;
+  const colorShades = getIconTileColorShades(color);
 
-  return (
-    <StyledTintedIconTileContainer
-      $backgroundColor={style.backgroundColor}
-      $dimension={tileDimension}
-    >
-      <Icon size={iconSize} stroke={iconStroke} color={style.iconColor} />
-    </StyledTintedIconTileContainer>
-  );
+  return useRender({
+    render,
+    ref,
+    props: {
+      ...props,
+      className: clsx(styles.root, className),
+      style: {
+        backgroundColor: colorShades.backgroundColor,
+        color: colorShades.iconColor,
+        ...style,
+      },
+      children: <span aria-hidden="true">{icon}</span>,
+    },
+  });
 };

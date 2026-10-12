@@ -10,7 +10,7 @@ import { getObjectSortDropdownId } from '@/object-record/object-sort-dropdown/ut
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';

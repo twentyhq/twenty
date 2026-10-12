@@ -14,6 +14,7 @@ export const AGENT_FRAGMENT = gql`
     isCustom
     isSystem
     modelConfiguration
+    triggers
     applicationId
     createdAt
     updatedAt

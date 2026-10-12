@@ -31,4 +31,5 @@ Notable changes are documented in [CHANGELOG.md](CHANGELOG.md).
 
 - [Twenty Apps documentation](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start)
 - [twenty-sdk CLI reference](https://www.npmjs.com/package/twenty-sdk)
+- [Agent skills for coding assistants](https://github.com/twentyhq/twenty/tree/agent-skills), and the rules in [AGENTS.md](AGENTS.md)
 - [Discord](https://discord.gg/cx5n4Jzs57)

@@ -12,7 +12,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { formatUpgradeCommandName, getSettingsPath } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconAlertTriangle,
   IconCalendar,
@@ -26,8 +27,8 @@ import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
   RefreshUpgradeStatusDocument,
 } from '~/generated-admin/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 
 const StyledRefreshButtonContainer = styled.div`
   display: flex;

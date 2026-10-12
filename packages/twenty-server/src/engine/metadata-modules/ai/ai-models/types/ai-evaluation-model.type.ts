@@ -19,8 +19,4 @@ export type AiEvaluationModelCallOptions = Parameters<
   AiEvaluationModel['doEvaluate']
 >[0];
 
-export type AiEvaluationModelResult = Awaited<
-  ReturnType<AiEvaluationModel['doEvaluate']>
->;
-
 export type AiEvaluationModelInput = AiEvaluationModelCallOptions['state'];

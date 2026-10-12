@@ -1,7 +1,7 @@
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { AttachmentChip } from '@/file/components/AttachmentChip';
 import { VariableChip } from '@/object-record/record-field/ui/form-types/components/VariableChip';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { useUploadWorkflowFile } from '@/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile';
 

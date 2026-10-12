@@ -7,4 +7,5 @@ export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
   workspaceId: string;
   authProvider: AuthProviderEnum;
   impersonatorUserWorkspaceId?: string;
+  jti?: string;
 };

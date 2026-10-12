@@ -6,13 +6,13 @@ import { FrontComponentMediaSessionIndicator } from '@/front-components/media-se
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
+import { useNavigationDrawerExpanded } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerExpanded';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { AnimatePresence } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';

@@ -1,4 +1,4 @@
-import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';

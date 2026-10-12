@@ -15,7 +15,7 @@ import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboard
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { onboardingCreateProfileDraftState } from '@/onboarding/states/onboardingCreateProfileDraftState';
 import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
-import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
+import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { PageFocusId } from '@/types/PageFocusId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -31,7 +31,7 @@ import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 

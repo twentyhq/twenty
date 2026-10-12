@@ -1,5 +1,6 @@
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
+  FeatureFlagKey,
   MetadataReadability,
   MetadataWritability,
   ObjectSharingReach,
@@ -64,8 +65,11 @@ const environment: RowAccessPolicyEnvironment &
   recordShareTableExpression: '"workspace"."recordShare"',
   resolveTableExpression: (objectMetadataId) =>
     `"workspace"."${objectMetadataId}"`,
-  isRecordSharingEnabled: false,
-  isRecordShareVisibilityGatingEnabled: true,
+  featureFlagsMap: {},
+};
+const sharingEnvironment = {
+  ...environment,
+  featureFlagsMap: { [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true },
 };
 
 const buildCompiledRowAccessPolicy = (
@@ -180,7 +184,7 @@ describe('buildRowAccessPolicy', () => {
     });
     const policy = buildCompiledRowAccessPolicy({
       subject: readEverything,
-      environment: { ...environment, isRecordSharingEnabled: true },
+      environment: sharingEnvironment,
       tableAlias: 'company',
       flatObjectMetadata: company,
       operationType: 'select',
@@ -198,7 +202,7 @@ describe('buildRowAccessPolicy', () => {
     expect(
       buildCompiledRowAccessPolicy({
         subject: { ...readEverything, canAccessAllRecords: true },
-        environment: { ...environment, isRecordSharingEnabled: true },
+        environment: sharingEnvironment,
         tableAlias: 'note',
         flatObjectMetadata: note,
         operationType: 'select',
@@ -217,7 +221,7 @@ describe('buildRowAccessPolicy', () => {
     expect(
       buildCompiledRowAccessPolicy({
         subject: readEverything,
-        environment: { ...environment, isRecordSharingEnabled: true },
+        environment: sharingEnvironment,
         tableAlias: 'note',
         flatObjectMetadata: { ...note, isSystem: true },
         operationType: 'select',
@@ -230,7 +234,7 @@ describe('buildRowAccessPolicy', () => {
     expect(
       buildCompiledRowAccessPolicy({
         subject: readEverything,
-        environment: { ...environment, isRecordSharingEnabled: true },
+        environment: sharingEnvironment,
         tableAlias: 'note',
         flatObjectMetadata: note,
         operationType: 'insert',
@@ -240,7 +244,6 @@ describe('buildRowAccessPolicy', () => {
   });
 
   describe('with a record shared beyond the role', () => {
-    const sharingEnvironment = { ...environment, isRecordSharingEnabled: true };
     const company = buildObject({
       id: 'company',
       readability: MetadataReadability.OPEN,
@@ -445,8 +448,10 @@ describe('buildRowAccessPolicy', () => {
   describe('with record share visibility gating off', () => {
     const ungatedEnvironment = {
       ...environment,
-      isRecordSharingEnabled: true,
-      isRecordShareVisibilityGatingEnabled: false,
+      featureFlagsMap: {
+        [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
+        [FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED]: false,
+      },
     };
     const buildBypassed = (
       subject: RowAccessPolicySubject,

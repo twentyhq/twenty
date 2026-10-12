@@ -5,7 +5,6 @@ import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UsageEventListener } from 'src/engine/core-modules/usage/listeners/usage-event.listener';
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
@@ -19,7 +18,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageAnalyticsModule,
     DiscoveryModule,
     EventLogEmitterModule,
-    FeatureFlagModule,
     PermissionsModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
     WorkspaceCacheModule,

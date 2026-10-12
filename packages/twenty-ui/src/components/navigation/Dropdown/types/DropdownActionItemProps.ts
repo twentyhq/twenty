@@ -17,6 +17,8 @@ export type DropdownActionItemProps = Omit<
     | 'shortcut'
     | 'shortcutJoinLabel'
     | 'hasSubmenu'
+    | 'actions'
+    | 'actionsVisibility'
   > & {
     render?: ReactElement;
     className?: string;

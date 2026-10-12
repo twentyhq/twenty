@@ -1,7 +1,4 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getEnabledAddressSubFields } from '@/object-metadata/utils/getEnabledAddressSubFields';
-import { resolveAddressSortSubField } from '@/object-metadata/utils/resolveAddressSortSubField';
-import { resolvePrimaryFullNameSortSubField } from '@/object-metadata/utils/resolvePrimaryFullNameSortSubField';
 import { useLingui } from '@lingui/react/macro';
 import { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from 'twenty-shared/constants';
 import {
@@ -10,6 +7,11 @@ import {
   type FieldMetadataSettingsMapping,
 } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  getEnabledAddressSubFields,
+  resolveAddressSortSubField,
+  resolvePrimaryFullNameSortSubField,
+} from 'twenty-shared/utils';
 
 export type SortSubFieldChoice = {
   value: string;

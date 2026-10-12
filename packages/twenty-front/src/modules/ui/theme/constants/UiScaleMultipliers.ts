@@ -1,4 +1,4 @@
-import { type UiScale } from '@/workspace-member/types/WorkspaceMember';
+import { type UiScale } from '@/ui/theme/types/UiScale';
 
 // Multiplies --t-scale-user, which every dimension token derives from; Default is today's rendering.
 // Steps bracket the range where layout survives, as breakpoints do not move with the scale (unlike browser zoom)

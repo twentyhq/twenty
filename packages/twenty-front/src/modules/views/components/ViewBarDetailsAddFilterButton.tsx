@@ -4,7 +4,7 @@ import { getViewBarFilterDropdownId } from '@/views/utils/getViewBarFilterDropdo
 import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { t } from '@lingui/core/macro';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const ViewBarDetailsAddFilterButton = () => {

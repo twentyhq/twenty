@@ -5,7 +5,7 @@ import {
   getFilterTypeFromFieldType,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { Dropdown, useDropdownPage } from 'twenty-ui/components';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 

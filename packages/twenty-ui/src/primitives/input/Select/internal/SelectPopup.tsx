@@ -1,6 +1,6 @@
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 
-import { useProvidedTextDirection } from '@ui/primitives/layout/TextDirectionProvider/internal/useProvidedTextDirection';
+import { useProvidedTextDirection } from '@ui/primitives/layout/DirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 

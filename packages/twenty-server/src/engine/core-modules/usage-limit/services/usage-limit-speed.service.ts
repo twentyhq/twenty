@@ -3,16 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageException } from 'src/engine/core-modules/cache-storage/exceptions/cache-storage.exception';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import {
-  TOKEN_BUCKETS_ALLOW_PARTIAL_ARG,
-  TOKEN_BUCKETS_DENY_PARTIAL_ARG,
-  TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
-} from 'src/engine/core-modules/throttler/constants/try-consume-token-buckets-script.constant';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
@@ -34,8 +27,7 @@ export class UsageLimitSpeedService {
   private readonly logger = new Logger(UsageLimitSpeedService.name);
 
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
-    private readonly cacheStorage: CacheStorageService,
+    private readonly throttlerService: ThrottlerService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
@@ -176,23 +168,11 @@ export class UsageLimitSpeedService {
     cost: number;
     allowPartial: boolean;
   }): Promise<SpeedBucketOutcome> {
-    const bucketConfigs = buckets.map((bucket) => ({
-      burst: bucket.burst,
-      refill: bucket.refillPerWindow,
-      windowMs: bucket.windowMs,
-    }));
-
     const [admittedCount, exhaustedIndex, retryAfterMs] =
-      await this.cacheStorage.runScript<number[]>({
-        script: TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
-        keys: buckets.map((bucket) => bucket.key),
-        args: [
-          String(cost),
-          JSON.stringify(bucketConfigs),
-          allowPartial
-            ? TOKEN_BUCKETS_ALLOW_PARTIAL_ARG
-            : TOKEN_BUCKETS_DENY_PARTIAL_ARG,
-        ],
+      await this.throttlerService.tryConsumeTokenBuckets({
+        buckets,
+        tokensToConsume: cost,
+        allowPartial,
       });
 
     if (admittedCount === cost) {

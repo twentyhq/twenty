@@ -12,7 +12,10 @@ export const DropdownBack = ({
   className,
   onClick,
   ...props
-}: Omit<DropdownActionItemProps, 'page' | 'closeOnClick'>) => {
+}: Omit<
+  DropdownActionItemProps,
+  'page' | 'closeOnClick' | 'actions' | 'actionsVisibility'
+>) => {
   const { goBack, canGoBack } = useDropdownContext();
 
   return (

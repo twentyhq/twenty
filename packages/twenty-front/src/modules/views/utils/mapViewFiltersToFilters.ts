@@ -2,13 +2,9 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
+import { getRecordFilterTypeAndLabelFromFieldMetadata } from '@/object-record/record-filter/utils/getRecordFilterTypeAndLabelFromFieldMetadata';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import {
-  convertViewFilterValueToString,
-  getFilterTypeFromFieldType,
-  isDefined,
-} from 'twenty-shared/utils';
+import { convertViewFilterValueToString, isDefined } from 'twenty-shared/utils';
 import { type ViewFilter as GqlViewFilter } from '~/generated-metadata/graphql';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 
@@ -18,46 +14,18 @@ export const mapViewFiltersToFilters = (
 ): RecordFilter[] => {
   return viewFilters
     .map((viewFilter) => {
-      const sourceFieldMetadataItem = fieldMetadataItems.find(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.id === viewFilter.fieldMetadataId,
-      );
+      const recordFilterTypeAndLabel =
+        getRecordFilterTypeAndLabelFromFieldMetadata({
+          fieldMetadataId: viewFilter.fieldMetadataId,
+          relationTargetFieldMetadataId:
+            viewFilter.relationTargetFieldMetadataId,
+          fieldMetadataItems,
+        });
 
-      if (!isDefined(sourceFieldMetadataItem)) {
+      if (!isDefined(recordFilterTypeAndLabel)) {
         // Todo: we don't throw an error yet as we have race condition on view change
         return undefined;
       }
-
-      const relationTargetFieldMetadataItem = isDefined(
-        viewFilter.relationTargetFieldMetadataId,
-      )
-        ? fieldMetadataItems.find(
-            (fieldMetadataItem) =>
-              fieldMetadataItem.id === viewFilter.relationTargetFieldMetadataId,
-          )
-        : undefined;
-
-      // A relation-traversal filter is meaningful only if both ends
-      // resolve — drop it otherwise (same race-condition handling as the
-      // source field above) instead of rendering a chip whose filterType
-      // and label fall back to the relation source, since the dispatcher
-      // would silently drop the GraphQL filter anyway.
-      if (
-        isDefined(viewFilter.relationTargetFieldMetadataId) &&
-        !isDefined(relationTargetFieldMetadataItem)
-      ) {
-        return undefined;
-      }
-
-      const filterType = isDefined(relationTargetFieldMetadataItem)
-        ? getFilterTypeFromFieldType(relationTargetFieldMetadataItem.type)
-        : getFilterTypeFromFieldType(sourceFieldMetadataItem.type);
-
-      const label = isSystemSearchVectorField(sourceFieldMetadataItem.name)
-        ? 'Search'
-        : isDefined(relationTargetFieldMetadataItem)
-          ? `${sourceFieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`
-          : sourceFieldMetadataItem.label;
 
       const operand = viewFilter.operand;
 
@@ -74,8 +42,8 @@ export const mapViewFiltersToFilters = (
         operand,
         recordFilterGroupId: viewFilter.viewFilterGroupId ?? undefined,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
-        label,
-        type: filterType,
+        label: recordFilterTypeAndLabel.label,
+        type: recordFilterTypeAndLabel.type,
         subFieldName: viewFilter.subFieldName as CompositeFieldSubFieldName,
         relationTargetFieldMetadataId:
           viewFilter.relationTargetFieldMetadataId ?? null,

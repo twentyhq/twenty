@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent, type ReactElement } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { type IconComponent } from 'twenty-ui/icon';
 import {
   type Avatar,

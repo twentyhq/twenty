@@ -2,7 +2,7 @@ import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
 import {
   formatNumber as utilFormatNumber,
   type FormatNumberOptions,
-} from '~/utils/format/formatNumber';
+} from '@/localization/utils/formatNumber';
 
 export type GraphValueFormatOptions = {
   displayType?: 'percentage' | 'number' | 'shortNumber' | 'currency' | 'custom';

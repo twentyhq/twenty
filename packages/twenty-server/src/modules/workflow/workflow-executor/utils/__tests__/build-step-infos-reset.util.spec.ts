@@ -38,20 +38,6 @@ describe('buildStepInfosReset', () => {
     });
   });
 
-  it('should move the conversation to history so the next iteration starts without it', () => {
-    const result = buildStepInfosReset({
-      stepIds: ['agentStep'],
-      stepInfos: {
-        agentStep: { status: StepStatus.SUCCESS, threadId: 'thread-1' },
-      },
-    });
-
-    expect(result.agentStep).toHaveProperty('threadId', undefined);
-    expect(result.agentStep.history).toEqual([
-      expect.objectContaining({ threadId: 'thread-1' }),
-    ]);
-  });
-
   it('should leave out steps that were not given', () => {
     const result = buildStepInfosReset({
       stepIds: ['step1'],

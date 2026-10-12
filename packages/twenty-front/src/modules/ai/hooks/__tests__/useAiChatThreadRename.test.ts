@@ -7,7 +7,7 @@ import { type AgentChatThread } from '~/generated-metadata/graphql';
 jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: jest.fn(),
 }));
-jest.mock('twenty-ui/components', () => ({
+jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast: jest.fn() }),
 }));
 

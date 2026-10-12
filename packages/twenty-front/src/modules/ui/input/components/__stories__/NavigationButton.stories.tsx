@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { styled } from '@linaria/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { LightButton, MainButton } from 'twenty-ui/components';
+import { LightButton, MainButton } from 'twenty-ui/components/input';
 
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 

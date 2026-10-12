@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
+import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
 
 type WidgetCardStyledProps = {

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai/components/AiChatAskStyledComponents';

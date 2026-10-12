@@ -50,10 +50,6 @@ export const useOnboardingFreeCreditsTooltipContent = ({
     onboardingConfig.importContactsCreditsReward,
     numberFormat,
   );
-  const formattedInstallAppsCreditsReward = formatOnboardingCredits(
-    onboardingConfig.installAppsCreditsReward,
-    numberFormat,
-  );
   const formattedInviteTeamCreditsRewardPerUser = formatOnboardingCredits(
     onboardingConfig.inviteTeamCreditsRewardPerUser,
     numberFormat,
@@ -80,13 +76,6 @@ export const useOnboardingFreeCreditsTooltipContent = ({
         one: `${formattedImportContactsAiActions} AI actions, ${formattedImportContactsEnrichments} enrichments or ${formattedImportContactsCallRecordingHours} hour of call recording.`,
         other: `${formattedImportContactsAiActions} AI actions, ${formattedImportContactsEnrichments} enrichments or ${formattedImportContactsCallRecordingHours} hours of call recording.`,
       }),
-    },
-    installApps: {
-      title: plural(onboardingConfig.installAppsCreditsReward, {
-        one: `Start with apps and earn ${formattedInstallAppsCreditsReward} free credit`,
-        other: `Start with apps and earn ${formattedInstallAppsCreditsReward} free credits`,
-      }),
-      description: t`Apps like enrichment and call recording run on credits.`,
     },
     createProfile: null,
     inviteTeam: {

@@ -58,4 +58,13 @@ describe('buildAgentRolePermissionConfig', () => {
       }),
     ).toEqual({ intersectionOf: ['application-role-id'] });
   });
+
+  it('reads nothing for an agent without a role, whatever restricts it', () => {
+    expect(
+      buildAgentRolePermissionConfig({
+        agentRoleId: undefined,
+        additionalRoleRestrictionIds: ['application-role-id'],
+      }),
+    ).toEqual({ intersectionOf: [] });
+  });
 });

@@ -1,9 +1,15 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { useId } from 'react';
+import { clsx } from 'clsx';
 
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import styles from '../Dropdown.module.scss';
+import { DropdownItemOwner } from './DropdownItemOwner';
+import { getNativeDisabled } from './getNativeDisabled';
+import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
@@ -19,6 +25,8 @@ export const DropdownActionItem = ({
   shortcut,
   shortcutJoinLabel,
   hasSubmenu,
+  actions,
+  actionsVisibility,
   children,
   render,
   disabled = false,
@@ -33,9 +41,12 @@ export const DropdownActionItem = ({
   const { type, closeTree, goToPage } = useDropdownContext();
   const generatedId = useId();
   const itemId = id ?? generatedId;
-  const itemFocus = useDropdownItemFocus({ id: itemId });
+  const itemFocus = useDropdownItemFocus({ id: itemId, disabled });
 
-  return (
+  const hasActions = isRenderableSlot(actions);
+  const resolvedHasSubmenu = hasSubmenu ?? isDefined(page);
+
+  const item = (
     <ButtonPrimitive
       {...props}
       id={itemId}
@@ -83,23 +94,51 @@ export const DropdownActionItem = ({
           closeTree();
         }
       }}
-      render={(renderProps) => (
-        <ListItem
-          {...renderProps}
-          render={render ?? <button type="button" />}
-          disabled={disabled}
-          color={color}
-          startIcon={startIcon}
-          endIcon={endIcon}
-          description={description}
-          descriptionPlacement={descriptionPlacement}
-          shortcut={shortcut}
-          shortcutJoinLabel={shortcutJoinLabel}
-          hasSubmenu={hasSubmenu ?? isDefined(page)}
-        >
-          {children}
-        </ListItem>
-      )}
+      render={(renderProps) => {
+        const nativeDisabled = getNativeDisabled({
+          nativeButton,
+          renderProps,
+        });
+
+        return (
+          <ListItem
+            {...renderProps}
+            render={
+              <DropdownItemOwner render={render} disabled={nativeDisabled} />
+            }
+            className={clsx(
+              renderProps.className,
+              hasActions && styles.itemWithActionsPrimary,
+            )}
+            disabled={disabled}
+            color={color}
+            startIcon={startIcon}
+            endIcon={endIcon}
+            actionsVisibility={actionsVisibility}
+            description={description}
+            descriptionPlacement={descriptionPlacement}
+            shortcut={shortcut}
+            shortcutJoinLabel={shortcutJoinLabel}
+            hasSubmenu={!hasActions && resolvedHasSubmenu}
+          >
+            {children}
+          </ListItem>
+        );
+      }}
     />
+  );
+
+  return hasActions ? (
+    <DropdownItemWithActions
+      actions={actions}
+      actionsVisibility={actionsVisibility}
+      color={color}
+      disabled={disabled}
+      hasSubmenu={resolvedHasSubmenu}
+    >
+      {item}
+    </DropdownItemWithActions>
+  ) : (
+    item
   );
 };

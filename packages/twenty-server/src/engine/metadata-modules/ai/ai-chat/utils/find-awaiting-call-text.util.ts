@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/ai';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/is-awaiting-pausing-tool-output.util';
+import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-history/utils/is-awaiting-pausing-tool-output.util';
 
 const readNonEmptyString = (value: unknown): string | null =>
   isString(value) && isNonEmptyString(value.trim()) ? value : null;

@@ -218,7 +218,16 @@ export const PhonesFieldInput = () => {
           onDelete={handleDelete}
         />
       )}
-      renderInput={({ value, onChange, autoFocus, placeholder, hasError }) => {
+      renderInput={({
+        value,
+        onChange,
+        onKeyDown,
+        onFocus,
+        onBlur,
+        autoFocus,
+        placeholder,
+        hasError,
+      }) => {
         return (
           <StyledCustomPhoneInputContainer
             hasItem={!!phones.length}
@@ -230,6 +239,9 @@ export const PhonesFieldInput = () => {
                 placeholder={placeholder}
                 value={value as E164Number}
                 onChange={onChange as unknown as (newValue: E164Number) => void}
+                onKeyDown={onKeyDown}
+                onFocus={onFocus}
+                onBlur={onBlur}
                 international={true}
                 withCountryCallingCode={true}
                 countrySelectComponent={PhoneCountryPickerDropdownButton}

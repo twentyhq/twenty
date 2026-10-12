@@ -13,6 +13,7 @@ type RenderActionButtonOptions = {
   canInstallMarketplaceApps?: boolean;
   onInstall?: () => void;
   isInstalling?: boolean;
+  installProgress?: number;
 };
 
 const renderActionButton = ({
@@ -20,6 +21,7 @@ const renderActionButton = ({
   canInstallMarketplaceApps = true,
   onInstall,
   isInstalling,
+  installProgress,
 }: RenderActionButtonOptions = {}) =>
   render(
     <MemoryRouter>
@@ -29,6 +31,7 @@ const renderActionButton = ({
           canInstallMarketplaceApps={canInstallMarketplaceApps}
           onInstall={onInstall}
           isInstalling={isInstalling}
+          installProgress={installProgress}
         />
       </I18nProvider>
     </MemoryRouter>,
@@ -54,12 +57,37 @@ describe('SettingsApplicationActionButton', () => {
     expect(onInstall).toHaveBeenCalledTimes(1);
   });
 
-  it('disables the button while installing', () => {
+  it('disables the button and communicates a busy state while installing', () => {
+    renderActionButton({ isInstalling: true });
+
+    const button = screen.getByRole('button', { name: /^Installing\b/ });
+
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-busy', 'true');
+  });
+
+  it('shows the installation progress in the label while installing', () => {
+    renderActionButton({ isInstalling: true, installProgress: 60 });
+
+    expect(
+      screen.getByRole('button', { name: 'Installing (60%)' }),
+    ).toBeDisabled();
+  });
+
+  it('starts the installation progress at zero before the first progress event', () => {
     renderActionButton({ isInstalling: true });
 
     expect(
-      screen.getByRole('button', { name: /^Installing\b/ }),
+      screen.getByRole('button', { name: 'Installing (0%)' }),
     ).toBeDisabled();
+  });
+
+  it('pads a single-digit percentage so the button keeps its width', () => {
+    renderActionButton({ isInstalling: true, installProgress: 7 });
+
+    expect(screen.getByRole('button').textContent).toContain(
+      'Installing \u2007(7%)',
+    );
   });
 
   it('links to the application settings once installed', () => {

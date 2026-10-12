@@ -52,6 +52,7 @@ import {
   resolveRelativeDateFilterStringified,
   type RecordFilter,
 } from '@/utils';
+import { convertCurrencyAmountToCurrencyMicros } from '@/utils/currency/convertCurrencyAmountToCurrencyMicros';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 import {
   actorSourceFilterValueSchema,
@@ -317,16 +318,23 @@ const buildDirectFieldGqlOperationFilter = ({
         case RecordFilterOperand.CONTAINS:
           return {
             [fieldMetadataItem.name]: {
-              like: `%${recordFilter.value}%`,
+              ilike: `%${recordFilter.value}%`,
             } as RawJsonFilter,
           };
         case RecordFilterOperand.DOES_NOT_CONTAIN:
           return {
-            not: {
-              [fieldMetadataItem.name]: {
-                like: `%${recordFilter.value}%`,
-              } as RawJsonFilter,
-            },
+            or: [
+              {
+                not: {
+                  [fieldMetadataItem.name]: {
+                    ilike: `%${recordFilter.value}%`,
+                  } as RawJsonFilter,
+                },
+              },
+              {
+                [fieldMetadataItem.name]: { is: 'NULL' } as RawJsonFilter,
+              },
+            ],
           };
         default:
           throw new Error(
@@ -338,16 +346,23 @@ const buildDirectFieldGqlOperationFilter = ({
         case RecordFilterOperand.CONTAINS:
           return {
             [fieldMetadataItem.name]: {
-              like: `%${recordFilter.value}%`,
+              ilike: `%${recordFilter.value}%`,
             } as FilesFilter,
           };
         case RecordFilterOperand.DOES_NOT_CONTAIN:
           return {
-            not: {
-              [fieldMetadataItem.name]: {
-                like: `%${recordFilter.value}%`,
-              } as FilesFilter,
-            },
+            or: [
+              {
+                not: {
+                  [fieldMetadataItem.name]: {
+                    ilike: `%${recordFilter.value}%`,
+                  } as FilesFilter,
+                },
+              },
+              {
+                [fieldMetadataItem.name]: { is: 'NULL' } as FilesFilter,
+              },
+            ],
           };
         default:
           throw new Error(
@@ -682,11 +697,9 @@ const buildDirectFieldGqlOperationFilter = ({
           };
         case RecordFilterOperand.IS_NOT:
           return {
-            not: {
-              [fieldMetadataItem.name]: {
-                eq: parseNumericFilterValue(recordFilter.value),
-              } as FloatFilter,
-            },
+            [fieldMetadataItem.name]: {
+              neq: parseNumericFilterValue(recordFilter.value),
+            } as FloatFilter,
           };
         default:
           throw new Error(
@@ -806,7 +819,9 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  gte: parseNumericFilterValue(recordFilter.value) * 1000000,
+                  gte: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
+                  ),
                 },
               } as CurrencyFilter,
             };
@@ -814,7 +829,9 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  lte: parseNumericFilterValue(recordFilter.value) * 1000000,
+                  lte: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
+                  ),
                 },
               } as CurrencyFilter,
             };
@@ -822,19 +839,21 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  eq: parseNumericFilterValue(recordFilter.value) * 1000000,
+                  eq: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
+                  ),
                 },
               } as CurrencyFilter,
             };
           case RecordFilterOperand.IS_NOT:
             return {
-              not: {
-                [fieldMetadataItem.name]: {
-                  amountMicros: {
-                    eq: parseNumericFilterValue(recordFilter.value) * 1000000,
-                  },
-                } as CurrencyFilter,
-              },
+              [fieldMetadataItem.name]: {
+                amountMicros: {
+                  neq: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
+                  ),
+                },
+              } as CurrencyFilter,
             };
           default:
             throw new Error(

@@ -4,7 +4,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { MenuItemSuggestion } from 'twenty-ui/components';
+import { MenuItemSuggestion } from 'twenty-ui/components/navigation';
 
 export type CustomSlashMenuListItemProps = {
   item: SuggestionItem;

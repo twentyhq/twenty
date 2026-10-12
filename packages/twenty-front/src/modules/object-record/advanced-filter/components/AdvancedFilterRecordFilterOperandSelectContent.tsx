@@ -9,7 +9,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { type RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { t } from '@lingui/core/macro';

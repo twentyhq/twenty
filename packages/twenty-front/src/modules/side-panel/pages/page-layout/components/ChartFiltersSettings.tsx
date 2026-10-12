@@ -1,6 +1,6 @@
 import { ChartFiltersDeletedFieldsWarning } from '@/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning';
 import { ChartFiltersSettingsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartWidget } from '@/side-panel/pages/page-layout/types/ChartWidget';
 import { type ChartWidgetConfiguration } from '@/side-panel/pages/page-layout/types/ChartWidgetConfiguration';
@@ -44,7 +44,7 @@ export const ChartFiltersSettings = ({
     objectMetadataItemId: objectMetadataItem.id,
   });
 
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);

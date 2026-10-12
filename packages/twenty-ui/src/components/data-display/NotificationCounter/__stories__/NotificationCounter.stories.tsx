@@ -7,7 +7,7 @@ import { ComponentDecorator } from '@ui/testing';
 import { NotificationCounter } from '../NotificationCounter';
 
 const meta = {
-  title: 'UI/Navigation/Tabs',
+  title: 'UI/Components/Data display/NotificationCounter',
   component: NotificationCounter,
   tags: ['!autodocs'],
   args: { count: 3, variant: 'secondary' },

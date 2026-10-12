@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { EDITABLE_PROFILE_FIELDS_DROPDOWN_ID } from '@/settings/security/constants/EditableProfileFields.constants';
+import { EDITABLE_PROFILE_FIELDS_DROPDOWN_ID } from '@/settings/security/constants/EditableProfileFields';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -10,7 +10,8 @@ import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconMail,
   IconPhoto,

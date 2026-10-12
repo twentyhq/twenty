@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import {
   IconEraser,
   IconPlayerPause,

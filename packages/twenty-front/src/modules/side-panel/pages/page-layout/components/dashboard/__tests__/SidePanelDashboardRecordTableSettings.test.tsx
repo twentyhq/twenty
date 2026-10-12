@@ -1,5 +1,6 @@
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { SidePanelDashboardRecordTableSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings';
+import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render } from '@testing-library/react';
@@ -43,13 +44,6 @@ jest.mock('@/side-panel/hooks/useSidePanelSubPageHistory', () => ({
     navigateToSidePanelSubPage: jest.fn(),
   }),
 }));
-
-jest.mock(
-  '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore',
-  () => ({
-    usePageLayoutIdFromContextStore: () => ({ pageLayoutId: PAGE_LAYOUT_ID }),
-  }),
-);
 
 jest.mock(
   '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions',
@@ -96,7 +90,17 @@ describe('SidePanelDashboardRecordTableSettings', () => {
     const { container } = render(
       <JotaiProvider store={store}>
         <I18nProvider i18n={i18n}>
-          <SidePanelDashboardRecordTableSettings />
+          <PageLayoutSidePanelTargetContext.Provider
+            value={{
+              pageLayoutId: PAGE_LAYOUT_ID,
+              targetRecordIdentifier: {
+                id: 'dashboard-record-id',
+                targetObjectNameSingular: 'dashboard',
+              },
+            }}
+          >
+            <SidePanelDashboardRecordTableSettings />
+          </PageLayoutSidePanelTargetContext.Provider>
         </I18nProvider>
       </JotaiProvider>,
     );

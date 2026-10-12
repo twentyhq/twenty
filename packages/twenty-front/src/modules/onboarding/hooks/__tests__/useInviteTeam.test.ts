@@ -43,8 +43,8 @@ jest.mock('@apollo/client/react', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
@@ -207,7 +207,6 @@ describe('useInviteTeam', () => {
     jotaiStore.set(onboardingConfigState.atom, {
       importContactsCreditsReward: 1,
       inviteTeamCreditsRewardPerUser: 0.5,
-      installAppsCreditsReward: 0.5,
       createProfileCreditsReward: 0.5,
       upgradeCreditsReward: 2,
       inviteTeamMaxInvites: 2,

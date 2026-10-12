@@ -42,23 +42,17 @@ describe('buildLogicFunctionExecutionUsage', () => {
         resourceId: LOGIC_FUNCTION_ID,
         spenders: SPENDERS,
       }),
-    ).toEqual({
-      usageEvents: [
-        buildExpectedUsageEvent({
-          creditsUsedMicro: 0,
-          quantity: 1,
-          unit: UsageUnit.INVOCATION,
-        }),
-        buildExpectedUsageEvent({
-          creditsUsedMicro: 0,
-          quantity: 0,
-          unit: UsageUnit.MILLISECOND,
-        }),
-      ],
-      cost: {
-        [UsageUnit.CREDIT]: 0,
-        [UsageUnit.INVOCATION]: 1,
-      },
-    });
+    ).toEqual([
+      buildExpectedUsageEvent({
+        creditsUsedMicro: 0,
+        quantity: 1,
+        unit: UsageUnit.INVOCATION,
+      }),
+      buildExpectedUsageEvent({
+        creditsUsedMicro: 0,
+        quantity: 0,
+        unit: UsageUnit.MILLISECOND,
+      }),
+    ]);
   });
 });

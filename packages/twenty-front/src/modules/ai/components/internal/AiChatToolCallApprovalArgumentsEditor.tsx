@@ -4,7 +4,7 @@ import { useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
+import { parseAndValidateVariableFriendlyStringifiedJson } from '~/utils/parseAndValidateVariableFriendlyStringifiedJson';
 
 const StyledTextarea = styled(TextareaAutosize)`
   background: ${themeCssVariables.background.transparent.lighter};

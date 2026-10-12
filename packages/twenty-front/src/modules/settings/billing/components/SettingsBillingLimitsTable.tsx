@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
-import { SearchInput } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/components/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 

@@ -28,7 +28,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -66,7 +65,6 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     oauthClient: true,
     application: true,
   }),
-  FeatureFlagGuard,
   NoPermissionGuard,
 )
 @MetadataResolver(() => LogicFunctionDTO)

@@ -7,11 +7,16 @@ export const buildAgentRolePermissionConfig = ({
   runAsRoleId,
   additionalRoleRestrictionIds = [],
 }: {
-  agentRoleId: string;
+  agentRoleId: string | undefined;
   runAsRoleId?: string;
   additionalRoleRestrictionIds?: string[];
 }): RolePermissionConfig => {
   const baseRoleId = isDefined(runAsRoleId) ? runAsRoleId : agentRoleId;
+
+  // without a role the agent reads nothing, however its restrictions narrow it
+  if (!isDefined(baseRoleId)) {
+    return { intersectionOf: [] };
+  }
 
   return {
     intersectionOf: [...new Set([baseRoleId, ...additionalRoleRestrictionIds])],

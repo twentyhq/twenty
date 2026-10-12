@@ -13,6 +13,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
@@ -51,6 +52,7 @@ export class ApplicationResolver {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationStopService: ApplicationStopService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -111,6 +113,21 @@ export class ApplicationResolver {
       workspaceId: workspace.id,
       applicationId: application.id,
     });
+  }
+
+  @ResolveField(() => Boolean)
+  isUninstallBlockedByOtherWorkspaceInstallations(
+    @Parent()
+    application: Pick<ApplicationDTO, 'id' | 'applicationRegistrationId'>,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<boolean> {
+    return this.applicationService.isUninstallBlockedByOtherWorkspaceInstallations(
+      {
+        applicationId: application.id,
+        applicationRegistrationId: application.applicationRegistrationId,
+        workspaceId: workspace.id,
+      },
+    );
   }
 
   @ResolveField(() => [ApplicationVariableEntityDTO])

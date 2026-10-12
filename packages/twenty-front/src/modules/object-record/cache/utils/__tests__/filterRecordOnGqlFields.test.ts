@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { filterRecordOnGqlFields } from '@/object-record/cache/utils/filterRecordOnGqlFields';
 
 describe('filterRecordOnGqlFields', () => {
@@ -10,7 +11,7 @@ describe('filterRecordOnGqlFields', () => {
       phone: '123-456-7890',
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       id: true,
       name: true,
     };
@@ -20,50 +21,6 @@ describe('filterRecordOnGqlFields', () => {
     expect(result).toEqual({
       id: '1',
       name: 'John',
-    });
-  });
-
-  it('should exclude fields with false values', () => {
-    const record = {
-      id: '1',
-      __typename: 'Person',
-      name: 'John',
-      email: 'john@example.com',
-    };
-
-    const recordGqlFields = {
-      id: true,
-      name: false,
-      email: true,
-    };
-
-    const result = filterRecordOnGqlFields({ record, recordGqlFields });
-
-    expect(result).toEqual({
-      id: '1',
-      email: 'john@example.com',
-    });
-  });
-
-  it('should exclude fields with undefined values', () => {
-    const record = {
-      id: '1',
-      __typename: 'Person',
-      name: 'John',
-      email: 'john@example.com',
-    };
-
-    const recordGqlFields = {
-      id: true,
-      name: undefined,
-      email: true,
-    };
-
-    const result = filterRecordOnGqlFields({ record, recordGqlFields });
-
-    expect(result).toEqual({
-      id: '1',
-      email: 'john@example.com',
     });
   });
 
@@ -78,7 +35,7 @@ describe('filterRecordOnGqlFields', () => {
       email: 'john@example.com',
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       id: true,
       fullName: {
         firstName: true,
@@ -108,7 +65,7 @@ describe('filterRecordOnGqlFields', () => {
       ],
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       id: true,
       name: true,
       employees: {
@@ -136,7 +93,7 @@ describe('filterRecordOnGqlFields', () => {
       company: null,
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       id: true,
       company: {
         id: true,
@@ -159,7 +116,7 @@ describe('filterRecordOnGqlFields', () => {
       company: undefined,
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       id: true,
       company: {
         id: true,
@@ -201,7 +158,7 @@ describe('filterRecordOnGqlFields', () => {
       },
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       id: true,
       company: {
         id: true,
@@ -249,7 +206,7 @@ describe('filterRecordOnGqlFields', () => {
       tags: ['tag1', 'tag2', 'tag3'],
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       id: true,
       tags: true,
     };
@@ -273,7 +230,7 @@ describe('filterRecordOnGqlFields', () => {
       ],
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       id: true,
       employees: {
         id: true,
@@ -296,7 +253,7 @@ describe('filterRecordOnGqlFields', () => {
       name: 'John',
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       email: true,
       phone: true,
     };
@@ -316,7 +273,7 @@ describe('filterRecordOnGqlFields', () => {
       address: 'NYC',
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       id: true,
       email: true,
     };

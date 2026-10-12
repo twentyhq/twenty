@@ -11,7 +11,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
 
 const BASE_INPUT = {
   agentUniversalIdentifier: 'agent-uid',
-  runAsWorkspaceMemberId: undefined,
+  runAsWorkspaceMemberId: 'member-1',
   messages: [{ role: 'user' as const, content: 'hi' }],
 };
 

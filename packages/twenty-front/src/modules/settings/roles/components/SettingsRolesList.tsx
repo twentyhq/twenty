@@ -10,7 +10,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { Dropdown, Section, SettingsRow } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import {
   IconFilter,
   IconKey,
@@ -105,12 +107,12 @@ export const SettingsRolesList = () => {
           <DropdownContent align="end" sideOffset={8}>
             <Dropdown.Section>
               <SettingsRow
-                startIcon={<IconLego />}
+                startElement={<IconLego />}
                 onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
                 checked={showAgentRoles}
               >{t`Agent roles`}</SettingsRow>
               <SettingsRow
-                startIcon={<IconKey />}
+                startElement={<IconKey />}
                 onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
                 checked={showApiKeyRoles}
               >{t`API key roles`}</SettingsRow>

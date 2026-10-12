@@ -83,7 +83,7 @@ describe('WaitForEventWorkflowAction', () => {
         eventName: 'company.updated',
         timeout: { hours: 'soon' },
       }),
-    ).rejects.toThrow('Wait timeout must be made of non-negative numbers');
+    ).rejects.toThrow('Duration must be made of non-negative numbers');
   });
 
   it('refuses a timeout too long to schedule', async () => {
@@ -92,7 +92,7 @@ describe('WaitForEventWorkflowAction', () => {
         eventName: 'company.updated',
         timeout: { days: 100000000 },
       }),
-    ).rejects.toThrow('Wait timeout cannot exceed one year');
+    ).rejects.toThrow('Duration cannot exceed one year');
   });
 
   it('refuses an event on an object name that cannot exist', async () => {

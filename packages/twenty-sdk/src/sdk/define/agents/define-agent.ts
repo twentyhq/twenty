@@ -1,5 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type AgentManifest } from 'twenty-shared/application';
+import {
+  AGENT_TRIGGER_EVENT_NAME_PATTERN,
+  AGENT_TRIGGER_LIMITS,
+  AGENT_TRIGGER_TYPES,
+  type AgentManifest,
+} from 'twenty-shared/application';
 import { validate as uuidValidate } from 'uuid';
 
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
@@ -38,6 +43,60 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
     errors.push(
       `Agent '${config.name}' roleUniversalIdentifier must be a valid UUID`,
     );
+  }
+
+  const triggers = config.triggers ?? [];
+
+  if (triggers.length > AGENT_TRIGGER_LIMITS.MAX_TRIGGERS_PER_AGENT) {
+    errors.push(
+      `Agent '${config.name}' cannot have more than ${AGENT_TRIGGER_LIMITS.MAX_TRIGGERS_PER_AGENT} triggers`,
+    );
+  }
+
+  const triggerIdentifiers = triggers.map(
+    (trigger) => trigger.universalIdentifier,
+  );
+
+  if (new Set(triggerIdentifiers).size !== triggerIdentifiers.length) {
+    errors.push(
+      `Agent '${config.name}' trigger universalIdentifiers must be unique`,
+    );
+  }
+
+  for (const trigger of triggers) {
+    if (!uuidValidate(trigger.universalIdentifier)) {
+      errors.push(
+        `Agent '${config.name}' trigger universalIdentifier must be a valid UUID`,
+      );
+    }
+
+    if (!AGENT_TRIGGER_TYPES.includes(trigger.type)) {
+      errors.push(
+        `Agent '${config.name}' trigger type must be one of: ${AGENT_TRIGGER_TYPES.join(', ')}`,
+      );
+    }
+
+    const eventName =
+      trigger.type === 'DATABASE_EVENT' ? trigger.settings?.eventName : null;
+
+    if (
+      trigger.type === 'DATABASE_EVENT' &&
+      (!isNonEmptyString(eventName) ||
+        !AGENT_TRIGGER_EVENT_NAME_PATTERN.test(eventName))
+    ) {
+      errors.push(
+        `Agent '${config.name}' trigger event name '${eventName}' must look like 'company.created'`,
+      );
+    }
+
+    if (
+      (trigger.instructions?.length ?? 0) >
+      AGENT_TRIGGER_LIMITS.MAX_INSTRUCTIONS_LENGTH
+    ) {
+      errors.push(
+        `Agent '${config.name}' trigger instructions cannot exceed ${AGENT_TRIGGER_LIMITS.MAX_INSTRUCTIONS_LENGTH} characters`,
+      );
+    }
   }
 
   return createValidationResult({ config, errors, warnings });

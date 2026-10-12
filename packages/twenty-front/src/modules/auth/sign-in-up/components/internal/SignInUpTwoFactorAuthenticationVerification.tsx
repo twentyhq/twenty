@@ -24,7 +24,8 @@ import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
-import { MainButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -217,6 +218,10 @@ export const SignInUpTOTPVerification = () => {
     setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
   };
 
+  const handleUseRecoveryCode = () => {
+    setSignInUpStep(SignInUpStep.TwoFactorAuthenticationRecovery);
+  };
+
   return (
     <StyledForm onSubmit={form.handleSubmit(submitOTP)}>
       <StyledTwoFactorInstructions>
@@ -268,6 +273,11 @@ export const SignInUpTOTPVerification = () => {
         fullWidth
         disabled={isLoading}
       >{t`Submit`}</MainButton>
+      <StyledActionBackLinkContainer>
+        <Button variant="link" onClick={handleUseRecoveryCode}>
+          <Trans>Lost your authenticator? Use a recovery code</Trans>
+        </Button>
+      </StyledActionBackLinkContainer>
       <StyledActionBackLinkContainer>
         <Button variant="link" onClick={handleBack}>
           <Trans>Back</Trans>

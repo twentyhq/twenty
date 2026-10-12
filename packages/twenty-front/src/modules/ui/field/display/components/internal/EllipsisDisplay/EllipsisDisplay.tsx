@@ -1,8 +1,7 @@
 import { css } from '@linaria/core';
 import { clsx } from 'clsx';
-
 import { Text } from 'twenty-ui/primitives/typography';
-import { isDefined } from 'twenty-ui/utilities';
+import { isDefined } from 'twenty-shared/utils';
 
 const styles = {
   ellipsis: css`

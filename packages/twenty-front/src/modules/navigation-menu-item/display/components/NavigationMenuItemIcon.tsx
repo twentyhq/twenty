@@ -2,8 +2,8 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { NavigationMenuItemIconWithOverlay } from '@/navigation-menu-item/display/components/NavigationMenuItemIconWithOverlay';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { getIconTileColorShades } from 'twenty-ui/components';
+import { isDefined, isSafeInternalPath } from 'twenty-shared/utils';
+import { getIconTileColorShades } from 'twenty-ui/components/data-display';
 import { IconLink, IconPerspective, IconWorld, useIcons } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -119,6 +119,20 @@ export const NavigationMenuItemIcon = ({
       views,
       isInitialObjectViewEnabled,
     });
+
+    if (isSafeInternalPath(computedLink)) {
+      return (
+        <ColoredIcon
+          Icon={
+            isDefined(navigationMenuItem.icon)
+              ? getIcon(navigationMenuItem.icon)
+              : IconLink
+          }
+          color={getNavigationMenuItemColor(navigationMenuItem)}
+        />
+      );
+    }
+
     return (
       <LinkIconWithLinkOverlay
         link={computedLink}

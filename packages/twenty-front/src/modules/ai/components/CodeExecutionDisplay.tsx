@@ -2,7 +2,7 @@ import { TerminalOutput } from '@/ai/components/TerminalOutput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import {
   IconChevronDown,
@@ -46,6 +46,12 @@ const StyledHeaderRight = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledExecutionStatusTag = styled(Tag)`
+  && {
+    min-width: fit-content;
+  }
 `;
 
 const StyledTitle = styled.span`
@@ -206,7 +212,7 @@ export const CodeExecutionDisplay = ({
           <StyledTitle>{t`Python Code Execution`}</StyledTitle>
         </StyledHeaderLeft>
         <StyledHeaderRight>
-          <Tag
+          <StyledExecutionStatusTag
             color={
               status === 'success'
                 ? 'turquoise'
@@ -215,10 +221,10 @@ export const CodeExecutionDisplay = ({
                   : 'gray'
             }
             weight="medium"
-            preventShrink
+            truncate={false}
           >
             {statusText}
-          </Tag>
+          </StyledExecutionStatusTag>
         </StyledHeaderRight>
       </StyledHeader>
 
@@ -248,20 +254,22 @@ export const CodeExecutionDisplay = ({
             )}
           </StyledHeaderRight>
         </StyledSectionHeader>
-        <Collapsible isExpanded={isCodeExpanded}>
-          <StyledCodeEditorContainer>
-            <CodeEditor
-              value={code}
-              language="python"
-              height="300px"
-              options={{
-                readOnly: true,
-                domReadOnly: true,
-                minimap: { enabled: false },
-              }}
-            />
-          </StyledCodeEditorContainer>
-        </Collapsible>
+        <Collapsible.Root open={isCodeExpanded}>
+          <Collapsible.Panel>
+            <StyledCodeEditorContainer>
+              <CodeEditor
+                value={code}
+                language="python"
+                height="300px"
+                options={{
+                  readOnly: true,
+                  domReadOnly: true,
+                  minimap: { enabled: false },
+                }}
+              />
+            </StyledCodeEditorContainer>
+          </Collapsible.Panel>
+        </Collapsible.Root>
       </StyledSection>
 
       {(hasOutput || isRunning) && (
@@ -276,13 +284,15 @@ export const CodeExecutionDisplay = ({
               <IconChevronDown size={theme.icon.size.sm} />
             )}
           </StyledSectionHeader>
-          <Collapsible isExpanded={isOutputExpanded}>
-            <TerminalOutput
-              stdout={stdout}
-              stderr={stderr}
-              isRunning={isRunning}
-            />
-          </Collapsible>
+          <Collapsible.Root open={isOutputExpanded}>
+            <Collapsible.Panel>
+              <TerminalOutput
+                stdout={stdout}
+                stderr={stderr}
+                isRunning={isRunning}
+              />
+            </Collapsible.Panel>
+          </Collapsible.Root>
         </StyledSection>
       )}
 
@@ -301,43 +311,48 @@ export const CodeExecutionDisplay = ({
               <IconChevronDown size={theme.icon.size.sm} />
             )}
           </StyledSectionHeader>
-          <Collapsible isExpanded={isFilesExpanded}>
-            <StyledFilesGrid>
-              {files.map((file) => {
-                const filename = file.filename;
+          <Collapsible.Root open={isFilesExpanded}>
+            <Collapsible.Panel>
+              <StyledFilesGrid>
+                {files.map((file) => {
+                  const filename = file.filename;
 
-                return (
-                  <StyledFileCard key={file.fileId}>
-                    <StyledFilePreview>
-                      {isPreviewableMimeType(file.mimeType) ? (
-                        <StyledPreviewImage
-                          src={file.url}
-                          alt={filename}
-                          loading="lazy"
-                        />
-                      ) : (
-                        <IconFile size={48} color={theme.font.color.tertiary} />
-                      )}
-                    </StyledFilePreview>
-                    <StyledFileInfo>
-                      <StyledFileName title={filename}>
-                        {filename}
-                      </StyledFileName>
-                      <StyledDownloadLink
-                        href={file.url}
-                        download={filename}
-                        title={t`Download ${filename}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <IconDownload size={theme.icon.size.sm} />
-                      </StyledDownloadLink>
-                    </StyledFileInfo>
-                  </StyledFileCard>
-                );
-              })}
-            </StyledFilesGrid>
-          </Collapsible>
+                  return (
+                    <StyledFileCard key={file.fileId}>
+                      <StyledFilePreview>
+                        {isPreviewableMimeType(file.mimeType) ? (
+                          <StyledPreviewImage
+                            src={file.url}
+                            alt={filename}
+                            loading="lazy"
+                          />
+                        ) : (
+                          <IconFile
+                            size={48}
+                            color={theme.font.color.tertiary}
+                          />
+                        )}
+                      </StyledFilePreview>
+                      <StyledFileInfo>
+                        <StyledFileName title={filename}>
+                          {filename}
+                        </StyledFileName>
+                        <StyledDownloadLink
+                          href={file.url}
+                          download={filename}
+                          title={t`Download ${filename}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <IconDownload size={theme.icon.size.sm} />
+                        </StyledDownloadLink>
+                      </StyledFileInfo>
+                    </StyledFileCard>
+                  );
+                })}
+              </StyledFilesGrid>
+            </Collapsible.Panel>
+          </Collapsible.Root>
         </StyledSection>
       )}
     </StyledContainer>

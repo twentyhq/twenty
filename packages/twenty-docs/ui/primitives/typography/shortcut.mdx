@@ -12,7 +12,7 @@ import ShortcutReference from '/snippets/ui/generated/typography/shortcut.mdx';
   height={200}
 />
 
-Import `Shortcut` and `formatShortcut` from `twenty-ui/primitives/typography`. Both share the same model, symbols, and separators. Register shortcuts in your application.
+Import `Shortcut` and `formatShortcut` from `twenty-ui/primitives/typography`. Both share the same model, symbols, and separators. Register shortcuts in your application. `Shortcut` only formats the hint; it does not register keyboard actions. Native attributes, event handlers, styles, class names, and refs target its outer span. `ShortcutProps` and `ShortcutFormatOptions` are public types.
 
 ```tsx
 import { Shortcut, formatShortcut } from 'twenty-ui/primitives/typography';
