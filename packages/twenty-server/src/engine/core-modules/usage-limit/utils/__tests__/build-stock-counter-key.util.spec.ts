@@ -1,44 +1,44 @@
 import { buildStockCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter-key.util';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const WORKSPACE_ID = 'workspace-1';
 
 const buildKey = (
-  overrides: Partial<Parameters<typeof buildStockCounterKey>[0]> = {},
+  overrides: Partial<
+    Parameters<typeof buildStockCounterKey>[0]['counter']
+  > = {},
 ) =>
   buildStockCounterKey({
     workspaceId: WORKSPACE_ID,
-    resourceType: UsageResourceType.STORAGE,
-    operationType: UsageOperationType.STORAGE_FILE,
-    spenderType: 'workspace',
-    spenderId: null,
-    unit: UsageUnit.BYTE,
-    limitValue: 1000,
-    ...overrides,
+    counter: {
+      resourceType: UsageResourceType.STORAGE,
+      spenderType: 'workspace',
+      spenderId: null,
+      unit: UsageUnit.BYTE,
+      ...overrides,
+    },
   });
 
 describe('buildStockCounterKey', () => {
-  it('hashes on the workspace so every counter of a workspace shares a slot', () => {
+  it('keys the held stock by its scope alone, under the workspace hash tag', () => {
     expect(buildKey()).toBe(
-      `{${WORKSPACE_ID}}:stock:STORAGE:STORAGE_FILE:workspace:-:BYTE:1000`,
+      `{${WORKSPACE_ID}}:stock-held:STORAGE:workspace:-:BYTE`,
     );
   });
 
-  it('names an absent spender rather than leaving the segment empty', () => {
+  it('names the spender when the scope has one', () => {
     expect(buildKey({ spenderType: 'application', spenderId: 'app-1' })).toBe(
-      `{${WORKSPACE_ID}}:stock:STORAGE:STORAGE_FILE:application:app-1:BYTE:1000`,
+      `{${WORKSPACE_ID}}:stock-held:STORAGE:application:app-1:BYTE`,
     );
   });
 
   it.each([
-    ['operationType', { operationType: UsageOperationType.CALL_RECORDING }],
+    ['resourceType', { resourceType: UsageResourceType.RECORD }],
     ['unit', { unit: UsageUnit.FILE }],
     ['spenderId', { spenderId: 'app-1' }],
-    ['limitValue', { limitValue: 2000 }],
-  ])(
-    'gives two limits differing only by %s their own counter',
+  ] as const)(
+    'gives two scopes differing only by %s their own counter',
     (_, differs) => {
       expect(buildKey(differs)).not.toBe(buildKey());
     },

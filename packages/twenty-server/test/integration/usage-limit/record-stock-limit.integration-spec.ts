@@ -314,7 +314,7 @@ describe('Record stock limit', () => {
     expectRefused(await createRockets(1));
   });
 
-  it.failing(
+  it(
     'keeps the held count across a cap edit instead of warming it again',
     async () => {
       setRecordLimitDefault(undefined);
@@ -333,7 +333,7 @@ describe('Record stock limit', () => {
     STATS_FLUSH_TIMEOUT_MS + 5_000,
   );
 
-  it.failing(
+  it(
     'keeps the held count when the default takes over from a deleted row',
     async () => {
       setRecordLimitDefault(baselineRecordCount + HEADROOM + 1);

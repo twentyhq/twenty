@@ -153,25 +153,22 @@ describe('Storage stock limit', () => {
     await redis.quit();
   });
 
-  it.failing(
-    'admits an overwrite that grows a file while over the file cap',
-    async () => {
-      const resourcePath = `stock-limit/${v4()}.txt`;
+  it('admits an overwrite that grows a file while over the file cap', async () => {
+    const resourcePath = `stock-limit/${v4()}.txt`;
 
-      await writeFile({ resourcePath, content: 'a' });
-      await writeFile({
-        resourcePath: `stock-limit/${v4()}.txt`,
-        content: 'a',
-      });
-      await saveStorageStockLimit({ unit: UsageUnit.FILE, limitValue: 1 });
+    await writeFile({ resourcePath, content: 'a' });
+    await writeFile({
+      resourcePath: `stock-limit/${v4()}.txt`,
+      content: 'a',
+    });
+    await saveStorageStockLimit({ unit: UsageUnit.FILE, limitValue: 1 });
 
-      expectRefused(await createFileUpload(1));
+    expectRefused(await createFileUpload(1));
 
-      await expect(
-        writeFile({ resourcePath, content: 'a longer content' }),
-      ).resolves.toBeDefined();
-    },
-  );
+    await expect(
+      writeFile({ resourcePath, content: 'a longer content' }),
+    ).resolves.toBeDefined();
+  });
 
   it('never lets a release drive the held bytes below zero', async () => {
     const resourcePath = `stock-limit/${v4()}.txt`;
