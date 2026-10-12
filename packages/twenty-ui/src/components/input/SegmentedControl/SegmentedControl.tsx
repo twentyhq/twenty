@@ -1,7 +1,7 @@
+import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
 import { clsx } from 'clsx';
 
 import { Radio } from '@ui/primitives/input/Radio/Radio';
-import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
 
 import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
@@ -15,7 +15,7 @@ export const SegmentedControl = <TValue extends string>({
   options,
   ...props
 }: SegmentedControlProps<TValue>) => (
-  <RadioGroup
+  <RadioGroupPrimitive
     {...props}
     className={mergeClassNames(styles.container, className)}
     data-item-width={itemWidth}
@@ -43,5 +43,5 @@ export const SegmentedControl = <TValue extends string>({
         </Radio.Root>
       ),
     )}
-  </RadioGroup>
+  </RadioGroupPrimitive>
 );

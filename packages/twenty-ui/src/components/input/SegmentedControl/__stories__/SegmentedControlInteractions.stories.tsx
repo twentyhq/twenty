@@ -343,6 +343,38 @@ export const EqualWidths: Story = {
   },
 };
 
+export const ConsumerClassName: Story = {
+  render: (args) => (
+    <>
+      <SegmentedControl
+        {...args}
+        className="segmented-control-consumer-overrides"
+      />
+      <style>{`
+        .segmented-control-consumer-overrides {
+          display: grid;
+          gap: 8px;
+          padding: 6px;
+        }
+      `}</style>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const group = canvas.getByRole('radiogroup', { name: 'Appearance' });
+
+    await expect(group).toHaveStyle({
+      display: 'grid',
+      gap: '8px',
+      padding: '6px',
+    });
+
+    await userEvent.click(canvas.getByRole('radio', { name: 'Dark' }));
+
+    await expect(canvas.getByRole('radio', { name: 'Dark' })).toBeChecked();
+  },
+};
+
 export const IconOnly: Story = {
   args: {
     'aria-label': 'Start page',
