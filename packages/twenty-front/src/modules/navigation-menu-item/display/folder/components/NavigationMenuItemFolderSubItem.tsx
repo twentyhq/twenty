@@ -141,9 +141,14 @@ export const NavigationMenuItemFolderSubItem = ({
         })
       : undefined;
 
+  const agentChatChannelOpenCount =
+    agentChatChannelNavigationMenuItem?.summary?.openCount ?? 0;
+
   const secondaryLabel = isCoreWorkflowsIndexItem
     ? t`System`
-    : viewSecondaryLabel;
+    : agentChatChannelOpenCount > 0
+      ? `${agentChatChannelOpenCount}`
+      : viewSecondaryLabel;
 
   if (
     navigationMenuItem.type === NavigationMenuItemType.AGENT_CHAT_CHANNEL &&
@@ -160,9 +165,16 @@ export const NavigationMenuItemFolderSubItem = ({
         Icon={() => (
           <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
         )}
-        to={isDragging || isEditable ? undefined : computedLink}
+        to={
+          isDragging ||
+          isEditable ||
+          isDefined(agentChatChannelNavigationMenuItem)
+            ? undefined
+            : computedLink
+        }
         onClick={handleClick}
         active={isActive}
+        isUnread={agentChatChannelNavigationMenuItem?.summary?.hasUnreadOpen}
         isSelectedInEditMode={isEditHighlightedInNavigationMenu}
         subItemState={getNavigationSubItemLeftAdornment({
           index,
