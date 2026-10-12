@@ -181,6 +181,12 @@ export const createCoreWorkflowVersionStep = async ({
   parentStepConnectionOptions?: object;
   defaultSettings?: object;
 }): Promise<CoreWorkflowStep> => {
+  const { steps: previousSteps } = await findCoreWorkflowVersion({
+    coreWorkflowVersionId,
+    token,
+  });
+  const previousStepIds = new Set((previousSteps ?? []).map((step) => step.id));
+
   await coreWorkflowGraphqlRequest({
     query: `
       mutation CreateCoreWorkflowVersionStep(
@@ -209,7 +215,9 @@ export const createCoreWorkflowVersionStep = async ({
   });
 
   const createdStep = (steps ?? []).find((step) =>
-    rest.id !== undefined ? step.id === rest.id : step.type === stepType,
+    rest.id !== undefined
+      ? step.id === rest.id
+      : step.type === stepType && !previousStepIds.has(step.id),
   );
 
   if (createdStep === undefined) {
