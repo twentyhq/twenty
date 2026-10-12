@@ -34,12 +34,9 @@ const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
     FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
 };
 
-const NAVIGATION_HIDING_FEATURE_FLAG_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
-  Record<string, FeatureFlagKey>
-> = {
-  [STANDARD_OBJECTS.workflowVersion.universalIdentifier]:
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-};
+const HIDDEN_NAVIGATION_OBJECT_UNIVERSAL_IDENTIFIERS = new Set<string>([
+  STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+]);
 
 export const buildNavigationConditionalAvailabilityExpression = ({
   universalIdentifier,
@@ -48,19 +45,15 @@ export const buildNavigationConditionalAvailabilityExpression = ({
   universalIdentifier: string;
   nameSingular: string;
 }): string => {
+  if (HIDDEN_NAVIGATION_OBJECT_UNIVERSAL_IDENTIFIERS.has(universalIdentifier)) {
+    return 'false';
+  }
+
   const targetObjectReadPermissionExpression = `targetObjectReadPermissions.${nameSingular}`;
   const featureFlagGate =
     NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER[
       universalIdentifier
     ];
-  const hidingFeatureFlagGate =
-    NAVIGATION_HIDING_FEATURE_FLAG_BY_OBJECT_UNIVERSAL_IDENTIFIER[
-      universalIdentifier
-    ];
-
-  if (isDefined(hidingFeatureFlagGate)) {
-    return `not featureFlags.${hidingFeatureFlagGate} and ${targetObjectReadPermissionExpression}`;
-  }
 
   return isDefined(featureFlagGate)
     ? `featureFlags.${featureFlagGate} and ${targetObjectReadPermissionExpression}`
