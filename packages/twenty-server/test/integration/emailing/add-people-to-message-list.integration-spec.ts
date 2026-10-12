@@ -6,7 +6,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldActorSource } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -19,6 +19,7 @@ import { type AddPeopleToMessageListService } from 'src/modules/emailing/service
 const people = Array.from({ length: 1005 }, (_, index) => ({
   id: v4(),
   name: { firstName: `List ${index}`, lastName: v4() },
+  createdBy: { source: FieldActorSource.EMAIL },
 }));
 const personIds = people.map(({ id }) => id);
 const messageListIds: string[] = [];
