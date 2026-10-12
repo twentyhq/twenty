@@ -2194,6 +2194,7 @@ export interface Mutation {
     syncMarketplaceCatalog: Scalars['Boolean']
     trackAnalytics: Analytics
     transferApplicationRegistrationOwnership: ApplicationRegistration
+    triggerAddPeopleToMessageListJob: TriggerAddPeopleToMessageListJobResult
     triggerInstallApplication: TriggerInstallApplicationResult
     /** @deprecated Use triggerInstallApplication instead */
     triggerInstallApplicationJob: TriggerInstallApplicationJobResult
@@ -3262,6 +3263,11 @@ export interface ToolIndexEntry {
 export interface TransientToken {
     transientToken: AuthToken
     __typename: 'TransientToken'
+}
+
+export interface TriggerAddPeopleToMessageListJobResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerAddPeopleToMessageListJobResult'
 }
 
 export interface TriggerInstallApplicationJobResult {
@@ -6380,6 +6386,7 @@ export interface MutationGenqlSelection{
     syncMarketplaceCatalog?: boolean | number
     trackAnalytics?: (AnalyticsGenqlSelection & { __args: {event?: (Scalars['String'] | null), name?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null), type: AnalyticsType} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
+    triggerAddPeopleToMessageListJob?: (TriggerAddPeopleToMessageListJobResultGenqlSelection & { __args: {input: TriggerAddPeopleToMessageListJobInput} })
     triggerInstallApplication?: (TriggerInstallApplicationResultGenqlSelection & { __args: {input: TriggerInstallApplicationInput} })
     /** @deprecated Use triggerInstallApplication instead */
     triggerInstallApplicationJob?: (TriggerInstallApplicationJobResultGenqlSelection & { __args: {input: TriggerInstallApplicationJobInput} })
@@ -7550,6 +7557,14 @@ export interface ToolIndexEntryGenqlSelection{
 
 export interface TransientTokenGenqlSelection{
     transientToken?: AuthTokenGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TriggerAddPeopleToMessageListJobInput {messageListId: Scalars['UUID'],personFilter: Scalars['JSON']}
+
+export interface TriggerAddPeopleToMessageListJobResultGenqlSelection{
+    jobId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10643,6 +10658,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isTransientToken = (obj?: { __typename?: any } | null): obj is TransientToken => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTransientToken"')
       return TransientToken_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TriggerAddPeopleToMessageListJobResult_possibleTypes: string[] = ['TriggerAddPeopleToMessageListJobResult']
+    export const isTriggerAddPeopleToMessageListJobResult = (obj?: { __typename?: any } | null): obj is TriggerAddPeopleToMessageListJobResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerAddPeopleToMessageListJobResult"')
+      return TriggerAddPeopleToMessageListJobResult_possibleTypes.includes(obj.__typename)
     }
     
 

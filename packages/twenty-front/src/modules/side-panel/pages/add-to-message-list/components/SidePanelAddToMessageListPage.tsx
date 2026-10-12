@@ -10,7 +10,10 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useAddPeopleToMessageList } from '@/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList';
+import { addToMessageListPersonFilterComponentState } from '@/side-panel/pages/add-to-message-list/states/addToMessageListPersonFilterComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -28,6 +31,10 @@ const StyledContent = styled.div`
 `;
 
 export const SidePanelAddToMessageListPage = () => {
+  const addToMessageListPersonFilter = useAtomComponentStateValue(
+    addToMessageListPersonFilterComponentState,
+  );
+
   const [messageListId, setMessageListId] = useState<string | null>(null);
 
   const { t } = useLingui();
@@ -35,6 +42,12 @@ export const SidePanelAddToMessageListPage = () => {
 
   const { createOneRecord: createOneMessageList } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.MessageList,
+  });
+
+  const { addPeopleToMessageList, isAdding } = useAddPeopleToMessageList({
+    messageListId,
+    personFilter: addToMessageListPersonFilter,
+    onCompleted: closeSidePanelMenu,
   });
 
   const handleCreateMessageList = async (searchInput?: string) => {
@@ -55,6 +68,7 @@ export const SidePanelAddToMessageListPage = () => {
           onChange={setMessageListId}
           onClear={() => setMessageListId(null)}
           onCreate={handleCreateMessageList}
+          disabled={isAdding}
         />
       </StyledContent>
       <SidePanelFooter
@@ -69,7 +83,9 @@ export const SidePanelAddToMessageListPage = () => {
             key="add-to-list"
             size="sm"
             startIcon={<IconUserPlus />}
-            disabled={!isDefined(messageListId)}
+            loading={isAdding}
+            disabled={isAdding || !isDefined(messageListId)}
+            onClick={addPeopleToMessageList}
             variant="solid"
             color="accent"
           >{t`Add to List`}</Button>,
