@@ -4,7 +4,7 @@ import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic
 export type TeamsTranscriptHistoryRouteResult =
   | {
       success: true;
-      state: TeamsTranscriptHistoryState | null;
+      state: Omit<TeamsTranscriptHistoryState, 'nextJob'> | null;
       isStalled: boolean;
     }
   | { success: false; errorCode: TeamsTranscriptHistoryRouteErrorCode };

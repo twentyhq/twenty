@@ -31,7 +31,11 @@ export const startTeamsTranscriptHistoryImportFromCountOrThrow = async ({
     updatedAt: new Date().toISOString(),
   };
 
-  await scheduleTeamsTranscriptHistoryRunOrThrow({ connectedAccountId, state });
+  await scheduleTeamsTranscriptHistoryRunOrThrow({
+    connectedAccountId,
+    state,
+    stateOnScheduleFailure: countedState,
+  });
 
   return { success: true, state, isStalled: false };
 };

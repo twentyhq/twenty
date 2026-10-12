@@ -8,11 +8,13 @@ import { enqueueTeamsTranscriptHistoryJobOrThrow } from 'src/features/transcript
 export const scheduleTeamsTranscriptHistoryRunOrThrow = async ({
   connectedAccountId,
   state,
+  stateOnScheduleFailure,
 }: {
   connectedAccountId: string;
   state: TeamsTranscriptHistoryState & {
     phase: TeamsTranscriptHistoryRunningPhase;
   };
+  stateOnScheduleFailure: TeamsTranscriptHistoryState;
 }): Promise<void> => {
   const stateKvKey = buildTeamsTranscriptHistoryKvKey(connectedAccountId);
 
@@ -31,11 +33,10 @@ export const scheduleTeamsTranscriptHistoryRunOrThrow = async ({
       delayMilliseconds: 0,
     });
   } catch (error) {
-    await kv.set<TeamsTranscriptHistoryState>(stateKvKey, {
-      ...state,
-      phase: 'failed',
-      errorCode: 'unknown',
-    });
+    await kv.set<TeamsTranscriptHistoryState>(
+      stateKvKey,
+      stateOnScheduleFailure,
+    );
 
     throw error;
   }

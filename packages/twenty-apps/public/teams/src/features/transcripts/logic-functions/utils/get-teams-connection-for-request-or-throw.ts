@@ -10,9 +10,21 @@ import { TeamsConnectionUnavailableError } from 'src/features/transcripts/logic-
 
 export const getTeamsConnectionForRequestOrThrow = async (
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
+  {
+    isOwnConnectionRequired = false,
+  }: { isOwnConnectionRequired?: boolean } = {},
 ) => {
+  const connections = await listConnections({
+    providerName: TEAMS_PROVIDER_NAME,
+  });
   const connection = findConnectionForRequest(
-    await listConnections({ providerName: TEAMS_PROVIDER_NAME }),
+    isOwnConnectionRequired
+      ? connections.filter(
+          (connection) =>
+            isDefined(context.userWorkspaceId) &&
+            connection.userWorkspaceId === context.userWorkspaceId,
+        )
+      : connections,
     context,
   );
 
