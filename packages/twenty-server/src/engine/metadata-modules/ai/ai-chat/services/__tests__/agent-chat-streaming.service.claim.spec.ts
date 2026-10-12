@@ -153,10 +153,6 @@ describe('AgentChatStreamingService claim & reap', () => {
       } as never,
       { withThreadLockForMessage: jest.fn(({ work }) => work()) } as never,
       threadLifecycleService as never,
-      {
-        remember: jest.fn(),
-        recall: jest.fn().mockResolvedValue(null),
-      } as never,
     );
 
     return {

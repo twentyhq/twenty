@@ -132,7 +132,6 @@ const buildResolver = () => {
         },
       }),
     } as never,
-    { remember: jest.fn() } as never,
   );
   return {
     resolver,

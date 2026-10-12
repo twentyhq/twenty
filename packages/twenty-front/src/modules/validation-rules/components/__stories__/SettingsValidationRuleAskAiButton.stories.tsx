@@ -1,12 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { expect, waitFor, within } from 'storybook/test';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SettingsValidationRuleAskAiButton } from '@/validation-rules/components/SettingsValidationRuleAskAiButton';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
 const AskAiButtonStory = ({
@@ -17,9 +17,10 @@ const AskAiButtonStory = ({
   useEffect(() => {
     jotaiStore.set(currentUserWorkspaceState.atom, {
       permissionFlags: hasAiPermission ? [PermissionFlagType.AI] : [],
-      twoFactorAuthenticationMethodSummary: null,
       objectsPermissions: [],
-    } as never);
+      isImpersonating: false,
+      twoFactorAuthenticationMethodSummary: null,
+    });
   }, [hasAiPermission]);
 
   return <SettingsValidationRuleAskAiButton />;

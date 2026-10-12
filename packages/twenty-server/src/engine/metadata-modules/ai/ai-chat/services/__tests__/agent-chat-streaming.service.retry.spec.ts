@@ -77,10 +77,6 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     };
 
     const metricsService = { incrementCounterBy: jest.fn() };
-    const browsingContextService = {
-      remember: jest.fn(),
-      recall: jest.fn().mockResolvedValue(null),
-    };
 
     const eventPublisherService = {
       publish: jest.fn(),
@@ -112,12 +108,10 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       {} as never,
       {} as never,
       {} as never,
-      browsingContextService as never,
     );
 
     return {
       service,
-      browsingContextService,
       claimQuery,
       turnRecorderService,
       threadRepository,
@@ -226,36 +220,6 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     });
     expect(result.messageId).toBe('user-message-id');
     expect(result.turnId).toBe('turn-id');
-  });
-
-  it('retries from the page the person sent the message from', async () => {
-    const browsingContext = {
-      type: 'settingsPage',
-      path: '/settings/objects/companies/validation-rules/rule-1',
-    };
-    const { service, messageQueueService, browsingContextService } =
-      buildService({
-        threadMessages: [
-          {
-            ...userMessageEntity,
-            id: 'earlier-message-id',
-          } as unknown as AgentMessageWorkspaceEntity,
-          userMessageEntity,
-        ],
-      });
-
-    browsingContextService.recall.mockResolvedValue(browsingContext);
-
-    await service.retryLastFailedTurn(retryArguments);
-
-    expect(browsingContextService.recall).toHaveBeenCalledWith({
-      threadId: 'thread-id',
-      messageIds: ['user-message-id', 'earlier-message-id'],
-    });
-    expect(messageQueueService.add).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({ browsingContext }),
-    );
   });
 
   it('retries a turn the agent opened, which has no user message', async () => {
