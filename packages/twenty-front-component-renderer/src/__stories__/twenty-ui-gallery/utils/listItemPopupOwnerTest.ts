@@ -22,7 +22,7 @@ export const listItemPopupOwnerTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(() => expect(item).toBeVisible());
   expect(item.tagName).toBe('BUTTON');
   expect(item).toHaveAttribute('data-ref-tag', 'HTML-BUTTON');
-  expect(disabledItem).toHaveAttribute('aria-disabled', 'true');
+  expect(disabledItem).toBeDisabled();
   await userEvent.click(disabledItem);
   expect(canvas.getByLabelText('Popup activations')).toHaveTextContent('0');
   await userEvent.click(item);
