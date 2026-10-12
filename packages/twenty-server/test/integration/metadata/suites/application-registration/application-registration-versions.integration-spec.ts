@@ -104,7 +104,7 @@ describe('Application registration versions', () => {
     for (const version of versions) {
       expect(version).toMatchObject({
         applicationRegistrationId,
-        sourceType: 'tarball',
+        sourceType: 'TARBALL',
         sourcePackage: null,
         artifactUrl: null,
         checksum: computeSriIntegrity(tarballByVersion[version.version]),
