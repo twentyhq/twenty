@@ -355,10 +355,13 @@ export class ApplicationRegistrationService {
     });
 
     return {
-      registrations: sortedRegistrations.slice(
-        safeOffset,
-        safeOffset + safeLimit,
-      ),
+      registrations: sortedRegistrations
+        .slice(safeOffset, safeOffset + safeLimit)
+        .map((registration) => ({
+          ...registration,
+          isConfigured:
+            isConfiguredByRegistrationId.get(registration.id) ?? false,
+        })),
       totalCount: sortedRegistrations.length,
       hasMore: safeOffset + safeLimit < sortedRegistrations.length,
     };
