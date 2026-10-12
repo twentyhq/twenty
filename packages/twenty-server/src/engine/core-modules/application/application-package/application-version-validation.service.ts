@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import semver from 'semver';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { isDefined } from 'twenty-shared/utils';
@@ -177,7 +177,14 @@ export class ApplicationVersionValidationService {
   private isRequiredServerVersionDeclared(
     requiredServerVersion: string | undefined,
   ): requiredServerVersion is string {
-    return isNonEmptyString(requiredServerVersion?.trim());
+    if (!isDefined(requiredServerVersion)) {
+      return false;
+    }
+
+    return (
+      !isString(requiredServerVersion) ||
+      isNonEmptyString(requiredServerVersion.trim())
+    );
   }
 
   private validateVersionAgainstRange({

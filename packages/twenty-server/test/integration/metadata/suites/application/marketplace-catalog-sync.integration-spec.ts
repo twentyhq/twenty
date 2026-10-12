@@ -91,6 +91,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
     const serverCompatibleUid = crypto.randomUUID();
     const serverIncompatibleUid = crypto.randomUUID();
     const blankServerRangeUid = crypto.randomUUID();
+    const nonStringServerRangeUid = crypto.randomUUID();
 
     // Insert all data before queries so the in-memory cache is populated once
     // with complete data rather than being stale for later tests.
@@ -162,6 +163,15 @@ describe('Marketplace Catalog Sync (integration)', () => {
           application: { requiredServerVersionRange: ' ' },
         },
       });
+
+      await insertCatalogRegistration({
+        universalIdentifier: nonStringServerRangeUid,
+        name: 'Non String Server Range App',
+        sourcePackage: '@test/non-string-server-range-app',
+        manifest: {
+          application: { requiredServerVersionRange: 2 },
+        },
+      });
     });
 
     it('should return npm-sourced registrations from the database', async () => {
@@ -207,6 +217,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
       expect(appIds).toContain(serverCompatibleUid);
       expect(appIds).not.toContain(serverIncompatibleUid);
+      expect(appIds).not.toContain(nonStringServerRangeUid);
     });
 
     it('should list apps that declare no required server version', async () => {
