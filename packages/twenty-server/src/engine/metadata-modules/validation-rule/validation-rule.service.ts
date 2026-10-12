@@ -4,8 +4,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { fromCreateValidationRuleInputToFlatValidationRuleToCreate } from 'src/engine/metadata-modules/flat-validation-rule/utils/from-create-validation-rule-input-to-flat-validation-rule-to-create.util';
 import { fromFlatValidationRuleToValidationRuleDto } from 'src/engine/metadata-modules/flat-validation-rule/utils/from-flat-validation-rule-to-validation-rule-dto.util';
@@ -121,6 +124,42 @@ export class ValidationRuleService {
     return { existingFlatValidationRule, flatMaps };
   }
 
+  private getUpdatedBindings({
+    existingFlatValidationRule,
+    update,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    existingFlatValidationRule: FlatValidationRule;
+    update: UpdateValidationRuleInput['update'];
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }): FlatValidationRule['bindings'] {
+    const expression =
+      update.expression ?? existingFlatValidationRule.expression;
+    const isActive = update.isActive ?? existingFlatValidationRule.isActive;
+    const isExpressionChanged =
+      expression !== existingFlatValidationRule.expression;
+
+    if (
+      isActive &&
+      (isExpressionChanged || !existingFlatValidationRule.isActive)
+    ) {
+      return compileValidationRuleExpressionOrThrow({
+        expression,
+        objectMetadataId: existingFlatValidationRule.objectMetadataId,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+    }
+
+    if (isExpressionChanged) {
+      return {};
+    }
+
+    return existingFlatValidationRule.bindings;
+  }
+
   async findByObjectMetadataId({
     objectMetadataId,
     workspaceId,
@@ -231,25 +270,12 @@ export class ValidationRuleService {
       workspaceId,
     });
 
-    const expression =
-      input.update.expression ?? existingFlatValidationRule.expression;
-    const isActive =
-      input.update.isActive ?? existingFlatValidationRule.isActive;
-    const isExpressionChanged =
-      expression !== existingFlatValidationRule.expression;
-    const shouldCompile =
-      isActive && (isExpressionChanged || !existingFlatValidationRule.isActive);
-
-    const bindings = shouldCompile
-      ? compileValidationRuleExpressionOrThrow({
-          expression,
-          objectMetadataId: existingFlatValidationRule.objectMetadataId,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        })
-      : isExpressionChanged
-        ? {}
-        : existingFlatValidationRule.bindings;
+    const bindings = this.getUpdatedBindings({
+      existingFlatValidationRule,
+      update: input.update,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     const flatValidationRuleToUpdate =
       fromUpdateValidationRuleInputToFlatValidationRuleToUpdate({
