@@ -59,58 +59,69 @@ const listAllNodesOrThrow = async <TNode>({
   ];
 };
 
-const listCalendarChannelEventAssociationsOrThrow = async ({
+const listAllNodesInBatchesOrThrow = async <TNode>({
+  coreApiClient,
+  objectName,
+  values,
+  buildFilter,
+  node,
+}: {
+  coreApiClient: Pick<CoreApiClient, 'query'>;
+  objectName: 'calendarChannelEventAssociations' | 'calendarEvents';
+  values: string[];
+  buildFilter: (batch: string[]) => Record<string, unknown>;
+  node: Record<keyof TNode, true>;
+}): Promise<TNode[]> => {
+  const nodes: TNode[] = [];
+
+  for (const batch of chunkIntoBatches(values, TWENTY_QUERY_MAX_RECORDS)) {
+    nodes.push(
+      ...(await listAllNodesOrThrow<TNode>({
+        coreApiClient,
+        objectName,
+        filter: buildFilter(batch),
+        node,
+      })),
+    );
+  }
+
+  return nodes;
+};
+
+const listCalendarChannelEventAssociationsOrThrow = ({
   coreApiClient,
   eventExternalIds,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
   eventExternalIds: string[];
-}): Promise<CalendarChannelEventAssociation[]> => {
-  const calendarChannelEventAssociations: CalendarChannelEventAssociation[] =
-    [];
+}): Promise<CalendarChannelEventAssociation[]> =>
+  listAllNodesInBatchesOrThrow<CalendarChannelEventAssociation>({
+    coreApiClient,
+    objectName: 'calendarChannelEventAssociations',
+    values: eventExternalIds,
+    buildFilter: (eventExternalIdBatch) => ({
+      eventExternalId: { in: eventExternalIdBatch },
+    }),
+    node: { eventExternalId: true, calendarEventId: true },
+  });
 
-  for (const eventExternalIdBatch of chunkIntoBatches(
-    eventExternalIds,
-    TWENTY_QUERY_MAX_RECORDS,
-  )) {
-    calendarChannelEventAssociations.push(
-      ...(await listAllNodesOrThrow<CalendarChannelEventAssociation>({
-        coreApiClient,
-        objectName: 'calendarChannelEventAssociations',
-        filter: { eventExternalId: { in: eventExternalIdBatch } },
-        node: { eventExternalId: true, calendarEventId: true },
-      })),
-    );
-  }
-
-  return calendarChannelEventAssociations;
-};
-
-const listCalendarEventsByICalUidOrThrow = async ({
+const listCalendarEventsByICalUidOrThrow = ({
   coreApiClient,
   iCalUIds,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
   iCalUIds: string[];
-}): Promise<CalendarEvent[]> => {
-  const calendarEvents: CalendarEvent[] = [];
-
-  for (const iCalUIdBatch of chunkIntoBatches(
-    iCalUIds,
-    TWENTY_QUERY_MAX_RECORDS,
-  )) {
-    calendarEvents.push(
-      ...(await listAllNodesOrThrow<CalendarEvent>({
-        coreApiClient,
-        objectName: 'calendarEvents',
-        filter: { iCalUid: { in: iCalUIdBatch }, isCanceled: { eq: false } },
-        node: { id: true, iCalUid: true },
-      })),
-    );
-  }
-
-  return calendarEvents;
-};
+}): Promise<CalendarEvent[]> =>
+  listAllNodesInBatchesOrThrow<CalendarEvent>({
+    coreApiClient,
+    objectName: 'calendarEvents',
+    values: iCalUIds,
+    buildFilter: (iCalUIdBatch) => ({
+      iCalUid: { in: iCalUIdBatch },
+      isCanceled: { eq: false },
+    }),
+    node: { id: true, iCalUid: true },
+  });
 
 const addMissingICalUIdsOrThrow = async ({
   accessToken,

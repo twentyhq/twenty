@@ -84,7 +84,7 @@ export const teamsListOrganizerTranscriptsHandler = async (
       accessToken: connection.accessToken,
       url: calendarPageUrl,
     });
-    const transcripts = await listTeamsOccurrenceTranscripts({
+    const { transcripts } = await listTeamsOccurrenceTranscripts({
       accessToken: connection.accessToken,
       occurrences: page.occurrences,
     });
