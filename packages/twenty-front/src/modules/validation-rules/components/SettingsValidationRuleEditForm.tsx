@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
@@ -22,8 +23,6 @@ import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/bu
 import { getValidationRuleFormValues } from '@/validation-rules/utils/getValidationRuleFormValues';
 import { getValidationRuleSaveErrorMessage } from '@/validation-rules/utils/getValidationRuleSaveErrorMessage';
 import { isValidationRuleFormSubmittable } from '@/validation-rules/utils/isValidationRuleFormSubmittable';
-import { mergeServerValidationRuleFormValues } from '@/validation-rules/utils/mergeServerValidationRuleFormValues';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const DELETE_VALIDATION_RULE_MODAL_ID = 'validation-rule-edit-delete';
 
@@ -51,30 +50,33 @@ export const SettingsValidationRuleEditForm = ({
   const { updateValidationRule, deleteValidationRule, isSaving, isDeleting } =
     useValidationRuleMutations({ objectMetadataId: objectMetadataItem.id });
 
-  const [values, setValues] = useState<ValidationRuleFormValues>(() =>
-    getValidationRuleFormValues(validationRule),
-  );
-  const [serverFormValues, setServerFormValues] =
-    useState<ValidationRuleFormValues>(() =>
-      getValidationRuleFormValues(validationRule),
-    );
-  const [formKey, setFormKey] = useState(0);
+  const [editedValues, setEditedValues] = useState<
+    Partial<ValidationRuleFormValues>
+  >({});
+  const [formKey, setFormKey] = useState(validationRule.expression);
 
-  const nextServerFormValues = getValidationRuleFormValues(validationRule);
+  const values: ValidationRuleFormValues = {
+    ...getValidationRuleFormValues(validationRule),
+    ...editedValues,
+  };
 
-  if (!isDeeplyEqual(nextServerFormValues, serverFormValues)) {
-    setServerFormValues(nextServerFormValues);
-    setValues((currentValues) =>
-      mergeServerValidationRuleFormValues({
-        formValues: currentValues,
-        previousServerFormValues: serverFormValues,
-        nextServerFormValues,
-      }),
-    );
-    if (nextServerFormValues.expression !== serverFormValues.expression) {
-      setFormKey((previousFormKey) => previousFormKey + 1);
-    }
+  if (
+    !isDefined(editedValues.expression) &&
+    formKey !== validationRule.expression
+  ) {
+    setFormKey(validationRule.expression);
   }
+
+  const handleChange = (nextValues: ValidationRuleFormValues) =>
+    setEditedValues((previousEditedValues) =>
+      typedObjectEntries(nextValues).reduce<Partial<ValidationRuleFormValues>>(
+        (nextEditedValues, [fieldName, value]) =>
+          value === values[fieldName]
+            ? nextEditedValues
+            : { ...nextEditedValues, [fieldName]: value },
+        previousEditedValues,
+      ),
+    );
 
   const fields = buildValidationRuleFieldDescriptors({
     objectMetadataItem,
@@ -166,7 +168,7 @@ export const SettingsValidationRuleEditForm = ({
         fields={fields}
         editorFields={editorFields}
         values={values}
-        onChange={setValues}
+        onChange={handleChange}
       />
       <Section.Root>
         <Section.Header

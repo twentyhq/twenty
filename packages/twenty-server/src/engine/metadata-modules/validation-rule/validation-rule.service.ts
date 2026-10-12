@@ -8,11 +8,8 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { fromCreateValidationRuleInputToFlatValidationRuleToCreate } from 'src/engine/metadata-modules/flat-validation-rule/utils/from-create-validation-rule-input-to-flat-validation-rule-to-create.util';
 import { fromFlatValidationRuleToValidationRuleDto } from 'src/engine/metadata-modules/flat-validation-rule/utils/from-flat-validation-rule-to-validation-rule-dto.util';
@@ -21,6 +18,7 @@ import { type CreateValidationRuleInput } from 'src/engine/metadata-modules/vali
 import { type UpdateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/update-validation-rule.input';
 import { type ValidationRuleDTO } from 'src/engine/metadata-modules/validation-rule/dtos/validation-rule.dto';
 import { compileValidationRuleExpressionOrThrow } from 'src/engine/metadata-modules/validation-rule/utils/compile-validation-rule-expression-or-throw.util';
+import { computeValidationRuleBindings } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-bindings.util';
 import {
   ValidationRuleException,
   ValidationRuleExceptionCode,
@@ -147,42 +145,6 @@ export class ValidationRuleService {
     return { existingFlatValidationRule, flatMaps };
   }
 
-  private getUpdatedBindings({
-    existingFlatValidationRule,
-    update,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-  }: {
-    existingFlatValidationRule: FlatValidationRule;
-    update: UpdateValidationRuleInput['update'];
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  }): FlatValidationRule['bindings'] {
-    const expression =
-      update.expression ?? existingFlatValidationRule.expression;
-    const isActive = update.isActive ?? existingFlatValidationRule.isActive;
-    const isExpressionChanged =
-      expression !== existingFlatValidationRule.expression;
-
-    if (
-      isActive &&
-      (isExpressionChanged || !existingFlatValidationRule.isActive)
-    ) {
-      return compileValidationRuleExpressionOrThrow({
-        expression,
-        objectMetadataId: existingFlatValidationRule.objectMetadataId,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      });
-    }
-
-    if (isExpressionChanged) {
-      return {};
-    }
-
-    return existingFlatValidationRule.bindings;
-  }
-
   async findByObjectMetadataId({
     objectMetadataId,
     workspaceId,
@@ -249,15 +211,13 @@ export class ValidationRuleService {
         { workspaceId },
       );
 
-    const bindings =
-      (input.isActive ?? true)
-        ? compileValidationRuleExpressionOrThrow({
-            expression: input.expression,
-            objectMetadataId: input.objectMetadataId,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-          })
-        : {};
+    const bindings = computeValidationRuleBindings({
+      expression: input.expression,
+      isActive: input.isActive ?? true,
+      objectMetadataId: input.objectMetadataId,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     const flatValidationRuleToCreate =
       fromCreateValidationRuleInputToFlatValidationRuleToCreate({
@@ -303,9 +263,12 @@ export class ValidationRuleService {
       workspaceId,
     });
 
-    const bindings = this.getUpdatedBindings({
+    const bindings = computeValidationRuleBindings({
+      expression:
+        input.update.expression ?? existingFlatValidationRule.expression,
+      isActive: input.update.isActive ?? existingFlatValidationRule.isActive,
+      objectMetadataId: existingFlatValidationRule.objectMetadataId,
       existingFlatValidationRule,
-      update: input.update,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
