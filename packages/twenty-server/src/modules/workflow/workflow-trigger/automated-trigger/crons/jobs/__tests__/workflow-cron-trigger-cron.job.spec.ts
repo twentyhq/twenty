@@ -1,13 +1,11 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
@@ -21,10 +19,6 @@ const WORKSPACE_3 = '20202020-0000-0000-0000-000000000003';
 
 const mockWorkspaceRepository = {
   find: jest.fn(),
-};
-
-const mockApplicationRepository = {
-  findOne: jest.fn(),
 };
 
 const mockMessageQueueService = {
@@ -57,6 +51,40 @@ const mockWorkflowVersionCoreSyncService = {
   findCoreVersionById: jest.fn(),
 };
 
+const buildCronTrigger = (index: number) => ({
+  workflowId: `workflow-${index}`,
+  coreWorkflowVersionId: `core-version-${index}`,
+  workspaceWorkflowVersionId: `workspace-version-${index}`,
+  type: 'CRON',
+  settings: { pattern: '* * * * *' },
+});
+
+const mockWorkspaceCaches = (
+  triggersByWorkspaceId: Record<string, Record<string, unknown> | Error>,
+  applicationVersion: string | null = '1.0.1',
+) =>
+  mockWorkspaceCacheService.getOrRecompute.mockImplementation((async (
+    workspaceId: string,
+    keys: string[],
+  ) => {
+    if (keys.includes('flatApplicationMaps')) {
+      return {
+        flatApplicationMaps: {
+          byId: { 'application-id': { version: applicationVersion } },
+          idByUniversalIdentifier: {},
+        },
+      };
+    }
+
+    const triggers = triggersByWorkspaceId[workspaceId];
+
+    if (triggers instanceof Error) {
+      throw triggers;
+    }
+
+    return { workflowAutomatedTriggerMaps: { byWorkflowId: triggers ?? {} } };
+  }) as never);
+
 describe('WorkflowCronTriggerCronJob', () => {
   let job: WorkflowCronTriggerCronJob;
 
@@ -65,10 +93,11 @@ describe('WorkflowCronTriggerCronJob', () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-04-02T15:00:30.000Z'));
     mockCronTriggerDeduplicationService.shouldDispatch.mockResolvedValue(true);
-    mockApplicationRepository.findOne.mockResolvedValue({ version: '1.0.1' });
+    mockWorkspaceCaches({});
     mockWorkflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId.mockImplementation(
       async (_workspaceId: string, workflowId: string) => ({
         id: workflowId,
+        applicationId: 'application-id',
         workspaceWorkflowId: workflowId,
         lastPublishedCoreWorkflowVersionId: workflowId.replace(
           'workflow-',
@@ -100,10 +129,6 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           provide: getRepositoryToken(WorkspaceEntity),
           useValue: mockWorkspaceRepository,
-        },
-        {
-          provide: getWorkspaceScopedRepositoryToken(ApplicationEntity),
-          useValue: mockApplicationRepository,
         },
         {
           provide: 'MESSAGE_QUEUE_workflow-queue',
@@ -212,7 +237,7 @@ describe('WorkflowCronTriggerCronJob', () => {
     });
 
     it('should not enqueue jobs while the application of the workflow is still installing', async () => {
-      mockApplicationRepository.findOne.mockResolvedValue({ version: null });
+      mockWorkspaceCaches({}, null);
       mockCacheStorageService.hashGetValues.mockResolvedValue([
         JSON.stringify({
           workspaceId: WORKSPACE_1,
@@ -286,10 +311,6 @@ describe('WorkflowCronTriggerCronJob', () => {
         { id: WORKSPACE_2 },
         { id: WORKSPACE_3 },
       ]);
-      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
-        workflowAutomatedTriggerMaps: { byWorkflowId: {} },
-      } as never);
-
       await job.handle();
 
       expect(mockWorkspaceRepository.find).toHaveBeenCalled();
@@ -304,36 +325,14 @@ describe('WorkflowCronTriggerCronJob', () => {
         { id: WORKSPACE_3 },
       ]);
 
-      mockWorkspaceCacheService.getOrRecompute
-        .mockResolvedValueOnce({
-          workflowAutomatedTriggerMaps: {
-            byWorkflowId: {
-              'workflow-1': {
-                workflowId: 'workflow-1',
-                coreWorkflowVersionId: 'core-version-1',
-                workspaceWorkflowVersionId: 'workspace-version-1',
-                type: 'CRON',
-                settings: { pattern: '* * * * *' },
-              },
-            },
-          },
-        } as never)
-        .mockResolvedValueOnce({
-          workflowAutomatedTriggerMaps: { byWorkflowId: {} },
-        } as never)
-        .mockResolvedValueOnce({
-          workflowAutomatedTriggerMaps: {
-            byWorkflowId: {
-              'workflow-2': {
-                workflowId: 'workflow-2',
-                coreWorkflowVersionId: 'core-version-2',
-                workspaceWorkflowVersionId: 'workspace-version-2',
-                type: 'CRON',
-                settings: { pattern: '* * * * *' },
-              },
-            },
-          },
-        } as never);
+      mockWorkspaceCaches({
+        [WORKSPACE_1]: {
+          'workflow-1': buildCronTrigger(1),
+        },
+        [WORKSPACE_3]: {
+          'workflow-2': buildCronTrigger(2),
+        },
+      });
 
       await job.handle();
 
@@ -380,22 +379,16 @@ describe('WorkflowCronTriggerCronJob', () => {
     });
 
     it('should keep a workflow cached without dispatching it while its application is still installing', async () => {
-      mockApplicationRepository.findOne.mockResolvedValue({ version: null });
       mockCacheStorageService.hashGetValues.mockResolvedValue([]);
       mockWorkspaceRepository.find.mockResolvedValue([{ id: WORKSPACE_1 }]);
-      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
-        workflowAutomatedTriggerMaps: {
-          byWorkflowId: {
-            'workflow-1': {
-              workflowId: 'workflow-1',
-              coreWorkflowVersionId: 'core-version-1',
-              workspaceWorkflowVersionId: 'workspace-version-1',
-              type: 'CRON',
-              settings: { pattern: '* * * * *' },
-            },
+      mockWorkspaceCaches(
+        {
+          [WORKSPACE_1]: {
+            'workflow-1': buildCronTrigger(1),
           },
         },
-      } as never);
+        null,
+      );
 
       await job.handle();
 
@@ -457,21 +450,12 @@ describe('WorkflowCronTriggerCronJob', () => {
         { id: WORKSPACE_1 },
         { id: WORKSPACE_2 },
       ]);
-      mockWorkspaceCacheService.getOrRecompute
-        .mockRejectedValueOnce(new Error('Cache unavailable'))
-        .mockResolvedValueOnce({
-          workflowAutomatedTriggerMaps: {
-            byWorkflowId: {
-              'workflow-1': {
-                workflowId: 'workflow-1',
-                coreWorkflowVersionId: 'core-version-1',
-                workspaceWorkflowVersionId: 'workspace-version-1',
-                type: 'CRON',
-                settings: { pattern: '* * * * *' },
-              },
-            },
-          },
-        } as never);
+      mockWorkspaceCaches({
+        [WORKSPACE_1]: new Error('Cache unavailable'),
+        [WORKSPACE_2]: {
+          'workflow-1': buildCronTrigger(1),
+        },
+      });
 
       await job.handle();
 
