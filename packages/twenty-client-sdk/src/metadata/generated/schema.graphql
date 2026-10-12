@@ -340,6 +340,7 @@ type Application {
   availablePackages: JSON!
   canBeUninstalled: Boolean!
   commandMenuItems: [CommandMenuItem!]!
+  createdAt: DateTime!
   defaultLogicFunctionRole: Role
   defaultRoleId: String
   description: String
