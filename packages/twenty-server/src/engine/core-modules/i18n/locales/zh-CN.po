@@ -12518,6 +12518,11 @@ msgstr "工作流记录选择器必须引用一个对象。"
 msgid "The workflow references metadata that is not available to this application."
 msgstr "工作流引用了此应用程序不可用的元数据。"
 
+#. js-lingui-id: W+A2pa
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
+msgid "The workflow schedule is invalid."
+msgstr "工作流计划无效。"
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
