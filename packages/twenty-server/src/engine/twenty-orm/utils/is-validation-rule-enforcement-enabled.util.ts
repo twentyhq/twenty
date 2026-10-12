@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
