@@ -1,8 +1,8 @@
-import { useRelationRecordsTotalCount } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useRelationRecordsTotalCount';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldWidgetRelationRecordsCard } from '@/page-layout/widgets/field/components/FieldWidgetRelationRecordsCard';
+import { useFieldWidgetRelationRecordsTotalCount } from '@/page-layout/widgets/field/hooks/useFieldWidgetRelationRecordsTotalCount';
 import { useFieldWidgetRelationSeeAllHref } from '@/page-layout/widgets/field/hooks/useFieldWidgetRelationSeeAllHref';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,10 +23,12 @@ export const FieldWidgetRelationCard = ({
 
   const targetRecord = useTargetRecord();
 
-  const { relationRecordsTotalCount } = useRelationRecordsTotalCount({
-    recordId: targetRecord.id,
-    relationFieldMetadata: fieldDefinition.metadata,
-  });
+  const { relationRecordsTotalCount } = useFieldWidgetRelationRecordsTotalCount(
+    {
+      recordId: targetRecord.id,
+      relationFieldMetadata: fieldDefinition.metadata,
+    },
+  );
 
   const { seeAllHref } = useFieldWidgetRelationSeeAllHref({
     recordId: targetRecord.id,

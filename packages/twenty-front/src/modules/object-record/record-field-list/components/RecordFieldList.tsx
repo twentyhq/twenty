@@ -9,8 +9,6 @@ import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-
 import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection';
-import { RecordDetailMorphRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSection';
-import { RecordDetailRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -22,7 +20,6 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type RecordFieldListProps = {
   instanceId: string;
@@ -72,13 +69,12 @@ export const RecordFieldList = ({
     setRecordFieldListHoverPosition(index);
   };
 
-  const { inlineFieldMetadataItems, boxedRelationFieldMetadataItems } =
-    useFieldListFieldMetadataItems({
-      objectNameSingular,
-      excludeFieldMetadataIds,
-      showRelationSections,
-      excludeCreatedAtAndUpdatedAt,
-    });
+  const { inlineFieldMetadataItems } = useFieldListFieldMetadataItems({
+    objectNameSingular,
+    excludeFieldMetadataIds,
+    showRelationSections,
+    excludeCreatedAtAndUpdatedAt,
+  });
 
   return (
     <FieldDescriptionTooltipProvider>
@@ -152,46 +148,6 @@ export const RecordFieldList = ({
             objectNameSingular={objectNameSingular}
           />
         )}
-        {boxedRelationFieldMetadataItems
-          .filter(
-            (fieldMetadataItem) =>
-              fieldMetadataItem.type === FieldMetadataType.RELATION ||
-              fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION,
-          )
-          .map((fieldMetadataItem, index) => {
-            const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
-              field: fieldMetadataItem,
-              position: index,
-              objectMetadataItem,
-            });
-
-            return (
-              <FieldContext.Provider
-                key={objectRecordId + fieldMetadataItem.id}
-                value={{
-                  recordId: objectRecordId,
-                  isLabelIdentifier: false,
-                  fieldDefinition,
-                  useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isDisplayModeFixHeight: true,
-                  isRecordFieldReadOnly: isRecordFieldReadOnly({
-                    isRecordReadOnly,
-                    objectMetadataId: objectMetadataItem.id,
-                    fieldMetadataItem,
-                    fieldDefinition,
-                    objectPermissionsByObjectMetadataId,
-                  }),
-                }}
-              >
-                {fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION ? (
-                  <RecordDetailMorphRelationSection loading={recordLoading} />
-                ) : (
-                  <RecordDetailRelationSection loading={recordLoading} />
-                )}
-              </FieldContext.Provider>
-            );
-          })}
-
         <RecordFieldListCellHoveredPortal
           objectMetadataItem={objectMetadataItem}
           recordId={objectRecordId}

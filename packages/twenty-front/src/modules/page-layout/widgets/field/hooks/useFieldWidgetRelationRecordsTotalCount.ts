@@ -13,15 +13,15 @@ import {
 } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
-type UseRelationRecordsTotalCountParams = {
+type UseFieldWidgetRelationRecordsTotalCountParams = {
   recordId: string;
   relationFieldMetadata: FieldRelationMetadata;
 };
 
-export const useRelationRecordsTotalCount = ({
+export const useFieldWidgetRelationRecordsTotalCount = ({
   recordId,
   relationFieldMetadata,
-}: UseRelationRecordsTotalCountParams) => {
+}: UseFieldWidgetRelationRecordsTotalCountParams) => {
   const {
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
