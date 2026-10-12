@@ -29,6 +29,7 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'icon',
   'canUpdateAllSettings',
   'canAccessAllTools',
+  'canAccessAllAgentChatChannels',
   'canReadAllObjectRecords',
   'canUpdateAllObjectRecords',
   'canSoftDeleteAllObjectRecords',
@@ -137,6 +138,8 @@ export const useSaveDraftRoleToDB = ({
           icon: settingsDraftRole.icon,
           canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
           canAccessAllTools: settingsDraftRole.canAccessAllTools,
+          canAccessAllAgentChatChannels:
+            settingsDraftRole.canAccessAllAgentChatChannels,
           canReadAllObjectRecords: settingsDraftRole.canReadAllObjectRecords,
           canUpdateAllObjectRecords:
             settingsDraftRole.canUpdateAllObjectRecords,
@@ -191,6 +194,8 @@ export const useSaveDraftRoleToDB = ({
               icon: settingsDraftRole.icon,
               canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
               canAccessAllTools: settingsDraftRole.canAccessAllTools,
+              canAccessAllAgentChatChannels:
+                settingsDraftRole.canAccessAllAgentChatChannels,
               canReadAllObjectRecords:
                 settingsDraftRole.canReadAllObjectRecords,
               canUpdateAllObjectRecords:

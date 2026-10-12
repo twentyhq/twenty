@@ -175,7 +175,6 @@ describe('NavigationDrawerAiChatContent', () => {
         icon: null,
         color: null,
         position: 1,
-        isOpenToEveryone: true,
         roleIds: [],
         isCustom: true,
         isAccessible: true,

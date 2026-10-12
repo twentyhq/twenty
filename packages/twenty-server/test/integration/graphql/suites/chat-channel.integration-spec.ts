@@ -8,8 +8,10 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { findNavigationMenuItems } from 'test/integration/metadata/suites/navigation-menu-item/utils/find-navigation-menu-items.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
@@ -27,7 +29,7 @@ const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const { JANE, JONY } = WORKSPACE_MEMBER_DATA_SEED_IDS;
 
-type ChannelAccess = { isOpenToEveryone?: boolean; roleIds?: string[] };
+type ChannelAccess = { roleIds?: string[] };
 
 type ChannelThreadsFilter = {
   status?: 'OPEN' | 'SNOOZED' | 'DONE';
@@ -42,11 +44,11 @@ type InboxAction =
   | 'SUBSCRIBE';
 
 const CREATE_CHANNEL = parse(
-  `mutation CreateChannel($input: CreateAgentChatChannelInput!) { createAgentChatChannel(input: $input) { id name icon color isOpenToEveryone roleIds isCustom } }`,
+  `mutation CreateChannel($input: CreateAgentChatChannelInput!) { createAgentChatChannel(input: $input) { id name icon color roleIds isCustom } }`,
 );
 
 const UPDATE_CHANNEL = parse(
-  `mutation UpdateChannel($channelId: UUID!, $input: UpdateAgentChatChannelInput!) { updateAgentChatChannel(channelId: $channelId, input: $input) { id name isOpenToEveryone roleIds } }`,
+  `mutation UpdateChannel($channelId: UUID!, $input: UpdateAgentChatChannelInput!) { updateAgentChatChannel(channelId: $channelId, input: $input) { id name roleIds } }`,
 );
 
 const DELETE_CHANNEL = parse(
@@ -54,7 +56,7 @@ const DELETE_CHANNEL = parse(
 );
 
 const CHANNELS = parse(
-  `query Channels { agentChatChannels { id name isOpenToEveryone isCustom isAccessible } }`,
+  `query Channels { agentChatChannels { id name isCustom isAccessible } }`,
 );
 
 const CREATE_THREAD = parse(
@@ -228,7 +230,6 @@ const listChannels = async (
   {
     id: string;
     name: string;
-    isOpenToEveryone: boolean;
     isCustom: boolean;
     isAccessible: boolean;
   }[]
@@ -240,14 +241,39 @@ const listChannels = async (
   return response.body.data.agentChatChannels;
 };
 
-// The grants a chat carries from its channel
+// The grants a chat carries from its channel, one row per kind of principal
 const readChannelGrants = async (threadId: string) =>
   global.testDataSource.query(
-    `SELECT "principalType", "sourceId" FROM ${SCHEMA}."recordShare"
+    `SELECT DISTINCT "principalType", "sourceId" FROM ${SCHEMA}."recordShare"
      WHERE "recordId" = $1 AND "rowCause" = 'RULE' AND "deletedAt" IS NULL
      ORDER BY "principalType"`,
     [threadId],
   );
+
+const readChannelGrantRoleIds = async (threadId: string): Promise<string[]> =>
+  (
+    await global.testDataSource.query(
+      `SELECT "principalId" FROM ${SCHEMA}."recordShare"
+       WHERE "recordId" = $1 AND "rowCause" = 'RULE' AND "deletedAt" IS NULL
+         AND "principalType" = 'ROLE'`,
+      [threadId],
+    )
+  ).map(({ principalId }: { principalId: string }) => principalId);
+
+const setRoleAllChannelsAccess = async (
+  roleId: string,
+  canAccessAllAgentChatChannels: boolean,
+) => {
+  const { errors } = await updateOneRole({
+    input: {
+      idToUpdate: roleId,
+      updatePayload: { canAccessAllAgentChatChannels },
+    },
+    gqlFields: 'id',
+  });
+
+  expect(errors).toBeUndefined();
+};
 
 // Stands in for a message landing in the chat
 const touchThread = (threadId: string) =>
@@ -261,7 +287,7 @@ describe('Chat channels through the authenticated API', () => {
   const createdChannelIds: string[] = [];
 
   const createChannel = async (
-    { isOpenToEveryone = true, roleIds = [] }: ChannelAccess = {},
+    { roleIds = [] }: ChannelAccess = {},
     token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
   ): Promise<string> => {
     const response = await makeMetadataApiRequest(
@@ -270,7 +296,6 @@ describe('Chat channels through the authenticated API', () => {
         variables: {
           input: {
             name: `  Channel ${randomUUID()} `,
-            isOpenToEveryone,
             roleIds,
           },
         },
@@ -315,8 +340,29 @@ describe('Chat channels through the authenticated API', () => {
     return threadId;
   };
 
+  // Jony holds Member, which reaches every channel unless a test closes it
+  const closeMemberAllChannelsAccess = async (): Promise<string> => {
+    const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
+
+    await setRoleAllChannelsAccess(memberRoleId, false);
+    isMemberAllChannelsAccessClosed = true;
+
+    return memberRoleId;
+  };
+
+  let isMemberAllChannelsAccessClosed = false;
+
   afterEach(async () => {
     jest.restoreAllMocks();
+
+    if (isMemberAllChannelsAccessClosed) {
+      const { id: memberRoleId } = await findOneRoleByLabel({
+        label: 'Member',
+      });
+
+      await setRoleAllChannelsAccess(memberRoleId, true);
+      isMemberAllChannelsAccessClosed = false;
+    }
 
     for (const threadId of createdThreadIds.splice(0)) {
       await destroyAgentChatThread({ threadId });
@@ -329,26 +375,20 @@ describe('Chat channels through the authenticated API', () => {
     }
   });
 
-  it('creates a channel open to everyone under a trimmed name, after General', async () => {
+  it('creates a channel under a trimmed name, after General', async () => {
     const channelId = await createChannel();
 
-    const [channel]: { name: string; isOpenToEveryone: boolean }[] =
-      await global.testDataSource.query(
-        `SELECT name, "isOpenToEveryone" FROM core."agentChatChannel" WHERE id = $1`,
-        [channelId],
-      );
+    const [channel]: { name: string }[] = await global.testDataSource.query(
+      `SELECT name FROM core."agentChatChannel" WHERE id = $1`,
+      [channelId],
+    );
 
     expect(channel.name.startsWith('Channel ')).toBe(true);
     expect(channel.name.endsWith(' ')).toBe(false);
-    expect(channel.isOpenToEveryone).toBe(true);
 
     const channels = await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 
-    expect(channels[0]).toMatchObject({
-      name: 'General',
-      isOpenToEveryone: true,
-      isCustom: false,
-    });
+    expect(channels[0]).toMatchObject({ name: 'General', isCustom: false });
     expect(channels[channels.length - 1]).toMatchObject({
       id: channelId,
       isCustom: true,
@@ -408,13 +448,18 @@ describe('Chat channels through the authenticated API', () => {
     expect((await readChannelState(threadId)).channelId).toBe(general?.id);
   });
 
-  it('lets everyone read and reply in a chat of a channel open to everyone', async () => {
+  it('lets the roles with access to all channels read and reply in its chats', async () => {
+    const { id: adminRoleId } = await findOneRoleByLabel({ label: 'Admin' });
+    const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
     const channelId = await createChannel();
     const threadId = await createThreadInChannel(channelId);
 
     expect(await readChannelGrants(threadId)).toEqual([
-      { principalType: 'EVERYONE', sourceId: channelId },
+      { principalType: 'ROLE', sourceId: channelId },
     ]);
+    expect(await readChannelGrantRoleIds(threadId)).toEqual(
+      expect.arrayContaining([adminRoleId, memberRoleId]),
+    );
     expect(
       await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toContain(threadId);
@@ -439,11 +484,8 @@ describe('Chat channels through the authenticated API', () => {
 
   it('keeps a channel open to roles, and its chats, to who holds them', async () => {
     const { id: adminRoleId } = await findOneRoleByLabel({ label: 'Admin' });
-    const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
-    const channelId = await createChannel({
-      isOpenToEveryone: false,
-      roleIds: [adminRoleId],
-    });
+    const memberRoleId = await closeMemberAllChannelsAccess();
+    const channelId = await createChannel({ roleIds: [adminRoleId] });
     const threadId = await createThreadInChannel(channelId);
 
     expect(
@@ -483,13 +525,6 @@ describe('Chat channels through the authenticated API', () => {
       ),
     ).toEqual({ channelId, openCount: 1, hasUnreadOpen: true });
 
-    expectNoErrors(await updateChannel(channelId, { roleIds: [memberRoleId] }));
-
-    // Who manages channels still lists the ones not open to them
-    expect(
-      (await listChannels()).find(({ id }) => id === channelId),
-    ).toMatchObject({ isAccessible: false });
-
     expectNoErrors(await updateChannel(channelId, { roleIds: [adminRoleId] }));
 
     expect(
@@ -502,25 +537,37 @@ describe('Chat channels through the authenticated API', () => {
     ).not.toContain(channelId);
   });
 
-  it('opens a channel to everyone and back', async () => {
-    const { id: adminRoleId } = await findOneRoleByLabel({ label: 'Admin' });
-    const channelId = await createChannel({
-      isOpenToEveryone: false,
-      roleIds: [adminRoleId],
-    });
+  it('opens every channel to a role given access to all channels, and back', async () => {
+    const memberRoleId = await closeMemberAllChannelsAccess();
+    const channelId = await createChannel();
     const threadId = await createThreadInChannel(channelId);
 
-    expectNoErrors(await updateChannel(channelId, { isOpenToEveryone: true }));
+    await expectEventually(async () =>
+      expect(
+        await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).not.toContain(threadId),
+    );
 
+    await setRoleAllChannelsAccess(memberRoleId, true);
+
+    await expectEventually(async () =>
+      expect(
+        await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).toContain(threadId),
+    );
     expect(
-      await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toContain(threadId);
+      (await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN)).find(
+        ({ id }) => id === channelId,
+      ),
+    ).toMatchObject({ isAccessible: true });
 
-    expectNoErrors(await updateChannel(channelId, { isOpenToEveryone: false }));
+    await setRoleAllChannelsAccess(memberRoleId, false);
 
-    expect(
-      await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).not.toContain(threadId);
+    await expectEventually(async () =>
+      expect(
+        await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).not.toContain(threadId),
+    );
   });
 
   it('refuses a role from outside the workspace', async () => {
@@ -529,7 +576,6 @@ describe('Chat channels through the authenticated API', () => {
       variables: {
         input: {
           name: 'Channel with an unknown role',
-          isOpenToEveryone: false,
           roleIds: [randomUUID()],
         },
       },
@@ -771,9 +817,10 @@ describe('Chat channels through the authenticated API', () => {
 
   it('moves a chat between channels and back out, starting it open', async () => {
     const { id: adminRoleId } = await findOneRoleByLabel({ label: 'Admin' });
-    const sourceChannelId = await createChannel();
+
+    const memberRoleId = await closeMemberAllChannelsAccess();
+    const sourceChannelId = await createChannel({ roleIds: [memberRoleId] });
     const destinationChannelId = await createChannel({
-      isOpenToEveryone: false,
       roleIds: [adminRoleId],
     });
     const threadId = await createThreadInChannel(sourceChannelId);
@@ -858,7 +905,7 @@ describe('Chat channels through the authenticated API', () => {
       destinationChannelId,
     );
     expect(await readChannelGrants(threadId)).toEqual([
-      { principalType: 'EVERYONE', sourceId: destinationChannelId },
+      { principalType: 'ROLE', sourceId: destinationChannelId },
     ]);
     expect((await listChannels()).map(({ id }) => id)).not.toContain(channelId);
     // Moved in SQL, so the move is sent for clients watching the chat

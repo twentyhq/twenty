@@ -27,7 +27,6 @@ const ADDED_STATE = {
   hasThreadIndex: true,
   generalChannel: {
     name: 'General',
-    isOpenToEveryone: true,
     isCustom: false,
   },
 };
@@ -69,7 +68,6 @@ describe('2-47 workspace command - add agent chat channels (integration)', () =>
           ? null
           : {
               name: generalChannel.name,
-              isOpenToEveryone: generalChannel.isOpenToEveryone,
               isCustom: generalChannel.isCustom,
             },
     };

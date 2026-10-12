@@ -5,6 +5,5 @@ export const STANDARD_AGENT_CHAT_CHANNEL = {
     icon: 'IconMessages',
     color: null,
     position: 0,
-    isOpenToEveryone: true,
   },
 } as const;

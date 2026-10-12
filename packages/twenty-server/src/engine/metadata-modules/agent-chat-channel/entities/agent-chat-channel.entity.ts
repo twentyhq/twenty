@@ -49,11 +49,6 @@ export class AgentChatChannelEntity
   @Column({ nullable: false, type: 'float', default: 0 })
   position: number;
 
-  // Everyone in the workspace can read and reply in the channel's chats; when
-  // false only the roles linked to it can
-  @Column({ nullable: false, default: false })
-  isOpenToEveryone: boolean;
-
   @Column({ nullable: false, default: false })
   isCustom: boolean;
 

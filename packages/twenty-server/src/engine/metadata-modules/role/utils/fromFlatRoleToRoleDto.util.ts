@@ -2,6 +2,7 @@ import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 export const fromFlatRoleToRoleDto = ({
+  canAccessAllAgentChatChannels,
   canAccessAllTools,
   canBeAssignedToAgents,
   canBeAssignedToApiKeys,
@@ -19,6 +20,7 @@ export const fromFlatRoleToRoleDto = ({
   universalIdentifier,
 }: FlatRole): RoleDTO => {
   return {
+    canAccessAllAgentChatChannels,
     canAccessAllTools,
     canBeAssignedToAgents,
     canBeAssignedToApiKeys,

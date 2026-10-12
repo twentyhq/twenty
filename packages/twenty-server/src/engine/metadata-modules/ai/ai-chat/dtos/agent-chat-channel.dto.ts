@@ -19,10 +19,7 @@ export class AgentChatChannelDTO {
   @Field(() => Float)
   position: number;
 
-  // Everyone reads and replies in its chats; otherwise only its roles do
-  @Field(() => Boolean)
-  isOpenToEveryone: boolean;
-
+  // Roles with access to all channels read its chats too, without being listed
   @Field(() => [UUIDScalarType])
   roleIds: string[];
 

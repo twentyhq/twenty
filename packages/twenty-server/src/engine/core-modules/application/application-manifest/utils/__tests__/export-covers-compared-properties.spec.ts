@@ -614,7 +614,10 @@ const EXPORTED_KINDS: ExportedKind[] = [
     ),
     renamedProperties: {},
     workspaceLocalProperties: [],
-    knownGaps: {},
+    knownGaps: {
+      canAccessAllAgentChatChannels:
+        'chat channels are not part of application manifests',
+    },
   },
   {
     metadataName: 'objectPermission',

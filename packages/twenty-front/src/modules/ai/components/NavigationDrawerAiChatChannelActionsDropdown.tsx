@@ -7,9 +7,7 @@ import {
   IconColorSwatch,
   IconHeart,
   IconHeartOff,
-  IconLock,
   IconTrash,
-  IconWorld,
 } from 'twenty-ui/icon';
 
 import { NavigationDrawerAiChatChannelRolesSubmenu } from '@/ai/components/NavigationDrawerAiChatChannelRolesSubmenu';
@@ -84,39 +82,10 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
               >
                 {t`Icon and color`}
               </Dropdown.ActionItem>
-              <Dropdown.Submenu>
-                <Dropdown.SubmenuTrigger
-                  startIcon={
-                    channel.isOpenToEveryone ? <IconWorld /> : <IconLock />
-                  }
-                >
-                  {t`Access`}
-                </Dropdown.SubmenuTrigger>
-                <Dropdown.Content aria-label={t`Who reads this channel`}>
-                  <Dropdown.Section label={t`Who reads this channel`}>
-                    <Dropdown.OptionItem
-                      startIcon={<IconWorld />}
-                      selected={channel.isOpenToEveryone}
-                      onSelect={() => onUpdate({ isOpenToEveryone: true })}
-                    >
-                      {t`Everyone`}
-                    </Dropdown.OptionItem>
-                    <Dropdown.OptionItem
-                      startIcon={<IconLock />}
-                      selected={!channel.isOpenToEveryone}
-                      onSelect={() => onUpdate({ isOpenToEveryone: false })}
-                    >
-                      {t`Selected roles`}
-                    </Dropdown.OptionItem>
-                  </Dropdown.Section>
-                </Dropdown.Content>
-              </Dropdown.Submenu>
-              {!channel.isOpenToEveryone && (
-                <NavigationDrawerAiChatChannelRolesSubmenu
-                  roleIds={channel.roleIds}
-                  onChange={(roleIds) => onUpdate({ roleIds })}
-                />
-              )}
+              <NavigationDrawerAiChatChannelRolesSubmenu
+                roleIds={channel.roleIds}
+                onChange={(roleIds) => onUpdate({ roleIds })}
+              />
               {channel.isCustom &&
                 (destinationChannels.length === 0 ? (
                   <Dropdown.ActionItem

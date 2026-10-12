@@ -11,7 +11,8 @@ type NavigationDrawerAiChatChannelRolesSubmenuProps = {
   onChange: (roleIds: string[]) => void;
 };
 
-// Everyone holding a checked role is in the channel, next to its members
+// Everyone holding a checked role reads the channel. Roles with access to all
+// channels read it either way, so they stay checked
 export const NavigationDrawerAiChatChannelRolesSubmenu = ({
   roleIds,
   onChange,
@@ -54,7 +55,17 @@ export const NavigationDrawerAiChatChannelRolesSubmenu = ({
               <Dropdown.OptionItem
                 key={role.id}
                 startIcon={<RoleIcon />}
-                selected={checkedRoleIds.includes(role.id)}
+                selected={
+                  role.canAccessAllAgentChatChannels ||
+                  checkedRoleIds.includes(role.id)
+                }
+                disabled={role.canAccessAllAgentChatChannels}
+                description={
+                  role.canAccessAllAgentChatChannels
+                    ? t`All channels`
+                    : undefined
+                }
+                descriptionPlacement="end"
                 closeOnSelect={false}
                 indicator="checkbox"
                 onSelect={() => toggleRole(role.id)}

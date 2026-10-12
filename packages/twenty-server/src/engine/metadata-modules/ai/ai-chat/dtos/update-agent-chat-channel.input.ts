@@ -16,9 +16,6 @@ export class UpdateAgentChatChannelInput {
   @Field(() => Float, { nullable: true })
   position?: number;
 
-  @Field(() => Boolean, { nullable: true })
-  isOpenToEveryone?: boolean;
-
   @Field(() => [UUIDScalarType], { nullable: true })
   roleIds?: string[];
 }

@@ -8,7 +8,6 @@ export const GET_AGENT_CHAT_CHANNELS = gql`
       icon
       color
       position
-      isOpenToEveryone
       roleIds
       isCustom
       isAccessible
