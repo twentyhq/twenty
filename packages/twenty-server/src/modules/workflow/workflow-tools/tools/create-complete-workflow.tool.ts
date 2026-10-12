@@ -146,7 +146,7 @@ Call validate_workflow once when the workflow is complete, before activating.`,
           },
         );
 
-      await deps.coreWorkflowVersionWriteService.writeContentAndMirror({
+      await deps.coreWorkflowVersionWriteService.writeContent({
         workspaceId,
         coreWorkflowVersionId,
         expectedVersion: coreWorkflowVersion,

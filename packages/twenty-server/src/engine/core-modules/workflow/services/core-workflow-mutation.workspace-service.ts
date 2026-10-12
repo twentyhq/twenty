@@ -29,7 +29,6 @@ import { getWorkflowCommandMenuItemLabel } from 'src/modules/workflow/workflow-t
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
-import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
@@ -267,7 +266,7 @@ export class CoreWorkflowMutationWorkspaceService {
       );
     }
 
-    await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+    await this.coreWorkflowVersionWriteService.writeContent({
       workspaceId,
       coreWorkflowVersionId: initialDraft.id,
       expectedVersion: initialDraft,
@@ -738,73 +737,24 @@ export class CoreWorkflowMutationWorkspaceService {
       flatEntityMaps: flatWorkflowVersionMaps,
     });
 
-    // mirror first so the assert can veto before the core delete commits
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.workspaceOrmManager.runInWorkspaceTransaction(
-        async (transactionScope) => {
-          const mirrorDeleteResult = await transactionScope
-            .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
-              shouldBypassPermissionChecks: true,
-            })
-            .softDelete({ coreWorkflowVersionId: coreVersion.id });
-
-          assertExactlyOneMirrorRowWasWritten({
-            affected: mirrorDeleteResult.affected,
-            coreWorkflowVersionId: coreVersion.id,
-          });
+    await this.runCoreWorkflowMigration({
+      workspaceId,
+      failureMessage:
+        'Multiple validation errors occurred while discarding workflow draft',
+      operations: {
+        workflowVersion: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: [flatCoreVersionToDelete],
+          flatEntityToUpdate: [],
         },
-      );
-    }, buildSystemAuthContext(workspaceId));
-
-    try {
-      await this.runCoreWorkflowMigration({
-        workspaceId,
-        failureMessage:
-          'Multiple validation errors occurred while discarding workflow draft',
-        operations: {
-          workflowVersion: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: [flatCoreVersionToDelete],
-            flatEntityToUpdate: [],
-          },
-        },
-      });
-    } catch (error) {
-      await this.restoreDiscardedMirrorVersion({
-        workspaceId,
-        coreWorkflowVersionId: coreVersion.id,
-      });
-
-      throw error;
-    }
+      },
+    });
 
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
       workspaceId,
     );
 
     return coreVersion.coreWorkflowId;
-  }
-
-  private async restoreDiscardedMirrorVersion({
-    workspaceId,
-    coreWorkflowVersionId,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionId: string;
-  }): Promise<void> {
-    try {
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        await this.workspaceOrmManager
-          .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
-            shouldBypassPermissionChecks: true,
-          })
-          .restore({ coreWorkflowVersionId });
-      }, buildSystemAuthContext(workspaceId));
-    } catch (restoreError) {
-      this.logger.error(
-        `Failed to restore the mirror version for core version ${coreWorkflowVersionId} in workspace ${workspaceId}: ${restoreError}`,
-      );
-    }
   }
 
   async updateWorkflowVisibility({
