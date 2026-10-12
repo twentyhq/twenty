@@ -9,9 +9,7 @@ const VALID_BEARER_TOKEN_VERIFICATION = {
 
 const validate = (bearerTokenVerification: unknown) =>
   validateLogicFunctionBearerTokenVerification({
-    serverRouteTriggerSettings: {
-      bearerTokenVerification: bearerTokenVerification as never,
-    },
+    serverRouteTriggerSettings: { bearerTokenVerification },
   });
 
 describe('validateLogicFunctionBearerTokenVerification', () => {

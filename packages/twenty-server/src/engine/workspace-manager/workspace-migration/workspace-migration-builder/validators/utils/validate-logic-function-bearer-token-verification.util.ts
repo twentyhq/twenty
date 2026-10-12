@@ -4,15 +4,14 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { isHttpsUrl } from 'src/engine/core-modules/application/application-registration/utils/is-https-url.util';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 export const validateLogicFunctionBearerTokenVerification = ({
   serverRouteTriggerSettings,
-}: Partial<
-  Pick<UniversalFlatLogicFunction, 'serverRouteTriggerSettings'>
->): FlatEntityValidationError<LogicFunctionExceptionCode>[] => {
-  const bearerTokenVerification: unknown =
+}: {
+  serverRouteTriggerSettings?: { bearerTokenVerification?: unknown } | null;
+}): FlatEntityValidationError<LogicFunctionExceptionCode>[] => {
+  const bearerTokenVerification =
     serverRouteTriggerSettings?.bearerTokenVerification;
 
   if (!isDefined(bearerTokenVerification)) {
