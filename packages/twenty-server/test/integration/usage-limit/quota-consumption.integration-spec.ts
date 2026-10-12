@@ -73,7 +73,6 @@ const EXECUTED_RUN_COUNT = 2;
 const UNREACHABLE_LIMIT_VALUE = 1_000_000_000_000;
 const CREDIT_LIMIT_MICRO = 1_000;
 const CONCURRENT_CHARGE_COUNT = 8;
-const SLOW_SEED_READ_MS = 1_500;
 const CLICKHOUSE_FLUSH_TIMEOUT_MS = 30_000;
 const EXECUTION_TIMEOUT_MS = 120_000;
 
@@ -1163,27 +1162,6 @@ describe('Usage quota consumption', () => {
           spyOnClickHouseRead().mockRejectedValue(
             new Error('ClickHouse is unreachable'),
           ),
-      },
-      {
-        failure: 'its ClickHouse read misses the seed deadline',
-        spyOnFailure: () => {
-          const usageAnalyticsService =
-            getAppProviderByClassName<UsageAnalyticsService>(
-              'UsageAnalyticsService',
-            );
-          const getConsumptionRowsForAllScopes =
-            usageAnalyticsService.getConsumptionRowsForAllScopes.bind(
-              usageAnalyticsService,
-            );
-
-          return spyOnClickHouseRead().mockImplementation(async (args) => {
-            await new Promise((resolve) =>
-              setTimeout(resolve, SLOW_SEED_READ_MS),
-            );
-
-            return getConsumptionRowsForAllScopes(args);
-          });
-        },
       },
       {
         failure: 'Redis fails on the seeding pass',

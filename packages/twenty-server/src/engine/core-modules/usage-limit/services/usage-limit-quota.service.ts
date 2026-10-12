@@ -53,9 +53,6 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-sp
 import { fromRecordUsageInputToUsageConsumptionRow } from 'src/engine/core-modules/usage/utils/from-record-usage-input-to-usage-consumption-row.util';
 import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { withDeadline } from 'src/utils/with-deadline';
-
-const SEED_READ_TIMEOUT_MS = 1_000;
 
 type QuotaEnforcement = {
   operation: 'assert' | 'consume';
@@ -838,7 +835,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
   }): Promise<(number | null)[]> {
     const rowsReadsByPeriodGroup = new Map<
       string,
-      Promise<UsageConsumptionRow[] | null>
+      Promise<UsageConsumptionRow[]>
     >();
 
     for (const counter of counters) {
@@ -851,10 +848,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
       if (!rowsReadsByPeriodGroup.has(periodGroupKey)) {
         rowsReadsByPeriodGroup.set(
           periodGroupKey,
-          this.readSeedTruth({
-            workspaceId,
-            read: this.fetchConsumptionRows({ workspaceId, counter }),
-          }),
+          this.fetchConsumptionRows({ workspaceId, counter }),
         );
       }
     }
@@ -862,12 +856,9 @@ export class UsageLimitQuotaService implements OnModuleInit {
     return Promise.all(
       counters.map(async (counter) => {
         if (counter.kind === 'allowance') {
-          return this.readSeedTruth({
-            workspaceId,
-            read: this.usageAnalyticsService.getCreditsUsedMicroForBillingPeriod(
-              { workspaceId, periodStart: counter.periodStart },
-            ),
-          });
+          return this.usageAnalyticsService.getCreditsUsedMicroForBillingPeriod(
+            { workspaceId, periodStart: counter.periodStart },
+          );
         }
 
         const rows = await rowsReadsByPeriodGroup.get(
@@ -879,29 +870,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
           : null;
       }),
     );
-  }
-
-  private async readSeedTruth<T>({
-    workspaceId,
-    read,
-  }: {
-    workspaceId: string;
-    read: Promise<T>;
-  }): Promise<T | null> {
-    try {
-      return await withDeadline({
-        promise: read,
-        timeoutMs: SEED_READ_TIMEOUT_MS,
-        createTimeoutError: () =>
-          new Error(`Seed read exceeded ${SEED_READ_TIMEOUT_MS}ms deadline`),
-      });
-    } catch (error) {
-      this.logger.error(
-        `Usage quota seed read failed for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
-      );
-
-      return null;
-    }
   }
 
   private fetchConsumptionRows({
