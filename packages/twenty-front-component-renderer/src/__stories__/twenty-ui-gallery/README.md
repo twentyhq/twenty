@@ -47,6 +47,7 @@ effect within the interaction timeout.
 | `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)          |
 | `twenty-ui-number-field`         | NumberField (locale formatting and paste, controlled/uncontrolled values, callback details, native forms and refs, bounds and render composition) |
 | `twenty-ui-autocomplete`         | Autocomplete (caret keys, controlled editing, composition, filtering, disabled state, Empty; `TwentyUiAutocomplete.stories.tsx`)        |
+| `twenty-ui-autocomplete-parts`   | Autocomplete grouped objects, popup parts, native refs/render, controlled updates, Clear, selection and cancelable Escape              |
 | `twenty-ui-display-helpers`      | Text                                                                                                                                    |
 | `twenty-ui-avatar-controls`      | Avatar (stable presentational root, compound fallback, refs, explicit button/link composition and native keyboard/disabled behavior)    |
 | `twenty-ui-avatar-group`         | AvatarGroup (derived and partial totals, custom overflow, keyed child state, native refs and explicit button/link composition)          |
@@ -125,11 +126,36 @@ that area so Floating UI popups flip and size themselves to fit it. The portal
 fixture covers callbacks, removal, menu placement, interface zoom, and an
 oversized portal that stays clipped while a host control remains usable.
 
-The Autocomplete fixture uses the public inline list interface to isolate input
-behavior from popup support. Its Empty section runs Base UI's live-region marker
-through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
-currentNode without callback filters; document Selection and DOM Range are
-outside this scope.
+The string Autocomplete fixture uses the public inline list interface for caret
+editing, controlled updates, IME confirmation, filtering and Empty. Its Empty
+section runs Base UI's live-region marker through a narrow worker TreeWalker
+that supports SHOW_TEXT, nextNode and currentNode without callback filters;
+document Selection and DOM Range are outside this scope.
+
+The grouped object fixture composes Portal, Positioner and Popup separately.
+Its React/Preact cases require visible popup content and check native input refs
+and element render composition, group filtering and empty results, item labels
+and selection callbacks, controlled external updates, Clear, keyboard highlight
+reasons, and cancelable Escape dismissal. The fixed Positioner configuration is
+forwarded. Separate React/Preact probes pass basic bottom/start placement with
+an 8px offset and nonzero visible host geometry. They do not establish collision
+handling or placement under scrolling and zoom.
+
+Three renderer gaps remain outside that positive coverage. A strict outside-press
+success probe fails in both runtimes: the host button activates once, but the
+popup remains open because events outside the owned component do not reach the
+worker. C07 owns that dismissal transport. A separate strict native-input
+semantics probe also fails in both runtimes after a controlled update while
+closed. Base UI compares the registered element's tag name with `INPUT`, while
+the worker retains `HTML-INPUT` for remote DOM transport. It consequently treats
+the input as a custom control and removes its combobox role and expanded state
+while closed. The role returns while the popup is open, and the Trigger retains
+its controlled expanded state. A strict scrolling probe highlights the final
+option in a 40-item list after keyboard navigation, but the option stays below
+the host list's visible bounds in both runtimes. This leaves the C06 scroll
+transport incomplete. No tag-name override or known-failure acceptance pin is
+introduced. These gaps and the remaining C05/C06/C07 work prevent these stories
+from establishing integrated V1 acceptance.
 
 ## ImageInput file selection
 
