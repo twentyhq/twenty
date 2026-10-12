@@ -142,6 +142,7 @@ export const SettingsAvailableApplicationDetails = () => {
               description={detail.description ?? undefined}
               aboutDescription={detail.aboutDescription ?? undefined}
               pricingDescription={detail.pricingDescription ?? undefined}
+              billsCredits={detail.billsCredits}
               screenshots={detail.galleryImages}
               author={detail.author ?? undefined}
               version={currentVersion ?? latestAvailableVersion ?? undefined}
@@ -167,6 +168,7 @@ export const SettingsAvailableApplicationDetails = () => {
         appLogoUrl={detail?.logoUrl ?? undefined}
         defaultRole={defaultRole}
         requestedCapabilities={detail?.requestedCapabilities}
+        billsCredits={detail?.billsCredits}
         onAuthorize={install}
         isInstalling={isInstalling}
       />

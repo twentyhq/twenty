@@ -38,6 +38,7 @@ const DEVELOPER_LINKS: DeveloperLinks = {
 
 type RenderAboutOptions = {
   aboutDescription?: string | null;
+  billsCredits?: boolean;
   description?: string | null;
   developerLinks?: DeveloperLinks;
   installCount?: number;
@@ -47,6 +48,7 @@ type RenderAboutOptions = {
 // null opts out of a default, undefined keeps it.
 const renderAbout = ({
   aboutDescription = ABOUT_DESCRIPTION,
+  billsCredits = false,
   description = SHORT_DESCRIPTION,
   developerLinks = DEVELOPER_LINKS,
   installCount = 7,
@@ -66,7 +68,8 @@ const renderAbout = ({
         version="2.0"
         installCount={installCount}
         category="Finance"
-        pricingDescription="Free"
+        pricingDescription="$0.02 per minute recorded"
+        billsCredits={billsCredits}
         developerLinks={developerLinks}
         onShare={onShare ?? undefined}
       />
@@ -93,6 +96,20 @@ describe('SettingsApplicationDetailAbout', () => {
     expect(await screen.findByText('1,098 installs')).toBeVisible();
   });
 
+  it('shows that the application bills credits, with its pricing on hover', async () => {
+    renderAbout({ billsCredits: true });
+
+    await userEvent.setup().hover(screen.getByText('Bills credits'));
+
+    expect(await screen.findByText('$0.02 per minute recorded')).toBeVisible();
+  });
+
+  it('does not claim credit billing for an application that bills none', () => {
+    renderAbout();
+
+    expect(screen.queryByText('Bills credits')).not.toBeInTheDocument();
+  });
+
   it('renders the application identity, metadata and resources', () => {
     renderAbout();
 
@@ -102,7 +119,6 @@ describe('SettingsApplicationDetailAbout', () => {
     expect(screen.getByText('2.0')).toBeVisible();
     expect(screen.getByText('7 installs')).toBeVisible();
     expect(screen.getByText('Finance')).toBeVisible();
-    expect(screen.getByText('Free')).toBeVisible();
 
     expect(screen.getByRole('link', { name: 'Website' })).toHaveAttribute(
       'href',
