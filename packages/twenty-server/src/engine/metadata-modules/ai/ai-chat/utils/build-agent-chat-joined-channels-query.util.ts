@@ -1,3 +1,4 @@
+import { buildAgentChatChannelRoleGrantCondition } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-role-grant-condition.util';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 
 // The channels a member is in: the ones they joined or were added to, and
@@ -22,10 +23,8 @@ export const buildAgentChatJoinedChannelsQuery = ({
      UNION ALL
      SELECT DISTINCT role_grant."recordId", NULL::float8, false
      FROM ${recordShareTable} role_grant
-     WHERE role_grant."principalType" = 'ROLE' AND role_grant."rowCause" = 'RULE'
-       AND role_grant."sourceId" = role_grant."recordId"
+     WHERE ${buildAgentChatChannelRoleGrantCondition('role_grant')}
        AND role_grant."principalId" = ${roleIdParameter}
-       AND role_grant."deletedAt" IS NULL
        AND NOT EXISTS (
          SELECT 1 FROM ${memberTable} own_membership
          WHERE own_membership."channelId" = role_grant."recordId"

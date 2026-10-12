@@ -18,6 +18,7 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadTriageChange } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-triage-change.type';
 import { type AgentChatThreadWriteStep } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-write-step.type';
+import { findAgentChatSnoozeRemainingDelay } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-snooze-remaining-delay.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -117,7 +118,7 @@ export class AgentChatThreadTriageService {
     await this.emitChannelCopiesUpdated({
       workspaceId: memberArgs.workspaceId,
       threadsBefore: assignedChannelThreads,
-      writtenThreadIds: channelCopyWrite.writtenThreadIds,
+      threadsAfter: channelCopyWrite.threadsAfter,
     });
 
     return participants;
@@ -171,7 +172,7 @@ export class AgentChatThreadTriageService {
     await this.emitChannelCopiesUpdated({
       workspaceId: args.workspaceId,
       threadsBefore: [threadBefore],
-      writtenThreadIds: channelCopyWrite.writtenThreadIds,
+      threadsAfter: channelCopyWrite.threadsAfter,
     });
   }
 
@@ -182,13 +183,10 @@ export class AgentChatThreadTriageService {
     threadId,
     snoozedUntil,
   }: EndAgentChatChannelSnoozeJobData): Promise<void> {
-    const [{ remainingDelay }] = await this.threadRepository.query(
+    const remainingDelay = await this.threadRepository.query(
       workspaceId,
       ({ manager }) =>
-        manager.query<{ remainingDelay: number }[]>(
-          `SELECT GREATEST(CEIL(EXTRACT(EPOCH FROM $1::timestamptz - clock_timestamp()) * 1000), 0)::int AS "remainingDelay"`,
-          [snoozedUntil],
-        ),
+        findAgentChatSnoozeRemainingDelay({ manager, snoozedUntil }),
     );
 
     // This server's clock ran ahead of the database's
@@ -281,19 +279,25 @@ export class AgentChatThreadTriageService {
     workspaceMemberId: string;
     threadIds: string[];
     isAssigneeOnly: boolean;
-  }): { write: AgentChatThreadWriteStep; writtenThreadIds: Set<string> } {
-    const writtenThreadIds = new Set<string>();
+  }): {
+    write: AgentChatThreadWriteStep;
+    threadsAfter: Map<string, AgentChatThreadWorkspaceEntity>;
+  } {
+    const channelThreadIds = new Set(threadIds);
+    const threadsAfter = new Map<string, AgentChatThreadWorkspaceEntity>();
 
     const write: AgentChatThreadWriteStep = async ({
       manager,
       table,
       threadId,
     }) => {
-      if (!threadIds.includes(threadId)) {
+      if (!channelThreadIds.has(threadId)) {
         return;
       }
 
-      const filedThreadIds = await manager.query<{ id: string }[]>(
+      const [threadAfter] = await manager.query<
+        AgentChatThreadWorkspaceEntity[]
+      >(
         `WITH filed_thread AS (
            UPDATE ${table('agentChatThread')}
            SET "channelArchivedAt" = CASE
@@ -305,9 +309,9 @@ export class AgentChatThreadTriageService {
              "updatedAt" = now()
            WHERE id = $1 AND "channelId" IS NOT NULL
              AND (NOT $5::boolean OR "assigneeId" = $4::uuid)
-           RETURNING id
+           RETURNING *
          )
-         SELECT id FROM filed_thread`,
+         SELECT * FROM filed_thread`,
         [
           threadId,
           change.action !== AgentChatInboxAction.MOVE_TO_INBOX,
@@ -319,31 +323,31 @@ export class AgentChatThreadTriageService {
         ],
       );
 
-      if (filedThreadIds.length === 1) {
-        writtenThreadIds.add(threadId);
+      if (isDefined(threadAfter)) {
+        threadsAfter.set(threadId, threadAfter);
       }
     };
 
-    return { write, writtenThreadIds };
+    return { write, threadsAfter };
   }
 
   private async emitChannelCopiesUpdated({
     workspaceId,
     threadsBefore,
-    writtenThreadIds,
+    threadsAfter,
   }: {
     workspaceId: string;
     threadsBefore: AgentChatThreadWorkspaceEntity[];
-    writtenThreadIds: Set<string>;
+    threadsAfter: Map<string, AgentChatThreadWorkspaceEntity>;
   }): Promise<void> {
-    for (const threadBefore of threadsBefore) {
-      if (writtenThreadIds.has(threadBefore.id)) {
-        await this.threadRecordEventService.emitThreadUpdated({
-          workspaceId,
-          threadBefore,
-        });
-      }
-    }
+    await this.threadRecordEventService.emitThreadsUpdated({
+      workspaceId,
+      threads: threadsBefore.flatMap((before) => {
+        const after = threadsAfter.get(before.id);
+
+        return isDefined(after) ? [{ before, after }] : [];
+      }),
+    });
   }
 
   private async scheduleChannelSnoozeEnd({

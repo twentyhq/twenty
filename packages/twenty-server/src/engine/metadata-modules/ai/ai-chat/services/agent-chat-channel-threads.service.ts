@@ -18,11 +18,8 @@ import { buildAgentChatJoinedChannelsQuery } from 'src/engine/metadata-modules/a
 import { decodeAgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/decode-agent-chat-channel-thread-cursor.util';
 import { encodeAgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/encode-agent-chat-channel-thread-cursor.util';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
+import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-errors.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -97,7 +94,9 @@ export class AgentChatChannelThreadsService {
       ? decodeAgentChatChannelThreadCursor(after)
       : null;
 
-    await this.assertHasChannels(args.workspaceId);
+    if (!(await this.sharingService.hasChannels(args.workspaceId))) {
+      throwAgentChatChannelsUnavailable();
+    }
 
     await this.channelAccessService.assertChannelAccess({
       ...args,
@@ -176,15 +175,6 @@ export class AgentChatChannelThreadsService {
             ORDER BY joined_channel.position NULLS LAST, lower(channel.name), channel.id`,
       parameters: { ...parameters, channelThreadsRoleId: roleId ?? null },
     }));
-  }
-
-  private async assertHasChannels(workspaceId: string): Promise<void> {
-    if (!(await this.sharingService.hasChannels(workspaceId))) {
-      throw new AiException(
-        'Chat channels are not available until this workspace finishes upgrading',
-        AiExceptionCode.CHAT_CHANNELS_UNAVAILABLE,
-      );
-    }
   }
 
   // The readable chats come from the record API's row level permissions,

@@ -12,14 +12,11 @@ import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/
 import {
   throwAgentChatChannelManagementForbidden,
   throwAgentChatChannelNotFound,
+  throwAgentChatChannelsUnavailable,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-errors.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -63,13 +60,20 @@ export class AgentChatChannelAccessService {
     }
   }
 
-  // Everyone can reply in a public channel, but only its members shape it
-  async assertMemberOrManager(args: AgentChatChannelAccessArgs): Promise<void> {
+  // Everyone can reply in a public channel, but only its members shape it.
+  // Resolves to whether the caller manages it, which callers check next
+  async assertMemberOrManager(
+    args: AgentChatChannelAccessArgs,
+  ): Promise<boolean> {
     await this.assertChannelAccess({ ...args, operationType: 'update' });
 
-    if (!(await this.isMember(args))) {
-      await this.assertCanManageChannel(args);
+    const canManage = await this.canManageChannel(args);
+
+    if (!canManage && !(await this.isMember(args))) {
+      throwAgentChatChannelManagementForbidden();
     }
+
+    return canManage;
   }
 
   // Through a membership row, or through a role the channel is open to
@@ -123,7 +127,7 @@ export class AgentChatChannelAccessService {
 
   async canManageChannel(args: AgentChatChannelAccessArgs): Promise<boolean> {
     const authContext = await this.sharingService.getAuthContext(args);
-    const { channelObjectMetadataId } = await this.findChannelObjectMetadataIds(
+    const channelObjectMetadataId = await this.findChannelObjectMetadataId(
       args.workspaceId,
     );
 
@@ -138,7 +142,7 @@ export class AgentChatChannelAccessService {
     return sharing.canManageSharing;
   }
 
-  async findChannelObjectMetadataIds(workspaceId: string) {
+  async findChannelObjectMetadataId(workspaceId: string): Promise<string> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -149,13 +153,6 @@ export class AgentChatChannelAccessService {
       'agentChatChannel',
     );
 
-    if (!isDefined(channelObjectMetadata)) {
-      throw new AiException(
-        'Chat channels are not available until this workspace finishes upgrading',
-        AiExceptionCode.CHAT_CHANNELS_UNAVAILABLE,
-      );
-    }
-
-    return { channelObjectMetadataId: channelObjectMetadata.id };
+    return channelObjectMetadata?.id ?? throwAgentChatChannelsUnavailable();
   }
 }
