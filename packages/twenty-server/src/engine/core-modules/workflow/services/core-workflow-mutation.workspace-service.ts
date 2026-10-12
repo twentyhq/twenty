@@ -674,37 +674,14 @@ export class CoreWorkflowMutationWorkspaceService {
   async discardDraftVersion({
     workspaceId,
     userWorkspaceId,
-    workspaceWorkflowVersionId,
     coreWorkflowVersionId,
   }: DiscardCoreWorkflowDraftInput & {
     workspaceId: string;
     userWorkspaceId: string | undefined;
   }): Promise<string | null> {
-    if (
-      isDefined(workspaceWorkflowVersionId) &&
-      isDefined(coreWorkflowVersionId)
-    ) {
-      throw new WorkflowQueryValidationException(
-        'Only one of workspaceWorkflowVersionId or coreWorkflowVersionId may be provided',
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Only one workflow version identifier may be provided`,
-        },
-      );
-    }
-
-    const resolvedCoreVersionId = await this.resolveDiscardTargetCoreVersionId(
-      workspaceId,
-      { workspaceWorkflowVersionId, coreWorkflowVersionId },
-    );
-
-    if (!isDefined(resolvedCoreVersionId)) {
-      return null;
-    }
-
     const coreVersion = await this.coreWorkflowVersionRepository.findOne(
       workspaceId,
-      { where: { id: resolvedCoreVersionId } },
+      { where: { id: coreWorkflowVersionId } },
     );
 
     if (!isDefined(coreVersion)) {
@@ -829,60 +806,6 @@ export class CoreWorkflowMutationWorkspaceService {
         `Failed to restore the mirror version for core version ${coreWorkflowVersionId} in workspace ${workspaceId}: ${restoreError}`,
       );
     }
-  }
-
-  private async resolveDiscardTargetCoreVersionId(
-    workspaceId: string,
-    {
-      workspaceWorkflowVersionId,
-      coreWorkflowVersionId,
-    }: DiscardCoreWorkflowDraftInput,
-  ): Promise<string | null> {
-    if (isDefined(coreWorkflowVersionId)) {
-      return coreWorkflowVersionId;
-    }
-
-    if (!isDefined(workspaceWorkflowVersionId)) {
-      throw new WorkflowQueryValidationException(
-        'Either workspaceWorkflowVersionId or coreWorkflowVersionId must be provided',
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow version is missing from the request`,
-        },
-      );
-    }
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const workspaceVersion = await workflowVersionRepository.findOne({
-        where: { id: workspaceWorkflowVersionId },
-        withDeleted: true,
-      });
-
-      if (
-        !isDefined(workspaceVersion) ||
-        isDefined(workspaceVersion.deletedAt)
-      ) {
-        return null;
-      }
-
-      if (!isDefined(workspaceVersion.coreWorkflowVersionId)) {
-        throw new WorkflowQueryValidationException(
-          `Workspace version '${workspaceWorkflowVersionId}' has no core twin`,
-          WorkflowQueryValidationExceptionCode.FORBIDDEN,
-          {
-            userFriendlyMessage: msg`Workflow version is not correctly linked to its mirror`,
-          },
-        );
-      }
-
-      return workspaceVersion.coreWorkflowVersionId;
-    }, buildSystemAuthContext(workspaceId));
   }
 
   async updateWorkflowVisibility({
