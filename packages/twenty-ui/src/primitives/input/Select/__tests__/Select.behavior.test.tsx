@@ -195,9 +195,9 @@ describe('Select behavior', () => {
 
     render(
       <form aria-label="Letter form">
-        <Select.Root
+        <Select.Root<string, true>
           multiple
-          defaultValue={[] as string[]}
+          defaultValue={[]}
           items={ITEMS}
           name="letters"
           onValueChange={onValueChange}
