@@ -4,6 +4,11 @@ import { fn } from 'storybook/test';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
+import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
+import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
+import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
+import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -20,12 +25,13 @@ const GRANOLA_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000022';
 const CREATED_AT = '2026-09-01T00:00:00.000Z';
 
 export const GOOGLE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000011';
+export const MICROSOFT_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000014';
 export const FATHOM_ONLY_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000013';
 const FATHOM_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000012';
-const MICROSOFT_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000014';
 const MY_SHARED_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000015';
 const TEAMMATE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000016';
 const EMAIL_GROUP_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000017';
+const SECOND_GOOGLE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000018';
 
 const buildConnectedAccount = (account: {
   id: string;
@@ -34,6 +40,7 @@ const buildConnectedAccount = (account: {
   userWorkspaceId: string;
   applicationId?: string;
   visibility?: string;
+  scopes?: string[];
 }) => ({
   __typename: 'ConnectedAccountPublicDTO',
   authFailedAt: null,
@@ -53,12 +60,16 @@ const buildConnectedAccount = (account: {
   ...account,
 });
 
-const buildMessageChannel = (id: string, connectedAccountId: string) => ({
+const buildMessageChannel = (
+  id: string,
+  connectedAccountId: string,
+  visibility = 'SHARE_EVERYTHING',
+) => ({
   __typename: 'MessageChannel',
   id,
   handle: 'mailbox',
   displayName: null,
-  visibility: 'SHARE_EVERYTHING',
+  visibility,
   type: 'EMAIL',
   isContactAutoCreationEnabled: true,
   contactAutoCreationPolicy: 'SENT',
@@ -95,12 +106,20 @@ const buildCalendarChannel = (id: string, connectedAccountId: string) => ({
   updatedAt: CREATED_AT,
 });
 
-const CONNECTED_ACCOUNTS = [
+export const CONNECTED_ACCOUNTS = [
   buildConnectedAccount({
     id: GOOGLE_ACCOUNT_ID,
     handle: 'tim@apple.dev',
     provider: 'google',
     userWorkspaceId: MY_USER_WORKSPACE_ID,
+    scopes: [
+      'email',
+      'profile',
+      'https://www.googleapis.com/auth/calendar.events',
+      'https://www.googleapis.com/auth/gmail.compose',
+      'https://www.googleapis.com/auth/gmail.readonly',
+      'https://www.googleapis.com/auth/gmail.send',
+    ],
   }),
   buildConnectedAccount({
     id: FATHOM_ACCOUNT_ID,
@@ -121,6 +140,14 @@ const CONNECTED_ACCOUNTS = [
     handle: 'tim@outlook.com',
     provider: 'microsoft',
     userWorkspaceId: MY_USER_WORKSPACE_ID,
+    scopes: [
+      'openid',
+      'email',
+      'Mail.ReadWrite',
+      'Mail.Send',
+      'Calendars.ReadWrite',
+      'User.Read',
+    ],
   }),
   buildConnectedAccount({
     id: MY_SHARED_ACCOUNT_ID,
@@ -137,6 +164,13 @@ const CONNECTED_ACCOUNTS = [
     userWorkspaceId: TEAMMATE_USER_WORKSPACE_ID,
     applicationId: GRANOLA_APPLICATION_ID,
     visibility: 'workspace',
+  }),
+  buildConnectedAccount({
+    id: SECOND_GOOGLE_ACCOUNT_ID,
+    handle: 'tim.cook@gmail.com',
+    provider: 'google',
+    userWorkspaceId: MY_USER_WORKSPACE_ID,
+    scopes: ['email', 'https://www.googleapis.com/auth/gmail.readonly'],
   }),
   buildConnectedAccount({
     id: EMAIL_GROUP_ACCOUNT_ID,
@@ -159,6 +193,11 @@ const MESSAGE_CHANNELS = [
   buildMessageChannel(
     '20202020-1a2b-4c3d-8e4f-000000000033',
     MICROSOFT_ACCOUNT_ID,
+  ),
+  buildMessageChannel(
+    '20202020-1a2b-4c3d-8e4f-000000000034',
+    SECOND_GOOGLE_ACCOUNT_ID,
+    'METADATA',
   ),
 ];
 
@@ -238,10 +277,11 @@ export const seedAccountGroupsStory = async () => {
   deleteConnectedAccount.mockClear();
   await mockedApolloClient.clearStore();
 
-  const previousWorkspace = jotaiStore.get(currentWorkspaceState.atom);
-  const previousWorkspaceMember = jotaiStore.get(
-    currentWorkspaceMemberState.atom,
-  );
+  jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
+  jotaiStore.set(isGoogleCalendarEnabledState.atom, true);
+  jotaiStore.set(isMicrosoftMessagingEnabledState.atom, true);
+  jotaiStore.set(isMicrosoftCalendarEnabledState.atom, true);
+  jotaiStore.set(isImapSmtpCaldavEnabledState.atom, false);
 
   jotaiStore.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
@@ -270,9 +310,4 @@ export const seedAccountGroupsStory = async () => {
     ...mockedWorkspaceMemberData,
     userWorkspaceId: MY_USER_WORKSPACE_ID,
   });
-
-  return () => {
-    jotaiStore.set(currentWorkspaceState.atom, previousWorkspace);
-    jotaiStore.set(currentWorkspaceMemberState.atom, previousWorkspaceMember);
-  };
 };

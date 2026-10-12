@@ -1,7 +1,10 @@
 import { SettingsAccountGroupTableRow } from '@/settings/app-preferences/components/SettingsAccountGroupTableRow';
-import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
+import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
 import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
+import { SETTINGS_NATIVE_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsNativeAccountAppAccountGroupTableGridTemplateColumns';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
+import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
+import { getNativeAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getNativeAccountAppsUsingAccount';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -9,6 +12,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -27,10 +31,28 @@ const StyledAddAccountContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-export const SettingsAccountGroupsSection = () => {
+type SettingsAccountGroupsSectionProps = {
+  nativeAccountApp?: NativeAccountApp;
+};
+
+export const SettingsAccountGroupsSection = ({
+  nativeAccountApp,
+}: SettingsAccountGroupsSectionProps) => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
-  const { groups, loading } = useMyAccountGroups();
+  const { groups: allGroups, loading } = useMyAccountGroups();
+
+  const groups = isDefined(nativeAccountApp)
+    ? allGroups.filter((group) =>
+        getNativeAccountAppsUsingAccount(group.nativeAccount).some(
+          (app) => app.id === nativeAccountApp.id,
+        ),
+      )
+    : allGroups;
+
+  const gridTemplateColumns = isDefined(nativeAccountApp)
+    ? SETTINGS_NATIVE_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
+    : SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS;
 
   if (loading) {
     return <SettingsSectionSkeletonLoader />;
@@ -43,22 +65,29 @@ export const SettingsAccountGroupsSection = () => {
         description={t`Shared accounts between apps`}
       />
       {groups.length === 0 ? (
-        <SettingsAccountsListEmptyStateCard />
+        <SettingsAppPreferencesListEmptyStateCard
+          provider={nativeAccountApp?.provider}
+        />
       ) : (
         <>
           <Table>
-            <TableRow
-              gridTemplateColumns={
-                SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
-              }
-            >
+            <TableRow gridTemplateColumns={gridTemplateColumns}>
               <TableHeader>{t`Account`}</TableHeader>
-              <TableHeader align="right">{t`Used by`}</TableHeader>
+              {isDefined(nativeAccountApp) ? (
+                <TableHeader>{t`Permissions`}</TableHeader>
+              ) : (
+                <TableHeader align="right">{t`Used by`}</TableHeader>
+              )}
               <TableHeader />
             </TableRow>
             <StyledTableRows>
               {groups.map((group) => (
-                <SettingsAccountGroupTableRow key={group.id} group={group} />
+                <SettingsAccountGroupTableRow
+                  key={group.id}
+                  group={group}
+                  gridTemplateColumns={gridTemplateColumns}
+                  nativeAccountApp={nativeAccountApp}
+                />
               ))}
             </StyledTableRows>
           </Table>

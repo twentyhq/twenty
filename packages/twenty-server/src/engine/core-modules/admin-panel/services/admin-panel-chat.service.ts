@@ -91,7 +91,7 @@ export class AdminPanelChatService {
       ({ manager, table }) =>
         manager.query<{ threadId: string; messageCount: number }[]>(
           `SELECT "threadId", COUNT(*)::int AS "messageCount" FROM ${table('agentMessage')}
-       WHERE "threadId" = ANY($1::uuid[]) AND "isHidden" = false AND role <> 'system'
+       WHERE "threadId" = ANY($1::uuid[]) AND role <> 'system'
        GROUP BY "threadId"`,
           [threadIds],
         ),
@@ -160,8 +160,7 @@ export class AdminPanelChatService {
         totalOutputTokens: thread.totalOutputTokens,
         conversationSize: thread.conversationSize,
         messageCount: messages.filter(
-          (message) =>
-            !message.isHidden && message.role !== AgentMessageRole.SYSTEM,
+          (message) => message.role !== AgentMessageRole.SYSTEM,
         ).length,
         createdAt: new Date(thread.createdAt),
         updatedAt: new Date(thread.updatedAt),
@@ -169,7 +168,6 @@ export class AdminPanelChatService {
       messages: messages.map((message) => ({
         id: message.id,
         role: message.role,
-        isHidden: message.isHidden,
         parts: (message.parts ?? [])
           .sort((a, b) => a.orderIndex - b.orderIndex)
           .map((part) => ({

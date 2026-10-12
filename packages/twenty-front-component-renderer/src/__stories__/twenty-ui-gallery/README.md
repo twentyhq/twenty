@@ -46,7 +46,7 @@ effect within the interaction timeout.
 | `twenty-ui-tag-controls`         | Tag (stable presentational root, positive truncation, native spacing, node content, refs and explicit button/link composition)          |
 | `twenty-ui-status-controls`      | Status (stable presentational root, loading/busy state, node content, refs and explicit button/link composition)                        |
 | `twenty-ui-avatar-image`         | Avatar Root/Image/Fallback (image labels/attributes/refs, loading callbacks, decoded images, fallback, replacement and unmount/remount) |
-| `twenty-ui-image-input`          | ImageInput                                                                                                                              |
+| `twenty-ui-image-input`          | ImageInput (native chooser, readable files, preview URLs, reset and ownership cleanup) |
 | `twenty-ui-list-item`            | ListItemButton and ListItem (native action composition, visual rows, explicit button/link/Menu.Item owners, refs/events/focus/keyboard, disabled behavior and sibling controls)            |
 | `twenty-ui-settings-row`         | SettingsRow                                                                                                                             |
 | `twenty-ui-tabs`                 | Tabs                                                                                                                                    |
@@ -124,12 +124,46 @@ through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
 currentNode without callback filters; document Selection and DOM Range are
 outside this scope.
 
-`ImageInput` calls `onFileSelect` when a file is selected. Applications own
-validation, uploads, progress, cancellation, and supplied preview URLs. Native
-chooser activation and readable `File` contents in React and Preact still depend
-on [C08 support](https://github.com/twentyhq/twenty/pull/27588).
-`userEvent.upload` checks selection handling and does not prove native chooser
-activation.
+## ImageInput file selection
+
+`ImageInputFileSelection.stories.tsx` mounts two independent SDK-built renderers.
+Its stories are tagged `!test`, so the Vitest run skips them and the native
+Chromium tests below exercise them instead. These tests wait for a browser
+`filechooser` event after trusted pointer, Enter and Space activation on both
+selection buttons. A worker `input.click()` on a file input asks the host to
+open the chooser. The host opens it with `showPicker()`, so the worker click is
+the only click the input receives, once per trusted click inside the same
+renderer, within one second of that click and while the browser still has
+transient user activation. Synthetic events and clicks in another renderer do
+not count.
+
+Selected files cross the existing event transport as native `File` objects,
+including metadata, `text()` and `arrayBuffer()` contents, and `ImageInput`
+passes them to `onFileSelect`. Reset clears both the native selection and the
+worker input's File references without invalidating a File retained by the
+callback, so the same file can be selected again. The tests cover disabled and
+uploading controls, empty chooser results, callback replacement, renderer
+isolation and teardown. Empty results are supplied through Playwright's
+intercepted chooser; operating-system dialog dismissal and other browser engines
+are not covered by these tests.
+
+A worker-created object URL assigned to `img.src` carries its `Blob` to the host.
+Each mounted image owns a host URL and revokes it on source replacement or
+unmount. As in browsers, revoking the worker URL keeps an image that already
+uses it and only stops later assignments, so revoking once the image has loaded
+is safe. Applications own validation, uploads, progress, cancellation and their
+worker URLs. Other object URL consumers are outside this adapter's scope.
+
+To run these tests, serve the built Storybook on port 6008 or set
+`STORYBOOK_URL`, then run from the repository root:
+
+```sh
+npx nx run twenty-front-component-renderer:storybook:test:file-selection
+```
+
+The renderer Storybook CI job runs this uncached target after the gallery
+checks. `userEvent.upload` in the gallery story checks selection handling and
+does not prove native chooser activation.
 
 ## Dialog policy
 
@@ -160,7 +194,6 @@ expected-to-fail by the runner.
 
 | Component                                                                                             | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ImageInput                                                                                            | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx).                                                                                                                                                         |
 | Popover, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                                            |
 | Slider                                                                                                | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch.                                                                                                                                                                                                                                                                                                                                                |
 | Responsive hooks                                                                                      | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
