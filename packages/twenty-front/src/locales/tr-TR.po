@@ -820,7 +820,7 @@ msgstr "{retentionInDays, plural, one {# gün} other {# gün}}"
 #. js-lingui-id: HlXLUQ
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "{retentionInHours, plural, one {# hour} other {# hours}}"
-msgstr ""
+msgstr "{retentionInHours, plural, one {# saat} other {# saat}}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1148,7 +1148,7 @@ msgstr "2 Sütun"
 #. js-lingui-id: Ur5nZV
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "2 hours"
-msgstr ""
+msgstr "2 saat"
 
 #. js-lingui-id: 0HAF12
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -4204,7 +4204,7 @@ msgstr "İş ortaklarına göz atın"
 #. js-lingui-id: 8nmCIQ
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Browse record changes, security events, app logs and more"
-msgstr ""
+msgstr "Kayıt değişikliklerini, güvenlik olaylarını, uygulama günlüklerini ve daha fazlasını görüntüleyin"
 
 #. js-lingui-id: GsXRxc
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -7204,7 +7204,7 @@ msgstr "Özel görünümler"
 #. js-lingui-id: T8n/Qf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Custom, up to 3 years"
-msgstr ""
+msgstr "Özel, 3 yıla kadar"
 
 #. js-lingui-id: 876pfE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -14159,7 +14159,7 @@ msgstr "Yeni bir anlaşma kaydedin (şirket, tutar, aşama, beklenen kapanış).
 #. js-lingui-id: qLzdcJ
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Log console"
-msgstr ""
+msgstr "Günlük konsolu"
 
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
@@ -14267,12 +14267,12 @@ msgstr "Günlükler"
 #. js-lingui-id: FBD/J1
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Logs are kept {proPlanEventLogRetentionInHours} hours on your plan. Upgrade to customize retention."
-msgstr ""
+msgstr "Günlükler planınızda {proPlanEventLogRetentionInHours} saat boyunca saklanır. Saklama süresini özelleştirmek için yükseltin."
 
 #. js-lingui-id: 6SoluV
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Logs are kept {retentionLabel}."
-msgstr ""
+msgstr "Günlükler {retentionLabel} boyunca saklanır."
 
 #. js-lingui-id: vOd7ZN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -16767,7 +16767,7 @@ msgstr "Pano sayısı"
 #. js-lingui-id: n13TAo
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Number of days to retain logs ({minEventLogRetentionInDays}-{maxEventLogRetentionInDays} days)"
-msgstr ""
+msgstr "Günlükleri saklamak için gün sayısı ({minEventLogRetentionInDays}-{maxEventLogRetentionInDays} gün)"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -17260,7 +17260,7 @@ msgstr "Bağlantıyı aç"
 #. js-lingui-id: MQAnOH
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Open log console"
-msgstr ""
+msgstr "Günlük konsolunu aç"
 
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
@@ -18908,7 +18908,7 @@ msgstr "{recordCount} kayıttan {displayedRecordNumber}. kayıt"
 #. js-lingui-id: v5nqef
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Record change logs"
-msgstr ""
+msgstr "Kayıt değişikliği günlükleri"
 
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx

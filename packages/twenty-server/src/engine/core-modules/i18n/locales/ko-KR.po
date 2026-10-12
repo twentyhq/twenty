@@ -1523,7 +1523,7 @@ msgstr "오디오 전용 녹음"
 #. js-lingui-id: 5bRlXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "Audit logs require an Organization subscription."
-msgstr ""
+msgstr "감사 로그를 사용하려면 Organization 구독이 필요합니다."
 
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -2476,7 +2476,7 @@ msgstr "참조"
 #. js-lingui-id: abq5Mk
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Changing log retention requires an Organization subscription."
-msgstr ""
+msgstr "로그 보존 기간을 변경하려면 Organization 구독이 필요합니다."
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts

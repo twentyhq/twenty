@@ -820,7 +820,7 @@ msgstr "{retentionInDays, plural, other {#일}}"
 #. js-lingui-id: HlXLUQ
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "{retentionInHours, plural, one {# hour} other {# hours}}"
-msgstr ""
+msgstr "{retentionInHours, plural, other {#시간}}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1148,7 +1148,7 @@ msgstr "2열"
 #. js-lingui-id: Ur5nZV
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "2 hours"
-msgstr ""
+msgstr "2시간"
 
 #. js-lingui-id: 0HAF12
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -4204,7 +4204,7 @@ msgstr "파트너 둘러보기"
 #. js-lingui-id: 8nmCIQ
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Browse record changes, security events, app logs and more"
-msgstr ""
+msgstr "레코드 변경 사항, 보안 이벤트, 앱 로그 등을 찾아보세요"
 
 #. js-lingui-id: GsXRxc
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -7204,7 +7204,7 @@ msgstr "커스텀 뷰"
 #. js-lingui-id: T8n/Qf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Custom, up to 3 years"
-msgstr ""
+msgstr "사용자 지정, 최대 3년"
 
 #. js-lingui-id: 876pfE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -14159,7 +14159,7 @@ msgstr "새 거래를 기록하세요 (회사, 금액, 단계, 예상 종결일)
 #. js-lingui-id: qLzdcJ
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Log console"
-msgstr ""
+msgstr "로그 콘솔"
 
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
@@ -14267,12 +14267,12 @@ msgstr "로그"
 #. js-lingui-id: FBD/J1
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Logs are kept {proPlanEventLogRetentionInHours} hours on your plan. Upgrade to customize retention."
-msgstr ""
+msgstr "현재 요금제에서는 로그가 {proPlanEventLogRetentionInHours}시간 동안 보관됩니다. 보관 기간을 사용자 지정하려면 업그레이드하세요."
 
 #. js-lingui-id: 6SoluV
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Logs are kept {retentionLabel}."
-msgstr ""
+msgstr "로그는 {retentionLabel} 동안 보관됩니다."
 
 #. js-lingui-id: vOd7ZN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -16767,7 +16767,7 @@ msgstr "대시보드 개수"
 #. js-lingui-id: n13TAo
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Number of days to retain logs ({minEventLogRetentionInDays}-{maxEventLogRetentionInDays} days)"
-msgstr ""
+msgstr "로그 보관 일수({minEventLogRetentionInDays}-{maxEventLogRetentionInDays}일)"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -17260,7 +17260,7 @@ msgstr "링크 열기"
 #. js-lingui-id: MQAnOH
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Open log console"
-msgstr ""
+msgstr "로그 콘솔 열기"
 
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
@@ -18908,7 +18908,7 @@ msgstr "레코드 {displayedRecordNumber} / {recordCount}"
 #. js-lingui-id: v5nqef
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Record change logs"
-msgstr ""
+msgstr "레코드 변경 로그"
 
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx

@@ -820,7 +820,7 @@ msgstr "{retentionInDays, plural, one {# יום} two {# ימים} other {# ימ�
 #. js-lingui-id: HlXLUQ
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "{retentionInHours, plural, one {# hour} other {# hours}}"
-msgstr ""
+msgstr "{retentionInHours, plural, one {# שעה} two {# שעות} other {# שעות}}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1148,7 +1148,7 @@ msgstr "2 עמודות"
 #. js-lingui-id: Ur5nZV
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "2 hours"
-msgstr ""
+msgstr "שעתיים"
 
 #. js-lingui-id: 0HAF12
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -4204,7 +4204,7 @@ msgstr "עיין בשותפים"
 #. js-lingui-id: 8nmCIQ
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Browse record changes, security events, app logs and more"
-msgstr ""
+msgstr "עיין בשינויים ברשומות, באירועי אבטחה, ביומני אפליקציה ועוד"
 
 #. js-lingui-id: GsXRxc
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -7204,7 +7204,7 @@ msgstr "תצוגות מותאמות אישית"
 #. js-lingui-id: T8n/Qf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Custom, up to 3 years"
-msgstr ""
+msgstr "מותאם אישית, עד 3 שנים"
 
 #. js-lingui-id: 876pfE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -14159,7 +14159,7 @@ msgstr "רשום עסקה חדשה (חברה, סכום, שלב, תאריך סג�
 #. js-lingui-id: qLzdcJ
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Log console"
-msgstr ""
+msgstr "מסוף יומנים"
 
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
@@ -14267,12 +14267,12 @@ msgstr "יומנים"
 #. js-lingui-id: FBD/J1
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Logs are kept {proPlanEventLogRetentionInHours} hours on your plan. Upgrade to customize retention."
-msgstr ""
+msgstr "יומנים נשמרים למשך {proPlanEventLogRetentionInHours} שעות בתוכנית שלך. שדרג כדי להתאים אישית את משך השמירה."
 
 #. js-lingui-id: 6SoluV
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Logs are kept {retentionLabel}."
-msgstr ""
+msgstr "יומנים נשמרים למשך {retentionLabel}."
 
 #. js-lingui-id: vOd7ZN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -16767,7 +16767,7 @@ msgstr "מספר לוחות המחוונים"
 #. js-lingui-id: n13TAo
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Number of days to retain logs ({minEventLogRetentionInDays}-{maxEventLogRetentionInDays} days)"
-msgstr ""
+msgstr "מספר הימים לשמירת יומנים ({minEventLogRetentionInDays}-{maxEventLogRetentionInDays} ימים)"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -17260,7 +17260,7 @@ msgstr "פתח קישור"
 #. js-lingui-id: MQAnOH
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Open log console"
-msgstr ""
+msgstr "פתח את מסוף היומנים"
 
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
@@ -18908,7 +18908,7 @@ msgstr "רשומה {displayedRecordNumber} מתוך {recordCount}"
 #. js-lingui-id: v5nqef
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Record change logs"
-msgstr ""
+msgstr "יומני שינויים ברשומות"
 
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx

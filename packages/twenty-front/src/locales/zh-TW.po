@@ -820,7 +820,7 @@ msgstr "{retentionInDays, plural, other {# 天}}"
 #. js-lingui-id: HlXLUQ
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "{retentionInHours, plural, one {# hour} other {# hours}}"
-msgstr ""
+msgstr "{retentionInHours, plural, other {# 小時}}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1148,7 +1148,7 @@ msgstr "2 欄"
 #. js-lingui-id: Ur5nZV
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "2 hours"
-msgstr ""
+msgstr "2 小時"
 
 #. js-lingui-id: 0HAF12
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -4204,7 +4204,7 @@ msgstr "瀏覽合作夥伴"
 #. js-lingui-id: 8nmCIQ
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Browse record changes, security events, app logs and more"
-msgstr ""
+msgstr "瀏覽記錄變更、安全性事件、應用程式日誌等"
 
 #. js-lingui-id: GsXRxc
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -7204,7 +7204,7 @@ msgstr "自訂檢視"
 #. js-lingui-id: T8n/Qf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Custom, up to 3 years"
-msgstr ""
+msgstr "自訂，最多 3 年"
 
 #. js-lingui-id: 876pfE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -14136,7 +14136,7 @@ msgstr "記錄一筆新交易（公司、金額、階段、預計結案）。詳
 #. js-lingui-id: qLzdcJ
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Log console"
-msgstr ""
+msgstr "日誌主控台"
 
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
@@ -14244,12 +14244,12 @@ msgstr "日誌"
 #. js-lingui-id: FBD/J1
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Logs are kept {proPlanEventLogRetentionInHours} hours on your plan. Upgrade to customize retention."
-msgstr ""
+msgstr "您的方案會保留日誌 {proPlanEventLogRetentionInHours} 小時。升級即可自訂保留期限。"
 
 #. js-lingui-id: 6SoluV
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Logs are kept {retentionLabel}."
-msgstr ""
+msgstr "日誌會保留 {retentionLabel}。"
 
 #. js-lingui-id: vOd7ZN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -16744,7 +16744,7 @@ msgstr "儀表板數量"
 #. js-lingui-id: n13TAo
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Number of days to retain logs ({minEventLogRetentionInDays}-{maxEventLogRetentionInDays} days)"
-msgstr ""
+msgstr "保留日誌的天數（{minEventLogRetentionInDays}-{maxEventLogRetentionInDays} 天）"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -17237,7 +17237,7 @@ msgstr "開啟連結"
 #. js-lingui-id: MQAnOH
 #: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
 msgid "Open log console"
-msgstr ""
+msgstr "開啟日誌主控台"
 
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
@@ -18885,7 +18885,7 @@ msgstr "第 {displayedRecordNumber} 筆，共 {recordCount} 筆記錄"
 #. js-lingui-id: v5nqef
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Record change logs"
-msgstr ""
+msgstr "記錄變更日誌"
 
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
