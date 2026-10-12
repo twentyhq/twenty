@@ -2,14 +2,17 @@ import { createManyOperationFactory } from 'test/integration/graphql/utils/creat
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
+import { gql } from 'graphql-tag';
 import { createClient } from 'redis';
 import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { RECORD_STOCK_TRACKED_SYSTEM_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/usage-limit/constants/record-stock-tracked-system-object-universal-identifiers.constant';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -23,7 +26,47 @@ const SCHEMA_NAME = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const HEADROOM = 2;
 const STATS_FLUSH_TIMEOUT_MS = 30_000;
 
+const UPDATE_WORKSPACE_USAGE_LIMIT = gql`
+  mutation UpdateWorkspaceUsageLimit(
+    $workspaceId: UUID!
+    $payload: UpdateUsageLimitInput!
+  ) {
+    updateWorkspaceUsageLimit(workspaceId: $workspaceId, payload: $payload) {
+      id
+    }
+  }
+`;
+
+const DELETE_WORKSPACE_USAGE_LIMIT = gql`
+  mutation DeleteWorkspaceUsageLimit(
+    $workspaceId: UUID!
+    $usageLimitId: UUID!
+  ) {
+    deleteWorkspaceUsageLimit(
+      workspaceId: $workspaceId
+      usageLimitId: $usageLimitId
+    )
+  }
+`;
+
+const RECORD_STOCK_PAYLOAD = {
+  resourceType: UsageResourceType.RECORD,
+  operationType: UsageOperationType.RECORD_WRITE,
+  spenderType: 'workspace' as const,
+  spenderId: null,
+  limitKind: 'stock' as const,
+  periodCount: 1,
+  periodUnit: 'lifetime' as const,
+  unit: UsageUnit.RECORD,
+  burstValue: null,
+};
+
 describe('Record stock limit', () => {
+  const twentyConfigService = getAppProviderByClassName<TwentyConfigService>(
+    'TwentyConfigService',
+  );
+  const readConfig = twentyConfigService.get.bind(twentyConfigService);
+
   let usageLimitRepository: Repository<UsageLimitEntity>;
   let redis: Awaited<ReturnType<typeof createClient>>;
   let usageLimitId: string;
@@ -54,6 +97,18 @@ describe('Record stock limit', () => {
         filter: { id: { in: ids } },
       }),
     );
+
+  const insertRocketsBehindTheCounter = async (count: number) => {
+    const ids = Array.from({ length: count }, () => v4());
+
+    createdRocketIds.push(...ids);
+
+    await global.testDataSource.query(
+      `INSERT INTO "${SCHEMA_NAME}"."_rocket" (id, name)
+       SELECT unnest($1::uuid[]), 'Record stock test'`,
+      [ids],
+    );
+  };
 
   const destroyRockets = (ids: string[]) =>
     makeGraphqlApiRequest(
@@ -129,13 +184,53 @@ describe('Record stock limit', () => {
     }
   };
 
-  const dropStockCounter = () =>
-    dropKeys(`*{${SEED_APPLE_WORKSPACE_ID}}:stock:RECORD:*`);
+  const dropWorkspaceCounters = () =>
+    dropKeys(`*{${SEED_APPLE_WORKSPACE_ID}}*`);
 
   const refreshUsageLimitsCache = () =>
     getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['usageLimits']);
+
+  const saveRecordStockLimit = async (limitValue: number) => {
+    const usageLimit = await usageLimitRepository.save({
+      ...RECORD_STOCK_PAYLOAD,
+      id: usageLimitId,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      spenderId: '',
+      limitValue,
+      isInstanceOverride: true,
+    });
+
+    usageLimitId = usageLimit.id;
+
+    await refreshUsageLimitsCache();
+  };
+
+  const updateRecordStockLimit = (limitValue: number) =>
+    makeAdminPanelApiRequest({
+      query: UPDATE_WORKSPACE_USAGE_LIMIT,
+      variables: {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        payload: {
+          id: usageLimitId,
+          payload: { ...RECORD_STOCK_PAYLOAD, limitValue },
+        },
+      },
+    });
+
+  const deleteRecordStockLimit = () =>
+    makeAdminPanelApiRequest({
+      query: DELETE_WORKSPACE_USAGE_LIMIT,
+      variables: { workspaceId: SEED_APPLE_WORKSPACE_ID, usageLimitId },
+    });
+
+  const setRecordLimitDefault = (limitValue: number | undefined) =>
+    jest
+      .spyOn(twentyConfigService, 'get')
+      .mockImplementation((key) =>
+        key === 'WORKSPACE_RECORD_LIMIT' ? limitValue : readConfig(key),
+      );
 
   const expectRefused = (response: { body: { errors?: unknown[] } }) => {
     expect(
@@ -159,33 +254,17 @@ describe('Record stock limit', () => {
     });
     baselineRecordCount = await waitForStatsToSettle();
 
-    const [usageLimit] = await usageLimitRepository.save([
-      {
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        resourceType: UsageResourceType.RECORD,
-        operationType: UsageOperationType.RECORD_WRITE,
-        spenderType: 'workspace',
-        spenderId: '',
-        limitKind: 'stock',
-        periodCount: 1,
-        periodUnit: 'lifetime',
-        unit: UsageUnit.RECORD,
-        limitValue: baselineRecordCount + HEADROOM,
-        burstValue: null,
-      },
-    ]);
-
-    usageLimitId = usageLimit.id;
-
-    await refreshUsageLimitsCache();
+    await saveRecordStockLimit(baselineRecordCount + HEADROOM);
   });
 
   beforeEach(async () => {
     await waitForRecordCount(baselineRecordCount);
-    await dropStockCounter();
+    await dropWorkspaceCounters();
   }, STATS_FLUSH_TIMEOUT_MS + 5_000);
 
   afterEach(async () => {
+    jest.restoreAllMocks();
+
     if (createdRocketIds.length > 0) {
       await global.testDataSource.query(
         `DELETE FROM "${SCHEMA_NAME}"."_rocket" WHERE id = ANY($1)`,
@@ -193,12 +272,14 @@ describe('Record stock limit', () => {
       );
       createdRocketIds.length = 0;
     }
+
+    await saveRecordStockLimit(baselineRecordCount + HEADROOM);
   });
 
   afterAll(async () => {
     await usageLimitRepository.delete({ id: usageLimitId });
     await refreshUsageLimitsCache();
-    await dropStockCounter();
+    await dropWorkspaceCounters();
     await redis.quit();
   });
 
@@ -232,4 +313,40 @@ describe('Record stock limit', () => {
 
     expectRefused(await createRockets(1));
   });
+
+  it.failing(
+    'keeps the held count across a cap edit instead of warming it again',
+    async () => {
+      setRecordLimitDefault(undefined);
+
+      expectAdmitted(await createRockets(1));
+
+      await insertRocketsBehindTheCounter(1);
+      await waitForRecordCount(baselineRecordCount + 2);
+
+      expectAdmitted(
+        await updateRecordStockLimit(baselineRecordCount + HEADROOM + 1),
+      );
+      expectAdmitted(await createRockets(2));
+      expectRefused(await createRockets(1));
+    },
+    STATS_FLUSH_TIMEOUT_MS + 5_000,
+  );
+
+  it.failing(
+    'keeps the held count when the default takes over from a deleted row',
+    async () => {
+      setRecordLimitDefault(baselineRecordCount + HEADROOM + 1);
+
+      expectAdmitted(await createRockets(1));
+
+      await insertRocketsBehindTheCounter(1);
+      await waitForRecordCount(baselineRecordCount + 2);
+
+      expectAdmitted(await deleteRecordStockLimit());
+      expectAdmitted(await createRockets(2));
+      expectRefused(await createRockets(1));
+    },
+    STATS_FLUSH_TIMEOUT_MS + 5_000,
+  );
 });
