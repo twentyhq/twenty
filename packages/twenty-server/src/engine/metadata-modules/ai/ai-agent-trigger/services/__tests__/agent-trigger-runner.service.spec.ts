@@ -141,6 +141,7 @@ describe('AgentTriggerRunnerService', () => {
 
     await service.run(JOB_DATA);
 
+    expect(runAgent).toHaveBeenCalledTimes(1);
     expect(runAgent).toHaveBeenCalledWith(
       expect.objectContaining({
         executionContext: expect.objectContaining({
@@ -162,6 +163,7 @@ describe('AgentTriggerRunnerService', () => {
 
     await service.run(JOB_DATA);
 
+    expect(runAgent).toHaveBeenCalledTimes(1);
     expect(runAgent).toHaveBeenCalledWith(
       expect.objectContaining({
         executionContext: expect.objectContaining({
