@@ -12518,6 +12518,11 @@ msgstr "Ish jarayoni yozuv tanlagichi obyektga havola qilishi kerak."
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Ish jarayoni ushbu ilova uchun mavjud bo‘lmagan metama’lumotlarga havola qiladi."
 
+#. js-lingui-id: W+A2pa
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
+msgid "The workflow schedule is invalid."
+msgstr "Ish jarayoni jadvali noto‘g‘ri."
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
