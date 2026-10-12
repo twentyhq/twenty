@@ -6,6 +6,7 @@ import { uploadApplicationFile } from 'test/integration/metadata/suites/applicat
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
 import {
   type FrontComponentManifest,
+  type FrontComponentSurface,
   type Manifest,
   type SettingsMenuItemManifest,
 } from 'twenty-shared/application';
@@ -24,11 +25,11 @@ const SETTINGS_COMPONENT_NAME = 'SettingsComponent';
 const buildFrontComponent = ({
   universalIdentifier,
   componentName,
-  excludeFromWidgetSelection,
+  availableOn,
 }: {
   universalIdentifier: string;
   componentName: string;
-  excludeFromWidgetSelection?: boolean;
+  availableOn?: FrontComponentSurface[];
 }): FrontComponentManifest => ({
   universalIdentifier,
   name: componentName,
@@ -37,9 +38,7 @@ const buildFrontComponent = ({
   builtComponentChecksum: `${componentName}-checksum`,
   componentName,
   isHeadless: false,
-  ...(isDefined(excludeFromWidgetSelection)
-    ? { excludeFromWidgetSelection }
-    : {}),
+  ...(isDefined(availableOn) ? { availableOn } : {}),
 });
 
 const SETTINGS_MENU_ITEM: SettingsMenuItemManifest = {
@@ -50,14 +49,12 @@ const SETTINGS_MENU_ITEM: SettingsMenuItemManifest = {
 
 const buildManifest = ({
   settingsMenuItems = [],
-  widgetExcludeFromWidgetSelection,
-  settingsExcludeFromWidgetSelection,
-  overrides,
+  widgetAvailableOn,
+  settingsAvailableOn,
 }: {
   settingsMenuItems?: SettingsMenuItemManifest[];
-  widgetExcludeFromWidgetSelection?: boolean;
-  settingsExcludeFromWidgetSelection?: boolean;
-  overrides?: Partial<Manifest>;
+  widgetAvailableOn?: FrontComponentSurface[];
+  settingsAvailableOn?: FrontComponentSurface[];
 } = {}): Manifest =>
   buildBaseManifest({
     appId: TEST_APP_ID,
@@ -67,26 +64,25 @@ const buildManifest = ({
         buildFrontComponent({
           universalIdentifier: WIDGET_FRONT_COMPONENT_ID,
           componentName: WIDGET_COMPONENT_NAME,
-          excludeFromWidgetSelection: widgetExcludeFromWidgetSelection,
+          availableOn: widgetAvailableOn,
         }),
         buildFrontComponent({
           universalIdentifier: SETTINGS_FRONT_COMPONENT_ID,
           componentName: SETTINGS_COMPONENT_NAME,
-          excludeFromWidgetSelection: settingsExcludeFromWidgetSelection,
+          availableOn: settingsAvailableOn,
         }),
       ],
       settingsMenuItems,
-      ...overrides,
     },
   });
 
-const findExcludeFromWidgetSelectionByUniversalIdentifier = async (): Promise<
-  Record<string, boolean>
+const findAvailableOnByUniversalIdentifier = async (): Promise<
+  Record<string, FrontComponentSurface[]>
 > => {
   const { data } = await findFrontComponents({
     gqlFields: `
       universalIdentifier
-      excludeFromWidgetSelection
+      availableOn
     `,
     expectToFail: false,
   });
@@ -100,7 +96,7 @@ const findExcludeFromWidgetSelectionByUniversalIdentifier = async (): Promise<
       )
       .map((frontComponent) => [
         frontComponent.universalIdentifier,
-        frontComponent.excludeFromWidgetSelection,
+        frontComponent.availableOn,
       ]),
   );
 };
@@ -119,13 +115,13 @@ const uploadBuiltComponentFile = async (componentName: string) => {
   });
 };
 
-describe('Manifest sync - front component widget selection', () => {
+describe('Manifest sync - front component availableOn', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
-      name: 'Front Component Widget Selection Test Application',
-      description: 'App for testing front component widget selection sync',
-      sourcePath: 'front-component-widget-selection-manifest-sync',
+      name: 'Front Component Available On Test Application',
+      description: 'App for testing front component availableOn sync',
+      sourcePath: 'front-component-available-on-manifest-sync',
     });
 
     // setupApplicationForSync leaves fake timers installed, under which the
@@ -149,30 +145,26 @@ describe('Manifest sync - front component widget selection', () => {
     });
   });
 
-  it('keeps front components selectable as widgets by default', async () => {
-    expect(await findExcludeFromWidgetSelectionByUniversalIdentifier()).toEqual(
-      {
-        [WIDGET_FRONT_COMPONENT_ID]: false,
-        [SETTINGS_FRONT_COMPONENT_ID]: false,
-      },
-    );
+  it('makes front components available on objects and dashboards by default', async () => {
+    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+      [SETTINGS_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+    });
   }, 60000);
 
-  it('excludes a front component rendered by a settings menu item by default', async () => {
+  it('makes a front component rendered by a settings menu item available on settings only by default', async () => {
     await syncApplication({
       manifest: buildManifest({ settingsMenuItems: [SETTINGS_MENU_ITEM] }),
       expectToFail: false,
     });
 
-    expect(await findExcludeFromWidgetSelectionByUniversalIdentifier()).toEqual(
-      {
-        [WIDGET_FRONT_COMPONENT_ID]: false,
-        [SETTINGS_FRONT_COMPONENT_ID]: true,
-      },
-    );
+    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+      [SETTINGS_FRONT_COMPONENT_ID]: ['SETTINGS'],
+    });
   }, 60000);
 
-  it('excludes the deprecated settings front component by default', async () => {
+  it('makes the deprecated settings front component available on settings only by default', async () => {
     const baseManifest = buildManifest();
 
     await syncApplication({
@@ -188,33 +180,29 @@ describe('Manifest sync - front component widget selection', () => {
       expectToFail: false,
     });
 
-    expect(await findExcludeFromWidgetSelectionByUniversalIdentifier()).toEqual(
-      {
-        [WIDGET_FRONT_COMPONENT_ID]: false,
-        [SETTINGS_FRONT_COMPONENT_ID]: true,
-      },
-    );
+    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+      [SETTINGS_FRONT_COMPONENT_ID]: ['SETTINGS'],
+    });
   }, 60000);
 
-  it('honors an explicit excludeFromWidgetSelection over the default', async () => {
+  it('honors an explicit availableOn over the default', async () => {
     await syncApplication({
       manifest: buildManifest({
         settingsMenuItems: [SETTINGS_MENU_ITEM],
-        widgetExcludeFromWidgetSelection: true,
-        settingsExcludeFromWidgetSelection: false,
+        widgetAvailableOn: ['DASHBOARDS'],
+        settingsAvailableOn: ['SETTINGS', 'OBJECTS'],
       }),
       expectToFail: false,
     });
 
-    expect(await findExcludeFromWidgetSelectionByUniversalIdentifier()).toEqual(
-      {
-        [WIDGET_FRONT_COMPONENT_ID]: true,
-        [SETTINGS_FRONT_COMPONENT_ID]: false,
-      },
-    );
+    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: ['DASHBOARDS'],
+      [SETTINGS_FRONT_COMPONENT_ID]: ['SETTINGS', 'OBJECTS'],
+    });
   }, 60000);
 
-  it('makes a front component selectable again once no settings menu item renders it', async () => {
+  it('restores the default once no settings menu item renders the front component', async () => {
     await syncApplication({
       manifest: buildManifest({ settingsMenuItems: [SETTINGS_MENU_ITEM] }),
       expectToFail: false,
@@ -226,9 +214,25 @@ describe('Manifest sync - front component widget selection', () => {
     });
 
     expect(
-      (await findExcludeFromWidgetSelectionByUniversalIdentifier())[
+      (await findAvailableOnByUniversalIdentifier())[
         SETTINGS_FRONT_COMPONENT_ID
       ],
-    ).toBe(false);
+    ).toEqual(['OBJECTS', 'DASHBOARDS']);
+  }, 60000);
+
+  it('rejects an unknown surface', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildManifest({
+        widgetAvailableOn: ['UNKNOWN' as FrontComponentSurface],
+      }),
+      expectToFail: true,
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors?.[0]?.extensions?.code).not.toBe('INTERNAL_SERVER_ERROR');
+    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+      [SETTINGS_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+    });
   }, 60000);
 });

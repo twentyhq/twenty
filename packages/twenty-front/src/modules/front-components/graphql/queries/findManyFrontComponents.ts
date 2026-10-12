@@ -12,7 +12,7 @@ export const FIND_MANY_FRONT_COMPONENTS = gql`
       createdAt
       description
       isHeadless
-      excludeFromWidgetSelection
+      availableOn
       sourceComponentPath
       universalIdentifier
       updatedAt

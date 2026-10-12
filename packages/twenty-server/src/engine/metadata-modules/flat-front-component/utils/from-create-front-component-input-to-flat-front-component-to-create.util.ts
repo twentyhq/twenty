@@ -1,3 +1,4 @@
+import { DEFAULT_FRONT_COMPONENT_AVAILABLE_ON } from 'twenty-shared/application';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -34,7 +35,7 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
     componentName: createFrontComponentInput.componentName,
     builtComponentChecksum: createFrontComponentInput.builtComponentChecksum,
     isHeadless: createFrontComponentInput.isHeadless ?? false,
-    excludeFromWidgetSelection: false,
+    availableOn: [...DEFAULT_FRONT_COMPONENT_AVAILABLE_ON],
     usesSdkClient: false,
     workspaceId,
     createdAt: now,

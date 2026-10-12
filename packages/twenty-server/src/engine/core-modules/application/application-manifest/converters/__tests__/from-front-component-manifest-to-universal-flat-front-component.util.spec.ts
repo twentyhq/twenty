@@ -19,7 +19,7 @@ const buildManifest = (
 });
 
 describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
-  it('should keep a regular front component selectable as a widget by default', () => {
+  it('should make a regular front component available on objects and dashboards by default', () => {
     const result = fromFrontComponentManifestToUniversalFlatFrontComponent({
       frontComponentManifest: buildManifest(),
       applicationUniversalIdentifier: APP_UID,
@@ -28,10 +28,10 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
       now: NOW,
     });
 
-    expect(result.excludeFromWidgetSelection).toBe(false);
+    expect(result.availableOn).toEqual(['OBJECTS', 'DASHBOARDS']);
   });
 
-  it('should exclude a settings front component from widget selection by default', () => {
+  it('should make a settings front component available on settings only by default', () => {
     const result = fromFrontComponentManifestToUniversalFlatFrontComponent({
       frontComponentManifest: buildManifest(),
       applicationUniversalIdentifier: APP_UID,
@@ -40,10 +40,10 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
       now: NOW,
     });
 
-    expect(result.excludeFromWidgetSelection).toBe(true);
+    expect(result.availableOn).toEqual(['SETTINGS']);
   });
 
-  it('should exclude a front component rendered by a settings menu item from widget selection by default', () => {
+  it('should make a front component rendered by a settings menu item available on settings only by default', () => {
     const result = fromFrontComponentManifestToUniversalFlatFrontComponent({
       frontComponentManifest: buildManifest(),
       applicationUniversalIdentifier: APP_UID,
@@ -52,14 +52,14 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
       now: NOW,
     });
 
-    expect(result.excludeFromWidgetSelection).toBe(true);
+    expect(result.availableOn).toEqual(['SETTINGS']);
   });
 
-  it('should honor an explicit excludeFromWidgetSelection over the default', () => {
+  it('should honor an explicit availableOn over the default', () => {
     const regularResult =
       fromFrontComponentManifestToUniversalFlatFrontComponent({
         frontComponentManifest: buildManifest({
-          excludeFromWidgetSelection: true,
+          availableOn: ['DASHBOARDS'],
         }),
         applicationUniversalIdentifier: APP_UID,
         isSettingsFrontComponent: false,
@@ -70,7 +70,7 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
     const settingsResult =
       fromFrontComponentManifestToUniversalFlatFrontComponent({
         frontComponentManifest: buildManifest({
-          excludeFromWidgetSelection: false,
+          availableOn: ['SETTINGS', 'OBJECTS'],
         }),
         applicationUniversalIdentifier: APP_UID,
         isSettingsFrontComponent: true,
@@ -78,7 +78,7 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
         now: NOW,
       });
 
-    expect(regularResult.excludeFromWidgetSelection).toBe(true);
-    expect(settingsResult.excludeFromWidgetSelection).toBe(false);
+    expect(regularResult.availableOn).toEqual(['DASHBOARDS']);
+    expect(settingsResult.availableOn).toEqual(['SETTINGS', 'OBJECTS']);
   });
 });

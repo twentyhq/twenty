@@ -21,7 +21,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
-import { isFrontComponentSelectableAsWidget } from '@/side-panel/pages/page-layout/utils/isFrontComponentSelectableAsWidget';
+import { isFrontComponentAvailableOn } from '@/side-panel/pages/page-layout/utils/isFrontComponentAvailableOn';
 import { resolveWidgetTypeSelectTargetTabId } from '@/side-panel/pages/page-layout/utils/resolveWidgetTypeSelectTargetTabId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -42,6 +42,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import {
   type FrontComponent,
+  FrontComponentSurface,
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
@@ -147,7 +148,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   }>(FIND_MANY_FRONT_COMPONENTS);
 
   const frontComponents = (frontComponentsData?.frontComponents ?? []).filter(
-    isFrontComponentSelectableAsWidget,
+    (frontComponent) =>
+      isFrontComponentAvailableOn({
+        frontComponent,
+        surface: FrontComponentSurface.OBJECTS,
+      }),
   );
 
   const frontComponentsWithSelectItemId = frontComponents.map(

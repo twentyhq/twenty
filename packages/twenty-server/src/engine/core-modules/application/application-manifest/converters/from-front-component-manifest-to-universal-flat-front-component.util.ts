@@ -1,4 +1,8 @@
-import { type FrontComponentManifest } from 'twenty-shared/application';
+import {
+  DEFAULT_FRONT_COMPONENT_AVAILABLE_ON,
+  type FrontComponentManifest,
+  SETTINGS_FRONT_COMPONENT_AVAILABLE_ON,
+} from 'twenty-shared/application';
 
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
 
@@ -28,9 +32,12 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
     isHeadless: isSettingsFrontComponent
       ? false
       : (frontComponentManifest.isHeadless ?? false),
-    excludeFromWidgetSelection:
-      frontComponentManifest.excludeFromWidgetSelection ??
-      (isSettingsFrontComponent || isReferencedBySettingsMenuItem),
+    availableOn: [
+      ...(frontComponentManifest.availableOn ??
+        (isSettingsFrontComponent || isReferencedBySettingsMenuItem
+          ? SETTINGS_FRONT_COMPONENT_AVAILABLE_ON
+          : DEFAULT_FRONT_COMPONENT_AVAILABLE_ON)),
+    ],
     usesSdkClient: frontComponentManifest.usesSdkClient ?? false,
     createdAt: now,
     updatedAt: now,

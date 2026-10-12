@@ -172,7 +172,14 @@ export type {
 } from './fieldManifestType';
 export type {
   CommandMenuItemManifest,
+  FrontComponentSurface,
   FrontComponentManifest,
+} from './frontComponentManifestType';
+export {
+  FRONT_COMPONENT_SURFACES,
+  isFrontComponentSurface,
+  DEFAULT_FRONT_COMPONENT_AVAILABLE_ON,
+  SETTINGS_FRONT_COMPONENT_AVAILABLE_ON,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
 export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';

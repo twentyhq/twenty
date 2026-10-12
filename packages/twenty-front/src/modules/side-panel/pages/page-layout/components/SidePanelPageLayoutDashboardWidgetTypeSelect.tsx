@@ -16,7 +16,7 @@ import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/h
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
 import { isExistingWidgetMissingOrDifferentType } from '@/side-panel/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
-import { isFrontComponentSelectableAsWidget } from '@/side-panel/pages/page-layout/utils/isFrontComponentSelectableAsWidget';
+import { isFrontComponentAvailableOn } from '@/side-panel/pages/page-layout/utils/isFrontComponentAvailableOn';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -33,6 +33,7 @@ import {
 } from 'twenty-ui/icon';
 import {
   type FrontComponent,
+  FrontComponentSurface,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
@@ -90,7 +91,11 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   }>(FIND_MANY_FRONT_COMPONENTS);
 
   const frontComponents = (frontComponentsData?.frontComponents ?? []).filter(
-    isFrontComponentSelectableAsWidget,
+    (frontComponent) =>
+      isFrontComponentAvailableOn({
+        frontComponent,
+        surface: FrontComponentSurface.DASHBOARDS,
+      }),
   );
 
   const frontComponentsWithSelectItemId = frontComponents.map(

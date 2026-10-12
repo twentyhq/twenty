@@ -1483,12 +1483,12 @@ export interface FrontComponent {
     /** @deprecated Use generateFrontComponentApplicationTokenPair */
     applicationTokenPair?: ApplicationTokenPair
     applicationVariables?: Scalars['JSON']
+    availableOn: FrontComponentSurface[]
     builtComponentChecksum: Scalars['String']
     builtComponentPath: Scalars['String']
     componentName: Scalars['String']
     createdAt: Scalars['DateTime']
     description?: Scalars['String']
-    excludeFromWidgetSelection: Scalars['Boolean']
     frontComponentSharedDependenciesChecksum?: Scalars['String']
     id: Scalars['UUID']
     isHeadless: Scalars['Boolean']
@@ -1506,6 +1506,8 @@ export interface FrontComponentConfiguration {
     headerCommandMenuItemUniversalIdentifiers?: Scalars['UUID'][]
     __typename: 'FrontComponentConfiguration'
 }
+
+export type FrontComponentSurface = 'DASHBOARDS' | 'OBJECTS' | 'SETTINGS'
 
 export interface FullName {
     firstName: Scalars['String']
@@ -5664,12 +5666,12 @@ export interface FrontComponentGenqlSelection{
     /** @deprecated Use generateFrontComponentApplicationTokenPair */
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
     applicationVariables?: boolean | number
+    availableOn?: boolean | number
     builtComponentChecksum?: boolean | number
     builtComponentPath?: boolean | number
     componentName?: boolean | number
     createdAt?: boolean | number
     description?: boolean | number
-    excludeFromWidgetSelection?: boolean | number
     frontComponentSharedDependenciesChecksum?: boolean | number
     id?: boolean | number
     isHeadless?: boolean | number
@@ -11554,6 +11556,12 @@ export const enumFileFolder = {
    RecordExport: 'RecordExport' as const,
    Source: 'Source' as const,
    Workflow: 'Workflow' as const
+}
+
+export const enumFrontComponentSurface = {
+   DASHBOARDS: 'DASHBOARDS' as const,
+   OBJECTS: 'OBJECTS' as const,
+   SETTINGS: 'SETTINGS' as const
 }
 
 export const enumGraphOrderBy = {

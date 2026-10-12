@@ -1778,9 +1778,9 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    excludeFromWidgetSelection: {
+    availableOn: {
       toCompare: true,
-      toStringify: false,
+      toStringify: true,
       universalProperty: undefined,
     },
     usesSdkClient: {

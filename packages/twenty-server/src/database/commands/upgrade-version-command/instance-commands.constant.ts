@@ -240,7 +240,7 @@ import { AddPurchaseToBillingCreditGrantTypeFastInstanceCommand } from 'src/data
 import { RestoreUsageLimitMeterCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791538680877-restore-usage-limit-meter-compatibility';
 import { DropUsageLimitMeterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791720497488-drop-usage-limit-meter';
 import { SetWorkspaceEventLogRetentionDefaultFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791790299002-set-workspace-event-log-retention-default';
-import { AddExcludeFromWidgetSelectionToFrontComponentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791814700861-add-exclude-from-widget-selection-to-front-component';
+import { AddAvailableOnToFrontComponentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791824779321-add-available-on-to-front-component';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -483,5 +483,5 @@ export const INSTANCE_COMMANDS = [
   RestoreUsageLimitMeterCompatibilityFastInstanceCommand,
   DropUsageLimitMeterFastInstanceCommand,
   SetWorkspaceEventLogRetentionDefaultFastInstanceCommand,
-  AddExcludeFromWidgetSelectionToFrontComponentFastInstanceCommand,
+  AddAvailableOnToFrontComponentFastInstanceCommand,
 ];

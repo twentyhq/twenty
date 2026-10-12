@@ -8,8 +8,13 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+// Inlined rather than imported from twenty-shared so this command keeps writing
+// what it wrote the day it ran, whatever those constants become.
+const DEFAULT_AVAILABLE_ON = ['OBJECTS', 'DASHBOARDS'];
+const SETTINGS_AVAILABLE_ON = ['SETTINGS'];
+
 // Mirrors the default applied on manifest sync, so components installed before
-// the column existed leave the widget picker without waiting for their next sync.
+// the column existed leave the widget pickers without waiting for their next sync.
 // Sync only sees the owning application's manifest, so a reference from another
 // application must not count here, or that application's next sync would undo it.
 const IS_SETTINGS_PAGE_FRONT_COMPONENT_PREDICATE = `(
@@ -28,13 +33,13 @@ const IS_SETTINGS_PAGE_FRONT_COMPONENT_PREDICATE = `(
   )
 )`;
 
-@RegisteredWorkspaceCommand('2.47.0', 1791814736863)
+@RegisteredWorkspaceCommand('2.47.0', 1791824791258)
 @Command({
-  name: 'upgrade:2-47:backfill-front-component-exclude-from-widget-selection',
+  name: 'upgrade:2-47:backfill-front-component-available-on',
   description:
-    'Exclude front components rendered as settings pages from the widget picker',
+    'Make front components rendered as settings pages available on settings only',
 })
-export class BackfillFrontComponentExcludeFromWidgetSelectionCommand extends ProvisionedWorkspaceCommandRunner {
+export class BackfillFrontComponentAvailableOnCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -48,35 +53,35 @@ export class BackfillFrontComponentExcludeFromWidgetSelectionCommand extends Pro
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.setSettingsPageFrontComponentsExcludeFromWidgetSelection(
-      args,
-      true,
-    );
+    await this.replaceSettingsPageFrontComponentsAvailableOn(args, {
+      from: DEFAULT_AVAILABLE_ON,
+      to: SETTINGS_AVAILABLE_ON,
+    });
   }
 
   async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.setSettingsPageFrontComponentsExcludeFromWidgetSelection(
-      args,
-      false,
-    );
+    await this.replaceSettingsPageFrontComponentsAvailableOn(args, {
+      from: SETTINGS_AVAILABLE_ON,
+      to: DEFAULT_AVAILABLE_ON,
+    });
   }
 
-  private async setSettingsPageFrontComponentsExcludeFromWidgetSelection(
+  private async replaceSettingsPageFrontComponentsAvailableOn(
     { workspaceId, options }: RunOnWorkspaceArgs,
-    excludeFromWidgetSelection: boolean,
+    { from, to }: { from: string[]; to: string[] },
   ): Promise<void> {
     if (options.dryRun ?? false) {
       const [{ count }] = await this.dataSource.query<{ count: number }[]>(
         `SELECT COUNT(*)::int AS count
          FROM core."frontComponent" "frontComponent"
          WHERE "frontComponent"."workspaceId" = $1
-           AND "frontComponent"."excludeFromWidgetSelection" <> $2
+           AND "frontComponent"."availableOn" = $2::text[]
            AND ${IS_SETTINGS_PAGE_FRONT_COMPONENT_PREDICATE}`,
-        [workspaceId, excludeFromWidgetSelection],
+        [workspaceId, from],
       );
 
       this.logger.log(
-        `[DRY RUN] Would set excludeFromWidgetSelection to ${excludeFromWidgetSelection} on ${count} front component(s) in workspace ${workspaceId}`,
+        `[DRY RUN] Would set availableOn to ${to.join(', ')} on ${count} front component(s) in workspace ${workspaceId}`,
       );
 
       return;
@@ -84,11 +89,11 @@ export class BackfillFrontComponentExcludeFromWidgetSelectionCommand extends Pro
 
     const [, updatedCount]: [unknown[], number] = await this.dataSource.query(
       `UPDATE core."frontComponent" "frontComponent"
-       SET "excludeFromWidgetSelection" = $2
+       SET "availableOn" = $3::text[]
        WHERE "frontComponent"."workspaceId" = $1
-         AND "frontComponent"."excludeFromWidgetSelection" <> $2
+         AND "frontComponent"."availableOn" = $2::text[]
          AND ${IS_SETTINGS_PAGE_FRONT_COMPONENT_PREDICATE}`,
-      [workspaceId, excludeFromWidgetSelection],
+      [workspaceId, from, to],
     );
 
     // Recomputed even when nothing changed: front components cached before the
@@ -98,7 +103,7 @@ export class BackfillFrontComponentExcludeFromWidgetSelectionCommand extends Pro
     ]);
 
     this.logger.log(
-      `Set excludeFromWidgetSelection to ${excludeFromWidgetSelection} on ${updatedCount} front component(s) in workspace ${workspaceId}`,
+      `Set availableOn to ${to.join(', ')} on ${updatedCount} front component(s) in workspace ${workspaceId}`,
     );
   }
 }

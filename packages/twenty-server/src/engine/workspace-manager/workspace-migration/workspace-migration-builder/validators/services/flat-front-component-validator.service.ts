@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isFrontComponentSurface } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -66,6 +67,14 @@ export class FlatFrontComponentValidatorService {
           userFriendlyMessage: msg`Source component path is invalid`,
         });
       }
+    }
+
+    if (!flatFrontComponent.availableOn.every(isFrontComponentSurface)) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Front component availableOn contains an unknown surface`,
+        userFriendlyMessage: msg`Front component availableOn contains an unknown surface`,
+      });
     }
 
     return validationResult;
@@ -166,6 +175,17 @@ export class FlatFrontComponentValidatorService {
           userFriendlyMessage: msg`Source component path is invalid`,
         });
       }
+    }
+
+    if (
+      isDefined(flatEntityUpdate.availableOn) &&
+      !flatEntityUpdate.availableOn.every(isFrontComponentSurface)
+    ) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Front component availableOn contains an unknown surface`,
+        userFriendlyMessage: msg`Front component availableOn contains an unknown surface`,
+      });
     }
 
     return validationResult;

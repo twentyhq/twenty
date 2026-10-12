@@ -1,17 +1,36 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import {
+  Field,
+  HideField,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
+  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
+import {
+  FRONT_COMPONENT_SURFACES,
+  type FrontComponentSurface,
+} from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
+
+const FrontComponentSurfaceEnum = Object.fromEntries(
+  FRONT_COMPONENT_SURFACES.map((surface) => [surface, surface]),
+) as { [P in FrontComponentSurface]: P };
+
+registerEnumType(FrontComponentSurfaceEnum, {
+  name: 'FrontComponentSurface',
+});
 
 @ObjectType('FrontComponent')
 export class FrontComponentDTO {
@@ -69,9 +88,10 @@ export class FrontComponentDTO {
   @Field()
   isHeadless: boolean;
 
-  @IsBoolean()
-  @Field()
-  excludeFromWidgetSelection: boolean;
+  @IsArray()
+  @IsIn(FRONT_COMPONENT_SURFACES, { each: true })
+  @Field(() => [FrontComponentSurfaceEnum])
+  availableOn: FrontComponentSurface[];
 
   @IsBoolean()
   @Field()

@@ -2311,12 +2311,12 @@ type FrontComponent {
   applicationName: String
   applicationTokenPair: ApplicationTokenPair @deprecated(reason: "Use generateFrontComponentApplicationTokenPair")
   applicationVariables: JSON
+  availableOn: [FrontComponentSurface!]!
   builtComponentChecksum: String!
   builtComponentPath: String!
   componentName: String!
   createdAt: DateTime!
   description: String
-  excludeFromWidgetSelection: Boolean!
   frontComponentSharedDependenciesChecksum: String
   id: UUID!
   isHeadless: Boolean!
@@ -2331,6 +2331,12 @@ type FrontComponentConfiguration {
   configurationType: WidgetConfigurationType!
   frontComponentId: UUID!
   headerCommandMenuItemUniversalIdentifiers: [UUID!]
+}
+
+enum FrontComponentSurface {
+  DASHBOARDS
+  OBJECTS
+  SETTINGS
 }
 
 type FullName {

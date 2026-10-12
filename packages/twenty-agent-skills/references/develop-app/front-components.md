@@ -25,7 +25,7 @@ export default defineFrontComponent({
 });
 ```
 
-Every non-headless front component is offered in the widget picker when a page layout is edited. Set `excludeFromWidgetSelection: true` to hide one that is not meant to be placed as a widget. A component pointed at by a settings menu item (see `layout.md`) is excluded by default; set `excludeFromWidgetSelection: false` to offer it as a widget too.
+Set `availableOn` to declare where a non-headless component is offered: `OBJECTS` (record page widget picker), `DASHBOARDS` (dashboard widget picker) and `SETTINGS` (page behind a settings menu item, see `layout.md`). It defaults to `['OBJECTS', 'DASHBOARDS']`, or to `['SETTINGS']` for a component pointed at by a settings menu item; list more surfaces, for example `['SETTINGS', 'DASHBOARDS']`, to also offer such a component as a widget.
 
 Do not import or call `react-dom/client` in the component source. The SDK renderer mounts front components.
 
