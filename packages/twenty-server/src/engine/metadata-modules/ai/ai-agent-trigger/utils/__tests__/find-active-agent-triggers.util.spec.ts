@@ -1,8 +1,10 @@
 import { type AgentTrigger } from 'twenty-shared/application';
 
 import { findActiveAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/find-active-agent-triggers.util';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 
 const AGENT_ID = 'agent-id';
 
@@ -46,13 +48,23 @@ describe('findActiveAgentTriggers', () => {
     ]);
   });
 
-  it('should return no trigger while the triggers column is hidden by the upgrade cursor', () => {
+  it('should return no trigger while the upgrade cursor hides the triggers column', () => {
+    const getHiddenColumnPropertyNamesSpy = jest
+      .spyOn(
+        UpgradeAwareRepositoryState.getInstance(),
+        'getHiddenColumnPropertyNames',
+      )
+      .mockImplementation((entityClass) =>
+        entityClass === AgentEntity ? new Set(['triggers']) : new Set(),
+      );
+
     expect(
       findActiveAgentTriggers({
         flatAgentMaps: buildFlatAgentMaps({}),
         type: 'CRON',
-        hiddenAgentColumnPropertyNames: new Set(['triggers']),
       }),
     ).toEqual([]);
+
+    getHiddenColumnPropertyNamesSpy.mockRestore();
   });
 });
