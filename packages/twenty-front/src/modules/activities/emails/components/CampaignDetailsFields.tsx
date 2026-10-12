@@ -206,6 +206,7 @@ export const CampaignDetailsFields = ({
             variant="transparent"
             value={detailsState.unsubscribeTopicId ?? ''}
             options={topicOptions}
+            showIconInControl={false}
             emptyOption={{
               label: t`No topic`,
               value: '',

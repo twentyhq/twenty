@@ -114,6 +114,7 @@ export const AdvancedTextEditorBlockHandleMenu = ({
         render={
           <LightIconButton
             size="sm"
+            emphasis="subtle"
             aria-label={t`Drag to move, click for options`}
           >
             <IconGripVertical stroke={theme.icon.stroke.lg} />
