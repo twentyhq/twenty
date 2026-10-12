@@ -44,7 +44,7 @@ const ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
     .universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.47.0', 1791798823261)
+@RegisteredWorkspaceCommand('2.47.0', 1791789521847)
 @Command({
   name: 'upgrade:2-47:sync-campaign-engagement-fields',
   description:
@@ -60,10 +60,11 @@ export class SyncCampaignEngagementFieldsCommand extends ProvisionedWorkspaceCom
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace({
-    workspaceId,
-    options,
-  }: RunOnWorkspaceArgs): Promise<void> {
+  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    await this.up(args);
+  }
+
+  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -193,6 +194,76 @@ export class SyncCampaignEngagementFieldsCommand extends ProvisionedWorkspaceCom
       throw new WorkspaceMigrationBuilderException(
         result,
         `Failed to add the campaign engagement fields for workspace ${workspaceId}`,
+      );
+    }
+  }
+
+  async down({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+    const { flatFieldMetadataMaps, flatViewFieldMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+        'flatViewFieldMaps',
+      ]);
+
+    const fieldsToDelete = ENGAGEMENT_FIELD_UNIVERSAL_IDENTIFIERS.map(
+      (universalIdentifier) =>
+        findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
+          flatEntityMaps: flatFieldMetadataMaps,
+          universalIdentifier,
+        }),
+    ).filter(isDefined);
+
+    const viewFieldsToDelete = ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
+      (universalIdentifier) =>
+        findFlatEntityByUniversalIdentifier<FlatViewField>({
+          flatEntityMaps: flatViewFieldMaps,
+          universalIdentifier,
+        }),
+    ).filter(isDefined);
+
+    if (fieldsToDelete.length === 0 && viewFieldsToDelete.length === 0) {
+      return;
+    }
+
+    if (options.dryRun) {
+      this.logger.log(
+        `[DRY RUN] Workspace ${workspaceId}: would remove ${fieldsToDelete.length} engagement field(s), ${viewFieldsToDelete.length} view column(s)`,
+      );
+
+      return;
+    }
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          isSystemBuild: true,
+          workspaceId,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+          allFlatEntityOperationByMetadataName: {
+            viewField: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: viewFieldsToDelete,
+              flatEntityToUpdate: [],
+            },
+            fieldMetadata: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: fieldsToDelete,
+              flatEntityToUpdate: [],
+            },
+          },
+        },
+      );
+
+    if (result.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        result,
+        `Failed to remove the campaign engagement fields for workspace ${workspaceId}`,
       );
     }
   }
