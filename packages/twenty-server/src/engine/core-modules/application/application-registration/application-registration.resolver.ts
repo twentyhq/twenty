@@ -8,7 +8,6 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
-import { type Request } from 'express';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
@@ -29,7 +28,6 @@ import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/ap
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
-import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { ApplicationRegistrationClaimInput } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim.input';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
@@ -604,24 +602,12 @@ export class ApplicationRegistrationResolver {
     { applicationRegistrationId }: ApplicationRegistrationClaimInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
-    @Context() context: { req: Request },
   ): Promise<string> {
-    if (!isDefined(context.req.res)) {
-      throw new ApplicationRegistrationException(
-        'Cannot start a GitHub claim without a response to bind it to',
-        ApplicationRegistrationExceptionCode.CLAIM_STATE_MISMATCH,
-      );
-    }
-
-    return this.applicationRegistrationClaimService.buildGithubAuthorizationUrl(
-      {
-        applicationRegistrationId,
-        workspaceId,
-        userId: user?.id ?? null,
-        response: context.req.res,
-        cookieOrigin: getRequestBaseUrl(context.req),
-      },
-    );
+    return this.applicationRegistrationClaimService.buildGithubClaimStartUrl({
+      applicationRegistrationId,
+      workspaceId,
+      userId: user?.id ?? null,
+    });
   }
 
   @UseGuards(

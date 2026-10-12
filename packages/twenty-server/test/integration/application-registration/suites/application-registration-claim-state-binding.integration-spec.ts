@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 
-import { print } from 'graphql';
 import gql from 'graphql-tag';
 import { http, HttpResponse } from 'msw';
 import request from 'supertest';
@@ -12,10 +11,20 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 
+const START_PATH = '/application-registration-claim/github/start';
 const CALLBACK_PATH = '/application-registration-claim/github/callback';
-const WORKSPACE_HOST = 'apple.localhost:3001';
+const WORKSPACE_ORIGIN = 'http://apple.localhost:3001';
+const FRONT_ORIGIN = 'http://localhost:3001';
 const PUBLISHER_ORG = 'publisher-org';
 const PACKAGE_VERSION = '1.0.0';
+
+const GITHUB_CLAIM_AUTHORIZATION_URL_QUERY = gql`
+  query GithubClaimAuthorizationUrl($applicationRegistrationId: String!) {
+    githubClaimAuthorizationUrl(
+      applicationRegistrationId: $applicationRegistrationId
+    )
+  }
+`;
 
 const provenanceAttestations = (repository: string) => ({
   attestations: [
@@ -118,27 +127,49 @@ describe('Application registration claim state binding (integration)', () => {
     );
   };
 
-  // Mints an authorization url the way the settings page does, and returns the
-  // state GitHub will echo back plus the nonce cookie the browser receives.
-  const startClaim = async (registrationId: string) => {
+  const mintClaimStartUrl = async (registrationId: string) => {
     const response = await makeMetadataApiRequest({
-      query: gql`
-        query GithubClaimAuthorizationUrl($applicationRegistrationId: String!) {
-          githubClaimAuthorizationUrl(
-            applicationRegistrationId: $applicationRegistrationId
-          )
-        }
-      `,
+      query: GITHUB_CLAIM_AUTHORIZATION_URL_QUERY,
       variables: { applicationRegistrationId: registrationId },
     });
 
     expect(response.body.errors).toBeUndefined();
+    expect(response.headers['set-cookie']).toBeUndefined();
 
-    const authorizationUrl = new URL(
+    const claimStartUrl = new URL(
       response.body.data.githubClaimAuthorizationUrl,
     );
+
+    expect(claimStartUrl.pathname).toBe(START_PATH);
+
+    return claimStartUrl;
+  };
+
+  const postClaimStart = async (
+    registrationId: string,
+    origin: string | undefined,
+  ) => {
+    const claimStartUrl = await mintClaimStartUrl(registrationId);
+    const pending = request(baseUrl)
+      .post(START_PATH)
+      .query({ token: claimStartUrl.searchParams.get('token') });
+
+    if (origin !== undefined) {
+      pending.set('Origin', origin);
+    }
+
+    return pending;
+  };
+
+  const startClaim = async (registrationId: string) => {
+    const response = await postClaimStart(registrationId, WORKSPACE_ORIGIN);
+
+    expect(response.status).toBe(302);
+
+    const authorizationUrl = new URL(response.headers.location);
     const setCookie = response.headers['set-cookie'];
 
+    expect(authorizationUrl.origin).toBe('https://github.com');
     expect(setCookie).toBeDefined();
 
     return {
@@ -147,54 +178,13 @@ describe('Application registration claim state binding (integration)', () => {
     };
   };
 
-  const startClaimFromHost = async (registrationId: string, host: string) => {
-    const response = await request(baseUrl)
-      .post('/metadata')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .set('Host', host)
-      .send({
-        query: print(gql`
-          query GithubClaimAuthorizationUrl(
-            $applicationRegistrationId: String!
-          ) {
-            githubClaimAuthorizationUrl(
-              applicationRegistrationId: $applicationRegistrationId
-            )
-          }
-        `),
-        variables: { applicationRegistrationId: registrationId },
-      });
-
-    expect(response.body.errors).toBeUndefined();
-
-    const authorizationUrl = new URL(
-      response.body.data.githubClaimAuthorizationUrl,
-    );
-    const setCookie = response.headers['set-cookie'];
-
-    expect(setCookie).toBeDefined();
-
-    return {
-      state: authorizationUrl.searchParams.get('state') as string,
-      cookie: (setCookie as unknown as string[])[0].split(';')[0],
-    };
-  };
-
-  const callback = (params: {
-    state: string;
-    cookie?: string;
-    host?: string;
-  }) => {
+  const callback = (params: { state: string; cookie?: string }) => {
     const pending = request(baseUrl)
       .get(CALLBACK_PATH)
       .query({ code: 'github-code', state: params.state });
 
     if (params.cookie !== undefined) {
       pending.set('Cookie', params.cookie);
-    }
-
-    if (params.host !== undefined) {
-      pending.set('Host', params.host);
     }
 
     return pending;
@@ -215,18 +205,7 @@ describe('Application registration claim state binding (integration)', () => {
       });
 
       try {
-        const response = await makeMetadataApiRequest({
-          query: gql`
-            query GithubClaimAuthorizationUrl(
-              $applicationRegistrationId: String!
-            ) {
-              githubClaimAuthorizationUrl(
-                applicationRegistrationId: $applicationRegistrationId
-              )
-            }
-          `,
-          variables: { applicationRegistrationId: registrationId },
-        });
+        const response = await postClaimStart(registrationId, WORKSPACE_ORIGIN);
 
         const [claimCookie] = response.headers[
           'set-cookie'
@@ -261,6 +240,21 @@ describe('Application registration claim state binding (integration)', () => {
     await expect(
       readOwnerWorkspaceId(dataSource, registrationId),
     ).resolves.toBe(SEED_APPLE_WORKSPACE_ID);
+  });
+
+  it('starts a claim from the instance front origin', async () => {
+    const registrationId = await insertClaimableRegistration(
+      dataSource,
+      `@${PUBLISHER_ORG}/front-origin`,
+    );
+
+    const response = await postClaimStart(registrationId, FRONT_ORIGIN);
+
+    expect(response.status).toBe(302);
+    expect(new URL(response.headers.location).origin).toBe(
+      'https://github.com',
+    );
+    expect(response.headers['set-cookie']).toBeDefined();
   });
 
   it('rejects a forwarded authorization url opened in another browser', async () => {
@@ -334,129 +328,37 @@ describe('Application registration claim state binding (integration)', () => {
     ).resolves.toBe(SEED_APPLE_WORKSPACE_ID);
   });
 
-  it('hands the callback over to the workspace host that holds the nonce cookie', async () => {
-    const sourcePackage = `@${PUBLISHER_ORG}/other-host`;
+  it.each([
+    ['a custom domain or any foreign site', 'https://crm.apple.example'],
+    ['a client that sends no browser origin', undefined],
+  ])('refuses to start a claim from %s', async (_description, origin) => {
     const registrationId = await insertClaimableRegistration(
       dataSource,
-      sourcePackage,
+      `@${PUBLISHER_ORG}/origin-${crypto.randomUUID().slice(0, 8)}`,
     );
 
-    stubPublisherIsOrgAdmin(sourcePackage);
-
-    const { state, cookie } = await startClaimFromHost(
-      registrationId,
-      WORKSPACE_HOST,
-    );
-
-    const callbackResponse = await callback({ state });
-
-    expect(callbackResponse.status).toBe(302);
-
-    const handover = new URL(callbackResponse.headers.location);
-
-    expect(handover.host).toBe(WORKSPACE_HOST);
-    expect(handover.pathname).toBe(CALLBACK_PATH);
-    expect(handover.searchParams.get('code')).toBe('github-code');
-    expect(handover.searchParams.get('state')).toBe(state);
-    await expect(
-      readOwnerWorkspaceId(dataSource, registrationId),
-    ).resolves.toBeNull();
-
-    const completionResponse = await callback({
-      state,
-      cookie,
-      host: WORKSPACE_HOST,
-    });
-
-    expect(completionResponse.status).toBe(302);
-    expect(completionResponse.headers.location).not.toContain('claimErrorCode');
-    await expect(
-      readOwnerWorkspaceId(dataSource, registrationId),
-    ).resolves.toBe(SEED_APPLE_WORKSPACE_ID);
-  });
-
-  it('still rejects a forwarded authorization url after the hand-over', async () => {
-    const sourcePackage = `@${PUBLISHER_ORG}/forwarded-other-host`;
-    const registrationId = await insertClaimableRegistration(
-      dataSource,
-      sourcePackage,
-    );
-
-    stubPublisherIsOrgAdmin(sourcePackage);
-
-    const { state } = await startClaimFromHost(registrationId, WORKSPACE_HOST);
-
-    const callbackResponse = await callback({ state });
-
-    expect(new URL(callbackResponse.headers.location).pathname).toBe(
-      CALLBACK_PATH,
-    );
-
-    const completionResponse = await callback({ state, host: WORKSPACE_HOST });
-
-    expect(completionResponse.status).toBe(302);
-    expect(completionResponse.headers.location).toContain(
-      'claimErrorCode=CLAIM_STATE_MISMATCH',
-    );
-    await expect(
-      readOwnerWorkspaceId(dataSource, registrationId),
-    ).resolves.toBeNull();
-  });
-
-  it('never hands the code over to a host the workspace does not own', async () => {
-    const sourcePackage = `@${PUBLISHER_ORG}/spoofed-host`;
-    const registrationId = await insertClaimableRegistration(
-      dataSource,
-      sourcePackage,
-    );
-
-    stubPublisherIsOrgAdmin(sourcePackage);
-
-    const { state } = await startClaimFromHost(registrationId, 'evil.example');
-
-    const response = await callback({ state });
+    const response = await postClaimStart(registrationId, origin);
 
     expect(response.status).toBe(302);
-    expect(response.headers.location).not.toContain('evil.example');
     expect(response.headers.location).toContain(
-      'claimErrorCode=CLAIM_STATE_MISMATCH',
+      'claimErrorCode=CLAIM_ORIGIN_NOT_ALLOWED',
     );
-    await expect(
-      readOwnerWorkspaceId(dataSource, registrationId),
-    ).resolves.toBeNull();
+    expect(response.headers['set-cookie']).toBeUndefined();
   });
 
-  it('hands over when the callback host only holds a stale nonce for the registration', async () => {
-    const sourcePackage = `@${PUBLISHER_ORG}/stale-nonce`;
+  it('does not start a claim from a start url opened as a link', async () => {
     const registrationId = await insertClaimableRegistration(
       dataSource,
-      sourcePackage,
+      `@${PUBLISHER_ORG}/start-as-link`,
     );
+    const claimStartUrl = await mintClaimStartUrl(registrationId);
 
-    stubPublisherIsOrgAdmin(sourcePackage);
+    const response = await request(baseUrl)
+      .get(START_PATH)
+      .query({ token: claimStartUrl.searchParams.get('token') })
+      .set('Origin', WORKSPACE_ORIGIN);
 
-    const { cookie: staleCookie } = await startClaim(registrationId);
-    const { state, cookie } = await startClaimFromHost(
-      registrationId,
-      WORKSPACE_HOST,
-    );
-
-    const callbackResponse = await callback({ state, cookie: staleCookie });
-
-    expect(callbackResponse.status).toBe(302);
-    expect(new URL(callbackResponse.headers.location).host).toBe(
-      WORKSPACE_HOST,
-    );
-
-    const completionResponse = await callback({
-      state,
-      cookie,
-      host: WORKSPACE_HOST,
-    });
-
-    expect(completionResponse.headers.location).not.toContain('claimErrorCode');
-    await expect(
-      readOwnerWorkspaceId(dataSource, registrationId),
-    ).resolves.toBe(SEED_APPLE_WORKSPACE_ID);
+    expect(response.status).not.toBe(302);
+    expect(response.headers['set-cookie']).toBeUndefined();
   });
 });

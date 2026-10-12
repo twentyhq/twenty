@@ -22,12 +22,14 @@ import { hashClaimStateNonce } from 'src/engine/core-modules/application/applica
 import { type AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { isValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
+import { type ApplicationRegistrationGithubClaimStartJwtPayload } from 'src/engine/core-modules/auth/types/application-registration-github-claim-start-jwt-payload.type';
 import { type ApplicationRegistrationGithubClaimStateJwtPayload } from 'src/engine/core-modules/auth/types/application-registration-github-claim-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
+const GITHUB_CLAIM_START_EXPIRES_IN = '5m';
 const GITHUB_CLAIM_STATE_EXPIRES_IN = '15m';
 const GITHUB_CLAIM_STATE_TTL_MS = 15 * 60 * 1000;
 
@@ -83,12 +85,10 @@ export class ApplicationRegistrationClaimService {
     private readonly claimStateCookieService: ApplicationRegistrationClaimStateCookieService,
   ) {}
 
-  async buildGithubAuthorizationUrl(params: {
+  async buildGithubClaimStartUrl(params: {
     applicationRegistrationId: string;
     workspaceId: string;
     userId: string | null;
-    response: Response;
-    cookieOrigin: string;
   }): Promise<string> {
     const registration =
       await this.applicationRegistrationService.findOneByIdGlobal(
@@ -96,26 +96,73 @@ export class ApplicationRegistrationClaimService {
       );
 
     this.assertClaimable(registration);
+    this.resolveGithubClientId();
 
-    const clientId = this.twentyConfigService.get('APP_CLAIM_GITHUB_CLIENT_ID');
+    const startPayload: ApplicationRegistrationGithubClaimStartJwtPayload = {
+      sub: registration.id,
+      type: JwtTokenTypeEnum.APPLICATION_REGISTRATION_GITHUB_CLAIM_START,
+      applicationRegistrationId: registration.id,
+      workspaceId: params.workspaceId,
+      userId: params.userId,
+    };
 
-    if (!isNonEmptyString(clientId)) {
+    const token = await this.jwtWrapperService.signAsyncOrThrow(startPayload, {
+      expiresIn: GITHUB_CLAIM_START_EXPIRES_IN,
+    });
+
+    const startUrl = new URL(
+      `${this.twentyConfigService.get('SERVER_URL')}/application-registration-claim/github/start`,
+    );
+
+    startUrl.searchParams.set('token', token);
+
+    return startUrl.toString();
+  }
+
+  async verifyClaimStartToken(
+    token: string,
+  ): Promise<ApplicationRegistrationGithubClaimStartJwtPayload> {
+    await this.jwtWrapperService.verifyJwtToken(token);
+
+    const payload =
+      this.jwtWrapperService.decode<ApplicationRegistrationGithubClaimStartJwtPayload>(
+        token,
+      );
+
+    if (
+      payload.type !==
+      JwtTokenTypeEnum.APPLICATION_REGISTRATION_GITHUB_CLAIM_START
+    ) {
       throw new ApplicationRegistrationException(
-        'GitHub OAuth app is not configured (APP_CLAIM_GITHUB_CLIENT_ID)',
-        ApplicationRegistrationExceptionCode.CLAIM_NOT_CONFIGURED,
+        'Invalid claim start token',
+        ApplicationRegistrationExceptionCode.GITHUB_AUTH_FAILED,
       );
     }
 
+    return payload;
+  }
+
+  async buildGithubAuthorizationUrl(params: {
+    startPayload: ApplicationRegistrationGithubClaimStartJwtPayload;
+    response: Response;
+  }): Promise<string> {
+    const registration =
+      await this.applicationRegistrationService.findOneByIdGlobal(
+        params.startPayload.applicationRegistrationId,
+      );
+
+    this.assertClaimable(registration);
+
+    const clientId = this.resolveGithubClientId();
     const nonce = crypto.randomBytes(32).toString('hex');
 
     const statePayload: ApplicationRegistrationGithubClaimStateJwtPayload = {
       sub: registration.id,
       type: JwtTokenTypeEnum.APPLICATION_REGISTRATION_GITHUB_CLAIM_STATE,
       applicationRegistrationId: registration.id,
-      workspaceId: params.workspaceId,
-      userId: params.userId,
+      workspaceId: params.startPayload.workspaceId,
+      userId: params.startPayload.userId,
       nonceHash: hashClaimStateNonce({ nonce }),
-      cookieOrigin: params.cookieOrigin,
     };
 
     const state = await this.jwtWrapperService.signAsyncOrThrow(statePayload, {
@@ -264,6 +311,19 @@ export class ApplicationRegistrationClaimService {
     }
 
     return registration.sourcePackage;
+  }
+
+  private resolveGithubClientId(): string {
+    const clientId = this.twentyConfigService.get('APP_CLAIM_GITHUB_CLIENT_ID');
+
+    if (!isNonEmptyString(clientId)) {
+      throw new ApplicationRegistrationException(
+        'GitHub OAuth app is not configured (APP_CLAIM_GITHUB_CLIENT_ID)',
+        ApplicationRegistrationExceptionCode.CLAIM_NOT_CONFIGURED,
+      );
+    }
+
+    return clientId;
   }
 
   private buildCallbackUrl(): string {

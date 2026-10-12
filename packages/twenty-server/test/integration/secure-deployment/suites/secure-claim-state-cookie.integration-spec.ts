@@ -14,10 +14,14 @@ import { updateConfigVariable } from 'test/integration/twenty-config/utils/updat
 
 import { IS_SECURE_DEPLOYMENT } from 'test/integration/graphql/suites/auth/user-sessions/constants/is-secure-deployment.constant';
 
+const START_PATH = '/application-registration-claim/github/start';
+const FRONT_ORIGIN = 'http://localhost:3001';
+
 // The secure/insecure cookie branch is decided by configuration, never by the
 // transport: isSecureCookieDeployment() reads SERVER_URL, which is env-only.
 // Run through `nx run twenty-server:test:integration:secure`.
 describe('claim state cookie on a production-like secure deployment (integration)', () => {
+  const baseUrl = `http://localhost:${APP_PORT}`;
   let registrationId: string;
 
   beforeAll(async () => {
@@ -56,7 +60,7 @@ describe('claim state cookie on a production-like secure deployment (integration
   });
 
   const startClaim = async () => {
-    const response = await makeMetadataApiRequest({
+    const mintResponse = await makeMetadataApiRequest({
       query: gql`
         query GithubClaimAuthorizationUrl($applicationRegistrationId: String!) {
           githubClaimAuthorizationUrl(
@@ -67,34 +71,32 @@ describe('claim state cookie on a production-like secure deployment (integration
       variables: { applicationRegistrationId: registrationId },
     });
 
-    expect(response.body.errors).toBeUndefined();
+    expect(mintResponse.body.errors).toBeUndefined();
+
+    const claimStartUrl = new URL(
+      mintResponse.body.data.githubClaimAuthorizationUrl,
+    );
+
+    const response = await request(baseUrl)
+      .post(START_PATH)
+      .query({ token: claimStartUrl.searchParams.get('token') })
+      .set('Origin', FRONT_ORIGIN);
+
+    expect(response.status).toBe(302);
 
     const [claimCookie] = response.headers['set-cookie'] as unknown as string[];
 
     return {
       claimCookie,
       nonce: claimCookie.split(';')[0].split('=')[1],
-      state: new URL(
-        response.body.data.githubClaimAuthorizationUrl,
-      ).searchParams.get('state') as string,
+      state: new URL(response.headers.location).searchParams.get(
+        'state',
+      ) as string,
     };
   };
 
   it('should deliver the production cookie: __Host- name, Secure, SameSite=Lax', async () => {
-    const response = await makeMetadataApiRequest({
-      query: gql`
-        query GithubClaimAuthorizationUrl($applicationRegistrationId: String!) {
-          githubClaimAuthorizationUrl(
-            applicationRegistrationId: $applicationRegistrationId
-          )
-        }
-      `,
-      variables: { applicationRegistrationId: registrationId },
-    });
-
-    expect(response.body.errors).toBeUndefined();
-
-    const [claimCookie] = response.headers['set-cookie'] as unknown as string[];
+    const { claimCookie } = await startClaim();
 
     expect(claimCookie).toContain(
       `${getApplicationRegistrationClaimStateSecureCookieName(registrationId)}=`,
@@ -109,7 +111,7 @@ describe('claim state cookie on a production-like secure deployment (integration
   it('should ignore a nonce planted under the plain cookie name', async () => {
     const { state, nonce } = await startClaim();
 
-    const response = await request(`http://localhost:${APP_PORT}`)
+    const response = await request(baseUrl)
       .get('/application-registration-claim/github/callback')
       .query({ code: 'github-code', state })
       .set(

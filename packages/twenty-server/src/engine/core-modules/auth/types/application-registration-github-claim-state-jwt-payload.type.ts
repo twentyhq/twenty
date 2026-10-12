@@ -8,5 +8,4 @@ export type ApplicationRegistrationGithubClaimStateJwtPayload =
     workspaceId: string;
     userId: string | null;
     nonceHash: string;
-    cookieOrigin: string;
   };

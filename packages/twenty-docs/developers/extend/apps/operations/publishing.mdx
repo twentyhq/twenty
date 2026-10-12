@@ -305,6 +305,7 @@ Ownership is per Twenty instance: claiming on Twenty Cloud does not claim the ap
 - Include the `twenty-app` keyword in `package.json` and wait for [catalog sync](#how-marketplace-discovery-works).
 - Choose the workspace that will own the app. For apps with server routes, this workspace also runs and pays for the shared resolver.
 - Sign in to GitHub as the **personal account that owns the source repository**, or as an **owner of the organization** that owns it. Repository collaborator access or npm package maintainer access alone is not sufficient.
+- Start the claim from your workspace's default address (its subdomain on the instance domain). Claiming is not available while a custom domain is enabled: disable it in the domain settings for the claim, then enable it again.
 
 ### Claim with GitHub
 

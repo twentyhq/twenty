@@ -33,6 +33,11 @@ export const getClaimErrorContent = (code: string): ClaimErrorContent => {
         message: msg`This claim was started in another browser, or the claim link was opened from somewhere else. Start the claim again from this browser.`,
         docPath: CI_PUBLISHING_PATH,
       };
+    case 'CLAIM_ORIGIN_NOT_ALLOWED':
+      return {
+        message: msg`Claiming is not available from a custom domain. Disable the custom domain in the domain settings, start the claim again from the workspace's default address, then enable it back.`,
+        docPath: PUBLISHING_PATH,
+      };
     case 'GITHUB_AUTH_FAILED':
       return {
         message: msg`GitHub authorization failed or was denied. Please connect your GitHub account again.`,
