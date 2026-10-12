@@ -17,7 +17,10 @@ import {
 } from '@/workflow/types/Workflow';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useMutation } from '@apollo/client/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -117,7 +120,7 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
       }),
     };
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       steps: true,
     };
     updateRecordFromCache({

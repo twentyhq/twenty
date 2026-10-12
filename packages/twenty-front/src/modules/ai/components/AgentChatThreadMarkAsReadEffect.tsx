@@ -94,7 +94,9 @@ export const AgentChatThreadMarkAsReadEffect = () => {
 
     const isKeptUnread = visit?.threadId === threadId && visit.isKeptUnread;
 
-    if (isUnread && !isKeptUnread) {
+    // Opening a chat the member does not participate in yet starts tracking
+    // it for them, so later activity in it reads as unread
+    if ((isUnread || !isDefined(participant)) && !isKeptUnread) {
       void updateAgentChatThreadInboxState({
         threadIds: [threadId],
         action: AgentChatInboxAction.READ,

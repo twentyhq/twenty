@@ -2,9 +2,10 @@ import { SettingsAccountGroupUsedBy } from '@/settings/app-preferences/component
 import { SettingsAppPreferencesRowDropdownMenu } from '@/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu';
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
-import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
+import { SettingsNativeAccountAppPermissionsCell } from '@/settings/app-preferences/components/SettingsNativeAccountAppPermissionsCell';
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
+import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -23,10 +24,14 @@ const SYNC_STATUSES_NEEDING_ACTION: ReadonlySet<SyncStatus> = new Set([
 
 type SettingsAccountGroupTableRowProps = {
   group: ConnectedAccountGroup;
+  gridTemplateColumns: string;
+  nativeAccountApp?: NativeAccountApp;
 };
 
 export const SettingsAccountGroupTableRow = ({
   group,
+  gridTemplateColumns,
+  nativeAccountApp,
 }: SettingsAccountGroupTableRowProps) => {
   const theme = useTheme();
   const navigateSettings = useNavigateSettings();
@@ -64,7 +69,7 @@ export const SettingsAccountGroupTableRow = ({
 
   return (
     <TableRow
-      gridTemplateColumns={SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS}
+      gridTemplateColumns={gridTemplateColumns}
       onClick={
         hasSettings
           ? () =>
@@ -86,9 +91,16 @@ export const SettingsAccountGroupTableRow = ({
       ) : (
         accountCell
       )}
-      <TableCell align="right">
-        <SettingsAccountGroupUsedBy group={group} />
-      </TableCell>
+      {isDefined(nativeAccountApp) ? (
+        <SettingsNativeAccountAppPermissionsCell
+          nativeAccountApp={nativeAccountApp}
+          account={nativeAccount}
+        />
+      ) : (
+        <TableCell align="right">
+          <SettingsAccountGroupUsedBy group={group} />
+        </TableCell>
+      )}
       <TableCell align="right" onClick={(event) => event.stopPropagation()}>
         {isDefined(nativeAccount) && (
           <SettingsAppPreferencesRowDropdownMenu account={nativeAccount} />

@@ -3,6 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
+import { LEGACY_CHAT_THREAD_LAST_STREAM_ERROR_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-46/constants/legacy-chat-thread-last-stream-error-field-universal-identifier.constant';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
@@ -42,8 +43,7 @@ export class BackfillFailedAgentTurnsCommand extends ProvisionedWorkspaceCommand
       ]);
 
     const hasRequiredFields = [
-      STANDARD_OBJECTS.agentChatThread.fields.lastStreamError
-        .universalIdentifier,
+      LEGACY_CHAT_THREAD_LAST_STREAM_ERROR_FIELD_UNIVERSAL_IDENTIFIER,
       STANDARD_OBJECTS.agentTurn.fields.status.universalIdentifier,
       STANDARD_OBJECTS.agentTurn.fields.error.universalIdentifier,
     ].every((universalIdentifier) =>
