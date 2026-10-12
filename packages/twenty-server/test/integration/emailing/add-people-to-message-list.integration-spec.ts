@@ -6,7 +6,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldActorSource } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -16,9 +16,12 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type AddPeopleToMessageListService } from 'src/modules/emailing/services/add-people-to-message-list.service';
 
+// The seeded "Create company when adding a new person" workflow skips people
+// synced from email, otherwise each of these people would queue a workflow run
 const people = Array.from({ length: 1005 }, (_, index) => ({
   id: v4(),
   name: { firstName: `List ${index}`, lastName: v4() },
+  createdBy: { source: FieldActorSource.EMAIL },
 }));
 const personIds = people.map(({ id }) => id);
 const messageListIds: string[] = [];
