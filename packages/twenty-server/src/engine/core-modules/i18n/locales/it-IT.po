@@ -12518,6 +12518,11 @@ msgstr "Il selettore di record del workflow deve fare riferimento a un oggetto."
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Il workflow fa riferimento a metadati non disponibili per questa applicazione."
 
+#. js-lingui-id: W+A2pa
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
+msgid "The workflow schedule is invalid."
+msgstr "La pianificazione del workflow non è valida."
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"

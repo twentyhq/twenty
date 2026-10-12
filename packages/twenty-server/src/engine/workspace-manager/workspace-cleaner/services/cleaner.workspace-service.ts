@@ -421,6 +421,10 @@ export class CleanerWorkspaceService {
           continue;
         }
 
+        if (isSoftDeletedWorkspace) {
+          continue;
+        }
+
         const inactiveDaysSinceSuspended =
           await this.computeDaysSinceSuspended(workspace);
 

@@ -8,6 +8,7 @@ import { CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS } from 'src/modules/emailing
 import { MESSAGE_VIEW_TABLE } from 'src/modules/emailing/constants/message-view-table.constant';
 import { SHORT_LINK_CLICK_TABLE } from 'src/modules/emailing/constants/short-link-click-table.constant';
 import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types/campaign-engagement-activity-class.type';
+import { type CampaignEngagementCounts } from 'src/modules/emailing/types/campaign-engagement-counts.type';
 
 type MessageViewEvent = {
   workspaceId: string;
@@ -53,5 +54,54 @@ export class CampaignEngagementEventService {
     if (!result.success) {
       throw result.error;
     }
+  }
+
+  async countCampaignEngagement({
+    workspaceId,
+    campaignId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+  }): Promise<CampaignEngagementCounts> {
+    const [clicks, opens] = await Promise.all([
+      this.countHumanEngagement({
+        table: SHORT_LINK_CLICK_TABLE,
+        workspaceId,
+        campaignId,
+      }),
+      this.countHumanEngagement({
+        table: MESSAGE_VIEW_TABLE,
+        workspaceId,
+        campaignId,
+      }),
+    ]);
+
+    return {
+      uniqueClickCount: clicks,
+      uniqueOpenCount: opens,
+    };
+  }
+
+  private async countHumanEngagement({
+    table,
+    workspaceId,
+    campaignId,
+  }: {
+    table: string;
+    workspaceId: string;
+    campaignId: string;
+  }): Promise<number> {
+    const [row] = await this.clickHouseService.selectOrThrow<{
+      uniqueCount: string;
+    }>(
+      `SELECT uniqExact(deliveryId) AS uniqueCount
+       FROM ${table}
+       WHERE workspaceId = {workspaceId:UUID}
+         AND messageCampaignId = {campaignId:UUID}
+         AND activityClass = 'UNCLASSIFIED'`,
+      { workspaceId, campaignId },
+    );
+
+    return Number(row?.uniqueCount ?? 0);
   }
 }

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconArrowRight, IconDownload, IconPlus } from '@ui/icon';
-import { Pill } from '@ui/primitives/data-display';
+import { Badge } from '@ui/primitives/data-display';
 import { Text } from '@ui/primitives/typography';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -66,7 +66,7 @@ export const Soon: Story = {
         }}
       >
         {children}
-        <Pill label="Coming soon" />
+        <Badge>Coming soon</Badge>
       </Text>
     </Button>
   ),

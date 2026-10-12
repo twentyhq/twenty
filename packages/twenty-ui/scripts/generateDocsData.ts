@@ -143,11 +143,13 @@ const extractProps = ({
   name,
   propDescriptions = {},
   propDefaults = {},
+  propOverrides = {},
 }: {
   symbol: ts.Symbol;
   name: string;
   propDescriptions?: Partial<Record<string, string>>;
   propDefaults?: Partial<Record<string, string>>;
+  propOverrides?: Partial<Record<string, { type: string; required?: boolean }>>;
 }): ComponentDocumentation['props'] => {
   const declaration = symbol.valueDeclaration;
 
@@ -197,13 +199,17 @@ const extractProps = ({
         );
       }
 
+      const propOverride = propOverrides[prop.name];
+
       return {
         name: prop.name,
-        type: normalizeDocumentationPropType({
-          type: prop.type,
-          required: prop.required,
-        }),
-        required: prop.required,
+        type:
+          propOverride?.type ??
+          normalizeDocumentationPropType({
+            type: prop.type,
+            required: prop.required,
+          }),
+        required: propOverride?.required ?? prop.required,
         defaultValue:
           propDefaults[prop.name] ??
           normalizeDocumentationDefaultValue(prop.defaultValue),
@@ -259,6 +265,12 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
     const partPropDefaults: Partial<
       Record<string, Partial<Record<string, string>>>
     > = 'partPropDefaults' in component ? component.partPropDefaults : {};
+    const partPropOverrides: Partial<
+      Record<
+        string,
+        Partial<Record<string, { type: string; required?: boolean }>>
+      >
+    > = 'partPropOverrides' in component ? component.partPropOverrides : {};
     const componentParts = type
       .getProperties()
       .filter((part) => COMPONENT_PART_NAME_PATTERN.test(part.name))
@@ -287,6 +299,7 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
           name: `${component.name}.${part.name}`,
           propDescriptions: partPropDescriptions[part.name],
           propDefaults: partPropDefaults[part.name],
+          propOverrides: partPropOverrides[part.name],
         }),
       };
     });
