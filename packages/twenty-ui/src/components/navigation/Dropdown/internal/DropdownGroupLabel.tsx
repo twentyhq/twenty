@@ -2,13 +2,14 @@ import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
-import styles from '../Menu.module.scss';
-import { type MenuGroupLabelProps } from '../types/MenuGroupLabelProps';
+import styles from '../Dropdown.module.scss';
 
-export const MenuGroupLabel = ({
+type DropdownGroupLabelProps = MenuPrimitive.GroupLabel.Props;
+
+export const DropdownGroupLabel = ({
   className,
   ...props
-}: MenuGroupLabelProps) => (
+}: DropdownGroupLabelProps) => (
   <MenuPrimitive.GroupLabel
     {...props}
     className={mergeClassNames(styles.groupLabel, className)}
