@@ -205,13 +205,6 @@ export class BillingWebhookSubscriptionService {
       workspaceId,
     );
 
-    if (shouldSetPendingInvoiceItemInterval(subscriptionWithSchedule)) {
-      await this.stripeSubscriptionService.updateSubscription(
-        subscriptionWithSchedule.id,
-        { pending_invoice_item_interval: { interval: 'month' } },
-      );
-    }
-
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'currentBillingSubscription',
     ]);
@@ -276,6 +269,13 @@ export class BillingWebhookSubscriptionService {
       String(data.object.customer),
       workspaceId,
     );
+
+    if (shouldSetPendingInvoiceItemInterval(subscriptionWithSchedule)) {
+      await this.stripeSubscriptionService.updateSubscription(
+        subscriptionWithSchedule.id,
+        { pending_invoice_item_interval: { interval: 'month' } },
+      );
+    }
 
     return {
       stripeSubscriptionId: data.object.id,
