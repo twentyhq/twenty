@@ -335,6 +335,7 @@ type Application {
   agents: [Agent!]!
   applicationRegistration: ApplicationRegistrationSummary
   applicationRegistrationId: UUID
+  applicationRegistrationVersionId: UUID
   applicationVariables: [ApplicationVariable!]!
   autoUpgrade: Boolean!
   availablePackages: JSON!
@@ -554,6 +555,30 @@ type ApplicationRegistrationVariable {
   type: String!
   updatedAt: DateTime!
   value: String
+}
+
+type ApplicationRegistrationVersion {
+  applicationRegistrationId: UUID!
+  artifactDownloadUrl: String
+  artifactUrl: String
+  checksum: String
+  createdAt: DateTime!
+  id: UUID!
+  publishedAt: DateTime!
+  publishedByUserId: UUID
+  publishedByWorkspaceId: UUID
+  reviewState: ApplicationRegistrationVersionReviewState!
+  sourcePackage: String
+  sourceType: ApplicationRegistrationSourceType!
+  tarballFileId: UUID
+  updatedAt: DateTime!
+  version: String!
+}
+
+enum ApplicationRegistrationVersionReviewState {
+  APPROVED
+  REJECTED
+  UNREVIEWED
 }
 
 type ApplicationTokenPair {
@@ -3786,6 +3811,7 @@ type Query {
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
+  findApplicationRegistrationVersions(applicationRegistrationId: String!): [ApplicationRegistrationVersion!]!
   findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
   findInstallApplicationJobStatus(universalIdentifier: String!): JobStatus
   findManyAgents: [Agent!]!

@@ -20,6 +20,11 @@ import {
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
+import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
+import {
+  computeFileSriIntegrity,
+  computeSriIntegrity,
+} from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
@@ -52,6 +57,11 @@ type ExtractedTarball = {
   packageJson: { version: string; engines?: { twenty?: string } } | null;
 };
 
+type TarballPublisher = {
+  checksum: string;
+  publishedByUserId: string | null;
+};
+
 @Injectable()
 export class ApplicationTarballService {
   private readonly logger = new Logger(ApplicationTarballService.name);
@@ -67,12 +77,14 @@ export class ApplicationTarballService {
     private readonly applicationService: ApplicationService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
   ) {}
 
   async uploadTarball(params: {
     tarballBuffer: Buffer;
     ownerWorkspaceId: string;
+    publishedByUserId: string | null;
   }): Promise<ApplicationRegistrationEntity> {
     return this.withTempDir(async (tempDir) => {
       const tarballPath = join(tempDir, TARBALL_FILE_NAME);
@@ -87,9 +99,14 @@ export class ApplicationTarballService {
       return this.registerExtractedTarball({
         extractedTarball,
         ownerWorkspaceId: params.ownerWorkspaceId,
+        publisher: {
+          checksum: computeSriIntegrity(params.tarballBuffer),
+          publishedByUserId: params.publishedByUserId,
+        },
         storeTarballFile: (appRegistration) =>
           this.storeTarballFile({
             appRegistration,
+            version: extractedTarball.packageJson?.version ?? null,
             tarballBuffer: params.tarballBuffer,
             ownerWorkspaceId: params.ownerWorkspaceId,
           }),
@@ -100,16 +117,23 @@ export class ApplicationTarballService {
   async completeTarballUpload({
     ownerWorkspaceId,
     fileId,
+    publishedByUserId,
   }: {
     ownerWorkspaceId: string;
     fileId: string;
+    publishedByUserId: string | null;
   }): Promise<ApplicationRegistrationEntity> {
     // Completions of one upload run one at a time: an overlapping request
     // would race the registration insert, so it is refused and a later retry
     // finds the registration the first one attached.
     const lockResult = await this.postgresAdvisoryLockService.tryWithLock(
       getTarballUploadCompletionLockName(fileId),
-      () => this.completeTarballUploadExclusively({ ownerWorkspaceId, fileId }),
+      () =>
+        this.completeTarballUploadExclusively({
+          ownerWorkspaceId,
+          fileId,
+          publishedByUserId,
+        }),
     );
 
     if (!lockResult.acquired) {
@@ -125,9 +149,11 @@ export class ApplicationTarballService {
   private async completeTarballUploadExclusively({
     ownerWorkspaceId,
     fileId,
+    publishedByUserId,
   }: {
     ownerWorkspaceId: string;
     fileId: string;
+    publishedByUserId: string | null;
   }): Promise<ApplicationRegistrationEntity> {
     const file = await this.fileRepository.findOne(ownerWorkspaceId, {
       where: { id: fileId, path: Like(`${FileFolder.AppTarball}/%`) },
@@ -179,16 +205,23 @@ export class ApplicationTarballService {
           tarballPath,
         );
 
+        const publisher: TarballPublisher = {
+          checksum: await computeFileSriIntegrity(tarballPath),
+          publishedByUserId,
+        };
+
         if (isDefined(attachedRegistration)) {
           return this.resumeAttachedRegistration({
             appRegistration: attachedRegistration,
             extractedTarball,
+            publisher,
           });
         }
 
         return this.registerExtractedTarball({
           extractedTarball,
           ownerWorkspaceId,
+          publisher,
           storeTarballFile: async () => file,
         });
       });
@@ -215,11 +248,20 @@ export class ApplicationTarballService {
   // where the previous attempt stopped and reruns those idempotent steps.
   private async resumeAttachedRegistration({
     appRegistration,
-    extractedTarball: { contentDir, manifest },
+    extractedTarball: { contentDir, manifest, packageJson },
+    publisher,
   }: {
     appRegistration: ApplicationRegistrationEntity;
     extractedTarball: ExtractedTarball;
+    publisher: TarballPublisher;
   }): Promise<ApplicationRegistrationEntity> {
+    await this.recordPublishedTarballVersion({
+      appRegistration,
+      version: packageJson?.version ?? null,
+      tarballFileId: appRegistration.tarballFileId,
+      publisher,
+    });
+
     await this.applicationRegistrationAssetService.storeRegistrationAssets({
       applicationRegistrationId: appRegistration.id,
       manifestApplication: manifest.application,
@@ -250,10 +292,12 @@ export class ApplicationTarballService {
   private async registerExtractedTarball({
     extractedTarball: { contentDir, manifest, packageJson },
     ownerWorkspaceId,
+    publisher,
     storeTarballFile,
   }: {
     extractedTarball: ExtractedTarball;
     ownerWorkspaceId: string;
+    publisher: TarballPublisher;
     storeTarballFile: (
       appRegistration: ApplicationRegistrationEntity,
     ) => Promise<Pick<FileEntity, 'id'>>;
@@ -300,6 +344,13 @@ export class ApplicationTarballService {
       },
     });
 
+    await this.recordPublishedTarballVersion({
+      appRegistration: { ...appRegistration, ownerWorkspaceId },
+      version: packageJson?.version ?? null,
+      tarballFileId: savedFile.id,
+      publisher,
+    });
+
     await this.applicationRegistrationAssetService.storeRegistrationAssets({
       applicationRegistrationId: appRegistration.id,
       manifestApplication: manifest.application,
@@ -331,9 +382,14 @@ export class ApplicationTarballService {
       }
     }
 
+    // The previous tarball is the artifact of an earlier version record, so it
+    // is only dropped when no version was recorded for it (pre-version uploads)
     if (
       isDefined(previousTarballFileId) &&
-      previousTarballFileId !== savedFile.id
+      previousTarballFileId !== savedFile.id &&
+      !(await this.applicationRegistrationVersionService.isTarballFileReferenced(
+        previousTarballFileId,
+      ))
     ) {
       await this.deleteTarballFileSilently({
         fileId: previousTarballFileId,
@@ -343,6 +399,39 @@ export class ApplicationTarballService {
 
     return this.appRegistrationRepository.findOneOrFail({
       where: { id: appRegistration.id },
+    });
+  }
+
+  private async recordPublishedTarballVersion({
+    appRegistration,
+    version,
+    tarballFileId,
+    publisher,
+  }: {
+    appRegistration: Pick<
+      ApplicationRegistrationEntity,
+      'id' | 'universalIdentifier' | 'ownerWorkspaceId'
+    >;
+    version: string | null;
+    tarballFileId: string | null;
+    publisher: TarballPublisher;
+  }): Promise<void> {
+    if (!isDefined(version)) {
+      this.logger.warn(
+        `Tarball of app ${appRegistration.universalIdentifier} declares no package.json version; no version record kept`,
+      );
+
+      return;
+    }
+
+    await this.applicationRegistrationVersionService.recordPublishedVersion({
+      applicationRegistrationId: appRegistration.id,
+      version,
+      sourceType: ApplicationRegistrationSourceType.TARBALL,
+      tarballFileId,
+      checksum: publisher.checksum,
+      publishedByUserId: publisher.publishedByUserId,
+      publishedByWorkspaceId: appRegistration.ownerWorkspaceId,
     });
   }
 
@@ -513,12 +602,16 @@ export class ApplicationTarballService {
     return workspaceCustomFlatApplication.universalIdentifier;
   }
 
+  // Each version keeps its own file so an earlier version's artifact is never
+  // overwritten by the next upload; unversioned tarballs keep the legacy path.
   private async storeTarballFile({
     appRegistration,
+    version,
     tarballBuffer,
     ownerWorkspaceId,
   }: {
     appRegistration: ApplicationRegistrationEntity;
+    version: string | null;
     tarballBuffer: Buffer;
     ownerWorkspaceId: string;
   }): Promise<FileEntity> {
@@ -529,11 +622,15 @@ export class ApplicationTarballService {
 
     return this.fileStorageService.writeFile({
       sourceFile: tarballBuffer,
-      resourcePath: `${appRegistration.id}/${TARBALL_FILE_NAME}`,
+      resourcePath: isDefined(version)
+        ? `${appRegistration.id}/${version}/${TARBALL_FILE_NAME}`
+        : `${appRegistration.id}/${TARBALL_FILE_NAME}`,
       fileFolder: FileFolder.AppTarball,
       applicationUniversalIdentifier,
       workspaceId: ownerWorkspaceId,
-      fileId: appRegistration.tarballFileId ?? v4(),
+      fileId: isDefined(version)
+        ? v4()
+        : (appRegistration.tarballFileId ?? v4()),
       settings: {
         isTemporaryFile: false,
         toDelete: false,

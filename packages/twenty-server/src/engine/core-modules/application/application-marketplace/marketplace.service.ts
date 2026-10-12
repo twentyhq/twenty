@@ -46,6 +46,20 @@ const registrySearchResultSchema = z.object({
 
 type RegistrySearchResult = z.infer<typeof registrySearchResultSchema>;
 
+const registryVersionDistSchema = z.object({
+  dist: z
+    .object({
+      tarball: z.string().optional(),
+      integrity: z.string().optional(),
+    })
+    .optional(),
+});
+
+export type RegistryPackageVersionDist = {
+  tarballUrl: string | null;
+  integrity: string | null;
+};
+
 @Injectable()
 export class MarketplaceService {
   private readonly logger = new Logger(MarketplaceService.name);
@@ -78,6 +92,45 @@ export class MarketplaceService {
     } catch {
       this.logger.debug(
         `Could not fetch manifest from CDN for ${packageName}@${version}`,
+      );
+
+      return null;
+    }
+  }
+
+  // Reads where the registry serves one package version and the integrity it
+  // records for it, which is the provenance kept on the version record.
+  async fetchPackageVersionDistFromRegistry(
+    packageName: string,
+    version: string,
+  ): Promise<RegistryPackageVersionDist | null> {
+    const registryUrl = this.twentyConfigService
+      .get('APP_REGISTRY_URL')
+      .replace(/\/$/, '');
+    const url = `${registryUrl}/${encodeURIComponent(packageName)}/${encodeURIComponent(version)}`;
+
+    try {
+      const { data } = await axios.get(url, {
+        headers: {
+          'User-Agent': 'Twenty-Marketplace',
+          Accept: 'application/json',
+        },
+        timeout: 5_000,
+      });
+
+      const parsed = registryVersionDistSchema.safeParse(data);
+
+      if (!parsed.success) {
+        return null;
+      }
+
+      return {
+        tarballUrl: parsed.data.dist?.tarball ?? null,
+        integrity: parsed.data.dist?.integrity ?? null,
+      };
+    } catch {
+      this.logger.debug(
+        `Could not fetch version metadata from registry for ${packageName}@${version}`,
       );
 
       return null;

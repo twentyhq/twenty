@@ -634,6 +634,55 @@ describe('Marketplace Catalog Sync (integration)', () => {
       });
     });
 
+    it('records each catalog version once with the registry artifact and integrity', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+      const dist = {
+        tarballUrl: `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`,
+        integrity: 'sha512-ZmFrZS1pbnRlZ3JpdHk=',
+      };
+      const syncVersionTwo = () =>
+        syncMarketplaceCatalogFromRegistryPackage({
+          packageName: SOURCE_PACKAGE,
+          version: '2.0.0',
+          manifest: buildBaseManifest({
+            appId: universalIdentifier,
+            roleId: crypto.randomUUID(),
+          }),
+          dist,
+        });
+      const findVersionRows = () =>
+        ds.query(
+          `SELECT version, "sourceType", "sourcePackage", "artifactUrl",
+                  checksum, "publishedByUserId", "publishedByWorkspaceId",
+                  "reviewState"
+           FROM core."applicationRegistrationVersion"
+           WHERE "applicationRegistrationId" = $1`,
+          [registrationId],
+        );
+
+      await syncVersionTwo();
+      await syncVersionTwo();
+
+      expect(await findVersionRows()).toEqual([
+        {
+          version: '2.0.0',
+          sourceType: 'npm',
+          sourcePackage: SOURCE_PACKAGE,
+          artifactUrl: dist.tarballUrl,
+          checksum: dist.integrity,
+          publishedByUserId: null,
+          publishedByWorkspaceId: null,
+          reviewState: 'UNREVIEWED',
+        },
+      ]);
+    });
+
     it('sets the version on a registration that has none', async () => {
       const universalIdentifier = crypto.randomUUID();
 

@@ -13,6 +13,7 @@ export const APPLICATION_ENTITY_RELATION_PROPERTIES = [
   'yarnLockFile',
   'logoFile',
   'applicationRegistration',
+  'applicationRegistrationVersion',
   'primaryPublicDomain',
   'publicDomains',
 ] as const satisfies (keyof ApplicationEntity)[];

@@ -14,6 +14,9 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
+import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 const buildManifest = (universalIdentifier: string) =>
   JSON.stringify({
     application: {
@@ -133,6 +136,16 @@ describe('Direct app tarball upload', () => {
     return row ?? null;
   };
 
+  const findVersionRows = async (registrationId: string) =>
+    ds.query(
+      `SELECT version, "sourceType", "tarballFileId", checksum,
+              "publishedByUserId", "publishedByWorkspaceId", "reviewState"
+       FROM core."applicationRegistrationVersion"
+       WHERE "applicationRegistrationId" = $1
+       ORDER BY version`,
+      [registrationId],
+    );
+
   beforeAll(() => {
     jest.useRealTimers();
     ds = global.testDataSource;
@@ -187,6 +200,18 @@ describe('Direct app tarball upload', () => {
     expect(file.mimeType).toBe('application/gzip');
     expect(file.path).toBe(`app-tarball/${uploadTarget.fileId}.gz`);
     expect(Number(file.size)).toBe(tarball.length);
+
+    expect(await findVersionRows(data!.completeAppTarballUpload.id)).toEqual([
+      {
+        version: '1.0.0',
+        sourceType: 'tarball',
+        tarballFileId: uploadTarget.fileId,
+        checksum: computeSriIntegrity(tarball),
+        publishedByUserId: expect.any(String),
+        publishedByWorkspaceId: SEED_APPLE_WORKSPACE_ID,
+        reviewState: 'UNREVIEWED',
+      },
+    ]);
   });
 
   it('answers a repeated completion with the same registration', async () => {
@@ -208,7 +233,7 @@ describe('Direct app tarball upload', () => {
     );
   });
 
-  it('replaces the previous tarball on a new version and drops it', async () => {
+  it('points the registration at the new tarball and keeps the previous version artifact', async () => {
     const universalIdentifier = crypto.randomUUID();
 
     const first = await deployTarball(
@@ -226,17 +251,23 @@ describe('Direct app tarball upload', () => {
       first.completion.data?.completeAppTarballUpload.id,
     );
 
-    const registration = await findRegistrationRow(
-      first.completion.data!.completeAppTarballUpload.id,
-    );
+    const registrationId = first.completion.data!.completeAppTarballUpload.id;
+    const registration = await findRegistrationRow(registrationId);
 
     expect(registration.tarballFileId).toBe(second.uploadTarget.fileId);
     expect(registration.latestAvailableVersion).toBe('1.1.0');
 
-    expect(await findFileRow(first.uploadTarget.fileId)).toBeNull();
+    expect((await findFileRow(first.uploadTarget.fileId)).status).toBe(
+      'UPLOADED',
+    );
     expect((await findFileRow(second.uploadTarget.fileId)).status).toBe(
       'UPLOADED',
     );
+
+    expect(await findVersionRows(registrationId)).toMatchObject([
+      { version: '1.0.0', tarballFileId: first.uploadTarget.fileId },
+      { version: '1.1.0', tarballFileId: second.uploadTarget.fileId },
+    ]);
   });
 
   it('refuses a version that does not progress and drops the promoted file', async () => {
@@ -263,11 +294,13 @@ describe('Direct app tarball upload', () => {
 
     expect(await findFileRow(second.uploadTarget.fileId)).toBeNull();
 
-    const registration = await findRegistrationRow(
-      first.completion.data!.completeAppTarballUpload.id,
-    );
+    const registrationId = first.completion.data!.completeAppTarballUpload.id;
+    const registration = await findRegistrationRow(registrationId);
 
     expect(registration.tarballFileId).toBe(first.uploadTarget.fileId);
+    expect(await findVersionRows(registrationId)).toMatchObject([
+      { version: '1.0.0', tarballFileId: first.uploadTarget.fileId },
+    ]);
   });
 
   it('registers a promoted upload whose registration was lost', async () => {

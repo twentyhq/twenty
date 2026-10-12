@@ -258,6 +258,7 @@ export interface Application {
     agents: Agent[]
     applicationRegistration?: ApplicationRegistrationSummary
     applicationRegistrationId?: Scalars['UUID']
+    applicationRegistrationVersionId?: Scalars['UUID']
     applicationVariables: ApplicationVariable[]
     autoUpgrade: Scalars['Boolean']
     availablePackages: Scalars['JSON']
@@ -473,6 +474,27 @@ export interface ApplicationRegistrationVariable {
     value?: Scalars['String']
     __typename: 'ApplicationRegistrationVariable'
 }
+
+export interface ApplicationRegistrationVersion {
+    applicationRegistrationId: Scalars['UUID']
+    artifactDownloadUrl?: Scalars['String']
+    artifactUrl?: Scalars['String']
+    checksum?: Scalars['String']
+    createdAt: Scalars['DateTime']
+    id: Scalars['UUID']
+    publishedAt: Scalars['DateTime']
+    publishedByUserId?: Scalars['UUID']
+    publishedByWorkspaceId?: Scalars['UUID']
+    reviewState: ApplicationRegistrationVersionReviewState
+    sourcePackage?: Scalars['String']
+    sourceType: ApplicationRegistrationSourceType
+    tarballFileId?: Scalars['UUID']
+    updatedAt: Scalars['DateTime']
+    version: Scalars['String']
+    __typename: 'ApplicationRegistrationVersion'
+}
+
+export type ApplicationRegistrationVersionReviewState = 'APPROVED' | 'REJECTED' | 'UNREVIEWED'
 
 export interface ApplicationTokenPair {
     applicationAccessToken: AuthToken
@@ -2741,6 +2763,7 @@ export interface Query {
     findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
     findApplicationRegistrationStats: ApplicationRegistrationStats
     findApplicationRegistrationVariables: ApplicationRegistrationVariable[]
+    findApplicationRegistrationVersions: ApplicationRegistrationVersion[]
     findClaimableApplicationRegistration?: ClaimableApplicationRegistration
     findInstallApplicationJobStatus?: JobStatus
     findManyAgents: Agent[]
@@ -4195,6 +4218,7 @@ export interface ApplicationGenqlSelection{
     agents?: AgentGenqlSelection
     applicationRegistration?: ApplicationRegistrationSummaryGenqlSelection
     applicationRegistrationId?: boolean | number
+    applicationRegistrationVersionId?: boolean | number
     applicationVariables?: ApplicationVariableGenqlSelection
     autoUpgrade?: boolean | number
     availablePackages?: boolean | number
@@ -4422,6 +4446,26 @@ export interface ApplicationRegistrationVariableGenqlSelection{
     type?: boolean | number
     updatedAt?: boolean | number
     value?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationVersionGenqlSelection{
+    applicationRegistrationId?: boolean | number
+    artifactDownloadUrl?: boolean | number
+    artifactUrl?: boolean | number
+    checksum?: boolean | number
+    createdAt?: boolean | number
+    id?: boolean | number
+    publishedAt?: boolean | number
+    publishedByUserId?: boolean | number
+    publishedByWorkspaceId?: boolean | number
+    reviewState?: boolean | number
+    sourcePackage?: boolean | number
+    sourceType?: boolean | number
+    tarballFileId?: boolean | number
+    updatedAt?: boolean | number
+    version?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6977,6 +7021,7 @@ export interface QueryGenqlSelection{
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
+    findApplicationRegistrationVersions?: (ApplicationRegistrationVersionGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), universalIdentifier?: (Scalars['String'] | null)} })
     findInstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findManyAgents?: AgentGenqlSelection
@@ -8810,6 +8855,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationRegistrationVariable = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariable => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariable"')
       return ApplicationRegistrationVariable_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationRegistrationVersion_possibleTypes: string[] = ['ApplicationRegistrationVersion']
+    export const isApplicationRegistrationVersion = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVersion => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVersion"')
+      return ApplicationRegistrationVersion_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11246,6 +11299,12 @@ export const enumApplicationRegistrationSourceType = {
    NPM: 'NPM' as const,
    OAUTH_ONLY: 'OAUTH_ONLY' as const,
    TARBALL: 'TARBALL' as const
+}
+
+export const enumApplicationRegistrationVersionReviewState = {
+   APPROVED: 'APPROVED' as const,
+   REJECTED: 'REJECTED' as const,
+   UNREVIEWED: 'UNREVIEWED' as const
 }
 
 export const enumApplicationVariableScope = {

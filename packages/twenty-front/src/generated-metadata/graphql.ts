@@ -375,6 +375,7 @@ export type Application = {
   agents: Array<Agent>;
   applicationRegistration?: Maybe<ApplicationRegistrationSummary>;
   applicationRegistrationId?: Maybe<Scalars['UUID']['output']>;
+  applicationRegistrationVersionId?: Maybe<Scalars['UUID']['output']>;
   applicationVariables: Array<ApplicationVariable>;
   autoUpgrade: Scalars['Boolean']['output'];
   availablePackages: Scalars['JSON']['output'];
@@ -614,6 +615,31 @@ export type ApplicationRegistrationVariable = {
   updatedAt: Scalars['DateTime']['output'];
   value?: Maybe<Scalars['String']['output']>;
 };
+
+export type ApplicationRegistrationVersion = {
+  __typename?: 'ApplicationRegistrationVersion';
+  applicationRegistrationId: Scalars['UUID']['output'];
+  artifactDownloadUrl?: Maybe<Scalars['String']['output']>;
+  artifactUrl?: Maybe<Scalars['String']['output']>;
+  checksum?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  publishedAt: Scalars['DateTime']['output'];
+  publishedByUserId?: Maybe<Scalars['UUID']['output']>;
+  publishedByWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+  reviewState: ApplicationRegistrationVersionReviewState;
+  sourcePackage?: Maybe<Scalars['String']['output']>;
+  sourceType: ApplicationRegistrationSourceType;
+  tarballFileId?: Maybe<Scalars['UUID']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+  version: Scalars['String']['output'];
+};
+
+export enum ApplicationRegistrationVersionReviewState {
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  UNREVIEWED = 'UNREVIEWED'
+}
 
 export type ApplicationTokenPair = {
   __typename?: 'ApplicationTokenPair';
@@ -5352,6 +5378,7 @@ export type Query = {
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
   findApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
+  findApplicationRegistrationVersions: Array<ApplicationRegistrationVersion>;
   findClaimableApplicationRegistration?: Maybe<ClaimableApplicationRegistration>;
   findInstallApplicationJobStatus?: Maybe<JobStatus>;
   findManyAgents: Array<Agent>;
@@ -5610,6 +5637,11 @@ export type QueryFindApplicationRegistrationStatsArgs = {
 
 
 export type QueryFindApplicationRegistrationVariablesArgs = {
+  applicationRegistrationId: Scalars['String']['input'];
+};
+
+
+export type QueryFindApplicationRegistrationVersionsArgs = {
   applicationRegistrationId: Scalars['String']['input'];
 };
 
