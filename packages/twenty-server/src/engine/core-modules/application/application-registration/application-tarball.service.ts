@@ -318,6 +318,7 @@ export class ApplicationTarballService {
     ) {
       this.applicationRegistrationService.emitRegistrationPublishMetric({
         isNewRegistration,
+        applicationRegistrationId: appRegistration.id,
         universalIdentifier,
         name: manifest.application?.displayName ?? 'Unknown App',
         sourceType: ApplicationRegistrationSourceType.TARBALL,

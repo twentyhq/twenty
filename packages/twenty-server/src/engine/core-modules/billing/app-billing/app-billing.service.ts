@@ -10,6 +10,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
+import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -45,6 +47,7 @@ export class AppBillingService {
   constructor(
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationRegistrationMetricService: ApplicationRegistrationMetricService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -57,14 +60,22 @@ export class AppBillingService {
   }): Promise<void> {
     const { workspaceId, applicationId, userWorkspaceId, charge } = params;
 
-    const [operationType, attributedUserWorkspaceId] = await Promise.all([
-      this.resolveOperationType({ workspaceId, applicationId, charge }),
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+    const application = findActiveFlatApplicationById(
+      flatApplicationMaps,
+      applicationId,
+    );
+
+    const operationType = this.resolveOperationType({ application, charge });
+    const attributedUserWorkspaceId =
       userWorkspaceId ??
-        this.findWorkspaceScopedUserWorkspaceId({
-          workspaceId,
-          userWorkspaceId: charge.userWorkspaceId,
-        }),
-    ]);
+      (await this.findWorkspaceScopedUserWorkspaceId({
+        workspaceId,
+        userWorkspaceId: charge.userWorkspaceId,
+      }));
 
     const unit = USAGE_UNIT_BY_OPERATION_TYPE[operationType];
 
@@ -91,17 +102,25 @@ export class AppBillingService {
         },
       ],
     });
+
+    if (isDefined(application)) {
+      this.applicationRegistrationMetricService.recordForApplication({
+        application,
+        metric: 'charge.credits_micro',
+        dimension: charge.operation ?? operationType,
+        value: charge.creditsUsedMicro,
+        workspaceId,
+      });
+    }
   }
 
-  private async resolveOperationType({
-    workspaceId,
-    applicationId,
+  private resolveOperationType({
+    application,
     charge,
   }: {
-    workspaceId: string;
-    applicationId: string;
+    application: FlatApplication | undefined;
     charge: ChargeDto;
-  }): Promise<AppChargeableOperationType> {
+  }): AppChargeableOperationType {
     if (!isDefined(charge.operation)) {
       if (!isDefined(charge.operationType)) {
         throw new BadRequestException(
@@ -112,15 +131,6 @@ export class AppBillingService {
       return UsageOperationType[charge.operationType];
     }
 
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
-
-    const application = findActiveFlatApplicationById(
-      flatApplicationMaps,
-      applicationId,
-    );
     // Undefined until the upgrade that adds the column has run.
     const billableOperations = application?.billing?.operations ?? {};
     // Own-property only: `constructor` or `__proto__` would resolve to inherited values and charge under no category

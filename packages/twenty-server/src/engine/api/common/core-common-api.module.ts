@@ -9,6 +9,7 @@ import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { ApplicationRegistrationAnalyticsModule } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-analytics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
@@ -29,6 +30,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitModule,
     UsageModule,
     MetricsModule,
+    ApplicationRegistrationAnalyticsModule,
     RecordPositionModule,
     RecordShareModule,
     RecordTransformerModule,

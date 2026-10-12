@@ -45,6 +45,7 @@ import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-quer
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
@@ -106,6 +107,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly twentyConfigService: TwentyConfigService;
   @Inject()
   protected readonly metricsService: MetricsService;
+  @Inject()
+  protected readonly applicationRegistrationMetricService: ApplicationRegistrationMetricService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -586,6 +589,11 @@ export abstract class CommonBaseQueryRunnerService<
           app_name: authContext.application.name,
           source_type: authContext.application.sourceType,
         },
+      });
+      this.applicationRegistrationMetricService.recordForApplication({
+        application: authContext.application,
+        metric: 'api.rate_limited',
+        workspaceId: authContext.workspace.id,
       });
 
       this.logger.warn(

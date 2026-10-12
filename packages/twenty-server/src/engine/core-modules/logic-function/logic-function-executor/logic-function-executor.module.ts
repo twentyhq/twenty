@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+
+import { ApplicationRegistrationAnalyticsModule } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-analytics.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
@@ -21,6 +23,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   imports: [
     ThrottlerModule,
     EventLogEmitterModule,
+    ApplicationRegistrationAnalyticsModule,
     EventLogLiveModule,
     TokenModule,
     SecretEncryptionModule,

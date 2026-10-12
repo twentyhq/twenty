@@ -50,7 +50,8 @@ export class EventLogLiveService {
     const groups = new Map<string, WatchedGroup>();
 
     for (const event of events) {
-      const workspaceId = event.row.workspaceId;
+      const workspaceId =
+        'workspaceId' in event.row ? event.row.workspaceId : undefined;
 
       if (!isDefined(workspaceId)) {
         continue;

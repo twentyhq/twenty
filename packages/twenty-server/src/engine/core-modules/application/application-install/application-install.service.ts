@@ -63,6 +63,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -87,6 +88,7 @@ export class ApplicationInstallService {
     private readonly workspaceQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
+    private readonly applicationRegistrationMetricService: ApplicationRegistrationMetricService,
   ) {}
 
   async installApplication(params: {
@@ -254,9 +256,19 @@ export class ApplicationInstallService {
         amount: 1,
         attributes,
       });
+      this.applicationRegistrationMetricService.record({
+        applicationRegistrationId: appRegistration.id,
+        universalIdentifier: appRegistration.universalIdentifier,
+        version: attributes.version,
+        metric: isVersionUpgrade ? 'upgrade.succeeded' : 'install.succeeded',
+        workspaceId: params.workspaceId,
+      });
 
       return result;
     } catch (error) {
+      const errorCode =
+        error instanceof ApplicationException ? error.code : 'UNKNOWN';
+
       this.metricsService.incrementCounterBy({
         key: isVersionUpgrade
           ? MetricsKeys.AppUpgradeFailed
@@ -264,9 +276,16 @@ export class ApplicationInstallService {
         amount: 1,
         attributes: {
           ...attributes,
-          error_code:
-            error instanceof ApplicationException ? error.code : 'UNKNOWN',
+          error_code: errorCode,
         },
+      });
+      this.applicationRegistrationMetricService.record({
+        applicationRegistrationId: appRegistration.id,
+        universalIdentifier: appRegistration.universalIdentifier,
+        version: attributes.version,
+        metric: isVersionUpgrade ? 'upgrade.failed' : 'install.failed',
+        dimension: errorCode,
+        workspaceId: params.workspaceId,
       });
 
       throw error;

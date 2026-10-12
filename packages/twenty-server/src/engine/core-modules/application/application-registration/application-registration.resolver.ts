@@ -31,6 +31,10 @@ import { ApplicationTarballService } from 'src/engine/core-modules/application/a
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationClaimInput } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim.input';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
+import { ApplicationRegistrationAnalyticsService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-analytics.service';
+import { ApplicationRegistrationAnalyticsDTO } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.dto';
+import { ApplicationRegistrationAnalyticsInput } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.input';
+import { resolveApplicationRegistrationAnalyticsPeriod } from 'src/engine/core-modules/application/application-registration-analytics/utils/resolve-application-registration-analytics-period.util';
 import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
 import { ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { FindClaimableApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/find-claimable-application-registration.input';
@@ -88,6 +92,7 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
+    private readonly applicationRegistrationAnalyticsService: ApplicationRegistrationAnalyticsService,
     private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -221,6 +226,42 @@ export class ApplicationRegistrationResolver {
     return this.applicationRegistrationService.getStats({
       applicationRegistrationId,
       ownerWorkspaceId: workspaceId,
+    });
+  }
+
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
+  )
+  @Query(() => ApplicationRegistrationAnalyticsDTO)
+  async findApplicationRegistrationAnalytics(
+    @ApplicationTargetArg<ApplicationRegistrationAnalyticsInput>('input', {
+      kind: 'applicationRegistrationId',
+      idKey: 'id',
+      requireApplicationRegistrationOwnership: true,
+    })
+    input: ApplicationRegistrationAnalyticsInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationAnalyticsDTO> {
+    await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+      applicationRegistrationId: input.id,
+      ownerWorkspaceId: workspaceId,
+    });
+
+    return this.applicationRegistrationAnalyticsService.getAnalytics({
+      applicationRegistrationId: input.id,
+      ...resolveApplicationRegistrationAnalyticsPeriod(input),
     });
   }
 

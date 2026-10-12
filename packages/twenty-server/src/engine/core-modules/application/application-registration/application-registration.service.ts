@@ -63,6 +63,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
@@ -117,6 +118,7 @@ export class ApplicationRegistrationService {
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
+    private readonly applicationRegistrationMetricService: ApplicationRegistrationMetricService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
@@ -234,12 +236,14 @@ export class ApplicationRegistrationService {
 
   emitRegistrationPublishMetric({
     isNewRegistration,
+    applicationRegistrationId,
     universalIdentifier,
     name,
     sourceType,
     version,
   }: {
     isNewRegistration: boolean;
+    applicationRegistrationId: string;
     universalIdentifier: string;
     name: string;
     sourceType: string;
@@ -256,6 +260,12 @@ export class ApplicationRegistrationService {
         source_type: sourceType,
         version: version ?? 'unknown',
       },
+    });
+    this.applicationRegistrationMetricService.record({
+      applicationRegistrationId,
+      universalIdentifier,
+      version,
+      metric: 'version.published',
     });
   }
 
@@ -876,6 +886,7 @@ export class ApplicationRegistrationService {
     if (manifestUpdate.isNewerVersion) {
       this.emitRegistrationPublishMetric({
         isNewRegistration: false,
+        applicationRegistrationId: existing.id,
         universalIdentifier: params.universalIdentifier,
         name: params.name,
         sourceType: params.sourceType,
@@ -912,6 +923,7 @@ export class ApplicationRegistrationService {
 
     this.emitRegistrationPublishMetric({
       isNewRegistration: true,
+      applicationRegistrationId: registration.id,
       universalIdentifier: params.universalIdentifier,
       name: params.name,
       sourceType: params.sourceType,

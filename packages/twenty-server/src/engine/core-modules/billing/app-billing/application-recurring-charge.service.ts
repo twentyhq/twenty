@@ -2,6 +2,10 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { buildRecurringChargeUsageEvents } from 'src/engine/core-modules/billing/app-billing/utils/build-recurring-charge-usage-events.util';
 import {
   collectDeclaredRecurringCharges,
@@ -30,6 +34,7 @@ export class ApplicationRecurringChargeService {
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly applicationRegistrationMetricService: ApplicationRegistrationMetricService,
   ) {}
 
   async chargeDueRecurringCharges(workspaceId: string): Promise<number> {
@@ -104,6 +109,24 @@ export class ApplicationRecurringChargeService {
     }
 
     await this.usageLimitQuotaService.charge({ workspaceId, events });
+
+    for (const event of events) {
+      const application = isDefined(event.resourceId)
+        ? findActiveFlatApplicationById(flatApplicationMaps, event.resourceId)
+        : undefined;
+
+      if (!isDefined(application)) {
+        continue;
+      }
+
+      this.applicationRegistrationMetricService.recordForApplication({
+        application,
+        metric: 'charge.credits_micro',
+        dimension: event.resourceContext,
+        value: event.creditsUsedMicro,
+        workspaceId,
+      });
+    }
 
     this.logger.log(
       `Raised ${events.length} recurring app charge(s) for workspace ${workspaceId}`,

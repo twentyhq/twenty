@@ -14,6 +14,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
+import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
@@ -38,6 +40,7 @@ export class CronTriggerCronJob {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
+    private readonly applicationRegistrationMetricService: ApplicationRegistrationMetricService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -94,17 +97,30 @@ export class CronTriggerCronJob {
             flatApplicationMaps,
             logicFunction.applicationId,
           );
-          const applicationRegistrationId =
-            application?.applicationRegistrationId;
 
-          if (!isDefined(applicationRegistrationId)) {
+          if (
+            !isDefined(application) ||
+            !isDefined(application.applicationRegistrationId)
+          ) {
             continue;
           }
 
-          await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
-            applicationId: logicFunction.applicationId,
-            applicationRegistrationId,
-          });
+          try {
+            await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+              applicationId: logicFunction.applicationId,
+              applicationRegistrationId: application.applicationRegistrationId,
+            });
+          } catch (error) {
+            if (error instanceof ThrottlerException) {
+              this.applicationRegistrationMetricService.recordForApplication({
+                application,
+                metric: 'job.rate_limited',
+                workspaceId: activeWorkspace.id,
+              });
+            }
+
+            throw error;
+          }
 
           await this.messageQueueService.add<LogicFunctionTriggerJobData>(
             LogicFunctionTriggerJob.name,
