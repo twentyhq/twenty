@@ -45,11 +45,9 @@ export class ConnectionProviderAccountService {
     return this.connectedAccountRepository.manager.transaction(
       async (entityManager) => {
         const { reconnectTarget } =
-          await this.appConnectionAccessService.validateConnectionAccessOrThrow(
-            {
-              ...args,
-              entityManager,
-            },
+          await this.appConnectionAccessService.lockAndAssertConnectionAccessOrThrow(
+            args,
+            entityManager,
           );
         const repository = entityManager.getRepository(ConnectedAccountEntity);
         const { encryptedAccessToken, encryptedRefreshToken } =

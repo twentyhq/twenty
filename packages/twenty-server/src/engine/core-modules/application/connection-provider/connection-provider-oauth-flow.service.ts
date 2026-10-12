@@ -74,7 +74,7 @@ export class ConnectionProviderOAuthFlowService {
     assertOAuthProvider(connectionProvider);
 
     const { visibility } =
-      await this.appConnectionAccessService.validateConnectionAccessOrThrow({
+      await this.appConnectionAccessService.assertConnectionAccessOrThrow({
         ...args,
         provider: connectionProvider,
       });
@@ -145,7 +145,7 @@ export class ConnectionProviderOAuthFlowService {
         statePayload.reconnectingConnectedAccountId,
     };
 
-    await this.appConnectionAccessService.validateConnectionAccessOrThrow(
+    await this.appConnectionAccessService.assertConnectionAccessOrThrow(
       connectionAccessArgs,
     );
 

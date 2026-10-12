@@ -25,6 +25,20 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
+export type ConnectionAccessArgs = {
+  provider: Pick<ConnectionProviderEntity, 'id' | 'applicationId'>;
+  workspaceId: string;
+  userId: string;
+  userWorkspaceId: string;
+  visibility?: ConnectedAccountVisibility;
+  reconnectingConnectedAccountId: string | null;
+};
+
+type ConnectionAccess = {
+  reconnectTarget: ConnectedAccountEntity | null;
+  visibility: ConnectedAccountVisibility;
+};
+
 @Injectable()
 export class AppConnectionAccessService {
   constructor(
@@ -35,27 +49,44 @@ export class AppConnectionAccessService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
-  async validateConnectionAccessOrThrow({
-    provider,
-    workspaceId,
-    userId,
-    userWorkspaceId,
-    visibility: requestedVisibility,
-    reconnectingConnectedAccountId,
-    entityManager = this.connectedAccountRepository.manager,
+  async assertConnectionAccessOrThrow(
+    args: ConnectionAccessArgs,
+  ): Promise<ConnectionAccess> {
+    return this.findAndAssertConnectionAccessOrThrow({
+      args,
+      entityManager: this.connectedAccountRepository.manager,
+      shouldLockReconnectTarget: false,
+    });
+  }
+
+  async lockAndAssertConnectionAccessOrThrow(
+    args: ConnectionAccessArgs,
+    transactionManager: EntityManager,
+  ): Promise<ConnectionAccess> {
+    // Holds the reconnect target until commit so an ownership or visibility change cannot land between this check and the credential write.
+    return this.findAndAssertConnectionAccessOrThrow({
+      args,
+      entityManager: transactionManager,
+      shouldLockReconnectTarget: true,
+    });
+  }
+
+  private async findAndAssertConnectionAccessOrThrow({
+    args: {
+      provider,
+      workspaceId,
+      userId,
+      userWorkspaceId,
+      visibility: requestedVisibility,
+      reconnectingConnectedAccountId,
+    },
+    entityManager,
+    shouldLockReconnectTarget,
   }: {
-    provider: Pick<ConnectionProviderEntity, 'id' | 'applicationId'>;
-    workspaceId: string;
-    userId: string;
-    userWorkspaceId: string;
-    visibility?: ConnectedAccountVisibility;
-    reconnectingConnectedAccountId: string | null;
-    entityManager?: EntityManager;
-  }): Promise<{
-    reconnectTarget: ConnectedAccountEntity | null;
-    visibility: ConnectedAccountVisibility;
-  }> {
-    const isTransactionActive = entityManager.queryRunner?.isTransactionActive;
+    args: ConnectionAccessArgs;
+    entityManager: EntityManager;
+    shouldLockReconnectTarget: boolean;
+  }): Promise<ConnectionAccess> {
     const currentProvider = await this.connectionProviderRepository
       .withManager(entityManager)
       .findOne(workspaceId, {
@@ -95,7 +126,9 @@ export class AppConnectionAccessService {
             },
             userWorkspaceId,
           }),
-          lock: isTransactionActive ? { mode: 'pessimistic_write' } : undefined,
+          lock: shouldLockReconnectTarget
+            ? { mode: 'pessimistic_write' }
+            : undefined,
         })
       : null;
 
