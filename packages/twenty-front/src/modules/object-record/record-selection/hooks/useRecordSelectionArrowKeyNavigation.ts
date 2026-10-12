@@ -20,9 +20,6 @@ type UseRecordSelectionArrowKeyNavigationProps = {
   onActiveRecordChange?: (recordId: string) => void;
 };
 
-// Arrows move like a click and shift+arrows extend the selection like a
-// shift+click, from the end of the selection, else the active record, else
-// the focused one
 export const useRecordSelectionArrowKeyNavigation = ({
   selectableItemsContainerRef,
   activeRecordId,

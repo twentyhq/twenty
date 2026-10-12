@@ -153,12 +153,14 @@ describe('useRecordSelectionArrowKeyNavigation', () => {
     const container = renderSelectableItems(['a', 'b', 'd', 'e']);
     const { navigateWithArrowKey } = renderArrowKeyNavigation({ container });
     const getItem = (recordId: string) =>
-      container.querySelector(`[data-selectable-id="${recordId}"]`);
+      container.querySelector<HTMLElement>(
+        `[data-selectable-id="${recordId}"]`,
+      );
 
     pressArrowKey(navigateWithArrowKey, Key.ArrowDown);
     expect(document.activeElement).toBe(getItem('a'));
 
-    act(() => (getItem('b') as HTMLElement).focus());
+    act(() => getItem('b')?.focus());
     pressArrowKey(navigateWithArrowKey, Key.ArrowDown);
     expect(document.activeElement).toBe(getItem('d'));
   });
