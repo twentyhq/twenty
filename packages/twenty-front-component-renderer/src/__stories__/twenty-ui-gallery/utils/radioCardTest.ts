@@ -32,7 +32,7 @@ export const radioCardTest: TwentyUiGalleryPlayFunction = async ({
   expect(
     new FormData(
       canvas.getByRole<HTMLFormElement>('form', {
-        name: 'Digest preferences',
+        name: 'Plan preferences',
       }),
     ).get('plan'),
   ).toBe('pro');

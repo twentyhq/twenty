@@ -529,7 +529,6 @@ export const HtmlLabelElement = createRemoteElement<
 export type HtmlInputProperties = HtmlCommonProperties & {
   type?: string;
   name?: string;
-  form?: string;
   value?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -559,7 +558,6 @@ export const HtmlInputElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     type: { type: String },
     name: { type: String },
-    form: { type: String },
     value: { type: String },
     placeholder: { type: String },
     disabled: { type: Boolean },

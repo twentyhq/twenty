@@ -78,32 +78,33 @@ const RadioGroupExample = () => {
         Frequency changes: {frequencyChanges}; Callback: {frequencyCallback};
         Targets: {frequencyTargets}
       </Text>
-      <RadioGroup
-        aria-label="Plan"
-        name="plan"
-        form="digest-preferences"
-        defaultValue="basic"
-        onValueChange={(nextPlan) => {
-          setPlan(nextPlan);
-          setPlanTargets(
-            `${cardRef.current?.tagName}/${cardInputRef.current?.tagName}`,
-          );
-        }}
-      >
-        <Radio variant="card" value="basic">
-          Basic plan
-        </Radio>
-        <Radio
-          ref={cardRef}
-          inputRef={cardInputRef}
-          variant="card"
-          value="pro"
-          nativeButton
-          render={<button type="button" data-native-owner="plan" />}
+      <form aria-label="Plan preferences">
+        <RadioGroup
+          aria-label="Plan"
+          name="plan"
+          defaultValue="basic"
+          onValueChange={(nextPlan) => {
+            setPlan(nextPlan);
+            setPlanTargets(
+              `${cardRef.current?.tagName}/${cardInputRef.current?.tagName}`,
+            );
+          }}
         >
-          Pro plan
-        </Radio>
-      </RadioGroup>
+          <Radio variant="card" value="basic">
+            Basic plan
+          </Radio>
+          <Radio
+            ref={cardRef}
+            inputRef={cardInputRef}
+            variant="card"
+            value="pro"
+            nativeButton
+            render={<button type="button" data-native-owner="plan" />}
+          >
+            Pro plan
+          </Radio>
+        </RadioGroup>
+      </form>
       <Text>
         Plan: {plan}; Targets: {planTargets}
       </Text>

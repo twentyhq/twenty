@@ -118,6 +118,8 @@ The callback receives the original event details, including the native `event`, 
 
 Keep `name`, `form`, `required`, `disabled` and `readOnly` on the group for the existing Base UI form contract. The selected value is submitted under `name`; disabled groups are excluded and read-only groups keep their selection. `form` supports a group outside its owning form. The installed version does not restore group state automatically on native form reset. Reset controlled state from the form's `onReset` handler when your workflow requires it.
 
+In sandboxed front components, put the group inside its owning form. The renderer forwards `required` validation and blocks explicit `form` references, which otherwise resolve across the host document.
+
 [SegmentedControl](/ui/components/input/segmented-control) is a convenience preset assembled from these primitives for a short exclusive choice. It uses radio semantics and requires an accessible group name. Tabs and tab-panel navigation are separate controls.
 
 ## Props
