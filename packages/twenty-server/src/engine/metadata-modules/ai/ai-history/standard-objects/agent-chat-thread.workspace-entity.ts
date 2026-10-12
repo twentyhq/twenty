@@ -19,7 +19,6 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   channel: EntityRelation<AgentChatChannelWorkspaceEntity> | null;
 
   archivedAt: string | null;
-  userWorkspaceId: string | null;
 
   workspaceMemberId: string | null;
   assigneeId: string | null;

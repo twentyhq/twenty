@@ -410,7 +410,6 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       id: threadId,
       title: conversation.title,
       workspaceMemberId: MEMBERS.TIM.workspaceMemberId,
-      userWorkspaceId: MEMBERS.TIM.userWorkspaceId,
       pendingQuestionMessageId: isDefined(conversation.answer)
         ? null
         : seedId('assistantMessage'),

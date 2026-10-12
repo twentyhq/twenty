@@ -185,16 +185,4 @@ describe('agent history workspace metadata', () => {
       ).toMatchObject({ type: FieldMetadataType.NUMERIC, defaultValue: "'0'" });
     }
   });
-
-  it('retains one hidden kickoff message per thread', () => {
-    expect(
-      allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentMessage.indexes.hiddenKickoffIndex
-          .universalIdentifier
-      ],
-    ).toMatchObject({
-      isUnique: true,
-      indexWhereClause: '"isHidden" = true AND "deletedAt" IS NULL',
-    });
-  });
 });

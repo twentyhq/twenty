@@ -6,7 +6,7 @@ description: Present route links and actions alongside tabs with consistent styl
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import TabButtonReference from '/snippets/ui/generated/components/navigation/tab-button.mdx';
 
-Use `TabButton` for navigation links and actions such as adding a tab or opening an overflow menu. It shares the appearance of [Tabs](/ui/primitives/navigation/tabs) and uses [Button](/ui/primitives/input/button) for interaction.
+Use `TabButton` for route links and actions such as adding a tab or opening an overflow menu. It shares the appearance of [Tabs](/ui/primitives/navigation/tabs) and uses [Button](/ui/primitives/input/button) for interaction.
 
 <StoryEmbed
   storyId="ui-components-tabbutton--default"
@@ -14,13 +14,15 @@ Use `TabButton` for navigation links and actions such as adding a tab or opening
   height={180}
 />
 
-## State ownership
+## State and semantics
 
-Your application supplies `active` from its current route or menu state. This prop highlights the control without changing its role or introducing selection state. Use `Tabs.Root`, `Tabs.List`, `Tabs.Tab`, and `Tabs.Panel` to switch between related content panels, with controlled or uncontrolled selection.
+Your application supplies `active` from its current route or menu state. This prop highlights the control. Set `aria-current="page"` on the current route link. Route links and adjacent actions retain their link or button semantics, with no tab role, `aria-selected`, or panel relationship.
+
+Use `Tabs.Root`, `Tabs.List`, `Tabs.Tab`, `Tabs.Panel`, and optional `Tabs.Indicator` to switch between related content panels. Keep route and action controls outside `Tabs.List`.
 
 ## Navigation
 
-Set `href` to render a link. Supply `aria-current="page"` on the current destination.
+Set `href` to render a native link. The current route owns its `active` appearance and `aria-current` value.
 
 ```tsx
 import { TabButton } from 'twenty-ui/components/navigation';
@@ -38,11 +40,30 @@ export const BillingLink = () => (
 );
 ```
 
-For client-side routing, set `nativeButton={false}` and `role="link"`, pass the resolved destination as `href`, and supply your router link through `render`. Keep route state and history options on the router link. Custom wrappers must forward props and the ref to the anchor. Disabled links retain their link role and block activation.
+For client-side routing, supply your router link through `render`, set `nativeButton={false}` and `role="link"`, and pass the resolved destination as `href`. Keep route state and history options on the router link. Custom wrappers must forward the supplied props and ref to their anchor.
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+
+export const ComposedBillingLink = () => (
+  <TabButton
+    nativeButton={false}
+    role="link"
+    href="/billing"
+    render={<a />}
+    aria-current="page"
+    active
+  >
+    Billing
+  </TabButton>
+);
+```
+
+An explicit `nativeButton` controls the interaction contract even when `href` is present. Match it to the actual rendered element. Disabled links retain their link role and block activation.
 
 ## Actions
 
-Without `href`, the control renders a native button with `type="button"`. Native attributes, refs, styles, class names, and event handlers pass through.
+Without `href`, the control renders a native button with `type="button"`. Native attributes, refs, styles, class names, and event handlers pass through. `render` accepts an element or a function receiving the Button props and state. Refs point to the actual rendered button or anchor, including refs supplied on a composed element.
 
 ```tsx
 import { useState } from 'react';
@@ -64,7 +85,7 @@ export const AddTabAction = () => {
 };
 ```
 
-Use `startIcon`, `endIcon`, and `badge` for supporting content. An avatar passed to an icon slot is decorative when the text names the destination. The `size` prop controls content padding with `sm` and `md` values.
+Use `startIcon`, `endIcon`, and `badge` for supporting content. An avatar passed to an icon slot is decorative when the text names the destination. `size` retains the public Button size contract. An explicit size takes priority over a surrounding `ButtonGroup` size; otherwise the component defaults to `sm`.
 
 ## Props
 

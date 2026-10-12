@@ -243,13 +243,12 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId"${isDefined(args.channelId) ? ', "channelId"' : ''})
-           VALUES ($1, $2, $3, $4${isDefined(args.channelId) ? ', $5' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId"${isDefined(args.channelId) ? ', "channelId"' : ''})
+           VALUES ($1, $2, $3${isDefined(args.channelId) ? ', $4' : ''}) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
             authContext.workspaceMemberId,
-            authContext.userWorkspaceId,
             ...(isDefined(args.channelId) ? [args.channelId] : []),
           ],
         );

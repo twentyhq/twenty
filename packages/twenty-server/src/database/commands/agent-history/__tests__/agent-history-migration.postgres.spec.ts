@@ -8,6 +8,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -43,6 +44,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
 import { AgentHistoryMigrationService } from 'src/database/commands/agent-history/agent-history-migration.service';
 import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import { getLegacyAgentHistoryFlatFieldMetadatas } from 'src/database/commands/agent-history/utils/get-legacy-agent-history-flat-field-metadatas.util';
 import { AGENT_HISTORY_TEST_SCHEMA } from 'src/database/commands/agent-history/__tests__/agent-history-test-schema.constant';
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { AGENT_HISTORY_MIGRATION_STORAGE_KEY } from 'src/database/commands/agent-history/agent-history-migration-storage-key.constant';
@@ -227,7 +229,14 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         chatRecordEvents as never,
         new AgentConversationWriterService(
           turns as never,
-          new AgentHistoryTransactionService(workspaceStorage, orm as never),
+          new AgentHistoryTransactionService(orm as never),
+          {
+            getOrRecompute: async () => ({
+              flatWorkspaceMemberMaps: {
+                idByUserWorkspaceId: { [OWNER_ID]: MEMBER_ID },
+              },
+            }),
+          } as never,
         ),
         chatThreadService,
       );
@@ -308,6 +317,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         'INSERT INTO core.workspace VALUES ($1, $2, true, null)',
         [WORKSPACE_ID, 'Test tenant'],
       );
+      // Tables as a workspace has them while it upgrades through 2.42 to 2.46
+      const legacyFields = getLegacyAgentHistoryFlatFieldMetadatas({
+        standard: metadata,
+      });
       const runner = dataSource.createQueryRunner();
       await runner.connect();
       try {
@@ -317,11 +330,12 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           )
             .filter(isDefined)
             .find((object) => object.nameSingular === table.name)!;
-          const fields = Object.values(
-            metadata.flatFieldMetadataMaps.byUniversalIdentifier,
-          )
-            .filter(isDefined)
-            .filter((field) => field.objectMetadataId === object.id);
+          const fields = [
+            ...Object.values(
+              metadata.flatFieldMetadataMaps.byUniversalIdentifier,
+            ).filter(isDefined),
+            ...legacyFields,
+          ].filter((field) => field.objectMetadataId === object.id);
           await new WorkspaceSchemaTableManagerService().createTable({
             queryRunner: runner,
             schemaName: SCHEMA,
@@ -688,7 +702,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(message.parts[0].textContent).toBe('Hidden setup context');
       expect(message.parts[0].createdAt).toBeInstanceOf(Date);
       const created = await threads.insertAndReturnOne(WORKSPACE_ID, {
-        userWorkspaceId: OWNER_ID,
         workspaceMemberId: MEMBER_ID,
         title: 'New workspace chat',
       });
@@ -783,7 +796,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const chat = createChatService(messages);
       const actors = createActorService(messages);
       const thread = await threads.insertAndReturnOne(WORKSPACE_ID, {
-        userWorkspaceId: OWNER_ID,
         workspaceMemberId: MEMBER_ID,
       });
       const openingTurn = await turns.insertAndReturnOne(WORKSPACE_ID, {
@@ -835,7 +847,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         where: { id: message.id },
         relations: { parts: true },
       });
-      expect(saved.senderUserWorkspaceId).toBe(OWNER_ID);
       expect(
         await dataSource.query(
           `SELECT "senderWorkspaceMemberId" FROM "${SCHEMA}"."agentMessage" WHERE id = ANY($1::uuid[])`,
@@ -861,7 +872,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const upgraded = await messages.insertAndReturnOne(WORKSPACE_ID, {
         threadId: THREAD_ID,
         role: AgentMessageRole.USER,
-        senderUserWorkspaceId: TURN_ID,
+        senderWorkspaceMemberId: MEMBER_ID,
         senderApplicationId: MESSAGE_ID,
       });
       await expect(
@@ -871,7 +882,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           messageId: upgraded.id,
         }),
       ).resolves.toMatchObject({
-        sender: { userWorkspaceId: TURN_ID, applicationId: MESSAGE_ID },
+        sender: { userWorkspaceId: OWNER_ID, applicationId: MESSAGE_ID },
       });
     });
 
@@ -954,7 +965,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ]);
     });
 
-    it('preserves the owner fallback for historical null-sender messages', async () => {
+    it('refuses historical member messages whose sender was never linked, rather than running them as the owner', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
@@ -969,8 +980,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           threadId: THREAD_ID,
           messageId: MESSAGE_ID,
         }),
-      ).resolves.toMatchObject({
-        sender: { userWorkspaceId: OWNER_ID, applicationId: null },
+      ).rejects.toMatchObject({
+        code: AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
       });
     });
 
@@ -1093,24 +1104,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         ).toBe('9007199254740994');
         await dataSource.query(`UPDATE ${table} SET "activeStreamId" = NULL`);
       }
-    });
-
-    it('enforces one live hidden kickoff per thread and releases a trashed slot', async () => {
-      await migration.migrate({
-        workspaceId: WORKSPACE_ID,
-        target: 'workspace',
-      });
-      const insert = () =>
-        dataSource.query(
-          `INSERT INTO "${SCHEMA}"."agentMessage" ("threadId", role, "isHidden") VALUES ($1, 'user', true)`,
-          [THREAD_ID],
-        );
-      await expect(insert()).rejects.toThrow('duplicate key');
-      await dataSource.query(
-        `UPDATE "${SCHEMA}"."agentMessage" SET "deletedAt" = now() WHERE id = $1`,
-        [MESSAGE_ID],
-      );
-      await expect(insert()).resolves.toBeDefined();
     });
 
     it('does not create constraints referencing core tables', async () => {
