@@ -136,6 +136,7 @@ export const CancelledDismissal: Story = {
 
     await userEvent.type(input, 'Ch');
     await body.findByRole('option', { name: 'Cherry' });
+    await waitFor(() => expect(body.getByRole('listbox')).toBeVisible());
     await userEvent.keyboard('{Escape}');
     await expect(args.onOpenChange).toHaveBeenLastCalledWith(
       false,
