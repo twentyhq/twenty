@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
 import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';

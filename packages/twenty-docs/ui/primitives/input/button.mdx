@@ -81,10 +81,10 @@ Your application owns progress formatting and the translated label. Pass the com
 
 ## Upcoming features
 
-Your application owns feature availability and its label. Compose a disabled button with `Pill` as children so the label remains part of the button's accessible name. Supply localized text from your application.
+Your application owns feature availability and its label. Compose a disabled button with `Badge` as children so the label remains part of the button's accessible name. Supply localized text from your application.
 
 ```tsx
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 
@@ -99,7 +99,7 @@ export const UpcomingAction = () => (
       }}
     >
       Upcoming action
-      <Pill label="Coming soon" />
+      <Badge>Coming soon</Badge>
     </Text>
   </Button>
 );

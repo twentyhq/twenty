@@ -12518,6 +12518,11 @@ msgstr "Workflowpostvælgeren skal referere til et objekt."
 msgid "The workflow references metadata that is not available to this application."
 msgstr "Workflowet refererer til metadata, der ikke er tilgængelige for denne applikation."
 
+#. js-lingui-id: W+A2pa
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
+msgid "The workflow schedule is invalid."
+msgstr "Workflowplanen er ugyldig."
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"

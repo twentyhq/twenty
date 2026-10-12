@@ -181,6 +181,11 @@ export class AgentTriggerRunnerService
       return null;
     }
 
+    // the agent never exceeds its application, as in its runAgent runs
+    const additionalRoleRestrictionIds = isDefined(application.defaultRoleId)
+      ? [application.defaultRoleId]
+      : undefined;
+
     const actingAgent = { id: agent.id, label: agent.label };
     const createdBy = buildCreatedByFromAgent({
       agent: actingAgent,
@@ -195,7 +200,11 @@ export class AgentTriggerRunnerService
         actorContext: createdBy,
         turnCreatedBy: createdBy,
         userWorkspaceId: null,
-        rolePermissionConfig: buildAgentRolePermissionConfig({ agentRoleId }),
+        rolePermissionConfig: buildAgentRolePermissionConfig({
+          agentRoleId,
+          additionalRoleRestrictionIds,
+        }),
+        additionalRoleRestrictionIds,
         usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       },
     };
