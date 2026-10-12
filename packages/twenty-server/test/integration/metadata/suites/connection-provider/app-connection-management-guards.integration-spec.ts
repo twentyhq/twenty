@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { insertApplicationRegistrationVariable } from 'test/integration/metadata/suites/application-registration-variable/utils/insert-application-registration-variable.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -18,6 +19,7 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 const APP_ID = uuidv4();
 const APP_ROLE_ID = uuidv4();
 const APP_PROVIDER_ID = uuidv4();
+const PKCE_PROVIDER_ID = uuidv4();
 
 const SHARED_BY_TIM_ID = uuidv4();
 const PRIVATE_OF_TIM_ID = uuidv4();
@@ -99,10 +101,70 @@ describe('app connection management guards (e2e)', () => {
 
     expect(response.status).toBe(302);
 
-    return (
-      new URL(response.headers.location).searchParams.get('errorMessage') ?? ''
-    );
+    return getErrorMessageFromRedirect(response.headers.location);
   };
+
+  const getErrorMessageFromRedirect = (location: string): string =>
+    new URL(location).searchParams.get('errorMessage') ?? '';
+
+  const startPkceFlow = async (): Promise<{
+    authorizationUrl: URL;
+    state: string;
+    flowCookie: string;
+  }> => {
+    const response = await request(`http://localhost:${APP_PORT}`)
+      .get('/auth/apps/authorize')
+      .query({
+        applicationId: applicationDbId,
+        providerName: 'pkce-provider',
+        transientToken: await generateTransientToken(),
+      });
+
+    expect(response.status).toBe(302);
+
+    const authorizationUrl = new URL(response.headers.location);
+    const state = authorizationUrl.searchParams.get('state');
+
+    expect(state).toEqual(expect.any(String));
+
+    const setCookieHeader = response.headers['set-cookie'] as unknown as
+      | string[]
+      | undefined;
+    const flowSetCookie = (setCookieHeader ?? []).find((cookie) =>
+      cookie.includes('app-oauth-flow='),
+    );
+
+    expect(flowSetCookie).toBeDefined();
+
+    return {
+      authorizationUrl,
+      state: state as string,
+      flowCookie: (flowSetCookie as string).split(';')[0],
+    };
+  };
+
+  const callbackAndGetErrorMessage = async ({
+    state,
+    flowCookie,
+  }: {
+    state: string;
+    flowCookie?: string;
+  }): Promise<string> => {
+    const callbackRequest = request(`http://localhost:${APP_PORT}`)
+      .get('/auth/apps/callback')
+      .query({ code: 'provider-issued-code', state });
+
+    const response = isDefined(flowCookie)
+      ? await callbackRequest.set('Cookie', flowCookie)
+      : await callbackRequest;
+
+    expect(response.status).toBe(302);
+
+    return getErrorMessageFromRedirect(response.headers.location);
+  };
+
+  const decodeJwtPayload = (token: string): Record<string, unknown> =>
+    JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString('utf8'));
 
   beforeAll(async () => {
     await setupApplicationForSync({
@@ -131,6 +193,23 @@ describe('app connection management guards (e2e)', () => {
                 clientSecretVariable: 'SLACK_CLIENT_SECRET',
               },
             },
+            {
+              universalIdentifier: PKCE_PROVIDER_ID,
+              name: 'pkce-provider',
+              displayName: 'PKCE provider',
+              type: 'oauth',
+              oauth: {
+                authorizationEndpoint:
+                  'https://pkce-provider.invalid/authorize',
+                // Unresolvable on purpose: the token exchange fails fast
+                // once the state checks have passed.
+                tokenEndpoint: 'https://pkce-provider.invalid/token',
+                scopes: ['read'],
+                clientIdVariable: 'PKCE_PROVIDER_CLIENT_ID',
+                clientSecretVariable: 'PKCE_PROVIDER_CLIENT_SECRET',
+                usePkce: true,
+              },
+            },
           ],
         },
       }),
@@ -139,10 +218,33 @@ describe('app connection management guards (e2e)', () => {
 
     jest.useRealTimers();
 
-    const [provider] = await findConnectionProvidersByApplication(APP_ID);
+    const providers = await findConnectionProvidersByApplication(APP_ID);
+    const provider = providers.find(({ name }) => name === 'slack');
+
+    if (!isDefined(provider)) {
+      throw new Error('Slack connection provider was not synced');
+    }
 
     applicationDbId = provider.applicationId;
     providerDbId = provider.id;
+
+    const [{ applicationRegistrationId }] =
+      await globalThis.testDataSource.query(
+        `SELECT "applicationRegistrationId" FROM core."application" WHERE id = $1`,
+        [applicationDbId],
+      );
+
+    await insertApplicationRegistrationVariable({
+      applicationRegistrationId,
+      key: 'PKCE_PROVIDER_CLIENT_ID',
+      value: 'pkce-provider-client-id',
+      isSecret: false,
+    });
+    await insertApplicationRegistrationVariable({
+      applicationRegistrationId,
+      key: 'PKCE_PROVIDER_CLIENT_SECRET',
+      value: 'pkce-provider-client-secret',
+    });
 
     await insertAppConnection({
       id: SHARED_BY_TIM_ID,
@@ -228,5 +330,68 @@ describe('app connection management guards (e2e)', () => {
 
     expect(errorMessage).not.toContain('Cannot reconnect connectedAccount');
     expect(errorMessage).not.toContain('does not have permission');
+  });
+
+  describe('OAuth state', () => {
+    it('sends the PKCE challenge but keeps the verifier out of the state', async () => {
+      const { authorizationUrl, state, flowCookie } = await startPkceFlow();
+
+      expect(authorizationUrl.searchParams.get('code_challenge')).toEqual(
+        expect.any(String),
+      );
+      expect(authorizationUrl.searchParams.get('code_challenge_method')).toBe(
+        'S256',
+      );
+
+      const statePayload = decodeJwtPayload(state);
+
+      expect(statePayload).not.toHaveProperty('codeVerifier');
+      expect(statePayload.jti).toEqual(expect.any(String));
+      expect(flowCookie.split('=')[1]).toBe(statePayload.jti);
+    });
+
+    it('rejects a state replayed after its first callback', async () => {
+      const { state, flowCookie } = await startPkceFlow();
+
+      const firstErrorMessage = await callbackAndGetErrorMessage({
+        state,
+        flowCookie,
+      });
+
+      expect(firstErrorMessage).not.toContain('OAuth state');
+
+      const replayErrorMessage = await callbackAndGetErrorMessage({
+        state,
+        flowCookie,
+      });
+
+      expect(replayErrorMessage).toContain(
+        'OAuth state has already been used or has expired',
+      );
+    });
+
+    it('rejects a callback that does not carry the flow cookie', async () => {
+      const { state } = await startPkceFlow();
+
+      const errorMessage = await callbackAndGetErrorMessage({ state });
+
+      expect(errorMessage).toContain(
+        'OAuth state was not issued to this browser',
+      );
+    });
+
+    it('rejects a callback whose flow cookie belongs to another flow', async () => {
+      const { state } = await startPkceFlow();
+      const { flowCookie: otherFlowCookie } = await startPkceFlow();
+
+      const errorMessage = await callbackAndGetErrorMessage({
+        state,
+        flowCookie: otherFlowCookie,
+      });
+
+      expect(errorMessage).toContain(
+        'OAuth state was not issued to this browser',
+      );
+    });
   });
 });
