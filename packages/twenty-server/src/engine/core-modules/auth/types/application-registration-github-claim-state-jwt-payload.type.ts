@@ -8,4 +8,7 @@ export type ApplicationRegistrationGithubClaimStateJwtPayload =
     workspaceId: string;
     userId: string | null;
     nonceHash: string;
+    // The nonce cookie is host-bound and GitHub calls back on SERVER_URL, so
+    // the callback needs to know which host received the cookie.
+    cookieOrigin: string;
   };

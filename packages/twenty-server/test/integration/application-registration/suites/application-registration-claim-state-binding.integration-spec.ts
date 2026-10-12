@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 
+import { print } from 'graphql';
 import gql from 'graphql-tag';
 import { http, HttpResponse } from 'msw';
 import request from 'supertest';
@@ -12,6 +13,10 @@ import { updateConfigVariable } from 'test/integration/twenty-config/utils/updat
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 
 const CALLBACK_PATH = '/application-registration-claim/github/callback';
+const COMPLETE_PATH = '/application-registration-claim/github/complete';
+// Where the settings page runs for the seeded workspace (FRONTEND_URL with the
+// multi-workspace subdomain), as opposed to the host supertest reaches.
+const WORKSPACE_HOST = 'apple.localhost:3001';
 const PUBLISHER_ORG = 'publisher-org';
 const PACKAGE_VERSION = '1.0.0';
 
@@ -145,9 +150,47 @@ describe('Application registration claim state binding (integration)', () => {
     };
   };
 
-  const callback = (params: { state: string; cookie?: string }) => {
+  // Same mint, but as seen from the workspace host: the browser then files the
+  // nonce cookie under that host, not under the one GitHub calls back on.
+  const startClaimFromHost = async (registrationId: string, host: string) => {
+    const response = await request(baseUrl)
+      .post('/metadata')
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+      .set('Host', host)
+      .send({
+        query: print(gql`
+          query GithubClaimAuthorizationUrl(
+            $applicationRegistrationId: String!
+          ) {
+            githubClaimAuthorizationUrl(
+              applicationRegistrationId: $applicationRegistrationId
+            )
+          }
+        `),
+        variables: { applicationRegistrationId: registrationId },
+      });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const authorizationUrl = new URL(
+      response.body.data.githubClaimAuthorizationUrl,
+    );
+    const setCookie = response.headers['set-cookie'];
+
+    expect(setCookie).toBeDefined();
+
+    return {
+      state: authorizationUrl.searchParams.get('state') as string,
+      cookie: (setCookie as unknown as string[])[0].split(';')[0],
+    };
+  };
+
+  const hitClaimRoute = (
+    path: string,
+    params: { state: string; cookie?: string },
+  ) => {
     const pending = request(baseUrl)
-      .get(CALLBACK_PATH)
+      .get(path)
       .query({ code: 'github-code', state: params.state });
 
     if (params.cookie !== undefined) {
@@ -156,6 +199,12 @@ describe('Application registration claim state binding (integration)', () => {
 
     return pending;
   };
+
+  const callback = (params: { state: string; cookie?: string }) =>
+    hitClaimRoute(CALLBACK_PATH, params);
+
+  const completion = (params: { state: string; cookie?: string }) =>
+    hitClaimRoute(COMPLETE_PATH, params);
 
   // A strict cookie is withheld on GitHub's cross-site redirect back to the
   // callback, which would fail every claim on instances configured that way.
@@ -289,5 +338,95 @@ describe('Application registration claim state binding (integration)', () => {
     await expect(
       readOwnerWorkspaceId(dataSource, registrationId),
     ).resolves.toBe(SEED_APPLE_WORKSPACE_ID);
+  });
+
+  it('hands the callback over to the workspace host that holds the nonce cookie', async () => {
+    const sourcePackage = `@${PUBLISHER_ORG}/other-host`;
+    const registrationId = await insertClaimableRegistration(
+      dataSource,
+      sourcePackage,
+    );
+
+    stubPublisherIsOrgAdmin(sourcePackage);
+
+    const { state, cookie } = await startClaimFromHost(
+      registrationId,
+      WORKSPACE_HOST,
+    );
+
+    // GitHub calls back on SERVER_URL, where the browser has no cookie to send.
+    const callbackResponse = await callback({ state });
+
+    expect(callbackResponse.status).toBe(302);
+
+    const handover = new URL(callbackResponse.headers.location);
+
+    expect(handover.host).toBe(WORKSPACE_HOST);
+    expect(handover.pathname).toBe(COMPLETE_PATH);
+    expect(handover.searchParams.get('code')).toBe('github-code');
+    expect(handover.searchParams.get('state')).toBe(state);
+    await expect(
+      readOwnerWorkspaceId(dataSource, registrationId),
+    ).resolves.toBeNull();
+
+    // The browser follows the redirect to the workspace host, cookie included.
+    const completionResponse = await completion({ state, cookie });
+
+    expect(completionResponse.status).toBe(302);
+    expect(completionResponse.headers.location).not.toContain('claimErrorCode');
+    await expect(
+      readOwnerWorkspaceId(dataSource, registrationId),
+    ).resolves.toBe(SEED_APPLE_WORKSPACE_ID);
+  });
+
+  it('still rejects a forwarded authorization url after the hand-over', async () => {
+    const sourcePackage = `@${PUBLISHER_ORG}/forwarded-other-host`;
+    const registrationId = await insertClaimableRegistration(
+      dataSource,
+      sourcePackage,
+    );
+
+    stubPublisherIsOrgAdmin(sourcePackage);
+
+    const { state } = await startClaimFromHost(registrationId, WORKSPACE_HOST);
+
+    const callbackResponse = await callback({ state });
+
+    expect(new URL(callbackResponse.headers.location).pathname).toBe(
+      COMPLETE_PATH,
+    );
+
+    const completionResponse = await completion({ state });
+
+    expect(completionResponse.status).toBe(302);
+    expect(completionResponse.headers.location).toContain(
+      'claimErrorCode=CLAIM_STATE_MISMATCH',
+    );
+    await expect(
+      readOwnerWorkspaceId(dataSource, registrationId),
+    ).resolves.toBeNull();
+  });
+
+  it('never hands the code over to a host the workspace does not own', async () => {
+    const sourcePackage = `@${PUBLISHER_ORG}/spoofed-host`;
+    const registrationId = await insertClaimableRegistration(
+      dataSource,
+      sourcePackage,
+    );
+
+    stubPublisherIsOrgAdmin(sourcePackage);
+
+    const { state } = await startClaimFromHost(registrationId, 'evil.example');
+
+    const response = await callback({ state });
+
+    expect(response.status).toBe(302);
+    expect(response.headers.location).not.toContain('evil.example');
+    expect(response.headers.location).toContain(
+      'claimErrorCode=CLAIM_STATE_MISMATCH',
+    );
+    await expect(
+      readOwnerWorkspaceId(dataSource, registrationId),
+    ).resolves.toBeNull();
   });
 });

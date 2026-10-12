@@ -88,6 +88,7 @@ export class ApplicationRegistrationClaimService {
     workspaceId: string;
     userId: string | null;
     response: Response;
+    cookieOrigin: string;
   }): Promise<string> {
     const registration =
       await this.applicationRegistrationService.findOneByIdGlobal(
@@ -114,6 +115,7 @@ export class ApplicationRegistrationClaimService {
       workspaceId: params.workspaceId,
       userId: params.userId,
       nonceHash: hashClaimStateNonce({ nonce }),
+      cookieOrigin: params.cookieOrigin,
     };
 
     const state = await this.jwtWrapperService.signAsyncOrThrow(statePayload, {

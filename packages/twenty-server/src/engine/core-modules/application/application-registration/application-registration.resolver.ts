@@ -29,6 +29,7 @@ import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/ap
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
+import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { ApplicationRegistrationClaimInput } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim.input';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
@@ -618,6 +619,7 @@ export class ApplicationRegistrationResolver {
         workspaceId,
         userId: user?.id ?? null,
         response: context.req.res,
+        cookieOrigin: getRequestBaseUrl(context.req),
       },
     );
   }
