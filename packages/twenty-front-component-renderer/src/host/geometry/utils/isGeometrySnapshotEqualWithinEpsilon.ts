@@ -29,11 +29,10 @@ export const isGeometrySnapshotEqualWithinEpsilon = <
       return Math.abs(previousValue - nextValue) < GEOMETRY_EPSILON_PIXELS;
     }
     if (isObject(nextValue) && isObject(previousValue)) {
-      const previousStyle = previousValue as Record<string, string>;
       return (
-        Object.keys(previousStyle).length === Object.keys(nextValue).length &&
+        Object.keys(previousValue).length === Object.keys(nextValue).length &&
         Object.entries(nextValue).every(
-          ([name, value]) => previousStyle[name] === value,
+          ([name, value]) => previousValue[name] === value,
         )
       );
     }
