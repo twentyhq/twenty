@@ -99,12 +99,17 @@ export class StripeCustomerService {
     });
   }
 
-  async createStripeCustomer(
-    userEmail: string,
-    workspaceId: string,
-    customerName: string | undefined,
-    partner?: string,
-  ) {
+  async createStripeCustomer({
+    userEmail,
+    workspaceId,
+    customerName,
+    partner,
+  }: {
+    userEmail: string;
+    workspaceId: string;
+    customerName: string | undefined;
+    partner?: string;
+  }) {
     const customer = await this.stripe.customers.create({
       name: customerName,
       email: userEmail,

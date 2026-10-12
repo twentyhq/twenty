@@ -53,12 +53,12 @@ export class BillingService {
       return;
     }
 
-    await this.stripeCustomerService.createStripeCustomer(
+    await this.stripeCustomerService.createStripeCustomer({
       userEmail,
       workspaceId,
-      workspaceDisplayName,
+      customerName: workspaceDisplayName,
       partner,
-    );
+    });
   }
 
   async hasWorkspaceAnySubscription(workspaceId: string) {
