@@ -350,6 +350,26 @@ describe('workflow manifest database event trigger', () => {
     ]);
   });
 
+  it('refuses a filter group id declared twice, since only the first one is evaluated', () => {
+    const result = workflowManifestSchema.safeParse(
+      withDatabaseEvent({
+        objectUniversalIdentifier: OBJECT_ID,
+        action: 'updated',
+        filter: {
+          stepFilterGroups: [
+            { id: 'root', logicalOperator: 'OR' },
+            { id: 'root', logicalOperator: 'AND' },
+          ],
+          stepFilters: [],
+        },
+      }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues.map((issue) => issue.message)).toEqual([
+      'Filter group root is declared more than once',
+    ]);
+  });
+
   it('refuses a filter group that is its own parent, since only groups under a root are evaluated', () => {
     const result = workflowManifestSchema.safeParse(
       withDatabaseEvent({

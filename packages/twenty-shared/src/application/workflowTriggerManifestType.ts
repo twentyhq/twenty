@@ -112,12 +112,25 @@ const workflowTriggerManifestOptions = [
           return;
         }
 
-        const parentIdByStepFilterGroupId = new Map(
-          settings.filter.stepFilterGroups.map((stepFilterGroup) => [
+        const parentIdByStepFilterGroupId = new Map<
+          string,
+          string | undefined
+        >();
+
+        settings.filter.stepFilterGroups.forEach((stepFilterGroup, index) => {
+          if (parentIdByStepFilterGroupId.has(stepFilterGroup.id)) {
+            context.addIssue({
+              code: 'custom',
+              path: ['filter', 'stepFilterGroups', index, 'id'],
+              message: `Filter group ${stepFilterGroup.id} is declared more than once`,
+            });
+          }
+
+          parentIdByStepFilterGroupId.set(
             stepFilterGroup.id,
             stepFilterGroup.parentStepFilterGroupId,
-          ]),
-        );
+          );
+        });
 
         settings.filter.stepFilterGroups.forEach((stepFilterGroup, index) => {
           const parentId = stepFilterGroup.parentStepFilterGroupId;
