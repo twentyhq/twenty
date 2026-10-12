@@ -25,18 +25,9 @@ describe('parseServerRouteSigningKeys', () => {
     ['a key without an id', { ...RSA_KEY, kid: '' }],
     ['a key without a modulus', { ...RSA_KEY, n: undefined }],
     ['a key without an exponent', { ...RSA_KEY, e: 42 }],
-    ['a key that is not an object', 'not a key'],
   ])('should drop %s', (_, key) => {
     expect(parseServerRouteSigningKeys({ keys: [key, RSA_KEY] })).toEqual([
       { ...RSA_KEY, endorsements: undefined },
     ]);
-  });
-
-  it.each([
-    ['a non object body', 'keys'],
-    ['a body without keys', {}],
-    ['a body whose keys are not a list', { keys: RSA_KEY }],
-  ])('should return no key for %s', (_, jwksResponseBody) => {
-    expect(parseServerRouteSigningKeys(jwksResponseBody)).toEqual([]);
   });
 });

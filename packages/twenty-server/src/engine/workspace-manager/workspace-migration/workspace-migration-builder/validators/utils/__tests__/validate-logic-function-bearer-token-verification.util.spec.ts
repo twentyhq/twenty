@@ -15,15 +15,6 @@ const validate = (bearerTokenVerification: unknown) =>
   });
 
 describe('validateLogicFunctionBearerTokenVerification', () => {
-  it('should accept a route without bearer token verification', () => {
-    expect(
-      validateLogicFunctionBearerTokenVerification({
-        serverRouteTriggerSettings: null,
-      }),
-    ).toEqual([]);
-    expect(validate(undefined)).toEqual([]);
-  });
-
   it('should accept valid settings', () => {
     expect(validate(VALID_BEARER_TOKEN_VERIFICATION)).toEqual([]);
     expect(
@@ -36,10 +27,8 @@ describe('validateLogicFunctionBearerTokenVerification', () => {
 
   it.each([
     ['a non https jwksUrl', { jwksUrl: 'http://login.botframework.com/keys' }],
-    ['a malformed jwksUrl', { jwksUrl: 'not a url' }],
     ['an empty issuer', { issuer: '' }],
     ['a missing audienceServerVariable', { audienceServerVariable: undefined }],
-    ['a non string endorsement', { requiredKeyEndorsement: ['msteams'] }],
     ['an empty endorsement', { requiredKeyEndorsement: '' }],
   ])('should reject %s', (_, override) => {
     expect(

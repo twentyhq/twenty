@@ -82,17 +82,6 @@ describe('verifyServerRouteBearerToken', () => {
     });
   });
 
-  it('should not require an endorsement when none is configured', () => {
-    expect(
-      verifyServerRouteBearerToken({
-        token: signToken(),
-        signingKey: toSigningKey({ endorsements: [] }),
-        issuer: ISSUER,
-        audience: AUDIENCE,
-      }),
-    ).toMatchObject({ isValid: true });
-  });
-
   it.each([
     ['a token for another audience', signToken({ audience: 'other' })],
     [

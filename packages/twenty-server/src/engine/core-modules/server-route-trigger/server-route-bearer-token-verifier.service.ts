@@ -157,7 +157,6 @@ export class ServerRouteBearerTokenVerifierService {
     return signingKey;
   }
 
-  // Forged tokens naming unknown keys must not turn every request into a fetch.
   private async loadSigningKeysOrThrow(
     jwksUrl: string,
   ): Promise<ServerRouteSigningKey[]> {
@@ -245,7 +244,6 @@ export class ServerRouteBearerTokenVerifierService {
     return cachedSigningKeys.keys;
   }
 
-  // The message reaches unauthenticated callers, so the reason is only logged.
   private throwInvalidBearerToken(reason: string): never {
     this.logger.warn(`Rejected server route bearer token: ${reason}`);
 

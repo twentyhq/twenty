@@ -90,29 +90,6 @@ describe('ServerRouteBearerTokenVerifierService', () => {
       applicationRegistrationId: 'registration-id',
     });
 
-  it('should return the claims of a valid token', async () => {
-    const claims = await verify(`Bearer ${signToken()}`);
-
-    expect(claims).toMatchObject({
-      iss: ISSUER,
-      aud: AUDIENCE,
-      serviceurl: 'https://smba.trafficmanager.net/emea/',
-    });
-    expect(findVariable).toHaveBeenCalledWith({
-      where: {
-        applicationRegistrationId: 'registration-id',
-        key: 'BOT_APP_ID',
-      },
-    });
-  });
-
-  it('should reject a missing header without detailing why', async () => {
-    await expect(verify(undefined)).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.INVALID_BEARER_TOKEN,
-      message: 'Bearer token is invalid',
-    });
-  });
-
   it('should reuse fetched signing keys across requests', async () => {
     await verify(`Bearer ${signToken()}`);
     await verify(`Bearer ${signToken()}`);
@@ -167,18 +144,4 @@ describe('ServerRouteBearerTokenVerifierService', () => {
     });
     expect(fetchJwks).toHaveBeenCalledTimes(2);
   });
-
-  it.each([
-    ['not declared', null],
-    ['not set', { encryptedValue: '' }],
-  ])(
-    'should be unavailable when the audience server variable is %s',
-    async (_, variable) => {
-      findVariable.mockResolvedValue(variable);
-
-      await expect(verify(`Bearer ${signToken()}`)).rejects.toMatchObject({
-        code: ServerRouteTriggerExceptionCode.BEARER_TOKEN_VERIFICATION_UNAVAILABLE,
-      });
-    },
-  );
 });

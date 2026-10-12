@@ -7,9 +7,6 @@ import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-fu
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
-const isHttpsUrlValue = (value: unknown): boolean =>
-  isNonEmptyString(value) && isHttpsUrl(value);
-
 export const validateLogicFunctionBearerTokenVerification = ({
   serverRouteTriggerSettings,
 }: Partial<
@@ -24,7 +21,8 @@ export const validateLogicFunctionBearerTokenVerification = ({
 
   if (
     isPlainObject(bearerTokenVerification) &&
-    isHttpsUrlValue(bearerTokenVerification.jwksUrl) &&
+    isNonEmptyString(bearerTokenVerification.jwksUrl) &&
+    isHttpsUrl(bearerTokenVerification.jwksUrl) &&
     isNonEmptyString(bearerTokenVerification.issuer) &&
     isNonEmptyString(bearerTokenVerification.audienceServerVariable) &&
     (!isDefined(bearerTokenVerification.requiredKeyEndorsement) ||
