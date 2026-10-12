@@ -10,8 +10,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { MainButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledRetryButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;
 const SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS = 30;
@@ -109,7 +114,12 @@ export const PaymentSuccess = () => {
       </AnimatePresence>
       <OnboardingAnimatedReveal isVisible={hasTimedOut}>
         <StyledRetryButtonContainer>
-          <MainButton onClick={handleRetry} fullWidth>{t`Retry`}</MainButton>
+          <StyledRetryButton
+            elevated
+            variant="solid"
+            onClick={handleRetry}
+            fullWidth
+          >{t`Retry`}</StyledRetryButton>
         </StyledRetryButtonContainer>
       </OnboardingAnimatedReveal>
     </OnboardingVerifyLayout>

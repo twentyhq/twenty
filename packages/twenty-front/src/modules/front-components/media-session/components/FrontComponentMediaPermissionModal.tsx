@@ -9,10 +9,15 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { GrantApplicationCapabilitiesDocument } from '~/generated-metadata/graphql';
+
+const StyledCloseButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 type FrontComponentMediaPermissionModalProps = {
   applicationId: string;
@@ -113,10 +118,12 @@ export const FrontComponentMediaPermissionModal = ({
                 isLoading={loading}
               />
             ) : (
-              <MainButton
+              <StyledCloseButton
+                elevated
+                variant="solid"
                 onClick={handleClose}
                 fullWidth
-              >{t`Close`}</MainButton>
+              >{t`Close`}</StyledCloseButton>
             )}
           </StyledContent>
         </Dialog.Popup>

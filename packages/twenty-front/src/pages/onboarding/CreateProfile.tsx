@@ -3,7 +3,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
-import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
+import { OnboardingRewardButton } from '@/onboarding/components/OnboardingRewardButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
@@ -324,7 +324,7 @@ export const CreateProfile = () => {
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <OnboardingRewardMainButton
+          <OnboardingRewardButton
             label={t`Continue`}
             creditsReward={
               onboardingCreditsProgress.rewardCreditsByStep.createProfile

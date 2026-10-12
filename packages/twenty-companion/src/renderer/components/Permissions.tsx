@@ -1,7 +1,6 @@
 import { i18n } from '@lingui/core';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
-import { MainButton } from '@ui/components/input/MainButton/MainButton';
 import {
   IconMicrophone,
   IconHeadphones,
@@ -102,7 +101,10 @@ export const Permissions = ({
         isPending={isPending}
         command={command}
       />
-      <MainButton
+      <Button
+        variant="solid"
+        elevated
+        className="setup-primary-action"
         fullWidth
         disabled={isPending('record', 'complete-setup') || !granted}
         onClick={() =>
@@ -116,7 +118,7 @@ export const Permissions = ({
         startIcon={intentToRecord ? <IconCircleDot /> : undefined}
       >
         {intentToRecord ? i18n._('Start recording') : i18n._('Finish')}
-      </MainButton>
+      </Button>
     </section>
   );
 };

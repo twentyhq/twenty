@@ -31,7 +31,7 @@ import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
-import { MainButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 import {
@@ -40,6 +40,11 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
+
+const StyledSubmitButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 const passwordLengthMessage = msg`Password must be between 8 and 50 characters`;
 
@@ -77,7 +82,7 @@ const StyledInputContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledMainButtonContainer = styled.div`
+const StyledSubmitButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
@@ -288,16 +293,17 @@ export const PasswordReset = () => {
                   </motion.div>
                 </StyledFullWidthContainer>
 
-                <StyledMainButtonContainer>
-                  <MainButton
+                <StyledSubmitButtonContainer>
+                  <StyledSubmitButton
+                    elevated
                     type="submit"
                     fullWidth
                     disabled={isUpdatingPassword}
                     variant="outline"
                   >
                     {passwordActionLabel}
-                  </MainButton>
-                </StyledMainButtonContainer>
+                  </StyledSubmitButton>
+                </StyledSubmitButtonContainer>
               </StyledForm>
             )}
           </StyledOnboardingContentContainer>

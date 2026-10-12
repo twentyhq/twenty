@@ -4,7 +4,6 @@ import {
   IconButton,
   LightButton,
   LightIconButton,
-  MainButton,
 } from 'twenty-ui/components/input';
 import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
 import { MenuItem, MenuItemDraggable } from 'twenty-ui/components/navigation';
@@ -45,9 +44,18 @@ const ButtonControls = () => {
       <Button disabled onClick={handleClick}>
         Disabled button
       </Button>
-      <MainButton loading={loading} onClick={() => setLoading(true)}>
+      <Button
+        variant="solid"
+        elevated
+        style={{
+          fontWeight: 'var(--t-font-weight-semi-bold)',
+          paddingInline: 'var(--t-spacing-3)',
+        }}
+        loading={loading}
+        onClick={() => setLoading(true)}
+      >
         Save changes
-      </MainButton>
+      </Button>
       <LightButton onClick={() => setLoading(false)}>
         Complete request
       </LightButton>

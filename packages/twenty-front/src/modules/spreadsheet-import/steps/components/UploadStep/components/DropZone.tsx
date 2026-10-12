@@ -8,9 +8,14 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useToast } from 'twenty-ui/components/feedback';
-import { MainButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { read, type WorkBook } from 'xlsx-ugnis';
+
+const StyledUploadActionButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -188,12 +193,18 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
             <Trans>Upload .xlsx, .xls or .csv file</Trans>
           </StyledText>
           <StyledButtonsContainer>
-            <MainButton onClick={open} fullWidth>{t`Select file`}</MainButton>
-            <MainButton
+            <StyledUploadActionButton
+              elevated
+              variant="solid"
+              onClick={open}
+              fullWidth
+            >{t`Select file`}</StyledUploadActionButton>
+            <StyledUploadActionButton
+              elevated
               onClick={downloadSample}
               fullWidth
               variant="outline"
-            >{t`Download sample`}</MainButton>
+            >{t`Download sample`}</StyledUploadActionButton>
           </StyledButtonsContainer>
           <StyledFooterText>
             {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}

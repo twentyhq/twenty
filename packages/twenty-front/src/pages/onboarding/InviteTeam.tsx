@@ -1,5 +1,5 @@
 import { OnboardingInviteTeamSkipDialog } from '@/onboarding/components/OnboardingInviteTeamSkipDialog';
-import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
+import { OnboardingRewardButton } from '@/onboarding/components/OnboardingRewardButton';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -123,7 +123,7 @@ export const InviteTeam = () => {
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
-          <OnboardingRewardMainButton
+          <OnboardingRewardButton
             label={t`Invite`}
             creditsReward={inviteTeamButtonReward.creditsReward}
             isRewardPerItem={inviteTeamButtonReward.isRewardPerItem}

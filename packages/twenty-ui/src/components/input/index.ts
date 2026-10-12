@@ -23,7 +23,6 @@ export { LightButton } from './LightButton/LightButton';
 export type { LightButtonProps } from './LightButton/types/LightButtonProps';
 export { LightIconButton } from './LightIconButton/LightIconButton';
 export type { LightIconButtonProps } from './LightIconButton/types/LightIconButtonProps';
-export { MainButton } from './MainButton/MainButton';
 export { NumberStepper } from './NumberStepper/NumberStepper';
 export type { NumberStepperProps } from './NumberStepper/types/NumberStepperProps';
 export { PhoneCountryPicker } from './PhoneCountryPicker/PhoneCountryPicker';

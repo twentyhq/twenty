@@ -10,13 +10,17 @@ const BackgroundMockPage = lazy(() =>
     (module) => ({ default: module.BackgroundMockPage }),
   ),
 );
-
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
-import { MainButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledBackButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -59,7 +63,9 @@ export const NotFound = () => {
           </EmptyState.Content>
           <StyledButtonContainer>
             <NavigationButton
-              buttonComponent={MainButton}
+              buttonComponent={StyledBackButton}
+              elevated
+              variant="solid"
               to={AppPath.Index}
               fullWidth
             >{t`Back to content`}</NavigationButton>

@@ -151,7 +151,6 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
   UI_COMPONENTS_INPUT_LIGHT_ICON_BUTTON:
     '/ui/components/input/light-icon-button',
-  UI_COMPONENTS_INPUT_MAIN_BUTTON: '/ui/components/input/main-button',
   UI_COMPONENTS_INPUT_NUMBER_STEPPER: '/ui/components/input/number-stepper',
   UI_COMPONENTS_INPUT_PHONE_COUNTRY_PICKER:
     '/ui/components/input/phone-country-picker',

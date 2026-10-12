@@ -3,19 +3,25 @@ import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingC
 import { type OnboardingRewardAction } from '@/onboarding/types/OnboardingRewardAction';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
+import { styled } from '@linaria/react';
 import { type Ref } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { useTheme } from 'twenty-ui/theme';
 
-type OnboardingRewardMainButtonProps = OnboardingRewardAction & {
+const StyledRewardButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
+
+type OnboardingRewardButtonProps = OnboardingRewardAction & {
   disabled?: boolean;
   isLoading?: boolean;
   ref?: Ref<HTMLButtonElement>;
 };
 
-export const OnboardingRewardMainButton = ({
+export const OnboardingRewardButton = ({
   label,
   Icon,
   creditsReward,
@@ -24,7 +30,7 @@ export const OnboardingRewardMainButton = ({
   isLoading = false,
   onClick,
   ref,
-}: OnboardingRewardMainButtonProps) => {
+}: OnboardingRewardButtonProps) => {
   const theme = useTheme();
   const { numberFormat } = useNumberFormat();
   const formattedCreditsReward = formatOnboardingCredits(
@@ -41,7 +47,9 @@ export const OnboardingRewardMainButton = ({
   };
 
   return (
-    <MainButton
+    <StyledRewardButton
+      elevated
+      variant="solid"
       ref={ref}
       fullWidth
       disabled={disabled || isLoading}
@@ -63,6 +71,6 @@ export const OnboardingRewardMainButton = ({
       })}
     >
       {label}
-    </MainButton>
+    </StyledRewardButton>
   );
 };

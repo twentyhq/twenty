@@ -25,10 +25,14 @@ import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
-import { MainButton } from 'twenty-ui/components/input';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+
+const StyledSubmitButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 const StyledForm = styled.form`
   align-items: center;
@@ -81,7 +85,7 @@ const StyledPlaceholderChar = styled.div`
   }
 `;
 
-export const Slot = (props: SlotProps) => {
+const Slot = (props: SlotProps) => {
   return (
     <StyledSlot isActive={props.isActive}>
       <StyledPlaceholderChar>
@@ -268,11 +272,13 @@ export const SignInUpTOTPVerification = () => {
           )}
         />
       </StyledTwoFactorMainContent>
-      <MainButton
+      <StyledSubmitButton
+        elevated
+        variant="solid"
         type="submit"
         fullWidth
         disabled={isLoading}
-      >{t`Submit`}</MainButton>
+      >{t`Submit`}</StyledSubmitButton>
       <StyledActionBackLinkContainer>
         <Button variant="link" onClick={handleUseRecoveryCode}>
           <Trans>Lost your authenticator? Use a recovery code</Trans>

@@ -25,6 +25,17 @@ export default meta;
 type Story = StoryObj<typeof Button>;
 
 export const Default: Story = { decorators: [ComponentDecorator] };
+export const ProminentAction: Story = {
+  ...Default,
+  args: {
+    variant: 'solid',
+    elevated: true,
+    style: {
+      fontWeight: 'var(--t-font-weight-semi-bold)',
+      paddingInline: 'var(--t-spacing-3)',
+    },
+  },
+};
 export const Keyboard: Story = {
   ...Default,
   args: { onClick: fn(), onFocus: fn(), onBlur: fn() },

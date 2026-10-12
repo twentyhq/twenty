@@ -3,7 +3,6 @@ import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { useState } from 'react';
 import { type CompanionState } from '../../shared/types/CompanionState';
 import { Field } from '@ui/primitives/input/Field/Field';
-import { MainButton } from '@ui/components/input/MainButton/MainButton';
 import { IconArrowUpRight, IconRefresh } from 'twenty-ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { type ActionProps } from '../types/ActionProps';
@@ -45,7 +44,10 @@ const Welcome = ({ state, isPending, command }: ActionProps) => {
           />
           <Field.Error />
         </Field.Root>
-        <MainButton
+        <Button
+          variant="solid"
+          elevated
+          className="setup-primary-action"
           fullWidth
           type="submit"
           disabled={isPending('connect') || (!window.companion && !IS_PREVIEW)}
@@ -54,7 +56,7 @@ const Welcome = ({ state, isPending, command }: ActionProps) => {
           {state.connection === 'connecting'
             ? i18n._('Waiting for your browser…')
             : i18n._('Connect to Twenty')}
-        </MainButton>
+        </Button>
       </form>
     </section>
   );

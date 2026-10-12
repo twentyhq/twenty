@@ -1,3 +1,4 @@
+import { ENTERPRISE_PLAN_MODAL_ID } from '@/settings/enterprise/constants/EnterprisePlanModalId';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
@@ -10,19 +11,18 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
-import { MainButton } from 'twenty-ui/components/input';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Button, Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
-const StyledCheckoutButton = styled(MainButton)`
+const StyledCheckoutButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
   width: 200px;
 `;
-
-export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';
 
 type BillingInterval = 'monthly' | 'yearly';
 
@@ -208,6 +208,8 @@ export const EnterprisePlanModal = () => {
             </RadioGroup>
 
             <StyledCheckoutButton
+              elevated
+              variant="solid"
               onClick={handleContinue}
               startIcon={isLoading && <Loader />}
               disabled={isLoading}

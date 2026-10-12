@@ -10,10 +10,8 @@ import { SubscriptionInfoContainer } from '@/settings/billing/components/Subscri
 import { SubscriptionInfoRowContainer } from '@/settings/billing/components/internal/SubscriptionInfoRowContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import {
-  ENTERPRISE_PLAN_MODAL_ID,
-  EnterprisePlanModal,
-} from '@/settings/enterprise/components/EnterprisePlanModal';
+import { EnterprisePlanModal } from '@/settings/enterprise/components/EnterprisePlanModal';
+import { ENTERPRISE_PLAN_MODAL_ID } from '@/settings/enterprise/constants/EnterprisePlanModalId';
 import { REFRESH_ENTERPRISE_VALIDITY_TOKEN } from '@/settings/enterprise/graphql/mutations/refreshEnterpriseValidityToken';
 import { RELEASE_ENTERPRISE_SERVER_BINDING } from '@/settings/enterprise/graphql/mutations/releaseEnterpriseServerBinding';
 import { SET_ENTERPRISE_KEY } from '@/settings/enterprise/graphql/mutations/setOrganizationKey';

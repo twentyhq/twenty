@@ -2,8 +2,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { styled } from '@linaria/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { LightButton, MainButton } from 'twenty-ui/components/input';
-
+import { LightButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 
 const meta: Meta<typeof NavigationButton> = {
@@ -14,7 +14,12 @@ const meta: Meta<typeof NavigationButton> = {
 export default meta;
 type Story = StoryObj<typeof NavigationButton>;
 
-const StyledMainButton = styled(MainButton)`
+const StyledActionButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
+
+const StyledFixedWidthActionButton = styled(StyledActionButton)`
   width: 200px;
 `;
 
@@ -42,7 +47,9 @@ export const RouterNavigation: Story = {
           element={
             <>
               <NavigationButton
-                buttonComponent={MainButton}
+                buttonComponent={StyledActionButton}
+                elevated
+                variant="solid"
                 to="./new-field/select"
                 onClick={args.onClick}
               >
@@ -149,7 +156,9 @@ export const NativePreset: Story = {
   args: { onClick: fn() },
   render: (args) => (
     <NavigationButton
-      buttonComponent={StyledMainButton}
+      buttonComponent={StyledFixedWidthActionButton}
+      elevated
+      variant="solid"
       to={undefined}
       onClick={args.onClick}
     >

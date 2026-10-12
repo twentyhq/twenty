@@ -19,11 +19,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type FormEvent, useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components/input';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+
+const StyledContinueButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 const StyledForm = styled.form`
   align-items: center;
@@ -126,11 +130,13 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
           fullWidth
         />
       </StyledInputContainer>
-      <MainButton
+      <StyledContinueButton
+        elevated
+        variant="solid"
         type="submit"
         fullWidth
         disabled={isLoading || !isNonEmptyString(recoveryCode.trim())}
-      >{t`Continue`}</MainButton>
+      >{t`Continue`}</StyledContinueButton>
       <StyledActionBackLinkContainer>
         <Button variant="link" onClick={handleBack}>
           <Trans>Back</Trans>

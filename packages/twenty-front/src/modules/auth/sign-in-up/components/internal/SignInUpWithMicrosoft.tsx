@@ -7,8 +7,9 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { type SocialSsoSignInUpActionType } from '@/auth/types/SocialSsoSignInUpActionType';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { IconMicrosoft } from 'twenty-ui/icon';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,6 +17,11 @@ import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useTheme } from 'twenty-ui/theme';
 import { SignInUpSeparator } from './SignInUpSeparator';
+
+const StyledMicrosoftSignInButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 export const SignInUpWithMicrosoft = ({
   action,
@@ -44,12 +50,13 @@ export const SignInUpWithMicrosoft = ({
   return (
     <>
       <StyledSsoButtonContainer>
-        <MainButton
+        <StyledMicrosoftSignInButton
+          elevated
           startIcon={<IconMicrosoft size={theme.icon.size.md} />}
           onClick={handleClick}
           fullWidth
           variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
-        >{t`Continue with Microsoft`}</MainButton>
+        >{t`Continue with Microsoft`}</StyledMicrosoftSignInButton>
         {isLastUsed && (isGlobalScope || hasMultipleAuthMethods) && (
           <LastUsedPill />
         )}

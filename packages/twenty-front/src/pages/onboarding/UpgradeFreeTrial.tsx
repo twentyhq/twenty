@@ -4,7 +4,7 @@ import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessio
 import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
+import { OnboardingRewardButton } from '@/onboarding/components/OnboardingRewardButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingContentBlock } from '@/onboarding/components/StyledOnboardingContentBlock';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -104,7 +104,7 @@ const UpgradeFreeTrialSubmitButton = ({
   };
 
   return (
-    <OnboardingRewardMainButton
+    <OnboardingRewardButton
       label={t`Continue`}
       creditsReward={creditsReward}
       onClick={handleSubmit}
@@ -275,7 +275,7 @@ const UpgradeFreeTrialContent = ({
               creditsReward={upgradeCreditsReward}
             />
           ) : (
-            <OnboardingRewardMainButton
+            <OnboardingRewardButton
               label={t`Continue`}
               creditsReward={requirePaymentMethod ? upgradeCreditsReward : 0}
               onClick={handleCheckoutSessionClick}

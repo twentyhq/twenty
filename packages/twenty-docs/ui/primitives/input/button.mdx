@@ -10,9 +10,10 @@ import ButtonReference from '/snippets/ui/generated/input/button.mdx';
 
 Use `Button` for an action and supply its visible label as children. Use [IconButton](/ui/components/input/icon-button) for icon-only controls, with an accessible name from `aria-label` or `aria-labelledby`.
 
-For recurring design defaults, use [MainButton](/ui/components/input/main-button)
-or [LightButton](/ui/components/input/light-button) from `twenty-ui/components`.
-Both share Button's native props, refs, state, and rendering behavior.
+Use `variant="solid"` and `elevated` for prominent actions.
+[LightButton](/ui/components/input/light-button) from `twenty-ui/components/input`
+provides lightweight design defaults and shares Button's native props, refs,
+state, and rendering behavior.
 
 ## State ownership
 
@@ -54,7 +55,7 @@ export const SaveRecord = ({ onSave }: SaveRecordProps) => {
 };
 ```
 
-The application starts and clears loading around the save operation. The button prevents activation while loading and becomes available again when the operation finishes, including after an error. `MainButton` and `LightButton` use the same state model.
+The application starts and clears loading around the save operation. The button prevents activation while loading and becomes available again when the operation finishes, including after an error. `LightButton` uses the same state model.
 
 ## Appearance
 
@@ -78,6 +79,38 @@ Choose `solid`, `outline`, `soft`, `ghost`, or `link` independently of the `neut
 Your application owns progress formatting and the translated label. Pass the complete status phrase as children, for example `Installing (42%)`.
 
 <StoryEmbed storyId="ui-input-button-button--loading-at-end" height={220} />
+
+## Prominent actions
+
+Use a solid surface and elevation for a prominent action. Typography and spacing
+belong to the application. Set semibold text and wider horizontal padding when
+that presentation is needed:
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SaveChanges = () => (
+  <Button
+    variant="solid"
+    elevated
+    type="submit"
+    fullWidth
+    style={{
+      fontWeight: 'var(--t-font-weight-semi-bold)',
+      paddingInline: 'var(--t-spacing-3)',
+    }}
+  >
+    Save changes
+  </Button>
+);
+```
+
+This keeps Button's native form behavior, event handlers, refs, loading state, and
+render composition. Inside a [ButtonGroup](/ui/primitives/input/button-group),
+omit `variant` to inherit the group's surface when that is the intended
+presentation.
+
+<StoryEmbed storyId="ui-input-button-button--prominent-action" height={220} />
 
 ## Upcoming features
 
@@ -105,7 +138,7 @@ export const UpcomingAction = () => (
 );
 ```
 
-This composition also works with `MainButton` and `LightButton`. It replaces the removed `soon` and `soonLabel` props.
+This composition also works with `LightButton`. It replaces the removed `soon` and `soonLabel` props.
 
 ## Animated icons
 

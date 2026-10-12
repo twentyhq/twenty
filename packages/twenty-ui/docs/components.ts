@@ -272,14 +272,6 @@ export const DOCUMENTED_COMPONENTS = [
     },
   },
   {
-    name: 'MainButton',
-    source: 'components/input/MainButton/MainButton.tsx',
-    entryPoint: 'twenty-ui/components/input',
-    slug: 'components/input/main-button',
-    propDescriptions: BUTTON_PROP_DESCRIPTIONS,
-    propDefaults: { variant: 'solid' },
-  },
-  {
     name: 'LightButton',
     source: 'components/input/LightButton/LightButton.tsx',
     entryPoint: 'twenty-ui/components/input',

@@ -19,10 +19,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { MainButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+
+const StyledRetryButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -143,13 +148,15 @@ export const WorkspaceActivation = () => {
       </OnboardingStepAnimatedItem>
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <MainButton
+          <StyledRetryButton
+            elevated
+            variant="solid"
             onClick={() => {
               void activate();
             }}
             disabled={isActivating}
             fullWidth
-          >{t`Retry`}</MainButton>
+          >{t`Retry`}</StyledRetryButton>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledContainer>

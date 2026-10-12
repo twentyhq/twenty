@@ -1,6 +1,6 @@
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
+import { OnboardingRewardButton } from '@/onboarding/components/OnboardingRewardButton';
 import { type OnboardingRewardAction } from '@/onboarding/types/OnboardingRewardAction';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -85,7 +85,7 @@ export const OnboardingSkipDialog = ({
           </StyledHeader>
           <Dialog.Footer>
             {actions.map((action, index) => (
-              <OnboardingRewardMainButton
+              <OnboardingRewardButton
                 key={action.label}
                 ref={index === 0 ? firstActionRef : undefined}
                 label={action.label}

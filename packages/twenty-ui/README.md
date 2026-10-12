@@ -48,7 +48,7 @@ The component stylesheet includes a global reset. Load it once at your applicati
 
 ## Entry points
 
-Primitives provide foundational controls, including compound controls such as Select, Menu, and Dialog. Shared components compose them into presets such as `MainButton`, `LightButton`, `Dropdown`, and `Toaster`. Both layers receive data, labels, and callbacks from the application.
+Primitives provide foundational controls, including compound controls such as Select, Menu, and Dialog. Shared components compose them into presets such as `LightButton`, `Dropdown`, and `Toaster`. Both layers receive data, labels, and callbacks from the application.
 
 Prefer the matching public subpath for focused imports. The root entry point also re-exports primitives, shared components, icons, theme tokens, and utilities. Assets, testing helpers, and the optional code editor have separate entry points.
 

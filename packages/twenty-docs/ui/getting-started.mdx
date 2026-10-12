@@ -60,11 +60,11 @@ Menu, and AlertDialog. Shared components combine primitives into recurring
 design presets and reusable app building blocks. Both receive data and callbacks
 from the application.
 
-Use [MainButton](/ui/components/input/main-button) for prominent actions and
-[LightButton](/ui/components/input/light-button) for lightweight actions. Both
-come from `twenty-ui/components/input` and share the foundational
-[Button](/ui/primitives/input/button) interaction contract. Routing and page
-layout remain in the application.
+Use [Button](/ui/primitives/input/button#prominent-actions) with `variant="solid"`
+and `elevated` for prominent actions. Import it from `twenty-ui/primitives/input`.
+[LightButton](/ui/components/input/light-button) comes from
+`twenty-ui/components/input` for lightweight actions and shares Button's
+interaction contract. Routing and page layout remain in the application.
 
 Each primitive and shared component family has a matching public entry point, such as
 `twenty-ui/primitives/input` and `twenty-ui/components/settings`. The aggregate

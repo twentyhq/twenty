@@ -3,7 +3,6 @@ import {
   IconButton,
   LightButton,
   LightIconButton,
-  MainButton,
   SearchInput,
 } from 'twenty-ui/components/input';
 import { TabButton } from 'twenty-ui/components/navigation';
@@ -110,8 +109,19 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'MainButton',
-    node: <MainButton>{'Main'}</MainButton>,
+    name: 'Button (solid, elevated)',
+    node: (
+      <Button
+        variant="solid"
+        elevated
+        style={{
+          fontWeight: 'var(--t-font-weight-semi-bold)',
+          paddingInline: 'var(--t-spacing-3)',
+        }}
+      >
+        {'Primary action'}
+      </Button>
+    ),
   },
   {
     name: 'Radio',

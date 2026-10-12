@@ -6,7 +6,6 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-
 import { LastUsedPill } from '@/auth/sign-in-up/components/internal/LastUsedPill';
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignInUpEmailField';
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/internal/SignInUpPasswordField';
@@ -24,8 +23,13 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { Loader } from 'twenty-ui/primitives/feedback';
+
+const StyledSubmitButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 const StyledForm = styled.form`
   align-items: center;
@@ -162,7 +166,8 @@ export const SignInUpWithCredentials = ({
             />
           )}
           <StyledSsoButtonContainer>
-            <MainButton
+            <StyledSubmitButton
+              elevated
               type="submit"
               startIcon={form.formState.isSubmitting ? <Loader /> : null}
               disabled={isSubmitButtonDisabled}
@@ -170,7 +175,7 @@ export const SignInUpWithCredentials = ({
               variant={signInUpStep === SignInUpStep.Init ? 'outline' : 'solid'}
             >
               {buttonTitle}
-            </MainButton>
+            </StyledSubmitButton>
             {isLastUsed && <LastUsedPill />}
             {isSignUpBlockedByDDLLock && (
               <InputHint>{t`Sign-up is temporarily unavailable during maintenance.`}</InputHint>

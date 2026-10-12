@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { AnimatedEaseIn } from '@/auth/components/internal/AnimatedEaseIn/AnimatedEaseIn';
@@ -11,10 +10,15 @@ import {
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { t } from '@lingui/core/macro';
-import { MainButton } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
+
+const StyledEmailActionButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -119,33 +123,38 @@ export const EmailVerificationSent = ({
 
   const mainButtons = isError ? (
     <>
-      <MainButton
+      <StyledEmailActionButton
+        elevated
         onClick={handleChangeEmail}
         fullWidth
         variant="outline"
-      >{t`Try with another email`}</MainButton>
-      <MainButton
+      >{t`Try with another email`}</StyledEmailActionButton>
+      <StyledEmailActionButton
+        elevated
+        variant="solid"
         onClick={handleResendEmailVerificationToken(email)}
         disabled={isLoading}
         fullWidth
       >
         {isLoading ? t`Sending...` : t`Resend email`}
-      </MainButton>
+      </StyledEmailActionButton>
     </>
   ) : (
     <>
-      <MainButton
+      <StyledEmailActionButton
+        elevated
         onClick={handleOpenGmail}
         startIcon={<IconGmail />}
         fullWidth
         variant="outline"
-      >{t`Open Gmail`}</MainButton>
-      <MainButton
+      >{t`Open Gmail`}</StyledEmailActionButton>
+      <StyledEmailActionButton
+        elevated
         onClick={handleOpenOutlook}
         startIcon={<IconMicrosoft />}
         fullWidth
         variant="outline"
-      >{t`Open Outlook`}</MainButton>
+      >{t`Open Outlook`}</StyledEmailActionButton>
     </>
   );
 

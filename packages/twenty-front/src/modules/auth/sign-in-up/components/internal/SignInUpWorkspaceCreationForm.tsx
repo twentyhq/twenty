@@ -16,11 +16,16 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, MainButton } from 'twenty-ui/components/input';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledCreateWorkspaceButton = styled(Button)`
+  --tw-button-font-weight: var(--t-font-weight-semi-bold);
+  --tw-button-padding-inline: var(--t-spacing-3);
+`;
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -350,11 +355,13 @@ export const SignInUpWorkspaceCreationForm = () => {
         )}
       </StyledFormSection>
       <OnboardingStepAnimatedItem index={isMultiWorkspaceEnabled ? 5 : 4}>
-        <MainButton
+        <StyledCreateWorkspaceButton
+          elevated
+          variant="solid"
           onClick={handleSubmit}
           disabled={isContinueDisabled}
           fullWidth
-        >{t`Create workspace`}</MainButton>
+        >{t`Create workspace`}</StyledCreateWorkspaceButton>
       </OnboardingStepAnimatedItem>
     </StyledContentContainer>
   );

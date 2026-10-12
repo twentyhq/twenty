@@ -91,7 +91,6 @@
       "ImageInput": "components/input/ImageInput/ImageInput",
       "LightButton": "components/input/LightButton/LightButton",
       "LightIconButton": "components/input/LightIconButton/LightIconButton",
-      "MainButton": "components/input/MainButton/MainButton",
       "NumberStepper": "components/input/NumberStepper/NumberStepper",
       "PhoneCountryPicker": "components/input/PhoneCountryPicker/PhoneCountryPicker",
       "SearchInput": "components/input/SearchInput/SearchInput"

@@ -1,4 +1,4 @@
-import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
+import { OnboardingRewardButton } from '@/onboarding/components/OnboardingRewardButton';
 import { type OnboardingRewardAction } from '@/onboarding/types/OnboardingRewardAction';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -81,7 +81,7 @@ export const ImportContacts = ({
         <StyledFooter>
           <StyledButtons>
             {providerActions.map((providerAction) => (
-              <OnboardingRewardMainButton
+              <OnboardingRewardButton
                 key={providerAction.label}
                 label={providerAction.label}
                 Icon={providerAction.Icon}
