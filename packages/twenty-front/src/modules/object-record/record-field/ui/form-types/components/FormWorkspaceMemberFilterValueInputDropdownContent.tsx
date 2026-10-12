@@ -9,7 +9,7 @@ import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/obj
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 type FormWorkspaceMemberFilterValueInputDropdownContentProps = {
   searchFilter: string;

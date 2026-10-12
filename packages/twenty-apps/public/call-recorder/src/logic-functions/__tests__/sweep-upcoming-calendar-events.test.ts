@@ -43,14 +43,14 @@ describe('sweepUpcomingCalendarEventsHandler', () => {
     }));
   });
 
-  it('is configured as a daily cron', () => {
+  it('has no cron trigger of its own', () => {
     expect(sweepLogicFunction.config).toEqual(
       expect.objectContaining({
         name: 'sweep-upcoming-calendar-events',
         timeoutSeconds: 900,
-        cronTriggerSettings: { pattern: '0 4 * * *' },
       }),
     );
+    expect(sweepLogicFunction.config.cronTriggerSettings).toBeUndefined();
   });
 
   it('enqueues one reconciliation batch for the upcoming calendar events', async () => {

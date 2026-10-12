@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -27,17 +28,22 @@ export default meta;
 type Story = StoryObj;
 
 export const CalloutDismissal: Story = {
-  render: () => (
-    <>
-      <Callout variant="info" title="Default notice" isClosable />
-      <Callout
-        variant="info"
-        title="Supplied notice"
-        isClosable
-        closeLabel="Dismiss notice"
-      />
-    </>
-  ),
+  render: function CalloutDismissal() {
+    const [isSuppliedVisible, setIsSuppliedVisible] = useState(true);
+    return (
+      <>
+        <Callout status="info" title="Default notice" onDismiss={() => {}} />
+        {isSuppliedVisible && (
+          <Callout
+            status="info"
+            title="Supplied notice"
+            onDismiss={() => setIsSuppliedVisible(false)}
+            closeLabel="Dismiss notice"
+          />
+        )}
+      </>
+    );
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -88,7 +94,7 @@ export const NativeNames: Story = {
       />
       <Text id="avatar-label">Open profile</Text>
       <Avatar
-        onClick={fn()}
+        render={<button type="button" onClick={fn()} />}
         aria-label="Fallback avatar"
         aria-labelledby="avatar-label"
       />

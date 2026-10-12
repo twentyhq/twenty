@@ -1,9 +1,9 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
 import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CalendarStartDay } from 'twenty-shared/constants';
 
@@ -19,7 +19,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, turnJSDateToPlainDate } from 'twenty-shared/utils';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const DATE_PICKER_SKELETON_PADDING = 16;
 
@@ -73,7 +73,6 @@ export const DatePickerWithoutCalendar = ({
   onChange,
   onClose,
 }: DatePickerWithoutCalendarProps) => {
-  const theme = useTheme();
   const plainDate = isDefined(date) ? Temporal.PlainDate.from(date) : null;
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -142,36 +141,34 @@ export const DatePickerWithoutCalendar = ({
         <Suspense
           fallback={
             <StyledDatePickerFallback>
-              <SkeletonTheme
-                baseColor={theme.background.tertiary}
-                highlightColor={theme.background.transparent.lighter}
+              <SkeletonLine
+                width={
+                  DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
+                }
+                height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
-              >
-                <Skeleton
-                  width={
-                    DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
-                  }
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={
-                    DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
-                  }
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={
-                    DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
-                  }
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={
-                    DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
-                  }
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-              </SkeletonTheme>
+              />
+              <SkeletonLine
+                width={
+                  DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
+                }
+                height={SKELETON_HEIGHT_SIZES.l}
+                borderRadius={2}
+              />
+              <SkeletonLine
+                width={
+                  DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
+                }
+                height={SKELETON_HEIGHT_SIZES.l}
+                borderRadius={2}
+              />
+              <SkeletonLine
+                width={
+                  DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
+                }
+                height={SKELETON_HEIGHT_SIZES.l}
+                borderRadius={2}
+              />
             </StyledDatePickerFallback>
           }
         >

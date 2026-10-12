@@ -207,6 +207,7 @@ const PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: OBJECT_UID,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
+  isFirstTabPinned: false,
   tabs: [PAGE_LAYOUT_TAB_MANIFEST],
 };
 
@@ -552,11 +553,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
     },
     workspaceLocalProperties: [],
-    knownGaps: {
-      ...PAGE_LAYOUT_KIND_GAPS,
-      isFirstTabPinned:
-        'workspace-owned: the sync keeps the live value, so the forward default never diffs',
-    },
+    knownGaps: PAGE_LAYOUT_KIND_GAPS,
   },
   {
     metadataName: 'pageLayoutTab',

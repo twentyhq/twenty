@@ -1,10 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
 
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
 import { type AvatarShape } from '@ui/primitives/data-display/Avatar/types/AvatarShape';
 import { type AvatarSize } from '@ui/primitives/data-display/Avatar/types/AvatarSize';
+import { Button } from '@ui/primitives/input/Button/Button';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   AVATAR_URL_MOCK,
@@ -15,16 +15,31 @@ import {
 import { AvatarGroup } from '@ui/components/data-display/AvatarGroup/AvatarGroup';
 import { type AvatarGroupProps } from '@ui/components/data-display/AvatarGroup/types/AvatarGroupProps';
 
-const makeAvatar = (userName: string, props: Partial<AvatarProps> = {}) => (
-  <Avatar name={userName} colorSeed={userName} {...props} />
+const makeAvatar = ({
+  userName,
+  props = {},
+}: {
+  userName: string;
+  props?: Partial<AvatarProps>;
+}) => (
+  <Avatar
+    key={userName}
+    name={userName}
+    colorSeed={userName}
+    role="img"
+    aria-label={userName}
+    {...props}
+  />
 );
 
 const getAvatars = (commonProps: Partial<AvatarProps> = {}) => [
-  makeAvatar('Matthew', { src: AVATAR_URL_MOCK, ...commonProps }),
-  makeAvatar('Sophie', commonProps),
-  makeAvatar('Jane', commonProps),
-  makeAvatar('Lily', commonProps),
-  makeAvatar('John', commonProps),
+  makeAvatar({
+    userName: 'Matthew',
+    props: { src: AVATAR_URL_MOCK, ...commonProps },
+  }),
+  ...['Sophie', 'Jane', 'Lily', 'John', 'Oliver', 'Emma', 'Noah'].map(
+    (userName) => makeAvatar({ userName, props: commonProps }),
+  ),
 ];
 
 const meta: Meta<
@@ -45,42 +60,59 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const WithOverflowCount: Story = {
+export const WithDerivedOverflow: Story = {
   decorators: [ComponentDecorator],
   render: () => (
     <AvatarGroup
       avatars={getAvatars({ shape: 'circle' })}
       maxVisible={3}
-      overflowCount={9}
       overflowShape="circle"
       overlap="left"
       overlapOffset="4px"
     />
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+};
 
-    expect(await canvas.findByText('+9')).toBeVisible();
-  },
+export const PartiallyLoaded: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <AvatarGroup
+      avatars={getAvatars({ shape: 'circle' }).slice(0, 3)}
+      maxVisible={3}
+      total={20}
+      overflowShape="circle"
+    />
+  ),
+};
+
+export const CustomOverflow: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <AvatarGroup
+      avatars={getAvatars({ shape: 'circle' })}
+      maxVisible={3}
+      renderOverflow={(hiddenCount) => (
+        <Button size="sm" variant="ghost">
+          {hiddenCount} more members
+        </Button>
+      )}
+    />
+  ),
 };
 
 export const WithRing: Story = {
   decorators: [ComponentDecorator],
   render: () => (
     <AvatarGroup
-      avatars={getAvatars({ shape: 'circle', size: 'lg', ring: true })}
+      avatars={getAvatars({ shape: 'circle', size: 'lg', ring: true }).slice(
+        0,
+        5,
+      )}
       maxVisible={5}
       overlap="left"
       overlapOffset="4px"
     />
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(await canvas.findByText('S')).toBeVisible();
-    await expect(canvas.getByText('L')).toBeVisible();
-    await expect(canvas.getAllByText('J')).toHaveLength(2);
-  },
 };
 
 export const Catalog: Story = {

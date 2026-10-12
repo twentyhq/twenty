@@ -1,4 +1,4 @@
-import { type CalloutVariant } from 'twenty-ui/components/feedback';
+import { type CalloutStatus } from 'twenty-ui/components/feedback';
 import {
   IconAlertCircle,
   IconAlertTriangle,
@@ -10,7 +10,7 @@ import {
 import { ApplicationHealthStatus } from '~/generated-metadata/graphql';
 
 type ApplicationHealthBannerAppearance = {
-  variant: CalloutVariant;
+  status: CalloutStatus;
   Icon: IconComponent;
 };
 
@@ -18,23 +18,23 @@ const APPEARANCE_BY_STATUS: Partial<
   Record<ApplicationHealthStatus, ApplicationHealthBannerAppearance>
 > = {
   [ApplicationHealthStatus.SUCCESS]: {
-    variant: 'success',
+    status: 'success',
     Icon: IconCheck,
   },
   [ApplicationHealthStatus.INFO]: {
-    variant: 'info',
+    status: 'info',
     Icon: IconInfoCircle,
   },
   [ApplicationHealthStatus.WARNING]: {
-    variant: 'warning',
+    status: 'warning',
     Icon: IconAlertTriangle,
   },
   [ApplicationHealthStatus.ERROR]: {
-    variant: 'error',
+    status: 'error',
     Icon: IconAlertCircle,
   },
   [ApplicationHealthStatus.NEUTRAL]: {
-    variant: 'neutral',
+    status: 'neutral',
     Icon: IconHelp,
   },
 };

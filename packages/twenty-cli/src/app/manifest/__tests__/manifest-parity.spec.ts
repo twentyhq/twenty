@@ -39,11 +39,7 @@ vi.mock('@/app/get-app-worker-launch', () => ({
 }));
 vi.mock('@/app/get-app-template-directory', () => ({
   getAppTemplateDirectory: () =>
-    join(REPOSITORY_ROOT, 'packages/create-twenty-app/src/constants/template'),
-}));
-vi.mock('@/app/get-app-template-overlay-directory', () => ({
-  getAppTemplateOverlayDirectory: () =>
-    join(REPOSITORY_ROOT, 'packages/twenty-cli/app-template-overlay'),
+    join(REPOSITORY_ROOT, 'packages/twenty-cli/app-template'),
 }));
 
 const REPOSITORY_ROOT = fileURLToPath(
@@ -288,6 +284,7 @@ export { compileApplicationTranslations } from './cli/utilities/translations/com
       signal: new AbortController().signal,
     });
     await symlink(join(root, 'node_modules'), join(appPath, 'node_modules'));
+    await rm(join(appPath, 'yarn.lock'));
     const result = await compareManifest(appPath);
     const packageJson = JSON.parse(
       await readFile(join(appPath, 'package.json'), 'utf8'),

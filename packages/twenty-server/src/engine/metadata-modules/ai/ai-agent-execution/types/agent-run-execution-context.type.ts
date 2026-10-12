@@ -10,6 +10,8 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export type AgentRunExecutionContext = {
   authContext: WorkspaceAuthContext;
   actorContext?: ActorMetadata;
+  // who the run's turns are recorded as sent by
+  turnCreatedBy: ActorMetadata;
   userWorkspaceId: string | null;
   // what the run itself can read, such as the record an awaited event is about
   rolePermissionConfig: RolePermissionConfig;

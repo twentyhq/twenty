@@ -55,7 +55,7 @@ import {
   EventLogFilterOperand,
   EventLogTable,
 } from '~/generated-metadata/graphql';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const TIME_DETAIL_FIELD: LogConsoleDetailField = {
   label: msg`Time`,

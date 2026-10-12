@@ -10,6 +10,7 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import {
@@ -27,15 +28,14 @@ import { type SeededEmail } from 'src/engine/workspace-manager/dev-seeder/data/u
 import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import {
-  WorkflowStatus,
-  type WorkflowWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { buildWorkflowStepCaller } from 'src/modules/workflow/workflow-executor/utils/build-workflow-step-caller.util';
-import { isWorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/guards/is-workflow-ai-agent-action.guard';
 import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';
 import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowAction,
+  type WorkflowAiAgentAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import {
   type WorkflowManualTrigger,
@@ -191,6 +191,21 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     applicationId: string;
   }): Promise<void> {
     for (const agentWorkflow of AGENT_WORKFLOWS_TO_SEED) {
+      const step: WorkflowAiAgentAction = {
+        id: seedId(agentWorkflow.stepKey, workspaceId),
+        name: agentWorkflow.stepName,
+        type: WorkflowActionType.AI_AGENT,
+        valid: true,
+        settings: {
+          input: {
+            prompt: agentWorkflow.stepPrompt,
+            humanInputInstructions: agentWorkflow.humanInputInstructions,
+          },
+          outputSchema: {},
+          errorHandlingOptions: ERROR_HANDLING_OPTIONS,
+        },
+        nextStepIds: [],
+      };
       const workflow = await this.insertWorkflow({
         workspaceId,
         applicationId,
@@ -198,21 +213,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         name: agentWorkflow.name,
         position: agentWorkflow.position,
         icon: agentWorkflow.icon,
-        step: {
-          id: seedId(agentWorkflow.stepKey, workspaceId),
-          name: agentWorkflow.stepName,
-          type: WorkflowActionType.AI_AGENT,
-          valid: true,
-          settings: {
-            input: {
-              prompt: agentWorkflow.stepPrompt,
-              humanInputInstructions: agentWorkflow.humanInputInstructions,
-            },
-            outputSchema: {},
-            errorHandlingOptions: ERROR_HANDLING_OPTIONS,
-          },
-          nextStepIds: [],
-        },
+        step,
       });
       const workflowRunId = seedId(
         `workflowRun:${agentWorkflow.runKey}`,
@@ -292,17 +293,19 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
           await this.agentRunSuspensionService.suspend({
             workspaceId,
             threadId,
-            caller: buildWorkflowStepCaller({
-              workflowRunId,
-              stepId: workflow.step.id,
-            }),
-            runSpec: isWorkflowAiAgentAction(workflow.step)
-              ? buildWorkflowAgentRunSpec({
-                  step: workflow.step,
-                  isApplicationBound: false,
-                })
-              : null,
-            summary: null,
+            condition: { type: 'ANSWER', threadId },
+            suspension: {
+              caller: buildWorkflowStepCaller({
+                workflowRunId,
+                stepId: step.id,
+              }),
+              runSpec: buildWorkflowAgentRunSpec({
+                step,
+                isApplicationBound: false,
+              }),
+              summary: null,
+              continuationCount: 0,
+            },
           });
 
           await this.agentRunConversationService.closeTurn({

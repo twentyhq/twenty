@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
@@ -9,7 +10,7 @@ export const useUpsertFindOneRecordQueryInCache = ({
   withSoftDeleted = false,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
-  recordGqlFields: Record<string, any>;
+  recordGqlFields: RecordGqlFields;
   withSoftDeleted?: boolean;
 }) => {
   const apolloCoreClient = useApolloCoreClient();

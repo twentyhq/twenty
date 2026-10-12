@@ -24,6 +24,7 @@ import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
@@ -98,6 +99,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingCreditRolloverService,
     BillingCreditGrantService,
     BillingCreditService,
+    BillingCreditOneTimeTopUpService,
     ResourceCreditService,
     BillingGaugeService,
     WorkspaceCurrentBillingSubscriptionCacheService,
@@ -113,6 +115,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingCreditRolloverService,
     BillingCreditGrantService,
     BillingCreditService,
+    BillingCreditOneTimeTopUpService,
     ResourceCreditService,
   ],
 })

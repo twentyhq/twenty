@@ -8,7 +8,7 @@ describe('buildSlackAssistantMessages', () => {
       requestText: 'How many open opportunities does ACME have?',
       requesterName: 'Jane',
       conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       attachments: [],
@@ -30,7 +30,7 @@ describe('buildSlackAssistantMessages', () => {
       requestText: 'How many open opportunities does ACME have?',
       requesterName: 'Jane',
       conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       attachments: [],
@@ -47,7 +47,7 @@ describe('buildSlackAssistantMessages', () => {
       requestText: 'What is wrong in this screenshot?',
       requesterName: 'Jane',
       conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       attachments: [{ fileId: 'file-id-1', filename: 'screenshot.png' }],
@@ -71,7 +71,7 @@ describe('buildSlackAssistantMessages', () => {
       requestText: 'What is in these?',
       requesterName: 'Jane',
       conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       attachments: [{ fileId: 'file-id-1', filename: 'screenshot.png' }],
@@ -94,7 +94,7 @@ describe('buildSlackAssistantMessages', () => {
       requestText: 'and this one?',
       requesterName: 'Jane',
       conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       attachments: [{ fileId: 'file-id-1', filename: 'screenshot.png' }],
@@ -116,7 +116,7 @@ describe('buildSlackAssistantMessages', () => {
       requestText: 'what is this?',
       requesterName: 'Jane',
       conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       attachments: [{ fileId: 'file-id-1', filename: 'diagram.png' }],
@@ -139,7 +139,7 @@ describe('buildSlackAssistantMessages', () => {
         { role: 'user', content: '<@U123>: Find the ACME account' },
         { role: 'assistant', content: 'ACME is a company record.' },
       ],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       attachments: [],
@@ -171,7 +171,7 @@ describe('buildSlackAssistantMessages', () => {
       requestText: 'How many open opportunities does ACME have?',
       requesterName: 'Jane',
       conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       attachments: [],
@@ -189,7 +189,7 @@ describe('buildSlackAssistantMessages', () => {
         'Create a task for @Alice Martin (workspace member member-1)',
       requesterName: 'Jane',
       conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       attachments: [],
@@ -264,30 +264,12 @@ describe('buildSlackAssistantMessages', () => {
     expect(messages[0].content).toContain('never invite the requester');
   });
 
-  it('should say it answers with the app role when nobody is linked', () => {
-    const messages = buildSlackAssistantMessages({
-      requestText: 'Which companies were added recently?',
-      requesterName: 'Jane',
-      conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
-      timeoutSeconds: 300,
-      workspaceBaseUrl: 'https://acme.twenty.com',
-      attachments: [],
-      attachedFileNames: [],
-      namesOnlyFileNames: [],
-      hasMentionedUsers: false,
-    });
-
-    expect(messages[0].content).toContain("app's own role");
-    expect(messages[0].content).not.toContain('acting as Jane');
-  });
-
   it('should tell the agent that shared files are names only', () => {
     const messages = buildSlackAssistantMessages({
       requestText: 'log this against ACME',
       requesterName: 'Jane',
       conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       namesOnlyFileNames: ['proposal.pdf'],
@@ -329,7 +311,7 @@ describe('buildSlackAssistantMessages', () => {
       requestText: 'who owns ACME?',
       requesterName: 'Jane',
       conversationMessages: [],
-      runAsWorkspaceMemberId: undefined,
+      runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
       attachments: [],

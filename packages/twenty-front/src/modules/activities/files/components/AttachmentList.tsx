@@ -179,10 +179,10 @@ export const AttachmentList = ({
           onClose={handleClosePreview}
           renderInDocumentBody
         >
-          {({ container, backdrop, viewportProps, onKeyDown }) => (
+          {({ onKeyDown }) => (
             <Dialog.Popup
               aria-label={previewedAttachment.name}
-              {...{ container, backdrop, viewportProps, onKeyDown }}
+              onKeyDown={onKeyDown}
               size="lg"
               style={{
                 padding: 'var(--t-spacing-2)',

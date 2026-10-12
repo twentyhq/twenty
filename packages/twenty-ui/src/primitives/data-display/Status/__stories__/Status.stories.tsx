@@ -25,17 +25,8 @@ type Story = StoryObj<typeof Status>;
 export const Default: Story = {
   args: {
     color: 'red',
-    onClick: fn(),
   },
   decorators: [ComponentDecorator],
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-
-    const status = canvas.getByRole('button', { name: 'Urgent' });
-
-    await userEvent.click(status);
-    expect(args.onClick).toHaveBeenCalled();
-  },
 };
 
 export const Documentation: Story = {
@@ -52,6 +43,37 @@ export const WithLongText: Story = {
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     container: { width: 100 },
+  },
+};
+
+export const Loading: Story = {
+  ...Default,
+  args: {
+    children: 'Saving',
+    color: 'blue',
+    loading: true,
+  },
+};
+
+export const LoadingAccessibility: Story = {
+  ...Loading,
+  args: {
+    ...Loading.args,
+    title: 'Save progress',
+    ref: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const status = canvas.getByTitle('Save progress');
+
+    await expect(status.tagName).toBe('SPAN');
+    await expect(status).toHaveAttribute('aria-busy', 'true');
+    await expect(status).not.toHaveAttribute('role');
+    await expect(status).not.toHaveAttribute('aria-live');
+    await expect(canvas.getByText('Saving')).toBeVisible();
+    await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+    await expect(args.ref).toHaveBeenCalledWith(status);
   },
 };
 
@@ -87,7 +109,16 @@ export const CatalogDark: typeof Catalog = {
 
 export const PointerAndKeyboard: Story = {
   decorators: [ComponentDecorator],
-  args: { children: 'Open details', onClick: fn(), color: 'blue' },
+  args: {
+    children: 'Open details',
+    onClick: fn(),
+    ref: fn(),
+    color: 'blue',
+    style: { padding: 0 },
+  },
+  render: ({ onClick, ...args }) => (
+    <Status {...args} render={<button type="button" onClick={onClick} />} />
+  ),
   play: async ({ canvasElement, args }) => {
     const control = within(canvasElement).getByRole('button', {
       name: 'Open details',
@@ -97,6 +128,8 @@ export const PointerAndKeyboard: Story = {
     await userEvent.keyboard(' ');
     await expect(args.onClick).toHaveBeenCalledTimes(3);
     await expect(control).toHaveFocus();
+    await expect(args.ref).toHaveBeenCalledWith(control);
+    await expect(getComputedStyle(control).padding).toBe('0px');
     await expect(args.onClick).toHaveBeenLastCalledWith(
       expect.objectContaining({ type: 'click' }),
     );
@@ -107,16 +140,111 @@ export const Disabled: Story = {
   decorators: [ComponentDecorator],
   args: {
     children: 'Unavailable',
-    disabled: true,
+    loading: true,
     onClick: fn(),
     color: 'blue',
   },
+  render: ({ onClick, ...args }) => (
+    <Status
+      {...args}
+      render={<button type="button" disabled onClick={onClick} />}
+    />
+  ),
   play: async ({ canvasElement, args }) => {
     const control = within(canvasElement).getByRole('button', {
       name: 'Unavailable',
     });
     await expect(control).toBeDisabled();
+    await expect(control).toHaveAttribute('aria-busy', 'true');
     await userEvent.click(control);
     await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const RenderCallback: Story = {
+  ...PointerAndKeyboard,
+  render: ({ onClick, ...args }) => (
+    <Status
+      {...args}
+      render={(props) => <button {...props} type="button" onClick={onClick} />}
+    />
+  ),
+};
+
+export const DefaultSemantics: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    title: 'Record state',
+    onClick: fn(),
+    ref: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const status = canvas.getByTitle('Record state');
+
+    await expect(status.tagName).toBe('SPAN');
+    await expect(status).not.toHaveAttribute('role');
+    await expect(status).not.toHaveAttribute('tabindex');
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+    await expect(args.ref).toHaveBeenCalledWith(status);
+    await userEvent.click(status);
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
+
+export const LoadingInteraction: Story = {
+  ...PointerAndKeyboard,
+  args: {
+    ...PointerAndKeyboard.args,
+    loading: true,
+  },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Open details',
+    });
+
+    await expect(button).toBeEnabled();
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await userEvent.click(button);
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
+
+export const Navigation: Story = {
+  ...PointerAndKeyboard,
+  args: {
+    ...PointerAndKeyboard.args,
+    children: 'Active records',
+    onClick: fn((event) => event.preventDefault()),
+  },
+  render: ({ onClick, ...args }) => (
+    <Status
+      {...args}
+      render={(props) => (
+        <a
+          {...props}
+          href="#active-records"
+          referrerPolicy="no-referrer"
+          onClick={onClick}
+        >
+          {props.children}
+        </a>
+      )}
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const link = within(canvasElement).getByRole('link', {
+      name: 'Active records',
+    });
+
+    await expect(link.tagName).toBe('A');
+    await expect(link).toHaveAttribute('href', '#active-records');
+    await expect(link).toHaveAttribute('referrerpolicy', 'no-referrer');
+    await expect(args.ref).toHaveBeenCalledWith(link);
+    link.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onClick).toHaveBeenCalledOnce();
+    await expect(link).toHaveFocus();
   },
 };

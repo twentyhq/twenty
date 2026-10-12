@@ -1,5 +1,5 @@
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
-import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
+import { useNavigationDrawerExpanded } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerExpanded';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useWorkspaceSurfaceHeaderPortal } from '@/ui/layout/hooks/useWorkspaceSurfaceHeaderPortal';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';

@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
+msgstr "{actorName}-ը ստեղծել է վերականգնման կոդ, որը թույլ է տալիս մուտք գործել {workspaceDisplayName}՝ առանց ձեր նույնականացուցիչ հավելվածի։"
+
+#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
 msgstr "{actorName}-ը թարմացրել է {targetName}-ի ({targetEmail}) սերվերի ադմինիստրատորի հասանելիությունը։"
@@ -37,6 +42,11 @@ msgstr "{senderName} (<0>{senderEmail}</0>)․ Խնդրում ենք վավեր�
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
 msgstr "Ծանուցում մինչև ձեր փորձաշրջանի ավարտը"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
+msgstr "Վերականգնման կոդ է օգտագործվել {workspaceDisplayName} մուտք գործելու համար։ Այս աշխատատարածքի ձեր նույնականացուցիչը հեռացվել է, և այնտեղի ձեր մյուս աշխատաշրջաններից դուրս եք գրվել։"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -128,9 +138,19 @@ msgid "Hi {userName},"
 msgstr "Ողջույն, {userName},"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "If this was not you, contact your workspace administrator and change your password."
+msgstr "Եթե դա դուք չեք արել, կապվեք ձեր աշխատատարածքի ադմինիստրատորի հետ և փոխեք ձեր գաղտնաբառը։"
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
 msgstr "Եթե Twenty-ը ձեզ հարմար է, ամեն ինչ կարգին է՝ այլևս ոչինչ անել պետք չէ։ Եթե այն ձեզ համար չէ, կարող եք մինչև այդ մեկ սեղմումով չեղարկել, և գանձում չի կատարվի։"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "If you did not ask for this, contact your workspace administrator and change your password."
+msgstr "Եթե դուք դա չեք խնդրել, կապվեք ձեր աշխատատարածքի ադմինիստրատորի հետ և փոխեք ձեր գաղտնաբառը։"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -234,6 +254,11 @@ msgid "Set"
 msgstr "Սահմանել"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "Set up two-factor authentication again under Settings, Profile."
+msgstr "Կարգավորումներ, Պրոֆիլ բաժնում կրկին կարգավորեք երկգործոն նույնականացումը։"
+
+#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
 msgstr "Սահմանեք ձեր գաղտնաբառը 🗝"
@@ -247,6 +272,11 @@ msgstr "Սկսել նոր workspace"
 #: src/emails/test.email.tsx
 msgid "Test email"
 msgstr "Թեստային նամակ"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
+msgstr "Կոդը կարող է օգտագործվել մեկ անգամ և ուժը կորցնում է {formattedExpiresAt}-ին։ Դրա օգտագործումը հեռացնում է ձեր ընթացիկ նույնականացուցիչը այս աշխատանքային տարածքի համար և դուրս է բերում ձեզ այնտեղի մյուս աշխատաշրջաններից։"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -267,6 +297,16 @@ msgstr "Ձեր workspace-ը և ձեր ստեղծած ամեն ինչը պահպ�
 #: src/components/Footer.tsx
 msgid "Twenty.com, Public Benefit Corporation"
 msgstr "Twenty.com, հասարակային շահի կորպորացիա"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "Two-factor authentication recovery code issued"
+msgstr "Երկքայլ նույնականացման վերականգնման կոդը թողարկվել է"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "Two-factor authentication reset"
+msgstr "Երկքայլ նույնականացման վերականգնում"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

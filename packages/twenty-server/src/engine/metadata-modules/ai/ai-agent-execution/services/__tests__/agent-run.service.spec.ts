@@ -32,7 +32,10 @@ const buildService = () => {
   const agentActorContextService = {
     buildRunAsWorkspaceMemberContext: jest.fn().mockResolvedValue({
       actorContext: RUN_AS_ACTOR,
-      authContext: { userWorkspaceId: RUN_AS_USER_WORKSPACE_ID },
+      authContext: {
+        userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+        workspaceMemberId: RUN_AS_ACTOR.workspaceMemberId,
+      },
       roleId: 'role-id',
     }),
     buildApplicationAgentContext: jest.fn().mockResolvedValue({
@@ -91,15 +94,15 @@ describe('AgentRunService', () => {
     });
 
     expect(result).toEqual({
+      threadId: expect.any(String),
+      status: 'COMPLETED',
       result: { response: 'Acme is your biggest customer' },
       error: null,
       success: true,
-      isWaiting: false,
-      threadId: expect.any(String),
     });
     expect(secondResult.threadId).not.toBe(result.threadId);
 
-    const { conversation, spec, prompt, executionContext, resolveCreatedBy } =
+    const { conversation, spec, prompt, executionContext } =
       runInput(agentRunnerService);
 
     expect(conversation).toEqual({
@@ -111,7 +114,6 @@ describe('AgentRunService', () => {
       toolLoadingStrategy: 'lazy',
       capabilities: {
         canAskHumans: false,
-        canProposeToolCalls: false,
       },
     });
     expect(prompt).toEqual({
@@ -122,9 +124,7 @@ describe('AgentRunService', () => {
     expect(executionContext).toMatchObject({
       rolePermissionConfig: { intersectionOf: ['agent-role-id'] },
       conversationActor: { type: 'application', applicationId: APPLICATION.id },
-    });
-    await expect(resolveCreatedBy()).resolves.toMatchObject({
-      source: 'APPLICATION',
+      turnCreatedBy: { source: 'APPLICATION' },
     });
   });
 
@@ -165,7 +165,7 @@ describe('AgentRunService', () => {
       runAsWorkspaceMemberId: 'workspace-member-id',
     });
 
-    const { conversation, caller, prompt, executionContext, resolveCreatedBy } =
+    const { conversation, caller, prompt, executionContext } =
       runInput(agentRunnerService);
 
     expect(result.threadId).toBe(threadId);
@@ -182,15 +182,15 @@ describe('AgentRunService', () => {
     expect(prompt).toMatchObject({
       senderUserWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
     });
-    await expect(resolveCreatedBy()).resolves.toEqual(RUN_AS_ACTOR);
     expect(executionContext).toMatchObject({
       actorContext: RUN_AS_ACTOR,
+      turnCreatedBy: RUN_AS_ACTOR,
       userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
       runAsRoleId: 'role-id',
       rolePermissionConfig: { intersectionOf: ['role-id'] },
       conversationActor: {
         type: 'user',
-        userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+        workspaceMemberId: RUN_AS_ACTOR.workspaceMemberId,
       },
     });
   });
@@ -248,6 +248,7 @@ describe('AgentRunService', () => {
     await expect(
       run(service, { input: userInput('Hello') }),
     ).resolves.toMatchObject({
+      status: 'FAILED',
       success: false,
       error: 'Agent stopped: no more available credits.',
     });

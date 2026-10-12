@@ -1,6 +1,9 @@
+import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
+
 export type ContinueAgentRunJobData = {
   workspaceId: string;
-  suspensionId: string;
-  // the suspension's resume count when scheduled, so a duplicate job finds it moved on
-  resumeCount: number;
+  threadId: string;
+  // the run's wake-up, which the continuation removes once the run went on, and what resolved it
+  wakeUpId: string;
+  outcome: PendingWakeUpOutcome;
 };

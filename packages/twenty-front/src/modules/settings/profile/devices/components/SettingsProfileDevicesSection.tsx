@@ -18,7 +18,7 @@ import {
   type CurrentUserSessionsQuery,
   RevokeAllOtherUserSessionsDocument,
 } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type UserSessionListItem =

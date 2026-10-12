@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UsageLimitRow } from '@/settings/billing/types/UsageLimitRow';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 export const filterUsageLimitRows = ({
   rows,

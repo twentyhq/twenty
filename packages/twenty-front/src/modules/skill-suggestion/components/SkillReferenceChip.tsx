@@ -1,3 +1,4 @@
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -29,7 +30,7 @@ export const SkillReferenceChip = ({
         <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       }
     >
-      {label}
+      {getChipLabel(label).content}
     </LinkChip>
   );
 };

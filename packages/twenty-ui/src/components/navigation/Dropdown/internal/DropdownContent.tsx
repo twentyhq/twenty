@@ -22,6 +22,7 @@ export const DropdownContent = ({
   sideOffset = 0,
   alignOffset,
   anchor,
+  collisionPadding,
   container,
   keepMounted,
   width = 200,
@@ -63,71 +64,77 @@ export const DropdownContent = ({
 
   return (
     <>
-      <Popover.Popup
-        {...props}
-        ref={mergedRef}
-        side={side ?? (isSubmenu ? 'inline-end' : 'bottom')}
-        align={align}
-        sideOffset={sideOffset}
-        alignOffset={alignOffset}
-        anchor={anchor}
-        container={container}
-        keepMounted={keepMounted}
-        role={type === 'menu' ? 'menu' : 'dialog'}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledBy ?? defaultAriaLabelledBy}
-        data-dropdown-content=""
-        data-type={type}
-        className={mergeClassNames(styles.content, className)}
-        style={(state) => ({
-          width,
-          ...(isFunction(style) ? style(state) : style),
-        })}
-        initialFocus={
-          initialFocus ??
-          (() => {
-            if (!focusOnOpen) {
-              return false;
+      <Popover.Portal container={container} keepMounted={keepMounted}>
+        <Popover.Positioner
+          side={side ?? (isSubmenu ? 'inline-end' : 'bottom')}
+          align={align}
+          sideOffset={sideOffset}
+          alignOffset={alignOffset}
+          anchor={anchor}
+          collisionPadding={collisionPadding}
+        >
+          <Popover.Popup
+            {...props}
+            ref={mergedRef}
+            role={type === 'menu' ? 'menu' : 'dialog'}
+            aria-label={ariaLabel}
+            aria-labelledby={ariaLabelledBy ?? defaultAriaLabelledBy}
+            data-dropdown-content=""
+            data-type={type}
+            className={mergeClassNames(styles.content, className)}
+            style={(state) => ({
+              width,
+              ...(isFunction(style) ? style(state) : style),
+            })}
+            initialFocus={
+              initialFocus ??
+              (() => {
+                if (!focusOnOpen) {
+                  return false;
+                }
+
+                if (!isDefined(contentRef.current)) {
+                  return true;
+                }
+
+                return getDropdownFocusTarget({
+                  content: contentRef.current,
+                  edge: initialFocusEdge,
+                  type,
+                });
+              })
             }
+            onKeyDown={(event) => {
+              onKeyDown?.(event);
+              handleNavigation(event);
 
-            if (!isDefined(contentRef.current)) {
-              return true;
-            }
-
-            return getDropdownFocusTarget({
-              content: contentRef.current,
-              edge: initialFocusEdge,
-              type,
-            });
-          })
-        }
-        onKeyDown={(event) => {
-          onKeyDown?.(event);
-          handleNavigation(event);
-
-          if (!isUnhandledModifierShortcut(event)) {
-            event.stopPropagation();
-          }
-        }}
-        onInput={(event) => {
-          onInput?.(event);
-          setSearchTargetId(getDropdownSearchTarget(event.currentTarget)?.id);
-        }}
-        onClick={(event) => {
-          event.stopPropagation();
-          onClick?.(event);
-        }}
-        onMouseDown={(event) => {
-          event.stopPropagation();
-          onMouseDown?.(event);
-        }}
-        onPointerDown={(event) => {
-          event.stopPropagation();
-          onPointerDown?.(event);
-        }}
-      >
-        {children}
-      </Popover.Popup>
+              if (!isUnhandledModifierShortcut(event)) {
+                event.stopPropagation();
+              }
+            }}
+            onInput={(event) => {
+              onInput?.(event);
+              setSearchTargetId(
+                getDropdownSearchTarget(event.currentTarget)?.id,
+              );
+            }}
+            onClick={(event) => {
+              event.stopPropagation();
+              onClick?.(event);
+            }}
+            onMouseDown={(event) => {
+              event.stopPropagation();
+              onMouseDown?.(event);
+            }}
+            onPointerDown={(event) => {
+              event.stopPropagation();
+              onPointerDown?.(event);
+            }}
+          >
+            {children}
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
       <DropdownPageFocusEffect contentRef={contentRef} />
       <DropdownSearchTargetEffect content={content} />
     </>

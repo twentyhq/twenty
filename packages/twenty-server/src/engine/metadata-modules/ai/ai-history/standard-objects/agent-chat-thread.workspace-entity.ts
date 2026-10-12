@@ -14,11 +14,12 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   recordTargets: EntityRelation<AgentChatThreadTargetWorkspaceEntity[]>;
   participants: EntityRelation<AgentChatThreadParticipantWorkspaceEntity[]>;
+  assignee: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
 
   archivedAt: string | null;
-  userWorkspaceId: string | null;
 
   workspaceMemberId: string | null;
+  assigneeId: string | null;
   title: string | null;
   lastActivityAt: string | null;
   lastMessageText: string | null;

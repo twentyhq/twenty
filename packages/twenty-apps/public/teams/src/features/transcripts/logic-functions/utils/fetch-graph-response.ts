@@ -1,9 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { GRAPH_REQUEST_MAX_ATTEMPTS } from 'src/features/transcripts/logic-functions/constants/graph-request-max-attempts';
 import { GRAPH_REQUEST_RETRY_BASE_DELAY_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/graph-request-retry-base-delay-milliseconds';
 import { GRAPH_RETRYABLE_STATUSES } from 'src/features/transcripts/logic-functions/constants/graph-retryable-statuses';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
+import { type GraphRequestMethod } from 'src/features/transcripts/logic-functions/types/graph-request-method.type';
 import { resolveGraphUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-graph-url-or-throw';
 import { sleepForMilliseconds } from 'src/features/transcripts/logic-functions/utils/sleep-for-milliseconds';
 
@@ -14,23 +16,31 @@ type GraphErrorBody = {
   };
 };
 
+type GraphRequest = {
+  accessToken: string;
+  url: string;
+  accept: string;
+  method?: GraphRequestMethod;
+  body?: object;
+};
+
 const fetchGraphResponseWithRetries = async ({
   accessToken,
   url,
   accept,
+  method,
+  body,
   attempt,
-}: {
-  accessToken: string;
-  url: string;
-  accept: string;
-  attempt: number;
-}): Promise<Response> => {
+}: GraphRequest & { attempt: number }): Promise<Response> => {
   const response = await fetch(url, {
+    method,
     redirect: 'error',
     headers: {
       Authorization: `Bearer ${accessToken}`,
       Accept: accept,
+      ...(isDefined(body) ? { 'Content-Type': 'application/json' } : {}),
     },
+    body: isDefined(body) ? JSON.stringify(body) : undefined,
   });
 
   if (response.ok) {
@@ -53,16 +63,18 @@ const fetchGraphResponseWithRetries = async ({
       accessToken,
       url,
       accept,
+      method,
+      body,
       attempt: attempt + 1,
     });
   }
 
-  const body: GraphErrorBody = await response.json().catch(() => ({}));
-  const innerErrorCode = isNonEmptyString(body.error?.innerError?.code)
-    ? body.error.innerError.code
+  const errorBody: GraphErrorBody = await response.json().catch(() => ({}));
+  const innerErrorCode = isNonEmptyString(errorBody.error?.innerError?.code)
+    ? errorBody.error.innerError.code
     : undefined;
-  const message = isNonEmptyString(body.error?.message)
-    ? body.error.message
+  const message = isNonEmptyString(errorBody.error?.message)
+    ? errorBody.error.message
     : response.statusText;
 
   throw new GraphRequestError({
@@ -73,17 +85,11 @@ const fetchGraphResponseWithRetries = async ({
 };
 
 export const fetchGraphResponse = ({
-  accessToken,
   url,
-  accept,
-}: {
-  accessToken: string;
-  url: string;
-  accept: string;
-}): Promise<Response> =>
+  ...request
+}: GraphRequest): Promise<Response> =>
   fetchGraphResponseWithRetries({
-    accessToken,
+    ...request,
     url: resolveGraphUrlOrThrow(url),
-    accept,
     attempt: 0,
   });

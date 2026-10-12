@@ -138,8 +138,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         }),
       });
 
-    const agentExecutionContext =
-      buildWorkflowAgentRunExecutionContext(executionContext);
+    const agentExecutionContext = buildWorkflowAgentRunExecutionContext({
+      executionContext,
+      turnCreatedBy:
+        await this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
+    });
     const resolvedPrompt = resolveInput(prompt, context) as string | undefined;
 
     const { threadId, outcome, summary } = await this.agentRunnerService.run({
@@ -162,8 +165,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
           }
         : null,
       executionContext: agentExecutionContext,
-      resolveCreatedBy: () =>
-        this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
     });
 
     await this.workflowRunStepLogService.setAiAgentStepLog({

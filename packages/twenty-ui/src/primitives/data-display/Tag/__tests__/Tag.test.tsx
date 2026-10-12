@@ -1,7 +1,8 @@
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { expect, it, vi } from 'vitest';
+import { createRef } from 'react';
+import { expect, expectTypeOf, it, vi } from 'vitest';
 
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
@@ -15,77 +16,85 @@ runComponentConformance({
   refInstanceOf: HTMLSpanElement,
 });
 
-it('disables a custom button with its own click handler until re-enabled', async () => {
-  const user = userEvent.setup();
+it('keeps its presentational root when native handlers are provided', async () => {
+  const ref = createRef<HTMLSpanElement>();
   const handleClick = vi.fn();
-  const { rerender } = render(
+  render(
     <ThemeProvider colorScheme="light">
-      <Tag color="blue" disabled render={<button onClick={handleClick} />}>
-        Save
+      <Tag color="blue" ref={ref} onClick={handleClick} title="Category">
+        Customer
       </Tag>
     </ThemeProvider>,
   );
 
-  const button = screen.getByRole('button', { name: 'Save' });
-
-  await user.click(button);
-  expect(handleClick).not.toHaveBeenCalled();
-  expect(button).toBeDisabled();
-
-  rerender(
-    <ThemeProvider colorScheme="light">
-      <Tag color="blue" render={<button onClick={handleClick} />}>
-        Save
-      </Tag>
-    </ThemeProvider>,
-  );
-
-  await user.click(button);
-  await user.keyboard('{Enter} ');
-  expect(handleClick).toHaveBeenCalledTimes(3);
+  expect(ref.current).toBeInstanceOf(HTMLSpanElement);
+  expect(ref.current).toHaveAttribute('title', 'Category');
+  expect(ref.current).not.toHaveAttribute('role');
+  expect(ref.current).not.toHaveAttribute('tabindex');
+  expect(screen.queryByRole('button')).not.toBeInTheDocument();
+  await userEvent.click(screen.getByText('Customer'));
+  expect(handleClick).toHaveBeenCalledOnce();
 });
 
-it('blocks disabled render-function links without trapping keyboard focus', async () => {
+it('lets a native button owner receive attributes, refs, keyboard activation and disabled state', async () => {
   const user = userEvent.setup();
+  const ref = createRef<HTMLButtonElement>();
   const handleClick = vi.fn();
-  const handleKeyDown = vi.fn();
-  const handleKeyUp = vi.fn();
-
-  render(
+  const compose = (disabled: boolean) => (
     <ThemeProvider colorScheme="light">
       <Tag
         color="blue"
-        disabled
-        nativeButton={false}
-        render={(props) => (
-          <a
-            {...props}
-            href="#details"
-            onClick={handleClick}
-            onKeyDown={handleKeyDown}
-            onKeyUp={handleKeyUp}
-          >
-            {props.children}
-          </a>
-        )}
+        render={
+          <button
+            ref={ref}
+            type="button"
+            name="category"
+            disabled={disabled}
+            onClick={(event) => {
+              expectTypeOf(event.currentTarget).toEqualTypeOf<
+                EventTarget & HTMLButtonElement
+              >();
+              handleClick(event.currentTarget.name);
+            }}
+          />
+        }
       >
-        Details
+        Customer
       </Tag>
-      <button>Next</button>
+    </ThemeProvider>
+  );
+  const { rerender } = render(compose(true));
+  const button = screen.getByRole('button', { name: 'Customer' });
+
+  expect(ref.current).toBe(button);
+  expect(button).toBeDisabled();
+  await user.click(button);
+  expect(handleClick).not.toHaveBeenCalled();
+
+  rerender(compose(false));
+  await user.tab();
+  expect(button).toHaveFocus();
+  await user.keyboard('{Enter} ');
+  expect(handleClick).toHaveBeenCalledTimes(2);
+  expect(handleClick).toHaveBeenLastCalledWith('category');
+});
+
+it('preserves caller-owned link nodes and URL strings', () => {
+  render(
+    <ThemeProvider colorScheme="light">
+      <Tag color="blue">
+        <a href="#account">Account</a>
+      </Tag>
+      <Tag color="blue" truncate={false}>
+        https://twenty.com
+      </Tag>
     </ThemeProvider>,
   );
 
-  const link = screen.getByRole('link', { name: 'Details' });
-
-  await user.click(link);
-  link.focus();
-  await user.keyboard('{Enter} ');
-  expect(handleClick).not.toHaveBeenCalled();
-  expect(handleKeyDown).not.toHaveBeenCalled();
-  expect(handleKeyUp).not.toHaveBeenCalled();
-  expect(link).toHaveAttribute('aria-disabled', 'true');
-  expect(link).toHaveAttribute('tabindex', '-1');
-
-  await user.tab();
-  expect(screen.getByRole('button', { name: 'Next' })).toHaveFocus();
+  expect(screen.getByRole('link', { name: 'Account' })).toHaveAttribute(
+    'href',
+    '#account',
+  );
+  expect(screen.getAllByRole('link')).toHaveLength(1);
+  expect(screen.getByText('https://twenty.com')).toBeVisible();
 });

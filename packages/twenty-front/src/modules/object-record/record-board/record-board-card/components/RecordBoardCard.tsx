@@ -132,11 +132,13 @@ export const RecordBoardCard = () => {
             isDragging={!isDragOverlay && isRecordIdSecondaryDragMultiple}
           >
             <RecordBoardCardHeader />
-            <Collapsible
-              isExpanded={recordBoardCardIsExpanded || !isCompactModeActive}
+            <Collapsible.Root
+              open={recordBoardCardIsExpanded || !isCompactModeActive}
             >
-              <RecordBoardCardBody />
-            </Collapsible>
+              <Collapsible.Panel>
+                <RecordBoardCardBody />
+              </Collapsible.Panel>
+            </Collapsible.Root>
           </RecordCard>
         </StyledCardContainer>
         {!isDragOverlay && (

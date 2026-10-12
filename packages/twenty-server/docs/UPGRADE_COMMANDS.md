@@ -133,6 +133,7 @@ An upgrade command is frozen once released: self-hosters can jump several versio
 
 - **Command logic lives in its version folder.** Helpers, SQL builders, constants and legacy formats that only a command needs go under `upgrade-version-command/<version>/` (or its `utils/`), never in `src/engine` or `src/modules`. Generic primitives (flat-entity utils, schema managers, repositories) are fine to call. The `twenty/no-runtime-import-from-upgrade-command` lint rule rejects runtime imports from `upgrade-version-command/`, except the `*-upgrade-command-name.constant` files that upgrade-aware entities use.
 - **Runtime code never branches on migration state.** Do not teach the runtime to serve both the old and the new shape. When a runtime must not run against a workspace mid-migration, fence it with one explicit check and remove that check once the command leaves the cross-upgrade window.
+- **A workspace command the new runtime depends on needs a fence, or must be safe without one.** On cloud the new version serves traffic before the command reaches every workspace. Instance commands get this from the upgrade-aware decorators; workspace commands do not, so decide which one applies when you write the command.
 
 A command should also not reach into runtime services to do its work. Their behavior changes with every release; the command's must not.
 

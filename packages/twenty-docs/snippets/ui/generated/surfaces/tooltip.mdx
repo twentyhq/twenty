@@ -17,7 +17,7 @@
   - `close`: Closes the tooltip imperatively when called.
 </ParamField>
 
-<ParamField body="align" type="&quot;center&quot; | &quot;end&quot; | &quot;start&quot;">
+<ParamField body="align" type="&quot;center&quot; | &quot;end&quot; | &quot;start&quot;" default="center">
   Alignment relative to the trigger. Defaults to center.
 </ParamField>
 
@@ -31,6 +31,10 @@
 
 <ParamField body="arrow" type="boolean">
   Displays an arrow pointing to the trigger. Defaults to false.
+</ParamField>
+
+<ParamField body="arrowPadding" type="number" default="5">
+  Minimum distance from the arrow to the popup edges.
 </ParamField>
 
 <ParamField body="children" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;" required>
@@ -89,8 +93,8 @@
   Portal destination. Defaults to the current theme container.
 </ParamField>
 
-<ParamField body="content" type="ReactNode" required>
-  Supplementary content displayed in the tooltip.
+<ParamField body="content" type="ReactNode | PayloadChildRenderFunction&lt;TPayload&gt;" required>
+  Supplementary content, or a function receiving the active trigger payload. Strings and numbers use the shorthand title layout.
 </ParamField>
 
 <ParamField body="defaultOpen" type="boolean" default="false">
@@ -106,6 +110,10 @@
   Delay in milliseconds before opening on hover. Defaults to 600.
 </ParamField>
 
+<ParamField body="description" type="ReactNode">
+  Optional secondary text below the shorthand title.
+</ParamField>
+
 <ParamField body="disableAnchorTracking" type="boolean" default="false">
   Whether to disable the popup from tracking any layout shift of its positioning anchor.
 </ParamField>
@@ -118,6 +126,10 @@
   Prevents hovering over the popup from keeping it open.
 </ParamField>
 
+<ParamField body="handle" type="TooltipHandle&lt;TPayload&gt;">
+  Connects detached triggers and preserves their typed payloads.
+</ParamField>
+
 <ParamField body="keepMounted" type="boolean">
   Keeps the popup mounted while closed.
 </ParamField>
@@ -127,7 +139,7 @@
 </ParamField>
 
 <ParamField body="onOpenChange" type="((open: boolean, eventDetails: TooltipRootChangeEventDetails) =&gt; void)">
-  Called when an interaction requests a visibility change.
+  Receives the requested open state and unchanged Base UI event details, including reason, event, trigger and cancel().
 </ParamField>
 
 <ParamField body="onOpenChangeComplete" type="((open: boolean) =&gt; void)">
@@ -136,6 +148,14 @@
 
 <ParamField body="open" type="boolean">
   Controlled visibility of the tooltip.
+</ParamField>
+
+<ParamField body="portalProps" type="TooltipPortalProps">
+  Full Portal props, including native props, ref and render. Overrides shorthand portal defaults.
+</ParamField>
+
+<ParamField body="positionerProps" type="TooltipPositionerProps">
+  Full Positioner props, including native props, ref and render. Overrides shorthand placement and width defaults.
 </ParamField>
 
 <ParamField body="positionMethod" type="&quot;absolute&quot; | &quot;fixed&quot;" default="absolute">
@@ -153,12 +173,16 @@
   Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="side" type="&quot;bottom&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;">
+<ParamField body="side" type="&quot;bottom&quot; | &quot;inline-end&quot; | &quot;inline-start&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;" default="top">
   Preferred side of the trigger. Defaults to top and may change to avoid collisions.
 </ParamField>
 
 <ParamField body="sideOffset" type="number | OffsetFunction" default="10">
   Distance from the trigger in pixels. Defaults to 10.
+</ParamField>
+
+<ParamField body="startIcon" type="ReactNode">
+  Optional node before the shorthand title.
 </ParamField>
 
 <ParamField body="sticky" type="boolean" default="false">
@@ -180,6 +204,10 @@
   There's no need to specify this prop when the tooltip is uncontrolled (that is, when the `open` prop is not set).
 </ParamField>
 
+<ParamField body="triggerProps" type="TooltipTriggerProps&lt;TPayload&gt;">
+  Full Trigger props, including native props, ref, render and payload. Overrides the shorthand trigger defaults.
+</ParamField>
+
 <ParamField body="withExitAnimation" type="boolean">
   Fades and slides the popup out when it closes instead of hiding it at once.
 </ParamField>
@@ -193,8 +221,7 @@
 </ParamField>
 
 <ParamField body="Root.children" type="ReactNode | PayloadChildRenderFunction&lt;Payload&gt;">
-  The content of the tooltip.
-  This can be a regular React node or a render function that receives the `payload` of the active trigger.
+  Parts or a render function receiving the active trigger payload. Root renders no DOM node.
 </ParamField>
 
 <ParamField body="Root.defaultOpen" type="boolean" default="false">
@@ -217,13 +244,11 @@
 </ParamField>
 
 <ParamField body="Root.handle" type="TooltipHandle&lt;Payload&gt;">
-  A handle to associate the tooltip with a trigger.
-  If specified, allows external triggers to control the tooltip's open state.
-  Can be created with the Tooltip.createHandle() method.
+  Connects detached triggers and imperative open/close actions.
 </ParamField>
 
 <ParamField body="Root.onOpenChange" type="((open: boolean, eventDetails: TooltipRootChangeEventDetails) =&gt; void)">
-  Event handler called when the tooltip is opened or closed.
+  Receives the requested open state and unchanged Base UI event details, including reason, event, trigger and cancel().
 </ParamField>
 
 <ParamField body="Root.onOpenChangeComplete" type="((open: boolean) =&gt; void)">
@@ -264,9 +289,7 @@
 </ParamField>
 
 <ParamField body="Trigger.disabled" type="boolean" default="false">
-  If `true`, the tooltip will not open when interacting with this trigger.
-  Note that this doesn't apply the `disabled` attribute to the trigger element.
-  If you want to disable the trigger element itself, you can pass the `disabled` prop to the trigger element via the `render` prop.
+  Disables tooltip interaction for this trigger without disabling its native element.
 </ParamField>
 
 <ParamField body="Trigger.handle" type="TooltipHandle&lt;Payload&gt;">
@@ -277,11 +300,12 @@
   A payload to pass to the tooltip when it is opened.
 </ParamField>
 
-<ParamField body="Trigger.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TooltipTriggerState&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
+<ParamField body="Trigger.ref" type="((((instance: HTMLButtonElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;HTMLButtonElement | null&gt;) &amp; (RefObject&lt;...&gt; | ((instance: HTMLElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)))) | null">
+  Ref to the rendered trigger element, a button by default.
+</ParamField>
 
-  Accepts a `ReactElement` or a function that returns the element to render.
+<ParamField body="Trigger.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TooltipTriggerState&gt;">
+  Composes a native element or a component that forwards attributes, handlers and ref.
 </ParamField>
 
 <ParamField body="Trigger.style" type="CSSProperties | ((state: TooltipTriggerState) =&gt; CSSProperties | undefined)">
@@ -289,33 +313,72 @@
   returns a style object based on the component's state.
 </ParamField>
 
-### Tooltip.Popup
+### Tooltip.Portal
 
-<ParamField body="Popup.align" type="&quot;center&quot; | &quot;end&quot; | &quot;start&quot;" default="center">
-  Alignment relative to the trigger. Defaults to center.
+<ParamField body="Portal.className" type="string | ((state: TooltipPortalState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Popup.alignOffset" type="number | OffsetFunction" default="0">
-  Offset along the alignment axis in pixels.
+<ParamField body="Portal.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
+  Portal destination. Defaults to the current theme container, then the document body.
 </ParamField>
 
-<ParamField body="Popup.anchor" type="Element | VirtualElement | RefObject&lt;Element | null&gt; | (() =&gt; Element | VirtualElement | null) | null">
-  An explicit positioning anchor for the popup.
+<ParamField body="Portal.keepMounted" type="boolean" default="false">
+  Whether to keep the portal mounted in the DOM while the popup is hidden.
 </ParamField>
 
-<ParamField body="Popup.arrow" type="boolean" default="false">
-  Displays an arrow pointing to the trigger. Defaults to false.
+<ParamField body="Portal.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the portal div.
 </ParamField>
 
-<ParamField body="Popup.children" type="ReactNode">
-  Content displayed inside the popup.
+<ParamField body="Portal.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TooltipPortalState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Popup.className" type="string | ((state: TooltipPopupState) =&gt; string | undefined)">
-  Additional CSS class for the popup.
+<ParamField body="Portal.style" type="CSSProperties | ((state: TooltipPortalState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
-<ParamField body="Popup.collisionAvoidance" type="CollisionAvoidance">
+### Tooltip.Positioner
+
+<ParamField body="Positioner.align" type="&quot;center&quot; | &quot;end&quot; | &quot;start&quot;" default="center">
+  How to align the popup relative to the specified side.
+</ParamField>
+
+<ParamField body="Positioner.alignOffset" type="number | OffsetFunction" default="0">
+  Additional offset along the alignment axis in pixels.
+  Also accepts a function that returns the offset to read the dimensions of the anchor
+  and positioner elements, along with its side and alignment.
+
+  The function takes a `data` object parameter with the following properties:
+  - `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.
+  - `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.
+  - `data.side`: which side of the anchor element the positioner is aligned against.
+  - `data.align`: how the positioner is aligned relative to the specified side.
+</ParamField>
+
+<ParamField body="Positioner.anchor" type="Element | VirtualElement | RefObject&lt;Element | null&gt; | (() =&gt; Element | VirtualElement | null) | null">
+  An element to position the popup against.
+  By default, the popup will be positioned against the trigger.
+</ParamField>
+
+<ParamField body="Positioner.arrowPadding" type="number" default="5">
+  Minimum distance to maintain between the arrow and the edges of the popup.
+
+  Use it to prevent the arrow element from hanging out of the rounded corners of a popup.
+</ParamField>
+
+<ParamField body="Positioner.className" type="string | ((state: TooltipPositionerState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Positioner.collisionAvoidance" type="CollisionAvoidance">
   Determines how to handle collisions when positioning the popup.
 
   `side` controls overflow on the preferred placement axis (`top`/`bottom` or `left`/`right`):
@@ -343,40 +406,64 @@
   If `align` is omitted, it defaults to `'flip'`.
 </ParamField>
 
-<ParamField body="Popup.collisionBoundary" type="Boundary" default="clipping-ancestors">
+<ParamField body="Positioner.collisionBoundary" type="Boundary" default="clipping-ancestors">
   An element or a rectangle that delimits the area that the popup is confined to.
 </ParamField>
 
-<ParamField body="Popup.collisionPadding" type="Padding" default="5">
+<ParamField body="Positioner.collisionPadding" type="Padding" default="5">
   Additional space to maintain from the edge of the collision boundary.
 </ParamField>
 
-<ParamField body="Popup.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
-  Portal destination. Defaults to the current theme container.
-</ParamField>
-
-<ParamField body="Popup.content" type="string">
-  Supplementary content displayed in the tooltip.
-</ParamField>
-
-<ParamField body="Popup.disableAnchorTracking" type="boolean" default="false">
+<ParamField body="Positioner.disableAnchorTracking" type="boolean" default="false">
   Whether to disable the popup from tracking any layout shift of its positioning anchor.
 </ParamField>
 
-<ParamField body="Popup.keepMounted" type="boolean">
-  Keeps the popup mounted while closed.
+<ParamField body="Positioner.positionMethod" type="&quot;absolute&quot; | &quot;fixed&quot;" default="absolute">
+  Determines which CSS `position` property to use.
 </ParamField>
 
-<ParamField body="Popup.maxWidth" type="MaxWidth&lt;string | number&gt;" default="300px">
-  Maximum popup width. Defaults to 300 pixels.
+<ParamField body="Positioner.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the positioning div. Native props, styles and render target this element.
 </ParamField>
 
-<ParamField body="Popup.positionMethod" type="&quot;absolute&quot; | &quot;fixed&quot;" default="absolute">
-  CSS positioning method for the popup.
+<ParamField body="Positioner.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TooltipPositionerState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Positioner.side" type="&quot;bottom&quot; | &quot;inline-end&quot; | &quot;inline-start&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;" default="top">
+  Preferred physical or logical side of the anchor. Defaults to top.
+</ParamField>
+
+<ParamField body="Positioner.sideOffset" type="number | OffsetFunction" default="0">
+  Distance from the anchor. Defaults to 0 in compound usage. Accepts a number or positioning function.
+</ParamField>
+
+<ParamField body="Positioner.sticky" type="boolean" default="false">
+  Whether to maintain the popup in the viewport after
+  the anchor element was scrolled out of view.
+</ParamField>
+
+<ParamField body="Positioner.style" type="CSSProperties | ((state: TooltipPositionerState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+### Tooltip.Popup
+
+<ParamField body="Popup.children" type="ReactNode">
+  Content rendered as supplied. Does not create a portal, positioner, title layout or arrow.
+</ParamField>
+
+<ParamField body="Popup.className" type="string | ((state: TooltipPopupState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
 <ParamField body="Popup.ref" type="Ref&lt;HTMLDivElement&gt;">
-  Ref forwarded to the popup element.
+  Ref to the popup div. Native props, styles and render target this element.
 </ParamField>
 
 <ParamField body="Popup.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TooltipPopupState&gt;">
@@ -386,49 +473,70 @@
   Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Popup.side" type="&quot;bottom&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;" default="top">
-  Preferred side of the trigger. Defaults to top and may change to avoid collisions.
-</ParamField>
-
-<ParamField body="Popup.sideOffset" type="number | OffsetFunction" default="10">
-  Distance from the trigger in pixels. Defaults to 10.
-</ParamField>
-
-<ParamField body="Popup.sticky" type="boolean" default="false">
-  Whether to maintain the popup in the viewport after
-  the anchor element was scrolled out of view.
-</ParamField>
-
 <ParamField body="Popup.style" type="CSSProperties | ((state: TooltipPopupState) =&gt; CSSProperties | undefined)">
-  Inline styles for the popup.
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
 <ParamField body="Popup.withExitAnimation" type="boolean" default="false">
-  Fades and slides the popup out when it closes instead of hiding it at once.
+  Enables the optional Twenty exit transition.
 </ParamField>
 
-### Tooltip.Content
+### Tooltip.Arrow
 
-<ParamField body="Content.children" type="ReactNode">
-  Primary text displayed in the tooltip.
+<ParamField body="Arrow.className" type="string | ((state: TooltipArrowState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Content.description" type="ReactNode">
-  Secondary explanation beneath the primary text.
+<ParamField body="Arrow.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the arrow div. Compose inside Popup.
 </ParamField>
 
-<ParamField body="Content.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+<ParamField body="Arrow.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TooltipArrowState&gt;">
   Allows you to replace the component's HTML element
   with a different tag, or compose it with another component.
 
   Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Content.startIcon" type="ReactNode">
-  An icon displayed before the text.
+<ParamField body="Arrow.style" type="CSSProperties | ((state: TooltipArrowState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+### Tooltip.Viewport
+
+<ParamField body="Viewport.children" type="ReactNode">
+  The content to render inside the transition container.
+</ParamField>
+
+<ParamField body="Viewport.className" type="string | ((state: TooltipViewportState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Viewport.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the content-transition div. Useful when several triggers share changing content.
+</ParamField>
+
+<ParamField body="Viewport.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TooltipViewportState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Viewport.style" type="CSSProperties | ((state: TooltipViewportState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
 ### Tooltip.Provider
+
+<ParamField body="Provider.children" type="ReactNode">
+  Tooltips sharing delay, closeDelay and timeout configuration. Provider renders no DOM node.
+</ParamField>
 
 <ParamField body="Provider.closeDelay" type="number">
   How long to wait before closing a tooltip. Specified in milliseconds.

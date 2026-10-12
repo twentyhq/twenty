@@ -112,7 +112,6 @@ describe('AgentTriggerRunnerService', () => {
           toolLoadingStrategy: 'lazy',
           capabilities: {
             canAskHumans: false,
-            canProposeToolCalls: false,
           },
         }),
         prompt: expect.objectContaining({

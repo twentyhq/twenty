@@ -1,18 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
@@ -27,6 +27,8 @@ export class AgentChatThreadLifecycleService {
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly turnRecorderService: AgentTurnRecorderService,
+    @InjectAgentHistoryRepository('agentMessagePart')
+    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
   ) {}
 
   async cancelStream({
@@ -85,67 +87,6 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  // owned threads are skipped so an upsert cannot reassign them
-  async assignCreatedThreadsToCreator({
-    authContext,
-    threadIds,
-  }: {
-    authContext: WorkspaceAuthContext;
-    threadIds: string[];
-  }): Promise<void> {
-    if (!isUserAuthContext(authContext) || !isNonEmptyArray(threadIds)) {
-      return;
-    }
-
-    const workspaceId = authContext.workspace.id;
-    const unassignedThreadCriteria = { workspaceMemberId: IsNull() };
-
-    const threadsBefore = await this.threadRepository.find(workspaceId, {
-      where: { id: In(threadIds), ...unassignedThreadCriteria },
-    });
-
-    if (!isNonEmptyArray(threadsBefore)) {
-      return;
-    }
-
-    const { generatedMaps: assignedThreads } =
-      await this.threadRepository.update(
-        workspaceId,
-        {
-          id: In(threadsBefore.map(({ id }) => id)),
-          ...unassignedThreadCriteria,
-        },
-        {
-          workspaceMemberId: authContext.workspaceMemberId,
-          userWorkspaceId: authContext.userWorkspaceId,
-        },
-      );
-
-    if (!isNonEmptyArray(assignedThreads)) {
-      return;
-    }
-
-    const threadsAfter = await this.threadRepository.find(workspaceId, {
-      where: { id: In(assignedThreads.map(({ id }) => id)) },
-    });
-
-    for (const threadAfter of threadsAfter) {
-      const threadBefore = threadsBefore.find(
-        ({ id }) => id === threadAfter.id,
-      );
-
-      if (!isDefined(threadBefore)) {
-        continue;
-      }
-
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId,
-        threadBefore,
-        threadAfter,
-      });
-    }
-  }
-
   async stopStreamIfAny({
     workspaceId,
     thread,
@@ -175,5 +116,54 @@ export class AgentChatThreadLifecycleService {
         threadBefore: thread,
       });
     }
+  }
+
+  // Clearing the marker is the claim, so only one caller closes the calls, and only while the
+  // thread is held by the stream given, or by none. The event goes last so listeners read the
+  // closed calls and the ended turn
+  async closePendingQuestion({
+    workspaceId,
+    threadId,
+    messageId,
+    activeStreamId,
+    turnStatus,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    messageId: string;
+    activeStreamId: string | null;
+    turnStatus: AgentTurnStatus.COMPLETED | AgentTurnStatus.CANCELLED;
+  }): Promise<void> {
+    const { affected } = await this.threadRepository.update(
+      workspaceId,
+      {
+        id: threadId,
+        pendingQuestionMessageId: messageId,
+        activeStreamId: activeStreamId ?? IsNull(),
+      },
+      { pendingQuestionMessageId: null },
+    );
+
+    if (!affected) {
+      return;
+    }
+
+    await closeOpenToolParts({
+      messagePartRepository: this.messagePartRepository,
+      messageId,
+      workspaceId,
+    });
+
+    await this.turnRecorderService.endWaitingTurn({
+      workspaceId,
+      messageId,
+      status: turnStatus,
+    });
+
+    await this.threadRecordEventService.emitPendingQuestionCleared({
+      workspaceId,
+      threadId,
+      messageId,
+    });
   }
 }

@@ -6,11 +6,11 @@ import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.m
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentRunSuspensionEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run-suspension.entity';
 import { ContinueAgentRunJob } from 'src/engine/metadata-modules/ai/ai-agent-execution/jobs/continue-agent-run.job';
 import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message-part.resolver';
 import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
@@ -55,8 +55,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ToolProviderModule,
     TypeOrmModule.forFeature([
       AgentEntity,
-      AgentRunSuspensionEntity,
       FileEntity,
+      PendingWakeUpEntity,
       WorkspaceEntity,
     ]),
   ],
@@ -77,8 +77,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ContinueAgentRunJob,
     RunAgentAttachmentService,
     provideWorkspaceScopedRepository(AgentEntity),
-    provideWorkspaceScopedRepository(AgentRunSuspensionEntity),
     provideWorkspaceScopedRepository(FileEntity),
+    provideWorkspaceScopedRepository(PendingWakeUpEntity),
   ],
   exports: [
     AgentActorContextService,

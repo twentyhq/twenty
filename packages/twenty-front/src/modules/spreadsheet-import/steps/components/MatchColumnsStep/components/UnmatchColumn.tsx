@@ -72,19 +72,21 @@ export const UnmatchColumn = ({
         isExpanded={isExpanded}
         allMatched={allMatched}
       />
-      <Collapsible isExpanded={isExpanded} dimension="height" containAnimation>
-        <StyledContentWrapper>
-          {column.matchedOptions?.map((option) => (
-            <SubMatchingSelectRow
-              option={option}
-              column={column}
-              onSubChange={onSubChange}
-              key={option.entry}
-              placeholder={t`Select an option`}
-            />
-          ))}
-        </StyledContentWrapper>
-      </Collapsible>
+      <Collapsible.Root open={isExpanded}>
+        <Collapsible.Panel dimension="height" containAnimation>
+          <StyledContentWrapper>
+            {column.matchedOptions?.map((option) => (
+              <SubMatchingSelectRow
+                option={option}
+                column={column}
+                onSubChange={onSubChange}
+                key={option.entry}
+                placeholder={t`Select an option`}
+              />
+            ))}
+          </StyledContentWrapper>
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </StyledContainer>
   );
 };

@@ -225,7 +225,6 @@ export class ApplicationManifestMigrationService {
       idByUniversalIdentifierByMetadataName,
       isApplicationWorkflowsEnabled:
         featureFlagsMap[FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED],
-      inferDeletionFromMissingEntities,
       now,
     });
 

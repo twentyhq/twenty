@@ -15,6 +15,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { getFieldBaseFile } from '@/app/add/entity-field-template';
 import { getFrontComponentBaseFile } from '@/app/add/entity-front-component-template';
 import { getLogicFunctionBaseFile } from '@/app/add/entity-logic-function-template';
+import { getRecordPageLayoutBaseFile } from '@/app/add/entity-record-page-layout-template';
 import { getObjectBaseFile } from '@/app/add/entity-object-template';
 import { kebabCase } from '@/app/pull/kebab-case';
 
@@ -39,6 +40,7 @@ type SdkReference = {
   getFrontComponentBaseFile: typeof getFrontComponentBaseFile;
   getLogicFunctionBaseFile: typeof getLogicFunctionBaseFile;
   getObjectBaseFile: typeof getObjectBaseFile;
+  getRecordPageLayoutBaseFile: typeof getRecordPageLayoutBaseFile;
   kebabCase: typeof kebabCase;
 };
 
@@ -58,7 +60,13 @@ describe('app add template parity with the repository SDK', () => {
     await build({
       stdin: {
         contents: [
-          ...['object', 'field', 'logic-function', 'front-component'].map(
+          ...[
+            'object',
+            'field',
+            'logic-function',
+            'front-component',
+            'record-page-layout',
+          ].map(
             (entity) =>
               `export * from './cli/utilities/entity/entity-${entity}-template';`,
           ),
@@ -94,6 +102,18 @@ describe('app add template parity with the repository SDK', () => {
 
     expect(normalizeIdentifiers(getObjectBaseFile(input))).toBe(
       normalizeIdentifiers(sdk.getObjectBaseFile(input)),
+    );
+  });
+
+  it('preserves the SDK record page layout and its fields view reference', () => {
+    const input = {
+      objectLabelSingular: 'Invoice',
+      objectUniversalIdentifier: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      fieldsWidgetViewUniversalIdentifier:
+        'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+    };
+    expect(normalizeIdentifiers(getRecordPageLayoutBaseFile(input))).toBe(
+      normalizeIdentifiers(sdk.getRecordPageLayoutBaseFile(input)),
     );
   });
 
@@ -158,7 +178,14 @@ describe('app add template parity with the repository SDK', () => {
       },
     });
 
-    for (const source of [object, field]) {
+    const layout = getRecordPageLayoutBaseFile({
+      objectLabelSingular: label,
+      objectUniversalIdentifier: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      fieldsWidgetViewUniversalIdentifier:
+        'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+    });
+
+    for (const source of [object, field, layout]) {
       expect(source).toContain("Customer\\'s \\\\ invoice\\nnext line");
       const result = await build({
         stdin: { contents: source, loader: 'ts' },

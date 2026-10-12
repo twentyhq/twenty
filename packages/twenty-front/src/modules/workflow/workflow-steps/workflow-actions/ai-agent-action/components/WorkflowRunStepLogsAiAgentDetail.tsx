@@ -29,7 +29,7 @@ import {
   StyledTitle,
 } from '@/workflow/workflow-steps/workflow-actions/components/workflowRunStepLogsStyles';
 import { WorkflowRunStepLogsToolCallRow } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const StyledModelBadge = styled.span`
   background: ${themeCssVariables.background.transparent.light};

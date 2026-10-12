@@ -45,6 +45,7 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =
   'release-enterprise-binding-confirmation-modal';
@@ -341,7 +342,7 @@ export const SettingsEnterprise = ({
       const portalUrl = data?.enterprisePortalSession;
 
       if (portalUrl !== null && portalUrl !== undefined) {
-        window.open(portalUrl, '_blank', 'noopener');
+        openUrlInNewTab(portalUrl);
       } else {
         enqueueToast({
           variant: 'error',
