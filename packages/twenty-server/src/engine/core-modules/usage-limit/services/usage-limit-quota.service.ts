@@ -25,9 +25,13 @@ import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/type
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
+import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 import { buildCounterScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-counter-script-arguments.util';
+import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
+import { buildOverriddenQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-overridden-quota-default-counter-keys.util';
+import { buildStaleUpdatedLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-stale-updated-limit-counter-keys.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/build-quota-debits.util';
@@ -148,6 +152,95 @@ export class UsageLimitQuotaService implements OnModuleInit {
     };
   }
 
+  async dropIntraWorkspaceLimitCounters(workspaceId: string): Promise<void> {
+    const { usageLimits } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['usageLimits'],
+    );
+
+    const limits = Object.values(usageLimits.byResourceType).flatMap(
+      (resourceTypeLimits) => resourceTypeLimits ?? [],
+    );
+
+    const keys = buildIntraWorkspaceLimitCounterKeys({
+      workspaceId,
+      limits,
+      periodByUnit: await this.usagePeriodService.findCurrentPeriodsByUnit({
+        workspaceId,
+        periodUnits: limits.map((limit) => limit.periodUnit),
+      }),
+    });
+
+    if (keys.length === 0) {
+      return;
+    }
+
+    await this.cacheStorage.mdel(keys);
+  }
+
+  async dropOverriddenQuotaDefaultCounters(
+    usageLimit: UsageLimitCounterScope,
+  ): Promise<void> {
+    const quotaLimitDefaults = this.buildQuotaLimitDefaults(
+      usageLimit.resourceType,
+    );
+
+    const keys = buildOverriddenQuotaDefaultCounterKeys({
+      usageLimit,
+      quotaLimitDefaults,
+      periodByUnit: await this.usagePeriodService.findCurrentPeriodsByUnit({
+        workspaceId: usageLimit.workspaceId,
+        periodUnits: quotaLimitDefaults.map(
+          (quotaLimitDefault) => quotaLimitDefault.periodUnit,
+        ),
+      }),
+    });
+
+    if (keys.length === 0) {
+      return;
+    }
+
+    await this.cacheStorage.mdel(keys);
+  }
+
+  async dropStaleUpdatedLimitCounter({
+    workspaceId,
+    previousUsageLimit,
+    updatedUsageLimit,
+  }: {
+    workspaceId: string;
+    previousUsageLimit: FlatUsageLimit;
+    updatedUsageLimit: FlatUsageLimit;
+  }): Promise<void> {
+    const [periodByUnit, enforceablePreviousUsageLimits] = await Promise.all([
+      this.usagePeriodService.findCurrentPeriodsByUnit({
+        workspaceId,
+        periodUnits: [
+          previousUsageLimit.periodUnit,
+          updatedUsageLimit.periodUnit,
+        ],
+      }),
+      this.usageLimitEntitlementService.findEnforceableLimits({
+        workspaceId,
+        limits: [previousUsageLimit],
+      }),
+    ]);
+
+    const keys = buildStaleUpdatedLimitCounterKeys({
+      workspaceId,
+      previousUsageLimit,
+      updatedUsageLimit,
+      isPreviousUsageLimitEnforced: enforceablePreviousUsageLimits.length > 0,
+      periodByUnit,
+    });
+
+    if (keys.length === 0) {
+      return;
+    }
+
+    await this.cacheStorage.mdel(keys);
+  }
+
   async getAllowanceUsage(workspaceId: string): Promise<{
     limitValue: number;
     consumedValue: number | null;
@@ -229,12 +322,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
         ? [
             {
               limit,
-              counter: buildLimitQuotaCounter({
-                workspaceId,
-                limit,
-                period,
-                isEnforced: true,
-              }),
+              counter: buildLimitQuotaCounter({ workspaceId, limit, period }),
             },
           ]
         : [];
@@ -285,7 +373,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
         ]);
 
       const counters: QuotaCounter[] = [
-        ...limitCounters.filter((counter) => counter.isEnforced),
+        ...limitCounters,
         ...(isDefined(allowanceCounter) ? [allowanceCounter] : []),
       ];
 
@@ -536,8 +624,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     ]);
 
     return buildQuotaCounters({
-      limits: quotaLimits,
-      enforceableLimits,
+      limits: enforceableLimits,
       quotaLimitDefaults,
       usageSpenders: spenders,
       workspaceId,

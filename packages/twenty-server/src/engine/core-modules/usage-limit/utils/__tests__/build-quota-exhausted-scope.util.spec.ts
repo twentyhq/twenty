@@ -15,7 +15,6 @@ const buildLimitCounter = (
   kind: 'limit',
   usageLimitId: 'limit-1',
   isDefault: false,
-  isEnforced: true,
   key: 'counter-key',
   limitValue: 1_000,
   unit: UsageUnit.CREDIT,

@@ -24,7 +24,6 @@ const buildLimitCounter = (
   kind: 'limit',
   usageLimitId: 'limit-1',
   isDefault: false,
-  isEnforced: true,
   key,
   limitValue: 1_000,
   unit: UsageUnit.CREDIT,
@@ -57,15 +56,6 @@ describe('findExhaustedCounters', () => {
       findExhaustedCounters({
         counters: [buildLimitCounter('cold'), buildAllowanceCounter('cold')],
         consumedValues: [null, null],
-      }),
-    ).toEqual([]);
-  });
-
-  it('skips a limit that is not enforced, however far past its cap', () => {
-    expect(
-      findExhaustedCounters({
-        counters: [buildLimitCounter('metered', { isEnforced: false })],
-        consumedValues: [5_000],
       }),
     ).toEqual([]);
   });

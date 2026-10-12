@@ -22,7 +22,6 @@ const buildLimitCounter = (unit: UsageUnit): LimitQuotaCounter => ({
   kind: 'limit',
   usageLimitId: null,
   isDefault: false,
-  isEnforced: true,
   key: unit,
   limitValue: 1_000_000,
   unit,

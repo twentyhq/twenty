@@ -8,18 +8,15 @@ export const buildLimitQuotaCounter = ({
   workspaceId,
   limit,
   period,
-  isEnforced,
 }: {
   workspaceId: string;
   limit: Omit<FlatQuotaLimit, 'limitKind' | 'periodCount' | 'burstValue'>;
   period: UsagePeriod;
-  isEnforced: boolean;
 }): LimitQuotaCounter => {
   const counter = {
     kind: 'limit' as const,
     usageLimitId: limit.id,
     isDefault: false,
-    isEnforced,
     limitValue: limit.limitValue,
     unit: limit.unit,
     resourceType: limit.resourceType,

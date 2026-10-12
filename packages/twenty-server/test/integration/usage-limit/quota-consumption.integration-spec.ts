@@ -25,8 +25,10 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { type UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { type UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
+import { type UsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-month-period.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -122,6 +124,9 @@ describe('Usage quota consumption', () => {
 
   const getQuotaService = () =>
     getAppProviderByClassName<UsageLimitQuotaService>('UsageLimitQuotaService');
+
+  const getUsageLimitService = () =>
+    getAppProviderByClassName<UsageLimitService>('UsageLimitService');
 
   const refreshUsageLimitsCache = () =>
     getAppProviderByClassName<WorkspaceCacheService>(
@@ -551,6 +556,12 @@ describe('Usage quota consumption', () => {
       });
 
       await waitForUsageEventRows(usageEventRowCount + 2);
+
+      await usageLimitRepository.update(
+        { id: usageLimitIdByUnit[UsageUnit.INVOCATION] },
+        { limitValue: UNREACHABLE_LIMIT_VALUE },
+      );
+      await refreshUsageLimitsCache();
     },
     EXECUTION_TIMEOUT_MS,
   );
@@ -667,7 +678,7 @@ describe('Usage quota consumption', () => {
       );
     });
 
-    it('debits a limit the workspace is not entitled to without refusing on it', async () => {
+    it('re-reads a limit from the ledger once the entitlement turns it back on', async () => {
       const { spenderId } = await saveCreditQuotaForNewSpender({
         limitValue: 500,
         isInstanceOverride: false,
@@ -679,14 +690,28 @@ describe('Usage quota consumption', () => {
           ),
           'isIntraWorkspaceLimitEntitled',
         )
-        .mockResolvedValue(false);
+        .mockResolvedValue(true);
 
       try {
-        expect(
-          await debitRunAheadOfRecord({ spenderId, creditsUsedMicro: 600 }),
-        ).toEqual({ exhaustedKind: null });
+        await chargeRun({ spenderId, creditsUsedMicro: 100 });
+        entitlementSpy.mockResolvedValue(false);
+
+        expect(await chargeRun({ spenderId, creditsUsedMicro: 600 })).toEqual({
+          exhaustedKind: null,
+        });
         expect(await findRunRefusal({ spenderId, costMicro: 0 })).toBeNull();
+
+        await expectEventually(
+          async () => {
+            expect(await countUsageEventRows(spenderId)).toBe(2);
+          },
+          { timeoutMs: CLICKHOUSE_FLUSH_TIMEOUT_MS, intervalMs: 250 },
+        );
+
         entitlementSpy.mockResolvedValue(true);
+        await getQuotaService().dropIntraWorkspaceLimitCounters(
+          SEED_APPLE_WORKSPACE_ID,
+        );
 
         expect(await findRunRefusal({ spenderId, costMicro: 0 })).toMatchObject(
           { exhaustedKind: 'limit', limitValue: 500 },
@@ -694,6 +719,99 @@ describe('Usage quota consumption', () => {
       } finally {
         entitlementSpy.mockRestore();
       }
+    });
+
+    it('re-reads a limit from the ledger once an operator edit makes it enforced again', async () => {
+      const usageLimit = await usageLimitRepository.save({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        resourceType: UsageResourceType.LOGIC_FUNCTION,
+        operationType: UsageOperationType.CODE_EXECUTION,
+        spenderType: 'logicFunction',
+        spenderId: logicFunctionId,
+        limitKind: 'quota',
+        periodCount: 1,
+        periodUnit: 'week',
+        unit: UsageUnit.CREDIT,
+        limitValue: UNREACHABLE_LIMIT_VALUE,
+        burstValue: null,
+        isInstanceOverride: false,
+      });
+
+      savedUsageLimitIds.push(usageLimit.id);
+      await refreshUsageLimitsCache();
+
+      const entitlementSpy = jest
+        .spyOn(
+          getAppProviderByClassName<UsageLimitEntitlementService>(
+            'UsageLimitEntitlementService',
+          ),
+          'isIntraWorkspaceLimitEntitled',
+        )
+        .mockResolvedValue(true);
+      const usageEventRowCount = await countUsageEventRows();
+
+      try {
+        await chargeRun({ spenderId: logicFunctionId, creditsUsedMicro: 100 });
+
+        const [counterKey] = await redis.keys(
+          `*:quota-consumed:${usageLimit.id}:*`,
+        );
+
+        jestExpectToBeDefined(counterKey);
+
+        const enforcedLimitValue = Number(await redis.get(counterKey)) + 300;
+
+        entitlementSpy.mockResolvedValue(false);
+        await chargeRun({ spenderId: logicFunctionId, creditsUsedMicro: 600 });
+        await waitForUsageEventRows(usageEventRowCount + 2);
+
+        await getUsageLimitService().update({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          input: {
+            id: usageLimit.id,
+            payload: {
+              resourceType: UsageResourceType.LOGIC_FUNCTION,
+              operationType: UsageOperationType.CODE_EXECUTION,
+              spenderType: 'logicFunction',
+              spenderId: logicFunctionId,
+              limitKind: 'quota',
+              periodCount: 1,
+              periodUnit: 'week',
+              unit: UsageUnit.CREDIT,
+              limitValue: enforcedLimitValue,
+              burstValue: null,
+            },
+          },
+          isOperator: true,
+        });
+
+        expect(
+          await findRunRefusal({ spenderId: logicFunctionId, costMicro: 0 }),
+        ).toMatchObject({
+          exhaustedKind: 'limit',
+          limitValue: enforcedLimitValue,
+        });
+      } finally {
+        entitlementSpy.mockRestore();
+        await usageLimitRepository.delete(usageLimit.id);
+        await refreshUsageLimitsCache();
+      }
+    });
+
+    it('keeps an operator override counter when the entitlement turns on', async () => {
+      const { spenderId } = await saveCreditQuotaForNewSpender({
+        limitValue: 500,
+      });
+
+      await debitRunAheadOfRecord({ spenderId, creditsUsedMicro: 600 });
+      await getQuotaService().dropIntraWorkspaceLimitCounters(
+        SEED_APPLE_WORKSPACE_ID,
+      );
+
+      expect(await findRunRefusal({ spenderId, costMicro: 0 })).toMatchObject({
+        exhaustedKind: 'limit',
+        limitValue: 500,
+      });
     });
   });
 
@@ -724,25 +842,34 @@ describe('Usage quota consumption', () => {
         },
       });
 
-    const debitEmailAheadOfRecord = (quantity: number) =>
-      getQuotaService().debitAheadOfRecord({
+    const chargeEmail = async (quantity: number) => {
+      await getQuotaService().charge({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
-        event: buildEmailEvent(quantity),
+        events: [buildEmailEvent(quantity)],
       });
+      chargedEmailRowCount++;
+    };
+
+    const buildEmailOverrideScope = (
+      periodUnit: PeriodUnit,
+    ): UsageLimitScope &
+      Pick<UsageLimitEntity, 'limitValue' | 'burstValue'> => ({
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.EMAIL_SEND,
+      spenderType: 'workspace',
+      spenderId: '',
+      limitKind: 'quota',
+      periodCount: 1,
+      periodUnit,
+      unit: UsageUnit.INVOCATION,
+      limitValue: emailDailyLimit + 1_000,
+      burstValue: null,
+    });
 
     const saveEmailOverride = async (periodUnit: PeriodUnit) => {
       const usageLimit = await usageLimitRepository.save({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
-        resourceType: UsageResourceType.EMAIL,
-        operationType: UsageOperationType.EMAIL_SEND,
-        spenderType: 'workspace',
-        spenderId: '',
-        limitKind: 'quota',
-        periodCount: 1,
-        periodUnit,
-        unit: UsageUnit.INVOCATION,
-        limitValue: emailDailyLimit + 1_000,
-        burstValue: null,
+        ...buildEmailOverrideScope(periodUnit),
         isInstanceOverride: true,
       });
 
@@ -806,11 +933,7 @@ describe('Usage quota consumption', () => {
     }, EXECUTION_TIMEOUT_MS);
 
     it('refuses the email that would cross the daily default', async () => {
-      await getQuotaService().charge({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        events: [buildEmailEvent(emailDailyLimit - 1)],
-      });
-      chargedEmailRowCount++;
+      await chargeEmail(emailDailyLimit - 1);
 
       expect(await findEmailRefusal(1)).toBeNull();
       expect(await findEmailRefusal(2)).toMatchObject({
@@ -828,29 +951,47 @@ describe('Usage quota consumption', () => {
     });
 
     it(
-      'forgives nothing when the override is deleted, recreated or moved off the default',
+      're-reads the default from the ledger once its override is deleted',
       async () => {
-        await debitEmailAheadOfRecord(1);
-        await usageLimitRepository.delete(overrideUsageLimitId);
-        await refreshUsageLimitsCache();
+        await chargeEmail(1);
+        await waitForChargedEmailRows();
+
+        await getUsageLimitService().delete({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          usageLimitId: overrideUsageLimitId,
+          isOperator: true,
+        });
 
         expect(await findEmailRefusal(1)).toMatchObject({
           exhaustedKind: 'limit',
           isDefault: true,
         });
+      },
+      EXECUTION_TIMEOUT_MS,
+    );
 
-        await waitForChargedEmailRows();
+    it(
+      're-reads the default from the ledger once its override moves to another period',
+      async () => {
+        await deleteEmailRows();
         await flushQuotaCounters();
+        chargedEmailRowCount = 0;
 
+        await chargeEmail(emailDailyLimit - 2);
         overrideUsageLimitId = await saveEmailOverride('day');
-        await debitEmailAheadOfRecord(1);
-        await usageLimitRepository.update(
-          { id: overrideUsageLimitId },
-          { periodUnit: 'month' },
-        );
-        await refreshUsageLimitsCache();
+        await chargeEmail(1);
+        await waitForChargedEmailRows();
 
-        expect(await findEmailRefusal(0)).toMatchObject({
+        await getUsageLimitService().update({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          input: {
+            id: overrideUsageLimitId,
+            payload: buildEmailOverrideScope('month'),
+          },
+          isOperator: true,
+        });
+
+        expect(await findEmailRefusal(2)).toMatchObject({
           exhaustedKind: 'limit',
           isDefault: true,
         });

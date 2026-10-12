@@ -27,7 +27,6 @@ const buildCounter = (
   kind: 'limit',
   usageLimitId: null,
   isDefault: false,
-  isEnforced: true,
   key: 'counter-key',
   limitValue: 1_000,
   unit: UsageUnit.CREDIT,

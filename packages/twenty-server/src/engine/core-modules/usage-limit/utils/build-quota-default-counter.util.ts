@@ -7,18 +7,15 @@ export const buildQuotaDefaultCounter = ({
   workspaceId,
   quotaLimitDefault,
   period,
-  isEnforced,
 }: {
   workspaceId: string;
   quotaLimitDefault: QuotaLimitDefault;
   period: UsagePeriod;
-  isEnforced: boolean;
 }): LimitQuotaCounter => {
   const counter = {
     kind: 'limit' as const,
     usageLimitId: null,
     isDefault: true,
-    isEnforced,
     limitValue: quotaLimitDefault.limitValue,
     unit: quotaLimitDefault.unit,
     resourceType: quotaLimitDefault.resourceType,

@@ -49,16 +49,13 @@ const buildDefault = (
 
 const buildCounters = ({
   limits = [],
-  enforceableLimits = limits,
   quotaLimitDefaults = [],
 }: {
   limits?: FlatQuotaLimit[];
-  enforceableLimits?: FlatQuotaLimit[];
   quotaLimitDefaults?: QuotaLimitDefault[];
 }) =>
   buildQuotaCounters({
     limits,
-    enforceableLimits,
     quotaLimitDefaults,
     usageSpenders: { userWorkspaceId: 'user-1' },
     workspaceId: 'workspace-1',
@@ -77,7 +74,6 @@ describe('buildQuotaCounters', () => {
         kind: 'limit',
         usageLimitId: 'limit-1',
         isDefault: false,
-        isEnforced: true,
         key: `{workspace-1}:quota-consumed:limit-1:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
         limitValue: 1_000_000,
         unit: UsageUnit.CREDIT,
@@ -174,7 +170,6 @@ describe('buildQuotaCounters', () => {
         kind: 'limit',
         usageLimitId: null,
         isDefault: true,
-        isEnforced: true,
         key: `{workspace-1}:quota-consumed:default:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
         limitValue: 5_000,
         unit: UsageUnit.CREDIT,
@@ -190,7 +185,7 @@ describe('buildQuotaCounters', () => {
   });
 
   it.each([500, 50_000])(
-    'keeps metering a default that a workspace limit of %i overrides, without enforcing it',
+    'overrides the default with a workspace limit of %i',
     (limitValue) => {
       const counters = buildCounters({
         limits: [buildLimit({ limitValue })],
@@ -198,44 +193,10 @@ describe('buildQuotaCounters', () => {
       });
 
       expect(counters).toEqual([
-        expect.objectContaining({
-          isDefault: false,
-          isEnforced: true,
-          limitValue,
-        }),
-        expect.objectContaining({ isDefault: true, isEnforced: false }),
+        expect.objectContaining({ isDefault: false, limitValue }),
       ]);
     },
   );
-
-  it('meters a limit the workspace is not entitled to, without enforcing it', () => {
-    const counters = buildCounters({
-      limits: [
-        buildLimit({
-          spenderType: 'userWorkspace',
-          spenderId: 'user-1',
-        }),
-      ],
-      enforceableLimits: [],
-    });
-
-    expect(counters).toEqual([
-      expect.objectContaining({ usageLimitId: 'limit-1', isEnforced: false }),
-    ]);
-  });
-
-  it('enforces the default under a limit the workspace is not entitled to', () => {
-    const counters = buildCounters({
-      limits: [buildLimit({})],
-      enforceableLimits: [],
-      quotaLimitDefaults: [buildDefault()],
-    });
-
-    expect(counters).toEqual([
-      expect.objectContaining({ isDefault: false, isEnforced: false }),
-      expect.objectContaining({ isDefault: true, isEnforced: true }),
-    ]);
-  });
 
   it('skips a default whose period was not resolved', () => {
     const counters = buildCounters({

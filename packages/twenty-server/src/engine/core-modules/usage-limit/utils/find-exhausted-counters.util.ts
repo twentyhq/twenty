@@ -16,10 +16,7 @@ export const findExhaustedCounters = ({
   counters.filter((counter, index) => {
     const consumed = consumedValues[index];
 
-    if (
-      !isDefined(consumed) ||
-      (counter.kind === 'limit' && !counter.isEnforced)
-    ) {
+    if (!isDefined(consumed)) {
       return false;
     }
 
