@@ -254,6 +254,73 @@ describe('app OAuth access while authorization is pending', () => {
     expect(tokenExchangeCount).toBe(1);
   });
 
+  it('waits for a concurrent change to the reconnect target before saving credentials', async () => {
+    await setMemberRole(administratorRoleId);
+    const state = await startAuthorization({
+      visibility: 'workspace',
+      reconnectingConnectedAccountId: application.connectedAccountId,
+    });
+    const [original] = await readAccounts();
+    const transaction = globalThis.testDataSource.createQueryRunner();
+
+    await transaction.connect();
+    await transaction.startTransaction();
+    await transaction.query(
+      'SELECT id FROM core."connectedAccount" WHERE id = $1 FOR UPDATE',
+      [application.connectedAccountId],
+    );
+    const [{ pid }] = await transaction.query('SELECT pg_backend_pid() AS pid');
+    const completing = completeAuthorization(state);
+
+    try {
+      let isBlocked = false;
+
+      for (let attempt = 0; attempt < 100; attempt++) {
+        const [activity] = await globalThis.testDataSource.query(
+          'SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE $1 = ANY(pg_blocking_pids(pid))) AS blocked',
+          [pid],
+        );
+
+        if (activity.blocked) {
+          isBlocked = true;
+          break;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 20));
+      }
+
+      expect(isBlocked).toBe(true);
+      await transaction.query(
+        'UPDATE core."connectedAccount" SET visibility = $1, "userWorkspaceId" = $2 WHERE id = $3',
+        [
+          'user',
+          USER_WORKSPACE_DATA_SEED_IDS.TIM,
+          application.connectedAccountId,
+        ],
+      );
+      await transaction.commitTransaction();
+
+      const redirect = await completing;
+
+      expect(redirect.searchParams.get('errorMessage')).toBeTruthy();
+      expect(tokenExchangeCount).toBe(1);
+      expect(await readAccounts()).toEqual([
+        {
+          ...original,
+          visibility: 'user',
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+        },
+      ]);
+    } finally {
+      if (transaction.isTransactionActive) {
+        await transaction.rollbackTransaction();
+      }
+
+      await transaction.release();
+      await completing.catch(() => undefined);
+    }
+  });
+
   it('persists a successful personal Add with encrypted tokens and the initiating owner', async () => {
     const redirect = await completeAuthorization(
       await startAuthorization({ visibility: 'user' }),
