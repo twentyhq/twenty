@@ -1,5 +1,4 @@
-import { isNull, isObject, isUndefined } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isFunction, isNull, isObject, isUndefined } from '@sniptt/guards';
 
 import { normalizeScrollOffset } from '@/polyfills/scroll/utils/normalizeScrollOffset';
 import { type ScrollAxisOffsets } from '@/types/ScrollAxisOffsets';
@@ -20,7 +19,7 @@ export const normalizeScrollToArguments = (
     return {};
   }
 
-  if (!isObject(scrollToOptions)) {
+  if (!isObject(scrollToOptions) && !isFunction(scrollToOptions)) {
     throw new TypeError(
       "Failed to execute 'scrollTo' on 'Element': The provided value is not of type 'ScrollToOptions'.",
     );
@@ -30,7 +29,7 @@ export const normalizeScrollToArguments = (
   const left: unknown = Reflect.get(scrollToOptions, 'left');
 
   return {
-    ...(isDefined(top) && { top: normalizeScrollOffset(top) }),
-    ...(isDefined(left) && { left: normalizeScrollOffset(left) }),
+    ...(!isUndefined(top) && { top: normalizeScrollOffset(top) }),
+    ...(!isUndefined(left) && { left: normalizeScrollOffset(left) }),
   };
 };
