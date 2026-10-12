@@ -12,7 +12,7 @@ import { type TeamsAssistantAnswerResult } from 'src/features/chat/logic-functio
 import { type TeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/types/teams-assistant-request-record.type';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { resolveTeamsSenderWorkspaceMemberId } from 'src/features/chat/logic-functions/utils/resolve-teams-sender-workspace-member-id';
-import { runTeamsAssistantAgent } from 'src/features/chat/logic-functions/utils/run-teams-assistant-agent';
+import { runTeamsAssistantAgentOrThrow } from 'src/features/chat/logic-functions/utils/run-teams-assistant-agent-or-throw';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
 import { toErrorMessage } from 'src/utils/to-error-message';
 
@@ -88,7 +88,7 @@ export const answerTeamsAssistantRequest = async ({
       workspaceMemberId,
     });
 
-    const responseText = await runTeamsAssistantAgent({
+    const responseText = await runTeamsAssistantAgentOrThrow({
       requestText,
       workspaceMemberId,
       deadlineAtMs: agentDeadlineAtMs,

@@ -48,8 +48,8 @@ vi.mock(
 );
 
 vi.mock(
-  'src/features/chat/logic-functions/utils/run-teams-assistant-agent',
-  () => ({ runTeamsAssistantAgent: runAgentMock }),
+  'src/features/chat/logic-functions/utils/run-teams-assistant-agent-or-throw',
+  () => ({ runTeamsAssistantAgentOrThrow: runAgentMock }),
 );
 
 vi.mock('src/features/chat/logic-functions/utils/send-teams-activity', () => ({

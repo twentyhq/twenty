@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { runTeamsAssistantAgent } from 'src/features/chat/logic-functions/utils/run-teams-assistant-agent';
+import { runTeamsAssistantAgentOrThrow } from 'src/features/chat/logic-functions/utils/run-teams-assistant-agent-or-throw';
 
 const runAgentMock = vi.hoisted(() => vi.fn());
 
@@ -13,7 +13,7 @@ const INPUT = {
   workspaceMemberId: 'workspace-member-1',
 };
 
-describe('runTeamsAssistantAgent', () => {
+describe('runTeamsAssistantAgentOrThrow', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     runAgentMock.mockResolvedValue({
@@ -30,7 +30,10 @@ describe('runTeamsAssistantAgent', () => {
 
   it('should run the agent as the member and return the trimmed answer', async () => {
     await expect(
-      runTeamsAssistantAgent({ ...INPUT, deadlineAtMs: Date.now() + 60_000 }),
+      runTeamsAssistantAgentOrThrow({
+        ...INPUT,
+        deadlineAtMs: Date.now() + 60_000,
+      }),
     ).resolves.toBe('Acme has 3 open deals.');
 
     expect(runAgentMock).toHaveBeenCalledTimes(1);
@@ -49,7 +52,7 @@ describe('runTeamsAssistantAgent', () => {
 
   it('should not start the agent when the deadline has already passed', async () => {
     await expect(
-      runTeamsAssistantAgent({ ...INPUT, deadlineAtMs: Date.now() - 1 }),
+      runTeamsAssistantAgentOrThrow({ ...INPUT, deadlineAtMs: Date.now() - 1 }),
     ).rejects.toThrow('Teams deadline passed before the agent could start');
 
     expect(runAgentMock).not.toHaveBeenCalled();
@@ -64,7 +67,7 @@ describe('runTeamsAssistantAgent', () => {
       }),
     );
 
-    const run = runTeamsAssistantAgent({
+    const run = runTeamsAssistantAgentOrThrow({
       ...INPUT,
       deadlineAtMs: Date.now() + 1_000,
     });
@@ -90,7 +93,10 @@ describe('runTeamsAssistantAgent', () => {
     });
 
     await expect(
-      runTeamsAssistantAgent({ ...INPUT, deadlineAtMs: Date.now() + 60_000 }),
+      runTeamsAssistantAgentOrThrow({
+        ...INPUT,
+        deadlineAtMs: Date.now() + 60_000,
+      }),
     ).rejects.toThrow('Agent run failed');
   });
 
@@ -102,7 +108,10 @@ describe('runTeamsAssistantAgent', () => {
     });
 
     await expect(
-      runTeamsAssistantAgent({ ...INPUT, deadlineAtMs: Date.now() + 60_000 }),
+      runTeamsAssistantAgentOrThrow({
+        ...INPUT,
+        deadlineAtMs: Date.now() + 60_000,
+      }),
     ).rejects.toThrow('Agent returned an empty response');
   });
 });

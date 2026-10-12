@@ -6,7 +6,7 @@ import { TEAMS_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/features/chat/co
 const hasResponseText = (result: object): result is { response: string } =>
   'response' in result && typeof result.response === 'string';
 
-export const runTeamsAssistantAgent = async ({
+export const runTeamsAssistantAgentOrThrow = async ({
   requestText,
   workspaceMemberId,
   deadlineAtMs,
@@ -29,7 +29,7 @@ export const runTeamsAssistantAgent = async ({
   });
 
   try {
-    // TODO: send `input` instead of the deprecated `messages` once the app builds against a twenty-sdk that ships it
+    // TODO(@abdulrahmancodes): send `input` instead of the deprecated `messages` once the app builds against a twenty-sdk that ships it
     const agentResult = await Promise.race([
       runAgent({
         agentUniversalIdentifier: TEAMS_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
