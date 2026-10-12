@@ -5,6 +5,7 @@ import { ConnectionProviderEntity } from 'src/engine/core-modules/application/co
 import { ApplicationConnectionsController } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.controller';
 import { ApplicationConnectionsResolver } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.resolver';
 import { ApplicationConnectionAuthFailureService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connection-auth-failure.service';
+import { ApplicationConnectionDeduplicationService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connection-deduplication.service';
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -35,6 +36,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
   providers: [
     provideWorkspaceScopedRepository(ConnectionProviderEntity),
     ApplicationConnectionAuthFailureService,
+    ApplicationConnectionDeduplicationService,
     ApplicationConnectionsListService,
     ApplicationConnectionsResolver,
   ],

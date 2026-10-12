@@ -9,9 +9,12 @@ import { Args, ID, Mutation, Query } from '@nestjs/graphql';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ConnectionProviderGraphqlApiExceptionInterceptor } from 'src/engine/core-modules/application/connection-provider/interceptors/connection-provider-graphql-api-exception.interceptor';
 import { AppConnectionObjectDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/app-connection.object';
+import { DeduplicateAppConnectionInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/deduplicate-app-connection.input';
+import { DeduplicateAppConnectionResult } from 'src/engine/core-modules/application/connection-provider/connections/dtos/deduplicate-app-connection.result';
 import { ListAppConnectionsInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/list-app-connections.input';
 import { ReportAppConnectionAuthFailureInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/report-app-connection-auth-failure.input';
 import { ApplicationConnectionAuthFailureService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connection-auth-failure.service';
+import { ApplicationConnectionDeduplicationService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connection-deduplication.service';
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -40,6 +43,7 @@ export class ApplicationConnectionsResolver {
   constructor(
     private readonly listService: ApplicationConnectionsListService,
     private readonly authFailureService: ApplicationConnectionAuthFailureService,
+    private readonly deduplicationService: ApplicationConnectionDeduplicationService,
   ) {}
 
   @Query(() => [AppConnectionObjectDto])
@@ -91,5 +95,23 @@ export class ApplicationConnectionsResolver {
     });
 
     return true;
+  }
+
+  @Mutation(() => DeduplicateAppConnectionResult)
+  async deduplicateConnectedAccount(
+    @AuthApplication() application: FlatApplication,
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @Args('input') input: DeduplicateAppConnectionInput,
+  ): Promise<DeduplicateAppConnectionResult> {
+    return this.deduplicationService.deduplicateOrThrow({
+      applicationId: application.id,
+      workspaceId: workspace.id,
+      requestUserWorkspaceId: userWorkspaceId ?? null,
+      connectedAccountId: input.connectedAccountId,
+      externalAccountId: input.externalAccountId,
+      handle: input.handle ?? null,
+    });
   }
 }
