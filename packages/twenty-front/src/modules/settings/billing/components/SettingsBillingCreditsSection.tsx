@@ -181,7 +181,6 @@ export const SettingsBillingCreditsSection = ({
     100,
     Math.max(0, remainingCreditsPercentage),
   );
-  const isCreditsEmpty = clampedRemainingCreditsPercentage === 0;
 
   // rolloverCredits sums every active grant, not just the rolled-over ones
   const extraCredits = rolloverCredits;
@@ -257,11 +256,7 @@ export const SettingsBillingCreditsSection = ({
             value={clampedRemainingCreditsPercentage}
             aria-label={t`Remaining credits`}
             backgroundColor={themeCssVariables.background.tertiary}
-            barColor={
-              isCreditsEmpty
-                ? themeCssVariables.color.red9
-                : themeCssVariables.color.green9
-            }
+            barColor={themeCssVariables.color.green9}
             withBorderRadius
           />
           <StyledCreditsFooter>
