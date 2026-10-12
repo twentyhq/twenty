@@ -36,6 +36,7 @@ type SessionForm = {
 };
 
 type ProductOption = {
+  category: string;
   id: string;
   name: string;
   sessionFormat: string;
@@ -78,8 +79,11 @@ type Participant = {
     id: string;
     name: { firstName: string | null; lastName: string | null } | null;
   } | null;
+  paymentStatus: string;
   status: string;
 };
+
+type PendingParticipant = { person: PersonOption; productId: string | null; paymentType: 'MEMBERSHIP' | 'PAY_AS_YOU_GO' };
 
 type PersonOption = {
   id: string;
@@ -438,9 +442,9 @@ const ClassSchedule = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [reloadVersion, setReloadVersion] = useState(0);
   const [participants, setParticipants] = useState<Participant[]>([]);
-  const [pendingParticipants, setPendingParticipants] = useState<PersonOption[]>(
-    [],
-  );
+  const [pendingParticipants, setPendingParticipants] = useState<PendingParticipant[]>([]);
+  const [bookingPaymentType, setBookingPaymentType] = useState<'MEMBERSHIP' | 'PAY_AS_YOU_GO'>('MEMBERSHIP');
+  const [payAsYouGoProductId, setPayAsYouGoProductId] = useState('');
   const [isPersonPickerOpen, setIsPersonPickerOpen] = useState(false);
   const [personSearch, setPersonSearch] = useState('');
   const [personResults, setPersonResults] = useState<PersonOption[]>([]);
@@ -485,7 +489,7 @@ const ClassSchedule = () => {
           },
           studioProducts: {
             __args: { filter: { isActive: { eq: true } }, first: 100 },
-            edges: { node: { id: true, name: true, sessionFormat: true, durationMinutes: true, defaultSessionCapacity: true } },
+            edges: { node: { id: true, name: true, category: true, sessionFormat: true, durationMinutes: true, defaultSessionCapacity: true } },
           },
         } as never)) as unknown as {
           classSessions?: { edges?: Array<{ node: ClassSession }> };
@@ -543,14 +547,14 @@ const ClassSchedule = () => {
             (participant) => participant.person?.id === person.id,
           ) &&
           !pendingParticipants.some(
-            (pendingParticipant) => pendingParticipant.id === person.id,
+            (pendingParticipant) => pendingParticipant.person.id === person.id,
           ) &&
-          getMatchingMembership(person, sessionForm) !== null,
+          (bookingPaymentType === 'PAY_AS_YOU_GO' ? payAsYouGoProductId !== '' : getMatchingMembership(person, sessionForm) !== null),
       )
       .sort((firstPerson, secondPerson) =>
         getPersonLabel(firstPerson).localeCompare(getPersonLabel(secondPerson), 'ru'),
       );
-  }, [activeParticipants, pendingParticipants, personResults, sessionForm]);
+  }, [activeParticipants, bookingPaymentType, payAsYouGoProductId, pendingParticipants, personResults, sessionForm]);
   const isFutureSession =
     sessionForm !== null && new Date(sessionForm.startsAt).getTime() > Date.now();
   const splitBooking = activeParticipants.find(
@@ -575,6 +579,7 @@ const ClassSchedule = () => {
             node: {
               id: true,
               bookingType: true,
+              paymentStatus: true,
               status: true,
               membership: { id: true },
               pair: { id: true },
@@ -774,6 +779,17 @@ const ClassSchedule = () => {
     }
   };
 
+  const createPayAsYouGoBooking = async (person: PersonOption, productId: string, classSessionId: string): Promise<boolean> => {
+    try {
+      const result = await new RestApiClient().post<{ message?: string; success: boolean }>('/s/studio/bookings/create-pay-as-you-go', { classSessionId, idempotencyKey: `pay-as-you-go:${person.id}:${classSessionId}`, personId: person.id, productId });
+      if (!result.success) throw new Error(result.message ?? 'Не удалось добавить клиента.');
+      return true;
+    } catch (saveError) {
+      void enqueueSnackbar({ message: saveError instanceof Error ? saveError.message : 'Не удалось добавить клиента.', variant: 'error' });
+      return false;
+    }
+  };
+
   const toggleSelectedPerson = (person: PersonOption) => {
     const isSelected = selectedPeople.some(
       (selectedPerson) => selectedPerson.id === person.id,
@@ -809,10 +825,7 @@ const ClassSchedule = () => {
     }
 
     if (sessionForm.id === null) {
-      setPendingParticipants((currentPeople) => [
-        ...currentPeople,
-        ...selectedPeople,
-      ]);
+      setPendingParticipants((currentPeople) => [...currentPeople, ...selectedPeople.map((person) => ({ person, productId: bookingPaymentType === 'PAY_AS_YOU_GO' ? payAsYouGoProductId : null, paymentType: bookingPaymentType }))]);
       setSelectedPeople([]);
       setPersonSearch('');
       setPersonResults([]);
@@ -821,7 +834,7 @@ const ClassSchedule = () => {
     }
 
     for (const person of selectedPeople) {
-      const wasAdded = await createRegularBooking(person, sessionForm.id);
+      const wasAdded = bookingPaymentType === 'PAY_AS_YOU_GO' ? await createPayAsYouGoBooking(person, payAsYouGoProductId, sessionForm.id) : await createRegularBooking(person, sessionForm.id);
       if (!wasAdded) return;
     }
 
@@ -998,7 +1011,7 @@ const ClassSchedule = () => {
           const result = await new RestApiClient().post<{
             message?: string;
             success: boolean;
-          }>('/s/studio/bookings/cancel', {
+          }>(participant.paymentStatus === 'EXPECTED' ? '/s/studio/bookings/cancel-pay-as-you-go' : '/s/studio/bookings/cancel', {
             bookingId: participant.id,
             cancelledAt: new Date().toISOString(),
             idempotencyKey: `schedule-studio-cancel:${participant.id}`,
@@ -1120,6 +1133,11 @@ const ClassSchedule = () => {
           },
         } as never)) as unknown as { createClassSession: { id: string } };
         const classSessionId = response.createClassSession.id;
+        try {
+          await client.mutation({ createStudioEvent: { __args: { data: { name: 'Создание занятия', eventType: 'SESSION_CREATED', outcome: 'SUCCESS', occurredAt: new Date().toISOString(), classSessionId, details: name } }, id: true } } as never);
+        } catch {
+          // The event log must not prevent creating a schedule slot.
+        }
         if (shouldAssignSplit) {
           const isSplitAdded = await createSplitBooking(classSessionId);
           if (!isSplitAdded) {
@@ -1127,7 +1145,7 @@ const ClassSchedule = () => {
           }
         } else {
           for (const participant of pendingParticipants) {
-            const wasAdded = await createRegularBooking(participant, classSessionId);
+            const wasAdded = participant.paymentType === 'PAY_AS_YOU_GO' && participant.productId !== null ? await createPayAsYouGoBooking(participant.person, participant.productId, classSessionId) : await createRegularBooking(participant.person, classSessionId);
             if (!wasAdded) {
               return;
             }
@@ -1357,8 +1375,8 @@ const ClassSchedule = () => {
               </strong>
               {sessionForm.id === null
                 ? pendingParticipants.map((participant) => (
-                    <div key={participant.id} style={styles.participant}>
-                      <span>{getPersonLabel(participant)}</span>
+                    <div key={participant.person.id} style={styles.participant}>
+                      <span>{getPersonLabel(participant.person)}{participant.paymentType === 'PAY_AS_YOU_GO' ? ' · оплата ожидается' : ''}</span>
                       <button
                         style={styles.smallButton}
                         type="button"
@@ -1366,7 +1384,7 @@ const ClassSchedule = () => {
                           setPendingParticipants((currentParticipants) =>
                             currentParticipants.filter(
                               (currentParticipant) =>
-                                currentParticipant.id !== participant.id,
+                                currentParticipant.person.id !== participant.person.id,
                             ),
                           )
                         }
@@ -1379,7 +1397,7 @@ const ClassSchedule = () => {
               {sessionForm.id !== null && isParticipantsLoading ? <span>Загрузка участников…</span> : null}
               {sessionForm.id !== null && !isParticipantsLoading ? activeParticipants.map((participant) => (
                 <div key={participant.id} style={styles.participant}>
-                  <span>{getPersonLabel(participant.person)}</span>
+                  <span>{getPersonLabel(participant.person)}{participant.paymentStatus === 'EXPECTED' ? ' · оплата ожидается' : ''}</span>
                 </div>
               )) : null}
               {sessionForm.id !== null && !isParticipantsLoading && activeParticipants.length === 0 ? <span>Участников пока нет.</span> : null}
@@ -1500,6 +1518,22 @@ const ClassSchedule = () => {
         <div style={styles.pickerBackdrop}>
           <div style={styles.picker}>
             <strong>Добавить клиента</strong>
+            <label style={styles.formLabel}>
+              Способ записи
+              <select style={styles.input} value={bookingPaymentType} onChange={(event) => setBookingPaymentType(event.target.value as 'MEMBERSHIP' | 'PAY_AS_YOU_GO')}>
+                <option value="MEMBERSHIP">По пакету</option>
+                <option value="PAY_AS_YOU_GO">Оплата по факту</option>
+              </select>
+            </label>
+            {bookingPaymentType === 'PAY_AS_YOU_GO' ? (
+              <label style={styles.formLabel}>
+                Услуга
+                <select style={styles.input} value={payAsYouGoProductId} onChange={(event) => setPayAsYouGoProductId(event.target.value)}>
+                  <option value="">Выберите услугу</option>
+                  {products.filter((product) => ['SINGLE', 'PERSONAL'].includes(product.category) && product.sessionFormat === sessionForm.sessionFormat).map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
+                </select>
+              </label>
+            ) : null}
             <input
               autoFocus
               placeholder="Имя, телефон или email"
@@ -1524,16 +1558,14 @@ const ClassSchedule = () => {
                           <span>
                             <input
                               checked={isSelected}
-                              disabled={!isSelected && selectedPeople.length >= availablePersonSlots}
+                              disabled={(!isSelected && selectedPeople.length >= availablePersonSlots) || (bookingPaymentType === 'PAY_AS_YOU_GO' && payAsYouGoProductId === '')}
                               type="checkbox"
                               onChange={() => toggleSelectedPerson(person)}
                             />{' '}
                             <strong>{getPersonLabel(person)}</strong>
                           </span>
                           <span style={styles.contact}>{getPersonContact(person)}</span>
-                          <span style={styles.membershipAvailable}>
-                            {membership?.product?.name} · доступно: {membership?.visitsAvailable}
-                          </span>
+                          <span style={styles.membershipAvailable}>{bookingPaymentType === 'PAY_AS_YOU_GO' ? 'Оплата будет ожидаться после занятия' : `${membership?.product?.name} · доступно: ${membership?.visitsAvailable}`}</span>
                         </label>
                       );
                     })

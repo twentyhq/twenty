@@ -4,7 +4,7 @@ type StudioEventInput = {
   bookingId?: string;
   classSessionId?: string;
   details?: string;
-  eventType: 'BOOKING_CREATED' | 'BOOKING_CANCELLED' | 'OPERATION_FAILED';
+  eventType: 'BOOKING_CREATED' | 'BOOKING_CANCELLED' | 'OPERATION_FAILED' | 'PAYMENT_CONFIRMED' | 'SESSION_CREATED';
   idempotencyKey?: string;
   membershipId?: string;
   outcome: 'SUCCESS' | 'FAILURE';
@@ -18,7 +18,7 @@ export const recordStudioEvent = async (
     await client.mutation({
       createStudioEvent: {
         __args: { data: {
-          name: input.eventType === 'BOOKING_CREATED' ? 'Создание записи' : input.eventType === 'BOOKING_CANCELLED' ? 'Отмена записи' : 'Ошибка операции',
+          name: input.eventType === 'BOOKING_CREATED' ? 'Создание записи' : input.eventType === 'BOOKING_CANCELLED' ? 'Отмена записи' : input.eventType === 'SESSION_CREATED' ? 'Создание занятия' : input.eventType === 'PAYMENT_CONFIRMED' ? 'Подтверждение оплаты' : 'Ошибка операции',
           eventType: input.eventType,
           outcome: input.outcome,
           occurredAt: new Date().toISOString(),

@@ -32,6 +32,15 @@ export default defineObject({
         { id: 'eb1b1850-1cc5-432b-84d2-b92dd4226e7c', value: 'CANCELLED_BY_STUDIO', label: 'Отменено студией', position: 5, color: 'purple' },
       ],
     },
+    {
+      universalIdentifier: 'bd08b67a-e685-46af-abf6-92b4fc0e66cd', type: FieldType.SELECT, name: 'paymentStatus', label: 'Статус оплаты', icon: 'IconCash', defaultValue: "'NOT_REQUIRED'",
+      options: [
+        { id: '0e244768-0ea8-4151-bbf0-9971eeb89ce5', value: 'NOT_REQUIRED', label: 'Не требуется', position: 0, color: 'gray' },
+        { id: '641b94b6-e373-4bc4-89ce-2327373381c4', value: 'EXPECTED', label: 'Ожидается', position: 1, color: 'orange' },
+        { id: '637088a4-00c2-47c6-bf57-4e65ca13cb09', value: 'PAID', label: 'Оплачено', position: 2, color: 'green' },
+        { id: '3f28f8ec-3067-4a5d-9d76-7dd4f70ecba9', value: 'WAIVED', label: 'Не требуется', position: 3, color: 'gray' },
+      ],
+    },
     { universalIdentifier: '9c1d090b-0d79-46bc-89c1-ff4a506a7034', type: FieldType.DATE_TIME, name: 'bookedAt', label: 'Создана', icon: 'IconCalendarPlus' },
     { universalIdentifier: '0537dfd0-4768-4ec1-9911-77fb9420498f', type: FieldType.DATE_TIME, name: 'cancelledAt', label: 'Отменена', icon: 'IconCalendarCancel', isNullable: true },
     { universalIdentifier: '395c61c2-ff58-4cfb-99ea-5a2800f91e34', type: FieldType.NUMBER, name: 'hoursBeforeStartAtCancellation', label: 'Часов до начала', icon: 'IconClockCancel', isNullable: true },
