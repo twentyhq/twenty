@@ -12,7 +12,6 @@ import {
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -74,7 +73,7 @@ export class GlobalWorkspaceMemberListener {
 
       await this.userWorkspaceService.updateUserWorkspaceLocaleForUserWorkspace(
         {
-          locale: after.locale as UserWorkspaceEntity['locale'],
+          locale: after.locale,
           userWorkspaceId: userWorkspace.id,
         },
       );
