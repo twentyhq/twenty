@@ -337,28 +337,25 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         })
       : undefined;
 
-    const {
-      authContext,
-      actorContext,
-      runRoleIds: callerRoleIds,
-    }: AgentRunCallerContext = isDefined(runAsContext)
-      ? {
-          authContext: runAsContext.authContext,
-          actorContext: runAsContext.actorContext,
-          runRoleIds: { userWorkspaceRoleId: runAsContext.roleId },
-        }
-      : await this.resolveCallerContext({
-          workspaceId,
-          ref,
-          agentAuthContext: agentContext.authContext,
-        });
+    const { authContext, actorContext, callerRoleIds }: AgentRunCallerContext =
+      isDefined(runAsContext)
+        ? {
+            authContext: runAsContext.authContext,
+            actorContext: runAsContext.actorContext,
+            callerRoleIds: { userWorkspaceRoleId: runAsContext.roleId },
+          }
+        : await this.resolveCallerContext({
+            workspaceId,
+            ref,
+            agentAuthContext: agentContext.authContext,
+          });
 
     const memberWorkspaceMemberId = isUserAuthContext(authContext)
       ? authContext.workspaceMemberId
       : null;
 
     // a run never exceeds the agent's application, whoever calls it
-    const runRoleIds: AgentRunRoleIds = {
+    const agentRunRoleIds: AgentRunRoleIds = {
       ...callerRoleIds,
       ...resolveApplicationRoleId({
         application: agentContext.application,
@@ -373,9 +370,9 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         runAsContext?.authContext.userWorkspaceId ?? ref.requestUserWorkspaceId,
       rolePermissionConfig: buildAgentRolePermissionConfig({
         agentRoleId: agentContext.agentRoleId,
-        runRoleIds,
+        agentRunRoleIds,
       }),
-      runRoleIds,
+      agentRunRoleIds,
       conversationActor: isDefined(memberWorkspaceMemberId)
         ? { type: 'user', workspaceMemberId: memberWorkspaceMemberId }
         : { type: 'application', applicationId: agentContext.application.id },
@@ -491,7 +488,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       return {
         authContext,
         actorContext,
-        runRoleIds: { userWorkspaceRoleId: roleId },
+        callerRoleIds: { userWorkspaceRoleId: roleId },
       };
     }
 
@@ -506,7 +503,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
           workspace: agentAuthContext.workspace,
           apiKey: fromApiKeyEntityToFlat(apiKey),
         }),
-        runRoleIds: {
+        callerRoleIds: {
           apiKeyRoleId: await this.apiKeyRoleService.getRoleIdForApiKeyId(
             apiKey.id,
             workspaceId,

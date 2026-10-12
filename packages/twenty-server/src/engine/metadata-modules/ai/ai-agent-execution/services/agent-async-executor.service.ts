@@ -162,16 +162,16 @@ export class AgentAsyncExecutorService {
   // preloading the few granted object schemas saves the model a learn_tools round trip
   private async buildPreloadedRegistryTools({
     toolContext,
-    runRoleIds,
+    agentRunRoleIds,
     additionalExcludedToolNames = [],
   }: {
     toolContext: RegistryToolContext;
-    runRoleIds?: AgentRunRoleIds;
+    agentRunRoleIds?: AgentRunRoleIds;
     additionalExcludedToolNames?: readonly string[];
   }): Promise<{ tools: ToolSet; proposableTools: ProposableTools }> {
     const rolePermissionConfig = buildAgentRolePermissionConfig({
       agentRoleId: toolContext.roleId,
-      runRoleIds,
+      agentRunRoleIds,
     });
     const preloadedToolContext = { ...toolContext, rolePermissionConfig };
 
@@ -208,11 +208,11 @@ export class AgentAsyncExecutorService {
   // learn_tools / execute_tool instead, scoped by composed role permissions rather than explicit grants only
   private async buildLazyRegistryTools({
     toolContext: baseToolContext,
-    runRoleIds,
+    agentRunRoleIds,
     additionalExcludedToolNames = [],
   }: {
     toolContext: RegistryToolContext;
-    runRoleIds?: AgentRunRoleIds;
+    agentRunRoleIds?: AgentRunRoleIds;
     additionalExcludedToolNames?: readonly string[];
   }): Promise<{
     tools: ToolSet;
@@ -223,7 +223,7 @@ export class AgentAsyncExecutorService {
       ...baseToolContext,
       rolePermissionConfig: buildAgentRolePermissionConfig({
         agentRoleId: baseToolContext.roleId,
-        runRoleIds,
+        agentRunRoleIds,
       }),
     };
     const {
@@ -319,7 +319,7 @@ export class AgentAsyncExecutorService {
       actorContext,
       authContext,
       userWorkspaceId,
-      runRoleIds,
+      agentRunRoleIds,
       usageOperationType,
     },
     additionalExcludedToolNames,
@@ -416,13 +416,13 @@ export class AgentAsyncExecutorService {
             toolLoadingStrategy === 'lazy'
               ? await this.buildLazyRegistryTools({
                   toolContext,
-                  runRoleIds,
+                  agentRunRoleIds,
                   additionalExcludedToolNames,
                 })
               : {
                   ...(await this.buildPreloadedRegistryTools({
                     toolContext,
-                    runRoleIds,
+                    agentRunRoleIds,
                     additionalExcludedToolNames,
                   })),
                   catalogSection: '',

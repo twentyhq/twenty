@@ -17,7 +17,7 @@ export type AgentRunExecutionContext = {
   // what the run itself can read, such as the record an awaited event is about
   rolePermissionConfig: RolePermissionConfig;
   // narrows the agent's own role, such as to the application a run belongs to
-  runRoleIds?: AgentRunRoleIds;
+  agentRunRoleIds?: AgentRunRoleIds;
   // who the continued conversation is read for, so turns others acted on read as theirs
   conversationActor?: AgentConversationActor;
   // the application the caller is bound to, whose tools are the only ones a call it posts can propose

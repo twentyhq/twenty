@@ -58,13 +58,13 @@ export const resolveRolePermissionConfig = ({
     return { shouldBypassPermissionChecks: true };
   }
 
-  const runRoleIds = resolveRoleIdsBySourceFromAuthContext({
+  const roleIdsBySource = resolveRoleIdsBySourceFromAuthContext({
     authContext,
     userWorkspaceRoleMap,
     apiKeyRoleMap,
   });
 
-  return isDefined(getRoleIdsToIntersect(runRoleIds))
-    ? { intersectionOf: runRoleIds }
+  return isDefined(getRoleIdsToIntersect(roleIdsBySource))
+    ? { intersectionOf: roleIdsBySource }
     : null;
 };

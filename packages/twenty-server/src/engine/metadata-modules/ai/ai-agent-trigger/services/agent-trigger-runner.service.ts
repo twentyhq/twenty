@@ -184,7 +184,7 @@ export class AgentTriggerRunnerService
     }
 
     // the agent never exceeds its application, as in its runAgent runs
-    const runRoleIds: AgentRunRoleIds = resolveApplicationRoleId({
+    const agentRunRoleIds: AgentRunRoleIds = resolveApplicationRoleId({
       application,
       isMissingApplicationRoleTolerated: true,
     });
@@ -205,9 +205,9 @@ export class AgentTriggerRunnerService
         userWorkspaceId: null,
         rolePermissionConfig: buildAgentRolePermissionConfig({
           agentRoleId,
-          runRoleIds,
+          agentRunRoleIds,
         }),
-        runRoleIds,
+        agentRunRoleIds,
         usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       },
     };

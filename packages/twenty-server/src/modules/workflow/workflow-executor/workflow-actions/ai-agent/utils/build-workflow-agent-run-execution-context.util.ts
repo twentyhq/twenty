@@ -8,17 +8,17 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 
 // A run that bypasses permission checks adds no restriction to the agent's role
-const getRunRoleIdsFromRolePermissionConfig = (
+const getAgentRunRoleIdsFromRolePermissionConfig = (
   rolePermissionConfig: RolePermissionConfig,
 ): AgentRunRoleIds => {
   if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
     return {};
   }
 
-  const { agentRoleId: _agentRoleId, ...runRoleIds } =
+  const { agentRoleId: _agentRoleId, ...agentRunRoleIds } =
     rolePermissionConfig.intersectionOf;
 
-  return runRoleIds;
+  return agentRunRoleIds;
 };
 
 // The step's agent acts with the run's permissions, derived again each time the agent continues
@@ -43,7 +43,7 @@ export const buildWorkflowAgentRunExecutionContext = ({
   ...(isDefined(executionContext.application)
     ? {
         application: executionContext.application,
-        runRoleIds: getRunRoleIdsFromRolePermissionConfig(
+        agentRunRoleIds: getAgentRunRoleIdsFromRolePermissionConfig(
           executionContext.rolePermissionConfig,
         ),
       }

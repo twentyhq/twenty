@@ -6,5 +6,5 @@ import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-ex
 export type AgentRunCallerContext = {
   authContext: WorkspaceAuthContext;
   actorContext?: ActorMetadata;
-  runRoleIds?: AgentRunRoleIds;
+  callerRoleIds?: AgentRunRoleIds;
 };

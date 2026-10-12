@@ -3,10 +3,10 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 
 export const buildAgentRolePermissionConfig = ({
   agentRoleId,
-  runRoleIds = {},
+  agentRunRoleIds = {},
 }: {
   agentRoleId: string | undefined;
-  runRoleIds?: AgentRunRoleIds;
+  agentRunRoleIds?: AgentRunRoleIds;
 }): RolePermissionConfig => ({
-  intersectionOf: { ...runRoleIds, agentRoleId: agentRoleId ?? null },
+  intersectionOf: { ...agentRunRoleIds, agentRoleId: agentRoleId ?? null },
 });

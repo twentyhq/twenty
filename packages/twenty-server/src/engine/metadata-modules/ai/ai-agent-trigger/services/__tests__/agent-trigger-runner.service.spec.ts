@@ -147,7 +147,7 @@ describe('AgentTriggerRunnerService', () => {
           rolePermissionConfig: {
             intersectionOf: { agentRoleId: AGENT_ROLE_ID },
           },
-          runRoleIds: {},
+          agentRunRoleIds: {},
         }),
       }),
     );
@@ -171,7 +171,7 @@ describe('AgentTriggerRunnerService', () => {
               applicationRoleId: 'application-role-id',
             },
           },
-          runRoleIds: { applicationRoleId: 'application-role-id' },
+          agentRunRoleIds: { applicationRoleId: 'application-role-id' },
         }),
       }),
     );
