@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconAlignCenter, IconAlignLeft, IconAlignRight } from 'twenty-ui/icon';
-import { Field, SegmentedControl } from 'twenty-ui/primitives/input';
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
 
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 

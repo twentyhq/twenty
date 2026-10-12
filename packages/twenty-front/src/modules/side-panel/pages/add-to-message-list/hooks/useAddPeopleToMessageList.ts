@@ -1,137 +1,83 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import {
-  CoreObjectNameSingular,
-  type RecordGqlOperationFilter,
-} from 'twenty-shared/types';
+import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
+import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { useCallback } from 'react';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
+import {
+  JobState,
+  TriggerAddPeopleToMessageListJobDocument,
+} from '~/generated-metadata/graphql';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
-type AddPeopleToMessageListParams = {
-  listId: string;
+type UseAddPeopleToMessageListArgs = {
+  messageListId: string | null;
   personFilter: RecordGqlOperationFilter;
+  onCompleted: () => void;
 };
 
-export const useAddPeopleToMessageList = () => {
-  const apolloCoreClient = useApolloCoreClient();
+export const useAddPeopleToMessageList = ({
+  messageListId,
+  personFilter,
+  onCompleted,
+}: UseAddPeopleToMessageListArgs) => {
+  const { enqueueToast } = useToast();
+  const [triggerAddPeopleToMessageListJob, { loading: isTriggeringAdd }] =
+    useMutation(TriggerAddPeopleToMessageListJobDocument);
 
-  const { objectMetadataItem: personObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.Person,
-    });
-
-  const { objectMetadataItem: listMemberObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.MessageListMember,
-    });
-
-  const { findManyRecordsQuery: findPeopleQuery } = useFindManyRecordsQuery({
-    objectNameSingular: CoreObjectNameSingular.Person,
-    recordGqlFields: { id: true },
-  });
-
-  const { findManyRecordsQuery: findListMembersQuery } =
-    useFindManyRecordsQuery({
-      objectNameSingular: CoreObjectNameSingular.MessageListMember,
-      recordGqlFields: { id: true, personId: true },
-    });
-
-  const { createManyRecords } = useCreateManyRecords({
-    objectNameSingular: CoreObjectNameSingular.MessageListMember,
-  });
-
-  const findPeoplePage = async (
-    personFilter: RecordGqlOperationFilter,
-    lastCursor: string | null,
-  ) => {
-    const { data } =
-      await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
-        query: findPeopleQuery,
-        variables: {
-          filter: personFilter,
-          limit: QUERY_MAX_RECORDS,
-          lastCursor,
-        },
-        fetchPolicy: 'network-only',
-      });
-
-    const peopleConnection = data?.[personObjectMetadataItem.namePlural];
-
-    return {
-      personIds:
-        peopleConnection?.edges.map(({ node }) => node.id as string) ?? [],
-      nextCursor:
-        peopleConnection?.pageInfo.hasNextPage === true
-          ? (peopleConnection.pageInfo.endCursor ?? null)
-          : null,
-    };
-  };
-
-  const findPersonIdsAlreadyInList = async (
-    listId: string,
-    personIds: string[],
-  ) => {
-    const { data } =
-      await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
-        query: findListMembersQuery,
-        variables: {
-          filter: { listId: { eq: listId }, personId: { in: personIds } },
-          limit: personIds.length,
-        },
-        fetchPolicy: 'network-only',
-      });
-
-    return new Set(
-      data?.[listMemberObjectMetadataItem.namePlural]?.edges.map(
-        ({ node }) => node.personId as string,
-      ) ?? [],
-    );
-  };
-
-  const addPeopleToMessageList = async ({
-    listId,
-    personFilter,
-  }: AddPeopleToMessageListParams) => {
-    let addedCount = 0;
-    let alreadyInListCount = 0;
-    let lastCursor: string | null = null;
-
-    do {
-      const { personIds, nextCursor } = await findPeoplePage(
-        personFilter,
-        lastCursor,
-      );
-
-      if (personIds.length > 0) {
-        const personIdsAlreadyInList = await findPersonIdsAlreadyInList(
-          listId,
-          personIds,
-        );
-        const personIdsToAdd = personIds.filter(
-          (personId) => !personIdsAlreadyInList.has(personId),
-        );
-
-        if (personIdsToAdd.length > 0) {
-          await createManyRecords({
-            recordsToCreate: personIdsToAdd.map((personId) => ({
-              listId,
-              personId,
-            })),
-          });
-        }
-
-        addedCount += personIdsToAdd.length;
-        alreadyInListCount += personIds.length - personIdsToAdd.length;
+  const handleAddJobSettled = useCallback(
+    (jobStatus: TrackedJobStatus) => {
+      if (jobStatus.state === JobState.FAILED) {
+        enqueueToast({
+          variant: 'error',
+          children: t`Failed to add people to the list. Please try again.`,
+        });
+        return;
       }
 
-      lastCursor = nextCursor;
-    } while (isDefined(lastCursor));
+      enqueueToast({
+        variant: 'success',
+        children: t`People added to the list.`,
+      });
+      onCompleted();
+    },
+    [enqueueToast, onCompleted],
+  );
 
-    return { addedCount, alreadyInListCount };
+  const { activeJobId, trackJob } = useTrackedQueueJob({
+    onQueueJobSettled: handleAddJobSettled,
+  });
+
+  const addPeopleToMessageList = async (): Promise<void> => {
+    if (!isDefined(messageListId)) {
+      return;
+    }
+
+    try {
+      const { data } = await triggerAddPeopleToMessageListJob({
+        variables: { input: { messageListId, personFilter } },
+      });
+
+      const jobId = data?.triggerAddPeopleToMessageListJob.jobId;
+
+      if (isDefined(jobId)) {
+        trackJob({ jobId, context: messageListId });
+      }
+    } catch (error) {
+      enqueueToast({
+        variant: 'error',
+        children: CombinedGraphQLErrors.is(error)
+          ? getErrorMessageFromApolloError(error)
+          : t`Failed to add people to the list. Please try again.`,
+      });
+    }
   };
 
-  return { addPeopleToMessageList };
+  return {
+    addPeopleToMessageList,
+    isAdding: isTriggeringAdd || isDefined(activeJobId),
+  };
 };

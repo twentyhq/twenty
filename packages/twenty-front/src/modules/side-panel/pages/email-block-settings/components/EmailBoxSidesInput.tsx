@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconFrame, IconSquare } from 'twenty-ui/icon';
-import { Field, SegmentedControl } from 'twenty-ui/primitives/input';
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';

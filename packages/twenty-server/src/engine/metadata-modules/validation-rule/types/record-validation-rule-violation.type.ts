@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 export type RecordValidationRuleViolation = {
   ruleId: string;
   message: string;

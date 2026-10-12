@@ -103,6 +103,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
     <SidePanelRecordCreationFormSettingsPage />,
   ],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
+  [SidePanelPages.AddToMessageList, <SidePanelAddToMessageListPage />],
   [SidePanelPages.EmailBlockSettings, <SidePanelEmailDesignPage />],
   [SidePanelPages.EmailBlockStyle, <SidePanelEmailBlockSettingsPage />],
   [SidePanelPages.EmailPageStyle, <SidePanelEmailPageStylePage />],
@@ -113,5 +114,4 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.ShareRecord, <SidePanelShareRecordPage />],
   [SidePanelPages.SnoozeAiChat, <SidePanelSnoozeAiChatPage />],
   [SidePanelPages.AssignAiChat, <SidePanelAssignAiChatPage />],
-  [SidePanelPages.AddToMessageList, <SidePanelAddToMessageListPage />],
 ]);

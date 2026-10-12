@@ -1,7 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
-import { type ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable, Logger } from '@nestjs/common';
 
 import path from 'path';
@@ -20,13 +21,11 @@ import {
 } from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
 import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.const';
@@ -39,7 +38,13 @@ import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.ty
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+
+type SandboxPrincipal = {
+  workspaceId: string;
+  applicationId: string;
+  userId?: string;
+  userWorkspaceId?: string;
+};
 
 @Injectable()
 export class CodeInterpreterTool implements Tool {
@@ -58,7 +63,7 @@ export class CodeInterpreterTool implements Tool {
     private readonly applicationService: ApplicationService,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly jwtWrapperService: JwtWrapperService,
+    private readonly applicationTokenService: ApplicationTokenService,
   ) {}
 
   private buildExecutionState(
@@ -86,13 +91,7 @@ export class CodeInterpreterTool implements Tool {
     parameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const {
-      workspaceId,
-      userId,
-      userWorkspaceId,
-      threadId,
-      onCodeExecutionUpdate,
-    } = context;
+    const { workspaceId, threadId, onCodeExecutionUpdate } = context;
     const { code, files } = parameters as CodeInterpreterInput;
     const executionId = v4();
     const startTime = Date.now();
@@ -117,20 +116,15 @@ export class CodeInterpreterTool implements Tool {
       );
 
       const serverUrl = this.twentyConfigService.get('SERVER_URL');
-      const authContext = workspaceAuthContextStorage.getStore();
-      const applicationId =
-        isDefined(authContext) && isUserAuthContext(authContext)
-          ? authContext.application?.id
-          : undefined;
-      const sessionToken = await this.generateSessionToken({
-        workspaceId,
-        userId,
-        userWorkspaceId,
-        applicationId,
-      });
+      const sandboxPrincipal = await this.resolveSandboxPrincipal(
+        workspaceAuthContextStorage.getStore(),
+      );
+      const sandboxToken = isDefined(sandboxPrincipal)
+        ? await this.generateSandboxToken(sandboxPrincipal)
+        : undefined;
 
       this.logger.debug(
-        `MCP session: workspaceId=${workspaceId}, userId=${userId}, userWorkspaceId=${userWorkspaceId}, serverUrl=${serverUrl}`,
+        `MCP session: workspaceId=${workspaceId}, applicationId=${sandboxPrincipal?.applicationId}, userWorkspaceId=${sandboxPrincipal?.userWorkspaceId}, serverUrl=${serverUrl}`,
       );
 
       const codeWithHelper = TWENTY_MCP_HELPER + '\n\n' + code;
@@ -141,10 +135,12 @@ export class CodeInterpreterTool implements Tool {
         {
           env: {
             TWENTY_SERVER_URL: serverUrl,
-            TWENTY_API_TOKEN: sessionToken,
+            ...(isDefined(sandboxToken)
+              ? { TWENTY_API_TOKEN: sandboxToken }
+              : {}),
           },
           sessionId: threadId ? `${workspaceId}:${threadId}` : undefined,
-          actorKey: `${userWorkspaceId ?? 'anonymous'}:${applicationId ?? 'direct'}`,
+          actorKey: `${sandboxPrincipal?.userWorkspaceId ?? 'anonymous'}:${sandboxPrincipal?.applicationId ?? 'none'}`,
         },
         {
           onStdout: (line) => {
@@ -315,39 +311,57 @@ export class CodeInterpreterTool implements Tool {
     return inputFiles;
   }
 
-  private async generateSessionToken({
-    workspaceId,
-    userId,
-    userWorkspaceId,
-    applicationId,
-  }: {
-    workspaceId: string;
-    userId?: string;
-    userWorkspaceId?: string;
-    applicationId?: string;
-  }): Promise<string> {
-    const payload: AccessTokenJwtPayload | ApplicationAccessTokenJwtPayload =
-      isDefined(applicationId)
-        ? {
-            sub: applicationId,
-            type: JwtTokenTypeEnum.APPLICATION_ACCESS,
-            workspaceId,
-            applicationId,
-            userId,
-            userWorkspaceId,
-          }
-        : {
-            sub: userId ?? workspaceId,
-            type: JwtTokenTypeEnum.ACCESS,
-            workspaceId,
-            userId: userId ?? workspaceId,
-            userWorkspaceId: userWorkspaceId ?? workspaceId,
-            authProvider: AuthProviderEnum.Password,
-          };
+  private async resolveSandboxPrincipal(
+    authContext: WorkspaceAuthContext | undefined,
+  ): Promise<SandboxPrincipal | undefined> {
+    if (!isDefined(authContext)) {
+      return undefined;
+    }
 
-    return this.jwtWrapperService.signAsyncOrThrow(payload, {
-      expiresIn: '5m',
-    });
+    const workspaceId = authContext.workspace.id;
+
+    if (isApplicationAuthContext(authContext)) {
+      return { workspaceId, applicationId: authContext.application.id };
+    }
+
+    if (!isUserAuthContext(authContext)) {
+      return undefined;
+    }
+
+    const applicationId =
+      authContext.application?.id ??
+      authContext.viaApplication?.id ??
+      (await this.findWorkspaceCustomApplicationId(workspaceId));
+
+    return {
+      workspaceId,
+      applicationId,
+      userId: authContext.user.id,
+      userWorkspaceId: authContext.userWorkspaceId,
+    };
+  }
+
+  private async findWorkspaceCustomApplicationId(
+    workspaceId: string,
+  ): Promise<string> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    return workspaceCustomFlatApplication.id;
+  }
+
+  private async generateSandboxToken(
+    sandboxPrincipal: SandboxPrincipal,
+  ): Promise<string> {
+    const { token } =
+      await this.applicationTokenService.generateApplicationAccessToken({
+        ...sandboxPrincipal,
+        expiresIn: '5m',
+      });
+
+    return token;
   }
 
   private async uploadSingleFile(

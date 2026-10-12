@@ -1,18 +1,17 @@
-import { useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import {
-  type RecordGqlOperationFilter,
   SidePanelPages,
+  type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
-import { IconUsersGroup } from 'twenty-ui/icon';
+import { IconUserPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { addToMessageListPersonFilterComponentState } from '@/side-panel/pages/add-to-message-list/states/addToMessageListPersonFilterComponentState';
 
 export const useOpenAddToMessageListInSidePanel = () => {
-  const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -29,12 +28,12 @@ export const useOpenAddToMessageListInSidePanel = () => {
 
       navigateSidePanelMenu({
         page: SidePanelPages.AddToMessageList,
-        pageTitle: t`Add to list`,
-        pageIcon: IconUsersGroup,
+        pageTitle: t`Add to List`,
+        pageIcon: IconUserPlus,
         pageId,
       });
     },
-    [navigateSidePanelMenu, store, t],
+    [navigateSidePanelMenu, store],
   );
 
   return { openAddToMessageListInSidePanel };

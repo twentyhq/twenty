@@ -147,6 +147,11 @@ const htmlNodeSchema = z.looseObject({
   attrs: z.looseObject({ html: z.string().max(100_000) }),
 });
 
+const htmlDocumentNodeSchema = z.looseObject({
+  type: z.literal(TIPTAP_NODE_TYPES.HTML_DOCUMENT),
+  attrs: z.looseObject({ html: z.string() }),
+});
+
 const blockNodeSchema = z.discriminatedUnion('type', [
   paragraphNodeSchema,
   headingNodeSchema,
@@ -159,6 +164,7 @@ const blockNodeSchema = z.discriminatedUnion('type', [
   buttonNodeSchema,
   dividerNodeSchema,
   htmlNodeSchema,
+  htmlDocumentNodeSchema,
 ]);
 
 const canvasThemeAttributeSchema = z.looseObject({

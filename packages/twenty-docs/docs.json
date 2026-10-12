@@ -570,15 +570,14 @@
                           "ui/primitives/input/field",
                           "ui/primitives/input/input",
                           "ui/primitives/input/input-group",
-                          "ui/primitives/input/number-stepper",
+                          "ui/primitives/input/number-field",
                           "ui/primitives/input/textarea",
                           "ui/primitives/input/checkbox",
                           "ui/primitives/input/radio",
                           "ui/primitives/input/radio-group",
                           "ui/primitives/input/select",
                           "ui/primitives/input/slider",
-                          "ui/primitives/input/switch",
-                          "ui/primitives/input/segmented-control"
+                          "ui/primitives/input/switch"
                         ]
                       },
                       {
@@ -604,7 +603,6 @@
                           "ui/primitives/surfaces/alert-dialog",
                           "ui/primitives/surfaces/card",
                           "ui/primitives/surfaces/dialog",
-                          "ui/primitives/surfaces/menu",
                           "ui/primitives/surfaces/popover",
                           "ui/primitives/surfaces/tooltip"
                         ]
@@ -653,7 +651,9 @@
                           "ui/components/input/currency-picker",
                           "ui/components/input/phone-country-picker",
                           "ui/components/input/image-input",
-                          "ui/components/input/search-input"
+                          "ui/components/input/search-input",
+                          "ui/components/input/number-stepper",
+                          "ui/components/input/segmented-control"
                         ]
                       },
                       {
@@ -6730,6 +6730,10 @@
     {
       "source": "/ui/primitives/layout/animated-expandable-container",
       "destination": "/ui/primitives/layout/collapsible"
+    },
+    {
+      "source": "/ui/primitives/input/number-stepper",
+      "destination": "/ui/components/input/number-stepper"
     },
     {
       "source": "/twenty-ui/input/checkbox",

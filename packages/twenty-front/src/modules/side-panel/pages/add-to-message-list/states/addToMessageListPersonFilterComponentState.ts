@@ -3,8 +3,8 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 export const addToMessageListPersonFilterComponentState =
-  createAtomComponentState<RecordGqlOperationFilter | null>({
+  createAtomComponentState<RecordGqlOperationFilter>({
     key: 'side-panel/add-to-message-list-person-filter',
-    defaultValue: null,
+    defaultValue: {},
     componentInstanceContext: SidePanelPageComponentInstanceContext,
   });

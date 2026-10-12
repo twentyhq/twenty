@@ -35,6 +35,7 @@ export enum SidePanelPages {
   RecordCreationForm = 'record-creation-form',
   RecordCreationFormSettings = 'record-creation-form-settings',
   SendCampaignTest = 'send-campaign-test',
+  AddToMessageList = 'add-to-message-list',
   WorkflowVersions = 'workflow-versions',
   WorkflowVersion = 'workflow-version',
   EmailBlockSettings = 'email-block-settings',
@@ -46,5 +47,4 @@ export enum SidePanelPages {
   ShareRecord = 'share-record',
   SnoozeAiChat = 'snooze-ai-chat',
   AssignAiChat = 'assign-ai-chat',
-  AddToMessageList = 'add-to-message-list',
 }
