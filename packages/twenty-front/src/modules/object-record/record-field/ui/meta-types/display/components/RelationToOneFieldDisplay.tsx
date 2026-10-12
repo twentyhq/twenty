@@ -1,4 +1,6 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { CoreWorkflowRunRelationFieldDisplay } from '@/object-core/workflows/components/CoreWorkflowRunRelationFieldDisplay';
+import { useIsCoreWorkflowRunRelationField } from '@/object-core/workflows/hooks/useIsCoreWorkflowRunRelationField';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
@@ -15,6 +17,15 @@ export const RelationToOneFieldDisplay = () => {
   } = useRelationToOneFieldDisplay();
 
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
+
+  const isCoreWorkflowRunRelationField = useIsCoreWorkflowRunRelationField({
+    objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
+    fieldName: fieldDefinition.metadata.fieldName,
+  });
+
+  if (isCoreWorkflowRunRelationField) {
+    return <CoreWorkflowRunRelationFieldDisplay />;
+  }
 
   if (!isDefined(fieldValue) && isDefined(foreignKeyFieldValue)) {
     return <ForbiddenFieldDisplay />;

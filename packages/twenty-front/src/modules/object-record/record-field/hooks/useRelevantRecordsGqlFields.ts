@@ -1,4 +1,5 @@
 import { type RecordGqlFields } from 'twenty-shared/types';
+import { useCoreWorkflowRunRecordGqlFields } from '@/object-core/workflows/hooks/useCoreWorkflowRunRecordGqlFields';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
@@ -34,6 +35,10 @@ export const useRelevantRecordsGqlFields = ({
     useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const coreWorkflowRunRecordGqlFields = useCoreWorkflowRunRecordGqlFields(
+    objectMetadataItem.nameSingular,
+  );
 
   const visibleRecordFieldMetadataItems = visibleRecordFields
     .map(
@@ -88,6 +93,7 @@ export const useRelevantRecordsGqlFields = ({
       : {}),
     ...(hasPosition ? { position: true } : {}),
     ...allDepthOneGqlFields,
+    ...coreWorkflowRunRecordGqlFields,
     createdAt: true,
     updatedAt: true,
     deletedAt: true,
