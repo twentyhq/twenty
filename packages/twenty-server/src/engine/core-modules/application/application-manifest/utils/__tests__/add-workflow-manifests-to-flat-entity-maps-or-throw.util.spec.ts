@@ -143,10 +143,14 @@ describe('application workflow manifest updates', () => {
     existing.flatObjectMetadataMaps.byUniversalIdentifier[
       objectUniversalIdentifier
     ] = {
+      id: 'company-id',
       universalIdentifier: objectUniversalIdentifier,
       applicationId: '99999999-9999-4999-8999-999999999999',
       nameSingular: 'company',
+      fieldIds: [],
     } as FlatObjectMetadata;
+    existing.flatObjectMetadataMaps.universalIdentifierById['company-id'] =
+      objectUniversalIdentifier;
     const workflows = structuredClone(MANIFEST.workflows ?? []);
     const workflow = workflows[0];
     if (!isDefined(workflow)) {

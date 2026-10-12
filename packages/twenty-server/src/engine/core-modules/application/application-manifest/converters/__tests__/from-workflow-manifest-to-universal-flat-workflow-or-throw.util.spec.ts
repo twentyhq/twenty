@@ -4,8 +4,15 @@ import {
 } from 'twenty-shared/application';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
+import {
+  getMockObjectMetadataInfo,
+  mockFlatFieldMetadataMaps,
+  mockFlatObjectMetadataMaps,
+  mockObjectIdByNameSingular,
+} from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
+import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
 
 const WORKFLOW_ID = '11111111-1111-4111-8111-111111111111';
 const TRIGGER_ID = '33333333-3333-4333-8333-333333333333';
@@ -347,5 +354,107 @@ describe('application workflow action graphs', () => {
     expect(() =>
       convert({ ...options, manifest: httpRequestManifest }),
     ).toThrow();
+  });
+});
+
+describe('application workflow output schemas', () => {
+  const COMPANY_ID = '20202020-c03c-45d6-a4b0-04afe1357c5c';
+  const FIND_STEP_ID = '12121212-1212-4212-8212-121212121212';
+  const LOOP_STEP_ID = '13131313-1313-4313-8313-131313131313';
+  const UPDATE_STEP_ID = '14141414-1414-4414-8414-141414141414';
+  const companyRecordSchema = generateFakeObjectRecord({
+    objectMetadataInfo: getMockObjectMetadataInfo('company'),
+  });
+  const declaredGreetingSchema = {
+    greeting: { isLeaf: true, type: 'string', value: 'Hello' },
+  } as const;
+
+  const { version } = convert({
+    ...options,
+    manifest: {
+      ...manifest,
+      version: {
+        trigger: {
+          universalIdentifier: TRIGGER_ID,
+          type: 'MANUAL',
+          nextStepIds: [FIND_STEP_ID],
+          settings: {
+            availability: {
+              type: 'SINGLE_RECORD',
+              objectUniversalIdentifier: COMPANY_ID,
+            },
+          },
+        },
+        steps: [
+          {
+            universalIdentifier: FIND_STEP_ID,
+            name: 'Find companies',
+            type: 'FIND_RECORDS',
+            input: { objectUniversalIdentifier: COMPANY_ID },
+            nextStepIds: [LOOP_STEP_ID],
+          },
+          {
+            universalIdentifier: LOOP_STEP_ID,
+            name: 'Each company',
+            type: 'ITERATOR',
+            input: {
+              items: `{{${FIND_STEP_ID}.all}}`,
+              initialLoopStepIds: [UPDATE_STEP_ID],
+            },
+            nextStepIds: [STEP_ID],
+          },
+          {
+            universalIdentifier: UPDATE_STEP_ID,
+            name: 'Rename company',
+            type: 'UPDATE_RECORD',
+            input: {
+              objectUniversalIdentifier: COMPANY_ID,
+              objectRecordId: `{{${LOOP_STEP_ID}.currentItem.id}}`,
+              objectRecord: { name: 'Acme' },
+              fieldsToUpdate: ['name'],
+            },
+            nextStepIds: [LOOP_STEP_ID],
+          },
+          manifest.version.steps[0],
+        ],
+      },
+    },
+    logicFunctionOutputSchemaByUniversalIdentifier: new Map([
+      [FUNCTION_ID, declaredGreetingSchema],
+    ]),
+    objectByUniversalIdentifier: new Map([
+      [COMPANY_ID, { nameSingular: 'company' }],
+    ]),
+    objectMetadataMaps: {
+      flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
+      objectIdByNameSingular: mockObjectIdByNameSingular,
+    },
+  });
+  const outputSchemaOf = (stepId: string) =>
+    version.steps?.find((step) => step.id === stepId)?.settings.outputSchema;
+
+  it('describes the record a manual trigger runs on', () => {
+    expect(version.triggers?.[0].settings.outputSchema).toMatchObject({
+      payload: { value: companyRecordSchema },
+    });
+  });
+
+  it('describes the records produced by record steps and loops', () => {
+    expect(outputSchemaOf(FIND_STEP_ID)).toMatchObject({
+      first: { value: companyRecordSchema },
+      totalCount: { type: 'number' },
+    });
+    expect(outputSchemaOf(LOOP_STEP_ID)).toMatchObject({
+      currentItem: {
+        label: 'Current Item (Company)',
+        value: companyRecordSchema,
+      },
+    });
+    expect(outputSchemaOf(UPDATE_STEP_ID)).toEqual(companyRecordSchema);
+  });
+
+  it('keeps the schema a function declares', () => {
+    expect(outputSchemaOf(STEP_ID)).toEqual(declaredGreetingSchema);
   });
 });

@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -9,15 +7,18 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import {
-  WorkflowCommonException,
-  WorkflowCommonExceptionCode,
-} from 'src/modules/workflow/common/exceptions/workflow-common.exception';
+import { getObjectMetadataInfoOrThrow } from 'src/modules/workflow/common/utils/get-object-metadata-info-or-throw.util';
 
 export type ObjectMetadataInfo = {
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+};
+
+export type WorkflowObjectMetadataMaps = {
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  objectIdByNameSingular: Record<string, string>;
 };
 
 @Injectable()
@@ -26,11 +27,9 @@ export class WorkflowMetadataReadService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  async getFlatEntityMaps(workspaceId: string): Promise<{
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    objectIdByNameSingular: Record<string, string>;
-  }> {
+  async getFlatEntityMaps(
+    workspaceId: string,
+  ): Promise<WorkflowObjectMetadataMaps> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -75,37 +74,9 @@ export class WorkflowMetadataReadService {
     objectNameSingular: string,
     workspaceId: string,
   ): Promise<ObjectMetadataInfo> {
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
-    } = await this.getFlatEntityMaps(workspaceId);
-
-    const objectId = objectIdByNameSingular[objectNameSingular];
-
-    if (!isDefined(objectId)) {
-      throw new WorkflowCommonException(
-        `Failed to read: Object ${objectNameSingular} not found`,
-        WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
-
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: objectId,
-      flatEntityMaps: flatObjectMetadataMaps,
+    return getObjectMetadataInfoOrThrow({
+      objectNameSingular,
+      objectMetadataMaps: await this.getFlatEntityMaps(workspaceId),
     });
-
-    if (!isDefined(flatObjectMetadata)) {
-      throw new WorkflowCommonException(
-        `Failed to read: Object ${objectNameSingular} not found`,
-        WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
-
-    return {
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    };
   }
 }

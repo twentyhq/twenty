@@ -4,6 +4,7 @@ import { fromWorkflowManifestToUniversalFlatCommandMenuItem } from 'src/engine/c
 import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
 import { fromWorkflowTriggerManifestToTriggerOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { fillWorkflowManifestOutputSchemas } from 'src/engine/core-modules/application/application-manifest/utils/fill-workflow-manifest-output-schemas.util';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -64,13 +65,15 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     workflowUniversalIdentifier: definition.universalIdentifier,
   });
 
-  const steps = definition.version.steps.map((step, index) =>
-    fromWorkflowStepManifestToActionOrThrow({ step, index, references }),
-  );
-
-  const trigger = fromWorkflowTriggerManifestToTriggerOrThrow({
-    trigger: definition.version.trigger,
-    references,
+  const { trigger, steps } = fillWorkflowManifestOutputSchemas({
+    steps: definition.version.steps.map((step, index) =>
+      fromWorkflowStepManifestToActionOrThrow({ step, index, references }),
+    ),
+    trigger: fromWorkflowTriggerManifestToTriggerOrThrow({
+      trigger: definition.version.trigger,
+      references,
+    }),
+    objectMetadataMaps: references.objectMetadataMaps,
   });
   const commandMenuItem = fromWorkflowManifestToUniversalFlatCommandMenuItem({
     manifest: definition,

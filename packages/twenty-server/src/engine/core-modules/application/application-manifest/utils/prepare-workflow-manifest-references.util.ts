@@ -8,6 +8,7 @@ import {
   type WorkflowManifestObjectReference,
   type WorkflowManifestFieldReference,
 } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { buildWorkflowManifestObjectMetadataMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-object-metadata-maps.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type IdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 
@@ -135,5 +136,11 @@ export const prepareWorkflowManifestReferences = ({
     agentIdByUniversalIdentifier,
     objectByUniversalIdentifier,
     fieldByUniversalIdentifier,
+    objectMetadataMaps: buildWorkflowManifestObjectMetadataMaps({
+      toAllUniversalFlatEntityMaps,
+      existingAllFlatEntityMaps,
+      ownerApplicationId,
+      idByUniversalIdentifierByMetadataName,
+    }),
   };
 };

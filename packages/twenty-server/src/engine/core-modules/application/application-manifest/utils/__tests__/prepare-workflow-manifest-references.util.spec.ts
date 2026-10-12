@@ -8,6 +8,7 @@ import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/appli
 const OWNER = 'owner';
 const object = {
   universalIdentifier: 'object',
+  applicationUniversalIdentifier: '11111111-1111-4111-8111-111111111111',
   nameSingular: 'company',
   applicationId: OWNER,
 } as FlatObjectMetadata;

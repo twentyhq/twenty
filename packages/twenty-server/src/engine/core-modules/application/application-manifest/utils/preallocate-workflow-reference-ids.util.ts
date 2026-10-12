@@ -1,6 +1,8 @@
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
 import { type IdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 
 const preallocateIds = ({
@@ -25,6 +27,29 @@ export const preallocateWorkflowReferenceIds = ({
   fromAllFlatEntityMaps: AllFlatEntityMaps;
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
 }): IdByUniversalIdentifierByMetadataName => {
+  const reservedSystemFieldsOfNewObjects = Object.fromEntries(
+    Object.values(
+      toAllUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (object) =>
+          !isDefined(
+            fromAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+              object.universalIdentifier
+            ],
+          ),
+      )
+      .flatMap((object) =>
+        Object.values(
+          buildReservedSystemFlatFieldMetadatasForCustomObject({
+            flatObjectMetadata: object,
+          }),
+        ),
+      )
+      .map((field) => [field.universalIdentifier, field]),
+  );
+
   return {
     logicFunction: preallocateIds({
       toByUniversalIdentifier:
@@ -39,10 +64,19 @@ export const preallocateWorkflowReferenceIds = ({
       fromByUniversalIdentifier:
         fromAllFlatEntityMaps.flatAgentMaps.byUniversalIdentifier,
     }),
-    fieldMetadata: preallocateIds({
+    objectMetadata: preallocateIds({
       toByUniversalIdentifier:
-        toAllUniversalFlatEntityMaps.flatFieldMetadataMaps
+        toAllUniversalFlatEntityMaps.flatObjectMetadataMaps
           .byUniversalIdentifier,
+      fromByUniversalIdentifier:
+        fromAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
+    }),
+    fieldMetadata: preallocateIds({
+      toByUniversalIdentifier: {
+        ...reservedSystemFieldsOfNewObjects,
+        ...toAllUniversalFlatEntityMaps.flatFieldMetadataMaps
+          .byUniversalIdentifier,
+      },
       fromByUniversalIdentifier:
         fromAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
     }),
