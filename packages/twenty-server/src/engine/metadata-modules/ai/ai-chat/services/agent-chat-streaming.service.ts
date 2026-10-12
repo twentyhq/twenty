@@ -768,7 +768,7 @@ export class AgentChatStreamingService {
         ),
         metadata: {
           createdAt: new Date(message.createdAt).toISOString(),
-          senderUserWorkspaceId: message.senderUserWorkspaceId,
+          senderWorkspaceMemberId: message.senderWorkspaceMemberId,
         },
       })),
     );

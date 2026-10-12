@@ -439,6 +439,9 @@ export default {
             "senderUserWorkspaceId": [
                 497
             ],
+            "senderWorkspaceMemberId": [
+                497
+            ],
             "status": [
                 1
             ],

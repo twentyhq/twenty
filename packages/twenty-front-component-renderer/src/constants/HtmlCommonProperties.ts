@@ -3,6 +3,7 @@ import { type PropertySchema } from '@/types/PropertySchema';
 export const HTML_COMMON_PROPERTIES: Record<string, PropertySchema> = {
   id: { type: 'string', optional: true },
   dir: { type: 'string', optional: true },
+  lang: { type: 'string', optional: true },
   className: { type: 'string', optional: true },
   style: { type: 'string', optional: true },
   title: { type: 'string', optional: true },

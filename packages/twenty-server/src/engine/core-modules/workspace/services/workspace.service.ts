@@ -45,6 +45,7 @@ import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 import {
   EmailingDomainWorkspaceCleanupJob,
   type EmailingDomainWorkspaceCleanupJobData,
@@ -194,6 +195,7 @@ export class WorkspaceService {
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
     private readonly applicationUninstallService: ApplicationUninstallService,
     private readonly agentChatDefaultChannelService: AgentChatDefaultChannelService,
+    private readonly eventLogRetentionService: EventLogRetentionService,
   ) {}
 
   // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
@@ -354,6 +356,15 @@ export class WorkspaceService {
     ) {
       await this.subdomainManagerService.validateSubdomainOrThrow(
         payload.subdomain,
+      );
+    }
+
+    if (
+      isDefined(payload.eventLogRetentionDays) &&
+      workspace.eventLogRetentionDays !== payload.eventLogRetentionDays
+    ) {
+      await this.eventLogRetentionService.validateRetentionUpdateOrThrow(
+        workspace.id,
       );
     }
 

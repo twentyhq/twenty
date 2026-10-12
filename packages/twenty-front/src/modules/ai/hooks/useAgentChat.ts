@@ -142,8 +142,8 @@ export const useAgentChat = () => {
       ],
       metadata: {
         createdAt: optimisticMessageCreatedAt,
-        senderUserWorkspaceId: store.get(currentWorkspaceMemberState.atom)
-          ?.userWorkspaceId,
+        senderWorkspaceMemberId: store.get(currentWorkspaceMemberState.atom)
+          ?.id,
       },
       status: 'sent',
     };

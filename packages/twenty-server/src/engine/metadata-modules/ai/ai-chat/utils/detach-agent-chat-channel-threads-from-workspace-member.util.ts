@@ -39,7 +39,7 @@ export const detachAgentChatChannelThreadsFromWorkspaceMember = async ({
   await threadRepository.query(workspaceId, async ({ manager, table }) => {
     await manager.query(
       `UPDATE ${table('agentChatThread')}
-       SET "workspaceMemberId" = NULL, "userWorkspaceId" = NULL, "updatedAt" = now()
+       SET "workspaceMemberId" = NULL, "updatedAt" = now()
        WHERE "workspaceMemberId" = $1 AND "channelId" IS NOT NULL`,
       [workspaceMemberId],
     );

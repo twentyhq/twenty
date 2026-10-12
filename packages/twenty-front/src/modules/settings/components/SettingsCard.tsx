@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -136,7 +136,7 @@ export const SettingsCard = ({
               </StyledIconContainer>
               <StyledTitle disabled={disabled}>
                 {title}
-                {soon && <Pill label={t`Soon`} />}
+                {soon && <Badge>{t`Soon`}</Badge>}
               </StyledTitle>
               {isDefined(Status) && Status}
               <StyledIconChevronRightContainer>

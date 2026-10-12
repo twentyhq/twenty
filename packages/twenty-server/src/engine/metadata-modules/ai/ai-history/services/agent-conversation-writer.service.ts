@@ -19,6 +19,7 @@ import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
 import { isAgentTurnStatusFinal } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-status-final.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   AiException,
   AiExceptionCode,
@@ -30,6 +31,7 @@ export class AgentConversationWriterService {
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
     private readonly transactionService: AgentHistoryTransactionService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   runInTransaction<TResult>(
@@ -155,6 +157,10 @@ export class AgentConversationWriterService {
     scope?: AgentHistoryTransactionScope;
   }): Promise<string> {
     const messageId = id ?? randomUUID();
+    const senderWorkspaceMemberId = await this.findSenderWorkspaceMemberId({
+      workspaceId,
+      senderUserWorkspaceId,
+    });
 
     const write = async (transactionScope: AgentHistoryTransactionScope) => {
       await transactionScope.insert('agentMessage', {
@@ -164,7 +170,9 @@ export class AgentConversationWriterService {
         role,
         agentId,
         processedAt: (processedAt ?? new Date()).toISOString(),
-        ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
+        ...(isDefined(senderWorkspaceMemberId)
+          ? { senderWorkspaceMemberId }
+          : {}),
         ...(isDefined(senderApplicationId) ? { senderApplicationId } : {}),
       });
 
@@ -251,5 +259,28 @@ export class AgentConversationWriterService {
     });
 
     return { isAwaitingAnswer, replyParts };
+  }
+
+  // Callers name the sender by their membership; a sender who has left since
+  // is recorded without one
+  private async findSenderWorkspaceMemberId({
+    workspaceId,
+    senderUserWorkspaceId,
+  }: {
+    workspaceId: string;
+    senderUserWorkspaceId: string | null;
+  }): Promise<string | null> {
+    if (!isDefined(senderUserWorkspaceId)) {
+      return null;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return (
+      flatWorkspaceMemberMaps.idByUserWorkspaceId[senderUserWorkspaceId] ?? null
+    );
   }
 }
