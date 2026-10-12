@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-07 16:20\n"
+"PO-Revision-Date: 2026-10-12 12:37\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -511,7 +511,7 @@ msgstr "150 小时"
 #. js-lingui-id: Ur5nZV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "2 hours"
-msgstr ""
+msgstr "2 小时"
 
 #. js-lingui-id: 2z1Znr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1254,7 +1254,7 @@ msgstr "通过 API、SDK 和 webhook 扩展 Twenty，并在你的 CRM 数据之�
 #. js-lingui-id: Oh+wHS
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "App logs"
-msgstr ""
+msgstr "应用日志"
 
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
@@ -2511,7 +2511,7 @@ msgstr "自定义视图"
 #. js-lingui-id: T8n/Qf
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom, up to 3 years"
-msgstr ""
+msgstr "自定义，最长 3 年"
 
 #. js-lingui-id: 876pfE
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -4935,7 +4935,7 @@ msgstr "登录"
 #. js-lingui-id: qakNlV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Log retention"
-msgstr ""
+msgstr "日志保留期限"
 
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
@@ -6325,7 +6325,7 @@ msgstr "“实时”是一种心态，而不是一个功能。"
 #. js-lingui-id: v5nqef
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Record change logs"
-msgstr ""
+msgstr "记录更改日志"
 
 #. js-lingui-id: TnoD2J
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts

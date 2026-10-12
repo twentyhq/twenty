@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-07 16:20\n"
+"PO-Revision-Date: 2026-10-12 12:37\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -511,7 +511,7 @@ msgstr "150 ساعة"
 #. js-lingui-id: Ur5nZV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "2 hours"
-msgstr ""
+msgstr "ساعتان"
 
 #. js-lingui-id: 2z1Znr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1254,7 +1254,7 @@ msgstr "واجهات APIs و SDKs و webhooks لتوسيع Twenty وإطلاق �
 #. js-lingui-id: Oh+wHS
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "App logs"
-msgstr ""
+msgstr "سجلات التطبيق"
 
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
@@ -2511,7 +2511,7 @@ msgstr "طرق عرض مخصّصة"
 #. js-lingui-id: T8n/Qf
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom, up to 3 years"
-msgstr ""
+msgstr "مخصص، حتى 3 سنوات"
 
 #. js-lingui-id: 876pfE
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -4935,7 +4935,7 @@ msgstr "تسجيل الدخول"
 #. js-lingui-id: qakNlV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Log retention"
-msgstr ""
+msgstr "الاحتفاظ بالسجلات"
 
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
@@ -6325,7 +6325,7 @@ msgstr "الوقت الحقيقي هو حالة ذهنية، وليس ميزة."
 #. js-lingui-id: v5nqef
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Record change logs"
-msgstr ""
+msgstr "سجلات تغييرات السجل"
 
 #. js-lingui-id: TnoD2J
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts

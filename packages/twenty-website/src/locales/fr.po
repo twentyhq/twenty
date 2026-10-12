@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-07 16:20\n"
+"PO-Revision-Date: 2026-10-12 12:37\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -511,7 +511,7 @@ msgstr "150 h"
 #. js-lingui-id: Ur5nZV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "2 hours"
-msgstr ""
+msgstr "2 heures"
 
 #. js-lingui-id: 2z1Znr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1254,7 +1254,7 @@ msgstr "APIs, SDKs et webhooks pour étendre Twenty et livrer des applications s
 #. js-lingui-id: Oh+wHS
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "App logs"
-msgstr ""
+msgstr "Journaux d’application"
 
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
@@ -2511,7 +2511,7 @@ msgstr "Vues personnalisées"
 #. js-lingui-id: T8n/Qf
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom, up to 3 years"
-msgstr ""
+msgstr "Personnalisé, jusqu’à 3 ans"
 
 #. js-lingui-id: 876pfE
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -4935,7 +4935,7 @@ msgstr "Connexion"
 #. js-lingui-id: qakNlV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Log retention"
-msgstr ""
+msgstr "Rétention des journaux"
 
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
@@ -6325,7 +6325,7 @@ msgstr "Le temps réel est un état d’esprit, pas une fonctionnalité."
 #. js-lingui-id: v5nqef
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Record change logs"
-msgstr ""
+msgstr "Journaux des modifications d’enregistrements"
 
 #. js-lingui-id: TnoD2J
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
