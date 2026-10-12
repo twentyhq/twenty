@@ -29,11 +29,15 @@ import { RESPONSIVE_HOOKS_WIDGET_SIZING } from '@/__stories__/twenty-ui-gallery/
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { toastCountdownTest } from '@/__stories__/twenty-ui-gallery/utils/toastCountdownTest';
 import { type Meta } from '@storybook/react-vite';
+import { expect, waitFor, within } from 'storybook/test';
 
 import {
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+  errorHandler,
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
+import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
 import { statusControlsTest } from '@/__stories__/twenty-ui-gallery/utils/statusControlsTest';
 import { tagControlsTest } from '@/__stories__/twenty-ui-gallery/utils/tagControlsTest';
@@ -753,53 +757,97 @@ export const AnimatedIconCrossfadePreact: Story = createGalleryStory({
   play: animatedIconCrossfadeTest,
 });
 
+const createMountOnlyPlay =
+  ({
+    testId,
+    expectedCount = 1,
+  }: {
+    testId: string;
+    expectedCount?: number;
+  }): TwentyUiGalleryPlayFunction =>
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(
+      () => {
+        const mountedComponents = canvas.getAllByTestId(testId);
+
+        expect(mountedComponents).toHaveLength(expectedCount);
+        for (const mountedComponent of mountedComponents) {
+          expect(mountedComponent).toBeVisible();
+        }
+      },
+      { timeout: MOUNT_TIMEOUT },
+    );
+    expect(errorHandler).not.toHaveBeenCalled();
+  };
+
+const galleryMountOnlyPlay = createMountOnlyPlay({
+  testId: 'front-component-mounted',
+});
+const geometryMountOnlyPlay = createMountOnlyPlay({
+  testId: 'geometry-measure-component',
+});
+const galleryInstancesMountOnlyPlay = createMountOnlyPlay({
+  testId: 'front-component-mounted',
+  expectedCount: 2,
+});
+
 export const ResizeHandleGesturesReact: Story = {
   ...ResizeHandleReact,
-  play: undefined,
+  play: galleryMountOnlyPlay,
 };
 export const ResizeHandleGesturesPreact: Story = {
   ...ResizeHandlePreact,
-  play: undefined,
+  play: galleryMountOnlyPlay,
 };
-export const SliderGesturesReact: Story = { ...SliderReact, play: undefined };
-export const SliderGesturesPreact: Story = { ...SliderPreact, play: undefined };
+export const SliderGesturesReact: Story = {
+  ...SliderReact,
+  play: galleryMountOnlyPlay,
+};
+export const SliderGesturesPreact: Story = {
+  ...SliderPreact,
+  play: galleryMountOnlyPlay,
+};
 export const SliderRangeGesturesReact: Story = {
   ...SliderRangeReact,
-  play: undefined,
+  play: galleryMountOnlyPlay,
 };
 export const SliderRangeGesturesPreact: Story = {
   ...SliderRangePreact,
-  play: undefined,
+  play: galleryMountOnlyPlay,
 };
 
 export const PortalGeometryReact: Story = {
   ...PortalBoundsReact,
-  play: undefined,
+  play: galleryMountOnlyPlay,
 };
 export const PortalGeometryPreact: Story = {
   ...PortalBoundsPreact,
-  play: undefined,
+  play: galleryMountOnlyPlay,
 };
 
 export const LayoutMeasurementsReact: Story = createGalleryStory({
   frontComponentBundleName: 'geometry-measure',
   runtime: 'react',
-  play: undefined,
+  play: geometryMountOnlyPlay,
 });
 export const LayoutMeasurementsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'geometry-measure',
   runtime: 'preact',
-  play: undefined,
+  play: geometryMountOnlyPlay,
 });
 
 export const OverflowingListInstancesReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-overflowing-list',
   runtime: 'react',
   decorators: [OverflowingListInstancesDecorator],
+  play: galleryInstancesMountOnlyPlay,
 });
 
 export const OverflowingListInstancesPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-overflowing-list',
   runtime: 'preact',
   decorators: [OverflowingListInstancesDecorator],
+  play: galleryInstancesMountOnlyPlay,
 });
