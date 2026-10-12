@@ -30,6 +30,7 @@ import { canComputeAutomaticTax } from 'src/engine/core-modules/billing/utils/ca
 import { computeCreditOneTimeTopUpUnitPriceCents } from 'src/engine/core-modules/billing/utils/compute-credit-one-time-top-up-unit-price-cents.util';
 import { findCreditOneTimeTopUpPrice } from 'src/engine/core-modules/billing/utils/find-credit-one-time-top-up-price.util';
 import { isCreditOneTimeTopUpAllowedForSubscription } from 'src/engine/core-modules/billing/utils/is-credit-one-time-top-up-allowed-for-subscription.util';
+import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { isValidCreditOneTimeTopUpCreditAmount } from 'src/engine/core-modules/billing/utils/is-valid-credit-one-time-top-up-credit-amount.util';
 import { parseCreditTopUpInvoiceMetadata } from 'src/engine/core-modules/billing/utils/parse-credit-top-up-invoice-metadata.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -89,7 +90,7 @@ export class BillingCreditOneTimeTopUpService {
     userId: string;
     creditAmount: number;
     idempotencyKey: string;
-  }): Promise<OneOffInvoicePayment> {
+  }): Promise<Pick<OneOffInvoicePayment, 'status' | 'hostedInvoiceUrl'>> {
     if (!isValidCreditOneTimeTopUpCreditAmount(creditAmount)) {
       const { minimum, maximum } = CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNT_RANGE;
 
@@ -124,6 +125,44 @@ export class BillingCreditOneTimeTopUpService {
     }
 
     const { stripeCustomerId, stripeSubscriptionId, currency } = subscription;
+    const creditAmountMicro =
+      creditAmount * INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
+    const amountInCents =
+      creditAmount * computeCreditOneTimeTopUpUnitPriceCents(price);
+    const lineDescription =
+      creditAmount === 1 ? '1 credit' : `${creditAmount} credits`;
+    const metadata = buildCreditOneTimeTopUpInvoiceMetadata({
+      workspaceId,
+      userId,
+      creditAmountMicro,
+    });
+    const stripeIdempotencyKey = `credit-top-up-${workspaceId}-${idempotencyKey}`;
+
+    if (isSendInvoiceSubscription(subscription)) {
+      const invoiceItem =
+        await this.stripeInvoiceService.createPendingInvoiceItem({
+          stripeCustomerId,
+          stripeSubscriptionId,
+          amountInCents,
+          currency,
+          description: `Credit top-up - ${lineDescription}`,
+          metadata,
+          isDiscountable: false,
+          idempotencyKey: `${stripeIdempotencyKey}-pending-invoice-item`,
+        });
+
+      await this.grantPurchasedCredits({
+        workspaceId,
+        creditAmountMicro,
+        stripeObjectId: invoiceItem.id,
+        reason: `Credit top-up, billed on the next invoice (${invoiceItem.id})`,
+      });
+
+      return {
+        status: BillingInvoicePaymentStatus.ADDED_TO_NEXT_INVOICE,
+        hostedInvoiceUrl: null,
+      };
+    }
 
     if (
       !(await this.stripeCustomerService.hasPaymentMethod(stripeCustomerId))
@@ -138,37 +177,28 @@ export class BillingCreditOneTimeTopUpService {
       stripeCustomerId,
     );
 
-    const creditAmountMicro =
-      creditAmount * INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
-
     const payment = await this.stripeInvoiceService.chargeOneOffInvoice({
       stripeCustomerId,
       stripeSubscriptionId,
-      amountInCents:
-        creditAmount * computeCreditOneTimeTopUpUnitPriceCents(price),
+      amountInCents,
       currency,
       description: 'Credit top-up',
-      lineDescription:
-        creditAmount === 1 ? '1 credit' : `${creditAmount} credits`,
-      metadata: buildCreditOneTimeTopUpInvoiceMetadata({
-        workspaceId,
-        userId,
-        creditAmountMicro,
-      }),
+      lineDescription,
+      metadata,
       isAutomaticTaxEnabled: canComputeAutomaticTax(
         await this.stripeCustomerService.getAutomaticTaxStatus(
           stripeCustomerId,
         ),
       ),
-      idempotencyKey: `credit-top-up-${workspaceId}-${idempotencyKey}`,
+      idempotencyKey: stripeIdempotencyKey,
     });
 
     if (payment.status === BillingInvoicePaymentStatus.PAID) {
       await this.grantPurchasedCredits({
         workspaceId,
         creditAmountMicro,
-        stripeInvoiceId: payment.stripeInvoiceId,
-        stripeInvoiceNumber: payment.stripeInvoiceNumber,
+        stripeObjectId: payment.stripeInvoiceId,
+        reason: `Credit top-up, invoice ${payment.stripeInvoiceNumber ?? payment.stripeInvoiceId}`,
       });
     }
 
@@ -216,8 +246,8 @@ export class BillingCreditOneTimeTopUpService {
     await this.grantPurchasedCredits({
       workspaceId,
       creditAmountMicro,
-      stripeInvoiceId: invoice.id,
-      stripeInvoiceNumber: invoice.number,
+      stripeObjectId: invoice.id,
+      reason: `Credit top-up, invoice ${invoice.number ?? invoice.id}`,
     });
 
     return workspaceId;
@@ -226,20 +256,20 @@ export class BillingCreditOneTimeTopUpService {
   private async grantPurchasedCredits({
     workspaceId,
     creditAmountMicro,
-    stripeInvoiceId,
-    stripeInvoiceNumber,
+    stripeObjectId,
+    reason,
   }: {
     workspaceId: string;
     creditAmountMicro: number;
-    stripeInvoiceId: string;
-    stripeInvoiceNumber: string | null;
+    stripeObjectId: string;
+    reason: string;
   }): Promise<BillingCreditGrantEntity | null> {
     return this.billingCreditService.grantCredits({
       workspaceId,
       amountMicro: creditAmountMicro,
       type: BillingCreditGrantType.PURCHASE,
-      reason: `Credit top-up, invoice ${stripeInvoiceNumber ?? stripeInvoiceId}`,
-      idempotencyKey: buildCreditTopUpIdempotencyKey(stripeInvoiceId),
+      reason,
+      idempotencyKey: buildCreditTopUpIdempotencyKey(stripeObjectId),
     });
   }
 
@@ -261,5 +291,5 @@ export class BillingCreditOneTimeTopUpService {
   }
 }
 
-const buildCreditTopUpIdempotencyKey = (stripeInvoiceId: string): string =>
-  `credit-top-up:${stripeInvoiceId}`;
+const buildCreditTopUpIdempotencyKey = (stripeObjectId: string): string =>
+  `credit-top-up:${stripeObjectId}`;

@@ -51,26 +51,37 @@ export class StripeInvoiceService {
     });
   }
 
-  async createPendingUpgradeInvoiceItem({
+  async createPendingInvoiceItem({
     stripeCustomerId,
     stripeSubscriptionId,
-    diffAmountInCents,
+    amountInCents,
     currency,
     description,
+    metadata,
+    isDiscountable,
+    idempotencyKey,
   }: {
     stripeCustomerId: string;
     stripeSubscriptionId: string;
-    diffAmountInCents: number;
+    amountInCents: number;
     currency: string;
     description: string;
-  }): Promise<void> {
-    await this.stripe.invoiceItems.create({
-      customer: stripeCustomerId,
-      subscription: stripeSubscriptionId,
-      amount: diffAmountInCents,
-      currency,
-      description,
-    });
+    metadata?: Stripe.MetadataParam;
+    isDiscountable?: boolean;
+    idempotencyKey?: string;
+  }): Promise<Stripe.InvoiceItem> {
+    return this.stripe.invoiceItems.create(
+      {
+        customer: stripeCustomerId,
+        subscription: stripeSubscriptionId,
+        amount: amountInCents,
+        currency,
+        description,
+        metadata,
+        discountable: isDiscountable,
+      },
+      isDefined(idempotencyKey) ? { idempotencyKey } : undefined,
+    );
   }
 
   async createImmediateUpgradeInvoice({

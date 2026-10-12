@@ -83,14 +83,16 @@ const PURCHASE_MUTATION = gql`
 const purchaseCreditOneTimeTopUp = ({
   creditAmount,
   accessToken,
+  idempotencyKey = randomUUID(),
 }: {
   creditAmount: number;
   accessToken?: string;
+  idempotencyKey?: string;
 }) =>
   makeMetadataApiRequest(
     {
       query: PURCHASE_MUTATION,
-      variables: { creditAmount, idempotencyKey: randomUUID() },
+      variables: { creditAmount, idempotencyKey },
     },
     accessToken,
   );
@@ -281,6 +283,53 @@ describe('Billing one-time credit top-up price and purchase (integration)', () =
       'BILLING_CREDIT_ONE_TIME_TOP_UP_NOT_ALLOWED',
     );
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
+  });
+
+  it('adds the top-up of an invoice-paying subscription to its next invoice and grants it now', async () => {
+    await setupResourceCreditSubscription({
+      workspaceId,
+      periodStart: PERIOD_START,
+      periodEnd: PERIOD_END,
+      creditAmountMicro: ALLOWANCE_MICRO,
+      collectionMethod: 'SEND_INVOICE',
+    });
+
+    const response = await purchaseCreditOneTimeTopUp({ creditAmount: 7 });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.purchaseCreditOneTimeTopUp).toEqual({
+      status: 'ADDED_TO_NEXT_INVOICE',
+      hostedInvoiceUrl: null,
+    });
+
+    const grants = await listCreditGrants(workspaceId);
+
+    expect(grants).toHaveLength(1);
+    expect(grants[0]).toMatchObject({
+      type: BillingCreditGrantType.PURCHASE,
+      amountMicro: 7_000_000,
+    });
+  });
+
+  it('grants a replayed invoice-paying top-up once', async () => {
+    await setupResourceCreditSubscription({
+      workspaceId,
+      periodStart: PERIOD_START,
+      periodEnd: PERIOD_END,
+      creditAmountMicro: ALLOWANCE_MICRO,
+      collectionMethod: 'SEND_INVOICE',
+    });
+
+    const idempotencyKey = randomUUID();
+
+    await purchaseCreditOneTimeTopUp({ creditAmount: 7, idempotencyKey });
+    const replay = await purchaseCreditOneTimeTopUp({
+      creditAmount: 7,
+      idempotencyKey,
+    });
+
+    expect(replay.body.errors).toBeUndefined();
+    expect(await listCreditGrants(workspaceId)).toHaveLength(1);
   });
 
   it('refuses an API key', async () => {

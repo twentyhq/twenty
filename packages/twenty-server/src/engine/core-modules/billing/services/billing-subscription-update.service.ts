@@ -422,9 +422,12 @@ export class BillingSubscriptionUpdateService {
     };
 
     if (isSendInvoiceSubscription(subscription)) {
-      await this.stripeInvoiceService.createPendingUpgradeInvoiceItem(
-        upgradeInvoiceItem,
-      );
+      const { diffAmountInCents, ...pendingInvoiceItem } = upgradeInvoiceItem;
+
+      await this.stripeInvoiceService.createPendingInvoiceItem({
+        ...pendingInvoiceItem,
+        amountInCents: diffAmountInCents,
+      });
 
       return;
     }

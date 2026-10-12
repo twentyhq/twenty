@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { randomUUID } from 'node:crypto';
+
 import type Stripe from 'stripe';
 
 export class StripeSDKMock {
@@ -9,6 +11,17 @@ export class StripeSDKMock {
     update: (_id: string, _params?: Stripe.CustomerUpdateParams) => {
       return;
     },
+  };
+
+  invoiceItems = {
+    create: (
+      params: Stripe.InvoiceItemCreateParams,
+      options?: Stripe.RequestOptions,
+    ) => ({
+      id: `ii_${options?.idempotencyKey ?? randomUUID()}`,
+      object: 'invoiceitem',
+      ...params,
+    }),
   };
 
   webhooks = {

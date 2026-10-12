@@ -860,8 +860,9 @@ export enum BillingEntitlementKey {
   VALIDATION_RULES = 'VALIDATION_RULES'
 }
 
-/** Where the payment of a one-off invoice stands */
+/** Where the payment of a one-time purchase stands */
 export enum BillingInvoicePaymentStatus {
+  ADDED_TO_NEXT_INVOICE = 'ADDED_TO_NEXT_INVOICE',
   PAID = 'PAID',
   PROCESSING = 'PROCESSING',
   REQUIRES_ACTION = 'REQUIRES_ACTION'

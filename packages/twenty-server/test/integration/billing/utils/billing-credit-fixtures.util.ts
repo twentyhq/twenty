@@ -53,6 +53,7 @@ export const setupResourceCreditSubscription = async ({
   status = 'active',
   trialStart = null,
   trialEnd = null,
+  collectionMethod = 'CHARGE_AUTOMATICALLY',
 }: {
   workspaceId: string;
   periodStart: Date;
@@ -61,11 +62,13 @@ export const setupResourceCreditSubscription = async ({
   status?: string;
   trialStart?: Date | null;
   trialEnd?: Date | null;
+  collectionMethod?: string;
 }): Promise<{ subscriptionId: string }> => {
   await query(
     `UPDATE core."billingSubscription"
      SET "currentPeriodStart" = $2, "currentPeriodEnd" = $3, status = $4,
-         "trialStart" = $5, "trialEnd" = $6, interval = 'month'
+         "trialStart" = $5, "trialEnd" = $6, interval = 'month',
+         "collectionMethod" = $8
      WHERE "workspaceId" = $1 AND "stripeSubscriptionId" = $7`,
     [
       workspaceId,
@@ -75,6 +78,7 @@ export const setupResourceCreditSubscription = async ({
       trialStart,
       trialEnd,
       TEST_STRIPE_SUBSCRIPTION_ID,
+      collectionMethod,
     ],
   );
 
