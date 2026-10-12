@@ -21,6 +21,8 @@ Card composition checks native part props and DOM refs, customized anatomy, ordi
 
 AvatarGroup checks derived counts, partially loaded totals, custom overflow and surviving keyed child state. Its native button and link (`target="_blank"`) verify refs, focus and pointer/keyboard activation in React and Preact.
 
+Badge checks ordinary node content, compact sizes, colors and circle shape. Its React and Preact fixtures keep count clamping and zero visibility in the caller, and verify native span attributes, refs and pointer handlers plus explicit button and link render composition with keyboard activation.
+
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
 shared assertions, render checks, interaction checks, and known-failure
@@ -43,6 +45,7 @@ effect within the interaction timeout.
 | `twenty-ui-display-helpers`      | Text                                                                                                                                    |
 | `twenty-ui-avatar-controls`      | Avatar (stable presentational root, compound fallback, refs, explicit button/link composition and native keyboard/disabled behavior)    |
 | `twenty-ui-avatar-group`         | AvatarGroup (derived and partial totals, custom overflow, keyed child state, native refs and explicit button/link composition)          |
+| `twenty-ui-badge`                | Badge (node content, appearance, caller-owned counts, native span refs and explicit button/link composition)                             |
 | `twenty-ui-tag-controls`         | Tag (stable presentational root, positive truncation, native spacing, node content, refs and explicit button/link composition)          |
 | `twenty-ui-status-controls`      | Status (stable presentational root, loading/busy state, node content, refs and explicit button/link composition)                        |
 | `twenty-ui-avatar-image`         | Avatar Root/Image/Fallback (image labels/attributes/refs, loading callbacks, decoded images, fallback, replacement and unmount/remount) |
