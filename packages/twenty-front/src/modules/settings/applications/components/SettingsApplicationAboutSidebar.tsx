@@ -42,7 +42,6 @@ type SettingsApplicationAboutSidebarProps = {
   version?: string;
   installCount?: number;
   category?: string;
-  pricingDescription?: string;
   billsCredits?: boolean;
   developerLinks?: DeveloperLinks;
 };
@@ -51,7 +50,6 @@ type AboutRow = {
   Icon: IconComponent;
   label: string;
   tooltip?: string;
-  iconTooltip?: string;
 };
 
 type ResourceLink = AboutRow & {
@@ -153,7 +151,6 @@ export const SettingsApplicationAboutSidebar = ({
   version,
   installCount,
   category,
-  pricingDescription,
   billsCredits = false,
   developerLinks,
 }: SettingsApplicationAboutSidebarProps) => {
@@ -195,15 +192,6 @@ export const SettingsApplicationAboutSidebar = ({
       : []),
     ...getInstallCountRows(),
     ...(isNonEmptyString(category) ? [{ Icon: IconTag, label: category }] : []),
-    ...(isNonEmptyString(pricingDescription)
-      ? [
-          {
-            Icon: IconCurrencyDollar,
-            label: pricingDescription,
-            iconTooltip: billsCredits ? t`This app bills credits` : undefined,
-          },
-        ]
-      : []),
   ];
 
   const {
@@ -272,16 +260,14 @@ export const SettingsApplicationAboutSidebar = ({
         )}
       </StyledHeader>
 
-      {aboutRows.length > 0 && (
+      {(aboutRows.length > 0 || billsCredits) && (
         <StyledSection>
           <StyledSectionLabel>{t`About`}</StyledSectionLabel>
-          {aboutRows.map(({ Icon, label, tooltip, iconTooltip }) => (
+          {aboutRows.map(({ Icon, label, tooltip }) => (
             <StyledRow key={label}>
-              <Tooltip content={iconTooltip}>
-                <StyledRowIcon aria-label={iconTooltip}>
-                  <Icon size={theme.icon.size.sm} />
-                </StyledRowIcon>
-              </Tooltip>
+              <StyledRowIcon>
+                <Icon size={theme.icon.size.sm} />
+              </StyledRowIcon>
               <OverflowingTextWithTooltip
                 text={label}
                 tooltipContent={tooltip}
@@ -289,6 +275,15 @@ export const SettingsApplicationAboutSidebar = ({
               />
             </StyledRow>
           ))}
+          {billsCredits && (
+            <StyledRow>
+              <Tooltip content={t`This app bills credits`}>
+                <StyledRowIcon aria-label={t`This app bills credits`}>
+                  <IconCurrencyDollar size={theme.icon.size.sm} />
+                </StyledRowIcon>
+              </Tooltip>
+            </StyledRow>
+          )}
         </StyledSection>
       )}
 

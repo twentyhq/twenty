@@ -17,7 +17,6 @@ type SettingsApplicationDetailAboutTabProps = {
   displayName: string;
   description?: string;
   aboutDescription?: string;
-  pricingDescription?: string;
   billsCredits?: boolean;
   screenshots?: string[];
   author?: string;
@@ -132,7 +131,6 @@ export const SettingsApplicationDetailAboutTab = ({
   displayName,
   description,
   aboutDescription,
-  pricingDescription,
   billsCredits,
   screenshots,
   author,
@@ -176,7 +174,6 @@ export const SettingsApplicationDetailAboutTab = ({
           version={version}
           installCount={installCount}
           category={category}
-          pricingDescription={pricingDescription}
           billsCredits={billsCredits}
           developerLinks={developerLinks}
         />

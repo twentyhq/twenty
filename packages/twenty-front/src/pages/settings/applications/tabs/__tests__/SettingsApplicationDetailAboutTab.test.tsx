@@ -68,7 +68,6 @@ const renderAboutTab = ({
         version="2.0"
         installCount={installCount}
         category="Finance"
-        pricingDescription="Free"
         billsCredits={billsCredits}
         developerLinks={developerLinks}
         onShare={onShare ?? undefined}
@@ -123,7 +122,6 @@ describe('SettingsApplicationDetailAboutTab', () => {
     expect(screen.getByText('2.0')).toBeVisible();
     expect(screen.getByText('7 installs')).toBeVisible();
     expect(screen.getByText('Finance')).toBeVisible();
-    expect(screen.getByText('Free')).toBeVisible();
 
     expect(screen.getByRole('link', { name: 'Website' })).toHaveAttribute(
       'href',
