@@ -5,6 +5,7 @@ import { createElement, type ReactNode } from 'react';
 
 import { useTriggerEventStreamCreation } from '@/sse-db-event/hooks/useTriggerEventStreamCreation';
 import { useTriggerEventStreamDestroy } from '@/sse-db-event/hooks/useTriggerEventStreamDestroy';
+import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
@@ -98,6 +99,27 @@ describe('useTriggerEventStreamCreation', () => {
 
     expect(sinks).toHaveLength(2);
     expect(store.get(sseEventStreamIdState.atom)).not.toBe(firstEventStreamId);
+  });
+
+  it('should clear the active listeners when destroying the stream', () => {
+    const { store, result } = setup();
+
+    act(() => {
+      result.current.triggerEventStreamCreation();
+    });
+
+    store.set(activeQueryListenersState.atom, [
+      {
+        queryId: 'record-table-virtualized-company',
+        operationSignature: { objectNameSingular: 'company', variables: {} },
+      },
+    ]);
+
+    act(() => {
+      result.current.triggerEventStreamDestroy();
+    });
+
+    expect(store.get(activeQueryListenersState.atom)).toEqual([]);
   });
 
   it('should request a destroy when the current stream completes', () => {

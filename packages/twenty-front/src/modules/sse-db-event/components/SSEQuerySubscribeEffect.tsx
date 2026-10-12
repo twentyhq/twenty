@@ -62,7 +62,6 @@ export const SSEQuerySubscribeEffect = () => {
         );
       }
 
-      store.set(activeQueryListenersState.atom, []);
       store.set(shouldDestroyEventStreamState.atom, true);
     },
     [store],
@@ -104,7 +103,6 @@ export const SSEQuerySubscribeEffect = () => {
         }
 
         if (result.data?.addQueryToEventStream === false) {
-          store.set(activeQueryListenersState.atom, []);
           store.set(shouldDestroyEventStreamState.atom, true);
 
           return;
@@ -167,7 +165,6 @@ export const SSEQuerySubscribeEffect = () => {
         }
 
         if (result.data?.removeQueryFromEventStream === false) {
-          store.set(activeQueryListenersState.atom, []);
           store.set(shouldDestroyEventStreamState.atom, true);
 
           return;
