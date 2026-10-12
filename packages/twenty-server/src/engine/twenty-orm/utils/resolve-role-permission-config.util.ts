@@ -1,11 +1,46 @@
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
+import {
+  type RolePermissionConfig,
+  type RoleRestrictionsBySource,
+} from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { buildUserRoleRestrictions } from 'src/engine/twenty-orm/utils/build-user-role-restrictions.util';
+import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 
+const resolveRoleRestrictionsFromAuthContext = ({
+  authContext,
+  userWorkspaceRoleMap,
+  apiKeyRoleMap,
+}: {
+  authContext: WorkspaceAuthContext;
+  userWorkspaceRoleMap: UserWorkspaceRoleMap;
+  apiKeyRoleMap: Record<string, string>;
+}): RoleRestrictionsBySource => {
+  if (isUserAuthContext(authContext)) {
+    return buildUserRoleRestrictions({
+      userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
+      applicationRoleId: authContext.application?.defaultRoleId,
+    });
+  }
+
+  if (isApiKeyAuthContext(authContext)) {
+    return { apiKey: apiKeyRoleMap[authContext.apiKey.id] ?? null };
+  }
+
+  if (isApplicationAuthContext(authContext)) {
+    return { application: authContext.application.defaultRoleId ?? null };
+  }
+
+  return {};
+};
+
+// null when the context allows nothing, which each caller turns into its own denial
 export const resolveRolePermissionConfig = ({
   authContext,
   userWorkspaceRoleMap,
@@ -19,15 +54,13 @@ export const resolveRolePermissionConfig = ({
     return { shouldBypassPermissionChecks: true };
   }
 
-  const roleIds = resolveRoleIdsFromAuthContext({
+  const roleRestrictions = resolveRoleRestrictionsFromAuthContext({
     authContext,
     userWorkspaceRoleMap,
     apiKeyRoleMap,
   });
 
-  if (!isNonEmptyArray(roleIds)) {
-    return null;
-  }
-
-  return { intersectionOf: roleIds };
+  return isDefined(getRoleIdsToIntersect(roleRestrictions))
+    ? { intersectionOf: roleRestrictions }
+    : null;
 };

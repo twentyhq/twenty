@@ -44,6 +44,7 @@ export class SystemPromptBuilderService {
     const [toolCatalog, skillCatalog, canAttachConversationToRecords] =
       await Promise.all([
         this.toolRegistry.buildToolIndex(workspaceId, roleId, {
+          rolePermissionConfig: { intersectionOf: { userWorkspace: roleId } },
           userId,
           userWorkspaceId,
           excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,

@@ -67,7 +67,7 @@ const generateDescriptors = async (
     {
       workspaceId,
       roleId,
-      rolePermissionConfig: { unionOf: [roleId] },
+      rolePermissionConfig: { intersectionOf: { userWorkspace: roleId } },
       application,
     },
     { includeSchemas: false },

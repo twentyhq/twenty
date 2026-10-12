@@ -34,22 +34,27 @@ const rolesPermissions: ObjectsPermissionsByRoleId = {
 };
 
 describe('getObjectsPermissionsFromRolePermissionConfig', () => {
-  it('should resolve a single union role', () => {
+  it('should resolve a single role unchanged', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
-        rolePermissionConfig: { unionOf: ['agent-role-id'] },
+        rolePermissionConfig: { intersectionOf: { agent: 'agent-role-id' } },
       }),
-    ).toEqual(agentRolePermissions);
+    ).toBe(agentRolePermissions);
   });
 
-  it('should resolve a single intersection role', () => {
+  it('should resolve a role held by several sources as that role alone', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
-        rolePermissionConfig: { intersectionOf: ['default-role-id'] },
+        rolePermissionConfig: {
+          intersectionOf: {
+            userWorkspace: 'default-role-id',
+            application: 'default-role-id',
+          },
+        },
       }),
-    ).toEqual(defaultRolePermissions);
+    ).toBe(defaultRolePermissions);
   });
 
   it('should intersect every role when several are provided', () => {
@@ -57,7 +62,10 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         rolePermissionConfig: {
-          intersectionOf: ['agent-role-id', 'default-role-id'],
+          intersectionOf: {
+            agent: 'agent-role-id',
+            userWorkspace: 'default-role-id',
+          },
         },
       }),
     ).toEqual(defaultRolePermissions);
@@ -68,7 +76,10 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         rolePermissionConfig: {
-          intersectionOf: ['default-role-id', 'agent-role-id'],
+          intersectionOf: {
+            userWorkspace: 'default-role-id',
+            application: 'agent-role-id',
+          },
         },
       })[OBJECT_ID].canReadObjectRecords,
     ).toBe(false);
@@ -79,7 +90,10 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         rolePermissionConfig: {
-          intersectionOf: ['agent-role-id', 'missing-role-id'],
+          intersectionOf: {
+            agent: 'agent-role-id',
+            application: 'missing-role-id',
+          },
         },
       }),
     ).toEqual({});
@@ -98,7 +112,27 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
-        rolePermissionConfig: { unionOf: ['missing-role-id'] },
+        rolePermissionConfig: { intersectionOf: { apiKey: 'missing-role-id' } },
+      }),
+    ).toEqual({});
+  });
+
+  it('should deny when an actor takes part without a role', () => {
+    expect(
+      getObjectsPermissionsFromRolePermissionConfig({
+        rolesPermissions,
+        rolePermissionConfig: {
+          intersectionOf: { agent: null, userWorkspace: 'agent-role-id' },
+        },
+      }),
+    ).toEqual({});
+  });
+
+  it('should deny when no actor restricts the call', () => {
+    expect(
+      getObjectsPermissionsFromRolePermissionConfig({
+        rolesPermissions,
+        rolePermissionConfig: { intersectionOf: {} },
       }),
     ).toEqual({});
   });

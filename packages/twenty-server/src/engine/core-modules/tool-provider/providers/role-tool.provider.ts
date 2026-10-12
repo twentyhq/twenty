@@ -14,7 +14,7 @@ import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/util
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleToolWorkspaceService } from 'src/engine/metadata-modules/role/tools/services/role-tool.workspace-service';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
+import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 
 @Injectable()
 export class RoleToolProvider implements ToolProvider {
@@ -56,10 +56,13 @@ export class RoleToolProvider implements ToolProvider {
   }
 
   private buildToolSet(context: ToolProviderContext): ToolSet {
-    const callerRoleIds = new Set([
-      ...getRoleIdsFromRolePermissionConfig(context.rolePermissionConfig),
-      context.roleId,
-    ]);
+    const { rolePermissionConfig } = context;
+    // a config that allows nothing holds no role the caller acts with
+    const permissionConfigRoleIds =
+      'intersectionOf' in rolePermissionConfig
+        ? (getRoleIdsToIntersect(rolePermissionConfig.intersectionOf) ?? [])
+        : [];
+    const callerRoleIds = new Set([...permissionConfigRoleIds, context.roleId]);
 
     return this.roleToolWorkspaceService.generateRoleTools({
       workspaceId: context.workspaceId,

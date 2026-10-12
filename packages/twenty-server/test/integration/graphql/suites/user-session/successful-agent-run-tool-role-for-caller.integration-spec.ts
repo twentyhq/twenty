@@ -28,6 +28,7 @@ type TestContext = {
   token: (globalContext: GlobalTestContext) => string;
   runAsWorkspaceMemberId?: string;
   roleTargetId: string;
+  callerRoleSource: 'userWorkspace' | 'apiKey';
 };
 
 const callerRunTestCases: EachTestingContext<TestContext>[] = [
@@ -36,6 +37,7 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     context: {
       token: () => APPLE_JONY_MEMBER_ACCESS_TOKEN,
       roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      callerRoleSource: 'userWorkspace',
     },
   },
   {
@@ -43,6 +45,7 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     context: {
       token: (globalContext) => globalContext.janeApplicationToken,
       roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      callerRoleSource: 'userWorkspace',
     },
   },
   {
@@ -51,6 +54,7 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
       token: (globalContext) => globalContext.applicationToken,
       runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      callerRoleSource: 'userWorkspace',
     },
   },
   {
@@ -58,6 +62,7 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     context: {
       token: () => API_KEY_ACCESS_TOKEN,
       roleTargetId: API_KEY_DATA_SEED_IDS.ID_1,
+      callerRoleSource: 'apiKey',
     },
   },
 ];
@@ -131,10 +136,12 @@ describe('Agent run tools should be limited to the caller role', () => {
         runAsWorkspaceMemberId: context.runAsWorkspaceMemberId,
       });
 
-      expect(executionContext.additionalRoleRestrictionIds).toEqual([
-        await findCallerRoleId(context.roleTargetId),
-        globalTestContext.applicationRoleId,
-      ]);
+      expect(executionContext.roleRestrictions).toEqual({
+        [context.callerRoleSource]: await findCallerRoleId(
+          context.roleTargetId,
+        ),
+        application: globalTestContext.applicationRoleId,
+      });
     },
   );
 
@@ -144,8 +151,8 @@ describe('Agent run tools should be limited to the caller role', () => {
       token: globalTestContext.applicationToken,
     });
 
-    expect(executionContext.additionalRoleRestrictionIds).toEqual([
-      globalTestContext.applicationRoleId,
-    ]);
+    expect(executionContext.roleRestrictions).toEqual({
+      application: globalTestContext.applicationRoleId,
+    });
   });
 });

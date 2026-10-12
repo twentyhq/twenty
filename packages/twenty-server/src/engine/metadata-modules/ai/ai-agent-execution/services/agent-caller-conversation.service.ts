@@ -22,7 +22,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
+import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 
 const MAX_ASK_ATTEMPTS = 10;
 
@@ -273,9 +273,14 @@ export class AgentCallerConversationService {
         .getHandlerOrThrow(caller.type)
         .buildExecutionContext({ workspaceId, caller });
 
+    const roleIds =
+      'intersectionOf' in rolePermissionConfig
+        ? getRoleIdsToIntersect(rolePermissionConfig.intersectionOf)
+        : null;
+
     const toolContext = {
       workspaceId,
-      roleId: getRoleIdsFromRolePermissionConfig(rolePermissionConfig)[0] ?? '',
+      roleId: roleIds?.[0] ?? '',
       rolePermissionConfig,
       authContext,
       application,

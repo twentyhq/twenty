@@ -158,7 +158,7 @@ describe('AgentRunService', () => {
       messages: userInput('Who is our biggest customer?'),
     });
     expect(executionContext).toMatchObject({
-      rolePermissionConfig: { intersectionOf: ['agent-role-id'] },
+      rolePermissionConfig: { intersectionOf: { agent: 'agent-role-id' } },
       conversationActor: { type: 'application', applicationId: APPLICATION.id },
       turnCreatedBy: { source: 'APPLICATION' },
     });
@@ -222,8 +222,10 @@ describe('AgentRunService', () => {
       actorContext: RUN_AS_ACTOR,
       turnCreatedBy: RUN_AS_ACTOR,
       userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
-      additionalRoleRestrictionIds: ['role-id'],
-      rolePermissionConfig: { intersectionOf: ['agent-role-id', 'role-id'] },
+      roleRestrictions: { userWorkspace: 'role-id' },
+      rolePermissionConfig: {
+        intersectionOf: { agent: 'agent-role-id', userWorkspace: 'role-id' },
+      },
       conversationActor: {
         type: 'user',
         workspaceMemberId: RUN_AS_ACTOR.workspaceMemberId,
@@ -295,7 +297,7 @@ describe('AgentRunService', () => {
           userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
         },
         rolePermissionConfig: {
-          intersectionOf: ['agent-role-id', 'role-id'],
+          intersectionOf: { agent: 'agent-role-id', userWorkspace: 'role-id' },
         },
         turnCreatedBy: RUN_AS_ACTOR,
       });
@@ -324,7 +326,10 @@ describe('AgentRunService', () => {
           workspaceMemberId: RUN_AS_ACTOR.workspaceMemberId,
         },
         rolePermissionConfig: {
-          intersectionOf: ['agent-role-id', 'updated-member-role-id'],
+          intersectionOf: {
+            agent: 'agent-role-id',
+            userWorkspace: 'updated-member-role-id',
+          },
         },
       });
     },
@@ -378,7 +383,7 @@ describe('AgentRunService', () => {
     expect(executionContext).toMatchObject({
       authContext: { type: 'apiKey', apiKey: { id: 'api-key-id' } },
       rolePermissionConfig: {
-        intersectionOf: ['agent-role-id', 'api-key-role-id'],
+        intersectionOf: { agent: 'agent-role-id', apiKey: 'api-key-role-id' },
       },
     });
 
@@ -394,7 +399,10 @@ describe('AgentRunService', () => {
     ).resolves.toMatchObject({
       authContext: { type: 'apiKey', apiKey: { id: 'api-key-id' } },
       rolePermissionConfig: {
-        intersectionOf: ['agent-role-id', 'updated-key-role-id'],
+        intersectionOf: {
+          agent: 'agent-role-id',
+          apiKey: 'updated-key-role-id',
+        },
       },
     });
   });

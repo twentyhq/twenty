@@ -124,7 +124,7 @@ describe('AgentTriggerRunnerService', () => {
             type: 'application',
             actingAgent: { id: AGENT_ID, label: 'Enricher' },
           }),
-          rolePermissionConfig: { intersectionOf: [AGENT_ROLE_ID] },
+          rolePermissionConfig: { intersectionOf: { agent: AGENT_ROLE_ID } },
         }),
       }),
     );
@@ -143,9 +143,12 @@ describe('AgentTriggerRunnerService', () => {
       expect.objectContaining({
         executionContext: expect.objectContaining({
           rolePermissionConfig: {
-            intersectionOf: [AGENT_ROLE_ID, 'application-role-id'],
+            intersectionOf: {
+              agent: AGENT_ROLE_ID,
+              application: 'application-role-id',
+            },
           },
-          additionalRoleRestrictionIds: ['application-role-id'],
+          roleRestrictions: { application: 'application-role-id' },
         }),
       }),
     );

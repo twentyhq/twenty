@@ -137,7 +137,7 @@ describe('DatabaseToolProvider', () => {
       {
         workspaceId,
         roleId,
-        rolePermissionConfig: { unionOf: [roleId] },
+        rolePermissionConfig: { intersectionOf: { agent: roleId } },
         requireExplicitObjectGrants: options?.requireExplicitObjectGrants,
       },
       { includeSchemas: false },

@@ -522,7 +522,9 @@ describe('Conversation sharing through the authenticated API', () => {
           }),
         ).resolves.toMatchObject({
           rolePermissionConfig: {
-            intersectionOf: [userWorkspaceRoleMap[sender.userWorkspaceId]],
+            intersectionOf: {
+              userWorkspace: userWorkspaceRoleMap[sender.userWorkspaceId],
+            },
           },
         });
         await expect(
