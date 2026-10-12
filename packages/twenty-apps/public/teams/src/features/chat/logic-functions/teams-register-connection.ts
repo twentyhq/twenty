@@ -41,7 +41,7 @@ export default defineLogicFunction({
   universalIdentifier: TEAMS_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER,
   name: 'teams-register-connection',
   description:
-    'Runs when a Microsoft Teams connection is added. For a workspace-shared connection with chat enabled, reads the Microsoft tenant id from Graph and claims it for this workspace under the server-scoped teams-tenant:<tenant_id> key, so activities from that tenant route here. Personal connections are left alone. With transcripts enabled, also subscribes to the transcripts of the meetings the account organizes, so Microsoft Graph notifies the app when one is ready, and starts importing the last 31 days of transcripts once per connection.',
+    'Runs when a Microsoft Teams connection is added. For a workspace-shared connection with chat enabled, reads the Microsoft tenant id from Graph and claims it for this workspace under the server-scoped teams-tenant:<tenant_id> key, so activities from that tenant route here. Personal connections are left alone. With transcripts enabled, also subscribes to the transcripts of the meetings the account organizes, so Microsoft Graph notifies the app when one is ready, and starts importing the last 31 days of transcripts once per connection, again on a reconnect when that import failed or stalled.',
   timeoutSeconds: 30,
   handler: teamsRegisterConnectionHandler,
 });

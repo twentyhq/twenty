@@ -1,5 +1,6 @@
 import { type TeamsTranscriptHistoryErrorCode } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-error-code.type';
 import { type TeamsTranscriptHistoryRunningPhase } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-running-phase.type';
+import { type TeamsTranscriptHistoryJobPayload } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-job-payload.type';
 
 export type TeamsTranscriptHistoryState = {
   runId: string;
@@ -17,4 +18,5 @@ export type TeamsTranscriptHistoryState = {
   checkedThrough?: string;
   updatedAt: string;
   errorCode?: TeamsTranscriptHistoryErrorCode;
+  nextJob?: TeamsTranscriptHistoryJobPayload;
 };

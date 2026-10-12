@@ -13,6 +13,7 @@ import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/trans
 import { type TeamsTranscriptHistoryJobPayload } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-job-payload.type';
 import { type TeamsTranscriptHistoryPageResult } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-page-result.type';
 import { type TeamsTranscriptHistoryRunningPhase } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-running-phase.type';
+import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-state.type';
 import { buildTeamsCalendarViewUrl } from 'src/features/transcripts/logic-functions/utils/build-teams-calendar-view-url';
 import { buildTeamsTranscriptHistoryKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-history-kv-key';
 import { countTeamsTranscriptHistoryPageOrThrow } from 'src/features/transcripts/logic-functions/utils/count-teams-transcript-history-page-or-throw';
@@ -49,6 +50,23 @@ const processValidTeamsTranscriptHistoryPageOrThrow = async ({
     };
   }
 
+  // The page was already saved, so only scheduling the next page failed.
+  if (state.pageCount === job.pageIndex + 1) {
+    if (isDefined(state.nextJob)) {
+      await enqueueTeamsTranscriptHistoryJobOrThrow({
+        phase,
+        job: state.nextJob,
+        delayMilliseconds: 0,
+      });
+    }
+
+    return {
+      success: true,
+      skipped: true,
+      reason: 'Teams transcript history page was already imported',
+    };
+  }
+
   const chunkWindow = getTeamsTranscriptHistoryChunkWindow({
     windowStart: state.windowStart,
     windowEnd: state.windowEnd,
@@ -66,17 +84,18 @@ const processValidTeamsTranscriptHistoryPageOrThrow = async ({
       ? resolveTeamsCalendarNextPageUrlOrThrow(job.nextPageUrl)
       : buildTeamsCalendarViewUrl(chunkWindow),
   });
-  const transcripts = await listTeamsOccurrenceTranscripts({
-    accessToken,
-    occurrences: page.occurrences.filter((occurrence) =>
-      isTeamsMeetingOccurrenceStartingInWindow({
-        occurrence,
-        window: chunkWindow,
-      }),
-    ),
-  });
+  const { transcripts, unavailableMeetingCount } =
+    await listTeamsOccurrenceTranscripts({
+      accessToken,
+      occurrences: page.occurrences.filter((occurrence) =>
+        isTeamsMeetingOccurrenceStartingInWindow({
+          occurrence,
+          window: chunkWindow,
+        }),
+      ),
+    });
   const coreApiClient = new CoreApiClient({ runAs: 'application' });
-  const pageCounts =
+  const phaseCounts =
     phase === 'counting'
       ? await countTeamsTranscriptHistoryPageOrThrow({
           coreApiClient,
@@ -86,7 +105,12 @@ const processValidTeamsTranscriptHistoryPageOrThrow = async ({
           accessToken,
           coreApiClient,
           transcripts,
+          importedSince: state.windowEnd,
         });
+  const pageCounts = {
+    ...phaseCounts,
+    unavailableCount: phaseCounts.unavailableCount + unavailableMeetingCount,
+  };
   const currentState = await findTeamsTranscriptHistoryStateForJob({
     job,
     phase,
@@ -110,9 +134,9 @@ const processValidTeamsTranscriptHistoryPageOrThrow = async ({
   });
 
   if (isDefined(transition.state)) {
-    await kv.set(
+    await kv.set<TeamsTranscriptHistoryState>(
       buildTeamsTranscriptHistoryKvKey(job.connectedAccountId),
-      transition.state,
+      { ...transition.state, nextJob: transition.nextJob },
     );
   }
 
