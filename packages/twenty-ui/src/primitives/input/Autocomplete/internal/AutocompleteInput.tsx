@@ -12,7 +12,6 @@ import { type AutocompleteInputProps } from '../types/AutocompleteInputProps';
 export const AutocompleteInput = ({
   size,
   className,
-  onKeyDown,
   ...props
 }: AutocompleteInputProps) => {
   const inputGroup = useContext(InputGroupContext);
@@ -26,13 +25,6 @@ export const AutocompleteInput = ({
         className,
       )}
       data-grouped={isDefined(inputGroup) || undefined}
-      onKeyDown={(event) => {
-        onKeyDown?.(event);
-
-        if (event.defaultPrevented) {
-          event.preventBaseUIHandler();
-        }
-      }}
     />
   );
 };

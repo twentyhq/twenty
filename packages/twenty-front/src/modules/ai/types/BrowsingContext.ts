@@ -12,4 +12,8 @@ export type BrowsingContext =
       viewId: string;
       viewName: string;
       filterDescriptions: string[];
+    }
+  | {
+      type: 'settingsPage';
+      path: string;
     };
