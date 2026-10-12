@@ -6,6 +6,7 @@ export const GET_AGENT_CHAT_CHANNEL_ROLES = gql`
       id
       label
       icon
+      canAccessAllAgentChatChannels
     }
   }
 `;

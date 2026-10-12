@@ -103,6 +103,7 @@ const buildSyntheticRole = (
   canDestroyAllObjectRecords: defaultRole.canDestroyAllObjectRecords ?? false,
   canUpdateAllSettings: defaultRole.canUpdateAllSettings ?? false,
   canAccessAllTools: defaultRole.canAccessAllTools ?? false,
+  canAccessAllAgentChatChannels: false,
   canBeAssignedToUsers: false,
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: false,

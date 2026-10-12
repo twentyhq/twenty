@@ -51,7 +51,7 @@ const READ_SUMMARY: OpenThreadsSummary = {
 };
 
 const renderTriage = ({
-  path = '/',
+  path = '/inbox',
   summary = READ_SUMMARY,
 }: {
   path?: string;
@@ -128,6 +128,38 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     expect(screen.getByRole('button', { name: 'Done' })).not.toHaveAttribute(
       'aria-current',
     );
+  });
+
+  it('hides the statuses narrowing Open while another status is shown', () => {
+    jotaiStore.set(
+      agentChatThreadFilterStatusState.atom,
+      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+    );
+
+    renderTriage();
+
+    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
+  });
+
+  it('keeps the statuses narrowing Open while one of them is shown', () => {
+    jotaiStore.set(
+      agentChatThreadFilterStatusState.atom,
+      AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
+    );
+
+    renderTriage();
+
+    expect(screen.getByRole('button', { name: 'Mentions' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Assigned' })).toBeVisible();
+  });
+
+  it('hides the statuses narrowing Open outside the inbox', () => {
+    renderTriage({ path: '/objects/companies' });
+
+    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
   });
 
   it('opens the inbox on the chosen status', async () => {
