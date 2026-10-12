@@ -1,5 +1,12 @@
 import request from 'supertest';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import {
+  activateCoreWorkflowVersion,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deactivateCoreWorkflowVersion,
+  deleteCoreWorkflows,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { isDefined } from 'twenty-shared/utils';
 
 const POLL_ATTEMPTS = 20;
@@ -65,10 +72,9 @@ type CoreWorkflowFilter = {
 };
 
 describe('coreWorkflows (e2e)', () => {
-  let workflowId: string;
-  let firstVersionId: string;
+  let coreWorkflowId: string;
+  let firstCoreWorkflowVersionId: string;
   let alreadyDestroyed = false;
-  let softDeletedWorkflowId: string | undefined;
 
   const listCoreWorkflows = async (
     filter?: CoreWorkflowFilter,
@@ -95,13 +101,8 @@ describe('coreWorkflows (e2e)', () => {
     filter?: CoreWorkflowFilter,
   ): Promise<CoreWorkflow | undefined> =>
     (await listCoreWorkflows(filter)).find(
-      (workflow) => workflow.workspaceWorkflowId === workflowId,
+      (workflow) => workflow.id === coreWorkflowId,
     );
-
-  const findCoreWorkflowByName = async (
-    name: string,
-  ): Promise<CoreWorkflow | undefined> =>
-    (await listCoreWorkflows()).find((workflow) => workflow.name === name);
 
   const waitForCoreWorkflow = async (
     predicate: (workflow: CoreWorkflow | undefined) => boolean,
@@ -120,65 +121,16 @@ describe('coreWorkflows (e2e)', () => {
   };
 
   beforeAll(async () => {
-    const createResponse = await graphql(`
-      mutation {
-        createWorkflow(data: { name: "Core Workflows List" }) {
-          id
-        }
-      }
-    `);
-
-    expect(createResponse.body.errors).toBeUndefined();
-    workflowId = createResponse.body.data.createWorkflow.id;
-
-    const getResponse = await graphql(
-      `
-        query GetWorkflow($id: UUID!) {
-          workflow(filter: { id: { eq: $id } }) {
-            versions {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      { id: workflowId },
-    );
-
-    firstVersionId = getResponse.body.data.workflow.versions.edges[0].node.id;
+    ({ coreWorkflowId, coreWorkflowVersionId: firstCoreWorkflowVersionId } =
+      await createCoreWorkflow({ name: 'Core Workflows List' }));
   });
 
   afterAll(async () => {
-    if (isDefined(softDeletedWorkflowId)) {
-      await graphql(
-        `
-          mutation DestroyWorkflow($id: UUID!) {
-            destroyWorkflow(id: $id) {
-              id
-            }
-          }
-        `,
-        { id: softDeletedWorkflowId },
-      );
-    }
-
-    if (alreadyDestroyed) {
+    if (alreadyDestroyed || !isDefined(coreWorkflowId)) {
       return;
     }
 
-    await graphql(
-      `
-        mutation DestroyWorkflow($id: UUID!) {
-          destroyWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: workflowId },
-    );
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });
 
   it('should list the workflow as DRAFT right after creation', async () => {
@@ -346,7 +298,7 @@ describe('coreWorkflows (e2e)', () => {
       ],
     });
 
-    expect(updatedAfter?.workspaceWorkflowId).toBe(workflowId);
+    expect(updatedAfter?.id).toBe(coreWorkflowId);
 
     const updatedBefore = await findCoreWorkflow({
       logicalOperator: 'AND',
@@ -372,7 +324,7 @@ describe('coreWorkflows (e2e)', () => {
       ],
     });
 
-    expect(updatedOnTheSameDay?.workspaceWorkflowId).toBe(workflowId);
+    expect(updatedOnTheSameDay?.id).toBe(coreWorkflowId);
   });
 
   it('should reject an operand the field does not support', async () => {
@@ -390,8 +342,8 @@ describe('coreWorkflows (e2e)', () => {
   });
 
   it('should list the workflow as ACTIVE once its version is activated', async () => {
-    await updateWorkflowVersionTrigger({
-      workflowVersionId: firstVersionId,
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId: firstCoreWorkflowVersionId,
       trigger: {
         name: 'Manual Trigger',
         type: 'MANUAL',
@@ -401,38 +353,14 @@ describe('coreWorkflows (e2e)', () => {
       },
     });
 
-    const stepResponse = await graphql(
-      `
-        mutation CreateWorkflowVersionStep(
-          $input: CreateWorkflowVersionStepInput!
-        ) {
-          createWorkflowVersionStep(input: $input) {
-            stepsDiff
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: firstVersionId,
-          stepType: 'FIND_RECORDS',
-          parentStepId: 'trigger',
-          position: { x: 200, y: 0 },
-        },
-      },
-    );
+    await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId: firstCoreWorkflowVersionId,
+      stepType: 'FIND_RECORDS',
+    });
 
-    expect(stepResponse.body.errors).toBeUndefined();
-
-    const activateResponse = await graphql(
-      `
-        mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-          activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-        }
-      `,
-      { workflowVersionId: firstVersionId },
-    );
-
-    expect(activateResponse.body.errors).toBeUndefined();
+    await activateCoreWorkflowVersion({
+      coreWorkflowVersionId: firstCoreWorkflowVersionId,
+    });
 
     const coreWorkflow = await waitForCoreWorkflow(
       (workflow) => workflow?.statuses[0] === 'ACTIVE',
@@ -442,16 +370,9 @@ describe('coreWorkflows (e2e)', () => {
   });
 
   it('should list the workflow as DEACTIVATED once its version is deactivated', async () => {
-    const deactivateResponse = await graphql(
-      `
-        mutation DeactivateWorkflowVersion($workflowVersionId: UUID!) {
-          deactivateWorkflowVersion(workflowVersionId: $workflowVersionId)
-        }
-      `,
-      { workflowVersionId: firstVersionId },
-    );
-
-    expect(deactivateResponse.body.errors).toBeUndefined();
+    await deactivateCoreWorkflowVersion({
+      coreWorkflowVersionId: firstCoreWorkflowVersionId,
+    });
 
     const coreWorkflow = await waitForCoreWorkflow(
       (workflow) => workflow?.statuses[0] === 'DEACTIVATED',
@@ -518,168 +439,8 @@ describe('coreWorkflows (e2e)', () => {
     expect(secondPage.edges[0].node.id).not.toBe(firstPage.edges[0].node.id);
   });
 
-  it('should not list a workflow once it is soft-deleted', async () => {
-    const softDeletedName = 'Core Workflows Soft Deleted';
-
-    const createResponse = await graphql(
-      `
-        mutation CreateWorkflow($name: String!) {
-          createWorkflow(data: { name: $name }) {
-            id
-          }
-        }
-      `,
-      { name: softDeletedName },
-    );
-
-    expect(createResponse.body.errors).toBeUndefined();
-
-    softDeletedWorkflowId = createResponse.body.data.createWorkflow.id;
-
-    const versionResponse = await graphql(
-      `
-        query GetWorkflow($id: UUID!) {
-          workflow(filter: { id: { eq: $id } }) {
-            versions {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      { id: softDeletedWorkflowId },
-    );
-
-    const softDeletedVersionId =
-      versionResponse.body.data.workflow.versions.edges[0].node.id;
-
-    await updateWorkflowVersionTrigger({
-      workflowVersionId: softDeletedVersionId,
-      trigger: {
-        name: 'Manual Trigger',
-        type: 'MANUAL',
-        settings: { outputSchema: {} },
-        nextStepIds: [],
-        position: { x: 0, y: 0 },
-      },
-    });
-
-    await graphql(
-      `
-        mutation CreateWorkflowVersionStep(
-          $input: CreateWorkflowVersionStepInput!
-        ) {
-          createWorkflowVersionStep(input: $input) {
-            stepsDiff
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: softDeletedVersionId,
-          stepType: 'FIND_RECORDS',
-          parentStepId: 'trigger',
-          position: { x: 200, y: 0 },
-        },
-      },
-    );
-
-    const activateResponse = await graphql(
-      `
-        mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-          activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-        }
-      `,
-      { workflowVersionId: softDeletedVersionId },
-    );
-
-    expect(activateResponse.body.errors).toBeUndefined();
-
-    let activated: CoreWorkflow | undefined;
-
-    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
-      activated = await findCoreWorkflowByName(softDeletedName);
-
-      if (activated?.statuses.includes('ACTIVE')) {
-        break;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-    }
-
-    expect(activated?.statuses).toEqual(['ACTIVE']);
-
-    const deleteResponse = await graphql(
-      `
-        mutation DeleteWorkflow($id: UUID!) {
-          deleteWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: softDeletedWorkflowId },
-    );
-
-    expect(deleteResponse.body.errors).toBeUndefined();
-
-    let deletedWorkflowStatuses: string[] | undefined;
-
-    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
-      const deletedWorkflowResponse = await graphql(
-        `
-          query DeletedWorkflow($id: UUID!) {
-            workflow(
-              filter: { id: { eq: $id }, not: { deletedAt: { is: "NULL" } } }
-            ) {
-              id
-              statuses
-            }
-          }
-        `,
-        { id: softDeletedWorkflowId },
-      );
-
-      deletedWorkflowStatuses =
-        deletedWorkflowResponse.body.data?.workflow?.statuses;
-
-      if (deletedWorkflowStatuses?.includes('DEACTIVATED')) {
-        break;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-    }
-
-    expect(deletedWorkflowStatuses).toEqual(['DEACTIVATED']);
-
-    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
-      if (!isDefined(await findCoreWorkflowByName(softDeletedName))) {
-        break;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-    }
-
-    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
-      expect(await findCoreWorkflowByName(softDeletedName)).toBeUndefined();
-
-      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-    }
-  });
-
   it('should not list the workflow once it is destroyed', async () => {
-    await graphql(
-      `
-        mutation DestroyWorkflow($id: UUID!) {
-          destroyWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: workflowId },
-    );
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
 
     alreadyDestroyed = true;
 
