@@ -11,14 +11,16 @@ jest.mock('@/front-components/components/FrontComponentRenderer', () => ({
   FrontComponentRenderer: ({
     frontComponentId,
     selectedRecordIds,
+    selectedRecordsFilter,
     objectNameSingular,
   }: {
     frontComponentId: string;
     selectedRecordIds?: string[];
+    selectedRecordsFilter?: unknown;
     objectNameSingular?: string;
   }) => (
     <div data-testid="front-component">
-      {`${frontComponentId}:${objectNameSingular ?? 'no object'}:${selectedRecordIds?.join(',') ?? 'no records'}`}
+      {`${frontComponentId}:${objectNameSingular ?? 'no object'}:${selectedRecordIds?.join(',') ?? 'no records'}${selectedRecordsFilter ? `:${JSON.stringify(selectedRecordsFilter)}` : ''}`}
     </div>
   ),
 }));
@@ -75,6 +77,16 @@ describe('SidePanelFrontComponentPage', () => {
         selectedRecordIds: ['record-1', 'record-2'],
       },
       expectedContent: 'front-component-id:company:record-1,record-2',
+    },
+    {
+      description: 'the filter of a Select all, which has no ids',
+      recordContext: {
+        objectNameSingular: 'company',
+        selectedRecordIds: [],
+        selectedRecordsFilter: { not: { id: { in: ['record-3'] } } },
+      },
+      expectedContent:
+        'front-component-id:company::{"not":{"id":{"in":["record-3"]}}}',
     },
     {
       description: 'selected records without an object name',
