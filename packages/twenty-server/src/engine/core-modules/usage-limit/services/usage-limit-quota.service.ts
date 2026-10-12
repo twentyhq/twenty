@@ -786,7 +786,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
           amount: amounts[index],
           warm: {
             value: warmValue,
-            pxMs: counters[index].periodEnd.getTime() - warmedAt,
+            ttl: counters[index].periodEnd.getTime() - warmedAt,
           },
         })),
       });

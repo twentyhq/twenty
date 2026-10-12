@@ -11,12 +11,12 @@ describe('buildConsumeScriptArguments', () => {
   );
 
   it.each([
-    { value: -1, pxMs: 60_000 },
-    { value: 0.5, pxMs: 60_000 },
-    { value: 10, pxMs: 0 },
-    { value: 10, pxMs: -1 },
-    { value: 10, pxMs: 1.5 },
-  ])('refuses the warm value $value with PX $pxMs', (warm) => {
+    { value: -1, ttl: 60_000 },
+    { value: 0.5, ttl: 60_000 },
+    { value: 10, ttl: 0 },
+    { value: 10, ttl: -1 },
+    { value: 10, ttl: 1.5 },
+  ])('refuses the warm value $value with TTL $ttl', (warm) => {
     expect(() => buildConsumeScriptArguments([{ amount: 1, warm }])).toThrow(
       /not a non-negative safe integer/,
     );
