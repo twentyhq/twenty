@@ -49,6 +49,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     EndAgentChatThreadSnoozeJob,
   ],
   exports: [
+    AgentChatChannelGrantService,
     AgentChatChannelService,
     AgentChatChannelThreadsService,
     AgentChatSharingService,

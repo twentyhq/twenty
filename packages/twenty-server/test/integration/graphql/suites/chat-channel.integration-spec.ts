@@ -394,15 +394,18 @@ describe('Chat channels through the authenticated API', () => {
     }
   });
 
-  it('keeps General, as the standard sync would bring it back', async () => {
+  it('keeps General and its chats, as the standard sync would bring it back', async () => {
     const general = (await listChannels()).find(({ isCustom }) => !isCustom);
+    const destinationChannelId = await createChannel();
+    const threadId = await createThreadInChannel(general?.id ?? null);
 
     const response = await makeMetadataApiRequest({
       query: DELETE_CHANNEL,
-      variables: { channelId: general?.id },
+      variables: { channelId: general?.id, destinationChannelId },
     });
 
     expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+    expect((await readChannelState(threadId)).channelId).toBe(general?.id);
   });
 
   it('lets everyone read and reply in a chat of a channel open to everyone', async () => {
