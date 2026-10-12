@@ -1,8 +1,8 @@
 import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { i18n } from '@lingui/core';
 import { type Response } from 'express';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -19,6 +19,7 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -37,6 +38,7 @@ export class ConnectionProviderOAuthController {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly i18nService: I18nService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -57,6 +59,7 @@ export class ConnectionProviderOAuthController {
   ) {
     // Captured early so error redirects land on the user's subdomain (another cookie domain logs them out)
     let workspace: WorkspaceEntity | null = null;
+    let locale: keyof typeof APP_LOCALES = SOURCE_LOCALE;
 
     try {
       if (!applicationId || !providerName || !transientToken) {
@@ -123,6 +126,8 @@ export class ConnectionProviderOAuthController {
         );
       }
 
+      locale = userWorkspace.locale;
+
       const { authorizationUrl } =
         await this.oauthProviderFlowService.startAuthorizationFlow({
           connectionProvider: provider,
@@ -143,7 +148,7 @@ export class ConnectionProviderOAuthController {
         error instanceof Error ? error.stack : undefined,
       );
 
-      return this.redirectToError(res, error, workspace);
+      return this.redirectToError(res, error, workspace, locale);
     }
   }
 
@@ -156,16 +161,24 @@ export class ConnectionProviderOAuthController {
     @Res() res: Response,
   ) {
     let workspace: WorkspaceEntity | null = null;
+    let locale: keyof typeof APP_LOCALES = SOURCE_LOCALE;
 
     try {
       // Resolve only verified state so failed reconnects return to the right workspace.
-      if (state) {
-        const workspaceId =
-          await this.oauthProviderFlowService.getCallbackWorkspaceId(state);
+      const statePayload = state
+        ? await this.oauthProviderFlowService.verifyState(state)
+        : null;
 
+      if (isDefined(statePayload)) {
         workspace = await this.workspaceRepository.findOneBy({
-          id: workspaceId,
+          id: statePayload.workspaceId,
         });
+
+        const userWorkspace = await this.userWorkspaceRepository.findOneBy({
+          id: statePayload.userWorkspaceId,
+        });
+
+        locale = userWorkspace?.locale ?? SOURCE_LOCALE;
       }
 
       if (errorParam) {
@@ -174,7 +187,7 @@ export class ConnectionProviderOAuthController {
         );
       }
 
-      if (!code || !state) {
+      if (!code || !isDefined(statePayload)) {
         throw new Error(
           'OAuth callback is missing the `code` or `state` query parameter',
         );
@@ -183,12 +196,8 @@ export class ConnectionProviderOAuthController {
       const { workspaceId, applicationId, redirectLocation } =
         await this.oauthProviderFlowService.completeAuthorizationFlow({
           code,
-          state,
+          statePayload,
         });
-
-      workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
-      });
 
       if (!workspace) {
         throw new ConnectionProviderException(
@@ -216,7 +225,7 @@ export class ConnectionProviderOAuthController {
 
       return res.redirect(url.toString());
     } catch (error) {
-      return this.redirectToError(res, error, workspace);
+      return this.redirectToError(res, error, workspace, locale);
     }
   }
 
@@ -224,17 +233,17 @@ export class ConnectionProviderOAuthController {
     res: Response,
     error: unknown,
     workspace: WorkspaceEntity | null,
+    locale: keyof typeof APP_LOCALES,
   ) {
-    const redirectError =
-      error instanceof ConnectionProviderException
-        ? new Error(i18n._(error.userFriendlyMessage))
-        : error instanceof Error
-          ? error
-          : new Error(String(error));
-
     return res.redirect(
       this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
-        error: redirectError,
+        error: error instanceof Error ? error : new Error(String(error)),
+        userFriendlyErrorMessage:
+          error instanceof ConnectionProviderException
+            ? this.i18nService
+                .getI18nInstance(locale)
+                ._(error.userFriendlyMessage)
+            : undefined,
         workspace: {
           id: workspace?.id,
           subdomain:

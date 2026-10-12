@@ -19,6 +19,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`Failed to refresh the access token.`;
     case ConnectionProviderExceptionCode.INVALID_STATE:
       return msg`The OAuth state parameter is invalid or expired.`;
+    case ConnectionProviderExceptionCode.PROVIDER_CHANGED_DURING_AUTHORIZATION:
+      return msg`The app's connection settings changed while you were authorizing. Please try connecting again.`;
     case ConnectionProviderExceptionCode.INVALID_REQUEST:
       return msg`The OAuth request is missing required parameters.`;
     case ConnectionProviderExceptionCode.FORBIDDEN:

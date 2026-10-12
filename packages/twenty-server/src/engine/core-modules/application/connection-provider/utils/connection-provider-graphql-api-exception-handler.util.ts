@@ -22,6 +22,7 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
         throw new ForbiddenError(error);
       case ConnectionProviderExceptionCode.INVALID_REQUEST:
       case ConnectionProviderExceptionCode.INVALID_STATE:
+      case ConnectionProviderExceptionCode.PROVIDER_CHANGED_DURING_AUTHORIZATION:
       case ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT:
       case ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NAME_ALREADY_EXISTS:
         throw new UserInputError(error);

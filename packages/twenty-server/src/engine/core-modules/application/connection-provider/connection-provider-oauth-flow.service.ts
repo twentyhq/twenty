@@ -40,7 +40,7 @@ type AuthorizeArgs = {
 
 type CallbackArgs = {
   code: string;
-  state: string;
+  statePayload: AppOAuthStateJwtPayload;
 };
 
 type CallbackResult = {
@@ -125,9 +125,10 @@ export class ConnectionProviderOAuthFlowService {
     return { authorizationUrl: authorizationUrl.toString() };
   }
 
-  async completeAuthorizationFlow(args: CallbackArgs): Promise<CallbackResult> {
-    const statePayload = await this.verifyState(args.state);
-
+  async completeAuthorizationFlow({
+    code,
+    statePayload,
+  }: CallbackArgs): Promise<CallbackResult> {
     const provider = await this.oauthProviderService.findOneByIdOrThrow({
       id: statePayload.connectionProviderId,
       workspaceId: statePayload.workspaceId,
@@ -162,7 +163,7 @@ export class ConnectionProviderOAuthFlowService {
         tokenEndpoint: provider.oauthConfig.tokenEndpoint,
         clientId,
         clientSecret,
-        code: args.code,
+        code,
         redirectUri: callbackUrl,
         codeVerifier: statePayload.codeVerifier,
         contentType: provider.oauthConfig.tokenRequestContentType,
@@ -210,11 +211,7 @@ export class ConnectionProviderOAuthFlowService {
     });
   }
 
-  async getCallbackWorkspaceId(state: string): Promise<string> {
-    return (await this.verifyState(state)).workspaceId;
-  }
-
-  private async verifyState(state: string): Promise<AppOAuthStateJwtPayload> {
+  async verifyState(state: string): Promise<AppOAuthStateJwtPayload> {
     try {
       const verified = (await this.jwtWrapperService.verifyJwtToken(
         state,

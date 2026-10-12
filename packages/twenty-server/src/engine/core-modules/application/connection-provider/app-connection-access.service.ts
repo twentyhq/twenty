@@ -99,7 +99,7 @@ export class AppConnectionAccessService {
     if (!isDefined(currentProvider)) {
       throw new ConnectionProviderException(
         'The connection provider changed during authorization. Start again.',
-        ConnectionProviderExceptionCode.INVALID_STATE,
+        ConnectionProviderExceptionCode.PROVIDER_CHANGED_DURING_AUTHORIZATION,
       );
     }
 

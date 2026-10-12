@@ -85,6 +85,7 @@ export class GuardRedirectService {
     error,
     workspace,
     pathname,
+    userFriendlyErrorMessage,
   }: {
     error: Error | AuthException;
     workspace: {
@@ -94,13 +95,15 @@ export class GuardRedirectService {
       isCustomDomainEnabled?: boolean;
     };
     pathname: string;
+    userFriendlyErrorMessage?: string;
   }) {
     this.captureException(error, workspace.id);
 
     const errorMessage =
-      error instanceof AuthException
+      userFriendlyErrorMessage ??
+      (error instanceof AuthException
         ? error.message
-        : `Authentication error: ${error instanceof Error ? error.message : String(error)}`;
+        : `Authentication error: ${error instanceof Error ? error.message : String(error)}`);
 
     return this.workspaceDomainsService.computeWorkspaceRedirectErrorUrl(
       errorMessage,
