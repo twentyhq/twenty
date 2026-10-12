@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -37,12 +38,12 @@ export class WorkflowRunEnqueueWorkspaceService {
     workspaceId: string;
     isCacheMode: boolean;
   }) {
-    const lockAcquired =
-      await this.workflowThrottlingWorkspaceService.acquireWorkflowEnqueueLock(
+    const lockOwnerToken =
+      await this.workflowThrottlingWorkspaceService.acquireWorkflowEnqueueLock({
         workspaceId,
-      );
+      });
 
-    if (!lockAcquired) {
+    if (!isDefined(lockOwnerToken)) {
       return;
     }
 
@@ -164,7 +165,10 @@ export class WorkflowRunEnqueueWorkspaceService {
     } finally {
       try {
         await this.workflowThrottlingWorkspaceService.releaseWorkflowEnqueueLock(
-          workspaceId,
+          {
+            workspaceId,
+            lockOwnerToken,
+          },
         );
       } catch (releaseError) {
         this.logger.warn(

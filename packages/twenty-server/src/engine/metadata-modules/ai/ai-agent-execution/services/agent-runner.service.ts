@@ -5,6 +5,7 @@ import { type AgentRunSummary } from 'twenty-shared/ai';
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
@@ -67,8 +68,10 @@ export class AgentRunnerService {
     });
   }
 
-  // Picks a suspended run up where it paused once its wake-up resolved. The run claims the wake-up
-  // under its conversation's lock, so each pause goes on once and the conversation waits until it does
+  // Picks a suspended run up where it paused once its wake-up resolved, under its conversation's lock.
+  // The wake-up is removed only once the run went on and its caller has the outcome, so a job that
+  // died or failed midway finds it again, and a pause the run made again replaced it with another
+  // id, so each pause goes on once
   continue({
     workspaceId,
     threadId,
@@ -79,7 +82,7 @@ export class AgentRunnerService {
       workspaceId,
       threadId,
       work: async () => {
-        const wakeUp = await this.pendingWakeUpService.claim({
+        const wakeUp = await this.pendingWakeUpService.find({
           workspaceId,
           wakeUpId,
         });
@@ -88,95 +91,108 @@ export class AgentRunnerService {
           return;
         }
 
-        const suspension = wakeUp.payload as AgentRunSuspension;
-        const isAwaitingAnswer = wakeUp.condition.type === 'ANSWER';
-        const { caller, runSpec } = suspension;
-        const handler = this.callerHandlerRegistry.getHandlerOrThrow(
-          caller.type,
-        );
+        await this.continueSuspendedRun({
+          workspaceId,
+          threadId,
+          wakeUp,
+          outcome,
+        });
 
-        let result: AgentRunnerResult;
-
-        // the wake-up is claimed, so a run that cannot go on is settled rather than left paused
-        try {
-          if (
-            (await handler.getWaitingState({ workspaceId, caller })) === 'GONE'
-          ) {
-            await this.agentRunSuspensionService.closeAwaitedCalls({
-              workspaceId,
-              threadId,
-              isAwaitingAnswer,
-            });
-
-            return;
-          }
-
-          if (outcome.type === 'ANSWERED' && 'error' in outcome.answer) {
-            throw new Error(outcome.answer.error);
-          }
-
-          // a wait the run called alongside a question is over once the question is answered
-          await this.agentRunSuspensionService.recordWaitOutcome({
-            workspaceId,
-            threadId,
-            outcome:
-              outcome.type === 'ANSWERED' ? { type: 'CANCELLED' } : outcome,
-          });
-
-          const agent = isDefined(runSpec.agentId)
-            ? await this.agentRepository.findOne(workspaceId, {
-                where: { id: runSpec.agentId },
-              })
-            : null;
-
-          if (isDefined(runSpec.agentId) && !isDefined(agent)) {
-            throw new AiException(
-              `Agent with id ${runSpec.agentId} not found`,
-              AiExceptionCode.AGENT_NOT_FOUND,
-            );
-          }
-
-          result = await this.runTurn({
-            input: {
-              workspaceId,
-              conversation: { threadId, isCreated: false },
-              caller,
-              spec: runSpec,
-              agent,
-              prompt: null,
-              executionContext: await handler.buildExecutionContext({
-                workspaceId,
-                caller,
-              }),
-            },
-            suspension,
-          });
-        } catch (error) {
-          await this.agentRunSuspensionService.settle({
-            workspaceId,
-            threadId,
-            suspension,
-            outcome: {
-              status: 'FAILED',
-              error: error instanceof Error ? error.message : String(error),
-            },
-            isAwaitingAnswer,
-          });
-
-          return;
-        }
-
-        if (result.outcome.status !== 'SUSPENDED') {
-          await this.agentRunSuspensionService.settle({
-            workspaceId,
-            threadId,
-            suspension,
-            outcome: result.outcome,
-            summary: result.summary,
-          });
-        }
+        await this.pendingWakeUpService.claim({ workspaceId, wakeUpId });
       },
     });
+  }
+
+  private async continueSuspendedRun({
+    workspaceId,
+    threadId,
+    wakeUp,
+    outcome,
+  }: Omit<ContinueAgentRunJobData, 'wakeUpId'> & {
+    wakeUp: Pick<PendingWakeUpEntity, 'payload' | 'condition'>;
+  }): Promise<void> {
+    const suspension = wakeUp.payload as AgentRunSuspension;
+    const isAwaitingAnswer = wakeUp.condition.type === 'ANSWER';
+    const { caller, runSpec } = suspension;
+    const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
+
+    let result: AgentRunnerResult;
+
+    // a run that cannot go on is settled rather than left paused
+    try {
+      if ((await handler.getWaitingState({ workspaceId, caller })) === 'GONE') {
+        await this.agentRunSuspensionService.closeAwaitedCalls({
+          workspaceId,
+          threadId,
+          isAwaitingAnswer,
+        });
+
+        return;
+      }
+
+      if (outcome.type === 'ANSWERED' && 'error' in outcome.answer) {
+        throw new Error(outcome.answer.error);
+      }
+
+      // a wait the run called alongside a question is over once the question is answered
+      await this.agentRunSuspensionService.recordWaitOutcome({
+        workspaceId,
+        threadId,
+        outcome: outcome.type === 'ANSWERED' ? { type: 'CANCELLED' } : outcome,
+      });
+
+      const agent = isDefined(runSpec.agentId)
+        ? await this.agentRepository.findOne(workspaceId, {
+            where: { id: runSpec.agentId },
+          })
+        : null;
+
+      if (isDefined(runSpec.agentId) && !isDefined(agent)) {
+        throw new AiException(
+          `Agent with id ${runSpec.agentId} not found`,
+          AiExceptionCode.AGENT_NOT_FOUND,
+        );
+      }
+
+      result = await this.runTurn({
+        input: {
+          workspaceId,
+          conversation: { threadId, isCreated: false },
+          caller,
+          spec: runSpec,
+          agent,
+          prompt: null,
+          executionContext: await handler.buildExecutionContext({
+            workspaceId,
+            caller,
+          }),
+        },
+        suspension,
+      });
+    } catch (error) {
+      await this.agentRunSuspensionService.settle({
+        workspaceId,
+        threadId,
+        suspension,
+        outcome: {
+          status: 'FAILED',
+          error: error instanceof Error ? error.message : String(error),
+        },
+        isAwaitingAnswer,
+      });
+
+      return;
+    }
+
+    if (result.outcome.status !== 'SUSPENDED') {
+      await this.agentRunSuspensionService.settle({
+        workspaceId,
+        threadId,
+        suspension,
+        outcome: result.outcome,
+        summary: result.summary,
+      });
+    }
   }
 
   private async runTurn({

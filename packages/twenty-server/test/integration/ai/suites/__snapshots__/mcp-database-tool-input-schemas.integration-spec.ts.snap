@@ -40,9 +40,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
             "type": "string",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
@@ -93,9 +90,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
       "type": "string",
     },
   },
-  "required": [
-    "position",
-  ],
   "type": "object",
 }
 `;
@@ -1220,9 +1214,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
             "type": "string",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
@@ -1470,9 +1461,6 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
             "type": "object",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
@@ -1716,9 +1704,6 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
       "type": "object",
     },
   },
-  "required": [
-    "position",
-  ],
   "type": "object",
 }
 `;
@@ -2027,12 +2012,8 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "extraData": {
       "properties": {
-        "eq": {
-          "description": "Equals",
-          "type": "string",
-        },
         "ilike": {
-          "description": "ILIKE (% wildcard, case-insensitive)",
+          "description": "ILIKE on the JSON text (% wildcard, case-insensitive)",
           "type": "string",
         },
         "is": {
@@ -2044,11 +2025,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
           "type": "string",
         },
         "like": {
-          "description": "LIKE (% wildcard)",
-          "type": "string",
-        },
-        "neq": {
-          "description": "Not equals",
+          "description": "LIKE on the JSON text (% wildcard)",
           "type": "string",
         },
       },
@@ -2958,7 +2935,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "traits": {
       "properties": {
-        "in": {
+        "containsAny": {
           "description": "Contains any of these values",
           "items": {
             "enum": [
@@ -3388,12 +3365,8 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "extraData": {
       "properties": {
-        "eq": {
-          "description": "Equals",
-          "type": "string",
-        },
         "ilike": {
-          "description": "ILIKE (% wildcard, case-insensitive)",
+          "description": "ILIKE on the JSON text (% wildcard, case-insensitive)",
           "type": "string",
         },
         "is": {
@@ -3405,11 +3378,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
           "type": "string",
         },
         "like": {
-          "description": "LIKE (% wildcard)",
-          "type": "string",
-        },
-        "neq": {
-          "description": "Not equals",
+          "description": "LIKE on the JSON text (% wildcard)",
           "type": "string",
         },
       },
@@ -4734,7 +4703,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "traits": {
       "properties": {
-        "in": {
+        "containsAny": {
           "description": "Contains any of these values",
           "items": {
             "enum": [
@@ -5115,12 +5084,8 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "extraData": {
       "properties": {
-        "eq": {
-          "description": "Equals",
-          "type": "string",
-        },
         "ilike": {
-          "description": "ILIKE (% wildcard, case-insensitive)",
+          "description": "ILIKE on the JSON text (% wildcard, case-insensitive)",
           "type": "string",
         },
         "is": {
@@ -5132,11 +5097,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
           "type": "string",
         },
         "like": {
-          "description": "LIKE (% wildcard)",
-          "type": "string",
-        },
-        "neq": {
-          "description": "Not equals",
+          "description": "LIKE on the JSON text (% wildcard)",
           "type": "string",
         },
       },
@@ -5596,7 +5557,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "traits": {
       "properties": {
-        "in": {
+        "containsAny": {
           "description": "Contains any of these values",
           "items": {
             "enum": [
@@ -5974,12 +5935,8 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "extraData": {
       "properties": {
-        "eq": {
-          "description": "Equals",
-          "type": "string",
-        },
         "ilike": {
-          "description": "ILIKE (% wildcard, case-insensitive)",
+          "description": "ILIKE on the JSON text (% wildcard, case-insensitive)",
           "type": "string",
         },
         "is": {
@@ -5991,11 +5948,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
           "type": "string",
         },
         "like": {
-          "description": "LIKE (% wildcard)",
-          "type": "string",
-        },
-        "neq": {
-          "description": "Not equals",
+          "description": "LIKE on the JSON text (% wildcard)",
           "type": "string",
         },
       },
@@ -6455,7 +6408,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "traits": {
       "properties": {
-        "in": {
+        "containsAny": {
           "description": "Contains any of these values",
           "items": {
             "enum": [
@@ -7280,9 +7233,6 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
             "type": "object",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
@@ -7367,9 +7317,6 @@ exports[`MCP database tool input schemas should list the input schemas of the su
             "type": "string",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
@@ -7450,9 +7397,6 @@ exports[`MCP database tool input schemas should list the input schemas of the su
       "type": "string",
     },
   },
-  "required": [
-    "position",
-  ],
   "type": "object",
 }
 `;
@@ -7588,12 +7532,8 @@ exports[`MCP database tool input schemas should list the input schemas of the su
     },
     "files": {
       "properties": {
-        "eq": {
-          "description": "Equals",
-          "type": "string",
-        },
         "ilike": {
-          "description": "ILIKE (% wildcard, case-insensitive)",
+          "description": "ILIKE on the JSON text (% wildcard, case-insensitive)",
           "type": "string",
         },
         "is": {
@@ -7605,11 +7545,7 @@ exports[`MCP database tool input schemas should list the input schemas of the su
           "type": "string",
         },
         "like": {
-          "description": "LIKE (% wildcard)",
-          "type": "string",
-        },
-        "neq": {
-          "description": "Not equals",
+          "description": "LIKE on the JSON text (% wildcard)",
           "type": "string",
         },
       },
@@ -8223,12 +8159,8 @@ exports[`MCP database tool input schemas should list the input schemas of the su
     },
     "files": {
       "properties": {
-        "eq": {
-          "description": "Equals",
-          "type": "string",
-        },
         "ilike": {
-          "description": "ILIKE (% wildcard, case-insensitive)",
+          "description": "ILIKE on the JSON text (% wildcard, case-insensitive)",
           "type": "string",
         },
         "is": {
@@ -8240,11 +8172,7 @@ exports[`MCP database tool input schemas should list the input schemas of the su
           "type": "string",
         },
         "like": {
-          "description": "LIKE (% wildcard)",
-          "type": "string",
-        },
-        "neq": {
-          "description": "Not equals",
+          "description": "LIKE on the JSON text (% wildcard)",
           "type": "string",
         },
       },
@@ -8971,12 +8899,8 @@ exports[`MCP database tool input schemas should list the input schemas of the su
     },
     "files": {
       "properties": {
-        "eq": {
-          "description": "Equals",
-          "type": "string",
-        },
         "ilike": {
-          "description": "ILIKE (% wildcard, case-insensitive)",
+          "description": "ILIKE on the JSON text (% wildcard, case-insensitive)",
           "type": "string",
         },
         "is": {
@@ -8988,11 +8912,7 @@ exports[`MCP database tool input schemas should list the input schemas of the su
           "type": "string",
         },
         "like": {
-          "description": "LIKE (% wildcard)",
-          "type": "string",
-        },
-        "neq": {
-          "description": "Not equals",
+          "description": "LIKE on the JSON text (% wildcard)",
           "type": "string",
         },
       },
@@ -9365,12 +9285,8 @@ exports[`MCP database tool input schemas should list the input schemas of the su
     },
     "files": {
       "properties": {
-        "eq": {
-          "description": "Equals",
-          "type": "string",
-        },
         "ilike": {
-          "description": "ILIKE (% wildcard, case-insensitive)",
+          "description": "ILIKE on the JSON text (% wildcard, case-insensitive)",
           "type": "string",
         },
         "is": {
@@ -9382,11 +9298,7 @@ exports[`MCP database tool input schemas should list the input schemas of the su
           "type": "string",
         },
         "like": {
-          "description": "LIKE (% wildcard)",
-          "type": "string",
-        },
-        "neq": {
-          "description": "Not equals",
+          "description": "LIKE on the JSON text (% wildcard)",
           "type": "string",
         },
       },
@@ -9890,9 +9802,6 @@ exports[`MCP database tool input schemas should list the input schemas of the su
             "type": "string",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,

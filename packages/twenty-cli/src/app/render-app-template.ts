@@ -20,6 +20,7 @@ export const renderAppTemplate = async ({
   appDescription: string;
 }) => {
   await cp(getAppTemplateDirectory(), appDirectory, { recursive: true });
+  await writeFile(join(appDirectory, 'yarn.lock'), '', { flag: 'a' });
 
   // npm excludes these dotfiles when packing the template.
   for (const [source, destination] of [

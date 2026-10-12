@@ -1,5 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { type CallRecordingSyncFields } from 'src/features/transcripts/logic-functions/types/call-recording-sync-fields.type';
 import { buildTeamsCallRecordingSyncFields } from 'src/features/transcripts/logic-functions/utils/build-teams-call-recording-sync-fields';
 import { computeCallRecordingIdForTeamsTranscript } from 'src/features/transcripts/logic-functions/utils/compute-call-recording-id-for-teams-transcript';
 import { fetchTeamsTranscriptData } from 'src/features/transcripts/logic-functions/utils/fetch-teams-transcript-data';
@@ -20,6 +21,7 @@ export const syncTeamsTranscriptToCallRecordingOrThrow = async ({
 }): Promise<{
   callRecordingId: string;
   calendarEventId?: string;
+  status: CallRecordingSyncFields['status'];
   created: boolean;
   skipped: boolean;
 }> => {
@@ -46,5 +48,5 @@ export const syncTeamsTranscriptToCallRecordingOrThrow = async ({
     fields,
   });
 
-  return { callRecordingId, calendarEventId, ...result };
+  return { callRecordingId, calendarEventId, status: fields.status, ...result };
 };

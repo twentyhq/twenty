@@ -1,5 +1,5 @@
 import { AvatarGroup, Callout, JsonTree } from '@ui/components';
-import { Avatar, Pill } from '@ui/primitives/data-display';
+import { Avatar, Badge } from '@ui/primitives/data-display';
 import {
   Button,
   ButtonGroup,
@@ -63,7 +63,7 @@ export const DirectionalLayoutExample = ({
             }}
           >
             Upcoming action
-            <Pill label="Soon" />
+            <Badge>Soon</Badge>
           </Text>
         </Button>
         <SegmentedControl
@@ -85,7 +85,7 @@ export const DirectionalLayoutExample = ({
               avatars={['Ada', 'Bea', 'Cam'].map((name) => (
                 <Avatar key={name} name={name} size="lg" />
               ))}
-              overflowCount={2}
+              total={5}
             />
           </div>
         ))}

@@ -19,6 +19,7 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
       startIcon={
         <Avatar
           src={getAbsoluteImageUrl(relationRecord.avatarUrl)}
+          imageProps={{ alt: '' }}
           colorSeed={relationRecord.id}
           name={relationRecord.name}
           size="md"

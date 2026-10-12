@@ -56,7 +56,6 @@ const build = () => {
       heartbeat as never,
       events as never,
       metrics as never,
-      { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
     ),
     actors as never,
     {} as never,

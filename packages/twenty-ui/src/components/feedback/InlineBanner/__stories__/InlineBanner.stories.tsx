@@ -259,6 +259,8 @@ export const CustomLink: Story = {
     ...CompactLink.args,
     action: (
       <InlineBanner.Action
+        nativeButton={false}
+        role="link"
         href={'https://twenty.com'}
         target={'_blank'}
         rel={'noopener noreferrer'}
@@ -275,6 +277,7 @@ export const CustomLink: Story = {
     const canvas = within(canvasElement);
     const link = canvas.getByRole('link', { name: 'Open connection settings' });
 
+    await expect(link).not.toHaveAttribute('type');
     await expect(link).toHaveAttribute('href', 'https://twenty.com');
     await expect(link).toHaveAttribute('target', '_blank');
     await expect(link).toHaveAttribute('rel', 'noopener noreferrer');

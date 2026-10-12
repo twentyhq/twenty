@@ -274,6 +274,8 @@ export const SettingsAdminNewAiProvider = () => {
               action={
                 <InlineBanner.Action
                   href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                  nativeButton={false}
+                  role="link"
                   render={
                     <Link
                       to={getSettingsPath(SettingsPath.AdminPanelOrganization)}

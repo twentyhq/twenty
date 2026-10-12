@@ -1,3 +1,3 @@
 export type AgentConversationActor =
-  | { type: 'user'; userWorkspaceId: string }
+  | { type: 'user'; workspaceMemberId: string }
   | { type: 'application'; applicationId: string };

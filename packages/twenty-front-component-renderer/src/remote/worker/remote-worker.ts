@@ -3,6 +3,7 @@ import '@remote-dom/react/polyfill';
 
 import {
   HtmlInputElement,
+  HtmlImgElement,
   HtmlTextareaElement,
 } from '../generated/remote-elements';
 
@@ -14,6 +15,7 @@ import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/state
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installImageLoadingPolyfill } from '@/polyfills/image/utils/installImageLoadingPolyfill';
+import { installImageObjectUrlPolyfill } from '@/polyfills/image/utils/installImageObjectUrlPolyfill';
 import { workerActiveElementStore } from '@/polyfills/dom/states/workerActiveElementStore';
 import { installTextTreeWalkerPolyfill } from '@/polyfills/dom/utils/installTextTreeWalkerPolyfill';
 import { installInputSelectionPolyfill } from '@/polyfills/input-selection/utils/installInputSelectionPolyfill';
@@ -41,6 +43,7 @@ import { installHostEventRetargetingPolyfill } from '@/polyfills/events/utils/in
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
+import { installVisualViewportPolyfill } from '@/polyfills/geometry/utils/installVisualViewportPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { mediaQueryEnvironmentSource } from '@/polyfills/media-query/states/mediaQueryEnvironmentSource';
 import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
@@ -65,6 +68,11 @@ import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread'
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
 import { createClonableErrorThreadSerialization } from '@/utils/clonable-error/createClonableErrorThreadSerialization';
+
+installImageObjectUrlPolyfill({
+  urlConstructor: URL,
+  imageElementPrototype: HtmlImgElement.prototype,
+});
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
@@ -142,6 +150,11 @@ installElementGeometryPolyfill({
 });
 
 installWindowGeometryPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  geometryStore: workerGeometryStore,
+});
+
+installVisualViewportPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
 });

@@ -62,7 +62,7 @@ describe('Send chat message workflow step', () => {
         [threadId],
       );
       const messages = await global.testDataSource.query(
-        `SELECT m.role, m."isHidden", p."textContent"
+        `SELECT m.role, p."textContent"
          FROM "${SCHEMA}"."agentMessage" m
          JOIN "${SCHEMA}"."agentMessagePart" p ON p."messageId" = m.id
          WHERE m."threadId" = $1
@@ -77,13 +77,11 @@ describe('Send chat message workflow step', () => {
       expect(messages).toEqual([
         {
           role: 'system',
-          isHidden: false,
           textContent:
             'The "Welcome new deal owners" workflow started this conversation. Its messages follow.',
         },
         {
           role: 'assistant',
-          isHidden: false,
           textContent: 'You now own the **Acme renewal**.',
         },
       ]);
@@ -286,6 +284,8 @@ describe('Send chat message workflow step', () => {
                   type: 'WORKFLOW_STEP',
                   ref: { workflowRunId, stepId },
                 },
+                // the message was already written, so the call is not built again
+                waitOnAnswer: async () => {},
               },
             });
 

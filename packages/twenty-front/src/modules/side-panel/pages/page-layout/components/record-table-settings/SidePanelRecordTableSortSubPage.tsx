@@ -1,12 +1,12 @@
 import { RecordTableSettingsSorts } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 export const SidePanelRecordTableSortSubPage = () => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   if (!isDefined(widgetInEditMode)) {

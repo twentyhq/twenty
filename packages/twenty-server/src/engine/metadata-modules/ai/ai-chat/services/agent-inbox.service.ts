@@ -72,7 +72,10 @@ export class AgentInboxService {
     resolveProposal?: ResolveInboxProposal;
     // a pausing call the server resolves, with its pending output, only when the message is written,
     // so a message delivered earlier is found even once the call could no longer be resolved
-    buildAwaitingToolCall?: () => Promise<{
+    buildAwaitingToolCall?: (postedCall: {
+      threadId: string;
+      toolCallId: string;
+    }) => Promise<{
       toolName: string;
       input: Record<string, unknown>;
       output: Record<string, unknown>;
@@ -118,7 +121,10 @@ export class AgentInboxService {
       };
     }
 
-    const awaitingToolCall = await buildAwaitingToolCall?.();
+    const awaitingToolCall = await buildAwaitingToolCall?.({
+      threadId,
+      toolCallId,
+    });
     const toolCallPart = isDefined(awaitingToolCall)
       ? {
           part: buildToolPart({ ...awaitingToolCall, toolCallId }),

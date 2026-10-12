@@ -15,6 +15,29 @@ runComponentConformance({
   ownClassName: styles.button,
 });
 
+runComponentConformance({
+  name: 'Button link',
+  element: (
+    <Button href="#destination" nativeButton={false}>
+      Open record
+    </Button>
+  ),
+  refInstanceOf: HTMLAnchorElement,
+  ownClassName: styles.button,
+  renderPropTagName: 'a',
+});
+
+runComponentConformance({
+  name: 'Button custom element',
+  element: (
+    <Button nativeButton={false} render={<div />}>
+      Open record
+    </Button>
+  ),
+  refInstanceOf: HTMLDivElement,
+  ownClassName: styles.button,
+});
+
 describe('Button loading', () => {
   it('keeps content in its layout space behind the default centered spinner', () => {
     render(
@@ -162,12 +185,14 @@ describe('Button loading', () => {
   it('preserves custom link rendering and blocks activation while loading', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
-    const ref = createRef<HTMLButtonElement>();
+    const ref = createRef<HTMLAnchorElement>();
 
     render(
       <Button
         ref={ref}
         href="#destination"
+        nativeButton={false}
+        role="link"
         render={
           <a href="#destination" data-custom-render>
             Installing

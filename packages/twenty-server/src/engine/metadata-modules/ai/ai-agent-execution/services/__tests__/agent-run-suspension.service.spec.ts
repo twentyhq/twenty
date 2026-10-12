@@ -18,6 +18,7 @@ const buildService = ({
   pendingQuestionMessageId = 'question-message-id' as string | null,
   hasPostedCall = true,
   wakeUps = [] as object[],
+  waitMessageIds = [] as string[],
 } = {}) => {
   const wakeUpRepository = { find: jest.fn().mockResolvedValue(wakeUps) };
   const threadRepository = {
@@ -30,11 +31,16 @@ const buildService = ({
       ),
   };
   const messagePartRepository = {
-    query: jest.fn().mockResolvedValue(undefined),
+    query: jest
+      .fn()
+      .mockResolvedValue(waitMessageIds.map((messageId) => ({ messageId }))),
     existsBy: jest.fn().mockResolvedValue(hasPostedCall),
   };
   const threadLifecycleService = {
     closePendingQuestion: jest.fn().mockResolvedValue(undefined),
+  };
+  const turnRecorderService = {
+    endWaitingTurn: jest.fn().mockResolvedValue(undefined),
   };
   const pendingWakeUpService = {
     claim: jest
@@ -50,6 +56,7 @@ const buildService = ({
     threadRepository as never,
     messagePartRepository as never,
     threadLifecycleService as never,
+    turnRecorderService as never,
     pendingWakeUpService as never,
     { getHandlerOrThrow: () => ({ onOutcome }) } as never,
     {} as never,
@@ -59,6 +66,7 @@ const buildService = ({
     service,
     threadLifecycleService,
     messagePartRepository,
+    turnRecorderService,
     pendingWakeUpService,
     onOutcome,
   };
@@ -110,6 +118,63 @@ describe('AgentRunSuspensionService', () => {
       expect(
         threadLifecycleService.closePendingQuestion,
       ).not.toHaveBeenCalled();
+    });
+
+    it('cancels the turn that waited on the dropped wait', async () => {
+      const { service, turnRecorderService } = buildService({
+        pendingQuestionMessageId: null,
+        waitMessageIds: ['wait-message-id'],
+      });
+
+      await service.closeAwaitedCalls({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        isAwaitingAnswer: false,
+      });
+
+      expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledTimes(1);
+      expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        messageId: 'wait-message-id',
+        status: AgentTurnStatus.CANCELLED,
+      });
+    });
+  });
+
+  describe('recordWaitOutcome', () => {
+    it('completes the turn that waited on a wait that is over', async () => {
+      const { service, turnRecorderService } = buildService({
+        waitMessageIds: ['wait-message-id'],
+      });
+
+      await service.recordWaitOutcome({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        outcome: { type: 'TIME_ELAPSED' },
+      });
+
+      expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledTimes(1);
+      expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        messageId: 'wait-message-id',
+        status: AgentTurnStatus.COMPLETED,
+      });
+    });
+
+    it('goes on when the turn cannot be ended', async () => {
+      const { service, turnRecorderService } = buildService({
+        waitMessageIds: ['wait-message-id'],
+      });
+
+      turnRecorderService.endWaitingTurn.mockRejectedValue(new Error('boom'));
+
+      await expect(
+        service.recordWaitOutcome({
+          workspaceId: 'workspace-id',
+          threadId: 'thread-id',
+          outcome: { type: 'EXPIRED' },
+        }),
+      ).resolves.toBeUndefined();
     });
   });
 

@@ -1,0 +1,2 @@
+export const ACKNOWLEDGED_NATIVE_EDIT_SEQUENCE_BRIDGE_PROPERTY =
+  '__twentyAcknowledgedNativeEditSequence';

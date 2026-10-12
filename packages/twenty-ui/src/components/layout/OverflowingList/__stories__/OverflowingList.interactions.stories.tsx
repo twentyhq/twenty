@@ -542,7 +542,12 @@ export const DescendantContentUpdates: Story = {
     style: { width: 200 },
     children: [
       <OverflowingListMutableTag key="customer" />,
-      <Tag key="partner" color="green" preventShrink>
+      <Tag
+        key="partner"
+        color="green"
+        truncate={false}
+        style={{ minWidth: 'fit-content' }}
+      >
         Partner
       </Tag>,
     ],

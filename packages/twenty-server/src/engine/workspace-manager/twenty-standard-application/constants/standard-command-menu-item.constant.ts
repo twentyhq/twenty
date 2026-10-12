@@ -985,7 +985,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     label: i18nLabel(
       msg({ message: `Mark as done`, context: 'commandMenuItem.label' }),
     ),
-    icon: 'IconProgressCheck',
+    icon: 'IconCheck',
     isPinned: true,
     position: 75,
     shortLabel: i18nLabel(
@@ -1025,7 +1025,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     label: i18nLabel(
       msg({ message: `Unsnooze`, context: 'commandMenuItem.label' }),
     ),
-    icon: 'IconClockOff',
+    icon: 'IconZzzOff',
     isPinned: true,
     position: 76,
     shortLabel: i18nLabel(
@@ -1045,7 +1045,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     label: i18nLabel(
       msg({ message: `Snooze`, context: 'commandMenuItem.label' }),
     ),
-    icon: 'IconClock',
+    icon: 'IconZzz',
     isPinned: true,
     position: 77,
     shortLabel: i18nLabel(

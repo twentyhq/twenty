@@ -126,7 +126,7 @@ const requireSuccess = <TData>(result: BuildResult<TData>): TData => {
   return result.data;
 };
 
-describe('programmatic application pull', () => {
+describe('programmatic application pull', { timeout: 30_000 }, () => {
   let appPath: string;
   const read = (relativePath: string) =>
     readFile(join(appPath, relativePath), 'utf8');

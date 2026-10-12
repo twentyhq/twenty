@@ -400,7 +400,7 @@ export class ChatExecutionService {
 
     processedMessages = injectChatMessageSenders({
       messages: processedMessages,
-      currentUserWorkspaceId: userWorkspaceId,
+      currentWorkspaceMemberId: authorization.authContext.workspaceMemberId,
     });
     processedMessages = injectMessageTimestamps(
       processedMessages,

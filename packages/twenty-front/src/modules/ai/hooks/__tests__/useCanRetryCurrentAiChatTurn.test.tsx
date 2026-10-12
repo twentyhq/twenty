@@ -23,8 +23,7 @@ describe('Shared chat execution controls', () => {
     jotaiStore.set(agentChatDisplayedThreadState.atom, 'thread');
     jotaiStore.set(currentAiChatThreadState.atom, 'thread');
     jotaiStore.set(currentWorkspaceMemberState.atom, {
-      id: 'bob-member',
-      userWorkspaceId: 'bob',
+      id: 'bob',
     } as never);
   });
 
@@ -35,7 +34,7 @@ describe('Shared chat execution controls', () => {
     [true, null, false],
   ])(
     'uses normal update permission (%s) and the saved sender (%s) for retries',
-    (canUpdate, senderUserWorkspaceId, expected) => {
+    (canUpdate, senderWorkspaceMemberId, expected) => {
       setAgentChatThreadPermissions(jotaiStore, 'thread', {
         canRead: true,
         canUpdate,
@@ -51,7 +50,7 @@ describe('Shared chat execution controls', () => {
             parts: [],
             metadata: {
               createdAt: '2026-09-22T00:00:00.000Z',
-              senderUserWorkspaceId,
+              senderWorkspaceMemberId,
             },
           },
           { id: 'assistant', role: 'assistant', parts: [] },
@@ -62,7 +61,7 @@ describe('Shared chat execution controls', () => {
             parts: [],
             metadata: {
               createdAt: '2026-09-22T00:00:00.000Z',
-              senderUserWorkspaceId: 'alice',
+              senderWorkspaceMemberId: 'alice',
             },
           },
         ],

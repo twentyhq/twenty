@@ -239,6 +239,25 @@ describe('AiChatInboxPage', () => {
       hasNextPage: false,
       endCursor: null,
     });
+    // The member's own chats, which they follow
+    jotaiStore.set(
+      agentChatThreadParticipantsState.atom,
+      Object.fromEntries(
+        THREADS.map(({ id, updatedAt }) => [
+          id,
+          {
+            id: `participant-${id}`,
+            threadId: id,
+            lastReadAt: updatedAt,
+            archivedAt: null,
+            snoozedUntil: null,
+            isSubscribed: true,
+            lastMentionedAt: null,
+            updatedAt,
+          },
+        ]),
+      ),
+    );
     isMobile = false;
     mockIsAiChatInboxEnabled = true;
   });
