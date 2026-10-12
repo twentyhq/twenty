@@ -14,11 +14,6 @@ const toOrigin = (value: string | undefined): string | undefined => {
   }
 };
 
-// GitHub always calls back on SERVER_URL, while the nonce cookie is bound to
-// the host that served the mint. When they differ, only that host can read the
-// cookie, so the callback hands the code over to it. The target is checked
-// against origins the instance owns so a spoofed Host header at mint time
-// cannot turn the callback into an open redirect.
 export const resolveClaimCompletionRedirectUrl = ({
   cookieOrigin,
   requestOrigin,

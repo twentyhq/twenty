@@ -33,9 +33,7 @@ type ClaimRedirectParams = {
 
 // GitHub OAuth callback of the trusted-publishers claim flow. Auth context
 // travels in the signed state token, not in a session, hence the public
-// endpoints. GitHub calls back on SERVER_URL while the nonce cookie lives on
-// the host that served the settings page, so the callback hands over to that
-// host when the two differ.
+// endpoint.
 @Controller(ApiPath.ApplicationRegistrationClaim)
 export class ApplicationRegistrationClaimController {
   constructor(
@@ -192,7 +190,6 @@ export class ApplicationRegistrationClaimController {
     }
   }
 
-  // Only origins the instance serves itself may receive the GitHub code.
   private resolveClaimOrigins(workspace: WorkspaceEntity | null): string[] {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 

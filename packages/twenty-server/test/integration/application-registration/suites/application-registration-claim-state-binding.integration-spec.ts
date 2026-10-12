@@ -14,8 +14,6 @@ import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 
 const CALLBACK_PATH = '/application-registration-claim/github/callback';
 const COMPLETE_PATH = '/application-registration-claim/github/complete';
-// Where the settings page runs for the seeded workspace (FRONTEND_URL with the
-// multi-workspace subdomain), as opposed to the host supertest reaches.
 const WORKSPACE_HOST = 'apple.localhost:3001';
 const PUBLISHER_ORG = 'publisher-org';
 const PACKAGE_VERSION = '1.0.0';
@@ -150,8 +148,6 @@ describe('Application registration claim state binding (integration)', () => {
     };
   };
 
-  // Same mint, but as seen from the workspace host: the browser then files the
-  // nonce cookie under that host, not under the one GitHub calls back on.
   const startClaimFromHost = async (registrationId: string, host: string) => {
     const response = await request(baseUrl)
       .post('/metadata')
@@ -354,7 +350,6 @@ describe('Application registration claim state binding (integration)', () => {
       WORKSPACE_HOST,
     );
 
-    // GitHub calls back on SERVER_URL, where the browser has no cookie to send.
     const callbackResponse = await callback({ state });
 
     expect(callbackResponse.status).toBe(302);
@@ -369,7 +364,6 @@ describe('Application registration claim state binding (integration)', () => {
       readOwnerWorkspaceId(dataSource, registrationId),
     ).resolves.toBeNull();
 
-    // The browser follows the redirect to the workspace host, cookie included.
     const completionResponse = await completion({ state, cookie });
 
     expect(completionResponse.status).toBe(302);
