@@ -33,16 +33,32 @@ const getStatus = ({
   });
 
 describe('getAgentChatThreadInboxStatus', () => {
-  it('keeps a thread nobody acted on in the inbox, unread', () => {
+  it('keeps a thread the member does not follow out of their inbox, read', () => {
     expect(
       getAgentChatThreadInboxStatus({
         lastActivityAt: '2026-10-01T09:00:00.000Z',
         participant: undefined,
       }),
     ).toEqual({
-      scope: 'INBOX',
+      scope: 'NONE',
+      isUnread: false,
+      isSubscribed: false,
+      isMentioned: false,
+      event: null,
+    });
+  });
+
+  it('tracks what a member who opened a thread without following it has read, outside their inbox', () => {
+    expect(
+      getStatus({
+        lastActivityAt: '2026-10-01T11:00:00.000Z',
+        lastReadAt: '2026-10-01T09:00:00.000Z',
+        isSubscribed: false,
+      }),
+    ).toEqual({
+      scope: 'NONE',
       isUnread: true,
-      isSubscribed: true,
+      isSubscribed: false,
       isMentioned: false,
       event: null,
     });

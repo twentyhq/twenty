@@ -6,8 +6,7 @@ import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/fl
 export type AllFlatEntityMaps<
   TWithCustomMapsProperties extends boolean = false,
 > = {
-  [P in AllMetadataName as MetadataToFlatEntityMapsKey<P>]: MetadataFlatEntityMaps<
-    P,
-    TWithCustomMapsProperties
-  >;
+  [
+    P in AllMetadataName as MetadataToFlatEntityMapsKey<P>
+  ]: MetadataFlatEntityMaps<P, TWithCustomMapsProperties>;
 };

@@ -87,6 +87,7 @@ export interface AgentMessage {
     processedAt?: Scalars['DateTime']
     role: Scalars['String']
     senderUserWorkspaceId?: Scalars['UUID']
+    senderWorkspaceMemberId?: Scalars['UUID']
     status: Scalars['String']
     threadId: Scalars['UUID']
     turnId?: Scalars['UUID']
@@ -4016,6 +4017,7 @@ export interface AgentMessageGenqlSelection{
     processedAt?: boolean | number
     role?: boolean | number
     senderUserWorkspaceId?: boolean | number
+    senderWorkspaceMemberId?: boolean | number
     status?: boolean | number
     threadId?: boolean | number
     turnId?: boolean | number

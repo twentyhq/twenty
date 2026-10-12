@@ -10,7 +10,6 @@ import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -54,24 +53,18 @@ const seedChatThreads = async ({
   workspaceId,
 }: SeedChatThreadsArgs) => {
   let threadId: string;
-  let userWorkspaceId: string;
 
   if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
     threadId = AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_DEFAULT_THREAD;
-    userWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
   } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
     threadId = AGENT_CHAT_THREAD_DATA_SEED_IDS.YCOMBINATOR_DEFAULT_THREAD;
-    userWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM_ACME;
   } else {
     throw new Error(
       `Unsupported workspace ID for agent chat thread seeding: ${workspaceId}`,
     );
   }
 
-  const workspaceScope =
-    schemaName === 'core'
-      ? { workspaceId }
-      : { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM };
+  const workspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.TIM;
   const now = new Date();
   const title =
     workspaceId === SEED_APPLE_WORKSPACE_ID
@@ -83,8 +76,7 @@ const seedChatThreads = async ({
     .insert()
     .into(`${schemaName}.${agentChatThreadTableName}`, [
       'id',
-      ...(schemaName === 'core' ? ['workspaceId'] : ['workspaceMemberId']),
-      'userWorkspaceId',
+      'workspaceMemberId',
       'title',
       'createdAt',
       'updatedAt',
@@ -93,8 +85,7 @@ const seedChatThreads = async ({
     .values([
       {
         id: threadId,
-        ...workspaceScope,
-        userWorkspaceId,
+        workspaceMemberId,
         title,
         createdAt: now,
         updatedAt: now,
@@ -106,15 +97,7 @@ const seedChatThreads = async ({
     .createQueryBuilder()
     .update(`${schemaName}.${agentChatThreadTableName}`)
     .set({ title })
-    .where(
-      schemaName === 'core'
-        ? 'id = :threadId AND "workspaceId" = :workspaceId'
-        : 'id = :threadId',
-      {
-        threadId,
-        workspaceId,
-      },
-    )
+    .where('id = :threadId', { threadId })
     .andWhere('title IS NULL')
     .execute();
 
@@ -124,8 +107,7 @@ const seedChatThreads = async ({
       .insert()
       .into(`${schemaName}.${agentChatThreadTableName}`, [
         'id',
-        ...(schemaName === 'core' ? ['workspaceId'] : ['workspaceMemberId']),
-        'userWorkspaceId',
+        'workspaceMemberId',
         'title',
         'createdAt',
         'updatedAt',
@@ -143,8 +125,7 @@ const seedChatThreads = async ({
           },
         ].map((thread) => ({
           id: thread.id,
-          ...workspaceScope,
-          userWorkspaceId,
+          workspaceMemberId,
           title: thread.title,
           createdAt: now,
           updatedAt: now,
@@ -182,7 +163,6 @@ const seedChatMessages = async ({
   let partIds: string[];
   let messages: Array<{
     id: string;
-    workspaceId: string;
     threadId: string;
     turnId: string;
     role: AgentMessageRole;
@@ -190,7 +170,6 @@ const seedChatMessages = async ({
   }>;
   let messageParts: Array<{
     id: string;
-    workspaceId: string;
     messageId: string;
     orderIndex: number;
     type: string;
@@ -214,7 +193,6 @@ const seedChatMessages = async ({
     messages = [
       {
         id: messageIds[0],
-        workspaceId,
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.USER,
@@ -222,7 +200,6 @@ const seedChatMessages = async ({
       },
       {
         id: messageIds[1],
-        workspaceId,
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.ASSISTANT,
@@ -232,7 +209,6 @@ const seedChatMessages = async ({
     messageParts = [
       {
         id: partIds[0],
-        workspaceId,
         messageId: messageIds[0],
         orderIndex: 0,
         type: 'text',
@@ -242,7 +218,6 @@ const seedChatMessages = async ({
       },
       {
         id: partIds[1],
-        workspaceId,
         messageId: messageIds[1],
         orderIndex: 0,
         type: 'text',
@@ -270,7 +245,6 @@ const seedChatMessages = async ({
     messages = [
       {
         id: messageIds[0],
-        workspaceId,
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.USER,
@@ -278,7 +252,6 @@ const seedChatMessages = async ({
       },
       {
         id: messageIds[1],
-        workspaceId,
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.ASSISTANT,
@@ -286,7 +259,6 @@ const seedChatMessages = async ({
       },
       {
         id: messageIds[2],
-        workspaceId,
         threadId,
         turnId: turnIds[1],
         role: AgentMessageRole.USER,
@@ -294,7 +266,6 @@ const seedChatMessages = async ({
       },
       {
         id: messageIds[3],
-        workspaceId,
         threadId,
         turnId: turnIds[1],
         role: AgentMessageRole.ASSISTANT,
@@ -304,7 +275,6 @@ const seedChatMessages = async ({
     messageParts = [
       {
         id: partIds[0],
-        workspaceId,
         messageId: messageIds[0],
         orderIndex: 0,
         type: 'text',
@@ -314,7 +284,6 @@ const seedChatMessages = async ({
       },
       {
         id: partIds[1],
-        workspaceId,
         messageId: messageIds[1],
         orderIndex: 0,
         type: 'text',
@@ -324,7 +293,6 @@ const seedChatMessages = async ({
       },
       {
         id: partIds[2],
-        workspaceId,
         messageId: messageIds[2],
         orderIndex: 0,
         type: 'text',
@@ -334,7 +302,6 @@ const seedChatMessages = async ({
       },
       {
         id: partIds[3],
-        workspaceId,
         messageId: messageIds[3],
         orderIndex: 0,
         type: 'text',
@@ -363,7 +330,6 @@ const seedChatMessages = async ({
 
           messages.push({
             id: messageId,
-            workspaceId,
             threadId: conversation.threadId,
             turnId,
             role:
@@ -372,7 +338,6 @@ const seedChatMessages = async ({
           });
           messageParts.push({
             id: partId,
-            workspaceId,
             messageId,
             orderIndex: 0,
             type: 'text',
@@ -386,7 +351,6 @@ const seedChatMessages = async ({
 
   const turns = uniqBy(messages, 'turnId').map((message) => ({
     id: message.turnId,
-    workspaceId,
     threadId: message.threadId,
     createdAt: message.createdAt,
   }));
@@ -396,17 +360,11 @@ const seedChatMessages = async ({
     .insert()
     .into(`${schemaName}.${agentTurnTableName}`, [
       'id',
-      ...(schemaName === 'core' ? ['workspaceId'] : []),
       'threadId',
       'createdAt',
     ])
     .orIgnore()
-    .values(
-      turns.map(({ workspaceId: ownerWorkspaceId, ...fields }) => ({
-        ...fields,
-        ...(schemaName === 'core' ? { workspaceId: ownerWorkspaceId } : {}),
-      })),
-    )
+    .values(turns)
     .execute();
 
   await queryRunner.manager
@@ -414,19 +372,13 @@ const seedChatMessages = async ({
     .insert()
     .into(`${schemaName}.${agentMessageTableName}`, [
       'id',
-      ...(schemaName === 'core' ? ['workspaceId'] : []),
       'threadId',
       'turnId',
       'role',
       'createdAt',
     ])
     .orIgnore()
-    .values(
-      messages.map(({ workspaceId: ownerWorkspaceId, ...fields }) => ({
-        ...fields,
-        ...(schemaName === 'core' ? { workspaceId: ownerWorkspaceId } : {}),
-      })),
-    )
+    .values(messages)
     .execute();
 
   await queryRunner.manager
@@ -434,7 +386,6 @@ const seedChatMessages = async ({
     .insert()
     .into(`${schemaName}.${agentMessagePartTableName}`, [
       'id',
-      ...(schemaName === 'core' ? ['workspaceId'] : []),
       'messageId',
       'orderIndex',
       'type',
@@ -442,12 +393,7 @@ const seedChatMessages = async ({
       'createdAt',
     ])
     .orIgnore()
-    .values(
-      messageParts.map(({ workspaceId: ownerWorkspaceId, ...fields }) => ({
-        ...fields,
-        ...(schemaName === 'core' ? { workspaceId: ownerWorkspaceId } : {}),
-      })),
-    )
+    .values(messageParts)
     .execute();
 };
 
