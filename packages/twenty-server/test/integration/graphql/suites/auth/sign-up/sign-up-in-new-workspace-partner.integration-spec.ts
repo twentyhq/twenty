@@ -1,19 +1,17 @@
 import { randomUUID } from 'crypto';
 
-import type Stripe from 'stripe';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { type StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 
 describe('Sign up in new workspace with a partner', () => {
   let email: string;
   let accessToken: string;
   let createdWorkspaceId: string | undefined;
-  let createStripeCustomerSpy: jest.SpyInstance;
+  let ensureBillingCustomerSpy: jest.SpyInstance;
 
   beforeEach(async () => {
     email = `test-${randomUUID()}@example.com`;
@@ -31,23 +29,14 @@ describe('Sign up in new workspace with a partner', () => {
       [email],
     );
 
-    jest
-      .spyOn(
-        getAppProviderByClassName<BillingService>('BillingService'),
-        'isBillingEnabled',
-      )
-      .mockReturnValue(true);
+    const billingService =
+      getAppProviderByClassName<BillingService>('BillingService');
 
-    createStripeCustomerSpy = jest
-      .spyOn(
-        getAppProviderByClassName<StripeCustomerService>(
-          'StripeCustomerService',
-        ),
-        'createStripeCustomer',
-      )
-      .mockResolvedValue({
-        id: 'cus_partner',
-      } as Stripe.Response<Stripe.Customer>);
+    jest.spyOn(billingService, 'isBillingEnabled').mockReturnValue(true);
+
+    ensureBillingCustomerSpy = jest
+      .spyOn(billingService, 'ensureBillingCustomer')
+      .mockResolvedValue();
   });
 
   afterEach(async () => {
@@ -66,7 +55,7 @@ describe('Sign up in new workspace with a partner', () => {
     );
   });
 
-  it('should create the Stripe customer with the partner', async () => {
+  it('should pass the partner to the billing customer creation', async () => {
     const { data } = await signUpInNewWorkspace({
       accessToken,
       partner: 'acme',
@@ -75,11 +64,11 @@ describe('Sign up in new workspace with a partner', () => {
 
     createdWorkspaceId = data.signUpInNewWorkspace.workspace.id;
 
-    expect(createStripeCustomerSpy).toHaveBeenCalledWith(
-      email,
-      createdWorkspaceId,
-      'Test Workspace',
-      'acme',
-    );
+    expect(ensureBillingCustomerSpy).toHaveBeenCalledWith({
+      userEmail: email,
+      workspaceId: createdWorkspaceId,
+      workspaceDisplayName: 'Test Workspace',
+      partner: 'acme',
+    });
   });
 });
