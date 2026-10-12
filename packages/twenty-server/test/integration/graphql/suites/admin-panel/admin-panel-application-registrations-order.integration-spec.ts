@@ -39,12 +39,12 @@ type RegistrationSeed = {
   suffix: string;
   isVetted?: boolean;
   isListed?: boolean;
+  sourcePackage?: string;
   hasUnfilledRequiredVariable?: boolean;
   exposesServerRoute?: boolean;
   ownerWorkspaceId?: string;
-  isInstalledOnOwnerWorkspace?: boolean;
+  installedOnWorkspaceIds?: string[];
   author?: string;
-  createdAt: string;
 };
 
 const SERVER_ROUTE_MANIFEST = {
@@ -61,57 +61,55 @@ const SERVER_ROUTE_MANIFEST = {
   ],
 };
 
-// Listed in the order the admin panel is expected to return them
+// Listed in the order the admin panel is expected to return them: vetted
+// first, not configured first, listed last, Twenty packages first, most
+// installed first, then by name
 const REGISTRATION_SEEDS: RegistrationSeed[] = [
   {
     suffix: 'vetted-not-configured',
     isVetted: true,
     hasUnfilledRequiredVariable: true,
-    createdAt: '2026-01-01T00:00:00.000Z',
   },
   {
     suffix: 'vetted-server-route-unclaimed',
     isVetted: true,
     exposesServerRoute: true,
-    createdAt: '2025-06-01T00:00:00.000Z',
   },
   {
     suffix: 'vetted-configured-unlisted',
     isVetted: true,
-    createdAt: '2026-01-01T00:00:00.000Z',
   },
   {
     suffix: 'vetted-configured-listed',
     isVetted: true,
     isListed: true,
     author: INSTALLED_AUTHOR,
-    createdAt: '2026-01-01T00:00:00.000Z',
+    installedOnWorkspaceIds: [SEED_APPLE_WORKSPACE_ID],
   },
   {
     suffix: 'community-not-configured-listed',
     isListed: true,
     hasUnfilledRequiredVariable: true,
-    createdAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    suffix: 'community-configured-twenty-package',
+    sourcePackage: '@twentyhq/admin-panel-order-integration-test',
   },
   {
     suffix: 'community-server-route-installed',
     exposesServerRoute: true,
     ownerWorkspaceId: SEED_APPLE_WORKSPACE_ID,
-    isInstalledOnOwnerWorkspace: true,
-    createdAt: '2026-02-15T00:00:00.000Z',
+    installedOnWorkspaceIds: [SEED_APPLE_WORKSPACE_ID],
   },
   {
-    suffix: 'community-configured-newer',
-    createdAt: '2026-02-01T00:00:00.000Z',
+    suffix: 'community-configured-alpha',
   },
   {
-    suffix: 'community-configured-older',
-    createdAt: '2026-01-01T00:00:00.000Z',
+    suffix: 'community-configured-beta',
   },
   {
-    suffix: 'community-configured-listed-newest',
+    suffix: 'community-configured-listed',
     isListed: true,
-    createdAt: '2026-03-01T00:00:00.000Z',
   },
 ];
 
@@ -160,8 +158,8 @@ describe('Admin panel application registrations ordering (integration)', () => {
       await dataSource.query(
         `INSERT INTO core."applicationRegistration"
           (id, "universalIdentifier", name, "oAuthClientId",
-           "oAuthRedirectUris", "oAuthScopes", "sourceType",
-           "isVetted", "isListed", author, "createdAt", "workspaceId", manifest)
+           "oAuthRedirectUris", "oAuthScopes", "sourceType", "sourcePackage",
+           "isVetted", "isListed", author, "workspaceId", manifest)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
         [
           id,
@@ -171,10 +169,10 @@ describe('Admin panel application registrations ordering (integration)', () => {
           [],
           [],
           'local',
+          seed.sourcePackage ?? null,
           seed.isVetted ?? false,
           seed.isListed ?? false,
           seed.author ?? null,
-          seed.createdAt,
           seed.ownerWorkspaceId ?? null,
           seed.exposesServerRoute === true
             ? JSON.stringify(SERVER_ROUTE_MANIFEST)
@@ -183,16 +181,6 @@ describe('Admin panel application registrations ordering (integration)', () => {
       );
 
       registrationIdBySuffix.set(seed.suffix, id);
-
-      if (
-        seed.isInstalledOnOwnerWorkspace === true &&
-        seed.ownerWorkspaceId !== undefined
-      ) {
-        await insertInstalledApplication({
-          applicationRegistrationId: id,
-          workspaceId: seed.ownerWorkspaceId,
-        });
-      }
 
       if (seed.hasUnfilledRequiredVariable === true) {
         const variableId = await insertApplicationRegistrationVariable({
@@ -207,14 +195,14 @@ describe('Admin panel application registrations ordering (integration)', () => {
           [variableId],
         );
       }
-    }
 
-    await insertInstalledApplication({
-      applicationRegistrationId: registrationIdBySuffix.get(
-        'vetted-configured-listed',
-      ) as string,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
+      for (const workspaceId of seed.installedOnWorkspaceIds ?? []) {
+        await insertInstalledApplication({
+          applicationRegistrationId: id,
+          workspaceId,
+        });
+      }
+    }
   });
 
   afterAll(async () => {
@@ -235,7 +223,27 @@ describe('Admin panel application registrations ordering (integration)', () => {
     );
   });
 
-  it('orders vetted first, not configured first, listed last, then newest first', async () => {
+  const findRegistrationsByName = async () => {
+    const response = await makeAdminPanelApiRequest({
+      query: FIND_ALL_REGISTRATIONS,
+      variables: { limit: 25, offset: 0, searchTerm: NAME_PREFIX },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    return Object.fromEntries(
+      response.body.data?.findAllApplicationRegistrations.registrations.map(
+        (registration: {
+          name: string;
+          author: string | null;
+          installCount: number;
+          isConfigured: boolean;
+        }) => [registration.name, registration],
+      ),
+    );
+  };
+
+  it('orders vetted, not configured, unlisted, Twenty packages, most installed, then by name', async () => {
     const response = await makeAdminPanelApiRequest({
       query: FIND_ALL_REGISTRATIONS,
       variables: { limit: 25, offset: 0, searchTerm: NAME_PREFIX },
@@ -276,23 +284,7 @@ describe('Admin panel application registrations ordering (integration)', () => {
   });
 
   it('exposes the install count and the author of each registration', async () => {
-    const response = await makeAdminPanelApiRequest({
-      query: FIND_ALL_REGISTRATIONS,
-      variables: { limit: 25, offset: 0, searchTerm: NAME_PREFIX },
-    });
-
-    expect(response.body.errors).toBeUndefined();
-
-    const registrationsByName = Object.fromEntries(
-      response.body.data?.findAllApplicationRegistrations.registrations.map(
-        (registration: {
-          name: string;
-          author: string | null;
-          installCount: number;
-          isConfigured: boolean;
-        }) => [registration.name, registration],
-      ),
-    );
+    const registrationsByName = await findRegistrationsByName();
 
     const installedRegistration =
       registrationsByName[buildName('vetted-configured-listed')];
@@ -310,22 +302,7 @@ describe('Admin panel application registrations ordering (integration)', () => {
   });
 
   it('treats a server-route app as configured only once installed on its owner workspace', async () => {
-    const response = await makeAdminPanelApiRequest({
-      query: FIND_ALL_REGISTRATIONS,
-      variables: { limit: 25, offset: 0, searchTerm: NAME_PREFIX },
-    });
-
-    expect(response.body.errors).toBeUndefined();
-
-    const registrationsByName = Object.fromEntries(
-      response.body.data?.findAllApplicationRegistrations.registrations.map(
-        (registration: {
-          name: string;
-          installCount: number;
-          isConfigured: boolean;
-        }) => [registration.name, registration],
-      ),
-    );
+    const registrationsByName = await findRegistrationsByName();
 
     const unclaimedRegistration =
       registrationsByName[buildName('vetted-server-route-unclaimed')];

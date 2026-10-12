@@ -55,8 +55,8 @@ const StyledShowMoreContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
-const TABLE_GRID = '1fr 110px 70px 70px 60px 90px 40px';
-const TABLE_GRID_MOBILE = '3fr 2fr 1fr 1fr 1fr 1fr 40px';
+const TABLE_GRID = '1fr 120px 80px 120px 100px 40px';
+const TABLE_GRID_MOBILE = '3fr 2fr 1fr 2fr 2fr 40px';
 const PAGE_SIZE = 25;
 
 const SOURCE_TYPE_FILTER_OPTIONS: {
@@ -292,7 +292,6 @@ export const SettingsAdminApps = () => {
                 <TableHeader>{t`Author`}</TableHeader>
                 <TableHeader align="right">{t`Source`}</TableHeader>
                 <TableHeader align="right">{t`Installs`}</TableHeader>
-                <TableHeader align="right">{t`Listed`}</TableHeader>
                 <TableHeader align="right">{t`Configured`}</TableHeader>
                 <TableHeader></TableHeader>
               </TableRow>
@@ -358,9 +357,6 @@ const SettingsAdminAppsTableRow = ({
         {getFormattedSource(registration)}
       </TableCell>
       <TableCell align="right">{registration.installCount}</TableCell>
-      <TableCell align="right">
-        {registration.isListed ? t`Yes` : t`No`}
-      </TableCell>
       <TableCell align="right">
         <Tag color={registration.isConfigured ? 'green' : 'red'}>
           {registration.isConfigured ? t`Yes` : t`No`}

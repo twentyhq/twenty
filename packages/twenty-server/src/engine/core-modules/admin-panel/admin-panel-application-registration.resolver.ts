@@ -3,7 +3,7 @@ import { Context, Int, Parent, ResolveField } from '@nestjs/graphql';
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { type ApplicationRegistrationWithConfigurationStatus } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
+import { type AdminApplicationRegistrationListItem } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 
 @AdminResolver(() => ApplicationRegistrationEntity)
@@ -12,15 +12,15 @@ export class AdminPanelApplicationRegistrationResolver {
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
   ) {}
 
+  // The admin list already computed both values to order the page
   @ResolveField(() => Boolean)
   async isConfigured(
     @Parent()
     registration:
       | ApplicationRegistrationEntity
-      | ApplicationRegistrationWithConfigurationStatus,
+      | AdminApplicationRegistrationListItem,
     @Context() context: { loaders: IDataloaders },
   ): Promise<boolean> {
-    // The admin list already computed the status to order the page
     if ('isConfigured' in registration) {
       return registration.isConfigured;
     }
@@ -32,9 +32,16 @@ export class AdminPanelApplicationRegistrationResolver {
 
   @ResolveField(() => Int)
   async installCount(
-    @Parent() registration: ApplicationRegistrationEntity,
+    @Parent()
+    registration:
+      | ApplicationRegistrationEntity
+      | AdminApplicationRegistrationListItem,
     @Context() context: { loaders: IDataloaders },
   ): Promise<number> {
+    if ('installCount' in registration) {
+      return registration.installCount;
+    }
+
     return context.loaders.applicationRegistrationInstallCountLoader.load({
       applicationRegistrationId: registration.id,
     });

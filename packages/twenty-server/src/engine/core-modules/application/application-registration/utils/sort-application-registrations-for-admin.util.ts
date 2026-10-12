@@ -1,20 +1,30 @@
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { isTwentyApplicationPackage } from 'src/engine/core-modules/application/application-registration/utils/is-twenty-application-package.util';
 
 type AdminSortableApplicationRegistration = Pick<
   ApplicationRegistrationEntity,
-  'id' | 'isVetted' | 'isListed' | 'createdAt'
+  | 'id'
+  | 'universalIdentifier'
+  | 'name'
+  | 'sourcePackage'
+  | 'isVetted'
+  | 'isListed'
 >;
 
-// Surfaces what still needs admin action: vetted apps come first, apps missing
-// configuration before configured ones, listed apps last, newest first within a group
+// Surfaces what still needs admin action: vetted apps first, apps missing
+// configuration before configured ones, listed apps last, Twenty's own packages
+// before community ones, then the most installed and a name order that is the
+// same on every instance
 export const sortApplicationRegistrationsForAdmin = <
   TRegistration extends AdminSortableApplicationRegistration,
 >({
   registrations,
   isConfiguredByRegistrationId,
+  installCountByRegistrationId,
 }: {
   registrations: TRegistration[];
   isConfiguredByRegistrationId: Map<string, boolean>;
+  installCountByRegistrationId: Map<string, number>;
 }): TRegistration[] => {
   return [...registrations].sort((left, right) => {
     if (left.isVetted !== right.isVetted) {
@@ -33,13 +43,29 @@ export const sortApplicationRegistrationsForAdmin = <
       return left.isListed ? 1 : -1;
     }
 
-    const createdAtDifference =
-      right.createdAt.getTime() - left.createdAt.getTime();
+    const isLeftFromTwenty = isTwentyApplicationPackage(left.sourcePackage);
+    const isRightFromTwenty = isTwentyApplicationPackage(right.sourcePackage);
 
-    if (createdAtDifference !== 0) {
-      return createdAtDifference;
+    if (isLeftFromTwenty !== isRightFromTwenty) {
+      return isLeftFromTwenty ? -1 : 1;
     }
 
-    return left.id.localeCompare(right.id);
+    const installCountDifference =
+      (installCountByRegistrationId.get(right.id) ?? 0) -
+      (installCountByRegistrationId.get(left.id) ?? 0);
+
+    if (installCountDifference !== 0) {
+      return installCountDifference;
+    }
+
+    const nameComparison = left.name.localeCompare(right.name, undefined, {
+      sensitivity: 'base',
+    });
+
+    if (nameComparison !== 0) {
+      return nameComparison;
+    }
+
+    return left.universalIdentifier.localeCompare(right.universalIdentifier);
   });
 };

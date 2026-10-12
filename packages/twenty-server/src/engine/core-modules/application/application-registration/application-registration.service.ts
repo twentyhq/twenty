@@ -334,12 +334,21 @@ export class ApplicationRegistrationService {
       return { registrations: [], totalCount: 0, hasMore: false };
     }
 
-    // Configuration status is computed, not stored, and drives both the filter
-    // and the ordering, so pagination happens in memory
-    const isConfiguredByRegistrationId =
-      await this.applicationRegistrationVariableService.isConfiguredBatch(
-        matchingRegistrations.map((registration) => registration.id),
-      );
+    const matchingRegistrationIds = matchingRegistrations.map(
+      (registration) => registration.id,
+    );
+
+    // Configuration status and install counts are computed, not stored, and
+    // drive both the filter and the ordering, so pagination happens in memory
+    const [isConfiguredByRegistrationId, installCountByRegistrationId] =
+      await Promise.all([
+        this.applicationRegistrationVariableService.isConfiguredBatch(
+          matchingRegistrationIds,
+        ),
+        this.countInstalledWorkspacesByApplicationRegistrationIds(
+          matchingRegistrationIds,
+        ),
+      ]);
 
     const filteredRegistrations = isDefined(isConfigured)
       ? matchingRegistrations.filter(
@@ -352,6 +361,7 @@ export class ApplicationRegistrationService {
     const sortedRegistrations = sortApplicationRegistrationsForAdmin({
       registrations: filteredRegistrations,
       isConfiguredByRegistrationId,
+      installCountByRegistrationId,
     });
 
     return {
@@ -361,10 +371,46 @@ export class ApplicationRegistrationService {
           ...registration,
           isConfigured:
             isConfiguredByRegistrationId.get(registration.id) ?? false,
+          installCount: installCountByRegistrationId.get(registration.id) ?? 0,
         })),
       totalCount: sortedRegistrations.length,
       hasMore: safeOffset + safeLimit < sortedRegistrations.length,
     };
+  }
+
+  async countInstalledWorkspacesByApplicationRegistrationIds(
+    applicationRegistrationIds: string[],
+  ): Promise<Map<string, number>> {
+    if (!isNonEmptyArray(applicationRegistrationIds)) {
+      return new Map();
+    }
+
+    const installCounts: {
+      applicationRegistrationId: string;
+      installCount: number;
+    }[] = await this.applicationRepository
+      .createQueryBuilder('application')
+      .select(
+        'application."applicationRegistrationId"',
+        'applicationRegistrationId',
+      )
+      .addSelect('COUNT(*)::int', 'installCount')
+      .innerJoin('application.workspace', 'workspace')
+      .where(
+        'application."applicationRegistrationId" IN (:...applicationRegistrationIds)',
+        { applicationRegistrationIds },
+      )
+      .andWhere('application."deletedAt" IS NULL')
+      .andWhere('workspace."deletedAt" IS NULL')
+      .groupBy('application."applicationRegistrationId"')
+      .getRawMany();
+
+    return new Map(
+      installCounts.map(({ applicationRegistrationId, installCount }) => [
+        applicationRegistrationId,
+        installCount,
+      ]),
+    );
   }
 
   async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {

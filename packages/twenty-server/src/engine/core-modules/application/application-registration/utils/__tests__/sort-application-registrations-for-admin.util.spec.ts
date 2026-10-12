@@ -2,19 +2,29 @@ import { sortApplicationRegistrationsForAdmin } from 'src/engine/core-modules/ap
 
 const buildRegistration = ({
   id,
+  name = id,
+  universalIdentifier = id,
+  sourcePackage = null,
   isVetted = false,
   isListed = false,
-  createdAt = '2026-01-01T00:00:00.000Z',
 }: {
   id: string;
+  name?: string;
+  universalIdentifier?: string;
+  sourcePackage?: string | null;
   isVetted?: boolean;
   isListed?: boolean;
-  createdAt?: string;
-}) => ({ id, isVetted, isListed, createdAt: new Date(createdAt) });
+}) => ({ id, name, universalIdentifier, sourcePackage, isVetted, isListed });
 
 const sortedIds = (
   registrations: ReturnType<typeof buildRegistration>[],
-  configuredIds: string[] = [],
+  {
+    configuredIds = registrations.map((registration) => registration.id),
+    installCounts = {},
+  }: {
+    configuredIds?: string[];
+    installCounts?: Record<string, number>;
+  } = {},
 ) =>
   sortApplicationRegistrationsForAdmin({
     registrations,
@@ -24,6 +34,7 @@ const sortedIds = (
         configuredIds.includes(registration.id),
       ]),
     ),
+    installCountByRegistrationId: new Map(Object.entries(installCounts)),
   }).map((registration) => registration.id);
 
 describe('sortApplicationRegistrationsForAdmin', () => {
@@ -33,10 +44,7 @@ describe('sortApplicationRegistrationsForAdmin', () => {
       buildRegistration({ id: 'vetted', isVetted: true }),
     ];
 
-    expect(sortedIds(registrations, ['community', 'vetted'])).toEqual([
-      'vetted',
-      'community',
-    ]);
+    expect(sortedIds(registrations)).toEqual(['vetted', 'community']);
   });
 
   it('puts registrations missing configuration before configured ones', () => {
@@ -45,10 +53,9 @@ describe('sortApplicationRegistrationsForAdmin', () => {
       buildRegistration({ id: 'not-configured' }),
     ];
 
-    expect(sortedIds(registrations, ['configured'])).toEqual([
-      'not-configured',
-      'configured',
-    ]);
+    expect(sortedIds(registrations, { configuredIds: ['configured'] })).toEqual(
+      ['not-configured', 'configured'],
+    );
   });
 
   it('puts listed registrations last', () => {
@@ -57,68 +64,85 @@ describe('sortApplicationRegistrationsForAdmin', () => {
       buildRegistration({ id: 'not-listed' }),
     ];
 
-    expect(sortedIds(registrations, ['listed', 'not-listed'])).toEqual([
-      'not-listed',
-      'listed',
+    expect(sortedIds(registrations)).toEqual(['not-listed', 'listed']);
+  });
+
+  it('puts packages published by Twenty before community ones', () => {
+    const registrations = [
+      buildRegistration({ id: 'community', sourcePackage: 'twenty-app-acme' }),
+      buildRegistration({ id: 'unpackaged' }),
+      buildRegistration({ id: 'twenty', sourcePackage: '@twentyhq/slack' }),
+    ];
+
+    expect(sortedIds(registrations)).toEqual([
+      'twenty',
+      'community',
+      'unpackaged',
     ]);
   });
 
-  it('orders newest first within a group and breaks ties by id', () => {
+  it('orders by install count, then name, then universal identifier', () => {
     const registrations = [
-      buildRegistration({ id: 'b-old', createdAt: '2026-01-01T00:00:00.000Z' }),
-      buildRegistration({ id: 'a-old', createdAt: '2026-01-01T00:00:00.000Z' }),
-      buildRegistration({ id: 'new', createdAt: '2026-02-01T00:00:00.000Z' }),
+      buildRegistration({
+        id: 'b-same-name',
+        name: 'Same',
+        universalIdentifier: 'b',
+      }),
+      buildRegistration({ id: 'zebra', name: 'zebra' }),
+      buildRegistration({
+        id: 'a-same-name',
+        name: 'same',
+        universalIdentifier: 'a',
+      }),
+      buildRegistration({ id: 'popular', name: 'Popular' }),
     ];
 
-    expect(sortedIds(registrations)).toEqual(['new', 'a-old', 'b-old']);
+    expect(sortedIds(registrations, { installCounts: { popular: 3 } })).toEqual(
+      ['popular', 'a-same-name', 'b-same-name', 'zebra'],
+    );
   });
 
-  it('applies vetted, then configuration, then listed, then creation date', () => {
+  it('applies vetted, configuration, listed, provenance, then installs', () => {
     const registrations = [
-      buildRegistration({
-        id: 'community-configured-listed',
-        isListed: true,
-        createdAt: '2026-03-01T00:00:00.000Z',
-      }),
-      buildRegistration({
-        id: 'community-configured-unlisted',
-        createdAt: '2026-01-01T00:00:00.000Z',
-      }),
+      buildRegistration({ id: 'community-configured-listed', isListed: true }),
+      buildRegistration({ id: 'community-configured-unlisted' }),
       buildRegistration({
         id: 'community-not-configured',
         isListed: true,
-        createdAt: '2026-01-01T00:00:00.000Z',
+      }),
+      buildRegistration({
+        id: 'twenty-configured-unlisted',
+        sourcePackage: '@twentyhq/linear',
       }),
       buildRegistration({
         id: 'vetted-configured-listed',
         isVetted: true,
         isListed: true,
-        createdAt: '2026-01-01T00:00:00.000Z',
       }),
       buildRegistration({
         id: 'vetted-configured-unlisted',
         isVetted: true,
-        createdAt: '2026-01-01T00:00:00.000Z',
       }),
-      buildRegistration({
-        id: 'vetted-not-configured',
-        isVetted: true,
-        createdAt: '2025-01-01T00:00:00.000Z',
-      }),
+      buildRegistration({ id: 'vetted-not-configured', isVetted: true }),
     ];
 
     expect(
-      sortedIds(registrations, [
-        'community-configured-listed',
-        'community-configured-unlisted',
-        'vetted-configured-listed',
-        'vetted-configured-unlisted',
-      ]),
+      sortedIds(registrations, {
+        configuredIds: [
+          'community-configured-listed',
+          'community-configured-unlisted',
+          'twenty-configured-unlisted',
+          'vetted-configured-listed',
+          'vetted-configured-unlisted',
+        ],
+        installCounts: { 'community-configured-listed': 10 },
+      }),
     ).toEqual([
       'vetted-not-configured',
       'vetted-configured-unlisted',
       'vetted-configured-listed',
       'community-not-configured',
+      'twenty-configured-unlisted',
       'community-configured-unlisted',
       'community-configured-listed',
     ]);
@@ -133,6 +157,7 @@ describe('sortApplicationRegistrationsForAdmin', () => {
     sortApplicationRegistrationsForAdmin({
       registrations,
       isConfiguredByRegistrationId: new Map(),
+      installCountByRegistrationId: new Map(),
     });
 
     expect(registrations.map((registration) => registration.id)).toEqual([
