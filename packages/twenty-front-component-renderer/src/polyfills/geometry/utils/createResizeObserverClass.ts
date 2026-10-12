@@ -2,6 +2,7 @@ import { type Hooks } from '@remote-dom/polyfill';
 import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ElementGeometryReader } from '@/polyfills/geometry/types/ElementGeometryReader';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { createResizeObserverEntry } from '@/polyfills/geometry/utils/createResizeObserverEntry';
 
@@ -13,6 +14,7 @@ type Observation = {
   box: ResizeObserverBoxOptions;
   lastSize: ResizeObserverSize | null;
   hasBeenConnected: boolean;
+  geometryReader: ElementGeometryReader;
 };
 
 type CreateResizeObserverClassInput = {
@@ -93,6 +95,7 @@ export const createResizeObserverClass = ({
         const target = targetRef.deref();
 
         if (!isDefined(target)) {
+          observation.geometryReader.release();
           this.#observations.delete(targetRef);
           continue;
         }
@@ -103,6 +106,7 @@ export const createResizeObserverClass = ({
         }
 
         if (observation.hasBeenConnected) {
+          observation.geometryReader.release();
           this.#observations.delete(targetRef);
         }
       }
@@ -123,7 +127,7 @@ export const createResizeObserverClass = ({
           continue;
         }
 
-        const snapshot = geometryStore.resolveElementSnapshot(target);
+        const snapshot = observation.geometryReader.read();
 
         if (!isDefined(snapshot)) {
           continue;
@@ -199,14 +203,19 @@ export const createResizeObserverClass = ({
         return;
       }
 
+      const geometryReader =
+        existingObservation?.geometryReader ??
+        geometryStore.createElementGeometryReader(target);
+
       this.#targetRefs.set(target, targetRef);
       this.#observations.set(targetRef, {
         targetRef,
         box,
         lastSize: null,
         hasBeenConnected: target.isConnected,
+        geometryReader,
       });
-      geometryStore.resolveElementSnapshot(target);
+      geometryReader.read();
       activeObserverSweeps.add(this.#pruneDetachedTargets);
       activeObserverSchedules.add(this.#scheduleDelivery);
       this.#unsubscribe ??= geometryStore.subscribeToGeometryUpdates(
@@ -219,6 +228,7 @@ export const createResizeObserverClass = ({
       const targetRef = this.#targetRefs.get(target);
 
       if (isDefined(targetRef)) {
+        this.#observations.get(targetRef)?.geometryReader.release();
         this.#observations.delete(targetRef);
       }
 
@@ -226,6 +236,10 @@ export const createResizeObserverClass = ({
     }
 
     disconnect(): void {
+      for (const observation of this.#observations.values()) {
+        observation.geometryReader.release();
+      }
+
       this.#observations.clear();
       this.#stopWhenEmpty();
     }
