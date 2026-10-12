@@ -25,7 +25,9 @@ export const NavigationDrawerAiChatFavoritesSection = ({
   onThreadClick,
 }: NavigationDrawerAiChatFavoritesSectionProps) => {
   const { t } = useLingui();
-  const favoriteChannels = useAtomStateValue(agentChatFavoriteChannelsSelector);
+  const agentChatFavoriteChannels = useAtomStateValue(
+    agentChatFavoriteChannelsSelector,
+  );
   const agentChatChannels = useAtomStateValue(agentChatChannelsState);
   const agentChatChannelSummaries = useAtomStateValue(
     agentChatChannelSummariesState,
@@ -34,7 +36,7 @@ export const NavigationDrawerAiChatFavoritesSection = ({
     PermissionFlagType.AI_SETTINGS,
   );
 
-  if (favoriteChannels.length === 0 && threads.length === 0) {
+  if (agentChatFavoriteChannels.length === 0 && threads.length === 0) {
     return null;
   }
 
@@ -47,7 +49,7 @@ export const NavigationDrawerAiChatFavoritesSection = ({
       sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
       label={t`Favorites`}
     >
-      {favoriteChannels.map((channel) => (
+      {agentChatFavoriteChannels.map((channel) => (
         <NavigationDrawerAiChatChannelItem
           key={channel.id}
           channel={channel}

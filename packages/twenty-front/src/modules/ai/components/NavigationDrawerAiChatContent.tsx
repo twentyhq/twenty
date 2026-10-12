@@ -81,17 +81,13 @@ export const NavigationDrawerAiChatContent = () => {
     <StyledContainer>
       <StyledThreadList>
         <StyledSectionsContainer>
-          {isAiChatInboxEnabled && (
-            <>
-              <NavigationDrawerAiChatTriageSection />
-              <NavigationDrawerAiChatChannelsSection />
-            </>
-          )}
+          {isAiChatInboxEnabled && <NavigationDrawerAiChatTriageSection />}
           <NavigationDrawerAiChatFavoritesSection
             threads={agentChatFavoriteThreads}
             currentThreadId={currentAiChatThread}
             onThreadClick={handleThreadClick}
           />
+          {isAiChatInboxEnabled && <NavigationDrawerAiChatChannelsSection />}
           {recentThreads.length > 0 && (
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
