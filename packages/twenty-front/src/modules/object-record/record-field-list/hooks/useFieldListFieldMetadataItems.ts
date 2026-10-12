@@ -9,17 +9,11 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 type UseFieldListFieldMetadataItemsProps = {
   objectNameSingular: string;
-  excludeFieldMetadataIds?: string[];
-  excludeCreatedAtAndUpdatedAt?: boolean;
-  showRelationSections?: boolean;
   includeSystemObjectRelations?: boolean;
 };
 
 export const useFieldListFieldMetadataItems = ({
   objectNameSingular,
-  excludeFieldMetadataIds = [],
-  showRelationSections = true,
-  excludeCreatedAtAndUpdatedAt = true,
   includeSystemObjectRelations = false,
 }: UseFieldListFieldMetadataItemsProps) => {
   const { labelIdentifierFieldMetadataItem } =
@@ -40,15 +34,7 @@ export const useFieldListFieldMetadataItems = ({
       (fieldMetadataItem) =>
         isFieldCellSupported(fieldMetadataItem, objectMetadataItems, {
           includeSystemObjectRelations,
-        }) &&
-        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id &&
-        !excludeFieldMetadataIds.includes(fieldMetadataItem.id) &&
-        (!excludeCreatedAtAndUpdatedAt ||
-          (fieldMetadataItem.name !== 'createdAt' &&
-            fieldMetadataItem.name !== 'deletedAt')) &&
-        (showRelationSections ||
-          (fieldMetadataItem.type !== FieldMetadataType.RELATION &&
-            fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION)),
+        }) && fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id,
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),

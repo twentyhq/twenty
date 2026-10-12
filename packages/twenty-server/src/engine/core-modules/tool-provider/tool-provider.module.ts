@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
@@ -27,6 +28,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { ValidationRuleModule } from 'src/engine/metadata-modules/validation-rule/validation-rule.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
@@ -47,6 +49,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ApplicationTranslationCatalogModule,
     ToolModule,
     RecordCrudModule,
+    FeatureFlagModule,
     FilesFieldModule,
     ObjectMetadataModule,
     FieldMetadataModule,
@@ -61,6 +64,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WebhookModule,
     RoleModule,
     UserRoleModule,
+    ValidationRuleModule,
     EmailingModule,
     TypeOrmModule.forFeature([UserEntity, FileEntity]),
   ],
