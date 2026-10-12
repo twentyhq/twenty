@@ -2,6 +2,7 @@ import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
 import {
   buildPermissionSummaryFromRoleManifest,
@@ -22,6 +23,7 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   appLogoUrl?: string;
   defaultRole?: RoleManifest;
   requestedCapabilities?: string[];
+  billsCredits?: boolean;
   onAuthorize: () => void;
   isInstalling?: boolean;
 };
@@ -97,6 +99,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   appLogoUrl,
   defaultRole,
   requestedCapabilities = [],
+  billsCredits = false,
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
@@ -110,8 +113,9 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     return [
       ...rolePermissionItems,
       ...buildApplicationCapabilitySummary(requestedCapabilities),
+      ...buildApplicationBillingSummary(billsCredits),
     ];
-  }, [requestedCapabilities, defaultRole]);
+  }, [requestedCapabilities, defaultRole, billsCredits]);
 
   const handleAuthorize = () => {
     closeDialog(modalInstanceId);

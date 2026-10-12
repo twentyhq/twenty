@@ -1,5 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  createCoreWorkflow,
+  deleteCoreWorkflows,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { pollWorkflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/poll-workflow-graphql-request.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 
@@ -78,37 +82,24 @@ type CoreWorkflowVersionResult = {
 };
 
 describe('coreWorkflow (e2e)', () => {
-  let workspaceWorkflowId: string;
+  let coreWorkflowId: string;
+  let workspaceWorkflowId: string | null;
 
   beforeAll(async () => {
-    const createResponse = await workflowGraphqlRequest(`
-      mutation {
-        createWorkflow(data: { name: "Core Workflow Read" }) {
-          id
-        }
-      }
-    `);
+    const createdCoreWorkflow = await createCoreWorkflow({
+      name: 'Core Workflow Read',
+    });
 
-    expect(createResponse.body.errors).toBeUndefined();
-
-    workspaceWorkflowId = createResponse.body.data.createWorkflow.id;
+    coreWorkflowId = createdCoreWorkflow.coreWorkflowId;
+    workspaceWorkflowId = createdCoreWorkflow.workspaceWorkflowId;
   });
 
   afterAll(async () => {
-    if (!isDefined(workspaceWorkflowId)) {
+    if (!isDefined(coreWorkflowId)) {
       return;
     }
 
-    await workflowGraphqlRequest(
-      `
-        mutation DestroyWorkflow($id: UUID!) {
-          destroyWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: workspaceWorkflowId },
-    );
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });
 
   it('should read one workflow by its workspace id', async () => {
