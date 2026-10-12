@@ -178,7 +178,7 @@ When another active connection of the same provider already carries that `extern
 
 Use an id that identifies the account, not a display value: include the organization or team when the provider's user ids are only unique inside it (`${teamId}:${userId}` for Slack), and never use an email address. `externalAccountId` is limited to 512 characters and the optional `handle` to 320; both must be non-empty and free of surrounding whitespace. Pass `handle` to update the label shown in settings.
 
-An app that never calls it keeps the previous behaviour: every Add is a separate connection. Connections created before your app started calling it have no id and are only identified the next time onConnect runs for them, on reconnect. Fathom does not expose a stable account id, so the Fathom app does not deduplicate its connections.
+An app that never calls it keeps the previous behaviour: every Add is a separate connection. Connections created before your app started calling it have no id and are only identified the next time onConnect runs for them, on reconnect; if another connection already holds that account, the reconnected one is merged into it and deleted, together with any channels it owns. Fathom does not expose a stable account id, so the Fathom app does not deduplicate its connections.
 
 If your app uses it, declare the dependency in your `package.json`: `"engines": { "twenty": ">=2.47.0" }`.
 
