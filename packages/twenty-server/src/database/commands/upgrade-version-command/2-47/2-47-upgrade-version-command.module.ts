@@ -5,6 +5,7 @@ import { UnpinNewAiChatCommand } from 'src/database/commands/upgrade-version-com
 import { UnfollowChatsMembersOnlyReadCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791728623417-unfollow-chats-members-only-read.command';
 import { DropLegacyChatColumnsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791730401449-drop-legacy-chat-columns.command';
 import { AddMessageListMemberCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791789514736-add-message-list-member-command-menu-items.command';
+import { MergeAiChatInboxFeatureFlagsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791822328094-merge-ai-chat-inbox-feature-flags.command';
 import { UnpinChatShareCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791822919338-unpin-chat-share.command';
 import { SyncCampaignEngagementFieldsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791811197174-sync-campaign-engagement-fields.command';
 import { ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791811310066-convert-workflow-email-bodies-to-email-documents.command';
@@ -24,6 +25,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UnfollowChatsMembersOnlyReadCommand,
     DropLegacyChatColumnsCommand,
     AddMessageListMemberCommandMenuItemsCommand,
+    MergeAiChatInboxFeatureFlagsCommand,
     UnpinChatShareCommand,
     SyncCampaignEngagementFieldsCommand,
     ConvertWorkflowEmailBodiesToEmailDocumentsCommand,

@@ -6,7 +6,7 @@ import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { type ReactNode } from 'react';
 import { Switch } from '@ui/primitives/input/Switch/Switch';
 import { Status } from '@ui/primitives/data-display/Status/Status';
-import { SegmentedControl } from '@ui/primitives/input/SegmentedControl/SegmentedControl';
+import { SegmentedControl } from '@ui/components/input/SegmentedControl/SegmentedControl';
 import {
   IconCalendarEvent,
   IconCircleDot,

@@ -765,6 +765,9 @@ export default {
             "commandMenuItems": [
                 136
             ],
+            "createdAt": [
+                187
+            ],
             "defaultLogicFunctionRole": [
                 418
             ],
@@ -13294,6 +13297,9 @@ export default {
                 4
             ],
             "isCampaignClickTrackingEnabled": [
+                4
+            ],
+            "isCampaignOpenTrackingEnabled": [
                 4
             ],
             "isGoogleAuthBypassEnabled": [
