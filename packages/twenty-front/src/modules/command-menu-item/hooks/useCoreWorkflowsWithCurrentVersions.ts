@@ -8,7 +8,9 @@ import { GetCoreWorkflowsWithCurrentVersionsDocument } from '~/generated/graphql
 
 export const useCoreWorkflowsWithCurrentVersions = (
   coreWorkflowIds: string[],
-): WorkflowWithCurrentVersion[] => {
+): (WorkflowWithCurrentVersion & {
+  applicationId: string | null | undefined;
+})[] => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { data } = useQuery(
@@ -33,6 +35,7 @@ export const useCoreWorkflowsWithCurrentVersions = (
         {
           __typename: 'Workflow' as const,
           id: workflow.id,
+          applicationId: workflow.applicationId,
           name: workflow.name ?? '',
           statuses: workflow.statuses,
           lastPublishedVersionId:

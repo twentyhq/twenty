@@ -125,8 +125,7 @@ export class UserSessionCookieService {
   clearSessionCookie(response: Response): void {
     const { options } = this.resolveCookieSettings();
 
-    // Both names, so an instance that switched to https drops the cookie it
-    // issued under the old one.
+    // Both names, so an instance that switched to https drops the cookie issued under the old one.
     response.clearCookie(USER_SESSION_SECURE_COOKIE_NAME, options);
     response.clearCookie(USER_SESSION_COOKIE_NAME, options);
   }

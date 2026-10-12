@@ -6,7 +6,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useId } from 'react';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
-import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconAdjustments,
   IconCopy,

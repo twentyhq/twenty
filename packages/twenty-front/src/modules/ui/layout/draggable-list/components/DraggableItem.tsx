@@ -42,7 +42,6 @@ export const DraggableItem = ({
     },
   });
 
-  // Items report their presence so the list can size its trailing drop target.
   useEffect(() => {
     if (!isDefined(draggableListGroupContext)) {
       return;

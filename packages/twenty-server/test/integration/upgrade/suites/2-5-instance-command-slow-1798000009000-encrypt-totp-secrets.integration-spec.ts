@@ -69,9 +69,7 @@ const restoreCheckConstraint = async (
   );
 };
 
-// Stand-in for the real JwtWrapperService used by SimpleSecretEncryptionUtil.
-// Reproduces JwtWrapperService.generateAppSecret byte-for-byte so the legacy
-// CBC key derivation matches what production rows were sealed with.
+// Reproduces JwtWrapperService.generateAppSecret byte for byte so legacy CBC keys match production rows.
 const buildJwtWrapperServiceStub = (appSecret: string): JwtWrapperService => {
   return {
     generateAppSecret: (

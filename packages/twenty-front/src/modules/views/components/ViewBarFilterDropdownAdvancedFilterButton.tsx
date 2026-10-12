@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
@@ -23,6 +23,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewBarAdvancedFilterDropdownId } from '@/views/utils/getViewBarAdvancedFilterDropdownId';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { flushSync } from 'react-dom';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/icon';
@@ -103,14 +104,6 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
     const alreadyHasAdvancedFilterGroup = currentRecordFilterGroups.length > 0;
 
     if (!alreadyHasAdvancedFilterGroup) {
-      const newRecordFilterGroup = {
-        id: v4(),
-        viewId: currentView.id,
-        logicalOperator: RecordFilterGroupLogicalOperator.AND,
-      };
-
-      upsertRecordFilterGroup(newRecordFilterGroup);
-
       const defaultFieldMetadataItem =
         availableFieldMetadataItemsForFilter.find(
           (fieldMetadataItem) =>
@@ -122,15 +115,26 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         throw new Error('Missing default filter definition');
       }
 
-      const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
-        defaultFieldMetadataItem,
-      );
+      flushSync(() => {
+        const newRecordFilterGroup = {
+          id: v4(),
+          viewId: currentView.id,
+          logicalOperator: RecordFilterGroupLogicalOperator.AND,
+        };
 
-      newRecordFilter.recordFilterGroupId = newRecordFilterGroup.id;
+        upsertRecordFilterGroup(newRecordFilterGroup);
 
-      upsertRecordFilter(newRecordFilter);
+        const { newRecordFilter } =
+          createEmptyRecordFilterFromFieldMetadataItem(
+            defaultFieldMetadataItem,
+          );
 
-      setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
+        newRecordFilter.recordFilterGroupId = newRecordFilterGroup.id;
+
+        upsertRecordFilter(newRecordFilter);
+
+        setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
+      });
     }
 
     closeObjectFilterDropdown();
@@ -145,7 +149,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER}
       onEnter={handleClick}
     >
-      <ListItem
+      <ListItemButton
         onClick={handleClick}
         startIcon={<IconFilter />}
         focused={isSelectedItemId}
@@ -156,7 +160,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
             </StyledPillContainer>
           ) : undefined
         }
-      >{t`Advanced filter`}</ListItem>
+      >{t`Advanced filter`}</ListItemButton>
     </SelectableListItem>
   );
 };

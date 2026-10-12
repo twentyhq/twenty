@@ -3,8 +3,7 @@ import { useDetachChatThreadFromRecord } from '@/ai/hooks/useDetachChatThreadFro
 import { ChatThreadsCardContent } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCardContent';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 
-// No WidgetHeaderCountEffect: one page is fetched, so the rows in hand cap at
-// the page size and cannot stand in for the record's total.
+// No WidgetHeaderCountEffect: only one page is fetched, so the row count isn't the total.
 export const ChatThreadsCard = () => {
   const targetRecord = useTargetRecord();
   const { threads, getLinkIdsToThread, loading, error, refetch } =

@@ -13,7 +13,7 @@ export const fromUsageLimitEntityToDto = (
   limitKind: usageLimit.limitKind,
   periodCount: usageLimit.periodCount,
   periodUnit: usageLimit.periodUnit,
-  meter: usageLimit.meter,
+  unit: usageLimit.unit,
   limitValue: usageLimit.limitValue,
   burstValue: usageLimit.burstValue,
   createdAt: usageLimit.createdAt,

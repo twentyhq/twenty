@@ -6,7 +6,7 @@ import { useElements, useStripe } from '@stripe/react-stripe-js';
 import { useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   type BillingPlanKey,
   type SubscriptionInterval,

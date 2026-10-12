@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { USAGE_SPENDER_COLUMN_BY_SPENDER_TYPE } from 'src/engine/core-modules/usage-limit/constants/usage-spender-column-by-spender-type.constant';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 export type UsageScopeFilter = {
   clause: string;
@@ -11,10 +12,12 @@ export type UsageScopeFilter = {
 
 export const buildUsageScopeFilter = ({
   operationType,
+  unit,
   spenderType,
   spenderId,
 }: {
   operationType: UsageOperationType;
+  unit: UsageUnit | null;
   spenderType: SpenderType;
   spenderId: string | null;
 }): UsageScopeFilter => {
@@ -24,6 +27,11 @@ export const buildUsageScopeFilter = ({
   if (operationType !== UsageOperationType.ALL) {
     clauses.push('AND operationType = {operationType:String}');
     params.operationType = operationType;
+  }
+
+  if (isDefined(unit)) {
+    clauses.push('AND unit = {unit:String}');
+    params.unit = unit;
   }
 
   if (spenderType !== 'workspace') {

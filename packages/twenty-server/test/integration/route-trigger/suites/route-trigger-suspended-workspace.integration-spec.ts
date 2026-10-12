@@ -1,3 +1,4 @@
+import { HTTPMethod } from 'twenty-shared/types';
 import request from 'supertest';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
@@ -57,7 +58,7 @@ const routeFunctionManifest: LogicFunctionManifest = {
   builtHandlerChecksum: 'checksum-suspended-workspace-route',
   httpRouteTriggerSettings: {
     path: '/suspended-workspace-route',
-    httpMethod: 'GET',
+    httpMethod: HTTPMethod.GET,
     isAuthRequired: false,
   },
 };
@@ -71,7 +72,7 @@ const authenticatedRouteFunctionManifest: LogicFunctionManifest = {
   builtHandlerChecksum: 'checksum-authenticated-workspace-route',
   httpRouteTriggerSettings: {
     path: '/authenticated-workspace-route',
-    httpMethod: 'GET',
+    httpMethod: HTTPMethod.GET,
     isAuthRequired: true,
   },
 };

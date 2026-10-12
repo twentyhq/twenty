@@ -35,8 +35,7 @@ describe('compileCatalogToMessageIds', () => {
   it('reports a collision and keeps the later entry', () => {
     const onCollision = vi.fn();
 
-    // An empty-string context group hashes like no context at all, so two
-    // distinct authored entries can claim one message id.
+    // An empty-string context hashes like no context, so two authored entries can claim one message id
     const compiled = compileCatalogToMessageIds({
       catalog: {
         Export: 'first',

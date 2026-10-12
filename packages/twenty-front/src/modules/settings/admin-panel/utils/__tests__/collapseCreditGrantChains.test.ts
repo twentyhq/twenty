@@ -45,8 +45,7 @@ describe('collapseCreditGrantChains', () => {
     expect(rows.map((row) => row.current.id)).toEqual(['b', 'a2']);
   });
 
-  // Revoking a grant leaves its successors behind, and a truncated list is the
-  // normal case once older rows are filtered out server side.
+  // Revoked sources and server-truncated lists both leave successors without their source.
   it('treats a grant whose source is missing as an origin of its own', () => {
     const orphan = grant('b', 20, 'missing');
 

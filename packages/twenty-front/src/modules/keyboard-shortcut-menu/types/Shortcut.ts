@@ -1,13 +1,6 @@
-export enum ShortcutType {
-  Table = 'Table',
-  General = 'General',
-  SidePanel = 'SidePanel',
-}
+import { type ShortcutDefinition } from 'twenty-ui/primitives/typography';
 
 export type Shortcut = {
   label: string;
-  type: ShortcutType;
-  firstHotKey?: string;
-  secondHotKey?: string;
-  areSimultaneous: boolean;
+  shortcuts: readonly ShortcutDefinition[];
 };

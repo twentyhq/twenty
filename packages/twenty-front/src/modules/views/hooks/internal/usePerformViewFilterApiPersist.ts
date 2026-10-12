@@ -16,8 +16,7 @@ import {
   UpdateViewFilterDocument,
 } from '~/generated-metadata/graphql';
 
-// Normalize value like the fetch path (splitViewWithRelated) so store
-// comparisons against string-converted values stay consistent
+// Normalized like the fetch path (splitViewWithRelated) so store comparisons stay consistent
 const toFlatViewFilter = ({
   __typename,
   ...viewFilter

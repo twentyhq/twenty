@@ -4,7 +4,7 @@ import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-b
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
-import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
@@ -21,14 +21,12 @@ export const RecordBoardClickOutsideEffect = () => {
 
   const isDraggingRecord = useAtomComponentStateValue(
     isDraggingRecordComponentState,
-    recordBoardId,
   );
 
   const { deactivateBoardCard } = useActiveRecordBoardCard(recordBoardId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const { resetRecordBoardSelection } =
-    useResetRecordBoardSelection(recordBoardId);
+  const { resetRecordSelection } = useResetRecordSelection(recordBoardId);
 
   useListenClickOutside({
     excludedClickOutsideIds: [
@@ -44,7 +42,7 @@ export const RecordBoardClickOutsideEffect = () => {
     refs: [],
     callback: () => {
       if (!isDraggingRecord) {
-        resetRecordBoardSelection();
+        resetRecordSelection();
         deactivateBoardCard();
         unfocusBoardCard();
       }

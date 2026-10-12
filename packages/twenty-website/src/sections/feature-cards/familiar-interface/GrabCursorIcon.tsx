@@ -2,7 +2,6 @@ import { FAMILIAR_INTERFACE_SCENE } from '@/tokens/feature-scenes/familiar-inter
 
 const INK = FAMILIAR_INTERFACE_SCENE.cursorInk;
 
-// The old site's authored grab-hand artwork, verbatim.
 export function GrabCursorIcon({ size = 72 }: { size?: number }) {
   return (
     <svg

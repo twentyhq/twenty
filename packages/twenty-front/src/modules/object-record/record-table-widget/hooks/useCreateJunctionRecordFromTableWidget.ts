@@ -12,8 +12,7 @@ export const useCreateJunctionRecordFromTableWidget = ({
       junctionCreateThrough.junctionObjectMetadataNameSingular,
   });
 
-  // Upserting keeps a pick idempotent when the picker excluded a record that
-  // was linked meanwhile, the way the junction field input links records.
+  // Upsert keeps a pick idempotent when the record was linked meanwhile.
   const createJunctionRecord = useCallback(
     async (targetRecordId: string) => {
       await createManyRecords({

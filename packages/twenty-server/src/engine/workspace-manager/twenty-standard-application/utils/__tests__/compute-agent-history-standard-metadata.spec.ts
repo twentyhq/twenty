@@ -14,10 +14,10 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 const OBJECT_NAMES = [
   'agentChatThread',
   'agentChatThreadTarget',
+  'agentChatThreadParticipant',
   'agentMessage',
   'agentMessagePart',
   'agentTurn',
-  'agentTurnEvaluation',
 ] as const;
 
 const { allFlatEntityMaps } = computeTwentyStandardApplicationAllFlatEntityMaps(
@@ -89,8 +89,6 @@ describe('agent history workspace metadata', () => {
       ).toMatchObject({ isUnique: false });
     },
   );
-  // Conversations are shareable records and their record links inherit from
-  // them; the rest of the history is written and read by the platform only.
   const SHARED_ACCESS_POLICY_BY_OBJECT_NAME: Partial<
     Record<
       (typeof OBJECT_NAMES)[number],
@@ -98,12 +96,16 @@ describe('agent history workspace metadata', () => {
     >
   > = {
     agentChatThread: {
-      readability: MetadataReadability.INHERITED,
+      readability: MetadataReadability.PRIVATE,
       writability: MetadataWritability.OPEN,
     },
     agentChatThreadTarget: {
       readability: MetadataReadability.INHERITED,
       writability: MetadataWritability.OPEN,
+    },
+    agentChatThreadParticipant: {
+      readability: MetadataReadability.PRIVATE,
+      writability: MetadataWritability.SYSTEM,
     },
   };
 
@@ -182,17 +184,5 @@ describe('agent history workspace metadata', () => {
         ],
       ).toMatchObject({ type: FieldMetadataType.NUMERIC, defaultValue: "'0'" });
     }
-  });
-
-  it('retains one hidden kickoff message per thread', () => {
-    expect(
-      allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentMessage.indexes.hiddenKickoffIndex
-          .universalIdentifier
-      ],
-    ).toMatchObject({
-      isUnique: true,
-      indexWhereClause: '"isHidden" = true AND "deletedAt" IS NULL',
-    });
   });
 });

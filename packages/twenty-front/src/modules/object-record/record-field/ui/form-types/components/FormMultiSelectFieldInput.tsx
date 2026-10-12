@@ -6,22 +6,21 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/ui/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { Field, type SelectOption } from 'twenty-ui/primitives/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { isArray } from '@sniptt/guards';
+import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { preventDropdownDismissOnInputElement } from '@/ui/layout/dropdown/utils/preventDropdownDismissOnInputElement';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -68,12 +67,6 @@ const StyledDisplayModeContainer = styled.div`
   width: 100%;
 `;
 
-const StyledSelectInputContainer = styled.div`
-  position: absolute;
-  top: calc(100% + ${themeCssVariables.spacing[1]});
-  z-index: 1;
-`;
-
 const StyledPlaceholderContainer = styled.div`
   width: 100%;
 `;
@@ -100,16 +93,12 @@ export const FormMultiSelectFieldInput = ({
 }: FormMultiSelectFieldInputProps) => {
   const theme = useTheme();
   const instanceId = useId();
-
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
+  const { closeDropdown } = useCloseDropdown();
 
   const [draftValue, setDraftValue] = useState<
     | {
         type: 'static';
         value: FieldMultiSelectValue | string;
-        editingMode: 'view' | 'edit';
       }
     | {
         type: 'variable';
@@ -124,33 +113,8 @@ export const FormMultiSelectFieldInput = ({
       : {
           type: 'static',
           value: isDefined(defaultValue) ? defaultValue : [],
-          editingMode: 'view',
         },
   );
-
-  const handleDisplayModeClick = () => {
-    if (draftValue.type !== 'static') {
-      throw new Error(
-        'This function can only be called when editing a static value.',
-      );
-    }
-
-    setDraftValue({
-      ...draftValue,
-      editingMode: 'edit',
-    });
-
-    pushFocusItemToFocusStack({
-      focusId: instanceId,
-      component: {
-        type: FocusComponentType.FORM_FIELD_INPUT,
-        instanceId,
-      },
-      globalHotkeysConfig: {
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
-  };
 
   const onOptionSelected = (value: FieldMultiSelectValue) => {
     if (draftValue.type !== 'static') {
@@ -160,23 +124,9 @@ export const FormMultiSelectFieldInput = ({
     setDraftValue({
       type: 'static',
       value,
-      editingMode: 'edit',
     });
 
     onChange(value);
-  };
-
-  const onCancel = () => {
-    if (draftValue.type !== 'static') {
-      throw new Error('Can only be called when editing a static value');
-    }
-
-    setDraftValue({
-      ...draftValue,
-      editingMode: 'view',
-    });
-
-    removeFocusItemFromFocusStackById({ focusId: instanceId });
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -192,7 +142,6 @@ export const FormMultiSelectFieldInput = ({
     setDraftValue({
       type: 'static',
       value: [],
-      editingMode: 'view',
     });
 
     onChange([]);
@@ -213,6 +162,8 @@ export const FormMultiSelectFieldInput = ({
       : undefined;
 
   const placeholderText = placeholder ?? label;
+  const accessibleLabel =
+    [label, placeholder].find(isNonEmptyString) ?? t`Select options`;
 
   return (
     <FormFieldInputContainer data-testid={testId}>
@@ -223,11 +174,12 @@ export const FormMultiSelectFieldInput = ({
           formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
           hoverable={!readonly}
+          preventFocusStackUpdate={draftValue.type === 'static' && !readonly}
         >
           {draftValue.type === 'static' ? (
             readonly ? (
               <StyledDisplayModeReadonlyContainer>
-                {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
+                {isNonEmptyArray(selectedOptions) ? (
                   <StyledMultiSelectDisplay
                     values={selectedNames}
                     options={selectedOptions}
@@ -243,29 +195,50 @@ export const FormMultiSelectFieldInput = ({
                 />
               </StyledDisplayModeReadonlyContainer>
             ) : (
-              <StyledDisplayModeContainer
-                data-open={draftValue.editingMode === 'edit'}
-                onClick={handleDisplayModeClick}
+              <DropdownRoot
+                dropdownId={instanceId}
+                type="picker"
+                multiple
+                onInteractOutside={preventDropdownDismissOnInputElement}
               >
-                <VisibilityHidden>{t`Edit`}</VisibilityHidden>
-
-                {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
-                  <StyledMultiSelectDisplay
-                    values={selectedNames}
-                    options={selectedOptions}
+                <Dropdown.Trigger
+                  render={<StyledDisplayModeContainer />}
+                  nativeButton={false}
+                  aria-label={accessibleLabel}
+                >
+                  {isNonEmptyArray(selectedOptions) ? (
+                    <StyledMultiSelectDisplay
+                      values={selectedNames}
+                      options={selectedOptions}
+                    />
+                  ) : (
+                    <StyledPlaceholderContainer>
+                      <FormFieldPlaceholder>
+                        {placeholderText}
+                      </FormFieldPlaceholder>
+                    </StyledPlaceholderContainer>
+                  )}
+                  <IconChevronDown
+                    size={theme.icon.size.md}
+                    color={theme.font.color.tertiary}
                   />
-                ) : (
-                  <StyledPlaceholderContainer>
-                    <FormFieldPlaceholder>
-                      {placeholderText}
-                    </FormFieldPlaceholder>
-                  </StyledPlaceholderContainer>
-                )}
-                <IconChevronDown
-                  size={theme.icon.size.md}
-                  color={theme.font.color.tertiary}
-                />
-              </StyledDisplayModeContainer>
+                </Dropdown.Trigger>
+                <DropdownContent
+                  align="start"
+                  sideOffset={parseInt(theme.spacing[1], 10)}
+                  width={
+                    dropdownWidth ?? GenericDropdownContentWidth.ExtraLarge
+                  }
+                  aria-label={accessibleLabel}
+                >
+                  <MultiSelectInput
+                    options={options}
+                    onOptionSelected={onOptionSelected}
+                    onEnter={() => closeDropdown(instanceId)}
+                    values={selectedNames}
+                  />
+                </DropdownContent>
+              </DropdownRoot>
             )
           ) : (
             <VariableChipStandalone
@@ -274,28 +247,8 @@ export const FormMultiSelectFieldInput = ({
             />
           )}
         </FormFieldInputInnerContainer>
-        <StyledSelectInputContainer>
-          {draftValue.type === 'static' &&
-            draftValue.editingMode === 'edit' && (
-              <OverlayContainer>
-                <MultiSelectInput
-                  selectableListComponentInstanceId={
-                    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
-                  }
-                  focusId={instanceId}
-                  options={options}
-                  onCancel={onCancel}
-                  onOptionSelected={onOptionSelected}
-                  values={selectedNames}
-                  dropdownWidth={
-                    dropdownWidth ?? GenericDropdownContentWidth.ExtraLarge
-                  }
-                />
-              </OverlayContainer>
-            )}
-        </StyledSelectInputContainer>
 
-        {VariablePicker && !readonly && (
+        {isDefined(VariablePicker) && !readonly && (
           <VariablePicker
             instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}

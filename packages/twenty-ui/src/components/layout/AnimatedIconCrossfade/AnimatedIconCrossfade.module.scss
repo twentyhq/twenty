@@ -1,8 +1,9 @@
 .container {
-  height: var(--animated-icon-crossfade-size);
+  display: inline-block;
+  height: calc(var(--t-icon-size-sm) * 1px);
   overflow: hidden;
   position: relative;
-  width: var(--animated-icon-crossfade-size);
+  width: calc(var(--t-icon-size-sm) * 1px);
 }
 
 .layer {

@@ -40,8 +40,7 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 // workspaceId is bound onto the request by FileByIdGuard.
@@ -58,10 +57,7 @@ export class FileController {
     private readonly serverFileStorageService: ServerFileStorageService,
   ) {}
 
-  // Serves application registration assets (logo, gallery images) by their
-  // public folder path. These are instance-global marketplace resources, also
-  // displayed on the public OAuth authorize page, hence no auth token, unlike
-  // the workspace-scoped /file/:folder/:id.
+  // Instance-global marketplace assets, also shown on the public OAuth authorize page, hence no auth.
   @Get(
     `${ApiPath.Files}/application-registrations/:applicationRegistrationId/*path`,
   )
@@ -201,8 +197,17 @@ export class FileController {
   @Get(`${ApiPath.File}/${FileFolder.RecordExport}/:id`)
   @UseGuards(
     JwtAuthGuard,
-    WorkspaceAuthGuard,
-    UserAuthGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
+    }),
     CustomPermissionGuard,
   )
   @UseFilters(PermissionsRestApiExceptionFilter)

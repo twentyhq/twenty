@@ -1,5 +1,5 @@
-export enum AgentMessageRole {
-  SYSTEM = 'system',
-  USER = 'user',
-  ASSISTANT = 'assistant',
-}
+export const AGENT_MESSAGE_ROLE = {
+  SYSTEM: 'system',
+  USER: 'user',
+  ASSISTANT: 'assistant',
+} as const;

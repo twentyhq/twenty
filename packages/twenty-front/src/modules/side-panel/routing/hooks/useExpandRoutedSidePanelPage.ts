@@ -8,8 +8,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 
-// A route opts into generic expansion only when moving it between surface
-// stores cannot discard in-progress state.
+// Only for routes whose in-progress state survives moving between surface stores
 export const useExpandRoutedSidePanelPage =
   (): SidePanelExpandTarget | null => {
     const { t } = useLingui();

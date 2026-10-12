@@ -1,9 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
-  type IconComponent,
   IconComment,
+  type IconComponent,
   IconHome,
+  IconInbox,
   IconSettings,
 } from 'twenty-ui/icon';
 
@@ -13,8 +14,12 @@ import {
   type NavigationDrawerActiveTab,
   NAVIGATION_DRAWER_TABS,
 } from '@/ui/navigation/states/navigationDrawerTabs';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 export type NavigationDrawerMode = {
   Icon: IconComponent;
@@ -26,13 +31,14 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
   const { t } = useLingui();
 
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
 
-  // A suspended workspace is held on the billing settings by the route guard,
-  // so offering the modes it would bounce back from only flashes the user out
-  // and in again.
+  // The route guard holds a suspended workspace on billing settings, so other modes would bounce back.
   if (isWorkspaceSuspended) {
     return [];
   }
@@ -45,10 +51,9 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
       Icon: IconHome,
       label: t`Home`,
     },
-    [NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY]: {
-      Icon: IconComment,
-      label: t`AI`,
-    },
+    [NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY]: isAiChatInboxEnabled
+      ? { Icon: IconInbox, label: t`Inbox` }
+      : { Icon: IconComment, label: t`AI` },
     [NAVIGATION_DRAWER_TABS.SETTINGS]: {
       Icon: IconSettings,
       label: t`Settings`,

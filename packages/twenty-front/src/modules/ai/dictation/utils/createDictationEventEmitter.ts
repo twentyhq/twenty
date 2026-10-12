@@ -5,8 +5,7 @@ export const createDictationEventEmitter = (): DictationEventEmitter => {
   const listeners = new Set<DictationEngineListener>();
 
   return {
-    // Iterating a copy so a listener that unsubscribes on its own event cannot
-    // skip the listener registered after it.
+    // Iterates a copy so a listener unsubscribing mid-emit can't skip the next one.
     emit: (event) => {
       for (const listener of Array.from(listeners)) {
         listener(event);

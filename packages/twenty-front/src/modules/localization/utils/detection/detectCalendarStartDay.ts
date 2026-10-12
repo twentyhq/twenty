@@ -1,12 +1,9 @@
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 
 export const detectCalendarStartDay = (): FirstDayOfTheWeek => {
-  // Use Intl.Locale to get the first day of the week from the user's locale
-  // This requires a modern browser that supports Intl.Locale
   try {
     const locale = new Intl.Locale(navigator?.language || 'en-US');
 
-    // Check if the weekInfo property is available (newer browsers)
     if (
       'weekInfo' in locale &&
       locale.weekInfo !== null &&
@@ -16,7 +13,6 @@ export const detectCalendarStartDay = (): FirstDayOfTheWeek => {
     ) {
       const firstDay = locale.weekInfo.firstDay;
 
-      // Map Intl.Locale firstDay values to our enum keys
       // Intl.Locale uses 1=Monday, 7=Sunday, 6=Saturday
       switch (firstDay) {
         case 1:
@@ -32,7 +28,6 @@ export const detectCalendarStartDay = (): FirstDayOfTheWeek => {
     // Fallback if Intl.Locale is not supported or fails
   }
 
-  // Fallback: Use a heuristic based on common locale patterns
   const language = (navigator?.language || 'en-US').toLowerCase();
 
   // Most European countries, Australia, New Zealand start with Monday

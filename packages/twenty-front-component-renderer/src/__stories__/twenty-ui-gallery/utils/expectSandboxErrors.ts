@@ -13,10 +13,7 @@ const matchesErrorMessage = (message: unknown, pattern: string | RegExp) =>
 // triggering failure and reject errors outside the documented sandbox gaps.
 export const expectSandboxErrors = async ({
   requiredErrors,
-  allowedAdditionalErrors = [],
 }: SandboxErrorExpectation): Promise<void> => {
-  const allowedErrors = [...requiredErrors, ...allowedAdditionalErrors];
-
   await waitFor(
     () => {
       const messages = errorHandler.mock.calls.map(([error]) => error?.message);
@@ -26,7 +23,7 @@ export const expectSandboxErrors = async ({
       );
       const unexpectedMessages = messages.filter(
         (message) =>
-          !allowedErrors.some((pattern) =>
+          !requiredErrors.some((pattern) =>
             matchesErrorMessage(message, pattern),
           ),
       );

@@ -29,7 +29,6 @@ const compositeOverWhite = (cssColor) => {
 
 const browser = await launchBrowser();
 
-// Scrolls the stepper section to a fraction of its own scrollable track.
 async function scrollSectionTo(page, trackFraction) {
   await page.evaluate(
     ({ needle, fraction }) => {
@@ -146,7 +145,6 @@ const pages = [
   ['new', newPage],
 ];
 
-// --- Step 1: section chrome + initial choreography ---------------------
 await scrollSectionTo(oldPage, 0.05);
 await scrollSectionTo(newPage, 0.05);
 const oldStart = await readStepperState(oldPage);
@@ -189,7 +187,6 @@ if (!oldStart || !newStart) {
   }
 }
 
-// --- Mid-track: second step takes over ----------------------------------
 await scrollSectionTo(oldPage, 0.5);
 await scrollSectionTo(newPage, 0.5);
 const oldMid = await readStepperState(oldPage);
@@ -228,7 +225,6 @@ for (const [name, page] of pages) {
   }
 }
 
-// --- Back to step 1: entity drag + edges follow -------------------------
 for (const [name, page] of pages) {
   // eslint-disable-next-line no-await-in-loop
   await scrollSectionTo(page, 0.05);
@@ -265,7 +261,6 @@ for (const [name, page] of pages) {
   }
 }
 
-// --- Step 3: layout visibility toggle ------------------------------------
 for (const [name, page] of pages) {
   // eslint-disable-next-line no-await-in-loop
   await scrollSectionTo(page, 0.85);

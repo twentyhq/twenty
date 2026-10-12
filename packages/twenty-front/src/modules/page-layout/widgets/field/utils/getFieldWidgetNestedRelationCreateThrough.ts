@@ -19,10 +19,7 @@ export const getFieldWidgetNestedRelationCreateThrough = ({
   nestedRelationFieldMetadataItem: FieldMetadataItem;
   recordId: string;
 }): RecordTableWidgetNestedRelationCreateThrough | undefined => {
-  // Only a one-to-many first hop leaves the record to create through
-  // ambiguous. A many-to-one first hop points at a single intermediate
-  // record, so the created record's join column is prefilled from the
-  // seeded direct filter instead of a picker.
+  // A many-to-one first hop is unambiguous: the join column is prefilled from the seeded filter.
   if (fieldRelationMetadata.relationType !== RelationType.ONE_TO_MANY) {
     return undefined;
   }

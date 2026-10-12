@@ -45,7 +45,6 @@ const GET_ROLES_QUERY = `
         roleId
         isCustom
         modelConfiguration
-        evaluationInputs
         applicationId
         createdAt
         updatedAt

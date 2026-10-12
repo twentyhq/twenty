@@ -16,7 +16,7 @@ export const hydrateAgentHistoryFiles = async ({
     if ('fileId' in record) {
       parts.push(record);
     }
-    for (const relation of ['parts', 'messages', 'turns', 'evaluations']) {
+    for (const relation of ['parts', 'messages', 'turns']) {
       if (Array.isArray(record[relation])) {
         record[relation].forEach(collectParts);
       }

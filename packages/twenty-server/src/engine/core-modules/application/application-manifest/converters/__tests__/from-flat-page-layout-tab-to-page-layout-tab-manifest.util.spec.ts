@@ -2,7 +2,11 @@ import {
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
 } from 'twenty-shared/application';
-import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from 'twenty-shared/types';
 
 import { fromFlatPageLayoutTabToPageLayoutTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-tab-to-page-layout-tab-manifest.util';
 import { fromFlatPageLayoutTabToStandalonePageLayoutTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-tab-to-standalone-page-layout-tab-manifest.util';
@@ -19,7 +23,7 @@ const NOW = '2026-09-08T10:00:00.000Z';
 const WIDGET_MANIFEST: PageLayoutWidgetManifest = {
   universalIdentifier: WIDGET_UID,
   title: 'Notes',
-  type: 'NOTES',
+  type: WidgetType.NOTES,
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
   configuration: { configurationType: 'NOTES' },
 };

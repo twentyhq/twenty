@@ -2,6 +2,8 @@ import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { CORE_OBJECT_TABLE_CHECKBOX_COLUMN_GRID_TRACK } from '@/object-core/constants/CoreObjectTableCheckboxColumnGridTrack';
+
 const StyledAddNewRow = styled.button`
   align-items: center;
   background: transparent;
@@ -14,6 +16,10 @@ const StyledAddNewRow = styled.button`
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[8]};
   padding: 0 ${themeCssVariables.spacing[2]};
+  padding-inline-start: calc(
+    ${CORE_OBJECT_TABLE_CHECKBOX_COLUMN_GRID_TRACK} +
+      ${themeCssVariables.spacing[2]}
+  );
   width: 100%;
 
   &:not(:disabled) {

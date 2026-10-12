@@ -26,6 +26,16 @@ describe('getAiChatUsageLabel', () => {
     expect(getAiChatUsageLabel({ ...base, hasUsage: false })).toBe('No limit');
   });
 
+  it('uses the provided label for unavailable consumption', () => {
+    expect(
+      getAiChatUsageLabel({
+        ...base,
+        creditPercentage: null,
+        unavailableConsumptionLabel: 'Not available',
+      }),
+    ).toBe('Not available');
+  });
+
   it('prioritizes loading and errors over stale data', () => {
     expect(getAiChatUsageLabel({ ...base, loading: true })).toBe('Loading…');
     expect(getAiChatUsageLabel({ ...base, hasError: true })).toBe(

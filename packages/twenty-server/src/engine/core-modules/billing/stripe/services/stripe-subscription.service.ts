@@ -62,8 +62,7 @@ export class StripeSubscriptionService {
           payment_method: stripePaymentMethodId,
         });
       } catch (error) {
-        // A decline is final for this webhook, Stripe dunning retries the invoice
-        // on its own schedule
+        // A decline is final for this webhook; Stripe dunning retries on its own schedule
         if (error instanceof this.stripe.errors.StripeCardError) {
           this.logger.error(
             `Card declined for invoice ${invoice.id} of subscription ${stripeSubscriptionId}: ${error.message}`,
@@ -72,8 +71,7 @@ export class StripeSubscriptionService {
           continue;
         }
 
-        // Stripe dunning or a concurrent webhook can have settled the invoice
-        // in the meantime, only a still open one is worth a webhook retry
+        // Dunning or a concurrent webhook may have settled it; only a still-open invoice merits a retry
         const refreshedInvoice = await this.stripe.invoices.retrieve(
           invoice.id,
         );

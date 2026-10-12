@@ -39,9 +39,6 @@ describe('unlockAudioContext', () => {
     expect(close).toHaveBeenCalledTimes(1);
   });
 
-  // A browser allows only a handful of live contexts, and resume() rejecting is
-  // routine on the surface this exists for, so leaking one per press would
-  // exhaust the pool the unlock depends on.
   it('releases the context even when resuming it fails', async () => {
     const { close } = stubAudioContext({ doesResumeReject: true });
 

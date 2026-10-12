@@ -1,16 +1,22 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
-import { type AskQuestionsToolResult } from 'twenty-shared/ai';
-import { IconHelpCircle } from 'twenty-ui/icon';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-
 import {
-  StyledAiChatAskStatusContainer,
+  type AskQuestionToolResult,
+  type AskQuestionsToolResult,
+} from 'twenty-shared/ai';
+import { IconHelpCircle } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
+import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { getAskedQuestionEntries } from '@/ai/utils/getAskedQuestionEntries';
+import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
+import {
+  StyledAiChatAskStatusDetail,
   StyledAiChatAskStatusMessage,
 } from '@/ai/components/AiChatAskStyledComponents';
-import { ShimmeringText } from '@/ai/components/ShimmeringText';
 
 const StyledAnswersCard = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
@@ -36,12 +42,6 @@ const StyledAnswerQuestion = styled.span`
   overflow-wrap: anywhere;
 `;
 
-const StyledAnswerValue = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  overflow-wrap: anywhere;
-`;
-
 export const AiChatQuestionStatusRenderer = ({
   toolPart,
   isStreaming,
@@ -50,39 +50,64 @@ export const AiChatQuestionStatusRenderer = ({
   isStreaming: boolean;
 }) => {
   const { t } = useLingui();
-  const theme = useTheme();
 
-  const result = (toolPart.output as { result?: AskQuestionsToolResult } | null)
-    ?.result;
-  const questions = result?.questions ?? [];
+  const result = (
+    toolPart.output as {
+      result?: AskQuestionToolResult | AskQuestionsToolResult;
+    } | null
+  )?.result;
   const status = result?.status ?? 'pending';
+  const entries = getAskedQuestionEntries(result);
 
   if (status === 'pending') {
-    const label = t`Asking questions...`;
+    if (entries.length !== 1) {
+      return (
+        <AiChatAskStatusRow
+          Icon={IconHelpCircle}
+          message={t`Asking questions...`}
+          isShimmering={isStreaming}
+        />
+      );
+    }
 
+    const pendingQuestion = entries[0].question.question;
+
+    // the shimmer clips text to a transparent fill, which would hide chip labels
     return (
-      <StyledAiChatAskStatusContainer>
-        <IconHelpCircle size={theme.icon.size.sm} />
-        {isStreaming ? (
-          <ShimmeringText>
-            <StyledAiChatAskStatusMessage>{label}</StyledAiChatAskStatusMessage>
-          </ShimmeringText>
-        ) : (
-          <StyledAiChatAskStatusMessage>{label}</StyledAiChatAskStatusMessage>
-        )}
-      </StyledAiChatAskStatusContainer>
+      <AiChatAskStatusRow
+        Icon={IconHelpCircle}
+        message={
+          isStreaming ? (
+            getChatReferenceSegments(pendingQuestion)
+              .map((segment) =>
+                isString(segment) ? segment : segment.displayName,
+              )
+              .join('')
+          ) : (
+            <TextWithChatReferences text={pendingQuestion} />
+          )
+        }
+        isShimmering={isStreaming}
+      />
     );
   }
 
-  const answers = result?.answers ?? [];
+  if (status === 'skipped') {
+    return (
+      <AiChatAskStatusRow
+        Icon={IconHelpCircle}
+        message={
+          entries.length > 1 ? t`Questions skipped` : t`Question skipped`
+        }
+        isShimmering={false}
+      />
+    );
+  }
 
   return (
     <StyledAnswersCard>
       <StyledAiChatAskStatusMessage>{t`Answers`}</StyledAiChatAskStatusMessage>
-      {questions.map((question, index) => {
-        const answer = answers.find(
-          (candidate) => candidate.questionIndex === index,
-        );
+      {entries.map(({ question, answer }, index) => {
         const selectedLabels = (answer?.selectedOptionIndices ?? [])
           .map((optionIndex) => question.options[optionIndex]?.label)
           .filter(isNonEmptyString);
@@ -98,8 +123,12 @@ export const AiChatQuestionStatusRenderer = ({
 
         return (
           <StyledAnswerBlock key={index}>
-            <StyledAnswerQuestion>{question.question}</StyledAnswerQuestion>
-            <StyledAnswerValue>{value}</StyledAnswerValue>
+            <StyledAnswerQuestion>
+              <TextWithChatReferences text={question.question} />
+            </StyledAnswerQuestion>
+            <StyledAiChatAskStatusDetail>
+              <TextWithChatReferences text={value} />
+            </StyledAiChatAskStatusDetail>
           </StyledAnswerBlock>
         );
       })}

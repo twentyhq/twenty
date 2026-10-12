@@ -5,7 +5,7 @@ export const EMPTY_USAGE_LIMIT_FORM_VALUES: UsageLimitFormValues = {
   operationType: null,
   spenderType: 'workspace',
   spenderId: '',
-  meter: null,
+  unit: null,
   periodUnit: null,
   limitValue: '',
 };

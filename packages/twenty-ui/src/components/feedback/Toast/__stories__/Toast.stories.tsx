@@ -16,7 +16,8 @@ import { type ToastProps } from '../types/ToastProps';
 import { type ToastVariant } from '../types/ToastVariant';
 
 const meta: Meta<typeof Toast> = {
-  title: 'UI/Feedback/Toast',
+  id: 'ui-feedback-toast',
+  title: 'UI/Components/Feedback/Toast',
   component: Toast,
   args: { children: 'Changes saved', progress: 100 },
 };

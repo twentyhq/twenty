@@ -3,8 +3,7 @@ import { UI_SCALE_VALUES } from 'twenty-shared/constants';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-// Enum-like TEXT fields whose values would otherwise be persisted unchecked,
-// then cast to a client-side union.
+// Enum-like TEXT fields would otherwise persist unchecked and then be cast to a client-side union.
 const WORKSPACE_MEMBER_FIELD_ALLOWED_VALUES: Record<
   string,
   ReadonlySet<string>

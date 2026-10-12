@@ -1,0 +1,8 @@
+.action[data-color][data-variant] {
+  --tw-button-active: color-mix(in srgb, currentColor 20%, transparent);
+  --tw-button-background: transparent;
+  --tw-button-border: color-mix(in srgb, currentColor 25%, transparent);
+  --tw-button-hover: color-mix(in srgb, currentColor 10%, transparent);
+
+  color: inherit;
+}

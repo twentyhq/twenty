@@ -19,8 +19,6 @@ import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-
   exports: [
     MicrosoftCalendarGetEventsService,
     MicrosoftCalendarImportEventsService,
-    MicrosoftCalendarEventListFetchErrorHandler,
-    MicrosoftCalendarEventsImportErrorHandler,
   ],
 })
 export class MicrosoftCalendarDriverModule {}

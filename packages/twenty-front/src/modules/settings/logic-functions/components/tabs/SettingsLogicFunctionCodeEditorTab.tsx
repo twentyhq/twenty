@@ -8,7 +8,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { IconPlayerPlay } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -65,7 +65,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
         title={t`Code your function`}
         description={t`Write your function (in typescript) below`}
       />
-      <CodeEditorHeader leftNodes={[HeaderTabList]} rightNodes={[TestButton]} />
+      <CodeEditorHeader startElement={HeaderTabList} endElement={TestButton} />
       {activeTabId && (
         <SettingsLogicFunctionCodeEditor
           files={files}

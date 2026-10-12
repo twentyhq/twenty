@@ -24,7 +24,7 @@ import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode'
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type PartialObjectRecordWithId = Partial<ObjectRecord> & {
@@ -37,7 +37,7 @@ type PartialObjectRecordWithOptionalId = Partial<ObjectRecord> & {
 
 export type useCreateManyRecordsProps = {
   objectNameSingular: string;
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  recordGqlFields?: RecordGqlFields;
   skipPostOptimisticEffect?: boolean;
   shouldMatchRootQueryFilter?: boolean;
   shouldRefetchAggregateQueries?: boolean;

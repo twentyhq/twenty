@@ -1,5 +1,8 @@
 export const AGENT_CHAT_THREAD_FILTER_STATUS = {
   ACTIVE: 'active',
-  ARCHIVED: 'archived',
-  ALL: 'all',
+  NEEDS_INPUT: 'needsInput',
+  MENTIONS: 'mentions',
+  ASSIGNED: 'assigned',
+  SNOOZED: 'snoozed',
+  DONE: 'done',
 } as const;

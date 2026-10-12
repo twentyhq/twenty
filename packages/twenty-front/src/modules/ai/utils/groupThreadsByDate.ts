@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { differenceInCalendarDays } from 'date-fns';
 
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 
 export type AgentChatThreadDateGroup = {
   id: string;
@@ -62,7 +63,7 @@ export const groupThreadsByDate = (
 
   for (const thread of threads) {
     const threadDateGroup = getThreadDateGroup(
-      new Date(thread.updatedAt),
+      new Date(getAgentChatThreadLastActivityAt(thread)),
       today,
     );
     const existingThreadDateGroup = groupedThreadsByDate.get(

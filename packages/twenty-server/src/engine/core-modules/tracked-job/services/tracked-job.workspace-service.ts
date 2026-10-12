@@ -19,13 +19,13 @@ import {
   type WorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
+import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TRACKED_JOB_CONNECTION_TTL_MS } from 'src/engine/core-modules/tracked-job/constants/tracked-job-connection-ttl-ms.constant';
 import { TRACKED_JOB_PERMISSION_CACHE_KEYS } from 'src/engine/core-modules/tracked-job/constants/tracked-job-permission-cache-keys.constant';
 import { TRACKED_JOB_PROGRESS_INTERVAL_MS } from 'src/engine/core-modules/tracked-job/constants/tracked-job-progress-interval-ms.constant';
-import { UPDATE_TRACKED_JOB_LEASE_SCRIPT } from 'src/engine/core-modules/tracked-job/constants/update-tracked-job-lease-script.constant';
 import { TrackedJobException } from 'src/engine/core-modules/tracked-job/exceptions/tracked-job.exception';
 import { type TrackedJobProgress } from 'src/engine/core-modules/tracked-job/types/tracked-job-progress.type';
 import { type TrackedJobUpdate } from 'src/engine/core-modules/tracked-job/types/tracked-job-update.type';
@@ -341,7 +341,7 @@ export class TrackedJobWorkspaceService {
   ): Promise<boolean> {
     return (
       (await this.cacheStorageService.runScript<number>({
-        script: UPDATE_TRACKED_JOB_LEASE_SCRIPT,
+        script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
         keys: [this.getLeaseKey(trackedJob)],
         args: [JSON.stringify(trackedJob.id), String(ttl)],
       })) === 1

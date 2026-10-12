@@ -9,11 +9,7 @@ import {
 
 export type OrderByValuesByRecordId = Record<string, Record<string, unknown>>;
 
-// Cursors are encoded from the raw rows of the scan rather than from the
-// formatted records: result formatting presents SQL NULLs of TEXT-like columns
-// as empty values, but only actual SQL NULLs sort into the NULL block the
-// cursor must continue from. This also carries relation orderBy values without
-// requiring the ordered relation in the selection (or any REST depth).
+// Raw rows, not formatted records: formatting shows SQL NULLs as empty values, but only real NULLs sort into the NULL block
 export const buildOrderByValuesByRecordId = ({
   orderByLeaves,
   records,
@@ -31,8 +27,7 @@ export const buildOrderByValuesByRecordId = ({
     return {};
   }
 
-  // The runner rejects row-multiplying joins, so raw rows and entities match
-  // one to one; the root id raw alias keys the pairing when available
+  // The runner rejects row-multiplying joins, so raw rows and records match one to one
   const rootIdRawAlias = `${objectNameSingular}_id`;
   const rawRowsByRecordId = new Map<string, Record<string, unknown>>();
 
@@ -64,9 +59,6 @@ export const buildOrderByValuesByRecordId = ({
         continue;
       }
 
-      // Every ordered column is selected under this raw alias, by the find
-      // options for root columns and by addRelationOrderColumnsToBuilder for
-      // joined ones
       const rawValue =
         rawRow[`${leafColumn.tableAlias}_${leafColumn.columnName}`];
 

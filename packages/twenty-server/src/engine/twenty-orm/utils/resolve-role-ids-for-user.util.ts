@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-// An application acting for a user stays within that person's role and within
-// the role it declared, so permissions are the intersection of both.
+// An application acting for a user is bounded by both the user's role and its own
 export const resolveRoleIdsForUser = ({
   userRoleId,
   applicationRoleId,

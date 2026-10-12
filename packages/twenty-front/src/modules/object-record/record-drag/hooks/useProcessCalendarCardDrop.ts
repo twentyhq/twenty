@@ -5,6 +5,8 @@ import { useStore } from 'jotai';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
+import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
 
 import { extractRecordPositions } from '@/object-record/record-drag/utils/extractRecordPositions';
 import { getShiftedRecordCalendarDateTimeUpdateInput } from '@/object-record/record-drag/utils/getShiftedRecordCalendarDateTimeUpdateInput';
@@ -13,11 +15,11 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
 
 export const useProcessCalendarCardDrop = () => {
   const store = useStore();
@@ -34,26 +36,21 @@ export const useProcessCalendarCardDrop = () => {
       calendarDayRecordIdsComponentFamilySelector,
     );
 
+  const draggedRecordIdsCallbackState = useAtomComponentStateCallbackState(
+    draggedRecordIdsComponentState,
+  );
+
   const processCalendarCardDrop = useCallback(
     async ({
-      recordId,
-      sourceDate,
-      destinationDate,
+      draggedRecordId: recordId,
+      sourceDroppableId: sourceDate,
+      destinationDroppableId: destinationDate,
       destinationIndex,
-      selectedRecordIds,
-    }: {
-      recordId: string;
-      sourceDate: string;
-      destinationDate: string;
-      destinationIndex: number;
-      selectedRecordIds: string[];
-    }) => {
-      if (!recordIndexCalendarFieldMetadataId) return;
+    }: RecordDragDropResult) => {
+      // Read before any await: the drag provider clears it once this call returns
+      const draggedRecordIds = store.get(draggedRecordIdsCallbackState);
 
-      const dragOperationType = getDragOperationType({
-        draggedRecordId: recordId,
-        selectedRecordIds,
-      });
+      if (!recordIndexCalendarFieldMetadataId) return;
 
       const destinationPlainDate = Temporal.PlainDate.from(destinationDate);
       const sourcePlainDate = Temporal.PlainDate.from(sourceDate);
@@ -127,10 +124,7 @@ export const useProcessCalendarCardDrop = () => {
 
       const dayOffset = sourcePlainDate.until(destinationPlainDate).days;
 
-      const recordIdsToShift =
-        dragOperationType === 'single' ? [recordId] : selectedRecordIds;
-
-      for (const idToUpdate of recordIdsToShift) {
+      for (const idToUpdate of draggedRecordIds) {
         const recordToShift = store.get(
           recordStoreFamilyState.atomFamily(idToUpdate),
         );
@@ -173,6 +167,7 @@ export const useProcessCalendarCardDrop = () => {
       objectMetadataItem.nameSingular,
       objectMetadataItem.fields,
       calendarDayRecordIdsSelector,
+      draggedRecordIdsCallbackState,
       userTimezone,
       updateOneRecord,
     ],

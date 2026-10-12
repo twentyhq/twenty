@@ -1,52 +1,47 @@
+import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 
-import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme';
-
 import styles from './AnimatedIconCrossfade.module.scss';
-
-type AnimatedIconCrossfadeProps = {
-  isActive: boolean;
-  ActiveIcon: IconComponent;
-  InactiveIcon: IconComponent;
-  size?: number;
-};
+import { type AnimatedIconCrossfadeProps } from './types/AnimatedIconCrossfadeProps';
 
 export const AnimatedIconCrossfade = ({
   isActive,
-  ActiveIcon,
-  InactiveIcon,
-  size,
+  activeIcon,
+  inactiveIcon,
+  className,
+  render,
+  ref,
+  ...props
 }: AnimatedIconCrossfadeProps) => {
-  const theme = useTheme();
-
-  const iconSize = size ?? theme.icon.size.sm;
-
-  return (
-    <div
-      className={styles.container}
-      style={
-        {
-          '--animated-icon-crossfade-size': `${iconSize}px`,
-        } as React.CSSProperties
-      }
-    >
-      <div
-        className={clsx(
-          styles.layer,
-          isActive ? styles.hidden : styles.visible,
-        )}
-      >
-        <InactiveIcon size={iconSize} />
-      </div>
-      <div
-        className={clsx(
-          styles.layer,
-          isActive ? styles.visible : styles.hidden,
-        )}
-      >
-        <ActiveIcon size={iconSize} />
-      </div>
-    </div>
-  );
+  return useRender({
+    defaultTagName: 'span',
+    render,
+    ref,
+    props: {
+      ...props,
+      className: clsx(styles.container, className),
+      children: (
+        <>
+          <span
+            aria-hidden="true"
+            className={clsx(
+              styles.layer,
+              isActive ? styles.hidden : styles.visible,
+            )}
+          >
+            {inactiveIcon}
+          </span>
+          <span
+            aria-hidden="true"
+            className={clsx(
+              styles.layer,
+              isActive ? styles.visible : styles.hidden,
+            )}
+          >
+            {activeIcon}
+          </span>
+        </>
+      ),
+    },
+  });
 };

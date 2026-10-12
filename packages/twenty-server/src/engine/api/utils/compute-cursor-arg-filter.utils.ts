@@ -30,12 +30,7 @@ type ComputeCursorArgFilterParams = {
   isForwardPagination: boolean;
 };
 
-// Builds the cumulative keyset conditions continuing a scan from a cursor:
-// (k1 after v1) OR (k1 = v1 AND k2 after v2) OR ... over the ordered leaves.
-// A keyset cursor can only continue the scan if it carries a value for every
-// leaf of the requested ordering: a cursor generated under another orderBy (or
-// by a version that failed to capture a sort value) must fail loudly, because
-// continuing on the remaining leaves silently skips records (issue #24333).
+// A cursor missing a leaf value must fail loudly: continuing on the remaining leaves silently skips records (#24333)
 export const computeCursorArgFilter = ({
   cursor,
   orderBy,
@@ -66,7 +61,6 @@ export const computeCursorArgFilter = ({
     return { leaf, cursorValue };
   });
 
-  // Each equality condition is reused by every later branch: compute them once
   const equalityConditions = leavesWithCursorValues.map(
     ({ leaf, cursorValue }) =>
       buildCursorLeafWhereCondition({
@@ -85,9 +79,6 @@ export const computeCursorArgFilter = ({
       isEqualityCondition: false,
     });
 
-    // A null main condition means no row can sort strictly after the cursor on
-    // this leaf alone (e.g. inside a trailing NULL block): only the tie-breaking
-    // leaves of the following branches can advance the scan
     if (!isDefined(mainCondition)) {
       return [];
     }

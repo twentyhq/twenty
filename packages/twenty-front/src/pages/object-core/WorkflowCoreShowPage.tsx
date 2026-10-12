@@ -1,3 +1,4 @@
+import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CoreWorkflowEditor } from '@/object-core/workflows/components/CoreWorkflowEditor';
 import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
 import { CoreWorkflowToWorkspaceRedirect } from '@/object-core/workflows/components/CoreWorkflowToWorkspaceRedirect';
@@ -7,13 +8,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useCoreWorkflowShowPageResource } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageResource';
@@ -22,8 +23,6 @@ import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -56,6 +55,9 @@ const CoreWorkflowShowContent = ({
     useCoreWorkflowShowPageResource({
       coreWorkflowId,
     });
+  const isApplicationManaged = useIsThirdPartyApplication(
+    coreWorkflow?.applicationId,
+  );
   const versions = useCoreWorkflowVersions(coreWorkflowId);
   const { refetchCoreWorkflowVersions } = versions;
 
@@ -78,7 +80,8 @@ const CoreWorkflowShowContent = ({
   const selectedVersion = isDefined(requestedVersionId)
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;
-  const isReadOnlyVersion = isDefined(requestedVersionId);
+  const isReadOnlyVersion =
+    isApplicationManaged || isDefined(requestedVersionId);
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
     currentName: record?.name,
@@ -112,7 +115,9 @@ const CoreWorkflowShowContent = ({
           <Button
             title={t`Retry`}
             onClick={() => invalidateCoreWorkflowVersions(client)}
-          />
+          >
+            {t`Retry`}
+          </Button>
         </WorkspaceRouteUnavailable>
       </>
     );
@@ -155,7 +160,7 @@ const CoreWorkflowShowContent = ({
             ]}
             actionButton={
               <>
-                {!isReadOnlyVersion && <RecordShowCommandMenu />}
+                {!isDefined(requestedVersionId) && <RecordShowCommandMenu />}
                 <SidePanelToggleButton />
               </>
             }
@@ -168,6 +173,7 @@ const CoreWorkflowShowContent = ({
             name={record.name}
             namePlaceholder={t`Untitled`}
             onRename={renameWorkflow}
+            isReadOnly={isApplicationManaged}
           />
           {isDefined(selectedVersion) ? (
             <CoreWorkflowEditor
@@ -189,16 +195,7 @@ export const WorkflowCoreShowPage = () => {
   const { coreWorkflowId } = useParams<{ coreWorkflowId: string }>();
   const isCore = useIsWorkflowCoreEnabled();
   const canManageWorkflows = useHasPermissionFlag(PermissionFlagType.WORKFLOWS);
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
-  });
-  const workflowObjectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
-  if (
-    !workflowObjectPermissions.canReadObjectRecords ||
-    (isCore && !canManageWorkflows)
-  ) {
+  if (!canManageWorkflows) {
     return (
       <WorkspaceRouteUnavailable>{t`You do not have permission to access workflows.`}</WorkspaceRouteUnavailable>
     );

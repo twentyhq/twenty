@@ -26,7 +26,7 @@ export type AppConnection = {
   // by the upstream provider.
   visibility: 'user' | 'workspace';
   // The userWorkspace that originally created the credential (also the owner
-  // for `scope: 'user'` credentials). Match against `event.userWorkspaceId`
+  // for `visibility: 'user'` credentials). Match against `event.userWorkspaceId`
   // to resolve the request user's connection.
   userWorkspaceId: string;
   // The workspace member who created the credential. null when the creating

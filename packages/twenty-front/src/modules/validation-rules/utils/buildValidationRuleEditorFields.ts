@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from 'twenty-shared/constants';
 import {
   compositeTypeDefinitions,
@@ -47,7 +48,9 @@ const buildScalarEditorFields = ({
 }): ValidationRuleEditorField[] => {
   const compositeType = compositeTypeDefinitions.get(fieldMetadataItem.type);
   const path = `${pathPrefix}${fieldMetadataItem.name}`;
-  const iconName = fieldMetadataItem.icon ?? DEFAULT_FIELD_ICON;
+  const iconName = isNonEmptyString(fieldMetadataItem.icon)
+    ? fieldMetadataItem.icon
+    : DEFAULT_FIELD_ICON;
 
   const field: ValidationRuleEditorField = {
     path,
@@ -56,7 +59,9 @@ const buildScalarEditorFields = ({
     iconName,
     type: fieldMetadataItem.type,
     objectLabelSingular: objectMetadataItem.labelSingular,
-    objectIconName: objectMetadataItem.icon ?? DEFAULT_OBJECT_ICON,
+    objectIconName: isNonEmptyString(objectMetadataItem.icon)
+      ? objectMetadataItem.icon
+      : DEFAULT_OBJECT_ICON,
     selectOptionValues:
       fieldMetadataItem.options?.map((option) => option.value) ?? [],
     isSystem: fieldMetadataItem.isSystem ?? false,
@@ -119,12 +124,14 @@ export const buildValidationRuleEditorFields = ({
         label: fieldMetadataItem.label,
         parentLabel: null,
         iconName:
-          fieldMetadataItem.icon ??
-          targetObjectMetadataItem?.icon ??
-          DEFAULT_OBJECT_ICON,
+          [fieldMetadataItem.icon, targetObjectMetadataItem?.icon].find(
+            isNonEmptyString,
+          ) ?? DEFAULT_OBJECT_ICON,
         type: fieldMetadataItem.type,
         objectLabelSingular: objectMetadataItem.labelSingular,
-        objectIconName: objectMetadataItem.icon ?? DEFAULT_OBJECT_ICON,
+        objectIconName: isNonEmptyString(objectMetadataItem.icon)
+          ? objectMetadataItem.icon
+          : DEFAULT_OBJECT_ICON,
         selectOptionValues: [],
         isSystem: fieldMetadataItem.isSystem ?? false,
         hasMembers: isDefined(targetObjectMetadataItem),

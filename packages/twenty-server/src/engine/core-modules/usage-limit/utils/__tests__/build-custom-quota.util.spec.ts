@@ -2,6 +2,7 @@ import { buildCustomQuota } from 'src/engine/core-modules/usage-limit/utils/buil
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const MONTH_PERIOD = {
   periodStart: new Date('2026-09-01T00:00:00.000Z'),
@@ -15,7 +16,7 @@ const buildUsageLimit = (overrides: Partial<UsageLimitEntity> = {}) => ({
   spenderType: 'workspace' as const,
   spenderId: '',
   periodUnit: 'month' as const,
-  meter: 'creditsUsedMicro' as const,
+  unit: UsageUnit.CREDIT,
   limitValue: 1_000_000,
   ...overrides,
 });
@@ -37,6 +38,7 @@ describe('buildCustomQuota', () => {
       expect.objectContaining({
         id: 'limit-1',
         spenderId: null,
+        unit: UsageUnit.CREDIT,
         consumedValue: 250_000,
         remainingValue: 750_000,
         periodEnd: MONTH_PERIOD.periodEnd,

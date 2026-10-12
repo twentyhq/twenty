@@ -1,5 +1,9 @@
 import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
+  WidgetType,
+} from 'twenty-shared/types';
 
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-page-layout-widget-manifest.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
@@ -18,7 +22,7 @@ const WIDGET_MANIFEST: Required<
 > = {
   universalIdentifier: WIDGET_UID,
   title: 'Fields',
-  type: 'FIELDS',
+  type: WidgetType.FIELDS,
   objectUniversalIdentifier: OBJECT_UID,
   conditionalDisplay: { device: 'DESKTOP' },
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 2 },
@@ -32,7 +36,7 @@ const WIDGET_MANIFEST: Required<
 const MINIMAL_WIDGET_MANIFEST: PageLayoutWidgetManifest = {
   universalIdentifier: WIDGET_UID,
   title: 'Notes',
-  type: 'NOTES',
+  type: WidgetType.NOTES,
   configuration: { configurationType: 'NOTES' },
 };
 
@@ -93,7 +97,7 @@ describe('fromFlatPageLayoutWidgetToPageLayoutWidgetManifest', () => {
   it('should leave the position out and hoist its height behavior when the order of the widgets carries it', () => {
     const viewportWidgetManifest: PageLayoutWidgetManifest = {
       ...MINIMAL_WIDGET_MANIFEST,
-      heightBehavior: 'TAB_VIEWPORT',
+      heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
     };
     const flatPageLayoutWidget = forward(viewportWidgetManifest);
 
@@ -134,7 +138,7 @@ describe('fromFlatPageLayoutWidgetToPageLayoutWidgetManifest', () => {
   it('should keep an explicit null view reference inside the configuration', () => {
     const viewlessFieldsWidgetManifest: PageLayoutWidgetManifest = {
       ...MINIMAL_WIDGET_MANIFEST,
-      type: 'FIELDS',
+      type: WidgetType.FIELDS,
       configuration: {
         configurationType: 'FIELDS',
         viewUniversalIdentifier: null,

@@ -1,4 +1,4 @@
-export type ApplicationLifecycleOperation = 'install' | 'uninstall';
+export type ApplicationLifecycleOperation = 'install' | 'uninstall' | 'upgrade';
 
 export const buildApplicationLifecycleJobId = ({
   operation,

@@ -18,7 +18,6 @@ export type HostToWorkerRenderContext = {
   initialViewportGeometry?: ViewportGeometrySnapshot;
   initialExecutionContext?: FrontComponentExecutionContext;
   storageSnapshots?: FrontComponentStorageSnapshots;
-  // MediaRecorder.isTypeSupported is synchronous, so the worker polyfill
-  // answers from this snapshot instead of a round trip to the host.
+  // isTypeSupported is synchronous, so the worker polyfill answers from this snapshot.
   mediaRecorderCapabilities?: MediaRecorderCapabilities;
 };

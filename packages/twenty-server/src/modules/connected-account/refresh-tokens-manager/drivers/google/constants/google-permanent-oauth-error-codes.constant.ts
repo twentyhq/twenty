@@ -1,6 +1,4 @@
-/**
- * @see https://developers.google.com/identity/protocols/oauth2/web-server#authorization-errors
- */
+// @see https://developers.google.com/identity/protocols/oauth2/web-server#authorization-errors
 export const GOOGLE_PERMANENT_OAUTH_ERROR_CODES = new Set([
   'invalid_grant',
   'invalid_client',

@@ -2,9 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { canGroupRecordsByFieldMetadataItem } from '@/object-record/record-group/utils/canGroupRecordsByFieldMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-// Widgets only offer select-field grouping: the server auto-generates
-// view groups from select options, and widgets have no per-record
-// add-group flow like the record index page.
+// Select fields only: the server generates their groups and widgets lack an add-group flow.
 export const isFieldMetadataItemAvailableAsWidgetGroupByField = (
   fieldMetadataItem: FieldMetadataItem,
 ) =>

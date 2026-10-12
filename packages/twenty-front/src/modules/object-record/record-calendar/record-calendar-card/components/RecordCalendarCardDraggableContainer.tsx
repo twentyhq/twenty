@@ -37,6 +37,7 @@ export const RecordCalendarCardDraggableContainer = ({
       group={calendarDay}
       type={RECORD_CALENDAR_CARD_DND_TYPE}
       accept={RECORD_CALENDAR_CARD_DND_TYPE}
+      data={{ recordId }}
       collisionDetector={pointerIntersection}
       disabled={dragIsDisabled}
       fadeSourceWhileDragging

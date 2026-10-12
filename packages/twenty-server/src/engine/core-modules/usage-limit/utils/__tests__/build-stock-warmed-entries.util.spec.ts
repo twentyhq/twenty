@@ -3,14 +3,15 @@ import { buildStockScopeKey } from 'src/engine/core-modules/usage-limit/utils/bu
 import { buildStockWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-stock-warmed-entries.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const TTL = 1_000;
 
 const buildCounter = (overrides: Partial<StockCounter> = {}): StockCounter => ({
-  key: 'stock:bytes',
+  key: 'stock:BYTE',
   isDefault: false,
   limitValue: 1_000,
-  meter: 'bytes',
+  unit: UsageUnit.BYTE,
   resourceType: UsageResourceType.STORAGE,
   operationType: UsageOperationType.STORAGE_FILE,
   spenderType: 'workspace',
@@ -26,17 +27,20 @@ describe('buildStockWarmedEntries', () => {
       buildStockWarmedEntries({
         coldCounters: [counter],
         usedByScope: new Map([
-          [buildStockScopeKey(counter), { bytes: 400, quantity: 2 }],
+          [
+            buildStockScopeKey(counter),
+            { [UsageUnit.BYTE]: 400, [UsageUnit.FILE]: 2 },
+          ],
         ]),
         ttl: TTL,
       }),
-    ).toEqual([{ key: 'stock:bytes', value: 600, ttl: TTL }]);
+    ).toEqual([{ key: 'stock:BYTE', value: 600, ttl: TTL }]);
   });
 
-  it('reads each counter against its own meter', () => {
+  it('reads each counter against its own unit', () => {
     const counter = buildCounter({
-      key: 'stock:quantity',
-      meter: 'quantity',
+      key: 'stock:FILE',
+      unit: UsageUnit.FILE,
       limitValue: 5,
     });
 
@@ -44,11 +48,57 @@ describe('buildStockWarmedEntries', () => {
       buildStockWarmedEntries({
         coldCounters: [counter],
         usedByScope: new Map([
-          [buildStockScopeKey(counter), { bytes: 400, quantity: 2 }],
+          [
+            buildStockScopeKey(counter),
+            { [UsageUnit.BYTE]: 400, [UsageUnit.FILE]: 2 },
+          ],
         ]),
         ttl: TTL,
       }),
-    ).toEqual([{ key: 'stock:quantity', value: 3, ttl: TTL }]);
+    ).toEqual([{ key: 'stock:FILE', value: 3, ttl: TTL }]);
+  });
+
+  it('warms counters of different units on the same scope from one read', () => {
+    const byteCounter = buildCounter();
+    const fileCounter = buildCounter({
+      key: 'stock:FILE',
+      unit: UsageUnit.FILE,
+      limitValue: 5,
+    });
+
+    expect(
+      buildStockWarmedEntries({
+        coldCounters: [byteCounter, fileCounter],
+        usedByScope: new Map([
+          [
+            buildStockScopeKey(byteCounter),
+            { [UsageUnit.BYTE]: 400, [UsageUnit.FILE]: 2 },
+          ],
+        ]),
+        ttl: TTL,
+      }),
+    ).toEqual([
+      { key: 'stock:BYTE', value: 600, ttl: TTL },
+      { key: 'stock:FILE', value: 3, ttl: TTL },
+    ]);
+  });
+
+  it('leaves a counter cold when its unit was not counted', () => {
+    const counter = buildCounter({
+      key: 'stock:FILE',
+      unit: UsageUnit.FILE,
+      limitValue: 5,
+    });
+
+    expect(
+      buildStockWarmedEntries({
+        coldCounters: [counter],
+        usedByScope: new Map([
+          [buildStockScopeKey(counter), { [UsageUnit.BYTE]: 400 }],
+        ]),
+        ttl: TTL,
+      }),
+    ).toEqual([]);
   });
 
   it('warms a lowered limit into the red rather than clamping it', () => {
@@ -58,11 +108,14 @@ describe('buildStockWarmedEntries', () => {
       buildStockWarmedEntries({
         coldCounters: [counter],
         usedByScope: new Map([
-          [buildStockScopeKey(counter), { bytes: 900, quantity: 4 }],
+          [
+            buildStockScopeKey(counter),
+            { [UsageUnit.BYTE]: 900, [UsageUnit.FILE]: 4 },
+          ],
         ]),
         ttl: TTL,
       }),
-    ).toEqual([{ key: 'stock:bytes', value: -400, ttl: TTL }]);
+    ).toEqual([{ key: 'stock:BYTE', value: -400, ttl: TTL }]);
   });
 
   it('skips a counter whose scope was never counted', () => {
@@ -78,7 +131,7 @@ describe('buildStockWarmedEntries', () => {
   it('warms each spender from its own scope', () => {
     const workspaceCounter = buildCounter();
     const applicationCounter = buildCounter({
-      key: 'stock:application:bytes',
+      key: 'stock:application:BYTE',
       spenderType: 'application',
       spenderId: 'application-1',
       limitValue: 800,
@@ -88,14 +141,20 @@ describe('buildStockWarmedEntries', () => {
       buildStockWarmedEntries({
         coldCounters: [workspaceCounter, applicationCounter],
         usedByScope: new Map([
-          [buildStockScopeKey(workspaceCounter), { bytes: 400, quantity: 2 }],
-          [buildStockScopeKey(applicationCounter), { bytes: 100, quantity: 1 }],
+          [
+            buildStockScopeKey(workspaceCounter),
+            { [UsageUnit.BYTE]: 400, [UsageUnit.FILE]: 2 },
+          ],
+          [
+            buildStockScopeKey(applicationCounter),
+            { [UsageUnit.BYTE]: 100, [UsageUnit.FILE]: 1 },
+          ],
         ]),
         ttl: TTL,
       }),
     ).toEqual([
-      { key: 'stock:bytes', value: 600, ttl: TTL },
-      { key: 'stock:application:bytes', value: 700, ttl: TTL },
+      { key: 'stock:BYTE', value: 600, ttl: TTL },
+      { key: 'stock:application:BYTE', value: 700, ttl: TTL },
     ]);
   });
 });

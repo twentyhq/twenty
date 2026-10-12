@@ -204,9 +204,7 @@ describe('LocalDriver', () => {
 
       const second = await stat(path.join(storagePath, filePath));
 
-      // Same length, so only the identity distinguishes them: a rewrite in
-      // place would keep the inode and leave a promotion unable to tell the
-      // two versions apart.
+      // Same length, so only the inode tells them apart; a rewrite in place would keep it.
       expect(second.size).toBe(first.size);
       expect(second.ino).not.toBe(first.ino);
 
@@ -359,8 +357,6 @@ describe('LocalDriver', () => {
         code: FileStorageExceptionCode.PRECONDITION_FAILED,
       });
 
-      // A failed promotion must not strand the object under the private name
-      // it was claimed with, where nothing would ever look for it again.
       await expect(readdir(folderPath)).resolves.toEqual(['file.txt']);
       await expect(
         readFile(path.join(folderPath, 'file.txt'), 'utf-8'),
@@ -374,8 +370,7 @@ describe('LocalDriver', () => {
       await mkdir(folderPath, { recursive: true });
       await writeFile(path.join(folderPath, 'file.txt'), 'original');
 
-      // A non-empty directory in the destination's place makes the final
-      // rename fail after the source has already been claimed.
+      // A non-empty directory at the destination makes the final rename fail after the claim.
       const blockedDestination = path.join(
         storagePath,
         'workspace',
@@ -409,8 +404,7 @@ describe('LocalDriver', () => {
       const storagePath = await createTempDirectory('local-driver-storage-');
 
       await mkdir(path.join(storagePath, 'workspace'), { recursive: true });
-      // A regular file where a directory is expected makes stat fail with
-      // ENOTDIR, which root cannot bypass the way it bypasses mode bits.
+      // stat fails with ENOTDIR here, which root cannot bypass the way it bypasses mode bits.
       await writeFile(path.join(storagePath, 'workspace', 'blocker'), 'x');
 
       const driver = new LocalDriver({ storagePath });
@@ -427,8 +421,7 @@ describe('LocalDriver', () => {
     it('should write and promote a filename at the validation limit', async () => {
       const storagePath = await createTempDirectory('local-driver-storage-');
       const driver = new LocalDriver({ storagePath });
-      // MAX_SEGMENT_LENGTH is the filesystem's own limit, so any suffix the
-      // driver adds to the filename for its temporary names would not fit.
+      // MAX_SEGMENT_LENGTH is the filesystem limit, so no temporary suffix could fit.
       const filename = `${'a'.repeat(251)}.txt`;
 
       await driver.writeFileStream({

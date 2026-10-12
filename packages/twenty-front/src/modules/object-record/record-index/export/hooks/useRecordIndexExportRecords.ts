@@ -20,7 +20,6 @@ import {
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type GenerateExportOptions = {
   columns: Pick<
@@ -125,7 +124,7 @@ const percentage = (part: number, whole: number): number => {
 };
 
 export const displayedExportProgress = (progress?: ExportProgress): string => {
-  if (isUndefinedOrNull(progress?.exportedRecordCount)) {
+  if (!isDefined(progress?.exportedRecordCount)) {
     return t`Export`;
   }
 

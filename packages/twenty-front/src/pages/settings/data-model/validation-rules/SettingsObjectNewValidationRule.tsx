@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';

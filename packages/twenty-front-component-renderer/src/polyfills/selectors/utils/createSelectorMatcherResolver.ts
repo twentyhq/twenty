@@ -14,11 +14,14 @@ import { resolveSelectorScopeTarget } from '@/polyfills/selectors/utils/resolveS
 
 export const createSelectorMatcherResolver = ({
   resolveActiveElement,
+  resolveFocusVisibleElement,
 }: {
   resolveActiveElement: () => object | null;
+  resolveFocusVisibleElement: () => object | null;
 }): SelectorMatcherResolver => {
   const pseudoClassMatchers = buildSelectorPseudoClassMatchers({
     resolveActiveElement,
+    resolveFocusVisibleElement,
   });
   const unscopedMatcherBySelectorsText = new Map<string, SelectorMatcher>();
 

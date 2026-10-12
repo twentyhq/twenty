@@ -16,13 +16,8 @@ const INGEST_APP_MESSAGES_MUTATION = `
   }
 `;
 
-// Writes messages into Twenty's Message/Message Thread records. Threading,
-// de-duplication, channel association and per-message privacy are handled
-// server-side; the whole batch lands in one transaction.
-//
-// At most 100 messages per call: one call is one transaction inside one
-// logic-function timeout, so page a provider backfill rather than sending it
-// whole.
+// Threading, dedup and privacy are handled server-side. At most 100 messages per call (one transaction
+// within one logic-function timeout), so page provider backfills
 export const ingestMessages = async ({
   messageChannelId,
   messages,

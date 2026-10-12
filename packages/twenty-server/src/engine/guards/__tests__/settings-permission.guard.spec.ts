@@ -3,19 +3,18 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('SettingsPermissionGuard', () => {
@@ -98,12 +97,59 @@ describe('SettingsPermissionGuard', () => {
   });
 
   describe('canActivate with an application-only token', () => {
-    let mockApplicationRepository: { findOne: jest.Mock };
-    let mockRoleRepository: { findOne: jest.Mock };
+    let mockWorkspaceCacheService: { getOrRecompute: jest.Mock };
+
+    const mockCache = ({
+      defaultRoleId,
+      canUpdateAllSettings = false,
+      isLayoutsFlagAssigned = false,
+    }: {
+      defaultRoleId: string | null;
+      canUpdateAllSettings?: boolean;
+      isLayoutsFlagAssigned?: boolean;
+    }) =>
+      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
+        userWorkspaceRoleMap: {},
+        flatApplicationMaps: {
+          byId: {
+            'application-id': {
+              id: 'application-id',
+              defaultRoleId,
+              deletedAt: null,
+            },
+          },
+          idByUniversalIdentifier: {},
+        },
+        flatRoleMaps: {
+          byUniversalIdentifier: {
+            'role-universal-identifier': {
+              id: 'role-id',
+              canUpdateAllSettings,
+              canAccessAllTools: false,
+              rolePermissionFlagIds: isLayoutsFlagAssigned
+                ? ['role-permission-flag-id']
+                : [],
+            },
+          },
+          universalIdentifierById: { 'role-id': 'role-universal-identifier' },
+        },
+        flatRolePermissionFlagMaps: {
+          byUniversalIdentifier: {
+            'role-permission-flag-universal-identifier': {
+              id: 'role-permission-flag-id',
+              permissionFlagUniversalIdentifier:
+                SystemPermissionFlag[PermissionFlagType.LAYOUTS],
+            },
+          },
+          universalIdentifierById: {
+            'role-permission-flag-id':
+              'role-permission-flag-universal-identifier',
+          },
+        },
+      });
 
     beforeEach(async () => {
-      mockApplicationRepository = { findOne: jest.fn() };
-      mockRoleRepository = { findOne: jest.fn() };
+      mockWorkspaceCacheService = { getOrRecompute: jest.fn() };
 
       mockGqlContext.req.userWorkspaceId = undefined;
       mockGqlContext.req.application = { id: 'application-id' };
@@ -111,16 +157,10 @@ describe('SettingsPermissionGuard', () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
           PermissionsService,
-          { provide: UserRoleService, useValue: {} },
-          { provide: WorkspaceCacheService, useValue: {} },
           { provide: ApiKeyRoleService, useValue: {} },
           {
-            provide: getWorkspaceScopedRepositoryToken(RoleEntity),
-            useValue: mockRoleRepository,
-          },
-          {
-            provide: getWorkspaceScopedRepositoryToken(ApplicationEntity),
-            useValue: mockApplicationRepository,
+            provide: WorkspaceCacheService,
+            useValue: mockWorkspaceCacheService,
           },
         ],
       }).compile();
@@ -133,96 +173,60 @@ describe('SettingsPermissionGuard', () => {
     });
 
     it('should deny with PERMISSION_DENIED when the application has no default role', async () => {
-      mockApplicationRepository.findOne.mockResolvedValue({
-        id: 'application-id',
-        defaultRoleId: null,
-      });
+      mockCache({ defaultRoleId: null });
 
       await expect(
         guard.canActivate(mockExecutionContext),
       ).rejects.toMatchObject({
         code: PermissionsExceptionCode.PERMISSION_DENIED,
       });
-      expect(mockApplicationRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(mockApplicationRepository.findOne).toHaveBeenCalledWith(
-        'workspace-id',
-        { where: { id: 'application-id' } },
-      );
-      expect(mockRoleRepository.findOne).not.toHaveBeenCalled();
     });
 
     it('should allow when the default role of the application grants the setting', async () => {
-      mockApplicationRepository.findOne.mockResolvedValue({
-        id: 'application-id',
+      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+
+      await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(true);
+      expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledTimes(1);
+      expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
+        'workspace-id',
+        [
+          'userWorkspaceRoleMap',
+          'flatApplicationMaps',
+          'flatRoleMaps',
+          'flatRolePermissionFlagMaps',
+        ],
+      );
+    });
+
+    it('should allow when the setting is assigned to the default role of the application', async () => {
+      mockCache({
         defaultRoleId: 'role-id',
-      });
-      mockRoleRepository.findOne.mockResolvedValue({
-        id: 'role-id',
-        canUpdateAllSettings: true,
-        rolePermissionFlags: [],
+        canUpdateAllSettings: false,
+        isLayoutsFlagAssigned: true,
       });
 
       await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(true);
-      expect(mockApplicationRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(mockApplicationRepository.findOne).toHaveBeenCalledWith(
-        'workspace-id',
-        { where: { id: 'application-id' } },
-      );
-      expect(mockRoleRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(mockRoleRepository.findOne).toHaveBeenCalledWith('workspace-id', {
-        where: { id: 'role-id' },
-        relations: [
-          'rolePermissionFlags',
-          'rolePermissionFlags.permissionFlag',
-        ],
-      });
     });
 
     it('should deny with PERMISSION_DENIED when the default role of the application lacks the setting', async () => {
-      mockApplicationRepository.findOne.mockResolvedValue({
-        id: 'application-id',
-        defaultRoleId: 'role-id',
-      });
-      mockRoleRepository.findOne.mockResolvedValue({
-        id: 'role-id',
-        canUpdateAllSettings: false,
-        rolePermissionFlags: [],
-      });
+      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: false });
 
       await expect(
         guard.canActivate(mockExecutionContext),
       ).rejects.toMatchObject({
         code: PermissionsExceptionCode.PERMISSION_DENIED,
-      });
-      expect(mockApplicationRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(mockApplicationRepository.findOne).toHaveBeenCalledWith(
-        'workspace-id',
-        { where: { id: 'application-id' } },
-      );
-      expect(mockRoleRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(mockRoleRepository.findOne).toHaveBeenCalledWith('workspace-id', {
-        where: { id: 'role-id' },
-        relations: [
-          'rolePermissionFlags',
-          'rolePermissionFlags.permissionFlag',
-        ],
       });
     });
 
     it('should reject with NO_AUTHENTICATION_CONTEXT when the application does not exist', async () => {
-      mockApplicationRepository.findOne.mockResolvedValue(null);
+      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+      mockGqlContext.req.application = { id: 'unknown-application-id' };
 
       await expect(
         guard.canActivate(mockExecutionContext),
       ).rejects.toMatchObject({
         code: PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
       });
-      expect(mockApplicationRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(mockApplicationRepository.findOne).toHaveBeenCalledWith(
-        'workspace-id',
-        { where: { id: 'application-id' } },
-      );
-      expect(mockRoleRepository.findOne).not.toHaveBeenCalled();
     });
   });
 });

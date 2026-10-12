@@ -30,8 +30,7 @@ export const isWhereFactoryLike = (
   condition !== null &&
   typeof (condition as WhereFactoryLike).whereFactory === 'function';
 
-// Compares prototype depth, not identity: an object literal built in another
-// realm, such as an integration test file, has its own Object.prototype.
+// Compares prototype depth, not identity: an object from another realm (e.g. a test file) has its own Object.prototype
 export const isObjectWhereLike = (
   condition: unknown,
 ): condition is ObjectWhereLike => {

@@ -4,8 +4,6 @@ import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record
 import { objectFilterDropdownAnyFieldSearchIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownAnyFieldSearchIsSelectedComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
-import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { objectFilterDropdownIsSelectingRelationTargetFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingRelationTargetFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -40,18 +38,6 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
       componentInstanceId,
     );
 
-  const objectFilterDropdownIsSelectingCompositeField =
-    useAtomComponentStateCallbackState(
-      objectFilterDropdownIsSelectingCompositeFieldComponentState,
-      componentInstanceId,
-    );
-
-  const objectFilterDropdownIsSelectingRelationTargetField =
-    useAtomComponentStateCallbackState(
-      objectFilterDropdownIsSelectingRelationTargetFieldComponentState,
-      componentInstanceId,
-    );
-
   const objectFilterDropdownCurrentRecordFilter =
     useAtomComponentStateCallbackState(
       objectFilterDropdownCurrentRecordFilterComponentState,
@@ -62,8 +48,6 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
     store.set(objectFilterDropdownSearchInput, '');
     store.set(selectedOperandInDropdown, null);
     store.set(objectFilterDropdownFilterIsSelected, false);
-    store.set(objectFilterDropdownIsSelectingCompositeField, false);
-    store.set(objectFilterDropdownIsSelectingRelationTargetField, false);
     store.set(fieldMetadataItemIdUsedInDropdown, null);
     store.set(objectFilterDropdownCurrentRecordFilter, null);
     store.set(objectFilterDropdownAnyFieldSearchIsSelected, false);
@@ -71,8 +55,6 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
     objectFilterDropdownSearchInput,
     selectedOperandInDropdown,
     objectFilterDropdownFilterIsSelected,
-    objectFilterDropdownIsSelectingCompositeField,
-    objectFilterDropdownIsSelectingRelationTargetField,
     fieldMetadataItemIdUsedInDropdown,
     objectFilterDropdownCurrentRecordFilter,
     objectFilterDropdownAnyFieldSearchIsSelected,

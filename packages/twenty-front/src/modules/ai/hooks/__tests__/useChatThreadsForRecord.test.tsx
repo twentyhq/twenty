@@ -24,6 +24,10 @@ const threadObjectMetadataItem = {
   id: 'agent-chat-thread-metadata-id',
   nameSingular: 'agentChatThread',
   namePlural: 'agentChatThreads',
+  fields: [
+    ...personObjectMetadataItem.fields,
+    { ...companyTargetField, name: 'lastActivityAt' },
+  ],
 };
 const threadTargetObjectMetadataItem = {
   ...personObjectMetadataItem,
@@ -146,7 +150,7 @@ describe('useChatThreadsForRecord', () => {
         objectNameSingular: 'agentChatThreadTarget',
         skip: false,
         filter: LINKS_FILTER,
-        orderBy: [{ thread: { updatedAt: 'DescNullsLast' } }],
+        orderBy: [{ thread: { lastActivityAt: 'DescNullsLast' } }],
       }),
     );
     expect(useListenToEventsForQuery).toHaveBeenCalledWith(

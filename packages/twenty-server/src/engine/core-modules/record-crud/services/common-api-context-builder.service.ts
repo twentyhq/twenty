@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getAllSelectableFields } from 'src/engine/api/common/common-select-fields/utils/get-all-selectable-fields.util';
+import { buildFieldSelection } from 'src/engine/api/common/common-select-fields/utils/build-field-selection.util';
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
@@ -106,10 +107,13 @@ export class CommonApiContextBuilderService {
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
 
-    const selectedFields = getAllSelectableFields({
+    const selectedFields = buildFieldSelection({
       restrictedFields,
       flatObjectMetadata,
-      flatFieldMetadataMaps,
+      flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityIds: flatObjectMetadata.fieldIds,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
     });
 
     return {

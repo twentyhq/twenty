@@ -30,11 +30,13 @@ export const getFieldMetadataCreationInputs = (
   targetObjectMetadata2Id: string,
 ) => {
   const fieldInputsMap: {
-    [K in Exclude<
-      | FieldMetadataTypesToTestForCreateInputValidation
-      | FieldMetadataTypesToTestForFilterInputValidation,
-      'ACTOR' | 'POSITION'
-    >]: FieldMetadataCreationInput | FieldMetadataCreationInput[];
+    [
+      K in Exclude<
+        | FieldMetadataTypesToTestForCreateInputValidation
+        | FieldMetadataTypesToTestForFilterInputValidation,
+        'ACTOR' | 'POSITION'
+      >
+    ]: FieldMetadataCreationInput | FieldMetadataCreationInput[];
   } = {
     [FieldMetadataType.RICH_TEXT]: {
       name: 'richTextField',
@@ -219,18 +221,6 @@ export const getFieldMetadataCreationInputs = (
           },
         ],
       },
-      // {
-      //   name: 'oneToManyRelationField',
-      //   label: 'oneToManyRelationField',
-      //   type: FieldMetadataType.RELATION,
-      //   objectMetadataId,
-      //   relationCreationPayload: {
-      //     targetObjectMetadataId: targetObjectMetadata1Id,
-      //     targetFieldLabel: 'manyToOneTargetRelationField',
-      //     targetFieldIcon: 'IconListOpportunity',
-      //     type: RelationType.ONE_TO_MANY,
-      //   },
-      // },
     ],
   };
 

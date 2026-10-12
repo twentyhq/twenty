@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
@@ -21,7 +21,7 @@ type Story = StoryObj<typeof DialogExample>;
 export const ScopedThemeAndDirection: Story = {
   decorators: [ComponentDecorator],
   render: () => (
-    <TextDirectionProvider direction="rtl">
+    <DirectionProvider direction="rtl">
       <ThemeProvider colorScheme="dark" applyToRoot={false}>
         <div
           data-testid="theme-scope"
@@ -34,7 +34,7 @@ export const ScopedThemeAndDirection: Story = {
           <DialogExample defaultOpen />
         </div>
       </ThemeProvider>
-    </TextDirectionProvider>
+    </DirectionProvider>
   ),
   play: async ({ canvasElement }) => {
     const dialog = await waitForDialog(canvasElement);
@@ -63,7 +63,7 @@ const ExplicitContainerDialog = () => {
       <div ref={setContainer} data-testid="portal-container" />
       <ThemeProvider colorScheme="dark" applyToRoot={false}>
         <div style={{ backgroundColor: 'var(--t-background-primary)' }}>
-          <DialogExample defaultOpen popupProps={{ container }} />
+          <DialogExample defaultOpen portalProps={{ container }} />
         </div>
       </ThemeProvider>
     </>
@@ -92,7 +92,7 @@ const DeferredContainerDialog = () => {
       <Button onClick={() => setContainer(containerRef.current)}>
         Attach container
       </Button>
-      <DialogExample open popupProps={{ container }} />
+      <DialogExample open portalProps={{ container }} />
     </ThemeProvider>
   );
 };
@@ -118,7 +118,7 @@ const RefContainerDialog = () => {
   return (
     <>
       <div ref={container} data-testid="ref-container" />
-      <DialogExample defaultOpen popupProps={{ container }} />
+      <DialogExample defaultOpen portalProps={{ container }} />
     </>
   );
 };

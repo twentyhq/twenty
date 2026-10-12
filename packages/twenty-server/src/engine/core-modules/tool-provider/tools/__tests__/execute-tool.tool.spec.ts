@@ -44,6 +44,17 @@ describe('createExecuteToolTool', () => {
     expect(result.success).toBe(false);
   });
 
+  it('refuses a call without a tool name without touching the registry', async () => {
+    const toolRegistry = buildRegistry();
+
+    const executeTool = createExecuteToolTool(toolRegistry, context);
+
+    const result = await executeTool.execute({ arguments: {} } as never);
+
+    expect(toolRegistry.resolveAndExecute).not.toHaveBeenCalled();
+    expect(result.success).toBe(false);
+  });
+
   it('executes any tool when no predicate is provided', async () => {
     const toolRegistry = buildRegistry();
 

@@ -16,11 +16,8 @@ import {
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 
-// Supplied ids are resolved workspace-wide further down, and the migration
-// validators only compare an update against its own stored row, so a predicate
-// or group id belonging to another role or object would be silently rewritten
-// in place, and a field from another object would build a filter that never
-// matches. Scope everything to the requested role and object upfront.
+// Ids resolve workspace-wide downstream and migration validators only compare an update to its own row, so another
+// role's or object's ids would be silently rewritten and another object's field would build a never-matching filter
 export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
   roleId,
   objectMetadataId,

@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application authorizations with a workspace-agnostic session should fail should refuse to list the application authorizations 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application authorizations with a workspace-agnostic session should fail should refuse to revoke an application authorization 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;

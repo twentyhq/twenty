@@ -6,13 +6,15 @@ import {
   GraphQLInputObjectType,
 } from 'graphql';
 import { CompositeType } from 'twenty-shared/types';
-import { pascalCase } from 'twenty-shared/utils';
+import {
+  pascalCase,
+  isCompositePropertySupportedInGroupBy,
+} from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
-import { isCompositePropertySupportedInGroupBy } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-property-supported-in-group-by.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
 @Injectable()
@@ -45,7 +47,6 @@ export class CompositeFieldMetadataGroupByGqlInputTypeGenerator {
     const fields: GraphQLInputFieldConfigMap = {};
 
     for (const property of compositeType.properties) {
-      // Relation fields are not supported in composite types
       if (isMorphOrRelationFieldMetadataType(property.type)) {
         this.logger.error(
           'Relation fields are not supported in composite types',

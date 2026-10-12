@@ -24,7 +24,8 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { mockPerformance } from '@/object-record/record-table/components/__stories__/perf/mock';
-import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { RecordTableBodyContextValueProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
@@ -175,22 +176,24 @@ const meta: Meta = {
                 objectMetadataItems: [],
                 objectNameSingular:
                   mockPerformance.objectMetadataItem.nameSingular,
-                objectPermissions: {
-                  objectMetadataId: mockPerformance.objectMetadataItem.id,
-                },
+                objectPermissions: getObjectPermissionsForObject(
+                  {},
+                  mockPerformance.objectMetadataItem.id,
+                ),
+                isObjectReadOnly: false,
                 visibleRecordFields,
                 onRecordIdentifierClick: () => {},
                 triggerEvent: 'CLICK',
               }}
             >
               <RecordTableComponentInstance recordTableId="recordTableId">
-                <RecordTableBodyContextProvider
+                <RecordTableBodyContextValueProvider
                   value={{
                     onOpenTableCell: () => {},
                     onMoveFocus: () => {},
                     onCloseTableCell: () => {},
                     onMoveHoverToCurrentCell: () => {},
-                    onCommandMenuDropdownOpened: () => {},
+                    openRecordContextMenu: () => {},
                   }}
                 >
                   <RecordTableRowContextProvider
@@ -246,7 +249,7 @@ const meta: Meta = {
                       </RecordTableCellContext.Provider>
                     </RecordTableRowDraggableContextProvider>
                   </RecordTableRowContextProvider>
-                </RecordTableBodyContextProvider>
+                </RecordTableBodyContextValueProvider>
               </RecordTableComponentInstance>
             </RecordTableContextProvider>
           </RecordComponentInstanceContextsWrapper>

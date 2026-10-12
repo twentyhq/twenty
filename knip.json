@@ -1,6 +1,10 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignoreWorkspaces": ["packages/twenty-docs", "packages/twenty-apps/**"],
+  "ignoreWorkspaces": [
+    "packages/twenty-docs",
+    "packages/twenty-apps/**",
+    "packages/twenty-front-component-renderer"
+  ],
   "rules": {
     "binaries": "warn",
     "dependencies": "error",

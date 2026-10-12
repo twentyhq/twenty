@@ -1,4 +1,3 @@
-import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { registerEnumType } from '@nestjs/graphql';
 
@@ -6,6 +5,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { type FullNameMetadata } from 'twenty-shared/types';
 import { type Relation } from 'typeorm';
 
+import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -81,7 +81,10 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   agentMessages: Relation<AgentMessageWorkspaceEntity[]>;
 
   agentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
-  inputAsks: Relation<InputAskWorkspaceEntity[]>;
+  assignedAgentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
+  agentChatThreadParticipants: Relation<
+    AgentChatThreadParticipantWorkspaceEntity[]
+  >;
   ownedOpportunities: Relation<OpportunityWorkspaceEntity[]>;
   searchVector: string;
   numberFormat: string;

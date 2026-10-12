@@ -115,6 +115,12 @@ export const TAB_PROPS = {
     icon: 'IconMessage',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
+  chat: {
+    title: 'Chat',
+    position: 10,
+    icon: 'IconMessage',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  },
   calendar: {
     title: 'Calendar',
     position: 70,
@@ -226,6 +232,11 @@ export const WIDGET_PROPS = {
   workflowRun: {
     title: 'Flow',
     type: WidgetType.WORKFLOW_RUN,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+  },
+  chat: {
+    title: 'Chat',
+    type: WidgetType.CHAT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   emailThread: {

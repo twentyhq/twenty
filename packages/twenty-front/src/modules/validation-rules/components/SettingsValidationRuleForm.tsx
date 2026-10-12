@@ -1,10 +1,12 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
+import { IconAddressBook, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsValidationRuleExpressionEditor } from '@/validation-rules/components/SettingsValidationRuleExpressionEditor';
@@ -14,12 +16,6 @@ import { type ValidationRuleEditorField } from '@/validation-rules/types/Validat
 import { type ValidationRuleFormValues } from '@/validation-rules/types/ValidationRuleFormValues';
 
 const RECORD_LEVEL_OPTION_VALUE = 'record-level';
-
-const StyledConditionContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledRow = styled.div`
   align-items: flex-end;
@@ -44,12 +40,26 @@ export const SettingsValidationRuleForm = ({
   onChange,
 }: SettingsValidationRuleFormProps) => {
   const { t } = useLingui();
+  const { getIcon } = useIcons();
 
   const errorFieldOptions = [
-    { label: t`Whole record`, value: RECORD_LEVEL_OPTION_VALUE },
+    {
+      label: t`Whole record`,
+      value: RECORD_LEVEL_OPTION_VALUE,
+      Icon: IconAddressBook,
+    },
     ...objectMetadataItem.fields
-      .filter((field) => field.isActive && !field.isSystem)
-      .map((field) => ({ label: field.label, value: field.id })),
+      .filter(
+        (field) =>
+          !field.isSystem &&
+          (field.isActive || field.id === values.errorFieldMetadataId),
+      )
+      .map((field) => ({
+        label: field.label,
+        value: field.id,
+        Icon: getIcon(field.icon),
+        contextualText: field.isActive ? undefined : t`Deactivated`,
+      })),
   ];
 
   return (
@@ -66,21 +76,26 @@ export const SettingsValidationRuleForm = ({
           title={t`Condition`}
           description={t`Must be true to save. A write that makes it false is rejected.`}
         />
-        <StyledConditionContent>
-          <SettingsValidationRulePreview
-            objectMetadataItem={objectMetadataItem}
-            fields={fields}
-            editorFields={editorFields}
-            expression={values.expression}
-            message={values.message}
-          />
-          <SettingsValidationRuleExpressionEditor
-            value={values.expression}
-            fields={fields}
-            editorFields={editorFields}
-            onChange={(expression) => onChange({ ...values, expression })}
-          />
-        </StyledConditionContent>
+        <SettingsDataModelPreviewFormCard
+          isPreviewTitleVisible={false}
+          preview={
+            <SettingsValidationRulePreview
+              objectMetadataItem={objectMetadataItem}
+              fields={fields}
+              editorFields={editorFields}
+              expression={values.expression}
+              message={values.message}
+            />
+          }
+          form={
+            <SettingsValidationRuleExpressionEditor
+              value={values.expression}
+              fields={fields}
+              editorFields={editorFields}
+              onChange={(expression) => onChange({ ...values, expression })}
+            />
+          }
+        />
       </Section.Root>
       <Section.Root>
         <Section.Header

@@ -60,7 +60,6 @@ describe('REST API Core Group By endpoint', () => {
       }),
     );
 
-    // Create test opportunities with different stages and dates
     await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'opportunity',

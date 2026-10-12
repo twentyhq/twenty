@@ -16,6 +16,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 const STANDARD_APP_UID = '20202020-0000-4000-8000-000000000001';
 const CUSTOM_APP_UID = '20202020-0000-4000-8000-000000000002';
@@ -42,6 +43,7 @@ type SourceSpecification = {
   nameSingular: string;
   isActive?: boolean;
   applicationUniversalIdentifier?: string;
+  hasTable?: boolean;
   pairedHolders?: DefaultRelationHolderNameSingular[];
   reverseOnlyHolders?: DefaultRelationHolderNameSingular[];
   forwardOnlyHolders?: DefaultRelationHolderNameSingular[];
@@ -71,6 +73,7 @@ const buildArgs = ({
 }: BuildArgs) => {
   const flatObjectMetadatas: FlatObjectMetadata[] = [];
   const flatFieldMetadatas: FlatFieldMetadata[] = [];
+  const existingTableNames = new Set<string>();
   const holderFieldIds: Record<DefaultRelationHolderNameSingular, string[]> = {
     timelineActivity: [],
     attachment: [],
@@ -175,18 +178,24 @@ const buildArgs = ({
       });
     }
 
-    flatObjectMetadatas.push(
-      getFlatObjectMetadataMock({
-        id: `object-${source.key}`,
-        universalIdentifier: `object-uid-${source.key}`,
-        applicationUniversalIdentifier:
-          source.applicationUniversalIdentifier ?? CUSTOM_APP_UID,
-        nameSingular: source.nameSingular,
-        namePlural: `${source.nameSingular}s`,
-        isActive: source.isActive ?? true,
-        fieldIds: sourceFieldIds,
-      }),
-    );
+    const sourceFlatObjectMetadata = getFlatObjectMetadataMock({
+      id: `object-${source.key}`,
+      universalIdentifier: `object-uid-${source.key}`,
+      applicationUniversalIdentifier:
+        source.applicationUniversalIdentifier ?? CUSTOM_APP_UID,
+      nameSingular: source.nameSingular,
+      namePlural: `${source.nameSingular}s`,
+      isActive: source.isActive ?? true,
+      fieldIds: sourceFieldIds,
+    });
+
+    flatObjectMetadatas.push(sourceFlatObjectMetadata);
+
+    if (source.hasTable ?? true) {
+      existingTableNames.add(
+        computeObjectTargetTable(sourceFlatObjectMetadata),
+      );
+    }
   }
 
   detachedFields.forEach(registerField);
@@ -234,6 +243,7 @@ const buildArgs = ({
       noteTarget: new Set(columnNamesByHolder.noteTarget ?? []),
       taskTarget: new Set(columnNamesByHolder.taskTarget ?? []),
     },
+    existingTableNames,
     twentyStandardApplicationUniversalIdentifier: STANDARD_APP_UID,
   };
 };
@@ -444,6 +454,47 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
       'noteTarget',
       'taskTarget',
     ]);
+  });
+
+  it('reports every missing pair of an object whose table does not exist', () => {
+    const result = buildMissingObjectSystemRelationCandidates(
+      buildArgs({
+        sources: [
+          { key: 'viewField', nameSingular: 'viewField', hasTable: false },
+          { key: 'phone', nameSingular: 'phoneNumber2' },
+        ],
+      }),
+    );
+
+    expect(result.unprovisionableSystemRelations).toEqual(
+      DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map((holderNameSingular) => ({
+        sourceObjectNameSingular: 'viewField',
+        holderNameSingular,
+        reason: 'table "_viewField" does not exist in the workspace schema',
+      })),
+    );
+    expect(result.candidates).toHaveLength(1);
+    expect(result.candidates[0].sourceFlatObjectMetadata.nameSingular).toBe(
+      'phoneNumber2',
+    );
+  });
+
+  it('does not report an object whose table does not exist when its pairs are complete', () => {
+    const result = buildMissingObjectSystemRelationCandidates(
+      buildArgs({
+        sources: [
+          {
+            key: 'viewField',
+            nameSingular: 'viewField',
+            hasTable: false,
+            pairedHolders: [...DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS],
+          },
+        ],
+      }),
+    );
+
+    expect(result.candidates).toEqual([]);
+    expect(result.unprovisionableSystemRelations).toEqual([]);
   });
 
   it('counts a leg held by its deterministic identifier even without matching relation semantics', () => {

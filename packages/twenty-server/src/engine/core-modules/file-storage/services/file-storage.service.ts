@@ -36,13 +36,12 @@ import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.t
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { STOCK_METERS } from 'src/engine/core-modules/usage-limit/constants/usage-meters.constant';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
-import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock-meter.type';
 import { type StockScope } from 'src/engine/core-modules/usage-limit/types/stock-scope.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -79,7 +78,7 @@ export class FileStorageService {
       resourceType: UsageResourceType.STORAGE,
       operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId },
-      cost: { bytes, quantity },
+      cost: { [UsageUnit.BYTE]: bytes, [UsageUnit.FILE]: quantity },
     });
   }
 
@@ -107,7 +106,7 @@ export class FileStorageService {
     applicationId: string;
     delta: StockCost;
   }): Promise<void> {
-    if (STOCK_METERS.every((meter) => (delta[meter] ?? 0) <= 0)) {
+    if (Object.values(delta).every((amount) => (amount ?? 0) <= 0)) {
       return;
     }
 
@@ -126,9 +125,7 @@ export class FileStorageService {
     workspaceId,
     spenderType,
     spenderId,
-  }: StockScope & { workspaceId: string }): Promise<
-    Record<StockMeter, number>
-  > {
+  }: StockScope & { workspaceId: string }): Promise<StockCost> {
     const query = this.fileRepository
       .createQueryBuilder('file')
       .select('COUNT(*)::bigint', 'quantity')
@@ -145,8 +142,8 @@ export class FileStorageService {
     const used = await query.getRawOne<{ quantity: string; bytes: string }>();
 
     return {
-      quantity: Number(used?.quantity ?? 0),
-      bytes: Number(used?.bytes ?? 0),
+      [UsageUnit.FILE]: Number(used?.quantity ?? 0),
+      [UsageUnit.BYTE]: Number(used?.bytes ?? 0),
     };
   }
 
@@ -240,7 +237,7 @@ export class FileStorageService {
       await this.applyStorageStockDelta({
         workspaceId: resourceIdentifier.workspaceId,
         applicationId,
-        delta: { bytes: metadata.size, quantity: 1 },
+        delta: { [UsageUnit.BYTE]: metadata.size, [UsageUnit.FILE]: 1 },
       });
     }
 
@@ -263,11 +260,11 @@ export class FileStorageService {
       spenders: { applicationId },
     };
 
-    if ((delta.bytes ?? 0) < 0) {
+    if ((delta[UsageUnit.BYTE] ?? 0) < 0) {
       return this.releaseStorageStock({
         workspaceId,
         applicationId,
-        bytes: -(delta.bytes ?? 0),
+        bytes: -(delta[UsageUnit.BYTE] ?? 0),
         quantity: 0,
       });
     }
@@ -518,9 +515,7 @@ export class FileStorageService {
     return file;
   }
 
-  // Creates the file record ahead of a direct client upload. The bytes are
-  // not in storage yet: the record stays PENDING until the upload is
-  // confirmed (completeFileUpload) or reaped by the cleanup cron.
+  // Stays PENDING until completeFileUpload confirms it or the cleanup cron reaps it.
   async createPendingFile({
     fileFolder,
     applicationUniversalIdentifier,
@@ -618,7 +613,7 @@ export class FileStorageService {
     await this.applyStorageStockDelta({
       workspaceId,
       applicationId,
-      delta: { bytes: size - chargedSize, quantity: 0 },
+      delta: { [UsageUnit.BYTE]: size - chargedSize },
     });
 
     return updateResult;
@@ -792,9 +787,7 @@ export class FileStorageService {
     });
   }
 
-  // Removes only the stored object. deleteFile also drops any row sitting at
-  // that path, which is wrong once the row is gone or belongs to a later
-  // upload that reused the same resource path.
+  // Unlike deleteFile, leaves the row alone: it may be gone or belong to a later upload at the same path.
   async deleteFileObject(params: ResourceIdentifier): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const { onStorageFilePath } =
@@ -903,7 +896,7 @@ export class FileStorageService {
     settings: FileSettings | null;
   }): Promise<FileEntity> {
     const { filePath } = this.validateAndBuildFileStoragePathOrThrow(to);
-    const delta = { bytes: size, quantity: 1 };
+    const delta = { [UsageUnit.BYTE]: size, [UsageUnit.FILE]: 1 };
 
     await this.assertStorageStockAvailable({
       workspaceId: to.workspaceId,

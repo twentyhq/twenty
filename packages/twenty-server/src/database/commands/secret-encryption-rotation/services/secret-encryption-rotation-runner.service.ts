@@ -19,6 +19,7 @@ import { SecretEncryptionService } from 'src/engine/core-modules/secret-encrypti
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-encryption-keys-or-throw.util';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
 
 export type RotationRunOptions = {
@@ -51,6 +52,7 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly moduleRef: ModuleRef,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   onModuleInit(): void {
@@ -161,6 +163,12 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
       );
     }
 
+    if (!options.dryRun) {
+      await this.flushWorkspaceCaches(
+        handlersToRun.map(([siteName]) => siteName),
+      );
+    }
+
     const totalDurationMs = Math.round(performance.now() - startedAt);
 
     this.logSummary({
@@ -199,6 +207,38 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
     }
 
     return [[siteName, handler]];
+  }
+
+  private async flushWorkspaceCaches(
+    siteNames: SecretEncryptionRotationSiteName[],
+  ): Promise<void> {
+    const workspaceCacheKeyNamesToFlush = Object.values(
+      SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES,
+    )
+      .flatMap(({ columnSiteNames }) => Object.values(columnSiteNames))
+      .filter(({ siteName }) => siteNames.includes(siteName))
+      .flatMap(({ workspaceCacheKeyNames }) => workspaceCacheKeyNames);
+
+    if (workspaceCacheKeyNamesToFlush.length === 0) {
+      return;
+    }
+
+    const workspaces = await this.coreDataSource.query<{ id: string }[]>(
+      `SELECT "id" FROM "core"."workspace"`,
+    );
+
+    for (const { id: workspaceId } of workspaces) {
+      await this.workspaceCacheService.flush(
+        workspaceId,
+        workspaceCacheKeyNamesToFlush,
+      );
+    }
+
+    this.logger.log(
+      `[secret-encryption:rotate] flushed workspace cache keys ${workspaceCacheKeyNamesToFlush.join(
+        ', ',
+      )} for ${workspaces.length} workspace(s)`,
+    );
   }
 
   private logSummary(summary: RotationRunSummary): void {

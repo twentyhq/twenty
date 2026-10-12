@@ -1,8 +1,9 @@
+import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
 import {
   IconBox,
   IconFolder,
@@ -12,6 +13,7 @@ import {
   useIcons,
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
+import { useTheme } from 'twenty-ui/theme';
 import {
   FindAllStandalonePageLayoutsDocument,
   type NavigationMenuItem,
@@ -21,7 +23,7 @@ import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-ite
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
-import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
 import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
@@ -36,13 +38,6 @@ import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewKey } from '@/views/types/ViewKey';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-
-export type NavigationMenuItemAddStep =
-  | 'main'
-  | 'object'
-  | 'view'
-  | 'record'
-  | 'page';
 
 type UseNavigationMenuItemAddOptionsParams = {
   step: NavigationMenuItemAddStep;
@@ -68,6 +63,7 @@ export const useNavigationMenuItemAddOptions = ({
   selectObject,
 }: UseNavigationMenuItemAddOptionsParams) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { getIcon } = useIcons();
 
   const {
@@ -121,14 +117,16 @@ export const useNavigationMenuItemAddOptions = ({
         {
           id: 'object',
           label: t`Object`,
-          icon: <TintedIconTile Icon={IconBox} />,
+          icon: <TintedIconTile icon={<IconBox size={theme.icon.size.md} />} />,
           onClick: () => navigateToStep('object'),
           hasSubMenu: true,
         },
         {
           id: 'view',
           label: t`View`,
-          icon: <TintedIconTile Icon={IconTable} />,
+          icon: (
+            <TintedIconTile icon={<IconTable size={theme.icon.size.md} />} />
+          ),
           onClick: () => navigateToStep('view'),
           hasSubMenu: true,
         },
@@ -182,7 +180,11 @@ export const useNavigationMenuItemAddOptions = ({
         {
           id: 'page',
           label: t`Page`,
-          icon: <TintedIconTile Icon={IconPerspective} />,
+          icon: (
+            <TintedIconTile
+              icon={<IconPerspective size={theme.icon.size.md} />}
+            />
+          ),
           onClick: () => navigateToStep('page'),
           hasSubMenu: true,
         },
@@ -261,7 +263,7 @@ export const useNavigationMenuItemAddOptions = ({
           return {
             id: view.id,
             label: view.name,
-            icon: <TintedIconTile Icon={Icon} />,
+            icon: <TintedIconTile icon={<Icon size={theme.icon.size.md} />} />,
             isDisabled: viewIdsAlreadyAdded.has(view.id),
             isAlreadyInSidebar: viewIdsAlreadyAdded.has(view.id),
             onClick: () =>
@@ -295,7 +297,9 @@ export const useNavigationMenuItemAddOptions = ({
             icon: isDefined(navigationItem) ? (
               <NavigationMenuItemIcon navigationMenuItem={navigationItem} />
             ) : (
-              <TintedIconTile Icon={IconPerspective} />
+              <TintedIconTile
+                icon={<IconPerspective size={theme.icon.size.md} />}
+              />
             ),
             isDisabled: pageLayoutIdsAlreadyAdded.has(page.id),
             isAlreadyInSidebar: pageLayoutIdsAlreadyAdded.has(page.id),

@@ -47,10 +47,6 @@ const StyledSwitchContainer = styled.div`
   height: 100%;
 `;
 
-const StyledSwitch = styled(Switch)`
-  align-self: center;
-`;
-
 const StyledInputContainer = styled.div`
   align-items: center;
   display: flex;
@@ -184,7 +180,7 @@ export const generateColumns = (
                   event.stopPropagation();
                 }}
               >
-                <StyledSwitch
+                <Switch
                   aria-label={column.label}
                   checked={row[columnKey] as boolean}
                   onCheckedChange={() => {

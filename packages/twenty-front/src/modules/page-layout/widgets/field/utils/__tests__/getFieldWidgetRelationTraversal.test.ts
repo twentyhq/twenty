@@ -62,16 +62,12 @@ describe('getFieldWidgetRelationTraversal', () => {
       objectMetadataItems,
     });
 
-    // The embedded view lists the terminal object...
     expect(traversal.targetObjectMetadataId).toBe(
       opportunityObjectMetadataItem.id,
     );
-    // ...scoped by the second hop's inverse (opportunity -> person)...
     expect(traversal.inverseFieldMetadataId).toBe(
       personOpportunitiesField?.relation?.targetFieldMetadata.id,
     );
-    // ...traversed one relation further out via the first hop's inverse
-    // (person -> company), which is what makes it a two-hop filter.
     expect(traversal.relationTargetFieldMetadataId).toBe(
       companyPeopleField?.relation?.targetFieldMetadata.id,
     );
@@ -105,8 +101,6 @@ describe('getFieldWidgetRelationTraversal', () => {
     expect(traversal.inverseFieldMetadataId).toBe(
       companyOpportunitiesField?.relation?.targetFieldMetadata.id,
     );
-    // The intermediate is the single record the current record points at, so
-    // the seeded filter is a direct one on the terminal object.
     expect(traversal.relationTargetFieldMetadataId).toBeNull();
   });
 
@@ -116,16 +110,10 @@ describe('getFieldWidgetRelationTraversal', () => {
       objectMetadataItems,
     });
 
-    // The embedded view lists the records behind the junction (companies),
-    // not the junction records (employment histories)...
     expect(traversal.targetObjectMetadataId).toBe(companyObjectMetadataItem.id);
-    // ...scoped by the target's own junction relation (company -> employment
-    // histories)...
     expect(traversal.inverseFieldMetadataId).toBe(
       companyPreviousEmployeesField?.id,
     );
-    // ...traversed to the junction field pointing at the current record
-    // (employment history -> person).
     expect(traversal.relationTargetFieldMetadataId).toBe(
       employmentHistoryPersonField?.id,
     );

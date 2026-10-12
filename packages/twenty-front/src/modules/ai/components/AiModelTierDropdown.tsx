@@ -10,7 +10,7 @@ import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -37,8 +37,7 @@ export const AiModelTierDropdown = ({
   const [agentChatUserSelectedModelTier, setAgentChatUserSelectedModelTier] =
     useAtomState(agentChatUserSelectedModelTierState);
 
-  // The setup chat runs on the fast tier server-side whatever the workspace
-  // setting says, so the control shows what will actually answer.
+  // The setup chat always runs on the fast tier server-side.
   const workspaceTier: AiModelTier = isWorkspaceSetupChat ? 'fast' : chatTier;
 
   const selectedTier = agentChatUserSelectedModelTier ?? workspaceTier;

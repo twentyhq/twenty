@@ -11,21 +11,14 @@ export const StyledAiChatAskCard = styled.div`
   width: 100%;
 `;
 
-export const StyledAiChatAskStatusContainer = styled.div`
-  align-items: flex-start;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[1]} 0;
-
-  svg {
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-`;
-
 export const StyledAiChatAskStatusMessage = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
+`;
+
+export const StyledAiChatAskStatusDetail = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  overflow-wrap: anywhere;
 `;

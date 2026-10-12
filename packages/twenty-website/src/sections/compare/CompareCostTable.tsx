@@ -21,8 +21,6 @@ const CheckMark = INFORMATIVE_MARKS.check;
 const REPORT_INACCURACY_URL =
   'https://github.com/twentyhq/twenty/issues/new/choose';
 
-// On narrow viewports the three-column grid scrolls horizontally instead of
-// squeezing the price cells.
 const TableScroller = styled.div`
   overflow-x: auto;
   width: 100%;

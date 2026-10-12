@@ -4,6 +4,5 @@ import { WorkspaceResolverNameMapCacheService } from 'src/engine/api/graphql/dir
 
 @Module({
   providers: [WorkspaceResolverNameMapCacheService],
-  exports: [WorkspaceResolverNameMapCacheService],
 })
 export class WorkspaceResolverNameMapCacheModule {}

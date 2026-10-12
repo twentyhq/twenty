@@ -7,7 +7,9 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
 
-Use `AlertDialog` for a decision that interrupts the current workflow, such as confirming deletion. It provides an accessible modal with a backdrop and focus management.
+Use `AlertDialog` for a decision that interrupts the current workflow, such as confirming deletion. It provides `alertdialog` semantics, focus management, and explicit confirmation or cancellation.
+
+This primitive is for standalone Twenty UI and host-owned interfaces. Front components must request a confirmation through the [SDK host dialog API](/developers/extend/apps/layout/front-components#host-communication-api). Direct `Dialog`, `AlertDialog`, and native browser dialogs are prohibited inside the front component renderer.
 
 <StoryEmbed
   storyId="ui-surfaces-alertdialog--documentation"
@@ -17,32 +19,38 @@ Use `AlertDialog` for a decision that interrupts the current workflow, such as c
 
 ## Anatomy
 
-Keep the trigger and popup inside `AlertDialog.Root`. This tree shows the recommended layout for a confirmation dialog.
+Keep related parts inside `AlertDialog.Root`, or connect detached triggers through a handle. Compose the portal, backdrop, viewport, and popup separately.
 
 ```text
 AlertDialog.Root
 ├── AlertDialog.Trigger
-└── AlertDialog.Popup
-    ├── AlertDialog.Header
-    │   ├── AlertDialog.Title
-    │   └── AlertDialog.Description
-    ├── AlertDialog.Body
-    └── AlertDialog.Footer
-        ├── AlertDialog.Close
-        └── Confirmation action
+└── AlertDialog.Portal
+    ├── AlertDialog.Backdrop
+    └── AlertDialog.Viewport
+        └── AlertDialog.Popup
+            ├── AlertDialog.Header
+            │   ├── AlertDialog.Title
+            │   └── AlertDialog.Description
+            ├── AlertDialog.Body
+            └── AlertDialog.Footer
+                ├── AlertDialog.Close
+                └── Confirmation action
 ```
 
-| Part                       | Requirement                                   | Purpose                                                                  |
-| -------------------------- | --------------------------------------------- | ------------------------------------------------------------------------ |
-| `Root`                     | Required                                      | Coordinates open state and modal behavior.                               |
-| `Trigger`                  | Optional for a programmatically opened dialog | Opens the dialog and provides a return focus target.                     |
-| `Popup`                    | Required                                      | Renders the modal content with focus management.                         |
-| `Title`                    | Recommended                                   | Supplies the visible dialog name. An accessible name is always required. |
-| `Description`              | Recommended for a confirmation                | Explains the decision and its consequences.                              |
-| `Header`, `Body`, `Footer` | Optional layout parts                         | Arrange headings, additional content, and actions.                       |
-| `Close`                    | Recommended for cancellation                  | Supplies an explicit close action.                                       |
+| Part                       | Requirement                                   | Purpose                                                                 |
+| -------------------------- | --------------------------------------------- | ----------------------------------------------------------------------- |
+| `Root`                     | Required                                      | Coordinates open state and modal behavior.                              |
+| `Trigger`                  | Optional for a programmatically opened dialog | Opens the dialog and provides a return focus target.                    |
+| `Portal`                   | Recommended                                   | Moves the overlay to its container and controls mounting.               |
+| `Backdrop`                 | Optional                                      | Visually separates the alert from the surrounding page.                 |
+| `Viewport`                 | Recommended                                   | Positions the popup and provides its scrollable surrounding area.       |
+| `Popup`                    | Required                                      | Renders the alert content with focus management.                        |
+| `Title`                    | Recommended                                   | Supplies the visible alert name. An accessible name is always required. |
+| `Description`              | Recommended for a confirmation                | Explains the decision and its consequences.                             |
+| `Header`, `Body`, `Footer` | Optional layout parts                         | Arrange headings, additional content, and actions.                      |
+| `Close`                    | Recommended for cancellation                  | Supplies an explicit close action.                                      |
 
-`Popup` includes the portal, backdrop, and viewport. Put content directly inside it and set `size`, `container`, and focus props on `Popup`. `Header`, `Body`, and `Footer` arrange content; `Title` and `Description` provide the accessible relationships.
+Set `container` and `keepMounted` on `Portal`, backdrop attributes on `Backdrop`, layout attributes on `Viewport`, and `size` and focus props on `Popup`. Each element part accepts its own native attributes, handlers, ref, and `render` composition. `Popup.ref` points to the alert content element. `Title` and `Description` establish the accessible relationships; provide `aria-label` on `Popup` when omitting a title.
 
 The confirmation action is application content, not an exported part. Use `Close` with a synchronous handler or a `Button` with controlled open state for asynchronous confirmation.
 
@@ -51,25 +59,38 @@ The confirmation action is application content, not an exported part. Use `Close
 Use `defaultOpen` to set the initial visibility. The dialog owns subsequent changes from its trigger, close controls, and dismissal interactions.
 
 ```tsx
+import { Button } from 'twenty-ui/primitives/input';
 import { AlertDialog } from 'twenty-ui/primitives/surfaces';
 
 type DeleteConfirmationProps = { onDelete: () => void };
 
 export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
   <AlertDialog.Root defaultOpen={false}>
-    <AlertDialog.Trigger>Delete record</AlertDialog.Trigger>
-    <AlertDialog.Popup>
-      <AlertDialog.Header>
-        <AlertDialog.Title>Delete this record?</AlertDialog.Title>
-        <AlertDialog.Description>
-          This action cannot be undone.
-        </AlertDialog.Description>
-      </AlertDialog.Header>
-      <AlertDialog.Footer>
-        <AlertDialog.Close>Cancel</AlertDialog.Close>
-        <AlertDialog.Close onClick={onDelete}>Delete</AlertDialog.Close>
-      </AlertDialog.Footer>
-    </AlertDialog.Popup>
+    <AlertDialog.Trigger
+      render={<Button color="danger">Delete record</Button>}
+    />
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This action cannot be undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close
+              render={<Button variant="outline">Cancel</Button>}
+            />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
   </AlertDialog.Root>
 );
 ```
@@ -78,10 +99,11 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
 
 ## Controlled state
 
-Pass `open` and update it with `onOpenChange` to own the same dialog's visibility in React state. The callback receives the next boolean and event details, including changes requested by the trigger and close controls.
+Pass `open` and update it with `onOpenChange` to own the same dialog's visibility in React state. The callback receives the requested boolean and upstream event details, including `reason`, `event`, and `cancel()`. Call `eventDetails.cancel()` to reject a requested change. `onOpenChangeComplete` runs after opening or closing transitions finish.
 
 ```tsx
 import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
 import { AlertDialog } from 'twenty-ui/primitives/surfaces';
 
 type DeleteConfirmationProps = { onDelete: () => void };
@@ -91,19 +113,31 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
 
   return (
     <AlertDialog.Root open={open} onOpenChange={setOpen}>
-      <AlertDialog.Trigger>Delete record</AlertDialog.Trigger>
-      <AlertDialog.Popup>
-        <AlertDialog.Header>
-          <AlertDialog.Title>Delete this record?</AlertDialog.Title>
-          <AlertDialog.Description>
-            This action cannot be undone.
-          </AlertDialog.Description>
-        </AlertDialog.Header>
-        <AlertDialog.Footer>
-          <AlertDialog.Close>Cancel</AlertDialog.Close>
-          <AlertDialog.Close onClick={onDelete}>Delete</AlertDialog.Close>
-        </AlertDialog.Footer>
-      </AlertDialog.Popup>
+      <AlertDialog.Trigger
+        render={<Button color="danger">Delete record</Button>}
+      />
+      <AlertDialog.Portal>
+        <AlertDialog.Backdrop />
+        <AlertDialog.Viewport>
+          <AlertDialog.Popup>
+            <AlertDialog.Header>
+              <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+              <AlertDialog.Description>
+                This action cannot be undone.
+              </AlertDialog.Description>
+            </AlertDialog.Header>
+            <AlertDialog.Footer>
+              <AlertDialog.Close
+                render={<Button variant="outline">Cancel</Button>}
+              />
+              <AlertDialog.Close
+                onClick={onDelete}
+                render={<Button color="danger">Delete</Button>}
+              />
+            </AlertDialog.Footer>
+          </AlertDialog.Popup>
+        </AlertDialog.Viewport>
+      </AlertDialog.Portal>
     </AlertDialog.Root>
   );
 };
@@ -126,34 +160,53 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
     <AlertDialog.Trigger
       render={<Button color="danger">Delete record</Button>}
     />
-    <AlertDialog.Popup>
-      <AlertDialog.Header>
-        <AlertDialog.Title>Delete this record?</AlertDialog.Title>
-        <AlertDialog.Description>
-          This action cannot be undone.
-        </AlertDialog.Description>
-      </AlertDialog.Header>
-      <AlertDialog.Footer>
-        <AlertDialog.Close render={<Button variant="outline">Cancel</Button>} />
-        <AlertDialog.Close
-          onClick={onDelete}
-          render={<Button color="danger">Delete</Button>}
-        />
-      </AlertDialog.Footer>
-    </AlertDialog.Popup>
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This action cannot be undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close
+              render={<Button variant="outline">Cancel</Button>}
+            />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
   </AlertDialog.Root>
 );
 ```
 
 Keep each action as a single interactive control. If you wrap `Button` in your own component, [forward the supplied props and ref](/ui/primitives/overview#custom-components).
 
+## Detached triggers and imperative actions
+
+Create a handle once with `AlertDialog.createHandle<Payload>()` and pass it to `handle` on `Root` and each detached `Trigger`. A trigger's typed `payload` is available to the root's child render function. A handle also supports `open(triggerId)`, `openWithPayload(payload)`, `close()`, and the `isOpen` getter while its root is mounted. Pass a matching trigger ID to `open`, or `null` to open without a trigger. Call imperative methods from event handlers or effects.
+
+`Root.actionsRef` exposes `close()` and `unmount()`. For an externally controlled closing animation, call `eventDetails.preventUnmountOnClose()` in `onOpenChange`, then call `actionsRef.current?.unmount()` after the animation finishes. The regular styled parts manage their own transitions without these imperative actions.
+
 ## Sizing and portals
 
-`Popup.size` defaults to `md`; see the reference for supported sizes. Use `container` to override the theme's portal container and `keepMounted` to retain mounted content when closed.
+`Popup.size` accepts `sm`, `md`, `lg`, `xl`, and `fullscreen`, and defaults to `md`. Size and appearance belong to the AlertDialog surface and do not have to match Dialog presets.
+
+`Portal.container` defaults to the nearest theme's portal container. Without one, Base UI uses its default portal destination, normally `document.body`. An explicit element, shadow root, or ref overrides that destination. An explicit `null` defers mounting until a container is available. Base UI resolves a ref whose `current` is `null` using its default destination; use `container={null}` when mounting must wait.
+
+Portaled content retains the theme context. `Portal` and `Viewport` inherit the provided text direction unless you set `dir` explicitly. Set `Portal.keepMounted` to retain mounted content and form state while closed.
 
 ## Focus and dismissal
 
-The dialog traps focus while open. Escape can dismiss it; clicking the backdrop does not. Always provide a visible Cancel or Close action. Keep the initial focus on the least destructive action, and preserve a meaningful return focus target when the action removes its trigger. Use `Popup.initialFocus` and `Popup.finalFocus` to customize focus behavior.
+The alert traps focus, blocks outside interaction, and locks page scrolling while open. Escape requests closure; clicking outside does not. To prevent Escape dismissal, cancel the `escape-key` change in `onOpenChange`. Always provide a visible Cancel or Close action.
+
+By default, focus moves to the first tabbable control, or to the popup for a touch opening. Put the least destructive action first, or use `Popup.initialFocus` to select it. Focus returns to the trigger or previously focused element when the alert closes. Use `Popup.finalFocus` when a successful action removes that target. Both focus props accept a boolean, element ref, or interaction-type callback according to the upstream contract.
 
 ## Props
 

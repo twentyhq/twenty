@@ -1,20 +1,35 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { type MessageDescriptor } from '@lingui/core';
+import { isNonEmptyString } from '@sniptt/guards';
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type EntityManager, IsNull, Repository } from 'typeorm';
 
+import {
+  AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { acquireUserAuthenticationLock } from 'src/engine/core-modules/auth/utils/acquire-user-authentication-lock.util';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import {
+  TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
+  TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
+} from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-otp-rate-limit.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
+import { buildTwoFactorAuthenticationOtpRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-otp-rate-limit-key.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -36,8 +51,11 @@ export class TwoFactorAuthenticationService {
   constructor(
     @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly throttlerService: ThrottlerService,
   ) {}
 
   private async decryptStoredSecret({
@@ -121,24 +139,18 @@ export class TwoFactorAuthenticationService {
       return reuseUri;
     }
 
-    const { uri, context } = new TotpStrategy(
-      TOTP_DEFAULT_CONFIGURATION,
-    ).initiate(
+    const { uri, encryptedSecret, status } = this.generatePendingTotpSecret({
       userEmail,
-      `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`,
-    );
-
-    const encryptedSecret = this.secretEncryptionService.encryptVersioned(
-      context.secret,
-      { workspaceId },
-    );
+      workspaceId,
+      workspaceDisplayName,
+    });
 
     await this.twoFactorAuthenticationMethodRepository.upsert(
       workspaceId,
       {
         userWorkspaceId: userWorkspace.id,
         secret: encryptedSecret,
-        status: context.status,
+        status,
         strategy: TwoFactorAuthenticationStrategy.TOTP,
       },
       ['userWorkspaceId', 'strategy'],
@@ -147,12 +159,45 @@ export class TwoFactorAuthenticationService {
     return uri;
   }
 
+  generatePendingTotpSecret({
+    userEmail,
+    workspaceId,
+    workspaceDisplayName,
+  }: {
+    userEmail: string;
+    workspaceId: WorkspaceEntity['id'];
+    workspaceDisplayName?: string;
+  }): { uri: string; encryptedSecret: EncryptedString; status: OTPStatus } {
+    const { uri, context } = new TotpStrategy(
+      TOTP_DEFAULT_CONFIGURATION,
+    ).initiate(
+      userEmail,
+      `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`,
+    );
+
+    return {
+      uri,
+      encryptedSecret: this.secretEncryptionService.encryptVersioned(
+        context.secret,
+        { workspaceId },
+      ),
+      status: context.status,
+    };
+  }
+
   async validateStrategy(
     userId: UserEntity['id'],
     token: string,
     workspaceId: WorkspaceEntity['id'],
     twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy,
   ) {
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      buildTwoFactorAuthenticationOtpRateLimitKey({ userId, workspaceId }),
+      1,
+      TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
+      TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
+    );
+
     const userTwoFactorAuthenticationMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne(workspaceId, {
         where: {
@@ -199,10 +244,107 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    await this.twoFactorAuthenticationMethodRepository.update(
+    await this.appTokenRepository.manager.transaction(async (entityManager) => {
+      await acquireUserAuthenticationLock({
+        entityManager,
+        userId,
+        mode: 'exclusive',
+      });
+
+      // A recovery that committed after the read replaced this method, and its enrollment reservation must survive
+      const updateResult = await entityManager
+        .getRepository(TwoFactorAuthenticationMethodEntity)
+        .update(
+          {
+            id: userTwoFactorAuthenticationMethod.id,
+            workspaceId,
+            secret: userTwoFactorAuthenticationMethod.secret,
+          },
+          { status: OTPStatus.VERIFIED },
+        );
+
+      if ((updateResult.affected ?? 0) === 0) {
+        throw new TwoFactorAuthenticationException(
+          'Two Factor Authentication Method not found.',
+          TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
+        );
+      }
+
+      await this.revokeRecoveryCodes({
+        workspaceId,
+        userId,
+        includeRedeemed: true,
+        entityManager,
+      });
+    });
+  }
+
+  async revokeRecoveryCodes({
+    workspaceId,
+    userId,
+    includeRedeemed = false,
+    entityManager,
+  }: {
+    workspaceId: WorkspaceEntity['id'];
+    userId: UserEntity['id'];
+    includeRedeemed?: boolean;
+    entityManager?: EntityManager;
+  }): Promise<number> {
+    const appTokenRepository =
+      entityManager?.getRepository(AppTokenEntity) ?? this.appTokenRepository;
+
+    const updateResult = await appTokenRepository.update(
+      {
+        workspaceId,
+        userId,
+        type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+        revokedAt: IsNull(),
+        ...(includeRedeemed ? {} : { deletedAt: IsNull() }),
+      },
+      { revokedAt: new Date() },
+    );
+
+    return updateResult.affected ?? 0;
+  }
+
+  async assertFreshStepUpAuthenticationOrThrow({
+    userId,
+    workspaceId,
+    otp,
+    otpRequiredMessage,
+    twoFactorAuthenticationRequiredMessage,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+    otp?: string;
+    otpRequiredMessage: MessageDescriptor;
+    twoFactorAuthenticationRequiredMessage: MessageDescriptor;
+  }): Promise<void> {
+    if (!isNonEmptyString(otp)) {
+      throw new TwoFactorAuthenticationException(
+        'A two-factor authentication code is required for this action',
+        TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+        { userFriendlyMessage: otpRequiredMessage },
+      );
+    }
+
+    const hasVerifiedTwoFactorAuthenticationMethod =
+      await this.twoFactorAuthenticationMethodRepository.exists(workspaceId, {
+        where: { userWorkspace: { userId }, status: OTPStatus.VERIFIED },
+      });
+
+    if (!hasVerifiedTwoFactorAuthenticationMethod) {
+      throw new TwoFactorAuthenticationException(
+        'Two-factor authentication must be enabled in the current workspace for this action',
+        TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+        { userFriendlyMessage: twoFactorAuthenticationRequiredMessage },
+      );
+    }
+
+    await this.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+      userId,
+      otp,
       workspaceId,
-      { id: userTwoFactorAuthenticationMethod.id },
-      { status: OTPStatus.VERIFIED },
     );
   }
 

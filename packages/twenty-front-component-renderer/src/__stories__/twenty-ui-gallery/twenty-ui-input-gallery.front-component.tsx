@@ -1,13 +1,12 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  ColorSchemePicker,
   IconButton,
   LightButton,
   LightIconButton,
   MainButton,
   SearchInput,
-  TabButton,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/input';
+import { TabButton } from 'twenty-ui/components/navigation';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import {
@@ -21,6 +20,7 @@ import {
   Switch,
 } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme';
+import { Text } from 'twenty-ui/primitives/typography';
 import {
   ComponentGallery,
   type GalleryEntry,
@@ -61,17 +61,12 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'CodeEditorHeader',
-    node: <CodeEditorHeader title="Editor" />,
-  },
-  {
-    name: 'ColorSchemePicker',
     node: (
-      <ColorSchemePicker
-        value="Light"
-        onChange={() => {}}
-        lightLabel="Light"
-        darkLabel="Dark"
-        systemLabel="System"
+      <CodeEditorHeader
+        title={<Text>Editor</Text>}
+        endElement={<Button size="sm">Format</Button>}
+        render={<header />}
+        aria-label="Code editor"
       />
     ),
   },
@@ -137,7 +132,7 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'SearchInput',
-    node: <SearchInput value="" onChange={() => {}} placeholder="Search" />,
+    node: <SearchInput defaultValue="" placeholder="Search" />,
   },
   {
     name: 'SegmentedControl',

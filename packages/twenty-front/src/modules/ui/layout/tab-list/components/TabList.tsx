@@ -1,4 +1,3 @@
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
@@ -124,7 +123,6 @@ export const TabList = ({
   });
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
-  const { closeDropdown } = useCloseDropdown();
 
   const isActiveTabHidden = useMemo(() => {
     if (!hasHiddenTabs) return false;
@@ -225,9 +223,6 @@ export const TabList = ({
                 <StyledDropdownContainer>
                   <TabListDropdown
                     dropdownId={dropdownId}
-                    onClose={() => {
-                      closeDropdown(dropdownId);
-                    }}
                     overflow={{
                       hiddenTabsCount,
                       isActiveTabHidden,

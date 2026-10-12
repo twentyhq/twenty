@@ -1,5 +1,5 @@
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
-import { RecordTableNoRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableNoRecordGroupBodyContextProvider';
+import { RecordTableBodyContextProvider } from '@/object-record/record-table/components/RecordTableBodyContextProvider';
 import { RecordTableNoRecordGroupRows } from '@/object-record/record-table/components/RecordTableNoRecordGroupRows';
 
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
@@ -29,7 +29,7 @@ export const RecordTableNoRecordGroupBody = () => {
   }
 
   return (
-    <RecordTableNoRecordGroupBodyContextProvider>
+    <RecordTableBodyContextProvider>
       <RecordTableBodyNoRecordGroupDragDropContextProvider>
         <RecordTableBody>
           <RecordTableNoRecordGroupRows />
@@ -43,6 +43,6 @@ export const RecordTableNoRecordGroupBody = () => {
         <RecordTableVirtualizedJunctionDataChangedEffect />
         <RecordTableVirtualizedSSESubscribeEffect />
       </RecordTableBodyNoRecordGroupDragDropContextProvider>
-    </RecordTableNoRecordGroupBodyContextProvider>
+    </RecordTableBodyContextProvider>
   );
 };

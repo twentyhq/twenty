@@ -1,6 +1,10 @@
 /* @license Enterprise */
 
-import { RecordShareAccessLevel } from 'twenty-shared/types';
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import {
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+} from 'twenty-shared/types';
 
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
@@ -42,6 +46,49 @@ describe('validateShareWithPrincipalsOrThrow', () => {
         flatRoleMaps,
       }),
     ).not.toThrow();
+  });
+
+  it('should resolve the principal and level of each entry', () => {
+    expect(
+      validateShareWithPrincipalsOrThrow({
+        shareWith: [
+          { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },
+          { everyone: true, accessLevel: RecordShareAccessLevel.NONE },
+        ],
+        flatWorkspaceMemberMaps,
+        flatRoleMaps,
+      }),
+    ).toEqual([
+      {
+        principalId: ROLE_ID,
+        principalType: RecordSharePrincipalType.ROLE,
+        accessLevel: RecordShareAccessLevel.FULL,
+      },
+      {
+        principalId: EVERYONE_PRINCIPAL_ID,
+        principalType: RecordSharePrincipalType.EVERYONE,
+        accessLevel: RecordShareAccessLevel.NONE,
+      },
+    ]);
+  });
+
+  it.each([
+    [{ everyone: true, accessLevel: RecordShareAccessLevel.FULL }],
+    [{ roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.NONE }],
+    [
+      {
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        accessLevel: RecordShareAccessLevel.NONE,
+      },
+    ],
+  ])('should reject %j, which is no general access or grant', (entry) => {
+    expect(() =>
+      validateShareWithPrincipalsOrThrow({
+        shareWith: [entry],
+        flatWorkspaceMemberMaps,
+        flatRoleMaps,
+      }),
+    ).toThrow('access level');
   });
 
   it('should reject a workspace member of another workspace', () => {

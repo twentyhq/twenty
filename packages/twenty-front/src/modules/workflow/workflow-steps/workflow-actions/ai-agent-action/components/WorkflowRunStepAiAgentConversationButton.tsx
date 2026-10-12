@@ -6,15 +6,20 @@ import { Button } from 'twenty-ui/primitives/input';
 import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { useWorkflowRunStepInfo } from '@/workflow/workflow-steps/hooks/useWorkflowRunStepInfo';
 
+type WorkflowRunStepAiAgentConversationButtonProps = {
+  stepId: string;
+  stepLogThreadId?: string;
+};
+
 export const WorkflowRunStepAiAgentConversationButton = ({
   stepId,
-}: {
-  stepId: string;
-}) => {
+  stepLogThreadId,
+}: WorkflowRunStepAiAgentConversationButtonProps) => {
   const { t } = useLingui();
   const { openAskAiThread } = useOpenAskAiThread();
   const stepInfo = useWorkflowRunStepInfo({ stepId });
-  const threadId = stepInfo?.threadId;
+  // runs from before the step log held the conversation kept it on the step info
+  const threadId = stepLogThreadId ?? stepInfo?.threadId;
 
   if (!isDefined(threadId)) {
     return null;

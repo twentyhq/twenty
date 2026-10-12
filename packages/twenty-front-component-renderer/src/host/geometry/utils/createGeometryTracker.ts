@@ -1,3 +1,4 @@
+import { findRemoteElementIdContainingNode } from '@/host/geometry/utils/findRemoteElementIdContainingNode';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
@@ -9,17 +10,20 @@ import { createGeometryWakeSources } from '@/host/geometry/utils/createGeometryW
 import { isGeometrySnapshotEqualWithinEpsilon } from '@/host/geometry/utils/isGeometrySnapshotEqualWithinEpsilon';
 import { measureNodeGeometry } from '@/host/geometry/utils/measureNodeGeometry';
 import { measureViewportGeometry } from '@/host/geometry/utils/measureViewportGeometry';
+import { updateFrontComponentPortalLayer } from '@/host/geometry/utils/updateFrontComponentPortalLayer';
 import { sanitizeRemoteElementIds } from '@/host/geometry/utils/sanitizeRemoteElementIds';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
 export const createGeometryTracker = (): GeometryTracker => {
   const registeredNodes = new Map<string, Element>();
+  const remoteElementIdByRegisteredNode = new WeakMap<object, string>();
   const observedRemoteElementIds = new Set<string>();
   const lastElementSnapshots = new Map<string, ElementGeometrySnapshot>();
   const unregisteredObservedFrameCounts = new Map<string, number>();
 
   let rootContainer: Element | null = null;
+  let portalLayer: HTMLElement | null = null;
   let pushGeometryUpdates: PushGeometryUpdates | null = null;
   let lastViewportSnapshot: ViewportGeometrySnapshot | null = null;
   let animationFrameHandle: number | null = null;
@@ -52,6 +56,11 @@ export const createGeometryTracker = (): GeometryTracker => {
     }
 
     const viewport = readViewportGeometry();
+
+    if (isDefined(portalLayer)) {
+      updateFrontComponentPortalLayer({ portalLayer, rootContainer, viewport });
+    }
+
     const rootContainerOrigin = {
       x: viewport.rootContainerX,
       y: viewport.rootContainerY,
@@ -149,9 +158,11 @@ export const createGeometryTracker = (): GeometryTracker => {
 
     if (isDefined(previousNode) && previousNode !== node) {
       wakeSources.stopObservingNode(previousNode);
+      remoteElementIdByRegisteredNode.delete(previousNode);
     }
 
     registeredNodes.set(remoteElementId, node);
+    remoteElementIdByRegisteredNode.set(node, remoteElementId);
     unregisteredObservedFrameCounts.delete(remoteElementId);
 
     if (observedRemoteElementIds.has(remoteElementId)) {
@@ -166,6 +177,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     }
 
     registeredNodes.delete(remoteElementId);
+    remoteElementIdByRegisteredNode.delete(node);
     wakeSources.stopObservingNode(node);
 
     if (observedRemoteElementIds.has(remoteElementId)) {
@@ -229,6 +241,23 @@ export const createGeometryTracker = (): GeometryTracker => {
     wakeSources.setRoot(node);
   };
 
+  const setPortalLayer = (element: HTMLElement | null): void => {
+    portalLayer = element;
+
+    if (!isDefined(element)) {
+      wakeSources.detachPortalLayerSources();
+      return;
+    }
+
+    updateFrontComponentPortalLayer({
+      portalLayer: element,
+      rootContainer,
+      viewport: readViewportGeometry(),
+    });
+    wakeSources.attachPortalLayerSources();
+    wake();
+  };
+
   const setPushGeometryUpdates = (
     nextPushGeometryUpdates: PushGeometryUpdates | null,
   ): void => {
@@ -240,7 +269,7 @@ export const createGeometryTracker = (): GeometryTracker => {
 
     wakeSources.attachViewportSources();
 
-    if (observedRemoteElementIds.size > 0) {
+    if (observedRemoteElementIds.size > 0 || isDefined(portalLayer)) {
       wake();
     }
   };
@@ -265,9 +294,17 @@ export const createGeometryTracker = (): GeometryTracker => {
   return {
     registerNode,
     unregisterNode,
+    getRegisteredNode: (remoteElementId) =>
+      registeredNodes.get(remoteElementId),
+    findRemoteElementIdContainingNode: (node) =>
+      findRemoteElementIdContainingNode({
+        node,
+        remoteElementIdByRegisteredNode,
+      }),
     observe,
     unobserve,
     setRoot,
+    setPortalLayer,
     setPushGeometryUpdates,
     getViewportGeometry: readViewportGeometry,
     reset,

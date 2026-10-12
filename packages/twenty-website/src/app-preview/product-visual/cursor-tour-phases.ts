@@ -279,7 +279,6 @@ const MOBILE_PHASES: TourPhase[] = [
   },
 ];
 
-// The tour replays from the top once the last phase's dwell elapses.
 function nextPhaseIndex(current: number, phaseCount: number): number {
   return current >= phaseCount - 1 ? LOOP_START_INDEX : current + 1;
 }

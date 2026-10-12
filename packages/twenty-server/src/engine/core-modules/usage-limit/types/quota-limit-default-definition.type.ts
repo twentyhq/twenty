@@ -1,9 +1,9 @@
 import { type NumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/numeric-config-variable-key.type';
 import { type AnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/types/anchored-period-unit.type';
-import { type QuotaMeter } from 'src/engine/core-modules/usage-limit/types/quota-meter.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 export type QuotaLimitDefaultDefinition<
   TResourceType extends UsageResourceType = UsageResourceType,
@@ -13,7 +13,7 @@ export type QuotaLimitDefaultDefinition<
   limitKind: 'quota';
   spenderType: SpenderType;
   spenderId: '';
-  meter: QuotaMeter;
+  unit: UsageUnit;
   periodUnit: AnchoredPeriodUnit;
   periodCount: 1;
   limitValueConfigVariable: NumericConfigVariableKey;

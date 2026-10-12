@@ -15,8 +15,7 @@ describe('useInsertDictatedText', () => {
   let editor: Editor;
 
   beforeEach(() => {
-    // The composer's schema carries marks, which is what makes a bare string
-    // insertion parse as HTML rather than land literally.
+    // Marks in the schema are what make a bare string insertion parse as HTML.
     editor = new Editor({
       extensions: [Document, Paragraph, Text, Bold, Italic],
       content: '<p></p>',

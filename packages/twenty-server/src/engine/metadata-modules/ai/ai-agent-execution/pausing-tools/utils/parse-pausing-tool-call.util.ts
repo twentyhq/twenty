@@ -4,9 +4,15 @@ import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution
 import { type PausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-call.type';
 
 export const parsePausingToolCall = (
-  toolPart: { toolName: string | null; toolInput: unknown } | null,
+  toolPart: {
+    toolName: string | null;
+    toolInput: unknown;
+    toolOutput?: unknown;
+  } | null,
 ): PausingToolCall | null =>
   isDefined(toolPart?.toolName)
-    ? (PAUSING_TOOLS.get(toolPart.toolName)?.parseCall(toolPart.toolInput) ??
-      null)
+    ? (PAUSING_TOOLS.get(toolPart.toolName)?.parseCall(
+        toolPart.toolInput,
+        toolPart.toolOutput,
+      ) ?? null)
     : null;

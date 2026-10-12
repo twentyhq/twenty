@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import {
@@ -39,6 +39,11 @@ export const useCoreWorkflowsSelection = <
     coreWorkflows.some((workflow) => workflow.id === id),
   );
 
+  const selectedCoreWorkflows = useMemo(
+    () => coreWorkflows.filter(({ id }) => selectionRowIds.includes(id)),
+    [coreWorkflows, selectionRowIds],
+  );
+
   const selectRows = (rowIds: string[]) =>
     setCoreWorkflowsSelection({
       filterSettings: coreWorkflowsFilterSettings,
@@ -53,6 +58,8 @@ export const useCoreWorkflowsSelection = <
   return {
     displayedCoreWorkflows: coreWorkflows,
     selectedRowIds,
+    selectedCoreWorkflows,
+    selectedRowCount: selectionRowIds.length,
     toggleRow,
     selectRows,
   };

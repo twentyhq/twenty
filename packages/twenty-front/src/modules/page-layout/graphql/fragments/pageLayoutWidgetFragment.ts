@@ -168,6 +168,9 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on ChatThreadsConfiguration {
         configurationType
       }
+      ... on ChatConfiguration {
+        configurationType
+      }
       ... on MessageCampaignBodyConfiguration {
         configurationType
       }

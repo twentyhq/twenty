@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 
 import packageJson from './package.json';
 import { BUILD_DESCRIPTOR } from './src/application-build/build-descriptor';
+import { createBundledSourcePlugin } from './vite.bundled-source-plugin';
 
 // Injected at the top of every ESM chunk so bundled CommonJS modules keep
 // working after rolldown inlines them into the `.mjs` output. They call
@@ -63,7 +64,11 @@ export default defineConfig(() => {
         '@/': path.resolve(__dirname, 'src') + '/',
       },
     },
-    plugins: [copyCoverAssetsPlugin(), writeBuildDescriptorPlugin()],
+    plugins: [
+      createBundledSourcePlugin(),
+      copyCoverAssetsPlugin(),
+      writeBuildDescriptorPlugin(),
+    ],
     build: {
       emptyOutDir: false,
       outDir: 'dist',

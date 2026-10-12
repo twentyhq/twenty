@@ -43,10 +43,8 @@ const getWorkspaceRouteObjects = (
     ];
   });
 
-// Each surface has exactly one route context store provider. The main surface
-// hosts it in MainAppLayoutWithSidePanel, above its routes. The side panel
-// renders its routes against its own location, which only the routed tree can
-// read, and it remounts per location, so its provider lives inside the tree.
+// One context store provider per surface: the main one sits above its routes, while the side panel
+// remounts per location, so its provider lives inside the routed tree.
 export const getWorkspaceRouteObjectsForSurface = (
   routeObjects: WorkspaceRouteObject[],
   surface: WorkspaceSurfaceType,

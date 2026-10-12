@@ -159,6 +159,23 @@ describe('Agent update should fail', () => {
         }),
       },
     },
+    {
+      title: 'when updating triggers with an invalid cron pattern',
+      context: {
+        input: (testSetup) => ({
+          id: testSetup.testAgentId,
+          triggers: [
+            {
+              id: '0d2b1a8c-77a4-4e2e-8f0c-3a8e9f6b4c22',
+              type: 'CRON',
+              isActive: true,
+              instructions: null,
+              settings: { pattern: 'every monday' },
+            },
+          ],
+        }),
+      },
+    },
   ];
 
   it.each(eachTestingContextFilter(failingAgentUpdateTestCases))(

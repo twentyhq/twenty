@@ -102,9 +102,7 @@ export const parseSamlMetadataFromXmlFile = (
       location: service.getAttribute('Location'),
     }));
 
-    // Prefer HTTP-Redirect (the default authnRequestBinding on the SP side),
-    // fall back to HTTP-POST since both are valid SAML 2.0 bindings and many
-    // IdPs (e.g. JumpCloud) only advertise HTTP-POST.
+    // Prefer HTTP-Redirect (the SP default), falling back to HTTP-POST, the only binding some IdPs (e.g. JumpCloud) advertise
     const ssoUrl =
       singleSignOnServices.find((s) => s.binding === HTTP_REDIRECT_BINDING)
         ?.location ??

@@ -111,7 +111,6 @@ describe('group-by resolvers - order by', () => {
   });
 
   afterAll(async () => {
-    // cleanup created companies
     for (const id of [
       testCompanyId1,
       testCompanyId2,

@@ -2,12 +2,12 @@ import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEf
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   BillingPlanKey,
   BillingPortalSessionDocument,
@@ -26,8 +26,9 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
 }: SettingsBillingTrialNoPaymentMethodBannerProps) => {
   const { redirect } = useRedirect();
 
-  const { [PermissionFlagType.BILLING]: hasPermissionToManageBilling } =
-    usePermissionFlagMap();
+  const hasPermissionToManageBilling = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
 
   const { data, error } = useQuery(BillingPortalSessionDocument, {
     variables: {
@@ -64,14 +65,17 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     <>
       <ToastOnQueryErrorEffect error={error} />
       <InlineBanner
-        color="blue"
-        message={message}
-        button={{
-          title: t`Add card`,
-          hidden: !hasPermissionToManageBilling,
-          onClick: openPaymentMethodUpdate,
-        }}
-      />
+        status="info"
+        action={
+          hasPermissionToManageBilling && (
+            <InlineBanner.Action
+              onClick={openPaymentMethodUpdate}
+            >{t`Add card`}</InlineBanner.Action>
+          )
+        }
+      >
+        {message}
+      </InlineBanner>
     </>
   );
 };

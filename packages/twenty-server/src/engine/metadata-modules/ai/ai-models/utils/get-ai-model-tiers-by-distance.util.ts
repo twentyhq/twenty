@@ -1,8 +1,6 @@
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 
-// The tier itself first, then its neighbours by distance, the lower rung
-// before the higher one at equal distance so a missing rung borrows the
-// cheaper side of the ladder.
+// lower rung first at equal distance so a missing rung borrows the cheaper side
 export const getAiModelTiersByDistance = (tier: AiModelTier): AiModelTier[] => {
   const tierIndex = AI_MODEL_TIERS.indexOf(tier);
   const distanceOf = (candidate: AiModelTier) =>

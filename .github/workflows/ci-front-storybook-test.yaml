@@ -1,0 +1,74 @@
+name: CI Front Storybook Test
+
+on:
+  workflow_call:
+    inputs:
+      scope:
+        type: string
+        required: true
+        description: 'Storybook scope to test: modules, pages or performance'
+      shard:
+        type: number
+        required: true
+      shard-count:
+        type: number
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  # Saved by front-sb-build in ci-front.yaml
+  STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-ubuntu-latest-8-cores-runner
+
+jobs:
+  storybook-test:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    env:
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000
+      STORYBOOK_URL: http://localhost:6006
+    steps:
+      - name: Fetch local actions
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Restore storybook build cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
+      - name: Clean stale storybook vitest cache
+        run: rm -rf packages/twenty-front/node_modules/.cache/storybook
+      - name: Build dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-ui
+          npx nx build twenty-front-component-renderer
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: v4-playwright-browsers-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+      - name: Install Playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: |
+          cd packages/twenty-front
+          npx playwright install chromium
+      - name: Front / Write .env
+        run: npx nx reset:env twenty-front
+      - name: Run storybook tests
+        run: npx nx storybook:test:no-coverage twenty-front --configuration=${{ inputs.scope }} --shard=${{ inputs.shard }}/${{ inputs.shard-count }}
+      - name: Upload screenshots for visual regression
+        if: always() && !cancelled() && inputs.scope != 'performance'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: argos-screenshots-twenty-front-${{ inputs.scope }}-${{ inputs.shard }}
+          path: packages/twenty-front/screenshots
+          retention-days: 1
+          overwrite: true

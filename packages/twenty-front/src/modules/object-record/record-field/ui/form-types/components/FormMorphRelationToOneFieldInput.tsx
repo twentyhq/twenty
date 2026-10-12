@@ -10,7 +10,7 @@ import {
   type RecordId,
   type Variable,
 } from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { Field } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';

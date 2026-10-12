@@ -1,6 +1,8 @@
+import { ONBOARDING_CREDITS_STEPS } from '@/onboarding/constants/OnboardingCreditsSteps';
 import { useSetCurrentWorkspaceOnboardingFreeCredits } from '@/onboarding/hooks/useSetCurrentWorkspaceOnboardingFreeCredits';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
-import { getOnboardingEarnedCredits } from '@/onboarding/utils/getOnboardingEarnedCredits';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 type SetOnboardingStepFreeCreditsOptions = {
@@ -8,6 +10,7 @@ type SetOnboardingStepFreeCreditsOptions = {
 };
 
 export const useSetOnboardingStepFreeCredits = () => {
+  const store = useStore();
   const setOnboardingFreeCredits =
     useSetCurrentWorkspaceOnboardingFreeCredits();
 
@@ -16,19 +19,31 @@ export const useSetOnboardingStepFreeCredits = () => {
       step: OnboardingCreditsStep,
       credits: number,
       { isQuiet = false }: SetOnboardingStepFreeCreditsOptions = {},
-    ) =>
+    ) => {
+      const { earnedCredits } = store.get(
+        onboardingCreditsProgressSelector.atom,
+      );
+
       setOnboardingFreeCredits((current) => {
         const onboardingFreeCredits = { ...current, [step]: credits };
         const quietCreditsChange = isQuiet ? credits - current[step] : 0;
-
+        const storedCredits = ONBOARDING_CREDITS_STEPS.reduce(
+          (total, creditsStep) => total + onboardingFreeCredits[creditsStep],
+          0,
+        );
         return {
           ...onboardingFreeCredits,
-          seenCredits: Math.min(
-            Math.max(0, current.seenCredits + quietCreditsChange),
-            getOnboardingEarnedCredits(onboardingFreeCredits),
+          seenCredits: Math.max(
+            0,
+            Math.min(
+              current.seenCredits + quietCreditsChange,
+              storedCredits,
+              earnedCredits + quietCreditsChange,
+            ),
           ),
         };
-      }),
-    [setOnboardingFreeCredits],
+      });
+    },
+    [setOnboardingFreeCredits, store],
   );
 };

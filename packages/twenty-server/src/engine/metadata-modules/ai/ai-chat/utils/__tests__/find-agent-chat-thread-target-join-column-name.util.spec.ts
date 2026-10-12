@@ -29,8 +29,6 @@ const findStandardObject = (nameSingular: keyof typeof STANDARD_OBJECTS) => {
 
 const targetFlatObjectMetadata = findStandardObject('agentChatThreadTarget');
 
-// Adds a field to agentChatThreadTarget the way a side effect would: the field
-// itself, and its id on the object.
 const withTargetField = (
   flatFieldMetadata: FlatFieldMetadata,
 ): {
@@ -101,8 +99,6 @@ describe('findAgentChatThreadTargetJoinColumnName', () => {
     ).toBe('targetPetId');
   });
 
-  // Like notes, chats only attach to person, company, opportunity and custom
-  // objects.
   it('finds no leg for a standard object chats do not attach to', () => {
     expect(
       findAgentChatThreadTargetJoinColumnName({
@@ -113,8 +109,6 @@ describe('findAgentChatThreadTargetJoinColumnName', () => {
     ).toBeUndefined();
   });
 
-  // Only the target's own morph attaches a chat to a record, not any other
-  // morph relation the target may carry to the same object.
   it('ignores a relation to the object outside the target morph', () => {
     const taskObjectMetadataId = findStandardObject('task').id;
 
@@ -138,8 +132,7 @@ describe('findAgentChatThreadTargetJoinColumnName', () => {
     ).toBeUndefined();
   });
 
-  // Its upgrade command provisions the target, so a workspace can briefly run
-  // this code without it.
+  // an upgrade command provisions the target, so a workspace can briefly lack it
   it('finds no leg in a workspace without the chat target', () => {
     const { [targetFlatObjectMetadata.universalIdentifier]: _target, ...rest } =
       flatObjectMetadataMaps.byUniversalIdentifier;

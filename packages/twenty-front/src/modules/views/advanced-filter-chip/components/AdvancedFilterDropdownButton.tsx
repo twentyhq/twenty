@@ -1,4 +1,5 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownCleanupEffect } from '@/ui/layout/dropdown/components/DropdownCleanupEffect';
 
 import { AdvancedFilterRootRecordFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRootRecordFilterGroup';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
@@ -17,6 +18,7 @@ export const AdvancedFilterDropdownButton = () => {
   const { setAdvancedFilterDropdownStates } =
     useSetAdvancedFilterDropdownStates();
   const { recordIndexId } = useRecordIndexContextOrThrow();
+  const dropdownId = getViewBarAdvancedFilterDropdownId(recordIndexId);
 
   const handleOpenAdvancedFilterDropdown = () => {
     setAdvancedFilterDropdownStates();
@@ -27,13 +29,16 @@ export const AdvancedFilterDropdownButton = () => {
   }
 
   return (
-    <Dropdown
-      dropdownId={getViewBarAdvancedFilterDropdownId(recordIndexId)}
-      clickableComponent={<AdvancedFilterChip />}
-      dropdownComponents={<AdvancedFilterRootRecordFilterGroup />}
-      dropdownOffset={{ y: 8, x: 0 }}
-      dropdownPlacement="bottom-start"
-      onOpen={handleOpenAdvancedFilterDropdown}
-    />
+    <>
+      <DropdownCleanupEffect dropdownId={dropdownId} />
+      <Dropdown
+        dropdownId={dropdownId}
+        clickableComponent={<AdvancedFilterChip />}
+        dropdownComponents={<AdvancedFilterRootRecordFilterGroup />}
+        dropdownOffset={{ y: 8, x: 0 }}
+        dropdownPlacement="bottom-start"
+        onOpen={handleOpenAdvancedFilterDropdown}
+      />
+    </>
   );
 };

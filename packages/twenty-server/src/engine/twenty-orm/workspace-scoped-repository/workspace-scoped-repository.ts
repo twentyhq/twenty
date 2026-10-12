@@ -186,9 +186,7 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  // DELETE ... RETURNING hands back raw driver output, which skips the
-  // hydration a find would do, so column transformers have to be applied by
-  // hand: a bigint column would otherwise read back as a string.
+  // DELETE ... RETURNING skips hydration, so column transformers are applied by hand (a bigint would read as a string)
   private hydrateRawRow(row: Record<string, unknown>): DeepPartial<T> {
     const { driver } = this.repository.manager.connection;
 
@@ -211,13 +209,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  // save / saveMany / softRemove / recover / remove are intentionally absent.
-  // TypeORM's entity-based methods use only the primary key in the WHERE
-  // clause, so stamping workspaceId on the entity object does not add an
-  // AND workspace_id = ? guard to the SQL. A leaked entity id could act on a
-  // row from a different workspace and silently reassign its workspaceId.
-  // The criteria-based methods either cannot target an existing row or
-  // always carry workspaceId in the WHERE clause.
+  // save/softRemove/recover/remove are intentionally absent: entity-based methods filter on the primary key only,
+  // so a leaked id could act on, and reassign, another workspace's row
 
   insert(
     workspaceId: string,
@@ -329,8 +322,7 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  // TypeORM drops `undefined` values from WHERE, which would emit an
-  // unscoped query.
+  // TypeORM drops undefined from WHERE, which would emit an unscoped query
   private assertWorkspaceId(workspaceId: string): void {
     if (
       workspaceId === undefined ||
@@ -380,9 +372,7 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return { workspaceId, ...clause } as FindOptionsWhere<T>;
   }
 
-  // ON CONFLICT matches on the conflict target alone. When that target does
-  // not contain workspaceId, a row from another workspace can satisfy it and
-  // the DO UPDATE would overwrite that row and reassign its workspaceId.
+  // ON CONFLICT matches on the target alone, so without workspaceId DO UPDATE could overwrite another workspace's row
   private async assertConflictTargetsBelongToWorkspace(
     workspaceId: string,
     entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],

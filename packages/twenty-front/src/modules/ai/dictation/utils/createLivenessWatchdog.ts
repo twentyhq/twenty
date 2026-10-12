@@ -1,7 +1,5 @@
 import { type LivenessWatchdog } from '@/ai/dictation/types/LivenessWatchdog';
-// iOS can accept start() and then emit nothing at all, so liveness is measured
-// rather than assumed. Kept free of browser APIs beyond timers so the rule that
-// decides whether dictation is working can be tested without a microphone.
+// iOS can accept start() and then emit nothing, so liveness is measured.
 export const createLivenessWatchdog = ({
   timeoutInMs,
   onSilent,
@@ -30,8 +28,7 @@ export const createLivenessWatchdog = ({
         }
       }, timeoutInMs);
     },
-    // Any sign of life counts, not just a transcript: audio opening proves the
-    // engine is running, and a slow speaker should not read as a dead engine.
+    // Any sign of life counts, so a slow speaker isn't read as a dead engine.
     noteActivity: () => {
       hasSeenActivity = true;
       clear();

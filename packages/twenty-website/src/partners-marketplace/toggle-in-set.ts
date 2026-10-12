@@ -1,4 +1,3 @@
-// Immutable Set toggle: returns a new Set with the value added or removed.
 export const toggleInSet = <Value>(
   set: ReadonlySet<Value>,
   value: Value,

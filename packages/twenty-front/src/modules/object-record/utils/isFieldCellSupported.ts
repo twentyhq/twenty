@@ -28,8 +28,7 @@ export const isFieldCellSupported = (
       (item) => item.id === relationObjectMetadataItemId,
     );
 
-    // A junction object is a system object on purpose, so the relation holding its records
-    // is still cell-supported even though relations to system objects are not.
+    // Junction objects are system objects by design, so their relation stays cell-supported.
     const junctionConfig = resolveJunctionConfig({
       settings: fieldMetadataItem.settings,
       relationObjectMetadataId: relationObjectMetadataItemId ?? '',

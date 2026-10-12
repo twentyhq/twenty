@@ -26,9 +26,7 @@ export default meta;
 
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
-// Runs the real sandbox: iframe, worker, and bridge in an actual browser, so
-// it fails if the polyfill never reaches the worker realm — which the unit
-// tests of the install function cannot detect.
+// Runs the real sandbox to catch a polyfill that never reaches the worker realm, which unit tests can't.
 export const NavigatorClipboard: Story = runFrontComponentStory({
   frontComponentBundleName: 'host-api-navigator-clipboard',
   play: async ({ canvasElement, args }) => {

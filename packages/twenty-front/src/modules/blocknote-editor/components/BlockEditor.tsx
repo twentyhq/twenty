@@ -11,10 +11,8 @@ import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
 import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
 import { CustomSideMenu } from '@/blocknote-editor/components/CustomSideMenu';
-import {
-  CustomSlashMenu,
-  type SuggestionItem,
-} from '@/blocknote-editor/components/CustomSlashMenu';
+import { CustomSlashMenu } from '@/blocknote-editor/components/CustomSlashMenu';
+import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
 import { IconX } from 'twenty-ui/icon';
 import { useThemeColorScheme, themeCssVariables } from 'twenty-ui/theme';

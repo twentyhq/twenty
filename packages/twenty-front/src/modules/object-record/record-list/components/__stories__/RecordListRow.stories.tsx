@@ -1,10 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordList } from '@/object-record/record-list/components/RecordList';
-import { RecordListContextProvider } from '@/object-record/record-list/contexts/RecordListContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
@@ -15,27 +12,7 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 
-const RecordListRowStory = () => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: 'company',
-  });
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
-
-  return (
-    <RecordListContextProvider
-      value={{
-        viewBarInstanceId: 'view-bar',
-        objectNameSingular: 'company',
-        objectMetadataItem,
-        objectPermissions,
-      }}
-    >
-      <RecordList />
-    </RecordListContextProvider>
-  );
-};
+const RecordListRowStory = () => <RecordList />;
 
 const meta: Meta<typeof RecordListRowStory> = {
   title: 'Modules/ObjectRecord/RecordList/RecordListRow',
@@ -84,5 +61,29 @@ export const ResponsiveFields: Story = {
     await userEvent.hover(within(firstOverflowChip).getByText(/^\+\d+$/));
 
     await body.findByRole('tooltip', {}, { timeout: 3000 });
+  },
+};
+
+export const SelectsRecordsWithModifierClicks: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      mockedCompanyRecords[0].name,
+      {},
+      { timeout: 3000 },
+    );
+
+    const rows = canvas.getAllByRole('button', { name: 'Open record' });
+
+    fireEvent.click(rows[0], { metaKey: true });
+    fireEvent.click(rows[2], { shiftKey: true });
+
+    await waitFor(() =>
+      expect(rows[2]).toHaveAttribute('data-selected', 'true'),
+    );
+    await expect(rows[0]).toHaveAttribute('data-selected', 'true');
+    await expect(rows[1]).toHaveAttribute('data-selected', 'true');
+    await expect(rows[3]).toHaveAttribute('data-selected', 'false');
   },
 };

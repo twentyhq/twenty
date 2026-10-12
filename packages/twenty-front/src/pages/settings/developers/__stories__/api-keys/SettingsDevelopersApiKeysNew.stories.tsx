@@ -9,9 +9,6 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-// TEMP_DISABLED_TEST: Removed unused import due to commented test
-// import { sleep } from '~/utils/sleep';
-
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/ApiKeys/SettingsDevelopersApiKeysNew',
   component: SettingsDevelopersApiKeysNew,

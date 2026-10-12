@@ -7,6 +7,9 @@
  *                              |___/
  */
 
+export { Breadcrumb } from './Breadcrumb/Breadcrumb';
+export type { BreadcrumbItem } from './Breadcrumb/types/BreadcrumbItem';
+export type { BreadcrumbProps } from './Breadcrumb/types/BreadcrumbProps';
 export { ListItem } from './ListItem/ListItem';
 export type { ListItemColor } from './ListItem/types/ListItemColor';
 export type { ListItemDescriptionPlacement } from './ListItem/types/ListItemDescriptionPlacement';

@@ -2,7 +2,7 @@ import { createContext, type MouseEvent } from 'react';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type TriggerEventType } from '@/ui/navigation/utils/types/TriggerEventType';
+import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
 
 export type RecordUpdateHookParams = {
   variables: {

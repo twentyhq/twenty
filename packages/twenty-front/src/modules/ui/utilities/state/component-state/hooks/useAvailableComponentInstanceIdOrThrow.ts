@@ -2,12 +2,8 @@ import { useComponentInstanceStateContext } from '@/ui/utilities/state/component
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { isNonEmptyString } from '@sniptt/guards';
 
-// Returns the id exactly as provided. An id is made unique where it is created
-// (from the record, page, view or step it belongs to), never rewritten here:
-// this hook cannot tell state meant to be shared across surfaces (a side panel
-// reading the main diagram's flow) from state that must be isolated, and ids
-// also escape into DOM anchors that are looked up by the exact string a
-// provider rendered.
+// Callers make the id unique where they create it; it is never rewritten here, since some state is deliberately
+// shared across surfaces and ids are looked up verbatim as DOM anchors
 export const useAvailableComponentInstanceIdOrThrow = <
   T extends { instanceId: string },
 >(

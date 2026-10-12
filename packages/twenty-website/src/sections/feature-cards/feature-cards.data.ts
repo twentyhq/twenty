@@ -1,9 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-// Which animated product scene mounts in the card frame when the mockup
-// wave (with AppPreview) lands; until then the gradient backdrop — the
-// scene's own bottom layer — fills the frame.
 export type FeatureIllustrationId =
   | 'familiar-interface'
   | 'live-data'

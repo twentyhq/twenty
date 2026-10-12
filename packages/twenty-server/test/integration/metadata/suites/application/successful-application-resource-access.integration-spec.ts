@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import { findApplicationRegistrationVariables } from 'test/integration/metadata/suites/application-registration-variable/utils/application-registration-variable-api.util';
 import { findApplicationRegistrationByUniversalIdentifier } from 'test/integration/metadata/suites/application-registration/utils/find-application-registration-by-universal-identifier.util';
 import { findApplicationRegistrationStats } from 'test/integration/metadata/suites/application-registration/utils/find-application-registration-stats.util';
@@ -7,13 +6,9 @@ import { findManyApplicationRegistrations } from 'test/integration/metadata/suit
 import { findOneApplicationRegistration } from 'test/integration/metadata/suites/application-registration/utils/find-one-application-registration.util';
 import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 import { findOneAgent } from 'test/integration/metadata/suites/agent/utils/find-one-agent.util';
-import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { exportApplication } from 'test/integration/metadata/suites/application/utils/export-application.util';
-import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
 import { runApplicationHealthCheck } from 'test/integration/metadata/suites/application/utils/run-application-health-check.util';
-import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { updateApplication } from 'test/integration/metadata/suites/application/utils/update-application.util';
 import {
   type ApplicationWithResources,
   setupApplicationWithResources,
@@ -289,55 +284,6 @@ const endpointTestCases: EachTestingContext<EndpointTestContext>[] = [
         });
 
         expect(data.skill.id).toBe(application.skillId);
-      },
-    },
-  },
-  {
-    title: 'syncApplication',
-    context: {
-      expectToReach: async ({ application, token }) => {
-        const { data } = await syncApplication({
-          manifest: buildBaseManifest({
-            appId: application.universalIdentifier,
-            roleId: crypto.randomUUID(),
-          }),
-          dryRun: true,
-          inferDeletionFromMissingEntities: false,
-          token,
-          expectToFail: false,
-        });
-
-        expect(data.syncApplication.applicationUniversalIdentifier).toBe(
-          application.universalIdentifier,
-        );
-      },
-    },
-  },
-  {
-    title: 'installApplication',
-    context: {
-      expectToReach: async ({ application, token }) => {
-        const { data } = await installApplication({
-          input: { universalIdentifier: application.universalIdentifier },
-          token,
-          expectToFail: false,
-        });
-
-        expect(data.installApplication.id).toBe(application.id);
-      },
-    },
-  },
-  {
-    title: 'updateApplication',
-    context: {
-      expectToReach: async ({ application, token }) => {
-        const { data } = await updateApplication({
-          input: { id: application.id, autoUpgrade: false },
-          token,
-          expectToFail: false,
-        });
-
-        expect(data.updateApplication.id).toBe(application.id);
       },
     },
   },

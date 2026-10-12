@@ -20,10 +20,7 @@ describe('subprocessors.json integrity', () => {
 
       expect(typeof subprocessor.processesPii).toBe('boolean');
 
-      // A sub-processor that handles PII must declare where it does so (Annex C
-      // relies on it). Non-PII providers (e.g. optional AI backends) may list
-      // none, and the trust-center sync action owns this data, so the location
-      // requirement is enforced only for PII processors.
+      // Only PII processors must declare locations (Annex C relies on them).
       if (subprocessor.processesPii) {
         expect(subprocessor.processingLocations.length).toBeGreaterThan(0);
       }

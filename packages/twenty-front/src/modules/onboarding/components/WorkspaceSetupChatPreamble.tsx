@@ -94,7 +94,7 @@ export const WorkspaceSetupChatPreamble = () => {
         <WelcomePersonChip avatarSize="xs" sizeVariant="compact" />
       </StyledSingleLineHandoffRun>{' '}
       <StyledContinuation className={revealClassName}>
-        {t`It natively comes with 7 standard objects.`}
+        {t`Let's set it up around the way you work.`}
       </StyledContinuation>
     </StyledPreamble>
   );

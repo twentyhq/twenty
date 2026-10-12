@@ -55,9 +55,7 @@ describe('ai-providers.json integrity', () => {
     });
   });
 
-  // An evaluation model answers questions against a state it is handed whole,
-  // so it has no window to size and no output to cap; what it does have is the
-  // set of question types it can answer.
+  // evaluation models get the whole state at once, so there is no window to size
   it('should declare the question types of every evaluation model, and no window', () => {
     Object.values(PROVIDERS).forEach((config) => {
       (config.models ?? [])
@@ -111,8 +109,7 @@ describe('ai-providers.json integrity', () => {
     });
   });
 
-  // Where a self-hosted instance processes and retains data depends on its own
-  // provider accounts, so the shipped catalog states neither on its behalf.
+  // residency and retention depend on each self-hosted instance's own provider accounts
   it('should not assert data residency or zero data retention', () => {
     Object.values(PROVIDERS).forEach((config) => {
       expect(config.dataResidency).toBeUndefined();

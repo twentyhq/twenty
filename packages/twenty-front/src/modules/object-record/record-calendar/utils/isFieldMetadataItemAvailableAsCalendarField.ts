@@ -4,9 +4,6 @@ import {
   isFieldMetadataSupportedInGroupBy,
 } from 'twenty-shared/utils';
 
-// Single availability rule for calendar date fields, shared by the
-// record index calendar picker and dashboard widget calendar settings:
-// active date fields, excluding system ones like deletedAt.
 export const isFieldMetadataItemAvailableAsCalendarField = (
   fieldMetadataItem: FieldMetadataItem,
 ) =>

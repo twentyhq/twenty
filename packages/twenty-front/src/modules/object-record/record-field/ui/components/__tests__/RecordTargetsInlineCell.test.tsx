@@ -9,8 +9,7 @@ import { RecordTargetsInlineCell } from '@/object-record/record-field/ui/compone
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-// Opening the picker performs a record search over the network, which is out of
-// scope here and unreachable through MockedProvider.
+// Opening the picker searches records over the network, unreachable through MockedProvider.
 jest.mock(
   '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch',
   () => ({

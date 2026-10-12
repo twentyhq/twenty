@@ -2,8 +2,13 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import chunk from 'lodash.chunk';
 import { Repository } from 'typeorm';
-import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  ASK_QUESTION_TOOL_NAME,
+  ASK_QUESTIONS_TOOL_NAME,
+} from 'twenty-shared/ai';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { ADMIN_CHAT_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/admin-panel/constants/admin-chat-threads-max-page-size.constant';
@@ -12,6 +17,7 @@ import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/
 import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
 import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
 import { WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-thread-id-namespace.constant';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 type GlobalChatThreadsArgs = {
   scope: AdminChatThreadScope;
@@ -42,6 +48,8 @@ type GlobalChatThreadRawRow = {
   updatedAt: Date;
 };
 
+const ADMIN_CHAT_REPORT_WORKSPACE_BATCH_SIZE = 25;
+
 const COLUMN_BY_SORT_FIELD: Record<
   AdminChatThreadSortField,
   'messageCount' | 'userReplyCount' | 'createdAt' | 'updatedAt'
@@ -56,7 +64,10 @@ const COLUMN_BY_SORT_FIELD: Record<
 export class AdminPanelGlobalChatThreadsService {
   constructor(
     @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceRepository: Pick<
+      Repository<WorkspaceEntity>,
+      'find'
+    >,
     @Inject(AgentHistoryWorkspaceStorageService)
     private readonly historyStorage: Pick<
       AgentHistoryWorkspaceStorageService,
@@ -93,31 +104,34 @@ export class AdminPanelGlobalChatThreadsService {
       );
     };
 
-    await this.historyStorage.runReadOnlyReport(
-      workspaces.map((workspace) => workspace.id),
-      async ({ manager, partitions }) => {
-        // Bound each statement's size and keep only the global page candidates.
-        for (
-          let offsetIndex = 0;
-          offsetIndex < partitions.length;
-          offsetIndex += 25
-        ) {
+    // Release earlier workspace locks before scanning the next batch so upgrades can proceed.
+    for (const workspaceBatch of chunk(
+      workspaces,
+      ADMIN_CHAT_REPORT_WORKSPACE_BATCH_SIZE,
+    )) {
+      await this.historyStorage.runReadOnlyReport(
+        workspaceBatch.map((workspace) => workspace.id),
+        async ({ manager, partitions }) => {
+          if (!isNonEmptyArray(partitions)) {
+            return;
+          }
+
           const parameters: unknown[] = [];
-          const queries = partitions
-            .slice(offsetIndex, offsetIndex + 25)
-            .map(({ workspaceIds, table }, partitionIndex) => {
+          const queries = partitions.map(
+            ({ workspaceIds, table }, partitionIndex) => {
               const search = args.searchTerm?.trim().replace(/[\\%_]/g, '\\$&');
               const query = `
           WITH candidates AS (
             SELECT thread.id, thread.title, workspace.id AS "workspaceId", workspace."displayName" AS "workspaceDisplayName",
               membership.id AS "userWorkspaceId", owner.email AS "userEmail", owner."firstName" AS "userFirstName", owner."lastName" AS "userLastName",
-              thread."deletedAt", thread."createdAt", thread."updatedAt", thread."lastStreamError" IS NOT NULL AS "hasError",
-              (EXISTS (SELECT 1 FROM ${table('agentMessage')} hidden WHERE hidden."threadId" = thread.id AND hidden."isHidden" = true)
+              thread."deletedAt", thread."createdAt", thread."updatedAt",
+              COALESCE((SELECT turn.status = '${AgentTurnStatus.FAILED}' FROM ${table('agentTurn')} turn WHERE turn."threadId" = thread.id ORDER BY turn."createdAt" DESC, turn.id DESC LIMIT 1), false) AS "hasError",
+              (EXISTS (SELECT 1 FROM ${table('agentMessage')} context WHERE context."threadId" = thread.id AND context.role = 'system')
                 OR (membership.id IS NOT NULL AND thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || membership.id::text))) AS "isOnboardingThread",
-              (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false) AS "messageCount",
-              ((SELECT COUNT(*) FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role = 'user')
+              (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message.role <> 'system') AS "messageCount",
+              ((SELECT COUNT(*) FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message.role = 'user')
                 + (SELECT COUNT(*) FROM ${table('agentMessagePart')} part JOIN ${table('agentMessage')} message ON message.id = part."messageId"
-                   WHERE message."threadId" = thread.id AND message."isHidden" = false AND part."toolName" = $3 AND part."toolOutput"->'result'->>'status' = 'answered'))::int AS "userReplyCount"
+                   WHERE message."threadId" = thread.id AND part."toolName" = ANY($3::text[]) AND part."toolOutput"->'result'->>'status' = 'answered'))::int AS "userReplyCount"
             FROM ${table('agentChatThread')} thread
             JOIN core.workspace workspace ON workspace.id = ANY($1::uuid[]) AND workspace."allowImpersonation" = true AND workspace."deletedAt" IS NULL
             LEFT JOIN ${escapeIdentifier(getWorkspaceSchemaName(workspaceIds[0]))}."workspaceMember" member ON member.id = thread."workspaceMemberId"
@@ -133,7 +147,7 @@ export class AdminPanelGlobalChatThreadsService {
               parameters.push(
                 workspaceIds,
                 WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
-                ASK_QUESTIONS_TOOL_NAME,
+                [ASK_QUESTION_TOOL_NAME, ASK_QUESTIONS_TOOL_NAME],
                 search ? `%${search}%` : null,
                 args.scope === AdminChatThreadScope.ONBOARDING,
                 args.hasErrorOnly,
@@ -142,7 +156,8 @@ export class AdminPanelGlobalChatThreadsService {
                 partitionIndex,
               );
               return `(${query.replace(/\$(\d+)/g, (_, position: string) => `$${Number(position) + parameterOffset}`)})`;
-            });
+            },
+          );
           const rows = await manager.query<
             (GlobalChatThreadRawRow & {
               totalCount: string;
@@ -157,9 +172,9 @@ export class AdminPanelGlobalChatThreadsService {
           candidates = [...candidates, ...rows]
             .sort(compare)
             .slice(0, offset + limit);
-        }
-      },
-    );
+        },
+      );
+    }
     const threads = candidates.slice(offset, offset + limit);
     return {
       threads,

@@ -54,6 +54,7 @@ type OpenPurposeBuiltSidePanelPageParams =
       page: SidePanelPages.ViewFrontComponent;
       frontComponentId: string;
       recordId?: string;
+      selectedRecordIds?: string[];
       objectNameSingular?: string;
       pageTitle: string;
       pageIcon?: string;
@@ -129,8 +130,7 @@ export type UploadedFrontComponentFile = {
 };
 
 export type UploadFileParams = {
-  // Uploads target a FILES field so the file can be attached to a record;
-  // anything else would strand it as a temporary orphan.
+  // Must be a FILES field so the file attaches to a record; anything else would strand it as a temporary orphan
   fieldMetadataId: string;
   fileName?: string;
 };

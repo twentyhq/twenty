@@ -25,6 +25,7 @@ export interface WorkspaceInternalContext {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   billingEntitlements: BillingEntitlements;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
+  roleIdsWithAllRecordsAccess: string[];
   apiKeyRoleMap: Record<string, string>;
   eventEmitterService: Pick<WorkspaceEventEmitter, 'emitDatabaseBatchEvent'>;
   recordStock: Pick<

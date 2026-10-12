@@ -16,12 +16,12 @@ import { RecordIndexViewFieldsSSESyncEffect } from '@/object-record/record-index
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
+import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndexDragSelectBoundaryClass';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { styled } from '@linaria/react';
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const StyledIndexContainer = styled.div`
@@ -31,7 +31,7 @@ const StyledIndexContainer = styled.div`
   width: 100%;
 `;
 
-export const RecordIndexContainerGater = () => {
+export const RecordIndexContainerGater = memo(() => {
   const setLastShowPageRecordId = useSetAtomComponentState(
     lastShowPageRecordIdState,
   );
@@ -121,4 +121,4 @@ export const RecordIndexContainerGater = () => {
       </ViewComponentInstanceContext.Provider>
     </RecordIndexContextProvider>
   );
-};
+});

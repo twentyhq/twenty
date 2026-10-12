@@ -10,6 +10,7 @@ export type SectionHeaderProps = Omit<
   Pick<HeadingProps, 'level' | 'size' | 'color'> & {
     title: ReactNode;
     description?: ReactNode;
-    adornment?: ReactNode;
-    descriptionLineClamp?: number;
+    actions?: ReactNode;
+    descriptionLineClamp?: number | false;
+    isDescriptionFocusable?: boolean;
   };

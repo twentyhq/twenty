@@ -13,9 +13,8 @@ export type CaseStudyQuote = {
   role: MessageDescriptor;
 };
 
-// The card-facing shape of a customer story. The full /customers/<slug> story
-// (sections, table of contents) extends this in the detail-page phase; the
-// catalog grid needs only these fields.
+// The card-facing shape of a customer story; the /customers/<slug> detail page
+// pairs it with the CaseStudyStory keyed by the same slug.
 export type CaseStudyCatalogEntry = {
   slug: string;
   industry: MessageDescriptor;

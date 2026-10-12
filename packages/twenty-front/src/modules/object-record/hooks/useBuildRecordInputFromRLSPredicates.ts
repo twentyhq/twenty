@@ -18,7 +18,10 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const mergeCompositeValues = (existingValue: unknown, incomingValue: unknown) =>
+const mergeCompositeValues = (
+  existingValue: unknown,
+  incomingValue: unknown,
+) =>
   isPlainObject(existingValue) && isPlainObject(incomingValue)
     ? { ...existingValue, ...incomingValue }
     : incomingValue;
@@ -179,8 +182,6 @@ export const useBuildRecordInputFromRLSPredicates = ({
       }
     });
 
-    // Only process filters without rlsDynamicValue in buildRecordInputFromFilter
-    // Filters with rlsDynamicValue are already handled above
     const staticFilters = rlsPredicatesAsRecordFilters.filter(
       (filter) => !isDefined(filter.rlsDynamicValue),
     );

@@ -9,6 +9,7 @@ export const CUSTOM_WORKSPACE_APPLICATION_MOCK = {
   settingsMenuItems: [],
   availablePackages: {},
   canBeUninstalled: false,
+  isUninstallBlockedByOtherWorkspaceInstallations: false,
   autoUpgrade: false,
   description: 'workpace custom application',
   name: 'custom',

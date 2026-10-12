@@ -110,8 +110,7 @@ describe('getNextNavigationBarScrollState', () => {
     ).toEqual(INITIAL_NAVIGATION_BAR_SCROLL_STATE);
   });
 
-  // The accumulator is what a route change or a side panel transition resets,
-  // so a small scroll on the next view must not inherit the previous direction.
+  // Route changes and side panel transitions reset the accumulator.
   it('should require the full threshold again from the initial state', () => {
     expect(
       getNextNavigationBarScrollState({

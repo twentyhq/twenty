@@ -8,7 +8,7 @@ import { type LongContextCost } from 'src/engine/metadata-modules/ai/ai-models/t
 import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
 export type AiModelConfig = {
-  // Composite model id (`provider/modelName`) used in the registry and GraphQL; same shape as SDK routing when applicable.
+  // `provider/modelName`
   modelId: string;
   sdkPackage: AiSdkPackage;
   label: string;

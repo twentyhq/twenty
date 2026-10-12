@@ -36,7 +36,7 @@
     "zod": "^4.1.0"
   },
   "devDependencies": {
-    "@electron/packager": "^19.0.0",
+    "@electron/packager": "^20.3.0",
     "@lingui/cli": "5.9.5",
     "@lingui/conf": "5.9.5",
     "@testing-library/dom": "^10.4.1",

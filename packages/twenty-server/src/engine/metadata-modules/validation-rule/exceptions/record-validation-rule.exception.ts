@@ -12,17 +12,17 @@ export enum RecordValidationRuleExceptionCode {
 
 const getRecordValidationRuleUserFriendlyMessage = ({
   code,
-  violations,
+  message,
 }: {
   code: RecordValidationRuleExceptionCode;
-  violations: RecordValidationRuleViolation[];
+  message: string;
 }): MessageDescriptor => {
   switch (code) {
     case RecordValidationRuleExceptionCode.VALIDATION_RULE_VIOLATION: {
       return {
         id: 'validation-rule-violation',
         message: '{ruleMessage}',
-        values: { ruleMessage: violations[0]?.message ?? '' },
+        values: { ruleMessage: message },
       };
     }
     case RecordValidationRuleExceptionCode.VALIDATION_RULE_EVALUATION_FAILED:
@@ -43,7 +43,7 @@ export class RecordValidationRuleException extends CustomException<RecordValidat
     super(message, code, {
       userFriendlyMessage: getRecordValidationRuleUserFriendlyMessage({
         code,
-        violations,
+        message,
       }),
     });
 

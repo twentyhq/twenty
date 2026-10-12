@@ -6,10 +6,7 @@ function escapesIn(text: string): string[] {
   return [...text.matchAll(ESCAPED_UNICODE_REGEX)].map(([escape]) => escape);
 }
 
-// A source that writes the escape itself - a code sample, a string about
-// escaping - means the translation is right to carry it through. Only an escape
-// the translator introduced is a decoding failure, and without the source there
-// is no way to tell the two apart, so the rule stands down as its peers do.
+// Only escapes the source lacks are decoding failures; without the source the rule stands down.
 function hasEscapedUnicode(text: string, sourceText?: string): boolean {
   if (sourceText === undefined) return false;
 

@@ -49,10 +49,10 @@ export const SpreadSheetImportModalWrapper = ({
       onClose={onClose}
       closeOnDismiss={false}
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={t`Import data`}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="xl"
           style={{ padding: 0, height: 'var(--t-modal-size-xl-height)' }}
         >

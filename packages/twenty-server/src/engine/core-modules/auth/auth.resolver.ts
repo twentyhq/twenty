@@ -52,6 +52,7 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { assertLoginTokenIsNotForImpersonation } from 'src/engine/core-modules/auth/utils/assert-login-token-is-not-for-impersonation.util';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
@@ -81,7 +82,10 @@ import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/imperson
 import { IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-log-message-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
+import { TwoFactorAuthenticationRecoveryCodeRedemptionDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-redemption.dto';
+import { TwoFactorAuthenticationRecoveryCodeVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-verification.input';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
+import { TwoFactorAuthenticationRecoveryService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
@@ -99,11 +103,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -149,6 +150,7 @@ export class AuthResolver {
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly twoFactorAuthenticationRecoveryService: TwoFactorAuthenticationRecoveryService,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -238,10 +240,11 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.authService.validateLoginWithPassword(
-      getLoginTokenFromCredentialsInput,
-      workspace,
-    );
+    const user =
+      await this.authService.validateLoginWithPasswordAndJoinWorkspaceIfInvited(
+        getLoginTokenFromCredentialsInput,
+        workspace,
+      );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -419,13 +422,13 @@ export class AuthResolver {
     @Args('origin') origin: string,
     @Context() context: { req: Request },
   ): Promise<AuthTokens> {
-    const {
-      sub: email,
-      authProvider,
-      workspaceId,
-    } = await this.loginTokenService.verifyLoginToken(
+    const loginTokenPayload = await this.loginTokenService.verifyLoginToken(
       twoFactorAuthenticationVerificationInput.loginToken,
     );
+
+    assertLoginTokenIsNotForImpersonation(loginTokenPayload);
+
+    const { sub: email, authProvider, workspaceId } = loginTokenPayload;
 
     const workspace = await this.validateWorkspaceAccess(origin, workspaceId);
 
@@ -437,6 +440,8 @@ export class AuthResolver {
       workspace.id,
       TwoFactorAuthenticationStrategy.TOTP,
     );
+
+    await this.loginTokenService.consumeLoginTokenOrThrow(loginTokenPayload);
 
     const authTokens = await this.authService.verify(
       email,
@@ -451,6 +456,56 @@ export class AuthResolver {
     });
 
     return authTokens;
+  }
+
+  @Mutation(() => TwoFactorAuthenticationRecoveryCodeRedemptionDTO)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
+  @AllowSuspendedWorkspace()
+  async getAuthTokensFromTwoFactorAuthenticationRecoveryCode(
+    @Args()
+    recoveryCodeVerificationInput: TwoFactorAuthenticationRecoveryCodeVerificationInput,
+    @Args('origin') origin: string,
+    @Context() context: { req: Request },
+  ): Promise<TwoFactorAuthenticationRecoveryCodeRedemptionDTO> {
+    const loginTokenPayload = await this.loginTokenService.verifyLoginToken(
+      recoveryCodeVerificationInput.loginToken,
+    );
+
+    assertLoginTokenIsNotForImpersonation(loginTokenPayload);
+
+    const { sub: email, authProvider, workspaceId } = loginTokenPayload;
+
+    const workspace = await this.validateWorkspaceAccess(origin, workspaceId);
+
+    const user = await this.userService.findUserByEmailOrThrow(email);
+
+    const { provisioningUri } =
+      await this.twoFactorAuthenticationRecoveryService.redeemRecoveryCode({
+        userId: user.id,
+        userEmail: email,
+        workspace,
+        recoveryCode: recoveryCodeVerificationInput.recoveryCode,
+      });
+
+    if (isDefined(provisioningUri)) {
+      return { tokens: null, provisioningUri };
+    }
+
+    await this.loginTokenService.consumeLoginTokenOrThrow(loginTokenPayload);
+
+    const authTokens = await this.authService.verify(
+      email,
+      workspace.id,
+      authProvider,
+    );
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: authTokens.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return { tokens: authTokens.tokens, provisioningUri: null };
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
@@ -592,7 +647,15 @@ export class AuthResolver {
   }
 
   @Query(() => SubdomainAvailabilityDTO)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
+    }),
+    NoPermissionGuard,
+  )
   async checkWorkspaceSubdomainAvailability(
     @Args('subdomain') subdomain: string,
   ): Promise<SubdomainAvailabilityDTO> {
@@ -600,7 +663,15 @@ export class AuthResolver {
   }
 
   @Query(() => WorkspaceCreationDefaultsDTO)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
+    }),
+    NoPermissionGuard,
+  )
   async getWorkspaceCreationDefaults(
     @AuthUser() currentUser: AuthContextUser,
   ): Promise<WorkspaceCreationDefaultsDTO> {
@@ -612,7 +683,15 @@ export class AuthResolver {
   }
 
   @Mutation(() => SignUpDTO)
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async signUpInNewWorkspace(
     @AuthUser() currentUser: AuthContextUser,
@@ -653,7 +732,15 @@ export class AuthResolver {
     deprecationReason:
       'Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload, which send the logo straight to file storage.',
   })
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
+    }),
+    NoPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async uploadNewWorkspaceLogo(
     @AuthUser() currentUser: AuthContextUser,
@@ -682,7 +769,15 @@ export class AuthResolver {
   }
 
   @Mutation(() => FileUploadTargetDTO)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
+    }),
+    NoPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async createNewWorkspaceLogoUpload(
     @AuthUser() currentUser: AuthContextUser,
@@ -709,7 +804,15 @@ export class AuthResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
+    }),
+    NoPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async completeNewWorkspaceLogoUpload(
     @AuthUser() currentUser: AuthContextUser,
@@ -732,7 +835,15 @@ export class AuthResolver {
   }
 
   @Mutation(() => TransientTokenDTO)
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
   async generateTransientToken(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -792,6 +903,8 @@ export class AuthResolver {
         user.email,
       );
 
+      await this.loginTokenService.consumeLoginTokenOrThrow(tokenPayload);
+
       authTokens =
         await this.authService.generateImpersonationAccessTokenAndRefreshToken({
           workspaceId,
@@ -802,6 +915,8 @@ export class AuthResolver {
         });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
+
+      await this.loginTokenService.consumeLoginTokenOrThrow(tokenPayload);
 
       authTokens = await this.authService.verify(
         user.email,
@@ -1016,7 +1131,15 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthorizeAppDTO)
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: AuthContextUser,
@@ -1067,8 +1190,7 @@ export class AuthResolver {
         refreshToken,
       });
     } finally {
-      // This mutation is public and SameSite=Lax keeps the cookie off cross-site
-      // POSTs, so clearing unconditionally would let any site sign a visitor out.
+      // Public, and SameSite=Lax keeps the cookie off cross-site POSTs: clearing unconditionally lets any site sign visitors out
       if (
         isDefined(context.req.res) &&
         this.userSessionCookieService.hasSessionCookie(context.req)
@@ -1081,8 +1203,17 @@ export class AuthResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
-    RequireAccessTokenGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => ApiKeyToken)
@@ -1098,8 +1229,17 @@ export class AuthResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
-    RequireAccessTokenGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => AuthToken)

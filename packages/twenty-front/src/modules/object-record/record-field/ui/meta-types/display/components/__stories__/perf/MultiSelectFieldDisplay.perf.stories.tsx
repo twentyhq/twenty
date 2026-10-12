@@ -43,7 +43,7 @@ type Story = StoryObj<typeof MultiSelectFieldDisplay>;
 
 export const Default: Story = {};
 
-export const ExpandableList: Story = {
+export const OverflowingList: Story = {
   decorators: [
     (Story) => {
       return (

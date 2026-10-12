@@ -380,7 +380,6 @@ describe('Manifest update - fields', () => {
   }, 60000);
 
   it('should backfill existing null rows when a field becomes non-nullable on second sync', async () => {
-    // First sync creates a nullable field with no default.
     await syncApplication({
       manifest: buildManifest({
         fields: [buildEstimateFieldManifest({ isNullable: true })],
@@ -388,7 +387,6 @@ describe('Manifest update - fields', () => {
       expectToFail: false,
     });
 
-    // Persist a record whose estimate is NULL on the underlying column.
     const recordId = uuidv4();
     const createdRecord = await createTicketRecord({
       id: recordId,

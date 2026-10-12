@@ -1,3 +1,4 @@
+import { seedAgentChatThreadInboxState } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agent-chat-thread-inbox-state.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -48,9 +49,9 @@ import { seedUnsubscribeTopics } from 'src/engine/workspace-manager/dev-seeder/c
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
-import { DevSeederAgentChatInputAskWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-input-ask.workspace-service';
+import { DevSeederAgentChatPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-pending-input.workspace-service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
-import { DevSeederWorkflowInputAskWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-input-ask.workspace-service';
+import { DevSeederWorkflowPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-pending-input.workspace-service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { PrefillFrontComponentService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-front-component.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
@@ -71,8 +72,8 @@ export class DevSeederWorkspaceService {
     private readonly devSeederMetadataService: DevSeederMetadataService,
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly devSeederDataService: DevSeederDataService,
-    private readonly devSeederWorkflowInputAskService: DevSeederWorkflowInputAskWorkspaceService,
-    private readonly devSeederAgentChatInputAskService: DevSeederAgentChatInputAskWorkspaceService,
+    private readonly devSeederWorkflowPendingInputService: DevSeederWorkflowPendingInputWorkspaceService,
+    private readonly devSeederAgentChatPendingInputService: DevSeederAgentChatPendingInputWorkspaceService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -137,8 +138,6 @@ export class DevSeederWorkspaceService {
         workspaceId,
       },
     );
-
-    await this.agentHistoryStorageService.initializeWorkspace(workspaceId);
 
     await this.sdkClientGenerationService.generateSdkClientForApplication({
       workspaceId,
@@ -229,7 +228,7 @@ export class DevSeederWorkspaceService {
     });
 
     // Before the chat seed, whose owner grants then cover these threads too.
-    await this.devSeederAgentChatInputAskService.seed({ workspaceId });
+    await this.devSeederAgentChatPendingInputService.seed({ workspaceId });
 
     await this.seedAgentChat({
       workspaceId,
@@ -241,7 +240,7 @@ export class DevSeederWorkspaceService {
       },
     });
 
-    await this.devSeederWorkflowInputAskService.seed({
+    await this.devSeederWorkflowPendingInputService.seed({
       workspaceId,
       applicationId: workspaceCustomFlatApplication.id,
     });
@@ -269,6 +268,10 @@ export class DevSeederWorkspaceService {
           manager,
           workspaceId,
           threadTableExpression: table('agentChatThread'),
+        });
+        await seedAgentChatThreadInboxState({
+          context: { manager, table },
+          workspaceId,
         });
       },
     );

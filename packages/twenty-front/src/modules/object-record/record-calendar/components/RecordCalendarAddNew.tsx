@@ -1,6 +1,6 @@
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { isRecordCalendarReadOnlyComponentState } from '@/object-record/record-calendar/states/isRecordCalendarReadOnlyComponentState';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
@@ -62,14 +62,13 @@ export const RecordCalendarAddNew = ({
 
   const isCalendarFieldReadOnly = calendarFieldMetadataItem
     ? calendarFieldMetadataItem.isUIEditable === false ||
-      isFieldMetadataReadOnlyByPermissions({
+      !getFieldPermissions({
         objectPermissions,
         fieldMetadataId: calendarFieldMetadataItem.id,
-      })
+      }).canUpdateField
     : false;
 
-  // Creating in a nested relation or junction widget requires picking the
-  // related record, which only the table layout offers today.
+  // Creating through a nested relation or junction needs a record picker only the table layout offers.
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   if (

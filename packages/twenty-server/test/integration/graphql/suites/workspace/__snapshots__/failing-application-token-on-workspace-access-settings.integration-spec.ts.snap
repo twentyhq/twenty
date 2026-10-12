@@ -1,0 +1,281 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Workspace access settings with an application token should fail should refuse an invitation with the admin role, creating no invitation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail should refuse an invitation without a role, creating no invitation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update allowImpersonation, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update customDomain, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update defaultRoleId, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update editableProfileFields, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update eventLogRetentionDays, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update inviteHash, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update isGoogleAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update isMicrosoftAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update isPasswordAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update isPublicInviteLinkEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update isTwoFactorAuthenticationEnforced, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update subdomain, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update workspaceDiscoverability, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update allowImpersonation, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update customDomain, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update defaultRoleId, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update editableProfileFields, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update eventLogRetentionDays, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update inviteHash, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update isGoogleAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update isMicrosoftAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update isPasswordAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update isPublicInviteLinkEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update isTwoFactorAuthenticationEnforced, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update subdomain, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update workspaceDiscoverability, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;

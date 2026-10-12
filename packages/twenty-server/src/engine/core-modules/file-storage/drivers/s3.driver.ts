@@ -209,8 +209,7 @@ export class S3Driver implements StorageDriver {
     stream: Readable;
     mimeType: string | undefined;
   }): Promise<void> {
-    // Upload streams the body with bounded memory (multipart under the hood),
-    // unlike PutObjectCommand which requires the whole payload upfront.
+    // Upload streams with bounded memory; PutObjectCommand needs the whole payload upfront.
     const upload = new Upload({
       client: this.s3Client,
       params: {
@@ -341,8 +340,7 @@ export class S3Driver implements StorageDriver {
         }),
       );
 
-      // Backends without CopySourceIfMatch support get an unconditional copy,
-      // so this is their only check that the object is still the inspected one.
+      // Backends without CopySourceIfMatch get an unconditional copy, so this is their only check.
       if (
         isDefined(params.ifMatchChecksum) &&
         head.ETag !== params.ifMatchChecksum
@@ -384,9 +382,7 @@ export class S3Driver implements StorageDriver {
     }
   }
 
-  // Some S3-compatible backends (e.g. OVHcloud) reject CopySourceIfMatch
-  // with 501, so fall back to an unconditional copy rather than failing
-  // every upload completion on them.
+  // Some S3-compatible backends (e.g. OVHcloud) reject CopySourceIfMatch with 501.
   private async copyObjectIfMatch({
     fromKey,
     toKey,
@@ -591,8 +587,7 @@ export class S3Driver implements StorageDriver {
       ContentLength: params.contentLength,
     });
 
-    // Content-Type and Content-Length are part of the signature so the client
-    // cannot upload a payload of a different type or size than declared.
+    // Signed so the client cannot upload a different type or size than declared.
     return getSignedUrl(this.presignClient, command, {
       expiresIn: params.expiresInSeconds ?? 900,
       signableHeaders: new Set(['content-type', 'content-length']),

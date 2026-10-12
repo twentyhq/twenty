@@ -21,14 +21,17 @@ describe('getNavigationDrawerHomeDestination', () => {
     ).toBe(defaultHomePagePath);
   });
 
-  it('falls back to the default home page when the memorized url is the AI chat', () => {
-    expect(
-      getNavigationDrawerHomeDestination({
-        memorizedUrl: '/chat/20202020-0687-4c41-b707-ed1bfca972a7',
-        defaultHomePagePath,
-      }),
-    ).toBe(defaultHomePagePath);
-  });
+  it.each(['/chat/20202020-0687-4c41-b707-ed1bfca972a7', '/inbox'])(
+    'falls back to the default home page when the memorized url is the AI page %s',
+    (memorizedUrl) => {
+      expect(
+        getNavigationDrawerHomeDestination({
+          memorizedUrl,
+          defaultHomePagePath,
+        }),
+      ).toBe(defaultHomePagePath);
+    },
+  );
 
   it.each([null, undefined, ''])(
     'falls back to the default home page when the memorized url is %p',

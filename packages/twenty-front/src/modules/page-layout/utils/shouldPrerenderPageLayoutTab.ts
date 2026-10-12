@@ -16,8 +16,7 @@ export const shouldPrerenderPageLayoutTab = ({
     return false;
   }
 
-  // Grid tabs size their widgets from the container, which measures zero
-  // while hidden; vertical lists lay out correctly on reveal.
+  // Grid tabs size widgets from the container, which measures zero while hidden.
   if (tab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST) {
     return false;
   }

@@ -29,4 +29,5 @@ export default defineField({
     relationType: RelationType.ONE_TO_MANY,
   },
   isUIEditable: false,
+  isAuditLogged: false,
 });

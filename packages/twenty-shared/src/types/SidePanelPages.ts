@@ -34,6 +34,7 @@ export enum SidePanelPages {
   CreateRelatedRecord = 'create-related-record',
   SendCampaign = 'send-campaign',
   RecordCreationForm = 'record-creation-form',
+  RecordCreationFormSettings = 'record-creation-form-settings',
   SendCampaignTest = 'send-campaign-test',
   WorkflowVersions = 'workflow-versions',
   WorkflowVersion = 'workflow-version',
@@ -43,4 +44,7 @@ export enum SidePanelPages {
   SettingsMetadataTranslations = 'settings-metadata-translations',
   RoutedPage = 'routed-page',
   WorkflowCoreFilters = 'workflow-core-filters',
+  ShareRecord = 'share-record',
+  SnoozeAiChat = 'snooze-ai-chat',
+  AssignAiChat = 'assign-ai-chat',
 }

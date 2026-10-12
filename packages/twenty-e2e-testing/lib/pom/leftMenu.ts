@@ -44,10 +44,7 @@ export class LeftMenu {
 
   async selectWorkspace(workspaceName: string) {
     await this.workspaceDropdown.click();
-    await this.page
-      .getByTestId('tooltip')
-      .filter({ hasText: workspaceName })
-      .click();
+    await this.page.getByText(workspaceName, { exact: true }).click();
   }
 
   async changeLeftMenu() {

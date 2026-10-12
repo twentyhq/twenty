@@ -43,9 +43,7 @@ const StyledContentContainer = styled.div`
   width: 100%;
 `;
 
-// The sidebar only sticks while both columns fit side by side: once they
-// stack, a sticky sidebar would cover the description below it. It sticks
-// at the page's top padding so it does not jump when scrolling starts.
+// Sticks only while the columns sit side by side, otherwise it would cover the stacked description
 const StyledSidebarColumn = styled.div`
   flex: 1 1 0;
   min-width: ${SIDEBAR_COLUMN_MIN_WIDTH_PX}px;
@@ -146,8 +144,7 @@ export const SettingsApplicationDetailAboutTab = ({
 
   const descriptionSummary = getApplicationDescriptionSummary(description);
 
-  // The sidebar shows the first paragraph of the description, so the content
-  // column only renders the description itself when it holds more than that.
+  // The sidebar already shows the first paragraph of the description
   const getMarkdownText = () => {
     if (isNonEmptyString(aboutDescription)) {
       return aboutDescription;

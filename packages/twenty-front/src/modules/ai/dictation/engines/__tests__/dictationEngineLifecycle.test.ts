@@ -4,8 +4,7 @@ import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSp
 import { type WebSpeechRecognitionEvent } from '@/ai/dictation/types/WebSpeechRecognitionEvent';
 import { type WebSpeechRecognitionInstance } from '@/ai/dictation/types/WebSpeechRecognitionInstance';
 
-// endSession is the test's stand-in for the recognizer reporting it finished,
-// which is the only thing that releases the started slot below.
+// endSession stands in for the recognizer reporting it finished, the only thing releasing the started slot.
 type FakeRecognition = WebSpeechRecognitionInstance & {
   start: jest.Mock;
   stop: jest.Mock;
@@ -42,9 +41,7 @@ const mockGetUserMedia = (implementation: () => Promise<MediaStream>) => {
   });
 };
 
-// Models the spec's [[started]] slot, so a test cannot assert a sequence a real
-// recognizer would refuse: start() throws while the previous session is still
-// started, and only the end event releases it.
+// Models the spec's [[started]] slot: start() throws until the end event releases it.
 const stubSpeechRecognition = () => {
   const instances: FakeRecognition[] = [];
 
@@ -121,8 +118,6 @@ describe('createWebSpeechDictationEngine', () => {
     delete (window as SpeechRecognitionTestWindow).SpeechRecognition;
   });
 
-  // getUserMedia resolves whenever the user answers the permission prompt, which
-  // can be long after the caller gave up. The engine has to notice.
   it('does not start recognition when stopped during the microphone warm-up', async () => {
     const deferred = createDeferred<MediaStream>();
     const { stream } = createFakeStream();
@@ -164,8 +159,6 @@ describe('createWebSpeechDictationEngine', () => {
     expect(instances[0]?.start).toHaveBeenCalledTimes(1);
   });
 
-  // A result that settles an utterance carries no interim for it, so without an
-  // explicit clear the hint keeps showing words already inserted below it.
   it('clears the interim hint when an utterance settles', async () => {
     const engine = createTestEngine();
     const events = collectEvents(engine);
@@ -180,8 +173,6 @@ describe('createWebSpeechDictationEngine', () => {
     expect(events).toContainEqual({ type: 'interim', text: '' });
   });
 
-  // Sending takes the composer's content with it, so a half-heard utterance
-  // belongs to neither the sent message nor the next draft.
   it('discards in-flight audio on cancel without delivering a result', async () => {
     const engine = createTestEngine();
 
@@ -191,8 +182,6 @@ describe('createWebSpeechDictationEngine', () => {
     expect(instances[0]?.abort).toHaveBeenCalledTimes(1);
   });
 
-  // Re-instantiating per press is what produces the iOS system chime and the
-  // first-attempt failures, so a recognizer that finished is used again.
   it('reuses the recognizer once it has reported the session ended', async () => {
     const engine = createTestEngine({ isIOS: true });
 
@@ -206,8 +195,7 @@ describe('createWebSpeechDictationEngine', () => {
     expect(instances[0]?.start).toHaveBeenCalledTimes(2);
   });
 
-  // iOS can end a session without firing onend, and a recognizer that never
-  // reported its end throws InvalidStateError on the next start().
+  // iOS can end a session without onend, and such a recognizer throws InvalidStateError on start().
   it('replaces a recognizer that never reported the session ended', async () => {
     const engine = createTestEngine({ isIOS: true });
     const events = collectEvents(engine);
@@ -226,8 +214,6 @@ describe('createWebSpeechDictationEngine', () => {
     });
   });
 
-  // The caller only starts again from 'idle', so a state left at 'recording'
-  // wedges the button into offering to stop a session that is already over.
   it.each(['stop', 'cancel'] as const)(
     'reports idle on %s even when onend never fires',
     async (method) => {
@@ -241,8 +227,6 @@ describe('createWebSpeechDictationEngine', () => {
     },
   );
 
-  // The listener must not outlive its session: onend is what normally removes
-  // it, and iOS can end a session without firing onend.
   it.each(['stop', 'cancel'] as const)(
     'removes the visibility listener on %s even when onend never fires',
     async (method) => {
@@ -259,8 +243,6 @@ describe('createWebSpeechDictationEngine', () => {
     },
   );
 
-  // A session ends once. onend arriving after an explicit stop must not report
-  // a second one, or a caller counting session ends sees two per session.
   it('reports idle once when stop is followed by onend', async () => {
     const engine = createTestEngine();
     const events = collectEvents(engine);
@@ -274,8 +256,6 @@ describe('createWebSpeechDictationEngine', () => {
     );
   });
 
-  // Every message send cancels, dictating or not, so cancelling an idle engine
-  // is the common case rather than an edge one.
   it('does nothing when cancelling an engine that is not dictating', () => {
     const engine = createTestEngine();
     const events = collectEvents(engine);
@@ -286,9 +266,6 @@ describe('createWebSpeechDictationEngine', () => {
     expect(events).toEqual([]);
   });
 
-  // stop() clears the session eagerly but the recognizer can still be settling.
-  // A send in that window must abort it, or its last final result is inserted
-  // into the composer the send just cleared.
   it('still aborts a settling recognizer when cancelled after stop', async () => {
     const engine = createTestEngine();
 
@@ -311,9 +288,6 @@ describe('createWebSpeechDictationEngine', () => {
     expect(readStates(events).at(-1)).toBe('idle');
   });
 
-  // The API reads lang at start(), so a speaker who changes their language mid
-  // session keeps that session and gets the new one on their next press —
-  // rebuilding the engine to apply it would abort what they are saying.
   it('reads the language at the start of each session', async () => {
     const languages = ['en-US', 'fr-FR'];
     const engine = createTestEngine({
@@ -333,8 +307,6 @@ describe('createWebSpeechDictationEngine', () => {
     expect(instances[0]?.lang).toBe('fr-FR');
   });
 
-  // The end event of a session that is already over must not abandon a press
-  // that is still warming up its microphone, or that press is silently lost.
   it('keeps a start warming up when a previous session finally reports its end', async () => {
     const engine = createTestEngine();
 

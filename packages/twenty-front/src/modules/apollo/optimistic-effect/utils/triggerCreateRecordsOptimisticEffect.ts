@@ -18,11 +18,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
-/*
-  TODO: for now new records are added to all cached record lists, no matter what the variables (filters, orderBy, etc.) are.
-  We need to refactor how the record creation works in the RecordTable so the created record row is temporarily displayed with a local state,
-  then we'll be able to uncomment the code below so the cached lists are updated coherently with the variables.
-*/
+// TODO: new records join every cached list regardless of its variables unless shouldMatchRootQueryFilter;
+// make matching the default once RecordTable keeps a created row in local state.
 type TriggerCreateRecordsOptimisticEffectArgs = {
   cache: ApolloCache;
   objectMetadataItem: EnrichedObjectMetadataItem;

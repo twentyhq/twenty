@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
+import * as Sentry from '@sentry/node';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ToolSet, zodSchema } from 'ai';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
@@ -26,6 +27,7 @@ import {
   listSkillsInputSchema,
 } from 'src/engine/api/mcp/tools/list-skills.tool';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
+import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
@@ -401,17 +403,16 @@ export class McpProtocolService {
         ? buildApiKeyAuthContext({ workspace, apiKey })
         : undefined;
 
-      const { toolSet, toolContext } = await this.buildMcpToolSet(
-        workspace,
-        roleId,
-        rolePermissionConfig,
-        {
-          authContext,
-          application,
-          userId,
-          userWorkspaceId,
-          apiKey,
-        },
+      const { toolSet, toolContext } = await Sentry.startSpan(
+        { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
+        () =>
+          this.buildMcpToolSet(workspace, roleId, rolePermissionConfig, {
+            authContext,
+            application,
+            userId,
+            userWorkspaceId,
+            apiKey,
+          }),
       );
 
       if (method === 'tools/call') {
@@ -454,18 +455,35 @@ export class McpProtocolService {
           ...nativeTools
         } = toolSet;
 
-        const registryTools = await this.toolRegistry.getToolsByCategories(
-          toolContext,
-          { excludeTools: [...MCP_EXCLUDED_TOOL_NAMES] },
-        );
+        const annotatedRegistryTools = await Sentry.startSpan(
+          {
+            name: 'mcp list registry tools',
+            op: 'mcp.tools',
+            onlyIfParent: true,
+          },
+          async () => {
+            const descriptors =
+              await this.toolRegistry.getDescriptorsByCategories(toolContext, {
+                excludeTools: [...MCP_EXCLUDED_TOOL_NAMES],
+              });
 
-        const annotatedRegistryTools = Object.fromEntries(
-          Object.entries(registryTools).map(
-            ([toolName, registryTool]): [string, McpAnnotatedTool] => [
-              toolName,
-              { ...registryTool, annotations: MCP_EXECUTE_TOOL_ANNOTATIONS },
-            ],
-          ),
+            const registryTools = this.toolRegistry.hydrateToolSet(
+              descriptors,
+              toolContext,
+            );
+
+            return Object.fromEntries(
+              descriptors.map((descriptor): [string, McpAnnotatedTool] => [
+                descriptor.name,
+                {
+                  ...registryTools[descriptor.name],
+                  annotations: getMcpRegistryToolAnnotations(
+                    descriptor.executionRef,
+                  ),
+                },
+              ]),
+            );
+          },
         );
 
         return this.mcpToolExecutorService.handleToolsListing(id, {

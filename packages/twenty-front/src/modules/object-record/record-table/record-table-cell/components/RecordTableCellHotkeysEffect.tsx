@@ -7,7 +7,7 @@ import { useIsFieldClearable } from '@/object-record/record-field/ui/hooks/useIs
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/ui/hooks/useToggleEditOnlyInput';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
+import { useRecordTableSelectAllHotkeys } from '@/object-record/record-table/hooks/useRecordTableSelectAllHotkeys';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { useListenToSidePanelOpening } from '@/ui/layout/side-panel/hooks/useListenToSidePanelOpening';
@@ -109,21 +109,7 @@ export const RecordTableCellHotkeysEffect = ({
     },
   });
 
-  const { selectAllRows } = useSelectAllRows();
-
-  const handleSelectAllRows = () => {
-    selectAllRows();
-  };
-
-  useHotkeysOnFocusedElement({
-    keys: ['ctrl+a,meta+a'],
-    callback: handleSelectAllRows,
-    focusId: cellFocusId,
-    dependencies: [handleSelectAllRows],
-    options: {
-      enableOnFormTags: false,
-    },
-  });
+  useRecordTableSelectAllHotkeys({ focusId: cellFocusId });
 
   return null;
 };

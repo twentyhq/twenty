@@ -62,8 +62,6 @@ export class CreateRecordService {
         name: 'Workflow',
       };
 
-      // Clean undefined values from the record data (including nested composite fields)
-      // This prevents validation errors for partial composite field inputs
       const cleanedRecord = removeUndefinedFromRecord(objectRecord);
       const dataWithActor = { ...cleanedRecord, createdBy: actorMetadata };
 

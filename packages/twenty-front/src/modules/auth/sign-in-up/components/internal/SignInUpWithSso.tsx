@@ -5,19 +5,19 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components';
+import { MainButton } from 'twenty-ui/components/input';
 import { IconLock } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useTheme } from 'twenty-ui/theme';
+import { SignInUpSeparator } from './SignInUpSeparator';
 
 export const SignInUpWithSso = () => {
   const theme = useTheme();
@@ -57,7 +57,7 @@ export const SignInUpWithSso = () => {
         >{t`Single sign-on (SSO)`}</MainButton>
         {isLastUsed && hasMultipleAuthMethods && <LastUsedPill />}
       </StyledSsoButtonContainer>
-      <HorizontalSeparator visible={false} />
+      <SignInUpSeparator />
     </>
   );
 };

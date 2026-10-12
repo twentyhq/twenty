@@ -20,9 +20,7 @@ describe('useDictationAvailability', () => {
   beforeEach(() => {
     localStorage.clear();
     getDefaultStore().set(hasWebSpeechProvenSilentState.atom, false);
-    // SpeechRecognition is absent from the DOM lib because it never became a
-    // standard, so the global is reached through the same structural type the
-    // engine declares.
+    // SpeechRecognition isn't in the DOM lib, so reach it through the engine's structural type.
     (window as unknown as SpeechRecognitionTestWindow).SpeechRecognition =
       function SpeechRecognition() {} as unknown as WebSpeechRecognitionConstructor;
     Object.defineProperty(navigator, 'mediaDevices', {
@@ -53,8 +51,6 @@ describe('useDictationAvailability', () => {
     expect(result.current.isAvailable).toBe(false);
   });
 
-  // Offering the same dead button again only costs the user another recording,
-  // and waiting for a remount to hide it costs one more.
   it('withdraws dictation the moment the engine proves itself silent', () => {
     const { result } = renderAvailability();
 

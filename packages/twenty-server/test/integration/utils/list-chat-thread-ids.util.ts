@@ -3,8 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-// Mirrors the chat list query: deleted chats stay listed so they can be
-// restored, and workflow run conversations are left to their run
+// Mirrors the chat list: deleted chats stay listed for restore.
 export const listChatThreadIds = async (
   token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ): Promise<string[]> => {
@@ -14,15 +13,7 @@ export const listChatThreadIds = async (
       objectMetadataPluralName: 'agentChatThreads',
       gqlFields: 'id',
       filter: {
-        and: [
-          { workflowRunId: { is: 'NULL' } },
-          {
-            or: [
-              { deletedAt: { is: 'NULL' } },
-              { deletedAt: { is: 'NOT_NULL' } },
-            ],
-          },
-        ],
+        or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
       },
       orderBy: [{ updatedAt: 'DescNullsLast' }],
       first: 200,

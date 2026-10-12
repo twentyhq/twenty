@@ -10,7 +10,7 @@ export const USAGE_QUOTAS_WITH_CONSUMPTION = gql`
       spenderId
       spenderLabel
       periodUnit
-      meter
+      unit
       limitValue
       isEnforced
       consumedValue

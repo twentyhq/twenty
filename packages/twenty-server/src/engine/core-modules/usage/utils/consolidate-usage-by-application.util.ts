@@ -11,13 +11,8 @@ type ConsolidateUsageByApplicationParams = {
   flatApplicationMaps: FlatApplicationCacheMaps;
 };
 
-// Operations an app declared in its manifest get their own slice under the app
-// name; anything it charged without declaring arrives already folded into a
-// single app-level slice, so undeclared context strings never reach a screen.
-// Uninstalled apps are looked up too, otherwise their spend would drop out of
-// the pie while still counting towards the bill. Keying on the label also
-// merges two apps sharing a display name, which would otherwise collide as one
-// chart id.
+// Uninstalled apps are looked up too, or their spend would drop out of the pie while still billed.
+// Keying on the label merges apps sharing a display name, which would otherwise collide as one chart id.
 export const consolidateUsageByApplication = ({
   items,
   flatApplicationMaps,

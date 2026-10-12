@@ -13,13 +13,50 @@
   flex: 1;
   gap: var(--t-spacing-2);
   min-width: 0;
+}
 
-  > svg {
-    flex-shrink: 0;
+.icon {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+
+  // SVG width/height attributes cannot read CSS variables, so the slot sizes
+  // the icon to keep it themeable
+  & > svg {
+    block-size: calc(var(--t-icon-size-md) * 1px);
+    inline-size: calc(var(--t-icon-size-md) * 1px);
   }
 }
 
 .bannerText {
   flex: 1;
   min-width: 0;
+}
+
+.compact {
+  box-sizing: content-box;
+  font-family: inherit;
+  font-size: inherit;
+  font-style: inherit;
+  gap: var(--t-spacing-2);
+  justify-content: space-between;
+  line-height: inherit;
+  margin-bottom: 0;
+  max-width: 512px;
+  min-height: auto;
+  width: auto;
+
+  .bannerContent {
+    flex: initial;
+  }
+
+  &[data-variant='soft'][data-color='blue'] {
+    background: var(--t-color-blue5);
+    color: var(--t-color-blue10);
+  }
+
+  &[data-variant='soft'][data-color='red'] {
+    background: var(--t-color-red3);
+    color: var(--t-color-red);
+  }
 }

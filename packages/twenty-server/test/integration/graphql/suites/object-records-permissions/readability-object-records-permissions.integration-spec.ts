@@ -22,12 +22,10 @@ import { setObjectReadability } from 'test/integration/metadata/suites/object-me
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   MetadataReadability,
   RecordShareAccessLevel,
@@ -101,13 +99,6 @@ const totalCountOperation = {
   `,
   variables: { filter: ALL_RECORDS_FILTER },
 };
-
-const setRecordSharingEnabled = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-    value,
-    expectToFail: false,
-  });
 
 describe('readabilityObjectRecordsPermissions', () => {
   let recordShareStorageService: RecordShareStorageService;
@@ -253,7 +244,6 @@ describe('readabilityObjectRecordsPermissions', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(false);
     await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
@@ -283,10 +273,9 @@ describe('readabilityObjectRecordsPermissions', () => {
     });
   });
 
-  describe('PRIVATE readability with record sharing enabled', () => {
+  describe('PRIVATE readability', () => {
     beforeAll(async () => {
       await setObjectReadability(objectMetadataId, MetadataReadability.PRIVATE);
-      await setRecordSharingEnabled(true);
     });
 
     it('should only return records shared with the admin principals', async () => {
@@ -556,10 +545,9 @@ describe('readabilityObjectRecordsPermissions', () => {
     });
   });
 
-  describe('SYSTEM readability with record sharing enabled', () => {
+  describe('SYSTEM readability', () => {
     beforeAll(async () => {
       await setObjectReadability(objectMetadataId, MetadataReadability.SYSTEM);
-      await setRecordSharingEnabled(true);
     });
 
     it('should refuse reads even for an admin', async () => {
@@ -567,38 +555,6 @@ describe('readabilityObjectRecordsPermissions', () => {
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toContain('not readable');
-    });
-  });
-
-  describe('PRIVATE readability with record sharing disabled', () => {
-    beforeAll(async () => {
-      await setObjectReadability(objectMetadataId, MetadataReadability.PRIVATE);
-      await setRecordSharingEnabled(false);
-
-      const response = await makeGraphqlApiRequest(
-        createOneOperationFactory({
-          objectMetadataSingularName: OBJECT_SINGULAR,
-          gqlFields: RECORD_GQL_FIELDS,
-          data: {
-            id: RECORD_IDS.SHARED_FULL_WITH_EVERYONE,
-            name: 'SHARED_FULL_WITH_EVERYONE',
-          },
-        }),
-      );
-
-      expect(response.body.errors).toBeUndefined();
-    });
-
-    it('keeps grants enforced with the sharing UI disabled', async () => {
-      const response = await makeGraphqlApiRequest(findManyOperation);
-
-      expect(response.body.errors).toBeUndefined();
-      expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
-        [
-          RECORD_IDS.SHARED_FULL_WITH_EVERYONE,
-          RECORD_IDS.SHARED_FULL_WITH_ADMIN_ROLE,
-        ].sort(),
-      );
     });
   });
 });

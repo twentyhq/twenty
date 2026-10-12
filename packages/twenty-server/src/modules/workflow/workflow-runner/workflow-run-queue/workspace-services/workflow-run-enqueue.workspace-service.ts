@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -37,12 +38,12 @@ export class WorkflowRunEnqueueWorkspaceService {
     workspaceId: string;
     isCacheMode: boolean;
   }) {
-    const lockAcquired =
-      await this.workflowThrottlingWorkspaceService.acquireWorkflowEnqueueLock(
+    const lockOwnerToken =
+      await this.workflowThrottlingWorkspaceService.acquireWorkflowEnqueueLock({
         workspaceId,
-      );
+      });
 
-    if (!lockAcquired) {
+    if (!isDefined(lockOwnerToken)) {
       return;
     }
 
@@ -71,19 +72,10 @@ export class WorkflowRunEnqueueWorkspaceService {
           return;
         }
 
-        let remainingWorkflowRunToEnqueueCount =
-          await this.workflowThrottlingWorkspaceService.getRemainingRunsToEnqueueCount(
-            workspaceId,
-          );
-
         let totalEnqueuedCount = 0;
+        let isSoftThrottled = false;
 
-        while (remainingWorkflowRunToEnqueueCount > 0) {
-          const batchSize = Math.min(
-            remainingWorkflowRunToEnqueueCount,
-            QUERY_MAX_RECORDS,
-          );
-
+        while (!isSoftThrottled) {
           const batchRuns = await workflowRunRepository.find({
             where: NOT_STARTED_RUNS_FIND_OPTIONS,
             select: {
@@ -92,16 +84,29 @@ export class WorkflowRunEnqueueWorkspaceService {
             order: {
               createdAt: 'ASC',
             },
-            take: batchSize,
+            take: QUERY_MAX_RECORDS,
           });
 
           if (batchRuns.length === 0) {
             break;
           }
 
-          const batchIds = batchRuns.map(
-            (workflowRun: WorkflowRunWorkspaceEntity) => workflowRun.id,
-          );
+          // Runs are fetched before consuming so the soft throttle is only charged for runs that exist
+          const admittedRunCount =
+            await this.workflowThrottlingWorkspaceService.consumeRemainingRunsToEnqueueCount(
+              workspaceId,
+              batchRuns.length,
+            );
+
+          if (admittedRunCount === 0) {
+            break;
+          }
+
+          isSoftThrottled = admittedRunCount < batchRuns.length;
+
+          const batchIds = batchRuns
+            .slice(0, admittedRunCount)
+            .map((workflowRun: WorkflowRunWorkspaceEntity) => workflowRun.id);
 
           await workflowRunRepository.update(batchIds, {
             enqueuedAt: new Date().toISOString(),
@@ -119,8 +124,7 @@ export class WorkflowRunEnqueueWorkspaceService {
             );
           }
 
-          totalEnqueuedCount += batchRuns.length;
-          remainingWorkflowRunToEnqueueCount -= batchRuns.length;
+          totalEnqueuedCount += batchIds.length;
         }
 
         if (totalEnqueuedCount === 0) {
@@ -132,11 +136,6 @@ export class WorkflowRunEnqueueWorkspaceService {
 
           return;
         }
-
-        await this.workflowThrottlingWorkspaceService.consumeRemainingRunsToEnqueueCount(
-          workspaceId,
-          totalEnqueuedCount,
-        );
 
         if (isCacheMode) {
           await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
@@ -166,7 +165,10 @@ export class WorkflowRunEnqueueWorkspaceService {
     } finally {
       try {
         await this.workflowThrottlingWorkspaceService.releaseWorkflowEnqueueLock(
-          workspaceId,
+          {
+            workspaceId,
+            lockOwnerToken,
+          },
         );
       } catch (releaseError) {
         this.logger.warn(

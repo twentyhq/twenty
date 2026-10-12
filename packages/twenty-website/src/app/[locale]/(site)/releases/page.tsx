@@ -15,7 +15,6 @@ import { ReleasesHero } from '@/sections/releases-hero';
 
 export const generateMetadata = buildRouteMetadata('releases');
 
-// Hero only for now; the release feed lands below it as its port arrives.
 export default async function ReleasesPage({
   params,
 }: {

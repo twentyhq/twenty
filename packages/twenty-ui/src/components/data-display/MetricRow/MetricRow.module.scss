@@ -1,0 +1,23 @@
+.row {
+  align-items: center;
+  color: var(--t-font-color-primary);
+  display: flex;
+  font-size: var(--t-font-size-sm);
+  font-weight: var(--t-font-weight-medium);
+  gap: var(--t-spacing-2);
+  min-height: 24px;
+}
+
+.label {
+  align-items: center;
+  color: var(--t-font-color-tertiary);
+  display: flex;
+  flex: 1;
+  gap: var(--t-spacing-1);
+  min-width: 0;
+}
+
+.icon {
+  display: flex;
+  flex-shrink: 0;
+}

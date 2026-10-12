@@ -189,7 +189,8 @@ const playResetsToRootPageAfterDismissal = async ({
 };
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Pages',
+  id: 'ui-components-dropdown-interactions-pages',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Pages',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },
@@ -240,6 +241,35 @@ export const SelectionReturnsToPreviousPage: Story = {
     await waitFor(() =>
       expect(body.getByRole('button', { name: 'Status' })).toHaveFocus(),
     );
+  },
+};
+
+export const PageWithoutSearchFocusesFirstOption: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Filters</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Filters">
+        <Dropdown.Page id="root">
+          <Dropdown.ActionItem page="status">Status</Dropdown.ActionItem>
+        </Dropdown.Page>
+        <Dropdown.Page id="status">
+          <Dropdown.Back>Back to filters</Dropdown.Back>
+          <StatusOptions />
+        </Dropdown.Page>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await openFilters(canvasElement);
+    await userEvent.click(await body.findByRole('button', { name: 'Status' }));
+    await waitFor(() =>
+      expect(body.getByRole('button', { name: 'Active' })).toHaveFocus(),
+    );
+    await userEvent.keyboard('{Enter}');
+
+    expect(onStatusChange).toHaveBeenCalledWith('Active');
   },
 };
 
@@ -502,6 +532,35 @@ export const ResetsToRootPageAfterDismissal: Story = {
 export const ResetsToRootPageAfterDismissalWhenKeptMounted: Story = {
   render: () => <FilterPages keepMounted />,
   play: playResetsToRootPageAfterDismissal,
+};
+
+export const KeepsPageWhileClosing: Story = {
+  render: () => <FilterPages />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await openFilters(canvasElement);
+
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'People' }),
+    );
+    const popup = await body.findByRole('dialog', { name: 'Filters' });
+
+    await within(popup).findByRole('searchbox', { name: 'Search people' });
+    await userEvent.keyboard('{Escape}');
+    expect(
+      within(popup).getByRole('searchbox', {
+        name: 'Search people',
+        hidden: true,
+      }),
+    ).toBeInTheDocument();
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
+    await userEvent.click(trigger);
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'People' })).toBeVisible(),
+    );
+    expect(body.queryByRole('searchbox')).not.toBeInTheDocument();
+  },
 };
 
 export const SharedDestination: Story = {

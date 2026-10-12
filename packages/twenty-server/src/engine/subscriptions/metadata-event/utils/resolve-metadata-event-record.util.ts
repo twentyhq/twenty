@@ -32,9 +32,7 @@ export const resolveMetadataEventRecord = ({
 
   const resolved: Record<string, unknown> = { ...baseRecord };
 
-  // Overridable-but-not-translatable properties are not all strings --
-  // pageLayoutTab.position is a number, commandMenuItem.isPinned a boolean --
-  // so they pass through as they are rather than through the resolver.
+  // Non-translatable overridable properties may be numbers or booleans, so they bypass the resolver
   for (const property of overridableProperties) {
     if (
       property === TRANSLATIONS_OVERRIDE_KEY ||

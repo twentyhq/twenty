@@ -11,11 +11,9 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
-  FeatureFlagKey,
   MetadataReadability,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -92,13 +90,6 @@ const findNoteWithChildrenOperation = findManyOperationFactory({
   filter: { id: { eq: NOTE_ID } },
 });
 
-const setRecordSharingEnabled = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-    value,
-    expectToFail: false,
-  });
-
 const destroyRecords = ({
   objectMetadataSingularName,
   objectMetadataPluralName,
@@ -126,7 +117,6 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
   const sourceId = randomUUID();
 
   beforeAll(async () => {
-    await setRecordSharingEnabled(true);
     recordShareStorageService =
       getAppProviderByClassName<RecordShareStorageService>(
         'RecordShareStorageService',
@@ -218,7 +208,6 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(false);
     await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
@@ -251,34 +240,6 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
       ids: [PERSON_ID],
-    });
-  });
-
-  describe('with record sharing disabled', () => {
-    beforeAll(async () => {
-      await setRecordSharingEnabled(false);
-    });
-
-    afterAll(async () => {
-      await setRecordSharingEnabled(true);
-    });
-
-    it('keeps inherited record visibility enforced when the sharing UI is disabled', async () => {
-      const attachmentsResponse = await makeGraphqlApiRequestWithMemberRole(
-        findAttachmentsOperation,
-      );
-      const noteTargetsResponse = await makeGraphqlApiRequestWithMemberRole(
-        findNoteTargetsOperation,
-      );
-
-      expect(attachmentsResponse.body.errors).toBeUndefined();
-      expect(
-        collectIds(attachmentsResponse.body.data.attachments.edges),
-      ).toEqual([PERSON_ATTACHMENT_ID]);
-      expect(noteTargetsResponse.body.errors).toBeUndefined();
-      expect(
-        collectIds(noteTargetsResponse.body.data.noteTargets.edges),
-      ).toEqual([NOTE_TARGET_ID]);
     });
   });
 

@@ -37,11 +37,6 @@ jest.mock(
   }),
 );
 
-// Note: We're using a single public flag for testing as it's sufficient to verify
-// the validator's behavior. The validator's role is to check if a flag exists in
-// the PUBLIC_FEATURE_FLAGS array, so testing with one flag adequately covers this
-// functionality. Adding more flags wouldn't increase the test coverage meaningfully.
-
 describe('publicFeatureFlagValidator', () => {
   describe('assertIsPublicFeatureFlag', () => {
     const mockException = new AuthException(
