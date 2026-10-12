@@ -76,7 +76,6 @@ export class BillingEntitlementSyncService {
       billingEntitlements.find((entitlement) => entitlement.key === key)
         ?.value === true;
 
-    // Unenforced counters would be charged on enable; reset before committing so a failed reset is retried
     if (
       !wasGranted(BillingEntitlementKey.USAGE_LIMIT) &&
       isGranted(BillingEntitlementKey.USAGE_LIMIT)

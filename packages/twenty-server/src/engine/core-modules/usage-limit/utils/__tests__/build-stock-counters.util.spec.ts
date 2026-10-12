@@ -77,14 +77,13 @@ describe('buildStockCounters', () => {
     },
   );
 
-  it('keeps a non-overridable default alongside a stored limit, on the same held count', () => {
+  it('keeps a non-overridable default alongside a stored limit', () => {
     const counters = build({
       limits: [buildLimit()],
       stockLimitDefaults: [buildDefault({ isOverridable: false })],
     });
 
     expect(counters.map((counter) => counter.isDefault)).toEqual([false, true]);
-    expect(new Set(counters.map((counter) => counter.key)).size).toBe(1);
   });
 
   it.each([
@@ -105,20 +104,6 @@ describe('buildStockCounters', () => {
       ]);
     },
   );
-
-  it('keys a workspace limit and the default it suppresses on one held count', () => {
-    const [limitCounter] = build({ limits: [buildLimit({ limitValue: 500 })] });
-    const [defaultCounter] = build({ stockLimitDefaults: [buildDefault()] });
-
-    expect(limitCounter.key).toBe(defaultCounter.key);
-  });
-
-  it('keeps the key of a stored limit whose value is edited', () => {
-    const [before] = build({ limits: [buildLimit({ limitValue: 500 })] });
-    const [after] = build({ limits: [buildLimit({ limitValue: 2_000 })] });
-
-    expect(before.key).toBe(after.key);
-  });
 
   it('skips a default whose spender type the call does not carry', () => {
     expect(

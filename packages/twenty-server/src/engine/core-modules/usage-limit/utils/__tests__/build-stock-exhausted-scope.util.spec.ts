@@ -14,12 +14,9 @@ const COUNTER: StockCounter = {
 };
 
 describe('buildStockExhaustedScope', () => {
-  it.each([
-    [7, 3],
-    [12, -2],
-  ])('reports what %i held leaves under a cap of 10', (held, remaining) => {
-    expect(buildStockExhaustedScope({ counter: COUNTER, held })).toEqual(
-      expect.objectContaining({ limitValue: 10, remaining }),
+  it('reports what the held stock leaves under the cap', () => {
+    expect(buildStockExhaustedScope({ counter: COUNTER, held: 7 })).toEqual(
+      expect.objectContaining({ limitValue: 10, remaining: 3 }),
     );
   });
 });

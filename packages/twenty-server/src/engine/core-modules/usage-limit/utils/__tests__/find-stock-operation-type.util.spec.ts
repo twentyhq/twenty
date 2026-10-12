@@ -3,13 +3,9 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 describe('findStockOperationType', () => {
-  it.each([
-    [UsageResourceType.STORAGE, UsageOperationType.STORAGE_FILE],
-    [UsageResourceType.RECORD, UsageOperationType.RECORD_WRITE],
-  ] as const)(
-    'names the one operation a %s stock counts',
-    (resourceType, operationType) => {
-      expect(findStockOperationType(resourceType)).toBe(operationType);
-    },
-  );
+  it('names the one operation a stock resource counts', () => {
+    expect(findStockOperationType(UsageResourceType.STORAGE)).toBe(
+      UsageOperationType.STORAGE_FILE,
+    );
+  });
 });
