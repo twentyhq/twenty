@@ -794,6 +794,8 @@ export class ChatExecutionService {
         );
       case 'listView':
         return this.buildListViewContext(browsingContext);
+      case 'settingsPage':
+        return this.buildSettingsPageContext(workspace, browsingContext.path);
       default:
         // browsing context comes from unvalidated client JSON
         return '';
@@ -847,5 +849,17 @@ export class ChatExecutionService {
     context += `\nUse get_view_query_parameters tool with this viewId to get the exact filter/sort parameters for querying records.`;
 
     return context;
+  }
+
+  private buildSettingsPageContext(
+    workspace: WorkspaceEntity,
+    path: string,
+  ): string {
+    const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
+      workspace,
+      pathname: path,
+    });
+
+    return `The user is on the settings page ${resourceUrl}. When they talk about what this page shows (for example "this rule" or "my rule"), they mean the item at this path.`;
   }
 }
