@@ -218,6 +218,13 @@ export class LogicFunctionExecutorService {
           `${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
       );
+      this.applicationRegistrationMetricService.recordForApplication({
+        application: flatApplication,
+        metric: 'function.error',
+        dimension: error instanceof Error ? error.name : 'UnhandledError',
+        context: flatLogicFunction.name,
+        workspaceId,
+      });
       throw error;
     }
 
