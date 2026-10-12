@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 import { IconRefresh, IconTrash, IconUsers } from 'twenty-ui/icon';
@@ -328,14 +328,14 @@ export const SettingsApplicationConnectionDetail = () => {
                 description={t`Manage this application's OAuth connection.`}
               />
               <StyledActions>
-                {connection.authFailedAt && (
-                  <Button
-                    startIcon={<IconRefresh />}
-                    onClick={handleReconnect}
-                    variant="outline"
-                    color="accent"
-                  >{t`Reconnect`}</Button>
-                )}
+                <Button
+                  startIcon={<IconRefresh />}
+                  onClick={handleReconnect}
+                  variant="outline"
+                  color={
+                    isDefined(connection.authFailedAt) ? 'accent' : 'neutral'
+                  }
+                >{t`Reconnect`}</Button>
                 {connection.visibility !== 'workspace' && (
                   <Button
                     startIcon={<IconUsers />}

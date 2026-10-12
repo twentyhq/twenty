@@ -185,6 +185,22 @@ describe('SettingsApplicationConnectionDetail', () => {
     });
   });
 
+  it('offers reconnect on a healthy connection', () => {
+    renderDetailPage();
+
+    expect(screen.getByText('Connected')).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Reconnect' }));
+
+    expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
+      applicationId: 'app-1',
+      providerName: 'google-calendar',
+      visibility: 'user',
+      reconnectingConnectedAccountId: 'account-1',
+      redirectLocation: '/settings/applications/app-1/connections/account-1',
+    });
+  });
+
   it('offers reconnect and disconnect on a failed workspace shared connection', () => {
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
