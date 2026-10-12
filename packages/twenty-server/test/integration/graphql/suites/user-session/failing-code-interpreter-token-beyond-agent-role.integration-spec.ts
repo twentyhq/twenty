@@ -4,9 +4,11 @@ import { findObjectMetadataIdByName } from 'test/integration/graphql/suites/appl
 import { captureAgentRunExecution } from 'test/integration/graphql/suites/user-session/utils/capture-agent-run-execution.util';
 import { captureCodeInterpreterSandboxToken } from 'test/integration/graphql/suites/user-session/utils/capture-code-interpreter-sandbox-token.util';
 import { listMcpTools } from 'test/integration/graphql/suites/user-session/utils/list-mcp-tools.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createFileUploadMutation } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
+import { upsertContainsRlsPredicate } from 'test/integration/graphql/utils/upsert-contains-rls-predicate.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithResources,
@@ -17,6 +19,7 @@ import { upsertObjectPermissions } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,7 +34,11 @@ type GlobalTestContext = {
   applicationRoleId: string;
   applicationToken: string;
   attachmentFileFieldMetadataId: string;
+  hiddenCompanyId: string;
+  visibleCompanyId: string;
 };
+
+const AGENT_VISIBLE_COMPANY_NAME_TOKEN = 'AgentVisible';
 
 const captureSandboxTokenForAgentRun = async ({
   globalTestContext,
@@ -99,6 +106,51 @@ const createAttachmentFileUpload = ({
     token,
   );
 
+const findCompanyIdsThroughMcp = async ({
+  globalTestContext,
+  token,
+}: {
+  globalTestContext: GlobalTestContext;
+  token: string;
+}): Promise<string[]> => {
+  const result = await callMcpTool({
+    toolName: 'execute_tool',
+    toolArguments: {
+      toolName: 'find_many_companies',
+      arguments: {
+        id: {
+          in: [
+            globalTestContext.visibleCompanyId,
+            globalTestContext.hiddenCompanyId,
+          ],
+        },
+        select: ['id'],
+      },
+    },
+    token,
+  });
+
+  const payload = JSON.parse(result.content[0].text);
+
+  expect(payload.success).toBe(true);
+
+  return payload.result.records.map((record: { id: string }) => record.id);
+};
+
+const createCompany = async (name: string): Promise<string> => {
+  const response = await makeGraphqlApiRequest(
+    createOneOperationFactory({
+      objectMetadataSingularName: 'company',
+      gqlFields: 'id',
+      data: { name },
+    }),
+  );
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.createCompany.id;
+};
+
 const findRecordsThroughGraphql = ({
   objectMetadataSingularName,
   objectMetadataPluralName,
@@ -118,7 +170,7 @@ const findRecordsThroughGraphql = ({
     token,
   );
 
-// The application and the member can read people and the application can upload files; the agent's role only reads companies
+// The application and the member can read people and the application can upload files; the agent's role only reads companies whose name holds a token
 describe('Code interpreter sandbox token beyond the agent role should be refused', () => {
   let application: ApplicationWithResources;
   let globalTestContext: GlobalTestContext;
@@ -175,6 +227,13 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
       expectToFail: false,
     });
 
+    await upsertContainsRlsPredicate({
+      roleId: agentRoleId,
+      objectNameSingular: 'company',
+      fieldName: 'name',
+      value: AGENT_VISIBLE_COMPANY_NAME_TOKEN,
+    });
+
     const assignResponse = await makeMetadataApiRequest({
       query: gql`
         mutation AssignRoleToAgent($agentId: UUID!, $roleId: UUID!) {
@@ -208,6 +267,10 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
       applicationRoleId,
       applicationToken: applicationAccessToken.token,
       attachmentFileFieldMetadataId,
+      hiddenCompanyId: await createCompany('Agent Hidden Probe Company'),
+      visibleCompanyId: await createCompany(
+        `${AGENT_VISIBLE_COMPANY_NAME_TOKEN} Probe Company`,
+      ),
     };
   }, 120000);
 
@@ -219,6 +282,11 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
     }
 
     if (isDefined(globalTestContext)) {
+      await deleteRecordsByIds('company', [
+        globalTestContext.hiddenCompanyId,
+        globalTestContext.visibleCompanyId,
+      ]);
+
       await deleteOneRole({
         input: { idToDelete: globalTestContext.agentRoleId },
         expectToFail: false,
@@ -339,5 +407,41 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
     expect(response.body.errors?.[0]?.extensions?.code).toBe(
       ErrorCode.FORBIDDEN,
     );
+  });
+
+  it('should let a member run find every company through MCP when no agent restricts it', async () => {
+    const sandboxToken = await captureSandboxTokenForAgentRun({
+      globalTestContext,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      isAgentPassed: false,
+    });
+
+    expect(
+      (
+        await findCompanyIdsThroughMcp({
+          globalTestContext,
+          token: sandboxToken,
+        })
+      ).sort(),
+    ).toEqual(
+      [
+        globalTestContext.hiddenCompanyId,
+        globalTestContext.visibleCompanyId,
+      ].sort(),
+    );
+  });
+
+  it('should apply the agent role row-level rules to MCP tools for a member run', async () => {
+    const sandboxToken = await captureSandboxTokenForAgentRun({
+      globalTestContext,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(
+      await findCompanyIdsThroughMcp({
+        globalTestContext,
+        token: sandboxToken,
+      }),
+    ).toEqual([globalTestContext.visibleCompanyId]);
   });
 });

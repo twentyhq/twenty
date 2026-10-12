@@ -27,6 +27,7 @@ import { getMcpRequestLogFields } from 'src/engine/api/mcp/utils/get-mcp-request
 import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { buildWorkspaceAuthContextFromRequest } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
 import { FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -95,7 +96,9 @@ export class McpCoreController {
       ...(isDefined(mcpToolName) && { 'mcp.tool_name': mcpToolName }),
     });
 
-    const authContext: McpCoreQueryContext = {
+    // The guard authenticates after WorkspaceAuthContextMiddleware has run, so the context is built here
+    const queryContext: McpCoreQueryContext = {
+      authContext: buildWorkspaceAuthContextFromRequest(request),
       workspace,
       userId: user?.id,
       userWorkspaceId,
@@ -107,7 +110,7 @@ export class McpCoreController {
 
     // JSON-RPC notifications (no id) expect no response body regardless of Accept
     if (!isDefined(body.id)) {
-      await this.mcpProtocolService.handleMCPCoreQuery(body, authContext);
+      await this.mcpProtocolService.handleMCPCoreQuery(body, queryContext);
 
       res.status(HttpStatus.ACCEPTED);
 
@@ -133,7 +136,7 @@ export class McpCoreController {
 
       const result = await this.mcpProtocolService.handleMCPCoreQuery(
         body,
-        authContext,
+        queryContext,
         sseWriter,
       );
 
@@ -148,7 +151,7 @@ export class McpCoreController {
 
     const result = await this.mcpProtocolService.handleMCPCoreQuery(
       body,
-      authContext,
+      queryContext,
     );
 
     return result;

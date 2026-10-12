@@ -35,8 +35,6 @@ import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
-import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -212,35 +210,6 @@ export class McpProtocolService {
     };
   }
 
-  // tools build a user's context themselves, so only callers without a user need one here
-  private buildToolAuthContext({
-    workspace,
-    userWorkspaceId,
-    apiKey,
-    application,
-    agentRoleRestriction,
-  }: {
-    workspace: FlatWorkspace;
-    userWorkspaceId?: string;
-    apiKey?: FlatApiKey;
-    application?: FlatApplication;
-    agentRoleRestriction?: AgentRoleRestriction;
-  }): WorkspaceAuthContext | undefined {
-    if (isDefined(apiKey)) {
-      return buildApiKeyAuthContext({ workspace, apiKey });
-    }
-
-    if (!isDefined(userWorkspaceId) && isDefined(application)) {
-      return buildApplicationAuthContext({
-        workspace,
-        application,
-        agentRoleRestriction,
-      });
-    }
-
-    return undefined;
-  }
-
   private async buildActorContext(
     workspaceId: string,
     userId?: string,
@@ -383,6 +352,7 @@ export class McpProtocolService {
   async handleMCPCoreQuery(
     { id, method, params }: JsonRpc,
     {
+      authContext,
       workspace,
       userId,
       userWorkspaceId,
@@ -449,19 +419,16 @@ export class McpProtocolService {
         agentRoleRestriction,
       });
 
-      const authContext = this.buildToolAuthContext({
-        workspace,
-        userWorkspaceId,
-        apiKey,
-        application,
-        agentRoleRestriction,
-      });
+      // A context rebuilt from the IDs would drop what the token carries, such as its agent restriction.
+      // A user still onboarding has no workspace member yet, so tools keep refusing them by rebuilding.
+      const toolAuthContext =
+        authContext.type === 'pendingActivationUser' ? undefined : authContext;
 
       const { toolSet, toolContext } = await Sentry.startSpan(
         { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
         () =>
           this.buildMcpToolSet(workspace, roleId, rolePermissionConfig, {
-            authContext,
+            authContext: toolAuthContext,
             application,
             userId,
             userWorkspaceId,
