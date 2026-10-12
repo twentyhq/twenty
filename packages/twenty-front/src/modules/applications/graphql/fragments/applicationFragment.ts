@@ -23,6 +23,7 @@ export const APPLICATION_FRAGMENT = gql`
     }
     canBeUninstalled
     autoUpgrade
+    createdAt
     defaultRoleId
     settingsCustomTabFrontComponentId
     healthCheckLogicFunctionId

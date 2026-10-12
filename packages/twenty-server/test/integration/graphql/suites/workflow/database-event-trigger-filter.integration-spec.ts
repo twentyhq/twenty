@@ -1,4 +1,11 @@
 import request from 'supertest';
+import {
+  activateCoreWorkflowVersion,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -25,42 +32,18 @@ const graphql = (query: string, variables?: object) =>
     .send({ query, variables });
 
 describe('Database event trigger filter (e2e)', () => {
-  let createdWorkflowId: string | null = null;
-  let createdWorkflowVersionId: string | null = null;
+  let coreWorkflowId: string | null = null;
+  let workspaceWorkflowId: string | null = null;
 
   beforeAll(async () => {
-    const createWorkflowResponse = await graphql(`
-      mutation CreateWorkflow {
-        createWorkflow(data: { name: "DB Event Trigger Filter Test" }) {
-          id
-        }
-      }
-    `);
+    const createdCoreWorkflow = await createCoreWorkflow({
+      name: 'DB Event Trigger Filter Test',
+    });
 
-    expect(createWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
+    coreWorkflowId = createdCoreWorkflow.coreWorkflowId;
+    workspaceWorkflowId = createdCoreWorkflow.workspaceWorkflowId;
 
-    const getWorkflowResponse = await graphql(
-      `
-        query GetWorkflow($id: UUID!) {
-          workflow(filter: { id: { eq: $id } }) {
-            id
-            versions {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      { id: createdWorkflowId },
-    );
-
-    expect(getWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowVersionId =
-      getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
+    const coreWorkflowVersionId = createdCoreWorkflow.coreWorkflowVersionId;
 
     const databaseEventTrigger = {
       name: 'Company is created',
@@ -88,73 +71,22 @@ describe('Database event trigger filter (e2e)', () => {
       position: { x: 0, y: 0 },
     };
 
-    const updateTriggerResponse = await graphql(
-      `
-        mutation UpdateWorkflowVersionTrigger(
-          $input: UpdateWorkflowVersionTriggerInput!
-        ) {
-          updateWorkflowVersionTrigger(input: $input) {
-            trigger
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: createdWorkflowVersionId,
-          trigger: databaseEventTrigger,
-        },
-      },
-    );
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
+      trigger: databaseEventTrigger,
+    });
 
-    expect(updateTriggerResponse.body.errors).toBeUndefined();
+    await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'CODE',
+    });
 
-    const createStepResponse = await graphql(
-      `
-        mutation CreateWorkflowVersionStep(
-          $input: CreateWorkflowVersionStepInput!
-        ) {
-          createWorkflowVersionStep(input: $input) {
-            stepsDiff
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: createdWorkflowVersionId,
-          stepType: 'CODE',
-          parentStepId: 'trigger',
-          position: { x: 200, y: 0 },
-        },
-      },
-    );
-
-    expect(createStepResponse.body.errors).toBeUndefined();
-
-    const activateResponse = await graphql(
-      `
-        mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-          activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-        }
-      `,
-      { workflowVersionId: createdWorkflowVersionId },
-    );
-
-    expect(activateResponse.body.errors).toBeUndefined();
-    expect(activateResponse.body.data.activateWorkflowVersion).toBe(true);
+    await activateCoreWorkflowVersion({ coreWorkflowVersionId });
   });
 
   afterAll(async () => {
-    if (createdWorkflowId) {
-      await graphql(
-        `
-          mutation DestroyWorkflow($id: ID!) {
-            destroyWorkflow(id: $id) {
-              id
-            }
-          }
-        `,
-        { id: createdWorkflowId },
-      );
+    if (coreWorkflowId) {
+      await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     }
   });
 
@@ -175,7 +107,7 @@ describe('Database event trigger filter (e2e)', () => {
           }
         }
       `,
-      { workflowId: createdWorkflowId },
+      { workflowId: workspaceWorkflowId },
     );
 
     expect(response.body.errors).toBeUndefined();

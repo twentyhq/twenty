@@ -10,6 +10,7 @@ const buildInstalledApplication = (id: string, name: string) => ({
   name,
   universalIdentifier: `${id}-universal-identifier`,
   logoUrl: null,
+  createdAt: '2024-01-01T00:00:00.000Z',
 });
 
 const buildSettingsMenuItem = ({

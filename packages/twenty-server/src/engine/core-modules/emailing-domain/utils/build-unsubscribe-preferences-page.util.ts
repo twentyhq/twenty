@@ -29,7 +29,7 @@ const buildTrackingSection = (isTrackingOptedOut: boolean): string => {
   const trackedAttribute = isTrackingOptedOut ? '' : ' checked';
   const optedOutAttribute = isTrackingOptedOut ? ' checked' : '';
 
-  return `<div class="topics"><p class="section-title">Email tracking</p><p class="hint">This sender records which links you click in its emails. You can opt out for this email address.</p><label class="topic"><input type="radio" name="tracking" value="TRACKED"${trackedAttribute} />Keep tracking my clicks</label><label class="topic"><input type="radio" name="tracking" value="OPTED_OUT"${optedOutAttribute} />Opt out of click tracking</label></div>`;
+  return `<div class="topics"><p class="section-title">Email tracking</p><p class="hint">This sender may record when you open its emails and which links you click. You can opt out for this email address.</p><label class="topic"><input type="radio" name="tracking" value="TRACKED"${trackedAttribute} />Keep tracking my opens and clicks</label><label class="topic"><input type="radio" name="tracking" value="OPTED_OUT"${optedOutAttribute} />Opt out of tracking</label></div>`;
 };
 
 export const buildUnsubscribePreferencesPage = ({
