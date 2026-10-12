@@ -5,6 +5,7 @@ import {
   type ApplicationRegistrationVersionResult,
   findApplicationRegistrationVersions,
 } from 'test/integration/metadata/suites/application-registration/utils/find-application-registration-versions.util';
+import { deleteApplicationRegistration } from 'test/integration/metadata/suites/application-registration/utils/delete-application-registration.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
@@ -192,6 +193,32 @@ describe('Application registration versions', () => {
     for (const version of versions) {
       expect(version.artifactDownloadUrl).toContain(version.tarballFileId);
     }
+  });
+
+  it('deletes every retained tarball with the registration', async () => {
+    const tarballFileIds = (await findVersions()).map(
+      ({ tarballFileId }) => tarballFileId,
+    );
+
+    const { data, errors } = await deleteApplicationRegistration({
+      input: { id: applicationRegistrationId },
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data.deleteApplicationRegistration).toBe(true);
+
+    const remainingFiles = await ds.query(
+      `SELECT id FROM core."file" WHERE id = ANY($1)`,
+      [tarballFileIds],
+    );
+    const remainingVersions = await ds.query(
+      `SELECT id FROM core."applicationRegistrationVersion"
+       WHERE "applicationRegistrationId" = $1`,
+      [applicationRegistrationId],
+    );
+
+    expect(remainingFiles).toEqual([]);
+    expect(remainingVersions).toEqual([]);
   });
 
   it('refuses the versions of a registration owned by another workspace', async () => {

@@ -11,6 +11,7 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 
@@ -41,6 +42,7 @@ export class ApplicationRegistrationVersionService {
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   // A version is published once: a retried publish of the same version keeps
@@ -122,6 +124,51 @@ export class ApplicationRegistrationVersionService {
     return this.applicationRegistrationVersionRepository.exists({
       where: { tarballFileId },
     });
+  }
+
+  // Retained tarballs live in the publishing workspace's storage, so the FK
+  // cascade that removes the version rows leaves their bytes behind.
+  async deleteTarballFilesOfRegistration({
+    applicationRegistrationId,
+    currentTarballFileId,
+  }: {
+    applicationRegistrationId: string;
+    currentTarballFileId: string | null;
+  }): Promise<void> {
+    const versions = await this.applicationRegistrationVersionRepository.find({
+      select: { tarballFileId: true },
+      where: { applicationRegistrationId },
+    });
+
+    const tarballFileIds = new Set(
+      [
+        ...versions.map(({ tarballFileId }) => tarballFileId),
+        currentTarballFileId,
+      ].filter(isDefined),
+    );
+
+    for (const tarballFileId of tarballFileIds) {
+      const tarballFile = await this.fileRepository.findOne({
+        select: { id: true, workspaceId: true },
+        where: { id: tarballFileId },
+      });
+
+      if (!isDefined(tarballFile) || !isDefined(tarballFile.workspaceId)) {
+        continue;
+      }
+
+      try {
+        await this.fileStorageService.deleteByFileId({
+          fileId: tarballFile.id,
+          workspaceId: tarballFile.workspaceId,
+          fileFolder: FileFolder.AppTarball,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to delete tarball file ${tarballFile.id} of registration ${applicationRegistrationId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
   }
 
   // Resolves to the registry url for catalog versions and to a signed url on

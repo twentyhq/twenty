@@ -17,6 +17,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { type DataSource } from 'typeorm';
 
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { type RegistryPackageVersionDist } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
 import { type ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -681,6 +682,51 @@ describe('Marketplace Catalog Sync (integration)', () => {
           reviewState: 'UNREVIEWED',
         },
       ]);
+    });
+
+    it('leaves a version unrecorded until the registry provides its artifact', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+      const syncVersionTwo = (dist: RegistryPackageVersionDist | null) =>
+        syncMarketplaceCatalogFromRegistryPackage({
+          packageName: SOURCE_PACKAGE,
+          version: '2.0.0',
+          manifest: buildBaseManifest({
+            appId: universalIdentifier,
+            roleId: crypto.randomUUID(),
+          }),
+          dist,
+        });
+      const countVersionRows = async (): Promise<number> => {
+        const [{ count }] = await ds.query(
+          `SELECT count(*)::int AS count FROM core."applicationRegistrationVersion"
+           WHERE "applicationRegistrationId" = $1`,
+          [registrationId],
+        );
+
+        return count;
+      };
+
+      await syncVersionTwo(null);
+
+      expect(await countVersionRows()).toBe(0);
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({ latestAvailableVersion: '2.0.0' });
+
+      await syncVersionTwo({
+        tarballUrl: `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`,
+        integrity: null,
+      });
+
+      expect(await countVersionRows()).toBe(1);
     });
 
     it('sets the version on a registration that has none', async () => {
