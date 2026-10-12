@@ -6428,6 +6428,7 @@ export type SignUp = {
 
 export type SignUpInNewWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
+  partner?: InputMaybe<Scalars['String']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
 };
 

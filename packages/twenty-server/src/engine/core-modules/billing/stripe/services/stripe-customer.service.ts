@@ -2,6 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import type Stripe from 'stripe';
 
@@ -102,12 +103,14 @@ export class StripeCustomerService {
     userEmail: string,
     workspaceId: string,
     customerName: string | undefined,
+    partner?: string,
   ) {
     const customer = await this.stripe.customers.create({
       name: customerName,
       email: userEmail,
       metadata: {
         workspaceId,
+        ...(isNonEmptyString(partner) ? { partner } : {}),
       },
     });
 

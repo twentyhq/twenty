@@ -1,15 +1,18 @@
 import { useCallback } from 'react';
 
+import { usePartner } from '@/auth/hooks/usePartner';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/BillingCheckoutSession';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
 import { useStore } from 'jotai';
+import { isDefined, normalizePartner } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useInitializeQueryParamState = () => {
   const store = useStore();
+  const { setPartner } = usePartner();
   const initializeQueryParamState = useCallback(() => {
     const handlers: Record<string, (value: string) => void> = {
       billingCheckoutSession: (value: string) => {
@@ -50,6 +53,13 @@ export const useInitializeQueryParamState = () => {
           store.set(returnToPathState.atom, value);
         }
       },
+      partner: (value: string) => {
+        const partner = normalizePartner(value);
+
+        if (isDefined(partner)) {
+          setPartner(partner);
+        }
+      },
     };
 
     const queryParams = new URLSearchParams(window.location.search);
@@ -60,7 +70,7 @@ export const useInitializeQueryParamState = () => {
         handler(value);
       }
     }
-  }, [store]);
+  }, [store, setPartner]);
 
   return { initializeQueryParamState };
 };

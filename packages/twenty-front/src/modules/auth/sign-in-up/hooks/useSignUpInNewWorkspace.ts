@@ -1,4 +1,6 @@
 import { useAuth } from '@/auth/hooks/useAuth';
+import { usePartner } from '@/auth/hooks/usePartner';
+import { partnerCookieState } from '@/auth/states/partnerCookieState';
 import { useUploadNewWorkspaceLogo } from '@/auth/sign-in-up/hooks/useUploadNewWorkspaceLogo';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -26,6 +28,13 @@ export const useSignUpInNewWorkspace = () => {
     SignUpInNewWorkspaceDocument,
   );
   const { uploadNewWorkspaceLogo } = useUploadNewWorkspaceLogo();
+  const partnerCookie = useAtomStateValue(partnerCookieState);
+  const { setPartner } = usePartner();
+
+  const partner =
+    isDefined(partnerCookie) && 'partner' in partnerCookie
+      ? partnerCookie.partner
+      : undefined;
 
   const createWorkspace = async ({
     displayName,
@@ -38,9 +47,11 @@ export const useSignUpInNewWorkspace = () => {
   } = {}): Promise<boolean> => {
     try {
       const { data } = await signUpInNewWorkspaceMutation({
-        variables: { input: { displayName, subdomain } },
+        variables: { input: { displayName, subdomain, partner } },
       });
       assertIsDefinedOrThrow(data?.signUpInNewWorkspace);
+
+      setPartner(null);
 
       const workspaceId = data.signUpInNewWorkspace.workspace.id;
 

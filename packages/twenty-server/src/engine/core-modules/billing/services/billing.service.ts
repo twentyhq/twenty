@@ -39,10 +39,12 @@ export class BillingService {
     userEmail,
     workspaceId,
     workspaceDisplayName,
+    partner,
   }: {
     userEmail: string;
     workspaceId: string;
     workspaceDisplayName: string | undefined;
+    partner?: string;
   }): Promise<void> {
     const existingBillingCustomer =
       await this.billingCustomerRepository.findOne(workspaceId, { where: {} });
@@ -55,6 +57,7 @@ export class BillingService {
       userEmail,
       workspaceId,
       workspaceDisplayName,
+      partner,
     );
   }
 
