@@ -1,5 +1,5 @@
-import { isNull, isString } from '@sniptt/guards';
 import { isValidUuid } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import { type AgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-thread-cursor.type';
 import {
@@ -9,6 +9,11 @@ import {
 
 const LAST_ACTIVITY_AT_PATTERN =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$/;
+
+const AGENT_CHAT_CHANNEL_THREAD_CURSOR_SCHEMA = z.tuple([
+  z.string().regex(LAST_ACTIVITY_AT_PATTERN).nullable(),
+  z.string().refine(isValidUuid),
+]);
 
 const throwInvalidCursor = (): never => {
   throw new AiException(
@@ -28,23 +33,13 @@ export const decodeAgentChatChannelThreadCursor = (
     return throwInvalidCursor();
   }
 
-  if (!Array.isArray(decoded) || decoded.length !== 2) {
+  const result = AGENT_CHAT_CHANNEL_THREAD_CURSOR_SCHEMA.safeParse(decoded);
+
+  if (!result.success) {
     return throwInvalidCursor();
   }
 
-  const [lastActivityAt, id] = decoded as unknown[];
-
-  if (
-    !(
-      isNull(lastActivityAt) ||
-      (isString(lastActivityAt) &&
-        LAST_ACTIVITY_AT_PATTERN.test(lastActivityAt))
-    ) ||
-    !isString(id) ||
-    !isValidUuid(id)
-  ) {
-    return throwInvalidCursor();
-  }
+  const [lastActivityAt, id] = result.data;
 
   return { lastActivityAt, id };
 };
