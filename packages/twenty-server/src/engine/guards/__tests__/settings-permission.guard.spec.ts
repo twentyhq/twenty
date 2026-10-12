@@ -103,10 +103,12 @@ describe('SettingsPermissionGuard', () => {
       defaultRoleId,
       canUpdateAllSettings = false,
       isLayoutsFlagAssigned = false,
+      canAgentRoleUpdateAllSettings = false,
     }: {
       defaultRoleId: string | null;
       canUpdateAllSettings?: boolean;
       isLayoutsFlagAssigned?: boolean;
+      canAgentRoleUpdateAllSettings?: boolean;
     }) =>
       mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
         userWorkspaceRoleMap: {},
@@ -130,8 +132,17 @@ describe('SettingsPermissionGuard', () => {
                 ? ['role-permission-flag-id']
                 : [],
             },
+            'agent-role-universal-identifier': {
+              id: 'agent-role-id',
+              canUpdateAllSettings: canAgentRoleUpdateAllSettings,
+              canAccessAllTools: false,
+              rolePermissionFlagIds: [],
+            },
           },
-          universalIdentifierById: { 'role-id': 'role-universal-identifier' },
+          universalIdentifierById: {
+            'role-id': 'role-universal-identifier',
+            'agent-role-id': 'agent-role-universal-identifier',
+          },
         },
         flatRolePermissionFlagMaps: {
           byUniversalIdentifier: {
@@ -217,6 +228,40 @@ describe('SettingsPermissionGuard', () => {
         code: PermissionsExceptionCode.PERMISSION_DENIED,
       });
     });
+
+    it('should allow when both the application and the agent roles grant the setting', async () => {
+      mockCache({
+        defaultRoleId: 'role-id',
+        canUpdateAllSettings: true,
+        canAgentRoleUpdateAllSettings: true,
+      });
+      mockGqlContext.req.agentRoleRestriction = {
+        agentId: 'agent-id',
+        roleId: 'agent-role-id',
+      };
+
+      await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(true);
+    });
+
+    it.each([
+      { title: 'the agent role lacks it', agentRoleId: 'agent-role-id' },
+      { title: 'the agent has no role', agentRoleId: null },
+    ])(
+      'should deny with PERMISSION_DENIED a setting the application grants when $title',
+      async ({ agentRoleId }) => {
+        mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+        mockGqlContext.req.agentRoleRestriction = {
+          agentId: 'agent-id',
+          roleId: agentRoleId,
+        };
+
+        await expect(
+          guard.canActivate(mockExecutionContext),
+        ).rejects.toMatchObject({
+          code: PermissionsExceptionCode.PERMISSION_DENIED,
+        });
+      },
+    );
 
     it('should reject with NO_AUTHENTICATION_CONTEXT when the application does not exist', async () => {
       mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });

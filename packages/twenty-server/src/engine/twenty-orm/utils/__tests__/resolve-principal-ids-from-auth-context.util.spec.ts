@@ -89,6 +89,20 @@ describe('resolvePrincipalIdsFromAuthContext', () => {
     ).toEqual([EVERYONE_PRINCIPAL_ID, APPLICATION_ROLE_ID]);
   });
 
+  it('should not count the agent role carried by the token as a principal', () => {
+    expect(
+      resolve({
+        type: 'user',
+        workspace: { id: 'workspace-1' },
+        userWorkspaceId: USER_WORKSPACE_ID,
+        user: { id: 'user-1' },
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        workspaceMember: { id: WORKSPACE_MEMBER_ID },
+        agentRoleRestriction: { agentId: 'agent-1', roleId: 'agent-role-1' },
+      } as unknown as WorkspaceAuthContext),
+    ).toEqual([EVERYONE_PRINCIPAL_ID, WORKSPACE_MEMBER_ID, USER_ROLE_ID]);
+  });
+
   it('should resolve everyone alone for a pending activation user', () => {
     expect(
       resolve({

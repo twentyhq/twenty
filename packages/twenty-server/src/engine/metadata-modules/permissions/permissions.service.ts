@@ -11,7 +11,10 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
+import { applyAgentRoleRestriction } from 'src/engine/core-modules/auth/utils/apply-agent-role-restriction.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
@@ -92,12 +95,14 @@ export class PermissionsService {
     setting,
     apiKeyId,
     applicationId,
+    agentRoleRestriction,
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
     setting: PermissionFlagType;
     apiKeyId?: string;
     applicationId: string | undefined;
+    agentRoleRestriction?: AgentRoleRestriction;
   }): Promise<boolean> {
     const {
       userWorkspaceRoleMap,
@@ -121,12 +126,18 @@ export class PermissionsService {
       flatRoleMaps,
     });
 
+    const roleIds = applyAgentRoleRestriction({
+      roleIds: flatRoles.map((flatRole) => flatRole.id),
+      agentRoleRestriction,
+    });
+
     return (
-      flatRoles.length > 0 &&
-      flatRoles.every((flatRole) =>
-        isPermissionFlagGrantedToFlatRole({
-          flatRole,
-          permissionFlag: setting,
+      roleIds.length > 0 &&
+      roleIds.every((roleId) =>
+        this.isPermissionFlagGrantedToRoleId({
+          roleId,
+          setting,
+          flatRoleMaps,
           flatRolePermissionFlagMaps,
         }),
       )
@@ -154,24 +165,42 @@ export class PermissionsService {
         'flatRolePermissionFlagMaps',
       ]);
 
-    // Like the ORM, a role missing from the cache grants nothing
-    const isGrantedByRoleId = (roleId: string): boolean => {
-      const flatRole = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: roleId,
-        flatEntityMaps: flatRoleMaps,
+    const isGrantedByRoleId = (roleId: string): boolean =>
+      this.isPermissionFlagGrantedToRoleId({
+        roleId,
+        setting,
+        flatRoleMaps,
+        flatRolePermissionFlagMaps,
       });
 
-      return (
-        isDefined(flatRole) &&
-        isPermissionFlagGrantedToFlatRole({
-          flatRole,
-          permissionFlag: setting,
-          flatRolePermissionFlagMaps,
-        })
-      );
-    };
-
     return roleIds.every(isGrantedByRoleId);
+  }
+
+  // Like the ORM, a role missing from the cache grants nothing
+  private isPermissionFlagGrantedToRoleId({
+    roleId,
+    setting,
+    flatRoleMaps,
+    flatRolePermissionFlagMaps,
+  }: {
+    roleId: string;
+    setting: PermissionFlagType;
+    flatRoleMaps: FlatRoleMaps;
+    flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
+  }): boolean {
+    const flatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: roleId,
+      flatEntityMaps: flatRoleMaps,
+    });
+
+    return (
+      isDefined(flatRole) &&
+      isPermissionFlagGrantedToFlatRole({
+        flatRole,
+        permissionFlag: setting,
+        flatRolePermissionFlagMaps,
+      })
+    );
   }
 
   // Every returned role must grant the flag; none means an application without a role

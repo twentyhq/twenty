@@ -6,6 +6,7 @@ const USER_ROLE_ID = 'user-role-1';
 const APPLICATION_ROLE_ID = 'application-role-1';
 const API_KEY_ID = 'api-key-1';
 const API_KEY_ROLE_ID = 'api-key-role-1';
+const AGENT_ROLE_ID = 'agent-role-1';
 
 const buildUserContext = ({
   userWorkspaceId = USER_WORKSPACE_ID,
@@ -39,6 +40,15 @@ const buildApplicationContext = (
     workspace: { id: 'workspace-1' },
     application: { defaultRoleId },
   }) as unknown as WorkspaceAuthContext;
+
+const withAgentRole = (
+  authContext: WorkspaceAuthContext,
+  agentRoleId: string | null,
+): WorkspaceAuthContext =>
+  ({
+    ...authContext,
+    agentRoleRestriction: { agentId: 'agent-1', roleId: agentRoleId },
+  }) as WorkspaceAuthContext;
 
 const resolve = (authContext: WorkspaceAuthContext) =>
   resolveRolePermissionConfig({
@@ -130,5 +140,50 @@ describe('resolveRolePermissionConfig', () => {
 
   it('allows nothing for an application without a role', () => {
     expect(resolve(buildApplicationContext(null))).toBeNull();
+  });
+
+  it('narrows a user application token to the role of the agent it carries', () => {
+    expect(
+      resolve(
+        withAgentRole(
+          buildUserContext({
+            application: { defaultRoleId: APPLICATION_ROLE_ID },
+          }),
+          AGENT_ROLE_ID,
+        ),
+      ),
+    ).toEqual({
+      intersectionOf: {
+        userWorkspaceRoleId: USER_ROLE_ID,
+        applicationRoleId: APPLICATION_ROLE_ID,
+        agentRoleId: AGENT_ROLE_ID,
+      },
+    });
+  });
+
+  it('narrows an application token to the role of the agent it carries', () => {
+    expect(
+      resolve(
+        withAgentRole(
+          buildApplicationContext(APPLICATION_ROLE_ID),
+          AGENT_ROLE_ID,
+        ),
+      ),
+    ).toEqual({
+      intersectionOf: {
+        applicationRoleId: APPLICATION_ROLE_ID,
+        agentRoleId: AGENT_ROLE_ID,
+      },
+    });
+  });
+
+  it('allows nothing when the agent the token carries has no role', () => {
+    expect(resolve(withAgentRole(buildUserContext(), null))).toBeNull();
+  });
+
+  it('allows nothing for an application without a role, even with an agent', () => {
+    expect(
+      resolve(withAgentRole(buildApplicationContext(null), AGENT_ROLE_ID)),
+    ).toBeNull();
   });
 });

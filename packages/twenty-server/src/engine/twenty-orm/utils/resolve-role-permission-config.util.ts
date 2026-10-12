@@ -8,6 +8,7 @@ import {
   type RolePermissionConfig,
   type RoleIdsBySource,
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { buildAgentRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-agent-role-ids-by-source.util';
 import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
 import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
 import { isDenyingRoleIdsBySource } from 'src/engine/twenty-orm/utils/is-denying-role-ids-by-source.util';
@@ -22,10 +23,13 @@ const resolveRoleIdsBySourceFromAuthContext = ({
   apiKeyRoleMap: Record<string, string>;
 }): RoleIdsBySource => {
   if (isUserAuthContext(authContext)) {
-    return buildUserRoleIdsBySource({
-      userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
-      application: authContext.application,
-    });
+    return {
+      ...buildUserRoleIdsBySource({
+        userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
+        application: authContext.application,
+      }),
+      ...buildAgentRoleIdsBySource(authContext.agentRoleRestriction),
+    };
   }
 
   if (isApiKeyAuthContext(authContext)) {
@@ -33,10 +37,13 @@ const resolveRoleIdsBySourceFromAuthContext = ({
   }
 
   if (isApplicationAuthContext(authContext)) {
-    return resolveApplicationRoleId({
-      application: authContext.application,
-      isMissingApplicationRoleTolerated: false,
-    });
+    return {
+      ...resolveApplicationRoleId({
+        application: authContext.application,
+        isMissingApplicationRoleTolerated: false,
+      }),
+      ...buildAgentRoleIdsBySource(authContext.agentRoleRestriction),
+    };
   }
 
   return {};

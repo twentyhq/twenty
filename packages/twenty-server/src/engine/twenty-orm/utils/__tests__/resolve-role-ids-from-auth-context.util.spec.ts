@@ -6,6 +6,8 @@ const USER_ROLE_ID = 'user-role-1';
 const APPLICATION_ROLE_ID = 'application-role-1';
 const API_KEY_ID = 'api-key-1';
 const API_KEY_ROLE_ID = 'api-key-role-1';
+const AGENT_ROLE_ID = 'agent-role-1';
+const AGENT_ROLE_RESTRICTION = { agentId: 'agent-1', roleId: AGENT_ROLE_ID };
 
 const userWorkspaceRoleMap = { [USER_WORKSPACE_ID]: USER_ROLE_ID };
 const apiKeyRoleMap = { [API_KEY_ID]: API_KEY_ROLE_ID };
@@ -97,6 +99,46 @@ describe('resolveRoleIdsFromAuthContext', () => {
         type: 'application',
         workspace: { id: 'workspace-1' },
         application: { defaultRoleId: null },
+      } as unknown as WorkspaceAuthContext),
+    ).toEqual([]);
+  });
+
+  it('should narrow a user application token to the agent role it carries', () => {
+    expect(
+      resolve({
+        ...buildUserContext({ defaultRoleId: APPLICATION_ROLE_ID }),
+        agentRoleRestriction: AGENT_ROLE_RESTRICTION,
+      } as WorkspaceAuthContext),
+    ).toEqual([USER_ROLE_ID, APPLICATION_ROLE_ID, AGENT_ROLE_ID]);
+  });
+
+  it('should narrow an application token to the agent role it carries', () => {
+    expect(
+      resolve({
+        type: 'application',
+        workspace: { id: 'workspace-1' },
+        application: { defaultRoleId: APPLICATION_ROLE_ID },
+        agentRoleRestriction: AGENT_ROLE_RESTRICTION,
+      } as unknown as WorkspaceAuthContext),
+    ).toEqual([APPLICATION_ROLE_ID, AGENT_ROLE_ID]);
+  });
+
+  it('should resolve nothing when the agent carried by the token has no role', () => {
+    expect(
+      resolve({
+        ...buildUserContext(),
+        agentRoleRestriction: { agentId: 'agent-1', roleId: null },
+      } as WorkspaceAuthContext),
+    ).toEqual([]);
+  });
+
+  it('should never let the agent role stand in for a missing role', () => {
+    expect(
+      resolve({
+        type: 'application',
+        workspace: { id: 'workspace-1' },
+        application: { defaultRoleId: null },
+        agentRoleRestriction: AGENT_ROLE_RESTRICTION,
       } as unknown as WorkspaceAuthContext),
     ).toEqual([]);
   });
