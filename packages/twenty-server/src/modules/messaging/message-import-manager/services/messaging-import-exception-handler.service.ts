@@ -75,6 +75,7 @@ export class MessageImportExceptionHandlerService {
         case TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR:
         case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
         case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
+        case ConnectedAccountRefreshAccessTokenExceptionCode.CREDENTIALS_CHANGED_DURING_REFRESH:
         case MessageNetworkExceptionCode.ECONNABORTED:
         case MessageNetworkExceptionCode.ENOTFOUND:
         case MessageNetworkExceptionCode.ECONNRESET:

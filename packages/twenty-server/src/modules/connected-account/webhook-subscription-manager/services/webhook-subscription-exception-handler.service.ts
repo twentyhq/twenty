@@ -79,6 +79,7 @@ export class WebhookSubscriptionExceptionHandlerService {
             channel,
           );
         case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
+        case ConnectedAccountRefreshAccessTokenExceptionCode.CREDENTIALS_CHANGED_DURING_REFRESH:
           return await this.handleTemporaryException(
             exception,
             channelType,

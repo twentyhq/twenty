@@ -42,7 +42,7 @@ const buildEncryptionStub = () => ({
 describe('GoogleOAuth2ClientProvider', () => {
   let provider: GoogleOAuth2ClientProvider;
   let connectedAccountRepository: { findOne: jest.Mock };
-  let connectedAccountRefreshTokensService: { resolveTokens: jest.Mock };
+  let connectedAccountRefreshTokensService: { resolveLatestTokens: jest.Mock };
   let connectedAccountTokenEncryptionService: { decrypt: jest.Mock };
 
   const mockWorkspaceId = 'workspace-123';
@@ -66,7 +66,7 @@ describe('GoogleOAuth2ClientProvider', () => {
     };
 
     connectedAccountRefreshTokensService = {
-      resolveTokens: jest.fn().mockResolvedValue({
+      resolveLatestTokens: jest.fn().mockResolvedValue({
         refreshToken: mockEncryptedRefreshToken,
         accessToken: wrap('access-token'),
       }),
@@ -123,7 +123,7 @@ describe('GoogleOAuth2ClientProvider', () => {
         where: { id: mockConnectedAccountId },
       });
       expect(
-        connectedAccountRefreshTokensService.resolveTokens,
+        connectedAccountRefreshTokensService.resolveLatestTokens,
       ).toHaveBeenCalledWith(mockConnectedAccount, mockWorkspaceId);
       expect(
         connectedAccountTokenEncryptionService.decrypt,
@@ -148,11 +148,13 @@ describe('GoogleOAuth2ClientProvider', () => {
       });
     });
 
-    it('should throw when resolveTokens returns no refresh token', async () => {
-      connectedAccountRefreshTokensService.resolveTokens.mockResolvedValue({
-        refreshToken: null,
-        accessToken: wrap('access-token'),
-      });
+    it('should throw when resolveLatestTokens returns no refresh token', async () => {
+      connectedAccountRefreshTokensService.resolveLatestTokens.mockResolvedValue(
+        {
+          refreshToken: null,
+          accessToken: wrap('access-token'),
+        },
+      );
 
       await expect(provider.getClient(mockConnectedAccountId)).rejects.toThrow(
         ConnectedAccountRefreshAccessTokenException,

@@ -82,6 +82,40 @@ export class ConnectedAccountRefreshTokensService {
     );
   }
 
+  // Sync jobs act for the account itself rather than for a caller, so they
+  // may use whichever credentials won a concurrent write.
+  async resolveLatestTokens(
+    connectedAccount: ConnectedAccountEntity,
+    workspaceId: string,
+  ): Promise<ConnectedAccountTokens> {
+    try {
+      return await this.resolveTokens(connectedAccount, workspaceId);
+    } catch (error) {
+      if (
+        !(error instanceof ConnectedAccountRefreshAccessTokenException) ||
+        error.code !==
+          ConnectedAccountRefreshAccessTokenExceptionCode.CREDENTIALS_CHANGED_DURING_REFRESH
+      ) {
+        throw error;
+      }
+    }
+
+    const latestAccount = await this.connectedAccountRepository.findOneBy({
+      id: connectedAccount.id,
+      workspaceId,
+      archivedAt: IsNull(),
+    });
+
+    if (!isDefined(latestAccount)) {
+      throw new ConnectedAccountRefreshAccessTokenException(
+        `Connected account ${connectedAccount.id} in workspace ${workspaceId} was disconnected during token refresh`,
+        ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND,
+      );
+    }
+
+    return this.resolveTokens(latestAccount, workspaceId);
+  }
+
   private getExistingEncryptedTokens(
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
@@ -125,17 +159,18 @@ export class ConnectedAccountRefreshTokensService {
       workspaceId,
     });
 
+    // Every credential write stamps lastCredentialsRefreshedAt, so a changed
+    // stamp means a reconnect or another refresh won while this one waited.
     const updateResult = await this.connectedAccountRepository.update(
       {
         id: connectedAccount.id,
         workspaceId,
-        ...(connectedAccount.provider === ConnectedAccountProvider.APP
-          ? {
-              accessToken: connectedAccount.accessToken ?? IsNull(),
-              refreshToken: encryptedRefreshToken,
-              archivedAt: IsNull(),
-            }
-          : {}),
+        archivedAt: IsNull(),
+        lastCredentialsRefreshedAt: isDefined(
+          connectedAccount.lastCredentialsRefreshedAt,
+        )
+          ? connectedAccount.lastCredentialsRefreshedAt
+          : IsNull(),
       },
       {
         accessToken: encryptedAccessToken,
@@ -144,11 +179,8 @@ export class ConnectedAccountRefreshTokensService {
       },
     );
 
-    // Reauthorization or disconnect may finish while the provider is refreshing.
-    if (
-      connectedAccount.provider === ConnectedAccountProvider.APP &&
-      updateResult.affected === 0
-    ) {
+    // A reconnect, disconnect or transfer may land while the provider refreshes.
+    if (updateResult.affected === 0) {
       const isStillActive = await this.connectedAccountRepository.existsBy({
         id: connectedAccount.id,
         workspaceId,
@@ -157,7 +189,7 @@ export class ConnectedAccountRefreshTokensService {
 
       if (!isStillActive) {
         throw new ConnectedAccountRefreshAccessTokenException(
-          'The app connection was disconnected during token refresh.',
+          `Connected account ${connectedAccount.id} in workspace ${workspaceId} was disconnected during token refresh`,
           ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND,
         );
       }

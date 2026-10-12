@@ -6,19 +6,26 @@ import {
 } from 'test/integration/metadata/suites/connection-provider/utils/setup-application-with-app-connection.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { type ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
-import { type ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import { type GoogleApiRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
+import {
+  type ConnectedAccountPlaintextTokens,
+  type ConnectedAccountRefreshTokensService,
+} from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 describe('app token refresh overlapping connection changes', () => {
   let application: ApplicationWithAppConnection;
@@ -310,5 +317,76 @@ describe('app token refresh overlapping connection changes', () => {
       authFailedAt: null,
       authFailedReason: null,
     });
+  });
+
+  it('does not put Google credentials back into a row transferred during refresh', async () => {
+    const departingMemberId = uuidv4();
+    const custodianMemberId = uuidv4();
+    const googleAccount = await accounts().save({
+      id: uuidv4(),
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      provider: ConnectedAccountProvider.GOOGLE,
+      userWorkspaceId: departingMemberId,
+      visibility: 'user',
+      handle: 'departing-member@example.com',
+      accessToken: encrypt('google-expired-access'),
+      refreshToken: encrypt('google-refresh'),
+      lastCredentialsRefreshedAt: new Date(0),
+    });
+
+    let respond!: (tokens: ConnectedAccountPlaintextTokens) => void;
+    let notifyRequestStarted!: () => void;
+    const requestStarted = new Promise<void>((resolve) => {
+      notifyRequestStarted = resolve;
+    });
+
+    jest
+      .spyOn(
+        getAppProviderByClassName<GoogleApiRefreshAccessTokenService>(
+          'GoogleApiRefreshAccessTokenService',
+        ),
+        'refreshTokens',
+      )
+      .mockImplementationOnce(() => {
+        notifyRequestStarted();
+
+        return new Promise((resolve) => {
+          respond = resolve;
+        });
+      });
+
+    try {
+      const refreshing = service.resolveTokens(
+        googleAccount,
+        SEED_APPLE_WORKSPACE_ID,
+      );
+
+      await requestStarted;
+      await getAppProviderByClassName<ConnectedAccountMetadataService>(
+        'ConnectedAccountMetadataService',
+      ).transferOwnership({
+        fromUserWorkspaceId: departingMemberId,
+        toUserWorkspaceId: custodianMemberId,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+      respond({
+        accessToken: plaintextStringSchema.parse('google-refreshed-access'),
+        refreshToken: plaintextStringSchema.parse('google-refresh'),
+      });
+
+      await expect(refreshing).rejects.toMatchObject({
+        code: ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND,
+      });
+      expect(
+        await accounts().findOneByOrFail({ id: googleAccount.id }),
+      ).toMatchObject({
+        userWorkspaceId: custodianMemberId,
+        archivedAt: expect.anything(),
+        accessToken: null,
+        refreshToken: null,
+      });
+    } finally {
+      await accounts().delete({ id: googleAccount.id });
+    }
   });
 });

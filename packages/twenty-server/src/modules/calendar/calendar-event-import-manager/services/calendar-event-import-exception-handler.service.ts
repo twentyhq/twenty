@@ -63,6 +63,7 @@ export class CalendarEventImportErrorHandlerService {
       case TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR:
       case CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR:
       case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.CREDENTIALS_CHANGED_DURING_REFRESH:
         await this.handleTemporaryException(
           syncStep,
           calendarChannel,

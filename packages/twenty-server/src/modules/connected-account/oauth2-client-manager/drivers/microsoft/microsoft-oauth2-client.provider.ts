@@ -44,7 +44,7 @@ export class MicrosoftOAuth2ClientProvider {
     }
 
     const { accessToken: encryptedAccessToken } =
-      await this.connectedAccountRefreshTokensService.resolveTokens(
+      await this.connectedAccountRefreshTokensService.resolveLatestTokens(
         connectedAccount,
         connectedAccount.workspaceId,
       );

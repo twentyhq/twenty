@@ -48,7 +48,7 @@ export class GoogleOAuth2ClientProvider {
     }
 
     const { refreshToken: encryptedRefreshToken } =
-      await this.connectedAccountRefreshTokensService.resolveTokens(
+      await this.connectedAccountRefreshTokensService.resolveLatestTokens(
         connectedAccount,
         connectedAccount.workspaceId,
       );
