@@ -22,20 +22,20 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
-const setSendChatMessageEnabled = (value: boolean) =>
+const setAiChatInboxEnabled = (value: boolean) =>
   updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+    featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
     value,
     expectToFail: false,
   });
 
 describe('Send chat message workflow step', () => {
   afterAll(async () => {
-    await setSendChatMessageEnabled(true);
+    await setAiChatInboxEnabled(true);
   });
 
   it('posts the message in a conversation of the recipient', async () => {
-    await setSendChatMessageEnabled(true);
+    await setAiChatInboxEnabled(true);
 
     const title = `Your new deal is ready ${uuidv4()}`;
     const { status, stepStatus, stepResult, stepError } =
@@ -153,7 +153,7 @@ describe('Send chat message workflow step', () => {
     };
 
     beforeEach(async () => {
-      await setSendChatMessageEnabled(true);
+      await setAiChatInboxEnabled(true);
 
       const response = await makeGraphqlApiRequest({
         query: gql`
@@ -610,7 +610,7 @@ describe('Send chat message workflow step', () => {
   });
 
   it('fails a step that runs after the feature flag is turned off', async () => {
-    await setSendChatMessageEnabled(true);
+    await setAiChatInboxEnabled(true);
 
     const { stepStatus, stepError } = await runWorkflowActionStep({
       name: 'Send chat message turned off',
@@ -620,7 +620,7 @@ describe('Send chat message workflow step', () => {
         title: 'Should not be sent',
         text: 'Hello',
       },
-      beforeRun: () => setSendChatMessageEnabled(false),
+      beforeRun: () => setAiChatInboxEnabled(false),
     });
 
     expect(stepStatus).toBe('FAILED');
@@ -628,7 +628,7 @@ describe('Send chat message workflow step', () => {
   }, 120000);
 
   it('cannot be added to a workflow while the feature flag is off', async () => {
-    await setSendChatMessageEnabled(false);
+    await setAiChatInboxEnabled(false);
 
     const workflowResponse = await makeGraphqlApiRequest({
       query: gql`

@@ -284,7 +284,7 @@ export class ChatExecutionService {
     const canAttachConversationToRecords =
       !isWorkspaceSetupConversation &&
       (await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace.id,
       ));
 
