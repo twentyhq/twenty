@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation } from '@nestjs/graphql';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -8,7 +8,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
@@ -84,17 +83,6 @@ export class MessageListResolver {
   ): Promise<TriggerAddPeopleToMessageListJobResultDTO> {
     return this.addPeopleToMessageListJobService.triggerAddPeopleToMessageListJob(
       { ...input, authContext: getWorkspaceAuthContext() },
-    );
-  }
-
-  @Query(() => JobStatusDTO, { nullable: true })
-  @UseGuards(NoPermissionGuard)
-  async findAddPeopleToMessageListJobStatus(
-    @Args('messageListId', { type: () => UUIDScalarType })
-    messageListId: string,
-  ): Promise<JobStatusDTO | null> {
-    return this.addPeopleToMessageListJobService.findAddPeopleToMessageListJobStatus(
-      { messageListId, authContext: getWorkspaceAuthContext() },
     );
   }
 }

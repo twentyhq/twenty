@@ -1,15 +1,13 @@
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
-import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import {
-  FindAddPeopleToMessageListJobStatusDocument,
   JobState,
   TriggerAddPeopleToMessageListJobDocument,
 } from '~/generated-metadata/graphql';
@@ -29,21 +27,6 @@ export const useAddPeopleToMessageList = ({
   const { enqueueToast } = useToast();
   const [triggerAddPeopleToMessageListJob, { loading: isTriggeringAdd }] =
     useMutation(TriggerAddPeopleToMessageListJobDocument);
-
-  const { data: jobStatusData } = useQuery(
-    FindAddPeopleToMessageListJobStatusDocument,
-    {
-      variables: { messageListId: messageListId ?? '' },
-      skip: !isDefined(messageListId),
-      fetchPolicy: 'network-only',
-    },
-  );
-
-  const runningJobStatus = jobStatusData?.findAddPeopleToMessageListJobStatus;
-  const runningJobId =
-    isDefined(runningJobStatus) && !isTerminalJobState(runningJobStatus.state)
-      ? runningJobStatus.jobId
-      : undefined;
 
   const handleAddJobSettled = useCallback(
     (jobStatus: TrackedJobStatus) => {
@@ -65,10 +48,6 @@ export const useAddPeopleToMessageList = ({
   );
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
-    runningJob:
-      isDefined(runningJobId) && isDefined(messageListId)
-        ? { jobId: runningJobId, context: messageListId }
-        : undefined,
     onQueueJobSettled: handleAddJobSettled,
   });
 

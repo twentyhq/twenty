@@ -40,19 +40,6 @@ const triggerAddPeopleToMessageListJob = (input: {
     variables: { input },
   });
 
-const findAddPeopleToMessageListJobStatus = (messageListId: string) =>
-  makeMetadataApiRequest({
-    query: gql`
-      query FindAddPeopleToMessageListJobStatus($messageListId: UUID!) {
-        findAddPeopleToMessageListJobStatus(messageListId: $messageListId) {
-          jobId
-          state
-        }
-      }
-    `,
-    variables: { messageListId },
-  });
-
 const getJobState = async (jobId: string) => {
   const campaignQueue = global.app.get<MessageQueueService>(
     getQueueToken(MessageQueue.campaignQueue),
@@ -262,7 +249,7 @@ describe('triggerAddPeopleToMessageListJob (integration)', () => {
     expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
   });
 
-  it('reports the running job and rejects a second add to the same list until it finishes', async () => {
+  it('rejects a second add to the same list until the running job finishes', async () => {
     const messageListId = await createMessageList();
     const personFilter = { id: { in: personIds.slice(0, 3) } };
     const addPeopleToMessageListService =
@@ -298,13 +285,6 @@ describe('triggerAddPeopleToMessageListJob (integration)', () => {
         expect(await getJobState(jobId)).toBe('active'),
       );
 
-      const statusResponse =
-        await findAddPeopleToMessageListJobStatus(messageListId);
-
-      expect(
-        statusResponse.body.data.findAddPeopleToMessageListJobStatus,
-      ).toEqual({ jobId, state: 'ACTIVE' });
-
       const secondResponse = await triggerAddPeopleToMessageListJob({
         messageListId,
         personFilter,
@@ -315,10 +295,6 @@ describe('triggerAddPeopleToMessageListJob (integration)', () => {
       releaseJob();
 
       expect(await waitForJobToSettle(jobId)).toBe('completed');
-      expect(
-        (await findAddPeopleToMessageListJobStatus(messageListId)).body.data
-          .findAddPeopleToMessageListJobStatus,
-      ).toBeNull();
       expect(await countMessageListMembers(messageListId)).toBe(3);
     } finally {
       releaseJob();

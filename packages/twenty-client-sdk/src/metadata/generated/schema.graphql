@@ -3776,7 +3776,6 @@ type Query {
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
   ): FieldConnection!
-  findAddPeopleToMessageListJobStatus(messageListId: UUID!): JobStatus
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!

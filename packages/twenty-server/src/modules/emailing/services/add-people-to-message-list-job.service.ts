@@ -7,10 +7,8 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
 import { findInFlightQueueJobIdByPrefix } from 'src/engine/core-modules/message-queue/utils/find-in-flight-queue-job-id-by-prefix.util';
 import {
   PermissionsException,
@@ -75,32 +73,6 @@ export class AddPeopleToMessageListJobService {
         }),
       buildAddPeopleToMessageListLockKey({ workspaceId, messageListId }),
     );
-  }
-
-  async findAddPeopleToMessageListJobStatus({
-    messageListId,
-    authContext,
-  }: {
-    messageListId: string;
-    authContext: WorkspaceAuthContext;
-  }): Promise<JobStatusDTO | null> {
-    await this.assertMessageListExists({ messageListId, authContext });
-
-    const jobId = findInFlightQueueJobIdByPrefix({
-      inFlightJobs: await this.campaignQueueService.getInFlightJobs(),
-      jobIdPrefix: buildAddPeopleToMessageListJobId({
-        workspaceId: authContext.workspace.id,
-        messageListId,
-      }),
-    });
-
-    if (!isDefined(jobId)) {
-      return null;
-    }
-
-    const job = (await this.campaignQueueService.getJobs([jobId]))[jobId];
-
-    return isDefined(job) ? buildJobStatus({ jobId, job }) : null;
   }
 
   private async assertMessageListExists({

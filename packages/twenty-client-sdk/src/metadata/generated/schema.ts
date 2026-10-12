@@ -2732,7 +2732,6 @@ export interface Query {
     exportApplication: ApplicationExport
     field: Field
     fields: FieldConnection
-    findAddPeopleToMessageListJobStatus?: JobStatus
     findApplicationRegistrationByClientId?: PublicApplicationRegistration
     findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
     findApplicationRegistrationStats: ApplicationRegistrationStats
@@ -6966,7 +6965,6 @@ export interface QueryGenqlSelection{
     filter: FieldFilter, 
     /** Limit or page results. */
     paging: CursorPaging} })
-    findAddPeopleToMessageListJobStatus?: (JobStatusGenqlSelection & { __args: {messageListId: Scalars['UUID']} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })

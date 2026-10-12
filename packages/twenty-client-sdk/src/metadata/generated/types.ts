@@ -9927,15 +9927,6 @@ export default {
                     ]
                 }
             ],
-            "findAddPeopleToMessageListJobStatus": [
-                290,
-                {
-                    "messageListId": [
-                        490,
-                        "UUID!"
-                    ]
-                }
-            ],
             "findApplicationRegistrationByClientId": [
                 386,
                 {
