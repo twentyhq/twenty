@@ -57,8 +57,9 @@ export class AgentToolProvider implements ToolProvider {
   }
 
   private buildToolSet(context: ToolProviderContext): ToolSet {
-    return this.agentToolWorkspaceService.generateAgentTools(
-      context.workspaceId,
-    );
+    return this.agentToolWorkspaceService.generateAgentTools({
+      workspaceId: context.workspaceId,
+      callingApplication: context.application,
+    });
   }
 }

@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
-import { getToolExecutionErrorMessage } from 'src/engine/core-modules/tool-provider/utils/build-tool-execution-failure.util';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type AgentToolContext } from 'src/engine/metadata-modules/ai/ai-agent/tools/types/agent-tool-context.type';
 import { type AgentToolDependencies } from 'src/engine/metadata-modules/ai/ai-agent/tools/types/agent-tool-dependencies.type';
 import { toAgentSummary } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-summary.util';
+import { toAgentToolFailureOrThrow } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-tool-failure-or-throw.util';
 
 const listAgentsSchema = z.object({});
 
@@ -21,7 +22,14 @@ export const createListAgentsTool = (
       );
 
       const listedAgents = agents
-        .filter((agent) => !agent.isSystem)
+        .filter(
+          (agent) =>
+            !agent.isSystem &&
+            canCallerReachApplication({
+              callingApplication: context.callingApplication,
+              applicationId: agent.applicationId,
+            }),
+        )
         .map(toAgentSummary);
 
       return {
@@ -30,13 +38,7 @@ export const createListAgentsTool = (
         result: { agents: listedAgents, count: listedAgents.length },
       };
     } catch (error) {
-      const message = getToolExecutionErrorMessage(error);
-
-      return {
-        success: false,
-        message: `Failed to list agents: ${message}`,
-        error: message,
-      };
+      return toAgentToolFailureOrThrow({ error, action: 'list agents' });
     }
   },
 });

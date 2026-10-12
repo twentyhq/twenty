@@ -1,6 +1,7 @@
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FieldActorSource } from 'twenty-shared/types';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { AgentToolProvider } from 'src/engine/core-modules/tool-provider/providers/agent-tool.provider';
 import { type AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
@@ -67,6 +68,11 @@ const buildProvider = (options?: { hasAiSettingsPermission?: boolean }) => {
   };
 };
 
+const otherApplication = {
+  id: 'other-application-id',
+  sourceType: 'npm',
+} as unknown as FlatApplication;
+
 const context: ToolProviderContext = {
   workspaceId,
   roleId: 'caller-role-id',
@@ -86,6 +92,7 @@ describe('AgentToolProvider', () => {
       const { provider, permissionsService } = buildProvider();
 
       await expect(provider.isAvailable(context)).resolves.toBe(true);
+      expect(permissionsService.checkRolesPermissions).toHaveBeenCalledTimes(1);
       expect(permissionsService.checkRolesPermissions).toHaveBeenCalledWith(
         context.rolePermissionConfig,
         workspaceId,
@@ -138,6 +145,68 @@ describe('AgentToolProvider', () => {
     });
   });
 
+  describe('application scope', () => {
+    const applicationContext: ToolProviderContext = {
+      ...context,
+      application: otherApplication,
+    };
+
+    it('only lists the agents of the calling application', async () => {
+      const { provider, agentService } = buildProvider();
+
+      agentService.findManyAgents.mockResolvedValue([
+        buildAgent(),
+        buildAgent({
+          id: 'other-application-agent-id',
+          applicationId: otherApplication.id,
+        }),
+      ]);
+
+      const output = await provider.executeStaticTool(
+        'list_agents',
+        {},
+        applicationContext,
+      );
+
+      expect(output.result).toMatchObject({
+        count: 1,
+        agents: [{ id: 'other-application-agent-id' }],
+      });
+    });
+
+    it('refuses to update or delete an agent of another application', async () => {
+      const { provider, agentService } = buildProvider();
+
+      const updateOutput = await provider.executeStaticTool(
+        'update_agent',
+        { id: agentId, prompt: 'Something else' },
+        applicationContext,
+      );
+      const deleteOutput = await provider.executeStaticTool(
+        'delete_agent',
+        { id: agentId },
+        applicationContext,
+      );
+
+      expect(updateOutput.success).toBe(false);
+      expect(deleteOutput.success).toBe(false);
+      expect(agentService.updateOneAgent).not.toHaveBeenCalled();
+      expect(agentService.deleteOneAgent).not.toHaveBeenCalled();
+    });
+  });
+
+  it('rethrows unexpected errors so the tool executor reports them', async () => {
+    const { provider, agentService } = buildProvider();
+
+    agentService.deleteOneAgent.mockRejectedValue(
+      new Error('Connection terminated'),
+    );
+
+    await expect(
+      provider.executeStaticTool('delete_agent', { id: agentId }, context),
+    ).rejects.toThrow('Connection terminated');
+  });
+
   describe('create_agent', () => {
     it('creates an agent on the workspace default model with generated trigger ids', async () => {
       const { provider, agentService, aiModelRegistryService } =
@@ -164,7 +233,11 @@ describe('AgentToolProvider', () => {
       expect(output.success).toBe(true);
       expect(
         aiModelRegistryService.validateModelAvailability,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        aiModelRegistryService.validateModelAvailability,
       ).toHaveBeenCalledWith('workspace-default-model');
+      expect(agentService.createOneAgent).toHaveBeenCalledTimes(1);
 
       const [createAgentInput, calledWorkspaceId] =
         agentService.createOneAgent.mock.calls[0];
@@ -259,6 +332,7 @@ describe('AgentToolProvider', () => {
       expect(
         aiModelRegistryService.validateModelAvailability,
       ).not.toHaveBeenCalled();
+      expect(agentService.updateOneAgent).toHaveBeenCalledTimes(1);
       expect(agentService.updateOneAgent).toHaveBeenCalledWith({
         input: {
           id: agentId,
@@ -305,6 +379,7 @@ describe('AgentToolProvider', () => {
       );
 
       expect(output.success).toBe(true);
+      expect(agentService.deleteOneAgent).toHaveBeenCalledTimes(1);
       expect(agentService.deleteOneAgent).toHaveBeenCalledWith(
         agentId,
         workspaceId,
