@@ -28,6 +28,7 @@ import { ApplicationLookupService } from 'src/engine/core-modules/application/ap
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
@@ -51,6 +52,7 @@ export class ApplicationDevelopmentService {
     private readonly fileStorageService: FileStorageService,
     private readonly throttlerService: ThrottlerService,
     private readonly cacheLockService: CacheLockService,
+    private readonly upgradeStatusService: UpgradeStatusService,
   ) {}
 
   async createDevelopmentApplication({
@@ -155,6 +157,9 @@ export class ApplicationDevelopmentService {
       },
     );
 
+    const serverVersion =
+      await this.upgradeStatusService.getWorkspaceCompletedVersion(workspaceId);
+
     if (dryRun === true) {
       const { workspaceMigration } =
         await this.applicationSyncService.synchronizeFromManifest({
@@ -169,10 +174,11 @@ export class ApplicationDevelopmentService {
         applicationUniversalIdentifier:
           workspaceMigration.applicationUniversalIdentifier,
         actions: workspaceMigration.actions,
+        serverVersion,
       };
     }
 
-    return this.cacheLockService.withLock(
+    const workspaceMigration = await this.cacheLockService.withLock(
       () =>
         this.applyManifestSync(
           manifest,
@@ -182,6 +188,8 @@ export class ApplicationDevelopmentService {
       `app-sync:${workspaceId}`,
       APP_SYNC_LOCK_OPTIONS,
     );
+
+    return { ...workspaceMigration, serverVersion };
   }
 
   async uploadApplicationFile({
@@ -249,7 +257,7 @@ export class ApplicationDevelopmentService {
     manifest: ApplicationInput['manifest'],
     workspaceId: string,
     inferDeletionFromMissingEntities: boolean,
-  ): Promise<WorkspaceMigrationDTO> {
+  ): Promise<Omit<WorkspaceMigrationDTO, 'serverVersion'>> {
     const applicationRegistration =
       await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
         {

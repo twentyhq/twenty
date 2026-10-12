@@ -1,14 +1,21 @@
 import gql from 'graphql-tag';
 import { type Manifest } from 'twenty-shared/application';
 
+const DEFAULT_SYNC_APPLICATION_GQL_FIELDS = `
+  applicationUniversalIdentifier
+  actions
+`;
+
 export const syncApplicationQueryFactory = ({
   manifest,
   dryRun,
   inferDeletionFromMissingEntities,
+  gqlFields = DEFAULT_SYNC_APPLICATION_GQL_FIELDS,
 }: {
   manifest: Manifest;
   dryRun?: boolean;
   inferDeletionFromMissingEntities?: boolean;
+  gqlFields?: string;
 }) => ({
   query: gql`
     mutation SyncApplication(
@@ -21,8 +28,7 @@ export const syncApplicationQueryFactory = ({
         dryRun: $dryRun
         inferDeletionFromMissingEntities: $inferDeletionFromMissingEntities
       ) {
-        applicationUniversalIdentifier
-        actions
+        ${gqlFields}
       }
     }
   `,

@@ -1,6 +1,8 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { type ApplicationExport } from '@/cli/utilities/pull/application-export-type';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
+import { buildUnsupportedServerVersionMessage } from '@/cli/utilities/version/build-unsupported-server-version-message';
+import { isServerVersionSupported } from '@/cli/utilities/version/is-server-version-supported';
 import axios, { type AxiosInstance } from 'axios';
 import { type Manifest } from 'twenty-shared/application';
 import {
@@ -8,6 +10,13 @@ import {
   type SyncAction,
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import sdkPackageJson from '../../../../package.json';
+
+// Servers that predate `WorkspaceMigration.serverVersion` reject the whole
+// sync operation at validation time, before anything is applied.
+const isUnknownServerVersionFieldError = (
+  message: string | undefined,
+): boolean => message?.includes('Cannot query field "serverVersion"') ?? false;
 
 export class ApplicationApi {
   constructor(private readonly client: AxiosInstance) {}
@@ -323,6 +332,7 @@ export class ApplicationApi {
       {
         applicationUniversalIdentifier: string;
         actions: SyncAction[];
+        serverVersion: string | null;
       },
       MetadataValidationErrorResponse
     >
@@ -349,6 +359,7 @@ export class ApplicationApi {
           syncApplication(${argumentAssignments}) {
             applicationUniversalIdentifier
             actions
+            serverVersion
           }
         }
       `;
@@ -376,22 +387,51 @@ export class ApplicationApi {
       );
 
       if (response.data.errors) {
+        const message: string | undefined = response.data.errors[0]?.message;
+
+        if (isUnknownServerVersionFieldError(message)) {
+          return {
+            success: false,
+            message: buildUnsupportedServerVersionMessage(),
+          };
+        }
+
         return {
           success: false,
           error: response.data.errors[0]?.extensions,
-          message: response.data.errors[0]?.message,
+          message,
+        };
+      }
+
+      const syncResult = response.data.data.syncApplication;
+
+      if (
+        !isServerVersionSupported({
+          serverVersion: syncResult.serverVersion,
+          supportedServerVersionRange: sdkPackageJson.engines.twenty,
+        })
+      ) {
+        return {
+          success: false,
+          message: buildUnsupportedServerVersionMessage(
+            syncResult.serverVersion,
+          ),
         };
       }
 
       return {
         success: true,
-        data: response.data.data.syncApplication,
+        data: syncResult,
         message: `Successfully synced application: ${manifest.application.displayName}`,
       };
     } catch (error) {
+      const message = serializeError(error);
+
       return {
         success: false,
-        message: serializeError(error),
+        message: isUnknownServerVersionFieldError(message)
+          ? buildUnsupportedServerVersionMessage()
+          : message,
       };
     }
   }

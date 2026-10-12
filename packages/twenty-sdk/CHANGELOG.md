@@ -26,6 +26,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
   The returned `{ id, path, size, createdAt, url }` is unchanged. `uploadFile` now requires a Twenty server that exposes the `createFileUpload` and `completeFileUpload` mutations.
 
+- **`twenty dev` and `twenty dev --once` require a Twenty server `>=2.47.0` and check it on every sync.** `syncApplication` now returns the workspace's server version, and the CLI stops a sync, dry runs included, when that version is outside the range twenty-sdk declares in its own `engines.twenty`. A server older than 2.47.0 cannot report its version and is rejected with the same message. Upgrade the server, or install a twenty-sdk version that supports it.
+
 ### Removed
 
 - **The per-file multipart fallback in `twenty app deploy` and `twenty app dev`.** Application files are only uploaded straight to file storage now (`createApplicationFileUploads`, PUT, `completeApplicationFileUploads`). The CLI no longer falls back to the `uploadApplicationFile` mutation on a server that lacks the batch mutations, so deploying to a server older than the direct upload fails instead of degrading.

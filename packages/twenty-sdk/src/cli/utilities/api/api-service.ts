@@ -72,6 +72,7 @@ export class ApiService {
       {
         applicationUniversalIdentifier: string;
         actions: SyncAction[];
+        serverVersion: string | null;
       },
       MetadataValidationErrorResponse
     >

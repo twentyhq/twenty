@@ -5954,6 +5954,7 @@ enum WorkspaceMemberTimeFormatEnum {
 type WorkspaceMigration {
   actions: JSON!
   applicationUniversalIdentifier: String!
+  serverVersion: String
 }
 
 type WorkspaceNameAndId {

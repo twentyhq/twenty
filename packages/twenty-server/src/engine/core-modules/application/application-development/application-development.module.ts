@@ -16,6 +16,7 @@ import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.m
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { UpgradeStatusModule } from 'src/engine/core-modules/upgrade/upgrade-status.module';
 import { WorkspaceGraphqlSchemaSDLModule } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -36,6 +37,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     PermissionsModule,
     ThrottlerModule,
     TypeOrmModule.forFeature([FileEntity]),
+    UpgradeStatusModule,
     WorkspaceCacheModule,
     WorkspaceGraphqlSchemaSDLModule,
   ],
