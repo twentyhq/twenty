@@ -125,20 +125,13 @@ const AiChatInboxPageContent = () => {
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
   };
 
-  // The list is not on screen beside a full page chat to load more as it
-  // scrolls, so reaching its last chat loads more, as the next button does
-  const handleActiveThreadChange = (nextThreadId: string) => {
-    selectThread(nextThreadId);
-
-    if (nextThreadId === threads.at(-1)?.id) {
-      void fetchMoreAgentChatThreads();
-    }
-  };
-
   const { navigateWithArrowKey } = useRecordSelectionArrowKeyNavigation({
     selectableItemsContainerRef: threadListContainerRef,
     activeRecordId: selectedThreadId,
-    onActiveRecordChange: handleActiveThreadChange,
+    onActiveRecordChange: selectThread,
+    // The list is not on screen beside a full page chat to load more as it
+    // scrolls, so going past its last chat loads more, as the next button does
+    onEndReached: fetchMoreAgentChatThreads,
   });
 
   useGlobalHotkeys({

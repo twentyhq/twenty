@@ -18,12 +18,14 @@ type UseRecordSelectionArrowKeyNavigationProps = {
   selectableItemsContainerRef: RefObject<HTMLElement | null>;
   activeRecordId?: string;
   onActiveRecordChange?: (recordId: string) => void;
+  onEndReached?: () => void;
 };
 
 export const useRecordSelectionArrowKeyNavigation = ({
   selectableItemsContainerRef,
   activeRecordId,
   onActiveRecordChange,
+  onEndReached,
 }: UseRecordSelectionArrowKeyNavigationProps) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordSelectionComponentInstanceContext,
@@ -94,6 +96,10 @@ export const useRecordSelectionArrowKeyNavigation = ({
             ];
 
       if (!isDefined(targetRecordId)) {
+        if (keyboardEvent.key === Key.ArrowDown) {
+          onEndReached?.();
+        }
+
         return;
       }
 
@@ -104,6 +110,7 @@ export const useRecordSelectionArrowKeyNavigation = ({
         toggleRecordSelection({
           recordId: targetRecordId,
           shouldSelectRange: true,
+          selectableRecordIds: recordIds,
         });
       } else {
         const anchorRecordId = cursorRecordId ?? targetRecordId;
@@ -119,6 +126,7 @@ export const useRecordSelectionArrowKeyNavigation = ({
           toggleRecordSelection({
             recordId: targetRecordId,
             shouldSelectRange: true,
+            selectableRecordIds: recordIds,
           });
         }
       }
@@ -133,6 +141,7 @@ export const useRecordSelectionArrowKeyNavigation = ({
       displayedRecordIds,
       isRecordSelectedFamilyState,
       onActiveRecordChange,
+      onEndReached,
       recordSelectionRange,
       resetRecordSelection,
       selectableItemsContainerRef,

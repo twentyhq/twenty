@@ -45,12 +45,14 @@ const renderArrowKeyNavigation = ({
   container?: HTMLElement | null;
 }) => {
   const onActiveRecordChange = jest.fn();
+  const onEndReached = jest.fn();
   const { result } = renderHook(
     () =>
       useRecordSelectionArrowKeyNavigation({
         selectableItemsContainerRef: { current: container },
         activeRecordId,
         onActiveRecordChange,
+        onEndReached,
       }),
     { wrapper: Wrapper },
   );
@@ -59,6 +61,7 @@ const renderArrowKeyNavigation = ({
     navigateWithArrowKey: (keyboardEvent: KeyboardEvent) =>
       result.current.navigateWithArrowKey(keyboardEvent),
     onActiveRecordChange,
+    onEndReached,
   };
 };
 
@@ -121,6 +124,16 @@ describe('useRecordSelectionArrowKeyNavigation', () => {
     expect(onActiveRecordChange).not.toHaveBeenCalled();
   });
 
+  it('should report going past the last record', () => {
+    const { navigateWithArrowKey, onActiveRecordChange, onEndReached } =
+      renderArrowKeyNavigation({ activeRecordId: 'e' });
+
+    pressArrowKey(navigateWithArrowKey, Key.ArrowDown);
+
+    expect(onActiveRecordChange).not.toHaveBeenCalled();
+    expect(onEndReached).toHaveBeenCalled();
+  });
+
   it('should extend and shrink the selection from the active record', () => {
     const { navigateWithArrowKey, onActiveRecordChange } =
       renderArrowKeyNavigation({ activeRecordId: 'b' });
@@ -163,5 +176,17 @@ describe('useRecordSelectionArrowKeyNavigation', () => {
     act(() => getItem('b')?.focus());
     pressArrowKey(navigateWithArrowKey, Key.ArrowDown);
     expect(document.activeElement).toBe(getItem('d'));
+  });
+
+  it('should not select records that are not on screen', () => {
+    const container = renderSelectableItems(['a', 'b', 'd', 'e']);
+    const { navigateWithArrowKey } = renderArrowKeyNavigation({
+      activeRecordId: 'b',
+      container,
+    });
+
+    pressArrowKey(navigateWithArrowKey, Key.ArrowDown, true);
+
+    expect(getSelectedRecordIds()).toEqual(['b', 'd']);
   });
 });
