@@ -174,6 +174,7 @@ export class AgentChatStreamingService {
       });
 
       await this.browsingContextService.remember({
+        threadId,
         messageId: queuedMessage.id,
         browsingContext,
       });
@@ -205,6 +206,7 @@ export class AgentChatStreamingService {
         });
 
         await this.browsingContextService.remember({
+          threadId,
           messageId: savedUserMessage.id,
           browsingContext,
         });
@@ -423,7 +425,7 @@ export class AgentChatStreamingService {
           workspaceId,
           messages,
           browsingContext: isDefined(message)
-            ? await this.recallLatestBrowsingContext(messages)
+            ? await this.recallLatestBrowsingContext({ threadId, messages })
             : null,
           modelId,
           lastUserMessageText: textPart?.text ?? '',
@@ -471,7 +473,10 @@ export class AgentChatStreamingService {
       userWorkspaceId,
       workspaceId: workspace.id,
       messages,
-      browsingContext: await this.recallLatestBrowsingContext(messages),
+      browsingContext: await this.recallLatestBrowsingContext({
+        threadId,
+        messages,
+      }),
       modelId,
       lastUserMessageText: '',
       turnId,
@@ -633,8 +638,9 @@ export class AgentChatStreamingService {
           userWorkspaceId,
           workspaceId,
           messages,
-          browsingContext: await this.browsingContextService.recall({
-            messageIds: [nextQueued.id],
+          browsingContext: await this.recallLatestBrowsingContext({
+            threadId,
+            messages,
           }),
           lastUserMessageText: messageText,
           turnId,
@@ -740,8 +746,15 @@ export class AgentChatStreamingService {
     );
   }
 
-  private recallLatestBrowsingContext(messages: ExtendedUIMessage[]) {
+  private recallLatestBrowsingContext({
+    threadId,
+    messages,
+  }: {
+    threadId: string;
+    messages: ExtendedUIMessage[];
+  }) {
     return this.browsingContextService.recall({
+      threadId,
       messageIds: messages
         .filter(({ role }) => role === 'user')
         .map(({ id }) => id)

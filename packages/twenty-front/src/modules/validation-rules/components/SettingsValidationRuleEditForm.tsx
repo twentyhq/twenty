@@ -71,7 +71,9 @@ export const SettingsValidationRuleEditForm = ({
         nextServerFormValues,
       }),
     );
-    setFormKey((previousFormKey) => previousFormKey + 1);
+    if (nextServerFormValues.expression !== serverFormValues.expression) {
+      setFormKey((previousFormKey) => previousFormKey + 1);
+    }
   }
 
   const fields = buildValidationRuleFieldDescriptors({

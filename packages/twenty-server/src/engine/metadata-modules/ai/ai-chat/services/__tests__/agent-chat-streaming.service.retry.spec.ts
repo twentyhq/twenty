@@ -250,6 +250,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     await service.retryLastFailedTurn(retryArguments);
 
     expect(browsingContextService.recall).toHaveBeenCalledWith({
+      threadId: 'thread-id',
       messageIds: ['user-message-id', 'earlier-message-id'],
     });
     expect(messageQueueService.add).toHaveBeenCalledWith(

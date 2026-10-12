@@ -1,67 +1,84 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 
-const BROWSING_CONTEXT_TTL_SECONDS = 86_400;
+const BROWSING_CONTEXT_TTL_MILLISECONDS = 86_400_000;
+
+type BrowsingContextByMessageId = Record<string, BrowsingContextType>;
 
 @Injectable()
 export class AgentChatBrowsingContextService {
   private readonly logger = new Logger(AgentChatBrowsingContextService.name);
 
-  constructor(private readonly redisClientService: RedisClientService) {}
+  constructor(
+    @InjectCacheStorage(CacheStorageNamespace.ModuleAiChat)
+    private readonly cacheStorageService: CacheStorageService,
+  ) {}
 
-  private getMessageKey(messageId: string): string {
-    return `agent-chat-browsing-context:message:${messageId}`;
+  private getThreadKey(threadId: string): string {
+    return `browsing-context:${threadId}`;
   }
 
   async remember({
+    threadId,
     messageId,
     browsingContext,
   }: {
+    threadId: string;
     messageId: string;
     browsingContext: BrowsingContextType | null;
   }): Promise<void> {
-    await this.redisClientService
-      .getClient()
-      .set(
-        this.getMessageKey(messageId),
-        JSON.stringify(browsingContext ?? null),
-        'EX',
-        BROWSING_CONTEXT_TTL_SECONDS,
-      )
-      .catch((error) => {
-        this.logger.warn(
-          `Could not store the browsing context of message ${messageId}: ${formatErrorWithCause(error)}`,
-        );
-      });
-  }
-
-  async recall({
-    messageIds,
-  }: {
-    messageIds: string[];
-  }): Promise<BrowsingContextType | null> {
-    if (!isNonEmptyArray(messageIds)) {
-      return null;
+    if (!isDefined(browsingContext)) {
+      return;
     }
 
     try {
-      const serializedBrowsingContext = (
-        await this.redisClientService
-          .getClient()
-          .mget(messageIds.map((messageId) => this.getMessageKey(messageId)))
-      ).find(isDefined);
+      const browsingContextByMessageId =
+        await this.cacheStorageService.get<BrowsingContextByMessageId>(
+          this.getThreadKey(threadId),
+        );
 
-      return isDefined(serializedBrowsingContext)
-        ? (JSON.parse(serializedBrowsingContext) as BrowsingContextType | null)
+      await this.cacheStorageService.set<BrowsingContextByMessageId>(
+        this.getThreadKey(threadId),
+        { ...browsingContextByMessageId, [messageId]: browsingContext },
+        BROWSING_CONTEXT_TTL_MILLISECONDS,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Could not store the browsing context of thread ${threadId}: ${formatErrorWithCause(error)}`,
+      );
+    }
+  }
+
+  async recall({
+    threadId,
+    messageIds,
+  }: {
+    threadId: string;
+    messageIds: string[];
+  }): Promise<BrowsingContextType | null> {
+    try {
+      const browsingContextByMessageId =
+        await this.cacheStorageService.get<BrowsingContextByMessageId>(
+          this.getThreadKey(threadId),
+        );
+
+      const messageId = messageIds.find((candidateMessageId) =>
+        isDefined(browsingContextByMessageId?.[candidateMessageId]),
+      );
+
+      return isDefined(messageId) && isDefined(browsingContextByMessageId)
+        ? browsingContextByMessageId[messageId]
         : null;
     } catch (error) {
       this.logger.warn(
-        `Could not read the browsing context of message ${messageIds[0]}: ${formatErrorWithCause(error)}`,
+        `Could not read the browsing context of thread ${threadId}: ${formatErrorWithCause(error)}`,
       );
 
       return null;
