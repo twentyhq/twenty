@@ -18,7 +18,8 @@ type MainButtonStoryProps = ButtonProps & {
 };
 
 const meta: Meta<MainButtonStoryProps> = {
-  title: 'UI/Components/MainButton',
+  id: 'ui-components-mainbutton',
+  title: 'UI/Components/Input/MainButton',
   component: MainButton,
   args: { children: 'Save changes' },
 };

@@ -10,8 +10,6 @@ import { AgentChatThreadMarkAsReadEffect } from '@/ai/components/AgentChatThread
 import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
-import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -32,10 +30,6 @@ export const AiChatTab = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
-  const editorSectionKey = isOnNewAiChatSlot
-    ? AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-    : (currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
 
   const { uploadFiles } = useAiChatFileUpload();
 
@@ -77,7 +71,7 @@ export const AiChatTab = () => {
         <>
           <AiChatTabMessageList />
           <AiChatQueuedMessages />
-          <AiChatEditorSection key={editorSectionKey} />
+          <AiChatEditorSection key={currentAiChatThread} />
         </>
       )}
     </StyledContainer>

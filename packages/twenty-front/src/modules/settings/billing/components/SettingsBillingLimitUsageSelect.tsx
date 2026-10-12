@@ -6,7 +6,7 @@ import { USAGE_OPERATION_TYPE_LABELS } from '@/settings/usage/constants/UsageOpe
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   type UsageOperationType,
   type UsageQuotaDefinitionsQuery,

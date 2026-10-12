@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 export const isSelectOptionMatchingSearch = ({
   option: { label, searchKeywords },

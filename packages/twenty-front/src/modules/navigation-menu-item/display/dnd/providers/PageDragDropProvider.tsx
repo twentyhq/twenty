@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState, type ReactNode } from 'react';
 
-import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
 import { PageDragDropProviderMountEffect } from '@/navigation-menu-item/display/dnd/providers/PageDragDropProviderMountEffect';
 
 const LazyNavigationMenuItemDndKitProvider = lazy(() =>

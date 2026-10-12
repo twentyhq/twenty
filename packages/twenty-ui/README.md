@@ -52,24 +52,30 @@ Primitives provide foundational controls, including compound controls such as Se
 
 Prefer the matching public subpath for focused imports. The root entry point also re-exports primitives, shared components, icons, theme tokens, and utilities. Assets, testing helpers, and the optional code editor have separate entry points.
 
-| Subpath                              | Contents                                                   |
-| ------------------------------------ | ---------------------------------------------------------- |
-| `twenty-ui/assets`                   | Logos and static assets                                    |
-| `twenty-ui/components`               | Presets, pickers, menu rows, toasts, and the JSON viewer   |
-| `twenty-ui/components/code-editor`   | Code editor, editor header, and editor theme helpers       |
-| `twenty-ui/icon`                     | Icon components and the icon provider                      |
-| `twenty-ui/primitives`               | All primitive families                                     |
-| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers           |
-| `twenty-ui/primitives/data-display`  | Avatars, chips, tags, color samples, and status indicators |
-| `twenty-ui/primitives/feedback`      | Banners, progress bars, and loaders                        |
-| `twenty-ui/primitives/input`         | Buttons and form controls                                  |
-| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing             |
-| `twenty-ui/primitives/navigation`    | Action links, list items, and tabs                         |
-| `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips              |
-| `twenty-ui/primitives/typography`    | Text and headings                                          |
-| `twenty-ui/testing`                  | Storybook and test decorators and helpers                  |
-| `twenty-ui/theme`                    | Theme provider, hooks, types, and tokens                   |
-| `twenty-ui/utilities`                | Hooks and shared utilities                                 |
+| Subpath                              | Contents                                                              |
+| ------------------------------------ | --------------------------------------------------------------------- |
+| `twenty-ui/assets`                   | Logos and static assets                                               |
+| `twenty-ui/components`               | All shared component families except the optional editor              |
+| `twenty-ui/components/data-display`  | Avatar groups, JSON trees, metrics, counters, and icon tiles          |
+| `twenty-ui/components/feedback`      | Callouts, inline banners, and notifications                           |
+| `twenty-ui/components/input`         | Button presets, search and image inputs, and country/currency pickers |
+| `twenty-ui/components/layout`        | Sections, overflowing lists, and icon transitions                     |
+| `twenty-ui/components/navigation`    | Dropdowns, menu compositions, and tab actions                         |
+| `twenty-ui/components/settings`      | Settings rows and settings-specific compositions                      |
+| `twenty-ui/components/code-editor`   | Code editor, editor header, and editor theme helpers                  |
+| `twenty-ui/icon`                     | Icon components and the icon provider                                 |
+| `twenty-ui/primitives`               | All primitive families                                                |
+| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers                      |
+| `twenty-ui/primitives/data-display`  | Avatars, chips, tags, color samples, and status indicators            |
+| `twenty-ui/primitives/feedback`      | Banners, progress bars, and loaders                                   |
+| `twenty-ui/primitives/input`         | Buttons and form controls                                             |
+| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                        |
+| `twenty-ui/primitives/navigation`    | Action links, list items, and tabs                                    |
+| `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                         |
+| `twenty-ui/primitives/typography`    | Text and headings                                                     |
+| `twenty-ui/testing`                  | Storybook and test decorators and helpers                             |
+| `twenty-ui/theme`                    | Theme provider, hooks, types, and tokens                              |
+| `twenty-ui/utilities`                | Hooks and shared utilities                                            |
 
 Import icons such as `IconCheck` from `twenty-ui/icon`. The dynamic icon provider includes the full catalog, so use it when icons need to be looked up at runtime.
 

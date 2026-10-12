@@ -8,11 +8,11 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown, useDropdownPage } from 'twenty-ui/components';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { IconForbid, useIcons } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { type ReadonlyDeep } from 'type-fest';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   max-height: 360px;

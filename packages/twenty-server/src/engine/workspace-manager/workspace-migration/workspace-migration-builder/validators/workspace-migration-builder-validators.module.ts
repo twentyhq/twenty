@@ -2,7 +2,6 @@ import { FlatWorkflowVersionValidatorService } from 'src/engine/workspace-manage
 import { FlatWorkflowValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service';
 import { Module } from '@nestjs/common';
 
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { FlatAgentValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service';
@@ -38,7 +37,6 @@ import { FlatValidationRuleValidatorService } from 'src/engine/workspace-manager
 import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service';
 
 @Module({
-  imports: [FeatureFlagModule],
   providers: [
     FlatWorkflowValidatorService,
     FlatWorkflowVersionValidatorService,
@@ -91,7 +89,6 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatFieldMetadataValidatorService,
     FlatObjectMetadataValidatorService,
     FlatLogicFunctionValidatorService,
-    FlatFieldMetadataTypeValidatorService,
     FlatRoleValidatorService,
     FlatRoleTargetValidatorService,
     FlatAgentValidatorService,

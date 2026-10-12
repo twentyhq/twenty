@@ -7,6 +7,16 @@ import { galleryRenderTest } from '@/__stories__/twenty-ui-gallery/utils/gallery
 export const inputTest: TwentyUiGalleryPlayFunction = async (context) => {
   await galleryRenderTest(context);
 
+  const editorHeader = within(context.canvasElement).getByLabelText(
+    'Code editor',
+  );
+
+  expect(editorHeader.tagName).toBe('HEADER');
+  await expect(within(editorHeader).getByText('Editor')).toBeVisible();
+  await expect(
+    within(editorHeader).getByRole('button', { name: 'Format' }),
+  ).toBeVisible();
+
   const segmentedControl = within(
     within(context.canvasElement).getByRole('radiogroup', { name: 'Choose' }),
   );

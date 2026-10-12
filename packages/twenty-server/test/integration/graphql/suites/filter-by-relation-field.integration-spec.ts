@@ -246,6 +246,68 @@ describe('Filter by relation field (e2e)', () => {
     expect(ids).toEqual([TEST_PERSON_IDS.AIRBNB_DESIGNER]);
   });
 
+  it.each([
+    {
+      description:
+        'a foreign key compared to a company, keeping people without one',
+      filter: { companyId: { neq: TEST_COMPANY_IDS.AIRBNB } },
+      expectedIds: [
+        TEST_PERSON_IDS.STRIPE_ENGINEER,
+        TEST_PERSON_IDS.NOTION_ENGINEER,
+        TEST_PERSON_IDS.UNAFFILIATED,
+      ],
+    },
+    {
+      description:
+        'a company field compared to a value, keeping people without a company',
+      filter: { company: { name: { neq: 'Airbnb' } } },
+      expectedIds: [
+        TEST_PERSON_IDS.STRIPE_ENGINEER,
+        TEST_PERSON_IDS.NOTION_ENGINEER,
+        TEST_PERSON_IDS.UNAFFILIATED,
+      ],
+    },
+    {
+      description:
+        'a foreign key compared to null, keeping only people with a company',
+      filter: { companyId: { neq: null } },
+      expectedIds: [
+        TEST_PERSON_IDS.AIRBNB_ENGINEER,
+        TEST_PERSON_IDS.AIRBNB_DESIGNER,
+        TEST_PERSON_IDS.STRIPE_ENGINEER,
+        TEST_PERSON_IDS.NOTION_ENGINEER,
+      ],
+    },
+  ])(
+    'should filter people with neq on $description',
+    async ({ filter, expectedIds }) => {
+      const response = await makeGraphqlApiRequest({
+        query: gql`
+          query People($filter: PersonFilterInput) {
+            people(filter: $filter, first: 10) {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          filter: { and: [{ id: { in: ALL_TEST_PERSON_IDS } }, filter] },
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const ids = response.body.data.people.edges.map(
+        (edge: { node: { id: string } }) => edge.node.id,
+      );
+
+      expect(ids.sort()).toEqual([...expectedIds].sort());
+    },
+  );
+
   it('should combine a relation filter with an order-by on the same relation (join dedupe)', async () => {
     const queryData = {
       query: gql`

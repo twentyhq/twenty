@@ -13,7 +13,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import {
   type CountryChoice,
   CountrySelect as SharedCountrySelect,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/input';
 
 type CountrySelectProps = {
   label: string;

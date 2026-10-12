@@ -6,12 +6,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   type Billing,
+  FeatureFlagKey,
   OnboardingStatus,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import {
   jotaiStore,
@@ -21,8 +23,10 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
+import { IconApps, IconAt } from 'twenty-ui/icon';
 import { messages } from '~/locales/generated/en';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 i18n.load({
   [SOURCE_LOCALE]: messages,
@@ -74,6 +78,16 @@ const setPermissionFlags = (permissionFlags: PermissionFlagType[]) => {
     objectsPermissions: [],
     isImpersonating: false,
   });
+};
+
+const getAccountsItem = () => {
+  const { result } = renderHook(() => useSettingsNavigationItems(), {
+    wrapper: Wrapper,
+  });
+
+  return result.current
+    .find((section) => section.label === 'User')
+    ?.items.find((item) => item.path === SettingsPath.Accounts);
 };
 
 describe('useSettingsNavigationItems', () => {
@@ -190,5 +204,35 @@ describe('useSettingsNavigationItems', () => {
         .filter((item) => item.path !== SettingsPath.Accounts)
         .every((item) => !item.isHidden),
     ).toBe(true);
+  });
+
+  it('should show Accounts with Emails and Calendars when app preferences are off', () => {
+    setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
+
+    const accountsItem = getAccountsItem();
+
+    expect(accountsItem?.label).toBe('Accounts');
+    expect(accountsItem?.Icon).toBe(IconAt);
+    expect(accountsItem?.subItems?.map((subItem) => subItem.path)).toEqual([
+      SettingsPath.AccountsEmails,
+      SettingsPath.AccountsCalendars,
+    ]);
+  });
+
+  it('should show App preferences without sub-items when app preferences are on', () => {
+    setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED, value: true },
+      ],
+    });
+
+    const accountsItem = getAccountsItem();
+
+    expect(accountsItem?.label).toBe('App preferences');
+    expect(accountsItem?.Icon).toBe(IconApps);
+    expect(accountsItem?.isHidden).toBe(false);
+    expect(accountsItem?.subItems).toBeUndefined();
   });
 });

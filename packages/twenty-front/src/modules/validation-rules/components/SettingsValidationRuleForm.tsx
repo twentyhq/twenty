@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
+import { IconAddressBook, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -39,9 +40,14 @@ export const SettingsValidationRuleForm = ({
   onChange,
 }: SettingsValidationRuleFormProps) => {
   const { t } = useLingui();
+  const { getIcon } = useIcons();
 
   const errorFieldOptions = [
-    { label: t`Whole record`, value: RECORD_LEVEL_OPTION_VALUE },
+    {
+      label: t`Whole record`,
+      value: RECORD_LEVEL_OPTION_VALUE,
+      Icon: IconAddressBook,
+    },
     ...objectMetadataItem.fields
       .filter(
         (field) =>
@@ -51,6 +57,7 @@ export const SettingsValidationRuleForm = ({
       .map((field) => ({
         label: field.label,
         value: field.id,
+        Icon: getIcon(field.icon),
         contextualText: field.isActive ? undefined : t`Deactivated`,
       })),
   ];
@@ -70,12 +77,14 @@ export const SettingsValidationRuleForm = ({
           description={t`Must be true to save. A write that makes it false is rejected.`}
         />
         <SettingsDataModelPreviewFormCard
+          isPreviewTitleVisible={false}
           preview={
             <SettingsValidationRulePreview
               objectMetadataItem={objectMetadataItem}
               fields={fields}
               editorFields={editorFields}
               expression={values.expression}
+              message={values.message}
             />
           }
           form={

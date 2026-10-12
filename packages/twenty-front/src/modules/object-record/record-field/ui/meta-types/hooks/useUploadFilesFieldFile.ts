@@ -1,6 +1,6 @@
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useLingui } from '@lingui/react/macro';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 const DEFAULT_VALUE_BEFORE_SERVER_RESPONSE =

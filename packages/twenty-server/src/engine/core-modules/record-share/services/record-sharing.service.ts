@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
-  FeatureFlagKey,
   type ObjectRecord,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -33,8 +32,11 @@ import { type RecordShare } from 'src/engine/core-modules/record-share/types/rec
 import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { resolveDefaultGeneralAccessLevel } from 'src/engine/core-modules/record-share/utils/resolve-default-general-access-level.util';
 import { resolveRecordGeneralAccessLevel } from 'src/engine/core-modules/record-share/utils/resolve-record-general-access-level.util';
+import {
+  type ObjectSharing,
+  resolveObjectSharing,
+} from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util';
-import { resolveRecordSharingMode } from 'src/engine/core-modules/record-share/utils/resolve-record-sharing-mode.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/core-modules/record-share/utils/resolve-viewer-record-share-access-level.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -57,10 +59,8 @@ type RecordSharingArgs = RecordTargetInput & {
   authContext: UserWorkspaceAuthContext;
 };
 
-type RecordSharingObject = {
+type RecordSharingObject = ObjectSharing & {
   flatObjectMetadata: FlatObjectMetadata;
-  isRecordSharingEnabled: boolean;
-  sharingMode: RecordSharingMode;
 };
 
 type RecordSharingChange = {
@@ -146,7 +146,7 @@ export class RecordSharingService {
             workspaceId,
             transactionScope,
             flatObjectMetadata: sharingObject.flatObjectMetadata,
-            isRecordSharingEnabled: sharingObject.isRecordSharingEnabled,
+            canShareBeyondRole: sharingObject.canShareBeyondRole,
             principals: [principal],
             recordIds: [args.recordId],
           },
@@ -653,16 +653,9 @@ export class RecordSharingService {
       throw new NotFoundError('Record not found');
     }
 
-    const isRecordSharingEnabled =
-      featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
-
     return {
       flatObjectMetadata,
-      isRecordSharingEnabled,
-      sharingMode: resolveRecordSharingMode({
-        flatObjectMetadata,
-        isRecordSharingEnabled,
-      }),
+      ...resolveObjectSharing({ flatObjectMetadata, featureFlagsMap }),
     };
   }
 }

@@ -1,6 +1,8 @@
 import { pageLayoutsWithRelationsSelector } from '@/page-layout/states/pageLayoutsWithRelationsSelector';
+import { pageLayoutWidgetsByTabIdSelector } from '@/page-layout/states/selectors/pageLayoutWidgetsByTabIdSelector';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
+import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const recordFormPageLayoutByObjectMetadataIdFamilySelector =
@@ -24,6 +26,21 @@ export const recordFormPageLayoutByObjectMetadataIdFamilySelector =
           (pageLayout) => !pageLayout.isSystemSideEffect,
         );
 
-        return customRecordFormPageLayout ?? recordFormPageLayouts[0];
+        const recordFormPageLayout =
+          customRecordFormPageLayout ?? recordFormPageLayouts[0];
+
+        if (!isDefined(recordFormPageLayout)) {
+          return undefined;
+        }
+
+        const widgetsByTabId = get(pageLayoutWidgetsByTabIdSelector);
+
+        return {
+          ...recordFormPageLayout,
+          tabs: recordFormPageLayout.tabs.map((tab) => ({
+            ...tab,
+            widgets: widgetsByTabId.get(tab.id) ?? [],
+          })),
+        };
       },
   });

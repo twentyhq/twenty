@@ -6,10 +6,11 @@
   &[data-weight='medium'] {
     font-weight: var(--t-font-weight-medium);
   }
-  &[data-interactive] {
+  &:is(button, a, [role='button'], [role='link']) {
     cursor: pointer;
   }
-  &[data-disabled] {
+  &:disabled,
+  &[aria-disabled='true'] {
     cursor: not-allowed;
     opacity: 0.5;
   }

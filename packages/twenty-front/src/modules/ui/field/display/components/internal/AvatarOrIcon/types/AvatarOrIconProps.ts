@@ -3,7 +3,7 @@ import {
   type AvatarProps,
   type AvatarShape,
 } from 'twenty-ui/primitives/data-display';
-import { type Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-shared/types';
 
 export type AvatarOrIconProps = Pick<
   AvatarProps,

@@ -19,31 +19,20 @@
   Theme color for the tag, or `transparent` for an unfilled label.
 </ParamField>
 
-<ParamField body="disabled" type="boolean" default="false">
-  Applies disabled styling and prevents pointer and keyboard activation.
+<ParamField body="onClick" type="MouseEventHandler&lt;HTMLSpanElement&gt;">
+  Native click handler. Does not change the default span or add keyboard activation.
 </ParamField>
 
-<ParamField body="nativeButton" type="boolean" default="true">
-  Set to `false` when a clickable tag uses `render` with an element other than a native button.
-</ParamField>
-
-<ParamField body="preventPadding" type="boolean" default="false">
-  Removes the tag padding.
-</ParamField>
-
-<ParamField body="preventShrink" type="boolean" default="false">
-  Keeps the tag from shrinking and disables string-label truncation and its tooltip.
-</ParamField>
-
-<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
-
-  Accepts a `ReactElement` or a function that returns the element to render.
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TagState&gt;">
+  Replaces the default span. Compose a button or link to provide explicit interaction semantics.
 </ParamField>
 
 <ParamField body="startIcon" type="ReactNode">
   Decorative icon before the label. Hidden from assistive technology.
+</ParamField>
+
+<ParamField body="truncate" type="boolean" default="true">
+  Truncates constrained string labels and exposes the full text in a tooltip. Set to `false` to show the full label without a tooltip.
 </ParamField>
 
 <ParamField body="variant" type="&quot;ghost&quot; | &quot;outline&quot; | &quot;soft&quot; | &quot;solid&quot;" default="soft">

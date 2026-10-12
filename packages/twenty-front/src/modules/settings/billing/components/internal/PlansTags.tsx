@@ -5,7 +5,7 @@ import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-export type PlansTagsProps = {
+type PlansTagsProps = {
   plan: BillingPlanKey;
   isTrialPeriod?: boolean;
 };
@@ -13,6 +13,12 @@ export type PlansTagsProps = {
 const StyledTagsWrapper = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledTrialTag = styled(Tag)`
+  && {
+    min-width: fit-content;
+  }
 `;
 
 export const PlansTags = ({ plan, isTrialPeriod = false }: PlansTagsProps) => {
@@ -24,7 +30,11 @@ export const PlansTags = ({ plan, isTrialPeriod = false }: PlansTagsProps) => {
   return (
     <StyledTagsWrapper>
       <Tag color={planDescriptor.color}>{planDescriptor.label}</Tag>
-      {isTrialPeriod && <Tag color="blue" preventShrink>{t`Trial`}</Tag>}
+      {isTrialPeriod && (
+        <StyledTrialTag color="blue" truncate={false}>
+          {t`Trial`}
+        </StyledTrialTag>
+      )}
     </StyledTagsWrapper>
   );
 };

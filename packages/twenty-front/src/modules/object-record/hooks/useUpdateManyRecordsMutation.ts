@@ -1,7 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { generateUpdateManyRecordsMutation } from '@/object-metadata/utils/generateUpdateManyRecordsMutation';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateManyRecordsMutation = ({
   objectNameSingular,
@@ -12,7 +12,7 @@ export const useUpdateManyRecordsMutation = ({
     objectNameSingular,
   });
 
-  if (isUndefinedOrNull(objectMetadataItem)) {
+  if (!isDefined(objectMetadataItem)) {
     return { updateManyRecordsMutation: EMPTY_MUTATION };
   }
 

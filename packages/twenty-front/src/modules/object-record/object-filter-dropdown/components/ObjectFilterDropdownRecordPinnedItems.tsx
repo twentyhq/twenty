@@ -1,7 +1,7 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const ObjectFilterDropdownRecordPinnedItems = (props: {
@@ -15,8 +15,7 @@ export const ObjectFilterDropdownRecordPinnedItems = (props: {
     <DropdownMenuItemsContainer isMultiSelect scrollable={false}>
       {props.selectableItems.map((selectableItem) => {
         return (
-          <ListItem
-            render={<button type="button" />}
+          <ListItemButton
             key={selectableItem.id}
             role="option"
             aria-selected={selectableItem.isSelected}
@@ -42,7 +41,7 @@ export const ObjectFilterDropdownRecordPinnedItems = (props: {
             }
           >
             {selectableItem.name}
-          </ListItem>
+          </ListItemButton>
         );
       })}
     </DropdownMenuItemsContainer>

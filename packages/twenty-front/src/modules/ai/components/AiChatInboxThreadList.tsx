@@ -7,7 +7,12 @@ import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks
 type AiChatInboxThreadListProps = {
   threads: AgentChatThreadRecord[];
   selectedThreadIds: string[];
+  checkedThreadIds: string[];
   onThreadClick: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
+  onThreadCheckboxClick?: (
     thread: AgentChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
@@ -16,7 +21,9 @@ type AiChatInboxThreadListProps = {
 export const AiChatInboxThreadList = ({
   threads,
   selectedThreadIds,
+  checkedThreadIds,
   onThreadClick,
+  onThreadCheckboxClick,
 }: AiChatInboxThreadListProps) => {
   const { openRecordContextMenu } = useOpenRecordContextMenu();
 
@@ -24,7 +31,9 @@ export const AiChatInboxThreadList = ({
     <AiChatThreadList
       threads={threads}
       selectedThreadIds={selectedThreadIds}
+      checkedThreadIds={checkedThreadIds}
       onThreadClick={onThreadClick}
+      onThreadCheckboxClick={onThreadCheckboxClick}
       onThreadContextMenu={(thread, event) =>
         openRecordContextMenu({ event, recordId: thread.id })
       }

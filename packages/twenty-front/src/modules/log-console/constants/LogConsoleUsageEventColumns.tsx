@@ -6,7 +6,7 @@ import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeC
 import { LOG_CONSOLE_USAGE_OPERATION_COLUMN } from '@/log-console/constants/LogConsoleUsageOperationColumn';
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
 import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 export const LOG_CONSOLE_USAGE_EVENT_COLUMNS: LogConsoleColumn[] = [
   LOG_CONSOLE_TIME_COLUMN,

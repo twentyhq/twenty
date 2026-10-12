@@ -8,7 +8,8 @@ import { type ReactNode } from 'react';
 import styles from './MenuPicker.stories.module.scss';
 
 const meta: Meta<typeof MenuPicker> = {
-  title: 'UI/Navigation/Menu/MenuPicker',
+  id: 'ui-navigation-menu-menupicker',
+  title: 'UI/Components/Navigation/MenuPicker',
   component: MenuPicker,
   decorators: [ComponentDecorator],
   args: {

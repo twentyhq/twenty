@@ -295,6 +295,9 @@ export class BullMQDriver
     this.workerMap[queueName].on('active', (job) =>
       this.emitJobChange({ queueName, job, state: 'active' }),
     );
+    this.workerMap[queueName].on('progress', (job) =>
+      this.emitJobChange({ queueName, job, state: 'active' }),
+    );
     this.workerMap[queueName].on('completed', (job) =>
       this.emitJobChange({ queueName, job, state: 'completed' }),
     );

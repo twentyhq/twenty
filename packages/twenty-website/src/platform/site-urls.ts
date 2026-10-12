@@ -11,6 +11,7 @@ export const SITE_URLS: Record<
   | 'docsSelfHostLicense'
   | 'docsUserGuide'
   | 'github'
+  | 'githubIssues'
   | 'linkedin'
   | 'trustCenter'
   | 'x',
@@ -29,6 +30,7 @@ export const SITE_URLS: Record<
     'https://docs.twenty.com/user-guide/billing/capabilities/pricing-plans#get-an-organization-key',
   docsUserGuide: 'https://docs.twenty.com/user-guide/introduction',
   github: 'https://github.com/twentyhq/twenty',
+  githubIssues: 'https://github.com/twentyhq/twenty/issues',
   linkedin: 'https://www.linkedin.com/company/twenty',
   trustCenter: 'https://trust.twenty.com',
   x: 'https://x.com/twentycrm',

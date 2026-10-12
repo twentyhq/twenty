@@ -1,15 +1,22 @@
 import { AgentChatMessagesFetchEffect } from '@/ai/components/AgentChatMessagesFetchEffect';
 import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
-import { AgentChatSessionStartTimeEffect } from '@/ai/components/AgentChatSessionStartTimeEffect';
-import { AgentChatStreamKeepAliveEffect } from '@/ai/components/AgentChatStreamKeepAliveEffect';
 import { AgentChatStreamSubscriptionEffect } from '@/ai/components/AgentChatStreamSubscriptionEffect';
-import { hasAgentChatBeenOpenedState } from '@/ai/states/hasAgentChatBeenOpenedState';
+import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 export const AgentChatRuntimeEffects = () => {
-  const hasAgentChatBeenOpened = useAtomStateValue(hasAgentChatBeenOpenedState);
+  // The session starts the first time the chat is opened
+  const agentChatUISessionStartTime = useAtomStateValue(
+    agentChatUISessionStartTimeState,
+  );
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
 
-  if (!hasAgentChatBeenOpened) {
+  if (!isDefined(agentChatUISessionStartTime) || isWorkspaceSuspended) {
     return null;
   }
 
@@ -18,8 +25,6 @@ export const AgentChatRuntimeEffects = () => {
       <AgentChatMessagesFetchEffect />
       <AgentChatStreamSubscriptionEffect />
       <AgentChatPrepromptEffect />
-      <AgentChatStreamKeepAliveEffect />
-      <AgentChatSessionStartTimeEffect />
     </>
   );
 };

@@ -1,16 +1,15 @@
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
-import { agentChatMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatMessageComponentFamilySelector';
-import { agentChatMessageIdsComponentSelector } from '@/ai/states/selectors/agentChatMessageIdsComponentSelector';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
+import { agentChatMessageIdsSelector } from '@/ai/states/selectors/agentChatMessageIdsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledErrorWrapper = styled.div`
   padding-top: ${themeCssVariables.spacing[3]};
@@ -20,22 +19,19 @@ export const AiChatErrorUnderMessageList = () => {
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
-  const agentChatError = useAtomComponentFamilyStateValue(
-    agentChatErrorComponentFamilyState,
-    { threadId: agentChatDisplayedThread },
-  );
-  const agentChatIsStreaming = useAtomComponentFamilyStateValue(
-    agentChatIsStreamingComponentFamilyState,
+  const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
+    threadId: agentChatDisplayedThread,
+  });
+  const agentChatIsStreaming = useAtomFamilyStateValue(
+    agentChatIsStreamingFamilyState,
     { threadId: agentChatDisplayedThread },
   );
 
-  const agentChatMessageIds = useAtomComponentSelectorValue(
-    agentChatMessageIdsComponentSelector,
-  );
+  const agentChatMessageIds = useAtomStateValue(agentChatMessageIdsSelector);
 
   const lastMessageId = agentChatMessageIds.at(-1);
-  const agentChatMessage = useAtomComponentFamilySelectorValue(
-    agentChatMessageComponentFamilySelector,
+  const agentChatMessage = useAtomFamilySelectorValue(
+    agentChatMessageFamilySelector,
     { messageId: lastMessageId },
   );
 

@@ -288,11 +288,13 @@ describe('AutocompleteRoot', () => {
     expect(screen.getByRole('listbox')).toBeVisible();
     unmount();
 
-    expect(
-      store.get(
-        isDropdownOpenComponentState.atomFamily({ instanceId: DROPDOWN_ID }),
-      ),
-    ).toBe(false);
+    await waitFor(() =>
+      expect(
+        store.get(
+          isDropdownOpenComponentState.atomFamily({ instanceId: DROPDOWN_ID }),
+        ),
+      ).toBe(false),
+    );
     expect(store.get(focusStackState.atom)).toEqual([]);
   });
 });

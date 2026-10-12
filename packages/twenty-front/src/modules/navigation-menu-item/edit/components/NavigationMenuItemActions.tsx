@@ -1,4 +1,4 @@
-import { Dropdown, useDropdownPage } from 'twenty-ui/components';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { useLingui } from '@lingui/react/macro';

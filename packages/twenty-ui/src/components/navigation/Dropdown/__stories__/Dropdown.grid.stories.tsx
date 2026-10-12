@@ -11,7 +11,8 @@ import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 const onSelect = fn();
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Grid',
+  id: 'ui-components-dropdown-interactions-grid',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Grid',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },
@@ -61,6 +62,9 @@ export const IconGrid: Story = {
 
     await waitFor(() => expect(search).toHaveFocus());
     expect(group).toHaveStyle({ display: 'grid' });
+    await expect(
+      within(popup).getByRole('button', { name: 'Calendar 5' }),
+    ).toBeDisabled();
     await waitFor(() =>
       expect(
         within(popup)

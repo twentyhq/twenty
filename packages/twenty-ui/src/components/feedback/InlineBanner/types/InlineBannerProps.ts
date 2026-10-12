@@ -1,13 +1,8 @@
-import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { type BannerColor } from '@ui/primitives/feedback/Banner/Banner';
-import { type InlineBannerButtonProps } from './InlineBannerButtonProps';
+import { type BannerProps } from '@ui/primitives/feedback/Banner/types/BannerProps';
 
-export type InlineBannerProps = {
-  color?: BannerColor;
-  message: string;
-  variant?: 'standard' | 'compact';
+import { type InlineBannerLayout } from './InlineBannerLayout';
+
+export type InlineBannerProps = BannerProps & {
+  layout?: InlineBannerLayout;
   embedded?: boolean;
-  button?: InlineBannerButtonProps;
-  LeftIcon?: IconComponent;
-  className?: string;
 };

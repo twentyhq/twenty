@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHeartOff } from 'twenty-ui/icon';
 import {
   FeatureFlagKey,

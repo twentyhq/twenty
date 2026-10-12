@@ -6,7 +6,7 @@ import { SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/se
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];

@@ -1,8 +1,8 @@
 import type * as esbuild from 'esbuild';
 
-import { JSX_RUNTIME_SHARED_HELPERS_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-shared-helpers-source';
-import { JSX_RUNTIME_WRAPPER_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-wrapper-source';
-import { getReactWrapperSource } from '@/cli/utilities/build/common/front-component-build/utils/get-react-wrapper-source';
+import jsxRuntimeWrapperSource from '@/cli/utilities/build/common/front-component-build/jsx-runtime/jsx-runtime-wrapper.ts?source';
+import jsxSharedHelpersSource from '@/cli/utilities/build/common/front-component-build/jsx-runtime/jsx-shared-helpers.ts?source';
+import reactWrapperSource from '@/cli/utilities/build/common/front-component-build/jsx-runtime/react-wrapper.ts?source';
 
 type JsxRuntimeRemoteWrapperPluginOptions = {
   usePreact?: boolean;
@@ -14,7 +14,7 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
   const usePreact = options?.usePreact ?? false;
 
   const jsxRuntimeModule = usePreact
-    ? 'preact/jsx-runtime'
+    ? 'preact/compat/jsx-runtime'
     : 'react/jsx-runtime';
   const reactModule = usePreact ? 'preact/compat' : 'react';
 
@@ -30,9 +30,22 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
       }));
 
       build.onLoad({ filter: /.*/, namespace: 'jsx-shared-helpers' }, () => ({
-        contents: JSX_RUNTIME_SHARED_HELPERS_SOURCE,
+        contents: jsxSharedHelpersSource,
         loader: 'js' as const,
       }));
+
+      build.onResolve({ filter: /^__reads_element_ref_from_vnode__$/ }, () => ({
+        path: '__reads_element_ref_from_vnode__',
+        namespace: 'reads-element-ref-from-vnode',
+      }));
+
+      build.onLoad(
+        { filter: /.*/, namespace: 'reads-element-ref-from-vnode' },
+        () => ({
+          contents: `export const READS_ELEMENT_REF_FROM_VNODE = ${usePreact};`,
+          loader: 'js' as const,
+        }),
+      );
 
       build.onResolve({ filter: /^react\/jsx-runtime$/ }, async (args) => {
         if (args.pluginData?.skipJsxWrapper) {
@@ -66,7 +79,7 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
       });
 
       build.onLoad({ filter: /.*/, namespace: 'jsx-runtime-wrapper' }, () => ({
-        contents: JSX_RUNTIME_WRAPPER_SOURCE,
+        contents: jsxRuntimeWrapperSource,
         loader: 'js' as const,
       }));
 
@@ -102,9 +115,7 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
       });
 
       build.onLoad({ filter: /.*/, namespace: 'react-wrapper' }, () => ({
-        contents: getReactWrapperSource({
-          readsElementRefFromVnode: usePreact,
-        }),
+        contents: reactWrapperSource,
         loader: 'js' as const,
       }));
     },

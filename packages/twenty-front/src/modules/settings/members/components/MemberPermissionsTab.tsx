@@ -10,7 +10,8 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconArrowUpRight, IconUser, useIcons } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -39,7 +40,7 @@ const StyledRoleSelector = styled.div`
 `;
 
 type MemberPermissionsTabProps = {
-  member: WorkspaceMember;
+  member: Pick<WorkspaceMember, 'id'>;
   roles: RoleWithPartialMembers[];
   allRoles: RoleWithPartialMembers[];
 };

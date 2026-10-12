@@ -351,6 +351,7 @@ describe('Quick Lead Workflow (e2e)', () => {
                 emails {
                   primaryEmail
                 }
+                jobTitle
               }
             }
           `,
@@ -367,6 +368,9 @@ describe('Quick Lead Workflow (e2e)', () => {
       );
       expect(personResponse.body.data.person.emails.primaryEmail).toBe(
         testFormData.email,
+      );
+      expect(personResponse.body.data.person.jobTitle).toBe(
+        testFormData.jobTitle,
       );
     });
   });

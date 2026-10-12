@@ -14,7 +14,8 @@ import {
 } from 'storybook/test';
 
 const meta: Meta<typeof JsonTree> = {
-  title: 'UI/JsonVisualizer/JsonTree',
+  id: 'ui-jsonvisualizer-jsontree',
+  title: 'UI/Components/Data display/JsonTree',
   component: JsonTree,
   args: {
     shouldExpandNodeInitially: () => true,

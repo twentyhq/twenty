@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useDebounce } from 'use-debounce';
 

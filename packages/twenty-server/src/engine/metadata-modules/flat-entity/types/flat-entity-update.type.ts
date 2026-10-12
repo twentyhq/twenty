@@ -25,10 +25,12 @@ export type FlatEntityUpdate<
     Extract<keyof MetadataFlatEntity<T>, TComparedKeys>
   >
 > & {
-  [K in TComparedKeys as [never] extends IsUniversalMappedProperty<
-    MetadataPropertyConfig,
-    K
-  >
-    ? never
-    : IsUniversalMappedProperty<MetadataPropertyConfig, K>]?: never;
+  [
+    K in TComparedKeys as [never] extends IsUniversalMappedProperty<
+      MetadataPropertyConfig,
+      K
+    >
+      ? never
+      : IsUniversalMappedProperty<MetadataPropertyConfig, K>
+  ]?: never;
 };

@@ -87,7 +87,7 @@ export class AddAiChatInboxCommandMenuItemsCommand extends ProvisionedWorkspaceC
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId} (${direction}): creating ${commandMenuItemsToCreate.length} and deleting ${commandMenuItemsToDelete.length} chat inbox command menu item(s)`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId} (${direction}): creating ${commandMenuItemsToCreate.length} and deleting ${commandMenuItemsToDelete.length} chat command menu item(s)`,
     );
 
     if (options.dryRun) {

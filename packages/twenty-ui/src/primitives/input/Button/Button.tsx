@@ -12,11 +12,12 @@ import styles from './Button.module.scss';
 import { type ButtonProps } from './types/ButtonProps';
 
 export const Button = ({
-  variant = 'outline',
-  color = 'neutral',
-  size = 'md',
+  variant,
+  color,
+  size,
   fullWidth = false,
   loading = false,
+  loadingPosition = 'center',
   elevated = false,
   startIcon,
   endIcon,
@@ -25,16 +26,28 @@ export const Button = ({
   disabled = false,
   href,
   render,
+  nativeButton,
+  role,
   className,
   children,
   ...props
 }: ButtonProps) => {
   const buttonGroup = useContext(ButtonGroupContext);
-  const resolvedVariant = buttonGroup?.variant ?? variant;
-  const resolvedColor = buttonGroup?.color ?? color;
-  const resolvedSize = buttonGroup?.size ?? size;
-  const isLink = isDefined(href);
-  const linkProps = isLink ? { href } : undefined;
+  const resolvedVariant = variant ?? buttonGroup?.variant ?? 'outline';
+  const resolvedColor = color ?? buttonGroup?.color ?? 'neutral';
+  const resolvedSize = size ?? buttonGroup?.size ?? 'md';
+  const isAutomaticLink =
+    isDefined(href) && !isDefined(render) && nativeButton !== true;
+  const linkProps = isDefined(href) ? { href } : undefined;
+  const resolvedRole = role ?? (isAutomaticLink ? 'link' : undefined);
+  const roleProps = isDefined(resolvedRole)
+    ? { role: resolvedRole }
+    : undefined;
+  const isCenterLoading = loading && loadingPosition === 'center';
+  const resolvedStartIcon =
+    loading && loadingPosition === 'start' ? <Loader /> : startIcon;
+  const resolvedEndIcon =
+    loading && loadingPosition === 'end' ? <Loader /> : endIcon;
 
   return (
     <ButtonPrimitive
@@ -49,22 +62,24 @@ export const Button = ({
       data-elevated={elevated || undefined}
       aria-busy={loading ? 'true' : props['aria-busy']}
       disabled={disabled || loading}
-      role={isLink ? 'link' : undefined}
-      nativeButton={!isLink}
-      render={render ?? (isLink ? <a href={href}>{children}</a> : undefined)}
+      {...roleProps}
+      nativeButton={nativeButton ?? !isAutomaticLink}
+      render={
+        render ?? (isAutomaticLink ? <a href={href}>{children}</a> : undefined)
+      }
     >
-      <span className={clsx(styles.content, loading && styles.hidden)}>
-        {isDefined(startIcon) && (
+      <span className={clsx(styles.content, isCenterLoading && styles.hidden)}>
+        {isDefined(resolvedStartIcon) && (
           <span className={styles.icon} aria-hidden>
-            {startIcon}
+            {resolvedStartIcon}
           </span>
         )}
         {isDefined(children) && (
           <span className={styles.label}>{children}</span>
         )}
-        {isDefined(endIcon) && (
+        {isDefined(resolvedEndIcon) && (
           <span className={styles.icon} aria-hidden>
-            {endIcon}
+            {resolvedEndIcon}
           </span>
         )}
         {isDefined(shortcut) && (
@@ -77,7 +92,7 @@ export const Button = ({
           />
         )}
       </span>
-      {loading && (
+      {isCenterLoading && (
         <span className={styles.loader} aria-hidden>
           <Loader />
         </span>

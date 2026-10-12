@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { OverflowingList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme';
 import 'twenty-ui/style.css';

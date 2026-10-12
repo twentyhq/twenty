@@ -4,7 +4,6 @@ import {
   STANDARD_OBJECTS,
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
-import { type DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -14,6 +13,7 @@ import {
   type DefaultRelationHolderNameSingular,
   type MissingObjectSystemRelationCandidate,
 } from 'src/database/commands/upgrade-version-command/2-38/utils/build-missing-object-system-relation-candidates.util';
+import { readExistingColumnNamesByTableName } from 'src/database/commands/upgrade-version-command/2-38/utils/read-existing-column-names-by-table-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -22,15 +22,16 @@ import {
   buildSystemRelationFlatFieldMetadatasForObject,
   type SystemRelationFlatFieldMetadataBundle,
 } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
 @RegisteredWorkspaceCommand('2.38.0', 1788266912940)
 @Command({
   name: 'upgrade:2-38:provision-missing-object-system-relations',
   description:
-    'Provision the default system-relation pairs (forward relation field on the object, target* morph leg on timelineActivity/attachment/noteTarget/taskTarget, join-column index) for non-standard objects that lost them, typically to pre-2.20 application syncs. The 2-35 restore command only recreated the pairs twenty-standard authors for its own objects; pairs of custom or app-installed objects were never restored, so runtime writes deriving the join column from the object name throw UNKNOWN_COLUMN on every event (Sentry TWENTY-SERVER-JRV). Mints exactly what the objectSystemRelationsOnCreate handler mints at object creation, only for pairs where both legs are absent, and reports pairs it cannot complete safely (partial pair, taken field name, surviving physical column) instead of guessing.',
+    'Provision the default system-relation pairs (forward relation field on the object, target* morph leg on timelineActivity/attachment/noteTarget/taskTarget, join-column index) for non-standard objects that lost them, typically to pre-2.20 application syncs. The 2-35 restore command only recreated the pairs twenty-standard authors for its own objects; pairs of custom or app-installed objects were never restored, so runtime writes deriving the join column from the object name throw UNKNOWN_COLUMN on every event (Sentry TWENTY-SERVER-JRV). Mints exactly what the objectSystemRelationsOnCreate handler mints at object creation, only for pairs where both legs are absent, and reports pairs it cannot complete safely (partial pair, taken field name, surviving physical column, missing source table) instead of guessing.',
 })
 export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -89,12 +90,29 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
       return;
     }
 
-    const existingColumnNamesByHolderNameSingular =
-      await this.readExistingColumnNamesByHolder({
-        dataSource,
-        workspaceId,
-        holderFlatObjectMetadataByNameSingular,
-      });
+    const columnNamesByTableName = await readExistingColumnNamesByTableName({
+      dataSource,
+      schemaName: getWorkspaceSchemaName(workspaceId),
+      tableNames: Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .map((flatObjectMetadata) =>
+          computeObjectTargetTable(flatObjectMetadata),
+        ),
+    });
+
+    const existingColumnNamesByHolderNameSingular = {} as Record<
+      DefaultRelationHolderNameSingular,
+      Set<string>
+    >;
+
+    for (const holderNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
+      existingColumnNamesByHolderNameSingular[holderNameSingular] =
+        columnNamesByTableName.get(
+          computeObjectTargetTable(
+            holderFlatObjectMetadataByNameSingular[holderNameSingular],
+          ),
+        ) ?? new Set();
+    }
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -107,6 +125,7 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
         flatFieldMetadataMaps,
         holderFlatObjectMetadataByNameSingular,
         existingColumnNamesByHolderNameSingular,
+        existingTableNames: new Set(columnNamesByTableName.keys()),
         twentyStandardApplicationUniversalIdentifier:
           twentyStandardFlatApplication.universalIdentifier,
       });
@@ -262,42 +281,5 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
         reverseFlatFieldMetadata.objectMetadataUniversalIdentifier,
       ),
     );
-  }
-
-  private async readExistingColumnNamesByHolder({
-    dataSource,
-    workspaceId,
-    holderFlatObjectMetadataByNameSingular,
-  }: {
-    dataSource: DataSource;
-    workspaceId: string;
-    holderFlatObjectMetadataByNameSingular: Record<
-      DefaultRelationHolderNameSingular,
-      FlatObjectMetadata
-    >;
-  }): Promise<Record<DefaultRelationHolderNameSingular, Set<string>>> {
-    const existingColumnNamesByHolderNameSingular = {} as Record<
-      DefaultRelationHolderNameSingular,
-      Set<string>
-    >;
-
-    for (const holderNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
-      const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
-        workspaceId,
-        objectMetadata:
-          holderFlatObjectMetadataByNameSingular[holderNameSingular],
-      });
-
-      const rows = await dataSource.query<{ column_name: string }[]>(
-        `SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2`,
-        [schemaName, tableName],
-      );
-
-      existingColumnNamesByHolderNameSingular[holderNameSingular] = new Set(
-        rows.map(({ column_name }) => column_name),
-      );
-    }
-
-    return existingColumnNamesByHolderNameSingular;
   }
 }

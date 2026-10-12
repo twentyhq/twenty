@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { createRef } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
@@ -33,7 +35,44 @@ for (const { name, Component, ownClassName } of [
     element: <Component>Import summary</Component>,
     ownClassName,
     refInstanceOf: HTMLDivElement,
-    skip: ['ref', 'renderProp'],
+  });
+
+  it(`composes Card.${name} with a native button's attributes, handlers and ref`, async () => {
+    const user = userEvent.setup();
+    const nativeRef = createRef<HTMLButtonElement>();
+    const onCardClick = vi.fn();
+    const onButtonClick = vi.fn();
+
+    render(
+      <Component
+        aria-describedby="import-description"
+        onClick={onCardClick}
+        render={
+          <button
+            type="button"
+            name="import"
+            value="ready"
+            ref={nativeRef}
+            onClick={onButtonClick}
+          />
+        }
+      >
+        Import records
+      </Component>,
+    );
+
+    const button = screen.getByRole('button', { name: 'Import records' });
+
+    expect(nativeRef.current).toBe(button);
+    expect(button).toHaveAttribute('type', 'button');
+    expect(button).toHaveAttribute('name', 'import');
+    expect(button).toHaveAttribute('value', 'ready');
+    expect(button).toHaveAttribute('aria-describedby', 'import-description');
+
+    await user.click(button);
+
+    expect(onCardClick).toHaveBeenCalledTimes(1);
+    expect(onButtonClick).toHaveBeenCalledTimes(1);
   });
 }
 
@@ -64,9 +103,7 @@ describe('Card rendering', () => {
     render(
       <Card.Root aria-label="Import summary" role="region">
         <Card.Header>Summary</Card.Header>
-        <Card.Content divider isClickable hasHoverHighlight>
-          Ready records
-        </Card.Content>
+        <Card.Content divider>Ready records</Card.Content>
         <Card.Content>Records to review</Card.Content>
         <Card.Footer>Last checked</Card.Footer>
         <Card.Footer divider={false}>Import actions</Card.Footer>
@@ -88,22 +125,8 @@ describe('Card rendering', () => {
       'data-divider',
       'true',
     );
-    expect(screen.getByText('Ready records')).toHaveAttribute(
-      'data-clickable',
-      'true',
-    );
-    expect(screen.getByText('Ready records')).toHaveAttribute(
-      'data-hover-highlight',
-      'true',
-    );
     expect(screen.getByText('Records to review')).not.toHaveAttribute(
       'data-divider',
-    );
-    expect(screen.getByText('Records to review')).not.toHaveAttribute(
-      'data-clickable',
-    );
-    expect(screen.getByText('Records to review')).not.toHaveAttribute(
-      'data-hover-highlight',
     );
     expect(screen.getByText('Last checked')).not.toHaveAttribute(
       'data-no-divider',
@@ -112,5 +135,29 @@ describe('Card rendering', () => {
       'data-no-divider',
       'true',
     );
+  });
+
+  it('keeps display cards presentational when they observe click events', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+
+    render(
+      <Card.Root onClick={onClick}>
+        <Card.Content>Import summary</Card.Content>
+      </Card.Root>,
+    );
+
+    const content = screen.getByText('Import summary');
+    const root = content.parentElement;
+
+    expect(root?.localName).toBe('div');
+    expect(root).not.toHaveAttribute('role');
+    expect(root).not.toHaveAttribute('tabindex');
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+
+    await user.click(content);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });

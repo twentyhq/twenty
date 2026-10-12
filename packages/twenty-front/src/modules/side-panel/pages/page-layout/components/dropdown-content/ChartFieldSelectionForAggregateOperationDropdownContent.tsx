@@ -1,6 +1,6 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { ChartAggregateOperationSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -18,7 +18,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
@@ -26,7 +26,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const configuration = widgetInEditMode?.configuration;
@@ -111,7 +111,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
                 setSelectedFieldMetadataId(fieldMetadataItem.id);
               }}
             >
-              <ListItem
+              <ListItemButton
                 focused={selectedItemId === fieldMetadataItem.id}
                 onClick={() => {
                   setIsSubMenuOpen(true);
@@ -127,7 +127,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
                 }
               >
                 {fieldMetadataItem.label}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           ))}
         </SelectableList>

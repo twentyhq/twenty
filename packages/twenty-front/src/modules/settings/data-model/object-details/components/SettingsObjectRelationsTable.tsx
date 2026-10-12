@@ -22,15 +22,16 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown, SettingsRow } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import {
   OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsObjectRelationItemTableRow,
 } from './SettingsObjectRelationItemTableRow';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;
@@ -222,7 +223,7 @@ export const SettingsObjectRelationsTable = ({
           >
             <Dropdown.Section>
               <SettingsRow
-                startIcon={<IconArchive />}
+                startElement={<IconArchive />}
                 onCheckedChange={() => setShowInactive(!showInactive)}
                 checked={showInactive}
               >{t`Inactive`}</SettingsRow>

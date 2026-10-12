@@ -1,8 +1,8 @@
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
-import { type ComponentProps } from 'react';
-import { expectTypeOf, it } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { expect, it } from 'vitest';
 
-import { MetricRow } from '@ui/components';
+import { MetricRow } from '../MetricRow';
 
 runComponentConformance({
   name: 'MetricRow',
@@ -14,8 +14,31 @@ runComponentConformance({
   refInstanceOf: HTMLDivElement,
 });
 
-it('requires a text label for the progress accessible name', () => {
-  expectTypeOf<ComponentProps<typeof MetricRow>>()
-    .pick<'children'>()
-    .toEqualTypeOf<{ children: string }>();
+it('names progress from nested label content while keeping the icon decorative', () => {
+  const { rerender } = render(
+    <MetricRow
+      startIcon={<svg role="img" aria-label="Internal artwork" />}
+      value={<bdi>42 of 100</bdi>}
+      progress={42}
+      progressValueText="42 files imported"
+    >
+      <strong>Imported</strong> files
+    </MetricRow>,
+  );
+
+  expect(
+    screen.getByRole('progressbar', { name: 'Imported files' }),
+  ).toHaveAttribute('aria-valuetext', '42 files imported');
+  expect(screen.queryByRole('img')).toBeNull();
+
+  rerender(
+    <MetricRow value={0} progress={0}>
+      <strong>Reviewed</strong> files
+    </MetricRow>,
+  );
+
+  expect(
+    screen.getByRole('progressbar', { name: 'Reviewed files' }),
+  ).toHaveAttribute('aria-valuenow', '0');
+  expect(screen.getByText('0')).toBeInTheDocument();
 });

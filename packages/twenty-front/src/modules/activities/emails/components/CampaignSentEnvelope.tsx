@@ -19,7 +19,7 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 const StyledValue = styled.span`
   color: ${themeCssVariables.font.color.primary};

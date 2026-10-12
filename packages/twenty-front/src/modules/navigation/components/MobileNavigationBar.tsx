@@ -8,7 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLocation } from 'react-router-dom';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 

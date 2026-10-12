@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 import { useState } from 'react';
 
@@ -30,12 +31,6 @@ export const WorkspaceMemberPicker = ({
     return (
       <SlackPickedEntityButton
         name={getMemberDisplayName(selectedMember)}
-        meta={selectedMember.userEmail ?? undefined}
-        avatar={{
-          type: 'rounded',
-          placeholder: getMemberDisplayName(selectedMember),
-          placeholderColorSeed: selectedMember.id,
-        }}
         changeLabel="Change the workspace member"
         onChangeRequest={() => {
           setIsReopening(true);
@@ -56,20 +51,11 @@ export const WorkspaceMemberPicker = ({
         setIsReopening(false);
         onSelect(member);
       }}
-      getOption={(member) => {
-        const displayedName = getMemberDisplayName(member);
-
-        return {
-          key: member.id,
-          name: displayedName,
-          meta: member.userEmail ?? undefined,
-          avatar: {
-            type: 'rounded',
-            placeholder: displayedName,
-            placeholderColorSeed: member.id,
-          },
-        };
-      }}
+      getOptionKey={(member) => member.id}
+      getOptionName={(member) =>
+        isNonEmptyString(member.name) ? member.name : member.id
+      }
+      getOptionMeta={(member) => member.userEmail ?? undefined}
       searchLabel="Search a workspace member by name"
       emptyText={searchErrorMessage ?? 'No members found'}
       disabled={disabled}

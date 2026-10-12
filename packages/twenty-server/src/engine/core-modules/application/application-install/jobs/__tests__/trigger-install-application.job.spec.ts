@@ -3,6 +3,7 @@ import {
   TriggerInstallApplicationJob,
   type TriggerInstallApplicationJobData,
 } from 'src/engine/core-modules/application/application-install/jobs/trigger-install-application.job';
+import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
 describe('TriggerInstallApplicationJob', () => {
   const applicationInstallService = {
@@ -16,17 +17,22 @@ describe('TriggerInstallApplicationJob', () => {
     workspaceId: 'workspace-id',
   };
 
+  const jobContext: MessageQueueJobProgressContext = {
+    updateProgress: jest.fn(),
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('installs the requested application', async () => {
-    await job.handle(jobData);
+  it('installs the requested application and forwards progress updates', async () => {
+    await job.handle(jobData, jobContext);
 
     expect(applicationInstallService.installApplication).toHaveBeenCalledWith({
       appRegistrationId: jobData.applicationRegistrationId,
       workspaceId: jobData.workspaceId,
       hasUserApprovedCapabilities: true,
+      updateProgress: jobContext.updateProgress,
     });
   });
 
@@ -37,6 +43,6 @@ describe('TriggerInstallApplicationJob', () => {
       .spyOn(applicationInstallService, 'installApplication')
       .mockRejectedValueOnce(error);
 
-    await expect(job.handle(jobData)).rejects.toThrow(error);
+    await expect(job.handle(jobData, jobContext)).rejects.toThrow(error);
   });
 });

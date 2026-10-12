@@ -5,7 +5,6 @@ import { SidePanelMultipleRecordsInfo } from '@/side-panel/components/SidePanelM
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
-import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { SidePanelPages } from 'twenty-shared/types';
 
 import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
@@ -36,12 +35,14 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     );
   }
 
-  const isPageLayoutPage = pageChip.page?.page
-    ? isPageLayoutSidePanelPage(pageChip.page.page)
-    : false;
+  const pageLayoutSidePanelTarget = pageChip.page?.pageLayoutSidePanelTarget;
 
-  if (isPageLayoutPage) {
-    return <SidePanelPageLayoutInfo />;
+  if (isDefined(pageLayoutSidePanelTarget)) {
+    return (
+      <SidePanelPageLayoutInfo
+        pageLayoutId={pageLayoutSidePanelTarget.pageLayoutId}
+      />
+    );
   }
 
   const isMultipleRecordsPage =

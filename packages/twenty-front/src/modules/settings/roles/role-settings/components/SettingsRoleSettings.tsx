@@ -11,7 +11,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 

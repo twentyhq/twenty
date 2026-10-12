@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { IconCopy, IconExclamationCircle } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 export const useCopyToClipboard = () => {

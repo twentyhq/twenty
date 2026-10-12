@@ -9,7 +9,7 @@ import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOpera
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { useTheme } from 'twenty-ui/theme';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 
@@ -97,7 +97,7 @@ export const UsageBreakdownPieSection = ({
       <Section.Header
         title={title}
         description={resolvedDescription}
-        adornment={
+        actions={
           <Select
             dropdownId={`${sectionId}-period`}
             value={period}

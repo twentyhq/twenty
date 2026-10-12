@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
-import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
+import { parseAndValidateVariableFriendlyStringifiedJson } from '~/utils/parseAndValidateVariableFriendlyStringifiedJson';
 import { WorkflowEditActionCodeFieldLeaf } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFieldLeaf';
 import { type ToolArgumentField } from '@/workflow/workflow-steps/workflow-actions/send-chat-message-action/types/ToolArgumentField';
 import { buildToolArgumentFields } from '@/workflow/workflow-steps/workflow-actions/send-chat-message-action/utils/buildToolArgumentFields';
@@ -12,7 +12,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { GetToolInputSchemaDocument } from '~/generated-metadata/graphql';
 

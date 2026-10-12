@@ -5,7 +5,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 

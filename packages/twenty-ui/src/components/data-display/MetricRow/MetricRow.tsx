@@ -11,7 +11,7 @@ import { type MetricRowProps } from './types/MetricRowProps';
 
 export const MetricRow = ({
   children,
-  startIcon: StartIcon,
+  startIcon,
   value,
   progress,
   progressColor,
@@ -32,7 +32,11 @@ export const MetricRow = ({
       children: (
         <>
           <div className={styles.label}>
-            {isDefined(StartIcon) && <StartIcon size={14} aria-hidden={true} />}
+            {isDefined(startIcon) && (
+              <span className={styles.icon} aria-hidden="true">
+                {startIcon}
+              </span>
+            )}
             <span id={labelId}>{children}</span>
           </div>
           {isDefined(progress) ? (

@@ -1,11 +1,11 @@
-import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { isAppEffectRedirectEnabledState } from '@/auth/states/isAppEffectRedirectEnabledState';
 import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { GetAuthTokensFromSsoExchangeTokenDocument } from '~/generated-metadata/graphql';
 
 export const useRedeemSsoExchangeToken = () => {

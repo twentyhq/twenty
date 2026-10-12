@@ -24,12 +24,10 @@ export const ListItemCheckboxIndicator = ({
     data-checked={checked || undefined}
     data-disabled={disabled || undefined}
   >
-    <span className={checkboxStyles.box}>
-      {checked && (
-        <span className={checkboxStyles.indicator}>
-          <IconCheck aria-hidden />
-        </span>
-      )}
-    </span>
+    {checked && (
+      <span className={checkboxStyles.indicator}>
+        <IconCheck aria-hidden />
+      </span>
+    )}
   </span>
 );
