@@ -1,0 +1,1 @@
+export const MAX_SCROLL_COMMANDS_PER_FLUSH = 64;
