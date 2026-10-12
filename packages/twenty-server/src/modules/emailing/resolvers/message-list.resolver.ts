@@ -79,7 +79,6 @@ export class MessageListResolver {
     }),
     NoPermissionGuard,
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async triggerAddPeopleToMessageListJob(
     @Args('input') input: TriggerAddPeopleToMessageListJobInput,
   ): Promise<TriggerAddPeopleToMessageListJobResultDTO> {
@@ -90,7 +89,6 @@ export class MessageListResolver {
 
   @Query(() => JobStatusDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async findAddPeopleToMessageListJobStatus(
     @Args('messageListId', { type: () => UUIDScalarType })
     messageListId: string,
