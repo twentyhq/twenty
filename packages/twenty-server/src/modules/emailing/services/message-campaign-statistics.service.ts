@@ -7,9 +7,6 @@ import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 import { MoreThanOrEqual } from 'typeorm';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import {
   CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
   REFRESH_CAMPAIGN_STATS_JOB,
@@ -25,9 +22,10 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { getCampaignDeliveryTableName } from 'src/modules/emailing/utils/get-campaign-delivery-table-name.util';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
+import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
+import { type CampaignEngagementCounts } from 'src/modules/emailing/types/campaign-engagement-counts.type';
 
 const RECONCILIATION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
-const REFRESH_LOCK_TTL_MS = CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS + 2_000;
 
 @Injectable()
 export class MessageCampaignStatisticsService {
@@ -35,8 +33,7 @@ export class MessageCampaignStatisticsService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
-    private readonly cacheStorageService: CacheStorageService,
+    private readonly campaignEngagementEventService: CampaignEngagementEventService,
   ) {}
 
   async scheduleRefresh({
@@ -46,34 +43,18 @@ export class MessageCampaignStatisticsService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
-    const lockKey = `campaign-stats-refresh:${workspaceId}:${campaignId}`;
-
-    const lockOwnerToken = await this.cacheStorageService.acquireLock({
-      key: lockKey,
-      ttl: REFRESH_LOCK_TTL_MS,
-    });
-
-    if (!isDefined(lockOwnerToken)) {
-      return;
-    }
-
-    await this.messageQueueService
-      .add<RefreshCampaignStatsJobData>(
-        REFRESH_CAMPAIGN_STATS_JOB,
-        { workspaceId, campaignId },
-        {
-          delay: CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
-          retryLimit: CAMPAIGN_JOB_RETRY_LIMIT,
+    await this.messageQueueService.add<RefreshCampaignStatsJobData>(
+      REFRESH_CAMPAIGN_STATS_JOB,
+      { workspaceId, campaignId },
+      {
+        delay: CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
+        retryLimit: CAMPAIGN_JOB_RETRY_LIMIT,
+        deduplication: {
+          id: `campaign-stats-refresh:${workspaceId}:${campaignId}`,
+          keepLastIfActive: true,
         },
-      )
-      .catch(async (error) => {
-        await this.cacheStorageService.releaseLock({
-          key: lockKey,
-          ownerToken: lockOwnerToken,
-        });
-
-        throw error;
-      });
+      },
+    );
   }
 
   async countDeliveriesByState({
@@ -111,9 +92,6 @@ export class MessageCampaignStatisticsService {
     return computeCampaignCounts({ groups });
   }
 
-  // The refresh lock is left to expire instead of being released here: a
-  // backed-up queue can start this job after the lock TTL, and deleting the key
-  // then would drop the lock a newer schedule already owns.
   async refreshCampaignCounts({
     workspaceId,
     campaignId,
@@ -127,6 +105,23 @@ export class MessageCampaignStatisticsService {
     });
 
     await this.persistCampaignCounts({ workspaceId, campaignId, counts });
+
+    if (!this.campaignEngagementEventService.isAvailable()) {
+      return;
+    }
+
+    const engagementCounts =
+      await this.campaignEngagementEventService.countCampaignEngagement({
+        workspaceId,
+        campaignId,
+      });
+
+    await this.persistEngagementStats({
+      workspaceId,
+      campaignId,
+      engagementCounts,
+      deliveredCount: counts.deliveredCount,
+    });
   }
 
   async reconcileWorkspaceCampaignCounts({
@@ -157,7 +152,7 @@ export class MessageCampaignStatisticsService {
       }, buildSystemAuthContext(workspaceId));
 
     for (const campaignId of campaignIds) {
-      await this.refreshCampaignCounts({ workspaceId, campaignId });
+      await this.scheduleRefresh({ workspaceId, campaignId });
     }
   }
 
@@ -217,5 +212,73 @@ export class MessageCampaignStatisticsService {
 
       await campaignRepository.update({ id: campaignId }, nextCounts);
     }, buildSystemAuthContext(workspaceId));
+  }
+
+  private async persistEngagementStats({
+    workspaceId,
+    campaignId,
+    engagementCounts,
+    deliveredCount,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    engagementCounts: CampaignEngagementCounts;
+    deliveredCount: number;
+  }): Promise<void> {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = this.workspaceOrmManager.getRepository(
+        MessageCampaignWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+      const campaign = await campaignRepository.findOne({
+        where: { id: campaignId },
+        select: {
+          id: true,
+          uniqueClickCount: true,
+          clickRate: true,
+          uniqueOpenCount: true,
+          openRate: true,
+        },
+      });
+
+      if (!isDefined(campaign)) {
+        return;
+      }
+
+      const nextEngagementStats = {
+        uniqueClickCount: engagementCounts.uniqueClickCount,
+        clickRate: this.computeRate(
+          engagementCounts.uniqueClickCount,
+          deliveredCount,
+        ),
+        uniqueOpenCount: engagementCounts.uniqueOpenCount,
+        openRate: this.computeRate(
+          engagementCounts.uniqueOpenCount,
+          deliveredCount,
+        ),
+      };
+
+      const storedEngagementStats = {
+        uniqueClickCount: campaign.uniqueClickCount,
+        clickRate: campaign.clickRate,
+        uniqueOpenCount: campaign.uniqueOpenCount,
+        openRate: campaign.openRate,
+      };
+
+      if (fastDeepEqual(storedEngagementStats, nextEngagementStats)) {
+        return;
+      }
+
+      await campaignRepository.update({ id: campaignId }, nextEngagementStats);
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  private computeRate(count: number, deliveredCount: number): number {
+    if (deliveredCount === 0) {
+      return 0;
+    }
+
+    return count / deliveredCount;
   }
 }

@@ -3978,14 +3978,14 @@
           },
           {
             "name": "filter",
-            "type": "((item: TItem, query: string, itemToString?: ((item: TItem) => string) | undefined) => boolean) | null",
+            "type": "AutocompleteRootProps<TItem>[\"filter\"]",
             "required": false,
             "defaultValue": null,
             "description": "Filter function used to match items against the input query."
           },
           {
             "name": "filteredItems",
-            "type": "readonly TItem[] | readonly Group<TItem>[]",
+            "type": "readonly TItem[] | readonly { items: readonly TItem[] }[]",
             "required": false,
             "defaultValue": null,
             "description": "Filtered items to display in the list.\nWhen provided, the list uses these items instead of filtering the `items` prop internally.\nWhen `items` is also provided, this array must preserve its flat or grouped structure.\nNullish entries are not supported, as in `items`.\nUse when you want to control filtering logic externally with the `useFilter()` hook."
@@ -4034,14 +4034,14 @@
           },
           {
             "name": "items",
-            "type": "readonly TItem[]",
+            "type": "readonly TItem[] | readonly { items: readonly TItem[] }[]",
             "required": false,
             "defaultValue": null,
-            "description": "Items to display in the list. Nullish entries are not supported."
+            "description": "Flat items or groups with an items array. Preserves the upstream item type; nullish entries are not supported."
           },
           {
             "name": "itemToStringValue",
-            "type": "((itemValue: TItem) => string)",
+            "type": "(itemValue: TItem) => string",
             "required": false,
             "defaultValue": null,
             "description": "When the item values are objects (`<Autocomplete.Item value={object}>`), this function converts the object value to a string representation for both display in the input and form submission.\nIf the shape of the object is `{ value, label }`, the label will be used automatically without needing to specify this prop."
@@ -4097,7 +4097,7 @@
           },
           {
             "name": "onItemHighlighted",
-            "type": "((highlightedValue: TItem | undefined, eventDetails: HighlightEventDetails) => void)",
+            "type": "(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void",
             "required": false,
             "defaultValue": null,
             "description": "Callback fired when an item is highlighted or unhighlighted.\nReceives the highlighted item value (or `undefined` if no item is highlighted) and event details with a `reason` property describing why the highlight changed.\nThe `reason` can be:\n- `'keyboard'`: the highlight changed due to keyboard navigation.\n- `'pointer'`: the highlight changed due to pointer hovering.\n- `'none'`: the highlight changed programmatically."
@@ -4175,6 +4175,58 @@
         ]
       },
       {
+        "name": "Value",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode | ((value: string) => ReactNode)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Content or render function receiving the current input text."
+          }
+        ]
+      },
+      {
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: AutocompleteTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component should ignore user interaction."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AutocompleteTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: AutocompleteTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
         "name": "InputGroup",
         "props": [
           {
@@ -4241,14 +4293,153 @@
         ]
       },
       {
-        "name": "Popup",
+        "name": "Icon",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxIconState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxIconState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxIconState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Clear",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxClearState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component should ignore user interaction."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component should remain mounted in the DOM when not visible."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxClearState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxClearState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Portal",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxPortalState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "container",
+            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Portal destination. Omitted uses the scoped theme container; explicit null waits without rendering. Element, ShadowRoot and ref targets pass through to Base UI."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to keep the portal mounted in the DOM while the popup is hidden."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxPortalState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxPortalState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Backdrop",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxBackdropState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxBackdropState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxBackdropState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Positioner",
         "props": [
           {
             "name": "align",
             "type": "\"center\" | \"end\" | \"start\"",
             "required": false,
             "defaultValue": "start",
-            "description": "How to align the popup relative to the specified side."
+            "description": "Alignment relative to the anchor. Defaults to start."
           },
           {
             "name": "alignOffset",
@@ -4265,11 +4456,32 @@
             "description": "An element to position the popup against.\nBy default, the popup will be positioned against the trigger."
           },
           {
+            "name": "arrowPadding",
+            "type": "number",
+            "required": false,
+            "defaultValue": "5",
+            "description": "Minimum distance to maintain between the arrow and the edges of the popup.\n\nUse it to prevent the arrow element from hanging out of the rounded corners of a popup."
+          },
+          {
             "name": "className",
-            "type": "string | ((state: ComboboxPopupState) => string | undefined)",
+            "type": "string | ((state: ComboboxPositionerState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "collisionAvoidance",
+            "type": "CollisionAvoidance",
+            "required": false,
+            "defaultValue": null,
+            "description": "Determines how to handle collisions when positioning the popup.\n\n`side` controls overflow on the preferred placement axis (`top`/`bottom` or `left`/`right`):\n- `'flip'`: keep the requested side when it fits; otherwise try the opposite side\n  (`top` and `bottom`, or `left` and `right`).\n- `'shift'`: never change side; keep the requested side and move the popup within\n  the clipping boundary so it stays visible.\n- `'none'`: do not correct side-axis overflow.\n\n`align` controls overflow on the alignment axis (`start`/`center`/`end`):\n- `'flip'`: keep side, but swap `start` and `end` when the requested alignment overflows.\n- `'shift'`: keep side and requested alignment, then nudge the popup along the\n  alignment axis to fit.\n- `'none'`: do not correct alignment-axis overflow.\n\n`fallbackAxisSide` controls fallback behavior on the perpendicular axis when the\npreferred axis cannot fit:\n- `'start'`: allow perpendicular fallback and try the logical start side first\n  (`top` before `bottom`, or `left` before `right` in LTR).\n- `'end'`: allow perpendicular fallback and try the logical end side first\n  (`bottom` before `top`, or `right` before `left` in LTR).\n- `'none'`: do not fallback to the perpendicular axis.\n\nWhen `side` is `'shift'`, explicitly setting `align` only supports `'shift'` or `'none'`.\nIf `align` is omitted, it defaults to `'flip'`."
+          },
+          {
+            "name": "collisionBoundary",
+            "type": "Boundary",
+            "required": false,
+            "defaultValue": "clipping-ancestors",
+            "description": "An element or a rectangle that delimits the area that the popup is confined to."
           },
           {
             "name": "collisionPadding",
@@ -4279,11 +4491,72 @@
             "description": "Additional space to maintain from the edge of the collision boundary."
           },
           {
-            "name": "container",
-            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+            "name": "disableAnchorTracking",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to disable the popup from tracking any layout shift of its positioning anchor."
+          },
+          {
+            "name": "positionMethod",
+            "type": "\"absolute\" | \"fixed\"",
+            "required": false,
+            "defaultValue": "absolute",
+            "description": "Determines which CSS `position` property to use."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
             "required": false,
             "defaultValue": null,
-            "description": "Element the popup is portaled into. Defaults to the theme portal container."
+            "description": "Ref to the positioning div, separate from Popup and Portal."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxPositionerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "side",
+            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
+            "required": false,
+            "defaultValue": "bottom",
+            "description": "Which side of the anchor element to align the popup against.\nMay automatically change to avoid collisions."
+          },
+          {
+            "name": "sideOffset",
+            "type": "number | OffsetFunction",
+            "required": false,
+            "defaultValue": "8",
+            "description": "Distance from the anchor. Defaults to 8; supports functional offsets."
+          },
+          {
+            "name": "sticky",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to maintain the popup in the viewport after\nthe anchor element was scrolled out of view."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxPositionerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Popup",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxPopupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
             "name": "finalFocus",
@@ -4307,20 +4580,6 @@
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
           },
           {
-            "name": "side",
-            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
-            "required": false,
-            "defaultValue": "bottom",
-            "description": "Which side of the anchor element to align the popup against.\nMay automatically change to avoid collisions."
-          },
-          {
-            "name": "sideOffset",
-            "type": "number | OffsetFunction",
-            "required": false,
-            "defaultValue": "8",
-            "description": "Distance between the anchor and the popup in pixels.\nAlso accepts a function that returns the distance to read the dimensions of the anchor\nand positioner elements, along with its side and alignment.\n\nThe function takes a `data` object parameter with the following properties:\n- `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.\n- `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.\n- `data.side`: which side of the anchor element the positioner is aligned against.\n- `data.align`: how the positioner is aligned relative to the specified side."
-          },
-          {
             "name": "style",
             "type": "CSSProperties | ((state: ComboboxPopupState) => CSSProperties | undefined)",
             "required": false,
@@ -4333,6 +4592,32 @@
             "required": false,
             "defaultValue": null,
             "description": "Width of the popup. Overrides its default minimum anchor width."
+          }
+        ]
+      },
+      {
+        "name": "Arrow",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxArrowState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxArrowState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxArrowState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           }
         ]
       },
@@ -4356,6 +4641,91 @@
           {
             "name": "style",
             "type": "CSSProperties | ((state: ComboboxListState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Status",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxStatusState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxStatusState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxStatusState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Group",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxGroupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "items",
+            "type": "readonly any[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "Items to be rendered within this group.\nWhen provided, child `Collection` components will use these items."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxGroupState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxGroupState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "GroupLabel",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxGroupLabelState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxGroupLabelState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxGroupLabelState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -4452,6 +4822,44 @@
         ]
       },
       {
+        "name": "Row",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxRowState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxRowState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxRowState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Collection",
+        "props": [
+          {
+            "name": "children",
+            "type": "(item: any, index: number) => ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": "Render function receiving each filtered item and its index."
+          }
+        ]
+      },
+      {
         "name": "Empty",
         "props": [
           {
@@ -4471,6 +4879,39 @@
           {
             "name": "style",
             "type": "CSSProperties | ((state: ComboboxEmptyState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Separator",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: AutocompleteSeparatorState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "orientation",
+            "type": "\"horizontal\" | \"vertical\"",
+            "required": false,
+            "defaultValue": "horizontal",
+            "description": "The orientation of the separator."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AutocompleteSeparatorState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: AutocompleteSeparatorState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -7573,998 +8014,6 @@
             "required": false,
             "defaultValue": null,
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Menu",
-    "entryPoint": "twenty-ui/primitives/surfaces",
-    "slug": "surfaces/menu",
-    "props": [],
-    "parts": [
-      {
-        "name": "Root",
-        "props": [
-          {
-            "name": "actionsRef",
-            "type": "RefObject<MenuRootActions | null>",
-            "required": false,
-            "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the menu.\n  Call this after any externally controlled closing animation finishes.\n- `close`: When specified, the menu can be closed imperatively."
-          },
-          {
-            "name": "children",
-            "type": "ReactNode | PayloadChildRenderFunction<Payload>",
-            "required": false,
-            "defaultValue": null,
-            "description": "The content of the menu.\nThis can be a regular React node or a render function that receives the `payload` of the active trigger."
-          },
-          {
-            "name": "closeParentOnEsc",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "When in a submenu, determines whether pressing the Escape key\ncloses the entire menu, or only the current child menu."
-          },
-          {
-            "name": "defaultOpen",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the menu is initially open.\n\nTo render a controlled menu, use the `open` prop instead."
-          },
-          {
-            "name": "defaultTriggerId",
-            "type": "string | null",
-            "required": false,
-            "defaultValue": null,
-            "description": "ID of the trigger that the menu is associated with.\nThis is useful in conjunction with the `defaultOpen` prop to create an initially open menu."
-          },
-          {
-            "name": "disabled",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component should ignore user interaction."
-          },
-          {
-            "name": "handle",
-            "type": "MenuHandle<Payload>",
-            "required": false,
-            "defaultValue": null,
-            "description": "A handle to associate the menu with a trigger.\nIf specified, allows external triggers to control the menu's open state."
-          },
-          {
-            "name": "highlightItemOnHover",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "true",
-            "description": "Whether moving the pointer over items should highlight them.\nDisabling this prop allows CSS `:hover` to be differentiated from the `:focus` (`data-highlighted`) state."
-          },
-          {
-            "name": "loopFocus",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "true",
-            "description": "Whether to loop keyboard focus back to the first item\nwhen the end of the list is reached while using the arrow keys."
-          },
-          {
-            "name": "modal",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "true",
-            "description": "Determines if the menu enters a modal state when open.\n- `true`: user interaction is limited to the menu: document page scroll is locked and pointer interactions on outside elements are disabled.\n- `false`: user interaction with the rest of the document is allowed.\n\nOn touch devices, a `true` modal blocks outside taps but leaves the page scrollable unless the popup spans nearly the full viewport width, matching native iOS behavior.\n\nNested menus ignore this prop, and menus opened by hover are never modal."
-          },
-          {
-            "name": "onOpenChange",
-            "type": "((open: boolean, eventDetails: MenuRootChangeEventDetails) => void)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Event handler called when the menu is opened or closed."
-          },
-          {
-            "name": "onOpenChangeComplete",
-            "type": "((open: boolean) => void)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Event handler called after any animations complete when the menu is opened or closed."
-          },
-          {
-            "name": "open",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": null,
-            "description": "Whether the menu is currently open."
-          },
-          {
-            "name": "orientation",
-            "type": "\"horizontal\" | \"vertical\"",
-            "required": false,
-            "defaultValue": "vertical",
-            "description": "The visual orientation of the menu.\nControls whether roving focus uses up/down or left/right arrow keys."
-          },
-          {
-            "name": "triggerId",
-            "type": "string | null",
-            "required": false,
-            "defaultValue": null,
-            "description": "ID of the trigger that the menu is associated with.\nThis is useful in conjunction with the `open` prop to create a controlled menu.\nThere's no need to specify this prop when the menu is uncontrolled (that is, when the `open` prop is not set)."
-          }
-        ]
-      },
-      {
-        "name": "Trigger",
-        "props": [
-          {
-            "name": "className",
-            "type": "string | ((state: MenuTriggerState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "closeDelay",
-            "type": "number",
-            "required": false,
-            "defaultValue": "0",
-            "description": "How long to wait before closing the menu that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
-          },
-          {
-            "name": "delay",
-            "type": "number",
-            "required": false,
-            "defaultValue": "100",
-            "description": "How long to wait before the menu may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
-          },
-          {
-            "name": "disabled",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component should ignore user interaction."
-          },
-          {
-            "name": "handle",
-            "type": "MenuHandle<Payload>",
-            "required": false,
-            "defaultValue": null,
-            "description": "A handle to associate the trigger with a menu."
-          },
-          {
-            "name": "nativeButton",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "true",
-            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
-          },
-          {
-            "name": "openOnHover",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": null,
-            "description": "Whether the menu should also open when the trigger is hovered."
-          },
-          {
-            "name": "payload",
-            "type": "Payload",
-            "required": false,
-            "defaultValue": null,
-            "description": "A payload to pass to the menu when it is opened."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, MenuTriggerState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: MenuTriggerState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          }
-        ]
-      },
-      {
-        "name": "Popup",
-        "props": [
-          {
-            "name": "align",
-            "type": "\"center\" | \"end\" | \"start\"",
-            "required": false,
-            "defaultValue": null,
-            "description": "Alignment of the popup along the anchor. Defaults to `start`."
-          },
-          {
-            "name": "alignOffset",
-            "type": "number",
-            "required": false,
-            "defaultValue": null,
-            "description": "Offset in pixels along the alignment axis. Defaults to `0` for a menu and\n`-4` for a submenu."
-          },
-          {
-            "name": "anchor",
-            "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
-            "required": false,
-            "defaultValue": null,
-            "description": "Element or position the popup is anchored to. Defaults to the trigger."
-          },
-          {
-            "name": "className",
-            "type": "string | ((state: MenuPopupState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "container",
-            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
-            "required": false,
-            "defaultValue": null,
-            "description": "Element the popup is portaled into. Defaults to the theme's portal\ncontainer."
-          },
-          {
-            "name": "finalFocus",
-            "type": "boolean | RefObject<HTMLElement | null> | ((closeType: InteractionType) => boolean | void | HTMLElement | null)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Determines the element to focus when the menu is closed.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (trigger or previously focused element).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, or `false`/`undefined` to do nothing."
-          },
-          {
-            "name": "keepMounted",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keeps the popup mounted in the DOM while the menu is closed."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, MenuPopupState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "side",
-            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
-            "required": false,
-            "defaultValue": null,
-            "description": "Side of the anchor the popup is placed on. Defaults to `bottom` for a menu\nand `inline-end` for a submenu."
-          },
-          {
-            "name": "sideOffset",
-            "type": "number",
-            "required": false,
-            "defaultValue": null,
-            "description": "Distance in pixels between the anchor and the popup. Defaults to `8` for a\nmenu and `0` for a submenu."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: MenuPopupState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          }
-        ]
-      },
-      {
-        "name": "Item",
-        "props": [
-          {
-            "name": "className",
-            "type": "string | ((state: MenuItemState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "closeOnClick",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "true",
-            "description": "Whether to close the menu when the item is clicked."
-          },
-          {
-            "name": "color",
-            "type": "\"danger\" | \"neutral\"",
-            "required": false,
-            "defaultValue": null,
-            "description": "Color of the text and icons. `danger` marks a destructive action."
-          },
-          {
-            "name": "description",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Supporting text, placed according to `descriptionPlacement`."
-          },
-          {
-            "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
-            "required": false,
-            "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
-          },
-          {
-            "name": "disabled",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component should ignore user interaction."
-          },
-          {
-            "name": "endIcon",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Icon rendered after the content."
-          },
-          {
-            "name": "label",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Overrides the text label to use when the item is matched during keyboard text navigation."
-          },
-          {
-            "name": "nativeButton",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
-          },
-          {
-            "name": "onClick",
-            "type": "((event: BaseUIEvent<MouseEvent<HTMLDivElement, MouseEvent>>) => void)",
-            "required": false,
-            "defaultValue": null,
-            "description": "The click handler for the menu item."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, MenuItemState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "shortcut",
-            "type": "ShortcutDefinition",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "shortcutJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between sequential shortcut steps. Defaults to `then`."
-          },
-          {
-            "name": "startIcon",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Icon rendered before the content."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: MenuItemState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          }
-        ]
-      },
-      {
-        "name": "CheckboxItem",
-        "props": [
-          {
-            "name": "checked",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": null,
-            "description": "Whether the checkbox item is currently ticked.\n\nTo render an uncontrolled checkbox item, use the `defaultChecked` prop instead."
-          },
-          {
-            "name": "className",
-            "type": "string | ((state: MenuCheckboxItemState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "closeOnClick",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether to close the menu when the item is clicked."
-          },
-          {
-            "name": "color",
-            "type": "\"danger\" | \"neutral\"",
-            "required": false,
-            "defaultValue": null,
-            "description": "Color of the text and icons. `danger` marks a destructive action."
-          },
-          {
-            "name": "defaultChecked",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the checkbox item is initially ticked.\n\nTo render a controlled checkbox item, use the `checked` prop instead."
-          },
-          {
-            "name": "description",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Supporting text, placed according to `descriptionPlacement`."
-          },
-          {
-            "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
-            "required": false,
-            "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
-          },
-          {
-            "name": "disabled",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component should ignore user interaction."
-          },
-          {
-            "name": "endIcon",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Icon rendered after the content."
-          },
-          {
-            "name": "label",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Overrides the text label to use when the item is matched during keyboard text navigation."
-          },
-          {
-            "name": "nativeButton",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
-          },
-          {
-            "name": "onCheckedChange",
-            "type": "((checked: boolean, eventDetails: MenuRootChangeEventDetails) => void)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Event handler called when the checkbox item is ticked or unticked."
-          },
-          {
-            "name": "onClick",
-            "type": "((event: BaseUIEvent<MouseEvent<HTMLDivElement, MouseEvent>>) => void)",
-            "required": false,
-            "defaultValue": null,
-            "description": "The click handler for the menu item."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, MenuCheckboxItemState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "shortcut",
-            "type": "ShortcutDefinition",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "shortcutJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between sequential shortcut steps. Defaults to `then`."
-          },
-          {
-            "name": "startIcon",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Icon rendered before the content."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: MenuCheckboxItemState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          }
-        ]
-      },
-      {
-        "name": "RadioGroup",
-        "props": [
-          {
-            "name": "children",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "The content of the component."
-          },
-          {
-            "name": "className",
-            "type": "string | ((state: MenuRadioGroupState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "defaultValue",
-            "type": "any",
-            "required": false,
-            "defaultValue": null,
-            "description": "The uncontrolled value of the radio item that should be initially selected.\n\nTo render a controlled radio group, use the `value` prop instead."
-          },
-          {
-            "name": "disabled",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component should ignore user interaction."
-          },
-          {
-            "name": "onValueChange",
-            "type": "((value: any, eventDetails: MenuRootChangeEventDetails) => void)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Function called when the selected value changes."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, MenuRadioGroupState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: MenuRadioGroupState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          },
-          {
-            "name": "value",
-            "type": "any",
-            "required": false,
-            "defaultValue": null,
-            "description": "The controlled value of the radio item that should be currently selected.\n\nTo render an uncontrolled radio group, use the `defaultValue` prop instead."
-          }
-        ]
-      },
-      {
-        "name": "RadioItem",
-        "props": [
-          {
-            "name": "className",
-            "type": "string | ((state: MenuRadioItemState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "closeOnClick",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether to close the menu when the item is clicked."
-          },
-          {
-            "name": "color",
-            "type": "\"danger\" | \"neutral\"",
-            "required": false,
-            "defaultValue": null,
-            "description": "Color of the text and icons. `danger` marks a destructive action."
-          },
-          {
-            "name": "description",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Supporting text, placed according to `descriptionPlacement`."
-          },
-          {
-            "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
-            "required": false,
-            "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
-          },
-          {
-            "name": "disabled",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component should ignore user interaction."
-          },
-          {
-            "name": "endIcon",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Icon rendered after the content."
-          },
-          {
-            "name": "label",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Overrides the text label to use when the item is matched during keyboard text navigation."
-          },
-          {
-            "name": "nativeButton",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
-          },
-          {
-            "name": "onClick",
-            "type": "((event: BaseUIEvent<MouseEvent<HTMLDivElement, MouseEvent>>) => void)",
-            "required": false,
-            "defaultValue": null,
-            "description": "The click handler for the menu item."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, MenuRadioItemState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "shortcut",
-            "type": "ShortcutDefinition",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "shortcutJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between sequential shortcut steps. Defaults to `then`."
-          },
-          {
-            "name": "startIcon",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Icon rendered before the content."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: MenuRadioItemState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          },
-          {
-            "name": "value",
-            "type": "any",
-            "required": true,
-            "defaultValue": null,
-            "description": "Value of the radio item.\nThis is the value that will be set in the MenuRadioGroup when the item is selected."
-          }
-        ]
-      },
-      {
-        "name": "Group",
-        "props": [
-          {
-            "name": "children",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "The content of the component."
-          },
-          {
-            "name": "className",
-            "type": "string | ((state: MenuGroupState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, MenuGroupState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: MenuGroupState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          }
-        ]
-      },
-      {
-        "name": "GroupLabel",
-        "props": [
-          {
-            "name": "className",
-            "type": "string | ((state: MenuGroupLabelState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, MenuGroupLabelState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: MenuGroupLabelState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          }
-        ]
-      },
-      {
-        "name": "Separator",
-        "props": [
-          {
-            "name": "className",
-            "type": "string | ((state: SeparatorState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "orientation",
-            "type": "\"horizontal\" | \"vertical\"",
-            "required": false,
-            "defaultValue": "horizontal",
-            "description": "The orientation of the separator."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, SeparatorState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: SeparatorState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          }
-        ]
-      },
-      {
-        "name": "SubmenuRoot",
-        "props": [
-          {
-            "name": "actionsRef",
-            "type": "RefObject<MenuRootActions | null>",
-            "required": false,
-            "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the menu.\n  Call this after any externally controlled closing animation finishes.\n- `close`: When specified, the menu can be closed imperatively."
-          },
-          {
-            "name": "children",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "The content of the submenu."
-          },
-          {
-            "name": "closeParentOnEsc",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "When in a submenu, determines whether pressing the Escape key\ncloses the entire menu, or only the current child menu."
-          },
-          {
-            "name": "defaultOpen",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the menu is initially open.\n\nTo render a controlled menu, use the `open` prop instead."
-          },
-          {
-            "name": "disabled",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component should ignore user interaction."
-          },
-          {
-            "name": "highlightItemOnHover",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "true",
-            "description": "Whether moving the pointer over items should highlight them.\nDisabling this prop allows CSS `:hover` to be differentiated from the `:focus` (`data-highlighted`) state."
-          },
-          {
-            "name": "loopFocus",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "true",
-            "description": "Whether to loop keyboard focus back to the first item\nwhen the end of the list is reached while using the arrow keys."
-          },
-          {
-            "name": "onOpenChange",
-            "type": "((open: boolean, eventDetails: MenuRootChangeEventDetails) => void)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Event handler called when the menu is opened or closed."
-          },
-          {
-            "name": "onOpenChangeComplete",
-            "type": "((open: boolean) => void)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Event handler called after any animations complete when the menu is opened or closed."
-          },
-          {
-            "name": "open",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": null,
-            "description": "Whether the menu is currently open."
-          },
-          {
-            "name": "orientation",
-            "type": "\"horizontal\" | \"vertical\"",
-            "required": false,
-            "defaultValue": "vertical",
-            "description": "The visual orientation of the menu.\nControls whether roving focus uses up/down or left/right arrow keys."
-          }
-        ]
-      },
-      {
-        "name": "SubmenuTrigger",
-        "props": [
-          {
-            "name": "className",
-            "type": "string | ((state: MenuSubmenuTriggerState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "closeDelay",
-            "type": "number",
-            "required": false,
-            "defaultValue": "0",
-            "description": "How long to wait before closing the menu that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
-          },
-          {
-            "name": "color",
-            "type": "\"danger\" | \"neutral\"",
-            "required": false,
-            "defaultValue": null,
-            "description": "Color of the text and icons. `danger` marks a destructive action."
-          },
-          {
-            "name": "delay",
-            "type": "number",
-            "required": false,
-            "defaultValue": "100",
-            "description": "How long to wait before the menu may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
-          },
-          {
-            "name": "description",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Supporting text, placed according to `descriptionPlacement`."
-          },
-          {
-            "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
-            "required": false,
-            "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
-          },
-          {
-            "name": "disabled",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component should ignore user interaction."
-          },
-          {
-            "name": "endIcon",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Icon rendered after the content."
-          },
-          {
-            "name": "label",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Overrides the text label to use when the item is matched during keyboard text navigation."
-          },
-          {
-            "name": "nativeButton",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
-          },
-          {
-            "name": "onClick",
-            "type": "((event: BaseUIEvent<MouseEvent<HTMLDivElement, MouseEvent>>) => void)",
-            "required": false,
-            "defaultValue": null,
-            "description": "The click handler for the submenu trigger."
-          },
-          {
-            "name": "openOnHover",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "true",
-            "description": "Whether the menu should also open when the trigger is hovered."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, MenuSubmenuTriggerState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "shortcut",
-            "type": "ShortcutDefinition",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "shortcutJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between sequential shortcut steps. Defaults to `then`."
-          },
-          {
-            "name": "startIcon",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Icon rendered before the content."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: MenuSubmenuTriggerState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           }
         ]
       }

@@ -21,8 +21,6 @@ import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/Lis
 import { type ListItemIndicator } from '@ui/primitives/navigation/ListItem/types/ListItemIndicator';
 import { type ListItemProps } from '@ui/primitives/navigation/ListItem/types/ListItemProps';
 
-import { ListItemMenuExample } from './ListItemMenuExample';
-
 const meta: Meta<typeof ListItem> = {
   title: 'UI/Navigation/ListItem',
   component: ListItem,
@@ -114,12 +112,6 @@ export const ExplicitLinkContent: Story = {
     children: <a href="https://twenty.com/developers">Read documentation</a>,
     description: 'Resource',
   },
-};
-
-export const MenuOwner: Story = {
-  decorators: [ComponentDecorator],
-  parameters: { container: { width: 240, height: 200 } },
-  render: () => <ListItemMenuExample />,
 };
 
 export const WithCheckbox: Story = {
