@@ -1,4 +1,3 @@
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { Module } from '@nestjs/common';
 
@@ -14,13 +13,12 @@ import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
 import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
     WorkflowVersionCoreModule,
     WorkflowCoreModule,
-    TypeOrmModule.forFeature([WorkspaceEntity, ApplicationEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     CronModule,
     RecordShareModule,
     WorkflowCommonModule,
@@ -31,7 +29,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     WorkflowDatabaseEventTriggerListener,
     WorkflowCronTriggerCronJob,
     WorkflowCronTriggerCronCommand,
-    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [AutomatedTriggerWorkspaceService, WorkflowCronTriggerCronCommand],
 })
