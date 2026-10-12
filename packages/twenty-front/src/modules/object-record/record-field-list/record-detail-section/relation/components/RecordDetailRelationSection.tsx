@@ -2,10 +2,10 @@ import { useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailSectionContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailSectionContainer';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsList';
+import { useRelationRecordsTotalCount } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useRelationRecordsTotalCount';
 import { RecordDetailRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdown';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
@@ -16,7 +16,6 @@ import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersis
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -24,18 +23,8 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
 import { useLingui } from '@lingui/react/macro';
-import {
-  AppPath,
-  FieldMetadataType,
-  ViewFilterOperand,
-  type RecordGqlOperationFilter,
-} from 'twenty-shared/types';
-import {
-  computeMorphRelationGqlFieldName,
-  CustomError,
-  getAppPath,
-  isDefined,
-} from 'twenty-shared/utils';
+import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
+import { CustomError, getAppPath } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
@@ -134,39 +123,9 @@ export const RecordDetailRelationSection = ({
     objectMetadataItemId: objectMetadataItem?.id ?? '',
   });
 
-  const relationFieldMetadataIsMorphRelation =
-    relationFieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION;
-
-  const computedName = isDefined(relationFieldMetadataItem)
-    ? computeMorphRelationGqlFieldName({
-        fieldName: relationFieldMetadataItem.name,
-        relationType: relationFieldMetadataItem.settings.relationType,
-        targetObjectMetadataNameSingular: objectMetadataItem.nameSingular,
-        targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
-      })
-    : undefined;
-
-  const gqlFieldName = relationFieldMetadataIsMorphRelation
-    ? computedName
-    : relationFieldMetadataItem?.name;
-
-  const filtersForAggregate = isToManyObjects
-    ? ({
-        [`${gqlFieldName}Id`]: {
-          in: [recordId],
-        },
-      } satisfies RecordGqlOperationFilter)
-    : {};
-
-  const { data: relationAggregateResult } = useAggregateRecords<{
-    id: { COUNT: number };
-  }>({
-    objectNameSingular: relationObjectMetadataItem.nameSingular,
-    filter: filtersForAggregate,
-    skip: !isToManyObjects,
-    recordGqlFieldsAggregate: {
-      id: [AggregateOperations.COUNT],
-    },
+  const { relationRecordsTotalCount } = useRelationRecordsTotalCount({
+    recordId,
+    relationFieldMetadata: fieldDefinition.metadata as FieldRelationMetadata,
   });
 
   const handleSubmit: FieldInputEvent = ({ newValue }) => {
@@ -179,7 +138,7 @@ export const RecordDetailRelationSection = ({
 
   if (loading) return null;
 
-  const relationRecordsCount = relationAggregateResult?.id?.COUNT ?? 0;
+  const relationRecordsCount = relationRecordsTotalCount ?? 0;
 
   return (
     <FieldInputEventContext.Provider
