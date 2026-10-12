@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { SegmentedControl } from 'twenty-ui/primitives/input';
+import { SegmentedControl } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';

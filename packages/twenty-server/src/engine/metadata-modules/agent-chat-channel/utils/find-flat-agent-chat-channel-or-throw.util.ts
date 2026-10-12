@@ -8,10 +8,13 @@ import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agen
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 
-export const findFlatAgentChatChannelOrThrow = (
-  flatAgentChatChannelMaps: FlatEntityMaps<FlatAgentChatChannel>,
-  channelId: string,
-): FlatAgentChatChannel => {
+export const findFlatAgentChatChannelOrThrow = ({
+  flatAgentChatChannelMaps,
+  channelId,
+}: {
+  flatAgentChatChannelMaps: FlatEntityMaps<FlatAgentChatChannel>;
+  channelId: string;
+}): FlatAgentChatChannel => {
   const channel = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: channelId,
     flatEntityMaps: flatAgentChatChannelMaps,

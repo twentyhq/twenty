@@ -13,6 +13,7 @@ import { CampaignEngagementEventService } from 'src/modules/emailing/services/ca
 import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 import { buildCampaignClickEvent } from 'src/modules/emailing/utils/build-campaign-click-event.util';
+import { classifyCampaignOpen } from 'src/modules/emailing/utils/classify-campaign-open.util';
 
 @Injectable()
 export class CampaignEngagementRecordingService {
@@ -56,30 +57,79 @@ export class CampaignEngagementRecordingService {
       id: observation.workspaceId,
     });
 
-    const clickEvent = buildCampaignClickEvent({
-      delivery,
-      workspace,
-      observation,
-    });
+    switch (observation.type) {
+      case 'CLICK': {
+        const clickEvent = buildCampaignClickEvent({
+          delivery,
+          workspace,
+          observation,
+        });
 
-    if (!isDefined(clickEvent)) {
-      return;
+        if (!isDefined(clickEvent)) {
+          return;
+        }
+
+        await this.campaignEngagementEventService.insertClickOrThrow(
+          clickEvent,
+        );
+
+        if (clickEvent.activityClass !== 'UNCLASSIFIED') {
+          return;
+        }
+
+        await this.scheduleStatisticsRefresh({
+          workspaceId: observation.workspaceId,
+          campaignId: delivery.campaignId,
+        });
+
+        return;
+      }
+      case 'OPEN': {
+        if (!workspace?.isCampaignOpenTrackingEnabled) {
+          return;
+        }
+
+        const activityClass = classifyCampaignOpen({
+          sentAt: delivery.sentAt,
+          occurredAt: observation.occurredAt,
+          userAgent: observation.userAgent,
+        });
+
+        await this.campaignEngagementEventService.insertOpenOrThrow({
+          workspaceId: observation.workspaceId,
+          messageCampaignId: delivery.campaignId,
+          deliveryId: delivery.id,
+          eventId: observation.eventId,
+          occurredAt: observation.occurredAt,
+          activityClass,
+        });
+
+        if (activityClass !== 'UNCLASSIFIED') {
+          return;
+        }
+
+        await this.scheduleStatisticsRefresh({
+          workspaceId: observation.workspaceId,
+          campaignId: delivery.campaignId,
+        });
+
+        return;
+      }
     }
+  }
 
-    await this.campaignEngagementEventService.insertClickOrThrow(clickEvent);
-
-    if (clickEvent.activityClass !== 'UNCLASSIFIED') {
-      return;
-    }
-
+  private async scheduleStatisticsRefresh({
+    workspaceId,
+    campaignId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+  }): Promise<void> {
     await this.messageCampaignStatisticsService
-      .scheduleRefresh({
-        workspaceId: observation.workspaceId,
-        campaignId: delivery.campaignId,
-      })
+      .scheduleRefresh({ workspaceId, campaignId })
       .catch((error) => {
         this.logger.error(
-          `Campaign ${delivery.campaignId} could not schedule a statistics refresh: ${
+          `Campaign ${campaignId} could not schedule a statistics refresh: ${
             error instanceof Error ? error.message : String(error)
           }`,
         );
