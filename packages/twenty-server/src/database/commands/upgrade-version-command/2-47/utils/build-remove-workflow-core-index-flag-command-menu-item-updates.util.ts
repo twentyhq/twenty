@@ -1,6 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 
 const WORKFLOW_CORE_INDEX_FLAG_EXPRESSION =
@@ -34,10 +35,20 @@ const isWorkflowVersionNavigation = (commandMenuItem: FlatCommandMenuItem) =>
   commandMenuItem.navigationTargetObjectMetadataUniversalIdentifier ===
   STANDARD_OBJECTS.workflowVersion.universalIdentifier;
 
+const isApplicationWorkflowCommand = (commandMenuItem: FlatCommandMenuItem) =>
+  commandMenuItem.engineComponentKey ===
+    EngineComponentKey.TRIGGER_WORKFLOW_VERSION &&
+  commandMenuItem.isSystemSideEffect;
+
 const computeUnflaggedExpression = (
-  expression: string,
+  commandMenuItem: FlatCommandMenuItem,
 ): string | null | undefined => {
-  if (!expression.includes(WORKFLOW_CORE_INDEX_FLAG_EXPRESSION)) {
+  const expression = commandMenuItem.conditionalAvailabilityExpression;
+
+  if (
+    !isDefined(expression) ||
+    !expression.includes(WORKFLOW_CORE_INDEX_FLAG_EXPRESSION)
+  ) {
     return undefined;
   }
 
@@ -63,6 +74,13 @@ const computeFlaggedExpression = (
   commandMenuItem: FlatCommandMenuItem,
 ): string | undefined => {
   if (
+    isApplicationWorkflowCommand(commandMenuItem) &&
+    !isDefined(commandMenuItem.conditionalAvailabilityExpression)
+  ) {
+    return WORKFLOW_CORE_INDEX_FLAG_EXPRESSION;
+  }
+
+  if (
     isWorkflowVersionNavigation(commandMenuItem) &&
     commandMenuItem.conditionalAvailabilityExpression ===
       HIDDEN_WORKFLOW_VERSION_NAVIGATION_EXPRESSION
@@ -86,18 +104,13 @@ export const buildRemoveWorkflowCoreIndexFlagCommandMenuItemUpdates = ({
   direction: 'up' | 'down';
 }): FlatCommandMenuItem[] =>
   flatCommandMenuItems.flatMap((commandMenuItem) => {
-    if (
-      !isDefined(commandMenuItem) ||
-      !isDefined(commandMenuItem.conditionalAvailabilityExpression)
-    ) {
+    if (!isDefined(commandMenuItem)) {
       return [];
     }
 
     const nextExpression =
       direction === 'up'
-        ? computeUnflaggedExpression(
-            commandMenuItem.conditionalAvailabilityExpression,
-          )
+        ? computeUnflaggedExpression(commandMenuItem)
         : computeFlaggedExpression(commandMenuItem);
 
     if (nextExpression === undefined) {

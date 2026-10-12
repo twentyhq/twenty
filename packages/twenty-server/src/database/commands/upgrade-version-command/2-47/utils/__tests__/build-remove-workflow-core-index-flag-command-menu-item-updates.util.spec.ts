@@ -66,6 +66,7 @@ const APPLICATION_WORKFLOW_ITEM = buildItem({
   universalIdentifier: 'application-workflow',
   applicationUniversalIdentifier: 'application',
   engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+  isSystemSideEffect: true,
   conditionalAvailabilityExpression: FLAG,
 });
 
@@ -154,6 +155,16 @@ describe('buildRemoveWorkflowCoreIndexFlagCommandMenuItemUpdates', () => {
         favoritesItem,
         hiddenNavigationItem,
         buildItem({ conditionalAvailabilityExpression: 'false' }),
+        {
+          ...APPLICATION_WORKFLOW_ITEM,
+          conditionalAvailabilityExpression: null,
+        },
+        {
+          ...APPLICATION_WORKFLOW_ITEM,
+          universalIdentifier: 'user-workflow',
+          isSystemSideEffect: false,
+          conditionalAvailabilityExpression: null,
+        },
       ],
       now: NOW,
       direction: 'down',
@@ -168,6 +179,7 @@ describe('buildRemoveWorkflowCoreIndexFlagCommandMenuItemUpdates', () => {
       withFlaggedFavoritesExpression(favoritesItem)
         .conditionalAvailabilityExpression,
       WORKFLOW_VERSION_NAVIGATION_ITEM.conditionalAvailabilityExpression,
+      FLAG,
     ]);
   });
 });

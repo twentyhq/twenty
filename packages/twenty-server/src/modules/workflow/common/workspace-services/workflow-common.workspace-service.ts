@@ -85,7 +85,7 @@ export class WorkflowCommonWorkspaceService {
         await workflowAutomatedTriggerRepository.softDelete({ workflowId });
         await workflowVersionRepository.softDelete({ workflowId });
 
-        await this.deactivateVersionsOnDelete({
+        await this.deactivateVersionOnDelete({
           workflowVersionRepository,
           workflowId,
         });
@@ -98,7 +98,7 @@ export class WorkflowCommonWorkspaceService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  private async deactivateVersionsOnDelete({
+  private async deactivateVersionOnDelete({
     workflowVersionRepository,
     workflowId,
   }: {
