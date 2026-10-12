@@ -1151,6 +1151,12 @@ export interface CreateEmailGroupChannelOutput {
 /** Database Event Action */
 export type DatabaseEventAction = 'CREATED' | 'DELETED' | 'DESTROYED' | 'RESTORED' | 'UPDATED' | 'UPSERTED'
 
+export interface DeduplicateAppConnectionResult {
+    connectedAccountId: Scalars['ID']
+    wasMerged: Scalars['Boolean']
+    __typename: 'DeduplicateAppConnectionResult'
+}
+
 export interface DeleteSso {
     identityProviderId: Scalars['UUID']
     __typename: 'DeleteSso'
@@ -2068,6 +2074,7 @@ export interface Mutation {
     createViewSort: ViewSort
     createWebhook: Webhook
     deactivateSkill: Skill
+    deduplicateConnectedAccount: DeduplicateAppConnectionResult
     deleteAppKeyValue: Scalars['Boolean']
     deleteAppMessageChannel: MessageChannel
     deleteApplicationRegistration: Scalars['Boolean']
@@ -5233,6 +5240,15 @@ first?: (Scalars['Int'] | null),
 /** Paginate last */
 last?: (Scalars['Int'] | null)}
 
+export interface DeduplicateAppConnectionInput {connectedAccountId: Scalars['ID'],externalAccountId: Scalars['String'],handle?: (Scalars['String'] | null)}
+
+export interface DeduplicateAppConnectionResultGenqlSelection{
+    connectedAccountId?: boolean | number
+    wasMerged?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface DeleteApprovedAccessDomainInput {id: Scalars['UUID']}
 
 export interface DeleteOneFieldInput {
@@ -6263,6 +6279,7 @@ export interface MutationGenqlSelection{
     createViewSort?: (ViewSortGenqlSelection & { __args: {input: CreateViewSortInput} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
+    deduplicateConnectedAccount?: (DeduplicateAppConnectionResultGenqlSelection & { __args: {input: DeduplicateAppConnectionInput} })
     deleteAppKeyValue?: { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} }
     deleteAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteApplicationRegistration?: { __args: {id: Scalars['String']} }
@@ -9346,6 +9363,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isCreateEmailGroupChannelOutput = (obj?: { __typename?: any } | null): obj is CreateEmailGroupChannelOutput => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
       return CreateEmailGroupChannelOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const DeduplicateAppConnectionResult_possibleTypes: string[] = ['DeduplicateAppConnectionResult']
+    export const isDeduplicateAppConnectionResult = (obj?: { __typename?: any } | null): obj is DeduplicateAppConnectionResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isDeduplicateAppConnectionResult"')
+      return DeduplicateAppConnectionResult_possibleTypes.includes(obj.__typename)
     }
     
 

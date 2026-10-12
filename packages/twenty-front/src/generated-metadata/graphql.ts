@@ -1763,6 +1763,18 @@ export enum DatabaseEventAction {
   UPSERTED = 'UPSERTED'
 }
 
+export type DeduplicateAppConnectionInput = {
+  connectedAccountId: Scalars['ID']['input'];
+  externalAccountId: Scalars['String']['input'];
+  handle?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type DeduplicateAppConnectionResult = {
+  __typename?: 'DeduplicateAppConnectionResult';
+  connectedAccountId: Scalars['ID']['output'];
+  wasMerged: Scalars['Boolean']['output'];
+};
+
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['UUID']['input'];
 };
@@ -3192,6 +3204,7 @@ export type Mutation = {
   createViewSort: ViewSort;
   createWebhook: Webhook;
   deactivateSkill: Skill;
+  deduplicateConnectedAccount: DeduplicateAppConnectionResult;
   deleteAppKeyValue: Scalars['Boolean']['output'];
   deleteAppMessageChannel: MessageChannel;
   deleteApplicationRegistration: Scalars['Boolean']['output'];
@@ -3754,6 +3767,11 @@ export type MutationCreateWebhookArgs = {
 
 export type MutationDeactivateSkillArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type MutationDeduplicateConnectedAccountArgs = {
+  input: DeduplicateAppConnectionInput;
 };
 
 

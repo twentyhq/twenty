@@ -1665,6 +1665,17 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeduplicateAppConnectionInput {
+  connectedAccountId: ID!
+  externalAccountId: String!
+  handle: String
+}
+
+type DeduplicateAppConnectionResult {
+  connectedAccountId: ID!
+  wasMerged: Boolean!
+}
+
 input DeleteApprovedAccessDomainInput {
   id: UUID!
 }
@@ -3031,6 +3042,7 @@ type Mutation {
   createViewSort(input: CreateViewSortInput!): ViewSort!
   createWebhook(input: CreateWebhookInput!): Webhook!
   deactivateSkill(id: UUID!): Skill!
+  deduplicateConnectedAccount(input: DeduplicateAppConnectionInput!): DeduplicateAppConnectionResult!
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
   deleteAppMessageChannel(id: UUID!): MessageChannel!
   deleteApplicationRegistration(id: String!): Boolean!
