@@ -109,6 +109,7 @@ export const Documentation: Story = {
         <Tabs.Tab value="activity" badge={<Badge>Soon</Badge>}>
           Activity
         </Tabs.Tab>
+        <Tabs.Indicator />
       </Tabs.List>
       <Tabs.Panel value="overview" style={{ padding: 'var(--t-spacing-4)' }}>
         <Badge color="inherit" size="md">
