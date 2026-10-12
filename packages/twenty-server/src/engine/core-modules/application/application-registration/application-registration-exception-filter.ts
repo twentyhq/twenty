@@ -15,7 +15,6 @@ import {
 export class ApplicationRegistrationExceptionFilter implements ExceptionFilter {
   catch(exception: ApplicationRegistrationException) {
     switch (exception.code) {
-      case ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_VERSION_NOT_FOUND:
       case ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND:
       case ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND:
       case ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_NOT_FOUND:

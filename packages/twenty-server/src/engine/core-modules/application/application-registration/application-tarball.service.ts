@@ -21,10 +21,8 @@ import { extractTarballSecurely } from 'src/engine/core-modules/application/appl
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
-import {
-  computeFileSriIntegrity,
-  computeSriIntegrity,
-} from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
+import { computeFileSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-file-sri-integrity.util';
+import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {

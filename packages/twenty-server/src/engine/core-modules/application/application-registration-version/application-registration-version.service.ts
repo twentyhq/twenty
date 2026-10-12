@@ -6,10 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
-import {
-  ApplicationRegistrationException,
-  ApplicationRegistrationExceptionCode,
-} from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -101,23 +97,6 @@ export class ApplicationRegistrationVersionService {
     return this.applicationRegistrationVersionRepository.findOne({
       where: { applicationRegistrationId, version },
     });
-  }
-
-  async findOneByIdOrThrow(
-    id: string,
-  ): Promise<ApplicationRegistrationVersionEntity> {
-    const version = await this.applicationRegistrationVersionRepository.findOne(
-      { where: { id } },
-    );
-
-    if (!isDefined(version)) {
-      throw new ApplicationRegistrationException(
-        `Application registration version with id ${id} not found`,
-        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_VERSION_NOT_FOUND,
-      );
-    }
-
-    return version;
   }
 
   async isTarballFileReferenced(tarballFileId: string): Promise<boolean> {

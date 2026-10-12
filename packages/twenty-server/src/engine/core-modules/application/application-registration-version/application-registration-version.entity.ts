@@ -36,7 +36,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
   'applicationRegistrationId',
   'version',
 ])
-@Index('IDX_APP_REG_VERSION_APP_REGISTRATION_ID', ['applicationRegistrationId'])
 @Index('IDX_APP_REG_VERSION_TARBALL_FILE_ID', ['tarballFileId'])
 export class ApplicationRegistrationVersionEntity {
   @Field(() => UUIDScalarType)

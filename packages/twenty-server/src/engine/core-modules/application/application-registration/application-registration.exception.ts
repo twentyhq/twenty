@@ -26,7 +26,6 @@ export enum ApplicationRegistrationExceptionCode {
   CLAIM_STATE_MISMATCH = 'CLAIM_STATE_MISMATCH',
   TARBALL_UPLOAD_NOT_FOUND = 'TARBALL_UPLOAD_NOT_FOUND',
   TARBALL_UPLOAD_COMPLETION_IN_PROGRESS = 'TARBALL_UPLOAD_COMPLETION_IN_PROGRESS',
-  APPLICATION_REGISTRATION_VERSION_NOT_FOUND = 'APPLICATION_REGISTRATION_VERSION_NOT_FOUND',
 }
 
 const getExceptionUserFriendlyMessage = (
@@ -75,8 +74,6 @@ const getExceptionUserFriendlyMessage = (
       return msg`Tarball upload not found.`;
     case ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_COMPLETION_IN_PROGRESS:
       return msg`This upload is already being completed. Please wait for it to finish.`;
-    case ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_VERSION_NOT_FOUND:
-      return msg`Application registration version not found.`;
     default:
       assertUnreachable(code);
   }
