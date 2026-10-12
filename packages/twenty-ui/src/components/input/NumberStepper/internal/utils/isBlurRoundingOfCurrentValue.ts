@@ -1,12 +1,13 @@
-import { type NumberField } from '@base-ui/react/number-field';
 import { formatNumber } from '@base-ui/utils/formatNumber';
+
+import { type NumberFieldRootChangeEventReason } from '@ui/primitives/input/NumberField/types/NumberFieldRootChangeEventReason';
 
 import { NUMBER_STEPPER_FORMAT } from '../constants/NumberStepperFormat';
 
 type IsBlurRoundingOfCurrentValueArgs = {
   nextValue: number | null;
   currentValue: number | null;
-  reason: NumberField.Root.ChangeEventReason;
+  reason: NumberFieldRootChangeEventReason;
 };
 
 export const isBlurRoundingOfCurrentValue = ({
