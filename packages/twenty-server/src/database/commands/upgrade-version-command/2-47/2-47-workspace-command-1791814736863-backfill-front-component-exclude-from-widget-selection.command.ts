@@ -70,7 +70,7 @@ export class BackfillFrontComponentExcludeFromWidgetSelectionCommand extends Pro
         `SELECT COUNT(*)::int AS count
          FROM core."frontComponent" "frontComponent"
          WHERE "frontComponent"."workspaceId" = $1
-           AND "frontComponent"."excludeFromWidgetSelection" = NOT $2
+           AND "frontComponent"."excludeFromWidgetSelection" <> $2
            AND ${IS_SETTINGS_PAGE_FRONT_COMPONENT_PREDICATE}`,
         [workspaceId, excludeFromWidgetSelection],
       );
@@ -86,7 +86,7 @@ export class BackfillFrontComponentExcludeFromWidgetSelectionCommand extends Pro
       `UPDATE core."frontComponent" "frontComponent"
        SET "excludeFromWidgetSelection" = $2
        WHERE "frontComponent"."workspaceId" = $1
-         AND "frontComponent"."excludeFromWidgetSelection" = NOT $2
+         AND "frontComponent"."excludeFromWidgetSelection" <> $2
          AND ${IS_SETTINGS_PAGE_FRONT_COMPONENT_PREDICATE}`,
       [workspaceId, excludeFromWidgetSelection],
     );
