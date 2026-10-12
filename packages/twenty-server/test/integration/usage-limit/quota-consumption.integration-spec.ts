@@ -641,7 +641,7 @@ describe('Usage quota consumption', () => {
     });
 
     it(
-      're-reads a limit from the ledger once it moves back to a period it left',
+      're-warms a limit from ClickHouse once it moves back to a period it left',
       async () => {
         const usageLimit = await createWeekCreditQuota();
         const usageEventRowCount = await countUsageEventRows();
@@ -678,7 +678,7 @@ describe('Usage quota consumption', () => {
       EXECUTION_TIMEOUT_MS,
     );
 
-    it('re-reads a limit from the ledger once the entitlement turns it back on', async () => {
+    it('re-warms a limit from ClickHouse once the entitlement turns it back on', async () => {
       const { spenderId } = await saveCreditQuotaForNewSpender({
         limitValue: 500,
         isInstanceOverride: false,
@@ -722,7 +722,7 @@ describe('Usage quota consumption', () => {
     });
 
     it(
-      're-reads a limit from the ledger once an operator edit makes it enforced again',
+      're-warms a limit from ClickHouse once an operator edit makes it enforced again',
       async () => {
         const entitlementSpy = jest
           .spyOn(
