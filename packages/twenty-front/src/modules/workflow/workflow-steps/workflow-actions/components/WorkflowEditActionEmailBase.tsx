@@ -43,7 +43,8 @@ import {
   TIPTAP_NODE_TYPES,
 } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { Callout, Dropdown } from 'twenty-ui/components';
+import { Callout } from 'twenty-ui/components/feedback';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconCode, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -283,7 +284,7 @@ export const WorkflowEditActionEmailBase = ({
           {isDefined(missingScopes) && (
             <>
               <Callout
-                variant={'error'}
+                status={'error'}
                 title={t`Missing email draft permission.`}
                 description={
                   hasConnectedAccountsPermission
@@ -291,9 +292,12 @@ export const WorkflowEditActionEmailBase = ({
                     : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
                 }
                 action={
-                  hasConnectedAccountsPermission
-                    ? { label: t`Reauthorize`, onClick: handleReauthorize }
-                    : undefined
+                  hasConnectedAccountsPermission ? (
+                    <Callout.Action
+                      type="button"
+                      onClick={handleReauthorize}
+                    >{t`Reauthorize`}</Callout.Action>
+                  ) : undefined
                 }
               />
             </>

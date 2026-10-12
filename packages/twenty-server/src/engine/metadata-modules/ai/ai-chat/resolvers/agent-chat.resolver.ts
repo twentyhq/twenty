@@ -48,6 +48,7 @@ import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usa
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -82,6 +83,7 @@ export class AgentChatResolver {
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly turnRecorderService: AgentTurnRecorderService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @Query(() => AgentChatThreadDTO)
@@ -105,10 +107,30 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return this.agentChatService.getMessagesForThread({
+    const messages = await this.agentChatService.getMessagesForThread({
       threadId,
       workspaceMemberId,
       workspaceId,
+    });
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    // Fronts cached from the release before still name senders by their
+    // membership, which messages no longer store
+    return messages.map((message) => {
+      const senderUserId = isDefined(message.senderWorkspaceMemberId)
+        ? flatWorkspaceMemberMaps.byId[message.senderWorkspaceMemberId]?.userId
+        : undefined;
+
+      return {
+        ...message,
+        senderUserWorkspaceId: isDefined(senderUserId)
+          ? (flatWorkspaceMemberMaps.userWorkspaceIdByUserId[senderUserId] ??
+            null)
+          : null,
+      };
     });
   }
 
@@ -169,10 +191,65 @@ export class AgentChatResolver {
       nullable: true,
     })
     fileAttachments: FileAttachmentInput[] | null,
+    @Args('mentionedWorkspaceMemberIds', {
+      type: () => [UUIDScalarType],
+      nullable: true,
+    })
+    mentionedWorkspaceMemberIds: string[] | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
+    await this.threadService.createThreadIfMissing({
+      threadId,
+      workspaceMemberId,
+      workspaceId: workspace.id,
+    });
+
+    const sentMessage = await this.sendChatMessageToThread({
+      threadId,
+      text,
+      messageId,
+      browsingContext,
+      modelId,
+      fileAttachments,
+      userWorkspaceId,
+      workspaceMemberId,
+      workspace,
+    });
+
+    const mentionedParticipantWorkspaceMemberIds =
+      await this.threadService.addMentionedParticipants({
+        threadId,
+        workspaceMemberId,
+        workspaceId: workspace.id,
+        mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
+      });
+
+    return { ...sentMessage, mentionedParticipantWorkspaceMemberIds };
+  }
+
+  private async sendChatMessageToThread({
+    threadId,
+    text,
+    messageId,
+    browsingContext,
+    modelId,
+    fileAttachments,
+    userWorkspaceId,
+    workspaceMemberId,
+    workspace,
+  }: {
+    threadId: string;
+    text: string;
+    messageId: string;
+    browsingContext: BrowsingContextType | null;
+    modelId: string | undefined;
+    fileAttachments: FileAttachmentInput[] | null;
+    userWorkspaceId: string;
+    workspaceMemberId: string;
+    workspace: WorkspaceEntity;
+  }): Promise<SendChatMessageResultDTO> {
     const thread = await this.turnPreflightService.assertCanStartChatTurn({
       threadId,
       modelId,

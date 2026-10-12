@@ -10,6 +10,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
@@ -20,7 +21,6 @@ import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/works
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -41,6 +41,7 @@ import { type WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { type DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
+import { publishCronTriggerCacheEntry } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/publish-cron-trigger-cache-entry.util';
 import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
 import {
   WorkflowTriggerException,
@@ -682,28 +683,12 @@ export class WorkflowTriggerWorkspaceService {
           }),
         };
 
-        const publishCronCache = async () => {
-          try {
-            await this.cacheStorageService.hashSetIfExists({
-              key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-              field: workflowVersion.workflowId,
-              value: JSON.stringify(cachedTrigger),
-            });
-          } catch (error) {
-            this.logger.error(
-              `Cron trigger cache entry not published for workflow ${workflowVersion.workflowId}, dropping the cron cache so the next tick rebuilds it from the database`,
-              error,
-            );
-
-            try {
-              await this.cacheStorageService.del(
-                WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-              );
-            } catch (invalidationError) {
-              this.logger.error(invalidationError);
-            }
-          }
-        };
+        const publishCronCache = () =>
+          publishCronTriggerCacheEntry({
+            cacheStorageService: this.cacheStorageService,
+            cachedTrigger,
+            logger: this.logger,
+          });
 
         if (isDefined(transactionContext)) {
           transactionContext.transactionScope.afterCommit(publishCronCache);

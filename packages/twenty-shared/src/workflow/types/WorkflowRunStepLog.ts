@@ -9,5 +9,3 @@ export type AiAgentStepLogDetails = Extract<
   WorkflowRunStepLog['details'],
   { type: 'AI_AGENT' }
 >;
-
-export type AiToolCallLog = AiAgentStepLogDetails['toolCalls'][number];

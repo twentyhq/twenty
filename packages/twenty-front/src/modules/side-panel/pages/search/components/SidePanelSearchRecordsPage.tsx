@@ -121,21 +121,26 @@ export const SidePanelSearchRecordsPage = () => {
 
       {shouldDisplayPreview && (
         <Tooltip.Root key={previewedItem.id} open>
-          <Tooltip.Popup
-            anchor={previewAnchorRef}
-            side="left"
-            align="start"
-            sideOffset={16}
-            className={previewTooltipClass}
-            maxWidth={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
-          >
-            <SidePanelSearchRecordPreviewCard
-              key={previewedItem.recordId}
-              objectNameSingular={previewedItem.objectNameSingular}
-              recordId={previewedItem.recordId}
-              label={previewedItem.label}
-            />
-          </Tooltip.Popup>
+          <Tooltip.Portal>
+            <Tooltip.Positioner
+              anchor={previewAnchorRef}
+              side="left"
+              align="start"
+              sideOffset={16}
+              style={{
+                maxWidth: `${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`,
+              }}
+            >
+              <Tooltip.Popup className={previewTooltipClass}>
+                <SidePanelSearchRecordPreviewCard
+                  key={previewedItem.recordId}
+                  objectNameSingular={previewedItem.objectNameSingular}
+                  recordId={previewedItem.recordId}
+                  label={previewedItem.label}
+                />
+              </Tooltip.Popup>
+            </Tooltip.Positioner>
+          </Tooltip.Portal>
         </Tooltip.Root>
       )}
     </>

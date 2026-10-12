@@ -81,6 +81,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   agentMessages: Relation<AgentMessageWorkspaceEntity[]>;
 
   agentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
+  assignedAgentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
   agentChatThreadParticipants: Relation<
     AgentChatThreadParticipantWorkspaceEntity[]
   >;

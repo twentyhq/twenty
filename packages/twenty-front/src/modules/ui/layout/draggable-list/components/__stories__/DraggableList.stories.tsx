@@ -2,7 +2,7 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
-import { MenuItemDraggable } from 'twenty-ui/components';
+import { MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconBell } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 

@@ -307,7 +307,6 @@ export class SignInUpService {
         user,
         workspace: params.workspace,
         shouldShowConnectAccountStep: true,
-        shouldShowInstallAppsStep: false,
       });
 
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
@@ -340,12 +339,10 @@ export class SignInUpService {
       user,
       workspace,
       shouldShowConnectAccountStep,
-      shouldShowInstallAppsStep,
     }: {
       user: Pick<UserEntity, 'id' | 'firstName' | 'lastName'>;
       workspace: WorkspaceEntity;
       shouldShowConnectAccountStep: boolean;
-      shouldShowInstallAppsStep: boolean;
     },
     queryRunner?: QueryRunner,
   ) {
@@ -368,17 +365,6 @@ export class SignInUpService {
       },
       queryRunner,
     );
-
-    if (shouldShowInstallAppsStep) {
-      await this.onboardingService.setOnboardingInstallAppsPending(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          value: true,
-        },
-        queryRunner,
-      );
-    }
   }
 
   private async saveNewUser(
@@ -763,7 +749,6 @@ export class SignInUpService {
               user,
               workspace,
               shouldShowConnectAccountStep: true,
-              shouldShowInstallAppsStep: true,
             },
             queryRunner,
           );

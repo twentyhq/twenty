@@ -37,6 +37,7 @@ export const ON_EVENT_SUBSCRIPTION = gql`
         state
         attemptsMade
         failedReason
+        progress
         enqueuedAt
         startedAt
         finishedAt

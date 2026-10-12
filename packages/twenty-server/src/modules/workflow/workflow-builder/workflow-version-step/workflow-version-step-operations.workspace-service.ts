@@ -186,7 +186,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     switch (type) {
       case WorkflowActionType.CODE: {
-        const logicFunctionId = id ?? v4();
+        // Step ids are shared across versions of a workflow and kept on a type
+        // change, so a logic function keyed on the step id could collide
+        const logicFunctionId = v4();
 
         const newLogicFunction =
           await this.codeStepBuildService.createCodeStepLogicFunction({

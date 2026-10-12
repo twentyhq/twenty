@@ -13,7 +13,7 @@ export const numberStepperTest: TwentyUiGalleryPlayFunction = async ({
   const input = canvas.getByRole('textbox', { name: 'Quantity' });
   const increment = canvas.getByRole('button', { name: 'Increase value' });
   const decrement = canvas.getByRole('button', { name: 'Decrease value' });
-  const status = canvas.getByRole('status');
+  const status = canvas.getByRole('status', { name: 'Quantity state' });
 
   expect(input).toHaveValue('3');
   expect(input).toHaveAccessibleDescription('Choose up to five items');

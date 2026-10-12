@@ -95,7 +95,7 @@ jobs:
               "target": {
                 "apiUrl": "${TWENTY_API_URL}",
                 "apiKey": "${TWENTY_API_KEY}",
-                "accessToken": "${TWENTY_API_KEY}"
+                "twentyCLIAccessToken": "${TWENTY_API_KEY}"
               }
             },
             "defaultRemote": "target"
@@ -117,5 +117,5 @@ jobs:
     needs: [changed-files-check, example-app-postcard]
     steps:
       - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1

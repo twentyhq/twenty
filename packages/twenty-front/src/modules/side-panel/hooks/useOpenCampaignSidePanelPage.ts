@@ -4,7 +4,7 @@ import { type IconComponent } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { type PurposeBuiltSidePanelPage } from '@/side-panel/types/SidePanelPage';
+import { type NonPageLayoutPurposeBuiltSidePanelPage } from '@/side-panel/types/SidePanelPage';
 import { type sendCampaignCampaignIdComponentState } from '@/side-panel/pages/send-campaign/states/sendCampaignCampaignIdComponentState';
 
 type CampaignIdComponentState = typeof sendCampaignCampaignIdComponentState;
@@ -19,7 +19,7 @@ export const useOpenCampaignSidePanelPage = ({
   pageIcon,
 }: {
   campaignIdComponentState: CampaignIdComponentState;
-  page: PurposeBuiltSidePanelPage;
+  page: NonPageLayoutPurposeBuiltSidePanelPage;
   pageTitle: string;
   pageIcon: IconComponent;
 }) => {

@@ -1,6 +1,7 @@
-import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createStore } from 'jotai';
 import { Temporal } from 'temporal-polyfill';
@@ -55,7 +56,10 @@ describe('calendarDayRecordIdsComponentFamilySelector', () => {
       endAt: '2026-07-18',
     });
     store.set(
-      recordCalendarRecordIdsComponentState.atomFamily({ instanceId }),
+      recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
+        instanceId,
+        familyKey: NO_RECORD_GROUP_FAMILY_KEY,
+      }),
       ['record-id'],
     );
 
@@ -78,7 +82,10 @@ describe('calendarDayRecordIdsComponentFamilySelector', () => {
       });
     }
     store.set(
-      recordCalendarRecordIdsComponentState.atomFamily({ instanceId }),
+      recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
+        instanceId,
+        familyKey: NO_RECORD_GROUP_FAMILY_KEY,
+      }),
       records.map((record) => record.id),
     );
 

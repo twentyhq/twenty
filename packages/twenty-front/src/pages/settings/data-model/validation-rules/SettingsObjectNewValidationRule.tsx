@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -10,6 +10,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { SettingsValidationRuleForm } from '@/validation-rules/components/SettingsValidationRuleForm';
 import { SettingsValidationRulePageLayout } from '@/validation-rules/components/SettingsValidationRulePageLayout';
 import { EMPTY_VALIDATION_RULE_FORM_VALUES } from '@/validation-rules/constants/EmptyValidationRuleFormValues';
+import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
 import { useNavigateToObjectValidationRules } from '@/validation-rules/hooks/useNavigateToObjectValidationRules';
 import { useValidationRuleMutations } from '@/validation-rules/hooks/useValidationRuleMutations';
 import { type ValidationRuleFormValues } from '@/validation-rules/types/ValidationRuleFormValues';
@@ -93,6 +94,7 @@ export const SettingsObjectNewValidationRule = () => {
   const isValidationRulesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
   );
+  const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
   const { objectNamePlural = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -100,7 +102,11 @@ export const SettingsObjectNewValidationRule = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
-  if (!isValidationRulesEnabled || !isDefined(objectMetadataItem)) {
+  if (
+    !isValidationRulesEnabled ||
+    !hasValidationRulesEntitlement ||
+    !isDefined(objectMetadataItem)
+  ) {
     return <NotFound />;
   }
 

@@ -1,13 +1,15 @@
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
-import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { isAppEffectRedirectEnabledState } from '@/auth/states/isAppEffectRedirectEnabledState';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useIsOnAuthOrOnboardingPage } from '@/auth/hooks/useIsOnAuthOrOnboardingPage';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SIDE_PANEL_PATH_SEARCH_PARAM } from '@/side-panel/routing/constants/SidePanelPathSearchParam';
 import { isWorkspaceLocationAvailableOnSurface } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -28,15 +30,14 @@ import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useRes
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { AppBasePath, AppPath, SidePanelPages } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
-import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdForLocation';
+import { isDefined, isSafeInternalPath } from 'twenty-shared/utils';
+import { usePageChangeEffectNavigateLocation } from '@/app/hooks/usePageChangeEffectNavigateLocation';
+import { getPageLayoutIdForLocation } from '@/app/utils/getPageLayoutIdForLocation';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 // TODO: break down into smaller functions and / or hooks
@@ -100,6 +101,7 @@ export const PageChangeEffect = () => {
   );
 
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const { removePageFromSidePanelHistory } = useSidePanelHistory();
 
   const { saveReturnToPath, getReturnToPath, clearReturnToPath } =
     useReturnToPath();
@@ -122,6 +124,15 @@ export const PageChangeEffect = () => {
 
         if (!shouldKeepSidePanelOpen) {
           closeSidePanelMenu();
+        } else {
+          // Leaving a page ends the layout edit it hosted, so its page layout
+          // pages must not be reachable again through the panel history
+          store
+            .get(sidePanelNavigationStackState.atom)
+            .filter((navigationItem) =>
+              isDefined(navigationItem.pageLayoutSidePanelTarget),
+            )
+            .forEach(({ pageId }) => removePageFromSidePanelHistory(pageId));
         }
       }
 
@@ -143,6 +154,7 @@ export const PageChangeEffect = () => {
     store,
     hasRoutedSidePanelTarget,
     closeSidePanelMenu,
+    removePageFromSidePanelHistory,
   ]);
 
   useEffect(() => {
@@ -331,22 +343,6 @@ export const PageChangeEffect = () => {
             componentInstance: {
               componentType: FocusComponentType.PAGE,
               componentInstanceId: PageFocusId.SyncEmail,
-            },
-            globalHotkeysConfig: {
-              enableGlobalHotkeysWithModifiers: false,
-              enableGlobalHotkeysConflictingWithKeyboard: false,
-            },
-          },
-        });
-        break;
-      }
-      case isMatchingLocation(location, AppPath.InstallApps): {
-        resetFocusStackToFocusItem({
-          focusStackItem: {
-            focusId: PageFocusId.InstallApps,
-            componentInstance: {
-              componentType: FocusComponentType.PAGE,
-              componentInstanceId: PageFocusId.InstallApps,
             },
             globalHotkeysConfig: {
               enableGlobalHotkeysWithModifiers: false,

@@ -4,7 +4,7 @@ import { type ConfigVariableGroupFilter } from '@/settings/admin-panel/config-va
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { Dropdown, useDropdownPage } from 'twenty-ui/components';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 

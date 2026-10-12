@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 type TrackedQueueJob<TContext> = {
   jobId: string;
   context: TContext;
+  progress?: number;
 };
 
 type UseTrackedQueueJobArgs<TContext> = {
@@ -23,6 +24,9 @@ export const useTrackedQueueJob = <TContext>({
 }: UseTrackedQueueJobArgs<TContext>) => {
   const [triggeredJob, setTriggeredJob] = useState<TrackedQueueJob<TContext>>();
   const [settledJobIds, setSettledJobIds] = useState<string[]>([]);
+  const [progressByJobId, setProgressByJobId] = useState<
+    Record<string, number>
+  >({});
 
   const trackedJob = triggeredJob ?? runningJob;
   const activeJob =
@@ -31,14 +35,26 @@ export const useTrackedQueueJob = <TContext>({
       : undefined;
   const activeJobId = activeJob?.jobId;
   const activeJobContext = activeJob?.context;
+  const activeJobProgress = isDefined(activeJob)
+    ? (progressByJobId[activeJob.jobId] ?? activeJob.progress)
+    : undefined;
 
   const handleQueueJobEvent = useCallback(
     (jobStatus: TrackedJobStatus) => {
-      if (
-        !isTerminalJobState(jobStatus.state) ||
-        !isDefined(activeJobId) ||
-        !isDefined(activeJobContext)
-      ) {
+      if (!isDefined(activeJobId) || !isDefined(activeJobContext)) {
+        return;
+      }
+
+      if (isDefined(jobStatus.progress)) {
+        const progress = jobStatus.progress;
+
+        setProgressByJobId((currentProgressByJobId) => ({
+          ...currentProgressByJobId,
+          [jobStatus.jobId]: progress,
+        }));
+      }
+
+      if (!isTerminalJobState(jobStatus.state)) {
         return;
       }
 
@@ -65,5 +81,5 @@ export const useTrackedQueueJob = <TContext>({
     setTriggeredJob(job);
   };
 
-  return { activeJobId, trackJob };
+  return { activeJobId, activeJobProgress, trackJob };
 };

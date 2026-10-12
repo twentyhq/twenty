@@ -7,14 +7,13 @@ import {
   type ClipboardEvent,
 } from 'react';
 import { Key } from 'ts-key-enum';
-
 import { type FieldDoubleText } from '@/object-record/record-field/ui/types/FieldDoubleText';
 
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
-import { splitFullName } from '~/utils/format/spiltFullName';
+import { splitFullName } from '~/utils/format/splitFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
 import { themeCssVariables } from 'twenty-ui/theme';

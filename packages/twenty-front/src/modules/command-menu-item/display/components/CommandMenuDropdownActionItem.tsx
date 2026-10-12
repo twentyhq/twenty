@@ -4,7 +4,7 @@ import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdParty
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
 import { useCommandMenuItemDisplay } from '@/command-menu-item/display/hooks/useCommandMenuItemDisplay';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 export const CommandMenuDropdownActionItem = ({
   item,

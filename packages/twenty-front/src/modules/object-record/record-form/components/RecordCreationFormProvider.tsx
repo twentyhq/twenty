@@ -1,6 +1,4 @@
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { useToast } from 'twenty-ui/components';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordCreationFormCancellationEffect } from '@/object-record/record-form/components/RecordCreationFormCancellationEffect';
 import {
@@ -10,6 +8,8 @@ import {
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -33,7 +33,6 @@ export const RecordCreationFormProvider = ({
   children,
 }: RecordCreationFormProviderProps) => {
   const store = useStore();
-  const { enqueueToast } = useToast();
   const { removePageFromSidePanelHistory } = useSidePanelHistory();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -57,7 +56,7 @@ export const RecordCreationFormProvider = ({
         !isDefined(pendingRecordCreation) ||
         pendingRecordCreation.isSettling
       ) {
-        return;
+        return {};
       }
 
       if (draftRecord === null) {
@@ -69,7 +68,7 @@ export const RecordCreationFormProvider = ({
           ),
         );
 
-        return;
+        return {};
       }
 
       setPendingRecordCreations((previousPendingRecordCreations) =>
@@ -93,9 +92,7 @@ export const RecordCreationFormProvider = ({
           ),
         );
 
-        enqueueToast(getToastOptionsFromError({ error }));
-
-        return;
+        return { error };
       }
 
       removePageFromSidePanelHistory(requestId);
@@ -107,8 +104,10 @@ export const RecordCreationFormProvider = ({
           (candidate) => candidate.requestId !== requestId,
         ),
       );
+
+      return {};
     },
-    [enqueueToast, pendingRecordCreations, removePageFromSidePanelHistory],
+    [pendingRecordCreations, removePageFromSidePanelHistory],
   );
 
   const requestRecordCreation = useCallback(
@@ -123,6 +122,21 @@ export const RecordCreationFormProvider = ({
         draftRecord: Partial<ObjectRecord>,
       ) => Promise<ObjectRecord>;
     }) => {
+      const topSidePanelPage = store.get(isSidePanelOpenedState.atom)
+        ? store.get(sidePanelNavigationStackState.atom).at(-1)
+        : undefined;
+
+      if (
+        topSidePanelPage?.page === SidePanelPages.RecordCreationForm &&
+        store.get(
+          recordCreationFormRequestComponentState.atomFamily({
+            instanceId: topSidePanelPage.pageId,
+          }),
+        )?.objectMetadataId === objectMetadataItem.id
+      ) {
+        return Promise.resolve(null);
+      }
+
       const requestId = v4();
 
       store.set(

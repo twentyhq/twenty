@@ -6,11 +6,10 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import {
-  agentChatUsageComponentFamilyState,
+  agentChatUsageFamilyState,
   type AgentChatUsageState,
-} from '@/ai/states/agentChatUsageComponentFamilyState';
+} from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { GetAiChatUsageDocument } from '~/generated-metadata/graphql';
 
@@ -50,48 +49,41 @@ const UsageStory = ({
     const storyStore = createStore();
     storyStore.set(currentAiChatThreadState.atom, 'story-thread');
     storyStore.set(
-      agentChatUsageComponentFamilyState.atomFamily({
-        instanceId: 'usage-story',
-        familyKey: { threadId: 'story-thread' },
-      }),
+      agentChatUsageFamilyState.atomFamily({ threadId: 'story-thread' }),
       usage,
     );
     return storyStore;
   });
   return (
     <Provider store={store}>
-      <AgentChatComponentInstanceContext.Provider
-        value={{ instanceId: 'usage-story' }}
-      >
-        <MockedProvider
-          mocks={[
-            {
-              request: { query: GetAiChatUsageDocument },
-              maxUsageCount: Infinity,
-              delay: loading ? Infinity : 0,
-              ...(error
-                ? { error: new Error('Usage unavailable') }
-                : {
-                    result: {
-                      data: {
-                        aiChatUsage:
-                          limit === null
-                            ? null
-                            : {
-                                limitValue: limit,
-                                consumedValue: consumed,
-                                periodEnd: null,
-                                kind: 'allowance',
-                              },
-                      },
+      <MockedProvider
+        mocks={[
+          {
+            request: { query: GetAiChatUsageDocument },
+            maxUsageCount: Infinity,
+            delay: loading ? Infinity : 0,
+            ...(error
+              ? { error: new Error('Usage unavailable') }
+              : {
+                  result: {
+                    data: {
+                      aiChatUsage:
+                        limit === null
+                          ? null
+                          : {
+                              limitValue: limit,
+                              consumedValue: consumed,
+                              periodEnd: null,
+                              kind: 'allowance',
+                            },
                     },
-                  }),
-            },
-          ]}
-        >
-          {children ?? <AiChatContextUsageButton />}
-        </MockedProvider>
-      </AgentChatComponentInstanceContext.Provider>
+                  },
+                }),
+          },
+        ]}
+      >
+        {children ?? <AiChatContextUsageButton />}
+      </MockedProvider>
     </Provider>
   );
 };

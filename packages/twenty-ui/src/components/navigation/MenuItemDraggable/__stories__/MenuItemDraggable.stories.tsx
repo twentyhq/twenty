@@ -14,7 +14,8 @@ import {
 } from '@ui/testing';
 
 const meta: Meta<typeof MenuItemDraggable> = {
-  title: 'UI/Navigation/Menu/MenuItem/MenuItemDraggable',
+  id: 'ui-navigation-menu-menuitem-menuitemdraggable',
+  title: 'UI/Components/Navigation/MenuItemDraggable',
   component: MenuItemDraggable,
 };
 

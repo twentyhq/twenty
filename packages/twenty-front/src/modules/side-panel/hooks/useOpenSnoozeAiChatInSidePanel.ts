@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconClock } from 'twenty-ui/icon';
+import { IconZzz } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -25,7 +25,7 @@ export const useOpenSnoozeAiChatInSidePanel = () => {
       navigateSidePanelMenu({
         page: SidePanelPages.SnoozeAiChat,
         pageTitle: t`Snooze`,
-        pageIcon: IconClock,
+        pageIcon: IconZzz,
         pageId,
       });
     },

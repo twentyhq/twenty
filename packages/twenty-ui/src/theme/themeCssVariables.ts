@@ -208,6 +208,7 @@ export const themeCssVariables = {
       light: 'var(--t-font-color-light)',
       extraLight: 'var(--t-font-color-extra-light)',
       inverted: 'var(--t-font-color-inverted)',
+      onAccent: 'var(--t-font-color-on-accent)',
       danger: 'var(--t-font-color-danger)',
     },
     size: {

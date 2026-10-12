@@ -27,6 +27,21 @@ export class AiAgentRoleService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
+  public async findAgentRoleId({
+    workspaceId,
+    agentId,
+  }: {
+    workspaceId: string;
+    agentId: string;
+  }): Promise<string | undefined> {
+    const { flatRoleTargetByAgentIdMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleTargetByAgentIdMaps',
+      ]);
+
+    return flatRoleTargetByAgentIdMaps[agentId]?.roleId;
+  }
+
   public async assignRoleToAgent({
     workspaceId,
     agentId,

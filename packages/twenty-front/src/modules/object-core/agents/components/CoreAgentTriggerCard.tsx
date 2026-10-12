@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type AgentTrigger } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconClock, IconAddressBook, IconTrash } from 'twenty-ui/icon';
 import { Checkbox, type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -15,8 +15,8 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
-import { useWorkflowObjectSelectOptions } from '@/workflow/hooks/useWorkflowObjectSelectOptions';
-import { describeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression';
+import { useObjectMetadataItemSelectOptions } from '@/object-metadata/hooks/useObjectMetadataItemSelectOptions';
+import { describeCronExpression } from '~/utils/cron-to-human/describeCronExpression';
 
 const StyledCard = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -94,7 +94,7 @@ export const CoreAgentTriggerCard = ({
       ? trigger.settings.eventName.split('.')
       : [];
 
-  const objectOptions = useWorkflowObjectSelectOptions({
+  const objectOptions = useObjectMetadataItemSelectOptions({
     selectedObjectNameSingular: objectNameSingular,
   });
 

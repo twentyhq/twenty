@@ -80,7 +80,17 @@ const EXPECTED_CATEGORIES_WITHOUT_READ_ONLY_TOOLS: string[] = [];
 const listMcpTools = async (
   bearer: string,
   path: string,
-): Promise<{ name: string; inputSchema: { type?: string } }[]> => {
+): Promise<
+  {
+    name: string;
+    inputSchema: { type?: string };
+    annotations?: {
+      readOnlyHint: boolean;
+      openWorldHint: boolean;
+      destructiveHint: boolean;
+    };
+  }[]
+> => {
   const response = await postMcp(
     { jsonrpc: '2.0', method: 'tools/list', id: '1' },
     bearer,
@@ -344,6 +354,26 @@ describe('MCP tool catalog (integration)', () => {
 
       expect(result.isError).toBe(true);
       expect(isDispatchFailure(result)).toBe(true);
+    });
+
+    it('should mark database read tools read-only and keep execute hints on writes', async () => {
+      const annotationsByToolName = Object.fromEntries(
+        (await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)).map((tool) => [
+          tool.name,
+          tool.annotations,
+        ]),
+      );
+
+      expect(annotationsByToolName.find_many_people).toEqual({
+        readOnlyHint: true,
+        openWorldHint: false,
+        destructiveHint: false,
+      });
+      expect(annotationsByToolName.create_one_person).toEqual({
+        readOnlyHint: false,
+        openWorldHint: true,
+        destructiveHint: false,
+      });
     });
 
     it('should keep plain /mcp on the meta-tools', async () => {

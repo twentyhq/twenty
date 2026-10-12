@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from 'twenty-ui/primitives/input';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { JsonTree } from 'twenty-ui/components';
+import { JsonTree } from 'twenty-ui/components/data-display';
 import 'twenty-ui/style.css';
 import { ThemeProvider } from 'twenty-ui/theme';
 

@@ -10,7 +10,8 @@ import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 const meta: Meta<typeof MetricRow> = {
-  title: 'UI/Data Display/MetricRow',
+  id: 'ui-data-display-metricrow',
+  title: 'UI/Components/Data display/MetricRow',
   component: MetricRow,
   decorators: [ComponentDecorator],
   parameters: {
@@ -21,7 +22,7 @@ const meta: Meta<typeof MetricRow> = {
     children: 'Imported files',
     value: '75 of 100',
     progress: 75,
-    startIcon: IconFiles,
+    startIcon: <IconFiles size={14} />,
   },
   argTypes: {
     startIcon: { control: false },
@@ -56,7 +57,11 @@ export const InCard: Story = {
   render: () => (
     <Card.Root>
       <Card.Content>
-        <MetricRow startIcon={IconFiles} value="75 of 100" progress={75}>
+        <MetricRow
+          startIcon={<IconFiles size={14} />}
+          value="75 of 100"
+          progress={75}
+        >
           Imported files
         </MetricRow>
         <MetricRow value="24 of 80" progress={30}>
@@ -118,7 +123,7 @@ const ControlledMetricRow = () => {
   return (
     <>
       <MetricRow
-        startIcon={IconFiles}
+        startIcon={<IconFiles size={14} />}
         value={completed ? '100 of 100' : '25 of 100'}
         progress={completed ? 100 : 25}
       >
@@ -178,5 +183,24 @@ export const RightToLeft: Story = {
     await expect(progress.getBoundingClientRect().right).toBeLessThan(
       label.getBoundingClientRect().left,
     );
+  },
+};
+
+export const NodeLabel: Story = {
+  args: {
+    children: <Text render={<strong />}>Imported files</Text>,
+    startIcon: (
+      <svg width="14" height="14" viewBox="0 0 14 14">
+        <path d="M1 1h12v12H1z" fill="currentColor" />
+      </svg>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const progress = within(canvasElement).getByRole('progressbar', {
+      name: 'Imported files',
+    });
+
+    await expect(progress).toHaveAttribute('aria-valuenow', '75');
+    await expect(progress).toHaveAttribute('aria-valuetext', '75 of 100');
   },
 };

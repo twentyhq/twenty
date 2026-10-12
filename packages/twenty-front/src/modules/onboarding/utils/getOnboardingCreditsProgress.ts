@@ -36,9 +36,6 @@ export const getOnboardingCreditsProgress = ({
     importContacts: isWorkspaceCreator
       ? onboardingConfig.importContactsCreditsReward
       : 0,
-    installApps: isWorkspaceCreator
-      ? onboardingConfig.installAppsCreditsReward
-      : 0,
     createProfile: isWorkspaceCreator
       ? onboardingConfig.createProfileCreditsReward
       : 0,
@@ -77,10 +74,6 @@ export const getOnboardingCreditsProgress = ({
 
     if (step !== onboardingStep) {
       return 0;
-    }
-
-    if (step === 'installApps') {
-      return onboardingFreeCredits.installApps;
     }
 
     if (step === 'createProfile' && hasProfileName) {

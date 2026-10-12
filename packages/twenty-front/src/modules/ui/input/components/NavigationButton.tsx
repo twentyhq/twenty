@@ -19,7 +19,13 @@ export const NavigationButton = ({
     return (
       <NavigationLink to={to}>
         {({ href, render }) => (
-          <ButtonComponent {...props} href={href} render={render} />
+          <ButtonComponent
+            nativeButton={false}
+            role="link"
+            {...props}
+            href={href}
+            render={render}
+          />
         )}
       </NavigationLink>
     );

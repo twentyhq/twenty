@@ -4,7 +4,7 @@ import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useInitViewBar } from '@/views/hooks/useInitViewBar';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordIndexViewBarEffectProps = {
   objectNamePlural: string;
@@ -30,7 +30,7 @@ export const RecordIndexViewBarEffect = ({
     useInitViewBar(viewBarId);
 
   useEffect(() => {
-    if (isUndefinedOrNull(objectMetadataItem)) {
+    if (!isDefined(objectMetadataItem)) {
       return;
     }
     setViewObjectMetadataId?.(objectMetadataItem.id);

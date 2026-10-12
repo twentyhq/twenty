@@ -3,7 +3,7 @@ import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
 import { type NavigationDrawerItemIndentationLevel } from './NavigationDrawerItemIndentationLevel';
 import { type NavigationDrawerItemModifier } from './NavigationDrawerItemModifier';
 import { type NavigationDrawerSubItemState } from './NavigationDrawerSubItemState';
-import { type TriggerEventType } from '@/ui/navigation/utils/types/TriggerEventType';
+import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
 
 export type NavigationDrawerItemProps = {
   className?: string;

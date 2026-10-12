@@ -8,7 +8,7 @@ import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/h
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconUserCircle, useIcons } from 'twenty-ui/icon';
 
 type AdvancedFilterRelationTargetFieldSelectMenuProps = {

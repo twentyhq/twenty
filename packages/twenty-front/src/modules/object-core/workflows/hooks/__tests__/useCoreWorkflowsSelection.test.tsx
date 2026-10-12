@@ -111,6 +111,19 @@ describe('useCoreWorkflowsSelection', () => {
     expect(result.current.selectedRowIds).toEqual([]);
   });
 
+  it('keeps the selected workflows stable across renders', () => {
+    const { result, rerender } = renderSelection();
+
+    act(() => result.current.toggleRow('core-2'));
+
+    const selectedCoreWorkflows = result.current.selectedCoreWorkflows;
+
+    rerender({ coreWorkflows });
+
+    expect(selectedCoreWorkflows).toEqual([coreWorkflows[1]]);
+    expect(result.current.selectedCoreWorkflows).toBe(selectedCoreWorkflows);
+  });
+
   it('should deselect a row that is toggled twice', () => {
     const { result } = renderSelection();
 

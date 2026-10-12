@@ -41,7 +41,7 @@ const SliderInput = styled.input<{ $fillPercent: number }>`
     background: linear-gradient(
       to right,
       rgba(255, 255, 255, 0.35) ${({ $fillPercent }) => $fillPercent}%,
-      rgba(255, 255, 255, 0.08) ${({ $fillPercent }) => $fillPercent}%
+        rgba(255, 255, 255, 0.08) ${({ $fillPercent }) => $fillPercent}%
     );
     border-radius: 999px;
     height: 6px;

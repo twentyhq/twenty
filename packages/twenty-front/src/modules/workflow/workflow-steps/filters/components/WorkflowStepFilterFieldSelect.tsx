@@ -22,7 +22,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   TRIGGER_STEP_ID,
   extractRawVariableNamePart,

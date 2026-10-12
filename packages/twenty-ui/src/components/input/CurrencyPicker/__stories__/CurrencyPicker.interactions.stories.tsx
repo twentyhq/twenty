@@ -8,7 +8,8 @@ import { CurrencyPickerExample } from './CurrencyPickerExample';
 import { openCurrencyPicker } from './openCurrencyPicker';
 
 const meta: Meta<typeof CurrencyPickerExample> = {
-  title: 'UI/Input/CurrencyPicker/Interactions',
+  id: 'ui-input-currencypicker-interactions',
+  title: 'UI/Components/Input/CurrencyPicker/Interactions',
   component: CurrencyPickerExample,
   render: (args) => <CurrencyPickerExample key={args.defaultValue} {...args} />,
   decorators: [ComponentDecorator],
@@ -164,7 +165,7 @@ export const DisabledCurrency: Story = {
       name: 'British Pound (GBP)',
     });
 
-    await expect(disabledCurrency).toHaveAttribute('aria-disabled', 'true');
+    await expect(disabledCurrency).toBeDisabled();
     await userEvent.click(disabledCurrency);
     await expect(args.onValueChange).not.toHaveBeenCalled();
     await userEvent.type(search, 'pound');
@@ -177,6 +178,8 @@ export const DisabledCurrency: Story = {
     await userEvent.keyboard('{Enter}');
     await expect(args.onValueChange).toHaveBeenCalledOnce();
     await expect(args.onValueChange).toHaveBeenCalledWith('JPY');
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 
@@ -214,7 +217,7 @@ export const DisabledOptions: Story = {
     await waitFor(() => expect(dialog).toBeVisible());
     await expect(within(dialog).getByRole('searchbox')).toBeDisabled();
     for (const option of within(dialog).getAllByRole('button')) {
-      await expect(option).toHaveAttribute('aria-disabled', 'true');
+      await expect(option).toBeDisabled();
     }
     await userEvent.click(
       within(dialog).getByRole('button', { name: 'Euro (EUR)' }),

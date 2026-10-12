@@ -129,7 +129,7 @@ export const SearchWithPinnedDisabledAndAction: Story = {
       'Add option',
     ]);
     const disabled = within(popup).getByRole('button', { name: 'Option B' });
-    expect(disabled).toHaveAttribute('aria-disabled', 'true');
+    expect(disabled).toBeDisabled();
     await userEvent.click(disabled);
     expect(args.onChange).not.toHaveBeenCalled();
     await userEvent.click(

@@ -1,5 +1,5 @@
 import { PageLayoutType } from '~/generated-metadata/graphql';
-import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
+import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 
 type GetWidgetCardVariantParams = {
   isSideColumnContext: boolean;

@@ -32,6 +32,7 @@ const mockedConnectedAccounts = [
     lastSignedInAt: null,
     userWorkspaceId: '20202020-0687-4c41-b707-ed1bfca972a7',
     connectionProviderId: null,
+    applicationId: null,
     name: 'Tim Apple',
     visibility: 'SHARE_EVERYTHING',
     lastCredentialsRefreshedAt: null,

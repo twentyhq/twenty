@@ -9,7 +9,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from 'twenty-shared/constants';
 import { type CommandMenuConfirmationModalResultBrowserEventDetail } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { type ButtonColor } from 'twenty-ui/primitives/input';
 
 export type HeadlessConfirmationModalEngineCommandEffectProps = {

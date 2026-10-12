@@ -1,6 +1,5 @@
 import { Fathom } from 'fathom-typescript';
 import { type RecordingDownload } from 'fathom-typescript/sdk/models/shared';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { getConnection } from 'twenty-sdk/logic-function';
 
 import { FATHOM_MEDIA_FAILURE_REASON } from 'src/constants/fathom-media-failure-reason.constant';
@@ -13,6 +12,7 @@ import { applyFathomMediaDownload } from 'src/logic-functions/utils/apply-fathom
 import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retryable-fathom-error.util';
 import { claimFathomMediaImport } from 'src/logic-functions/utils/claim-fathom-media-import.util';
 import { completeFathomCallRecordingImport } from 'src/logic-functions/utils/complete-fathom-call-recording-import.util';
+import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
 import { enqueueFathomMediaDownloadPoll } from 'src/logic-functions/utils/enqueue-fathom-media-download-poll.util';
 import { enqueueFathomMediaDownloadRequest } from 'src/logic-functions/utils/enqueue-fathom-media-download-request.util';
 import { getFathomMediaFailureReasonForError } from 'src/logic-functions/utils/get-fathom-media-failure-reason-for-error.util';
@@ -28,7 +28,7 @@ const MAX_RATE_LIMIT_RETRIES = 3;
 export const runFathomMediaImport = async (rawPayload: unknown) => {
   const payload = fathomMediaImportPayloadSchema.parse(rawPayload);
   const { callRecordingId, attempt } = payload;
-  const coreApiClient = new CoreApiClient({ runAs: 'application' });
+  const coreApiClient = createFathomCoreApiClient();
   const recordingContext = { coreApiClient, callRecordingId };
   const fathomRecordingImportId = callRecordingId;
   const claim = await claimFathomMediaImport({

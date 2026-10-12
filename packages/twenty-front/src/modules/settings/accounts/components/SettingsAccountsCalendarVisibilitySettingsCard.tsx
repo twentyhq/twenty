@@ -3,8 +3,8 @@ import { styled } from '@linaria/react';
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
 import { SettingsRadioSettingsCard } from '@/settings/components/SettingsRadioSettingsCard';
 import { msg } from '@lingui/core/macro';
-import { CalendarChannelVisibility } from '~/generated/graphql';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 type SettingsAccountsEventVisibilitySettingsCardProps = {
   onChange: (nextValue: CalendarChannelVisibility) => void;

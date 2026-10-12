@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { CronModule } from 'src/engine/core-modules/cron/cron.module';
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
@@ -21,7 +20,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   imports: [
     TypeOrmModule.forFeature([AgentEntity, WorkspaceEntity]),
     AiAgentExecutionModule,
-    ApplicationLookupModule,
     CronModule,
     RecordShareModule,
     ThrottlerModule,

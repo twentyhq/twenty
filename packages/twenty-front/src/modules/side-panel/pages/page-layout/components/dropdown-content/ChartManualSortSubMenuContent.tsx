@@ -1,6 +1,6 @@
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 
@@ -13,13 +13,20 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemDraggable } from 'twenty-ui/components';
+import { MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
+
+const StyledOptionTag = styled(Tag)`
+  && {
+    min-width: fit-content;
+  }
+`;
 
 type ChartManualSortSubMenuContentProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -32,7 +39,7 @@ export const ChartManualSortSubMenuContent = ({
   axis,
   onBack,
 }: ChartManualSortSubMenuContentProps) => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
@@ -104,9 +111,9 @@ export const ChartManualSortSubMenuContent = ({
                       gripMode="always"
                       isDragDisabled={sortedOptions.length === 1}
                       text={
-                        <Tag preventShrink color={option.color}>
+                        <StyledOptionTag truncate={false} color={option.color}>
                           {option.label}
-                        </Tag>
+                        </StyledOptionTag>
                       }
                     />
                   }

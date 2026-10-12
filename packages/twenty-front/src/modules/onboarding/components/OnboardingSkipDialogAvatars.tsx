@@ -1,6 +1,6 @@
 import { OnboardingSkipDialogAvatarItem } from '@/onboarding/components/OnboardingSkipDialogAvatarItem';
 import { styled } from '@linaria/react';
-import { AvatarGroup } from 'twenty-ui/components';
+import { AvatarGroup } from 'twenty-ui/components/data-display';
 import { IconPlus } from 'twenty-ui/icon';
 import {
   AVATAR_PROPERTIES_BY_SIZE,

@@ -1,0 +1,171 @@
+---
+title: NumberField
+description: Compose a numeric field with locale formatting, stepping, native forms, and scrubbing.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import NumberFieldReference from '/snippets/ui/generated/input/number-field.mdx';
+
+`NumberField` exposes all seven parts of the installed Base UI Number Field: `Root`, `Group`, `Input`, `Decrement`, `Increment`, `ScrubArea`, and `ScrubAreaCursor`. Import it from `twenty-ui/primitives/input`. It retains Base UI's numeric state, formatting, stepping, event details, and native form integration with Twenty UI styling for the input, group, and adjustment controls.
+
+For the compact preset with fixed formatting and modifier-step defaults, use [NumberStepper](/ui/components/input/number-stepper) from `twenty-ui/components/input`.
+
+<StoryEmbed
+  storyId="ui-input-numberfield--default"
+  title="NumberField example"
+  height={200}
+/>
+
+## Compose a field
+
+`Root` owns numeric state. `Input` is the visible text input. Use `Group` to arrange optional decrement and increment controls around it. Supply content and accessible names for the controls; the primitive does not inject icons or labels.
+
+```tsx
+import { Field, NumberField } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label>Quantity</Field.Label>
+    <NumberField.Root name="quantity" defaultValue={3} min={0} max={10}>
+      <NumberField.Group>
+        <NumberField.Decrement aria-label="Decrease quantity">
+          −
+        </NumberField.Decrement>
+        <NumberField.Input />
+        <NumberField.Increment aria-label="Increase quantity">
+          +
+        </NumberField.Increment>
+      </NumberField.Group>
+    </NumberField.Root>
+    <Field.Description>Choose up to ten items.</Field.Description>
+  </Field.Root>
+);
+```
+
+`Field.Label`, `Field.Description`, and `Field.Error` associate with the visible input. Alternatively, pass `aria-label` or `aria-labelledby` to `Input`. The default `aria-roledescription` is `Number field`; it does not provide an accessible name.
+
+## Values and callbacks
+
+Omit `value` for an uncontrolled field, and supply a numeric `defaultValue` when an initial value is needed. Omitting `defaultValue` starts empty. For a controlled field, pass a number or `null` through `value` and update it from `onValueChange`.
+
+```tsx
+import { useState } from 'react';
+import { Field, NumberField } from 'twenty-ui/primitives/input';
+
+export const PriceInput = () => {
+  const [price, setPrice] = useState<number | null>(null);
+  const [savedPrice, setSavedPrice] = useState<number | null>(null);
+
+  return (
+    <Field.Root>
+      <Field.Label>Price</Field.Label>
+      <NumberField.Root
+        value={price}
+        onValueChange={setPrice}
+        onValueCommitted={setSavedPrice}
+      >
+        <NumberField.Input placeholder="Enter a price" />
+      </NumberField.Root>
+      <Field.Description>
+        Last committed price: {savedPrice ?? 'empty'}
+      </Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+Clearing reports `null`, including when `min` is set. Incomplete drafts such as `-` remain editable without reporting an invalid number. Parseable typing updates the numeric value before the edit is committed. The first step from an empty value starts at zero clamped to the bounds; subsequent steps use the active step amount.
+
+`onValueChange(value, details)` retains the native `event`, `reason`, `cancel`, `allowPropagation`, `isCanceled`, `isPropagationAllowed`, `trigger`, and optional `direction`. Reasons distinguish typing (`input-change`), clearing (`input-clear`), blur normalization (`input-blur`), paste (`input-paste`), keyboard, increment or decrement presses, wheel, scrubbing, and native autofill (`none`). Calling `cancel()` prevents the numeric state update; controlled callers still choose their accepted value.
+
+`onValueCommitted(value, details)` runs on blur after editing, on pointer release after stepping or scrubbing, and immediately for keyboard and wheel adjustments. Clearing commits `null` on blur. Commit details contain `event` and `reason`; they are generic details without change cancellation methods. Focusing and blurring an untouched field does not itself commit a value when no numeric normalization is needed. Explicit rounding options can normalize and commit an untouched value.
+
+## Locale and formatting
+
+Set `locale` and `format` on `Root`. They retain the installed Base UI contract: `locale` accepts `Intl.LocalesArgument`, and `format` accepts `Intl.NumberFormatOptions`. Display formatting is separate from the raw numeric value submitted by the form. The primitive does not force Latin digits, grouping, precision, or modifier steps.
+
+<StoryEmbed
+  storyId="ui-input-numberfield--locale-currency"
+  title="Locale and currency formatting"
+  height={200}
+/>
+
+```tsx
+import { Field, NumberField } from 'twenty-ui/primitives/input';
+
+export const AmountInput = () => (
+  <Field.Root>
+    <Field.Label>Amount in euros</Field.Label>
+    <NumberField.Root
+      name="amount"
+      defaultValue={1234.5}
+      locale="de-DE"
+      format={{ style: 'currency', currency: 'EUR' }}
+      step={0.5}
+      smallStep={0.01}
+      largeStep={10}
+    >
+      <NumberField.Input />
+    </NumberField.Root>
+  </Field.Root>
+);
+```
+
+Typing and paste use the configured locale and supported format symbols. Blur normalizes the displayed text. Explicit precision or rounding options can also normalize the committed number; without those options, formatting alone does not replace an untouched numeric value with rounded display text.
+
+## Stepping and bounds
+
+`step` defaults to `1`, `smallStep` to `0.1` while Alt is held, and `largeStep` to `10` while Shift is held. The active step applies to buttons, Arrow Up and Arrow Down, wheel, and scrub-area movement. `snapOnStep` defaults to `false`; enable it to snap adjustments to the active step. Home and End select the corresponding explicit bound. Native key handlers can call `event.preventBaseUIHandler()` when the owner needs to override Base UI's keyboard behavior.
+
+`min` and `max` are inclusive. Step interactions stay bounded. By default, typed and pasted values also clamp numerically, with the draft normalized on blur. Set `allowOutOfRange` to accept direct edits outside those bounds and let native range validation or application validation report the problem.
+
+`step="any"` disables native step validation while interactive stepping uses `1` and the configured modifier steps. With a numeric step, provide `min` explicitly when native submission must validate step alignment. The numeric step does not round every typed value to a step.
+
+## Scrubbing
+
+`ScrubArea` changes the numeric value as the pointer moves. It supports horizontal or vertical movement, `pixelSensitivity`, and optional `teleportDistance`. The active step and bounds also apply to scrubbing. Use a visible label as the scrub target while keeping the input available for keyboard editing.
+
+<StoryEmbed
+  storyId="ui-input-numberfield--with-scrubbing"
+  title="Scrub the width label"
+  height={220}
+/>
+
+Compose `ScrubAreaCursor` inside `ScrubArea` for a custom cursor during pointer-lock scrubbing. It portals to the document body while active. Base UI falls back to the normal cursor for touch input, denied pointer lock, and WebKit. Set `allowWheelScrub` on `Root` to allow wheel adjustment while the input is focused and hovered; it defaults to `false`.
+
+## Forms and disabled state
+
+`Root` renders a hidden native `input type="number"` for raw numeric submission and native validation. Set `name`, `form`, `required`, `min`, `max`, and `step` on `Root`. `form` can associate the field with a form elsewhere in the document. The default adjustment controls use `type="button"`, so stepping does not submit the form.
+
+`disabled` prevents interaction and excludes the value from submission. `readOnly` prevents changes while keeping the visible input focusable and its form value available. Use a controlled value when the application must reset numeric state; native form reset does not reset it.
+
+## DOM targets and customization
+
+| Part or prop              | Default DOM and ref target                                                     |
+| ------------------------- | ------------------------------------------------------------------------------ |
+| `Root` / `Root.ref`       | The outer `div`                                                                |
+| `Root.inputRef`           | The hidden native number input                                                 |
+| `Root.id`                 | Associates the visible text input's ID                                         |
+| `Group` / `Group.ref`     | The group `div`                                                                |
+| `Input` / `Input.ref`     | The visible `input type="text"`                                                |
+| `Decrement` / `Increment` | Native buttons                                                                 |
+| `ScrubArea`               | A `span`                                                                       |
+| `ScrubAreaCursor`         | A `span` portaled to the document body while active; its ref is otherwise null |
+
+Native attributes, `className`, `style`, and `render` target the part receiving them. Input customization applies to the visible control; wrapper customization belongs on `Root` or `Group`. To focus the control, use `Input.ref`, rather than `Root.inputRef`.
+
+Each part accepts an element or callback through `render`, with the corresponding public state type. Forward the supplied props and ref to the appropriate DOM element so editing, focus, labels, and validation keep working. When a stepping control renders a non-button element, set `nativeButton={false}`. `className` and `style` also accept state callbacks. State includes numeric `value`, formatted `inputValue`, `required`, `disabled`, `readOnly`, `scrubbing`, and inherited Field state.
+
+The public entry points export the props and state type for every part, plus `NumberFieldRootChangeEventDetails`, `NumberFieldRootChangeEventReason`, `NumberFieldRootCommitEventDetails`, and `NumberFieldRootCommitEventReason`.
+
+## Front component renderer
+
+React and Preact sandbox fixtures verify initial locale formatting, localized paste, raw numeric form values, accessible labels, refs, render composition, blur commits, keyboard change and commit details, and pointer change details.
+
+Sequential typing after clearing a controlled localized field currently resets the caret in the renderer: typing `2` and then `3` can produce `32`. A formatted pointer adjustment can also race with blur and leave the visible input showing the previous value. Pointer adjustments report changes, but pointer release does not deliver the corresponding commit callback; later blur can commit with `input-blur` instead. Dragging the scrub area and using its custom cursor are also unavailable in the sandbox. These limitations do not affect ordinary React hosts.
+
+## Props
+
+The reference is generated from the installed public component types. Native attributes and event handlers are also accepted on parts that render elements.
+
+<NumberFieldReference />

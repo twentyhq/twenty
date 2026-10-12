@@ -1,4 +1,4 @@
-import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
+import { verifyEmailRedirectPathState } from '@/auth/states/verifyEmailRedirectPathState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -31,7 +31,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconCalendarEvent, IconCoins } from 'twenty-ui/icon';
 import { Button, RadioGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -249,10 +249,9 @@ const UpgradeFreeTrialContent = ({
                 />
               ) : (
                 <InlineBanner
-                  variant="compact"
-                  color="danger"
-                  message={t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}
-                />
+                  layout="compact"
+                  status="error"
+                >{t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}</InlineBanner>
               ))}
           </OnboardingPlanCard>
 

@@ -31,6 +31,7 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -59,6 +60,7 @@ export class BillingUsageService {
     private readonly clickHouseService: ClickHouseService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly usageAnalyticsService: UsageAnalyticsService,
   ) {}
 
   async assertUsageAllowed(scope: UsageQuotaScope): Promise<void> {
@@ -202,7 +204,17 @@ export class BillingUsageService {
     periodEnd: Date,
   ): Promise<BillingResourceCreditUsageDTO> {
     const [usedCredits, rolloverCredits] = await Promise.all([
-      this.getCurrentPeriodCreditsUsed(workspaceId, periodStart),
+      // Fails open: an unreadable usage total must never block a paying workspace
+      this.usageAnalyticsService
+        .getCreditsUsedMicroForBillingPeriod({ workspaceId, periodStart })
+        .catch((error) => {
+          this.logger.error(
+            `Could not read credits used for workspace ${workspaceId}`,
+            error,
+          );
+
+          return 0;
+        }),
       this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
     ]);
 
@@ -257,17 +269,27 @@ export class BillingUsageService {
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
   }
 
+  // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period
   // Null on a failed read: select swallows errors into [], while sum() always yields one row
-  private async sumCreditsUsedMicroOrNull(
-    condition: string,
-    params: Record<string, unknown>,
-  ): Promise<number | null> {
+  async getCreditsUsedBetweenOrNull({
+    workspaceId,
+    from,
+    to,
+  }: {
+    workspaceId: string;
+    from: Date;
+    to: Date;
+  }): Promise<number | null> {
     const rows = await this.clickHouseService.select<UsageSumRow>(
       `SELECT sum(creditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
-         AND ${condition}`,
-      params,
+         AND timestamp >= {from:DateTime64(3)} AND timestamp < {to:DateTime64(3)}`,
+      {
+        workspaceId,
+        from: formatDateTimeForClickHouse(from),
+        to: formatDateTimeForClickHouse(to),
+      },
     );
 
     if (rows.length === 0) {
@@ -278,42 +300,6 @@ export class BillingUsageService {
     const total = typeof rawTotal === 'string' ? Number(rawTotal) : rawTotal;
 
     return Number.isFinite(total) ? total : 0;
-  }
-
-  // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period
-  async getCreditsUsedBetweenOrNull({
-    workspaceId,
-    from,
-    to,
-  }: {
-    workspaceId: string;
-    from: Date;
-    to: Date;
-  }): Promise<number | null> {
-    return this.sumCreditsUsedMicroOrNull(
-      'timestamp >= {from:DateTime64(3)} AND timestamp < {to:DateTime64(3)}',
-      {
-        workspaceId,
-        from: formatDateTimeForClickHouse(from),
-        to: formatDateTimeForClickHouse(to),
-      },
-    );
-  }
-
-  // Fails open: an unreadable usage total must never block a paying workspace.
-  async getCurrentPeriodCreditsUsed(
-    workspaceId: string,
-    periodStart: Date,
-  ): Promise<number> {
-    const usedMicro = await this.sumCreditsUsedMicroOrNull(
-      'periodStart = {periodStart:DateTime64(3)}',
-      {
-        workspaceId,
-        periodStart: formatDateTimeForClickHouse(periodStart),
-      },
-    );
-
-    return usedMicro ?? 0;
   }
 
   async getCachedCurrentBillingSubscription(

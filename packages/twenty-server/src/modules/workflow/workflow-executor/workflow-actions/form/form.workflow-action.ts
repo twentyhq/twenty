@@ -29,6 +29,6 @@ export class FormWorkflowAction implements WorkflowAction {
       );
     }
 
-    return { wait: { type: 'ANSWER' } };
+    return { wait: { type: 'CALLBACK' } };
   }
 }

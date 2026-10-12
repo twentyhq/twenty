@@ -1,3 +1,4 @@
+import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -64,7 +65,11 @@ const renderSwitchNavigationDrawerMode = ({
     {
       wrapper: ({ children }: { children: ReactNode }) => (
         <Provider store={store}>
-          <MemoryRouter initialEntries={[pathname]}>{children}</MemoryRouter>
+          <MemoryRouter initialEntries={[pathname]}>
+            <MemoryRouterAppNavigatorProvider>
+              {children}
+            </MemoryRouterAppNavigatorProvider>
+          </MemoryRouter>
         </Provider>
       ),
     },

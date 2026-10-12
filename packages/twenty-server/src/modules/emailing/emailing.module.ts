@@ -18,7 +18,6 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { CampaignTrackingController } from 'src/modules/emailing/controllers/campaign-tracking.controller';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
@@ -66,7 +65,6 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     PermissionsModule,
     UserRoleModule,
     BillingModule,
-    WorkspaceEventEmitterModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     UsageLimitModule,
@@ -119,18 +117,13 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
   ],
   exports: [
     EmailingDomainSenderService,
-    EmailBillingService,
-    MessageCampaignService,
     MessageCampaignScheduleService,
-    CampaignSendSlotService,
     MessageCampaignDeliveryService,
     MessageCampaignBatchDeliveryService,
     MessageCampaignDeliveryFeedbackService,
     MessageCampaignMaterializationService,
-    MessageCampaignDraftService,
     MessageCampaignStatisticsService,
     MessageSuppressionService,
-    UnsubscribeTopicService,
     SaveCampaignTool,
     EmailingOngoingStaleCronCommand,
     ReconcileCampaignStatsCronCommand,

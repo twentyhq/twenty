@@ -84,7 +84,7 @@ export const mapAgentTurnToAgentRun = (
   const inputMessages = messages.filter(
     (message) => !isDefined(message.agentId),
   );
-  const lastAgentMessage = agentMessages.at(-1);
+  const lastAgentMessage = agentMessages[agentMessages.length - 1];
 
   return {
     id: turn.id,

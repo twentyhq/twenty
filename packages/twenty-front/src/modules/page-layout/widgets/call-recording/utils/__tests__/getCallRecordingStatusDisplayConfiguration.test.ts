@@ -96,6 +96,41 @@ describe('getCallRecordingStatusDisplayConfiguration', () => {
     );
   });
 
+  it.each([
+    {
+      transcript: { status: 'EMPTY' },
+      title: 'No Speech Detected',
+      subTitle: 'No speech was detected, so there is nothing to summarize.',
+    },
+    {
+      transcript: { status: 'EMPTY', subCode: 'transcript_expired' },
+      title: 'Summary Not Available',
+      subTitle:
+        'A summary could not be generated because no transcript is available.',
+    },
+    {
+      transcript: { status: 'FAILED' },
+      title: 'Summary Not Available',
+      subTitle:
+        'A summary could not be generated because no transcript is available.',
+    },
+    {
+      transcript: { status: 'PENDING' },
+      title: 'Summary Not Available',
+      subTitle: 'A summary is not available for this call recording yet.',
+    },
+  ])(
+    'explains a missing summary of a completed recording with transcript $transcript',
+    ({ transcript, title, subTitle }) => {
+      expect(
+        getCallRecordingStatusDisplayConfiguration(
+          { status: CallRecordingStatus.COMPLETED, transcript },
+          'summary',
+        ),
+      ).toEqual({ title, subTitle });
+    },
+  );
+
   it('shows the transcript empty state after recording completion', () => {
     expect(
       getCallRecordingStatusDisplayConfiguration(

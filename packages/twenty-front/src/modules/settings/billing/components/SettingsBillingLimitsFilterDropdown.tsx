@@ -12,7 +12,7 @@ import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel'
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
 
 const FILTER_DROPDOWN_ID = 'settings-billing-limits-filter';

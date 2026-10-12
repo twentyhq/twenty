@@ -16,6 +16,7 @@ type ReconcileUpcomingCalendarEventsResult =
       reconciledCalendarEventIds: string[];
       actionCounts: CallRecorderReconciliationActionCounts;
     };
+import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
 
 export const reconcileUpcomingCalendarEventsHandler = async (
   payload: unknown,
@@ -29,7 +30,7 @@ export const reconcileUpcomingCalendarEventsHandler = async (
   try {
     const reconciliationResults =
       await reconcileCallRecorderForCalendarEventIds({
-        client: new CoreApiClient(),
+        client: new CoreApiClient({ fetch: fetchWithRateLimitRetry }),
         calendarEventIds,
       });
 

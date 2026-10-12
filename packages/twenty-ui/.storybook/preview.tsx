@@ -16,6 +16,7 @@ const preview: Preview = {
   parameters: {
     a11y: {
       test: 'error',
+      context: { exclude: ['[role="img"][data-variant="button"]'] },
     },
   },
   globalTypes: {
