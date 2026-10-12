@@ -31,7 +31,11 @@ export const startTeamsTranscriptHistoryRunOrThrow = async ({
     updatedAt: new Date(now).toISOString(),
   };
 
-  await scheduleTeamsTranscriptHistoryRunOrThrow({ connectedAccountId, state });
+  await scheduleTeamsTranscriptHistoryRunOrThrow({
+    connectedAccountId,
+    state,
+    stateOnScheduleFailure: { ...state, phase: 'failed', errorCode: 'unknown' },
+  });
 
   return state;
 };
