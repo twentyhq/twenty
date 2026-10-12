@@ -3,14 +3,16 @@ import { randomUUID } from 'node:crypto';
 import { addMonths, startOfMonth } from 'date-fns';
 import request from 'supertest';
 import {
+  debitInFlightCredits,
   getSeededBillingWorkspaceId,
   listCreditGrants,
   quitBillingFixtureRedis,
-  readAllowanceCounter,
+  readAllowanceConsumedMicro,
+  readAllowanceLimitMicro,
+  refreshCurrentBillingSubscription,
   resetBillingCreditState,
   setupResourceCreditSubscription,
   TEST_STRIPE_CUSTOMER_ID,
-  warmAllowanceCounter,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
 import { createMockStripeCreditTopUpInvoicePaidData } from 'test/integration/billing/utils/create-mock-stripe-credit-top-up-invoice-paid-data.util';
 
@@ -23,6 +25,7 @@ const PERIOD_END = addMonths(PERIOD_START, 1);
 
 const ALLOWANCE_MICRO = 1_000_000;
 const TOP_UP_MICRO = 2_000_000;
+const IN_FLIGHT_CREDITS_MICRO = 120_000;
 
 const postCreditTopUpInvoicePaid = ({
   invoiceId,
@@ -99,15 +102,24 @@ describe('Billing credit top-up webhook (integration)', () => {
     });
   });
 
-  it('drops the allowance counter so a blocked workspace resumes at once', async () => {
-    await warmAllowanceCounter(workspaceId, PERIOD_START, 0);
+  it('raises the allowance cap at once and keeps in-flight usage', async () => {
+    await refreshCurrentBillingSubscription(workspaceId);
 
+    const limitBeforeMicro = await readAllowanceLimitMicro(workspaceId);
+    const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
+
+    await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
     await postCreditTopUpInvoicePaid({
       invoiceId: `in_test_top_up_${randomUUID()}`,
       workspaceId,
     });
 
-    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
+    expect(await readAllowanceLimitMicro(workspaceId)).toBe(
+      limitBeforeMicro + TOP_UP_MICRO,
+    );
+    expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+      consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+    );
   });
 
   it('grants nothing more when Stripe redelivers the event', async () => {

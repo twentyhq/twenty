@@ -102,12 +102,14 @@ const meta: Meta<typeof SettingsRolePermissionsFlagSections> = {
           name: 'Notifications',
           universalIdentifier: 'notification-app',
           logoUrl: null,
+          createdAt: '2024-01-01T00:00:00.000Z',
         },
         {
           id: 'standard-app',
           name: 'Standard',
           universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           logoUrl: null,
+          createdAt: '2024-01-01T00:00:00.000Z',
         },
       ],
     });

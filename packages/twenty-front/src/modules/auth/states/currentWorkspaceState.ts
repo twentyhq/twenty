@@ -21,6 +21,7 @@ export type CurrentWorkspace = Pick<
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
   | 'isCampaignClickTrackingEnabled'
+  | 'isCampaignOpenTrackingEnabled'
   | 'workspaceDiscoverability'
   | 'isGoogleAuthEnabled'
   | 'isGoogleAuthBypassEnabled'
@@ -49,7 +50,7 @@ export type CurrentWorkspace = Pick<
   workspaceCustomApplication: Pick<Application, 'id'> | null;
   installedApplications: Pick<
     Application,
-    'id' | 'name' | 'universalIdentifier' | 'logoUrl'
+    'id' | 'name' | 'universalIdentifier' | 'logoUrl' | 'createdAt'
   >[];
 };
 

@@ -1,4 +1,4 @@
-import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
+import { useRecordFieldListNonRelationFieldMetadataItems } from '@/object-record/record-field-list/hooks/useRecordFieldListNonRelationFieldMetadataItems';
 import { recordFieldListCellEditModePositionComponentState } from '@/object-record/record-field-list/states/recordFieldListCellEditModePositionComponentState';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -19,15 +19,8 @@ export const useFieldListFieldMetadataFromPosition = ({
     recordFieldListCellEditModePositionComponentState,
   );
 
-  const { inlineFieldMetadataItems, boxedRelationFieldMetadataItems } =
-    useFieldListFieldMetadataItems({
-      objectNameSingular,
-    });
-
-  const fieldMetadataItems = [
-    ...inlineFieldMetadataItems,
-    ...boxedRelationFieldMetadataItems,
-  ];
+  const fieldMetadataItems =
+    useRecordFieldListNonRelationFieldMetadataItems(objectNameSingular);
 
   const hoveredFieldMetadataItem = isDefined(recordFieldListHoverPosition)
     ? fieldMetadataItems.at(recordFieldListHoverPosition)
