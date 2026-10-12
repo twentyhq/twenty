@@ -14,9 +14,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   CoreWorkflowStatus,
-  CoreWorkflowVersionStatus,
   GetCoreWorkflowDocument,
-  GetCoreWorkflowVersionsDocument,
   WorkflowVisibility,
 } from '~/generated/graphql';
 import {
@@ -27,7 +25,6 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 
 const WORKFLOW_RUN_ID = '20202020-0000-4000-8000-000000000001';
 const CORE_WORKFLOW_ID = '20202020-0000-4000-8000-000000000002';
-const CORE_WORKFLOW_VERSION_ID = '20202020-0000-4000-8000-000000000003';
 
 const APOLLO_MOCKS = [
   {
@@ -42,7 +39,7 @@ const APOLLO_MOCKS = [
           id: CORE_WORKFLOW_ID,
           name: 'Lead enrichment',
           statuses: [CoreWorkflowStatus.ACTIVE],
-          lastPublishedCoreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
+          lastPublishedCoreWorkflowVersionId: null,
           applicationId: null,
           workspaceWorkflowId: null,
           visibility: WorkflowVisibility.WORKSPACE,
@@ -53,35 +50,13 @@ const APOLLO_MOCKS = [
       },
     },
   },
-  {
-    request: {
-      query: GetCoreWorkflowVersionsDocument,
-      variables: { coreWorkflowId: CORE_WORKFLOW_ID },
-    },
-    result: {
-      data: {
-        coreWorkflowVersions: [
-          {
-            __typename: 'CoreWorkflowVersionDTO',
-            id: CORE_WORKFLOW_VERSION_ID,
-            label: 'v2',
-            status: CoreWorkflowVersionStatus.ACTIVE,
-            coreWorkflowId: CORE_WORKFLOW_ID,
-            createdAt: '2026-10-01T10:00:00.000Z',
-          },
-        ],
-      },
-    },
-  },
 ];
 
-const renderRelationField = ({
-  fieldName,
-  workflowRun,
+const renderWorkflowField = ({
+  coreWorkflowId,
   isWorkflowCoreIndexPageEnabled = true,
 }: {
-  fieldName: 'workflow' | 'workflowVersion';
-  workflowRun: Record<string, unknown>;
+  coreWorkflowId: string | null;
   isWorkflowCoreIndexPageEnabled?: boolean;
 }) =>
   render(
@@ -99,18 +74,18 @@ const renderRelationField = ({
               isLabelIdentifier: false,
               isRecordFieldReadOnly: true,
               fieldDefinition: {
-                fieldMetadataId: `${fieldName}-field-metadata-id`,
-                label: fieldName,
+                fieldMetadataId: 'workflow-field-metadata-id',
+                label: 'Workflow',
                 iconName: 'IconSettingsAutomation',
                 type: FieldMetadataType.RELATION,
                 metadata: {
-                  fieldName,
+                  fieldName: 'workflow',
                   objectMetadataNameSingular:
                     CoreObjectNameSingular.WorkflowRun,
                   relationFieldMetadataId: 'runs-field-metadata-id',
-                  relationObjectMetadataId: `${fieldName}-object-metadata-id`,
-                  relationObjectMetadataNameSingular: fieldName,
-                  relationObjectMetadataNamePlural: `${fieldName}s`,
+                  relationObjectMetadataId: 'workflow-object-metadata-id',
+                  relationObjectMetadataNameSingular: 'workflow',
+                  relationObjectMetadataNamePlural: 'workflows',
                 },
               },
             }}
@@ -136,8 +111,7 @@ const renderRelationField = ({
             __typename: 'WorkflowRun',
             id: WORKFLOW_RUN_ID,
             workflow: null,
-            workflowVersion: null,
-            ...workflowRun,
+            coreWorkflowId,
           });
         },
       }),
@@ -146,13 +120,7 @@ const renderRelationField = ({
 
 describe('CORE_WORKFLOW_RUN_FIELD_DISPLAY_OVERRIDES', () => {
   it('should show the core workflow of a run without workspace workflow, linking to the core workflow page', async () => {
-    renderRelationField({
-      fieldName: 'workflow',
-      workflowRun: {
-        coreWorkflowId: CORE_WORKFLOW_ID,
-        coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
-      },
-    });
+    renderWorkflowField({ coreWorkflowId: CORE_WORKFLOW_ID });
 
     const workflowLink = await screen.findByRole('link', {
       name: /Lead enrichment/,
@@ -164,26 +132,10 @@ describe('CORE_WORKFLOW_RUN_FIELD_DISPLAY_OVERRIDES', () => {
     );
   });
 
-  it('should show the core workflow version label of a run', async () => {
-    renderRelationField({
-      fieldName: 'workflowVersion',
-      workflowRun: {
-        coreWorkflowId: CORE_WORKFLOW_ID,
-        coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
-      },
-    });
-
-    expect(await screen.findByText('v2')).toBeInTheDocument();
-  });
-
   it('should show nothing for a core-only run when the flag is off', async () => {
-    const { container } = renderRelationField({
-      fieldName: 'workflow',
+    const { container } = renderWorkflowField({
+      coreWorkflowId: CORE_WORKFLOW_ID,
       isWorkflowCoreIndexPageEnabled: false,
-      workflowRun: {
-        coreWorkflowId: CORE_WORKFLOW_ID,
-        coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
-      },
     });
 
     await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
@@ -191,15 +143,9 @@ describe('CORE_WORKFLOW_RUN_FIELD_DISPLAY_OVERRIDES', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it.each(['workflow', 'workflowVersion'] as const)(
-    'should show nothing in the %s field of a run without core workflow',
-    (fieldName) => {
-      const { container } = renderRelationField({
-        fieldName,
-        workflowRun: { coreWorkflowId: null, coreWorkflowVersionId: null },
-      });
+  it('should show nothing for a run without core workflow', () => {
+    const { container } = renderWorkflowField({ coreWorkflowId: null });
 
-      expect(container).toBeEmptyDOMElement();
-    },
-  );
+    expect(container).toBeEmptyDOMElement();
+  });
 });
