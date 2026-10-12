@@ -156,6 +156,7 @@ export class FieldPermissionService {
     const mirroredFieldKeys = this.addRelatedFieldPermissionsToDesired({
       desiredMap,
       inputFieldPermissions: input.fieldPermissions,
+      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
 
@@ -438,10 +439,12 @@ export class FieldPermissionService {
   private addRelatedFieldPermissionsToDesired({
     desiredMap,
     inputFieldPermissions,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
     desiredMap: Map<string, DesiredFieldPermission>;
     inputFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Set<string> {
     const inputKeys = new Set(
@@ -512,6 +515,17 @@ export class FieldPermissionService {
       const sourceIsCleared =
         !isDefined(fieldPermission.canReadFieldValue) &&
         !isDefined(fieldPermission.canUpdateFieldValue);
+
+      const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: targetObjectId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+      // System objects take no field permissions: a mirror there is hidden from role settings and blocks
+      // writes such as linking a task to the record. Clearing still runs to remove mirrors written before.
+      if (targetFlatObjectMetadata?.isSystem === true && !sourceIsCleared) {
+        continue;
+      }
 
       desiredMap.set(targetKey, {
         objectMetadataId: targetObjectId,

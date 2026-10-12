@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
@@ -6,11 +8,13 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const ROLE_GQL_FIELDS_WITH_FIELD_PERMISSIONS = `
   id
@@ -236,6 +240,94 @@ describe('Relation field permission grant-back', () => {
       await grantBackField(restricted());
 
       expect(await findFieldPermissionsForRole()).toHaveLength(0);
+    });
+  });
+
+  describe('restricting a relation whose inverse is on a system object', () => {
+    let taskTargetsField: { objectMetadataId: string; fieldMetadataId: string };
+    let targetField: { objectMetadataId: string; fieldMetadataId: string };
+
+    beforeAll(async () => {
+      const [{ fieldMetadataId, inverseFieldMetadataId, inverseObjectId }] =
+        await global.testDataSource.query(
+          `SELECT field.id AS "fieldMetadataId",
+                  field."relationTargetFieldMetadataId" AS "inverseFieldMetadataId",
+                  field."relationTargetObjectMetadataId" AS "inverseObjectId"
+           FROM core."fieldMetadata" field
+           WHERE field."objectMetadataId" = $1 AND field.name = 'taskTargets'`,
+          [sourceObjectMetadataId],
+        );
+
+      taskTargetsField = {
+        objectMetadataId: sourceObjectMetadataId,
+        fieldMetadataId,
+      };
+      targetField = {
+        objectMetadataId: inverseObjectId,
+        fieldMetadataId: inverseFieldMetadataId,
+      };
+    });
+
+    afterEach(async () => {
+      await grantBackField(taskTargetsField);
+    });
+
+    // getRoles leaves out rows on system objects, so the table is read directly
+    const findStoredFieldPermissionsForRole = () =>
+      global.testDataSource.query(
+        `SELECT "objectMetadataId", "fieldMetadataId", "canReadFieldValue", "canUpdateFieldValue"
+         FROM core."fieldPermission" WHERE "roleId" = $1`,
+        [createdRoleId],
+      );
+
+    it('should not mirror the restriction onto the system object', async () => {
+      await restrictFieldUpdate(taskTargetsField);
+
+      expect(await findStoredFieldPermissionsForRole()).toEqual([
+        {
+          ...taskTargetsField,
+          canReadFieldValue: null,
+          canUpdateFieldValue: false,
+        },
+      ]);
+    });
+
+    it('should delete a mirror written before when the restricted field is granted back', async () => {
+      await restrictFieldUpdate(taskTargetsField);
+
+      const [{ applicationId, roleId, workspaceId }] =
+        await global.testDataSource.query(
+          `SELECT "applicationId", "roleId", "workspaceId" FROM core."fieldPermission"
+           WHERE "roleId" = $1 AND "fieldMetadataId" = $2`,
+          [createdRoleId, taskTargetsField.fieldMetadataId],
+        );
+      const mirrorId = randomUUID();
+
+      await global.testDataSource.query(
+        `INSERT INTO core."fieldPermission"
+           (id, "roleId", "objectMetadataId", "fieldMetadataId", "canUpdateFieldValue", "workspaceId", "universalIdentifier", "applicationId")
+         VALUES ($1, $2, $3, $4, false, $5, $1, $6)`,
+        [
+          mirrorId,
+          roleId,
+          targetField.objectMetadataId,
+          targetField.fieldMetadataId,
+          workspaceId,
+          applicationId,
+        ],
+      );
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(workspaceId, [
+        'flatFieldPermissionMaps',
+        'rolesPermissions',
+      ]);
+
+      expect(await findStoredFieldPermissionsForRole()).toHaveLength(2);
+
+      await grantBackField(taskTargetsField);
+
+      expect(await findStoredFieldPermissionsForRole()).toHaveLength(0);
     });
   });
 });
