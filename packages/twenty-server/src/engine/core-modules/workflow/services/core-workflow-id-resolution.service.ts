@@ -100,37 +100,4 @@ export class CoreWorkflowIdResolutionService {
 
     return coreWorkflow;
   }
-
-  async resolveWorkspaceWorkflowIdOrThrow({
-    workspaceId,
-    userWorkspaceId,
-    coreWorkflowId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    coreWorkflowId: string;
-  }): Promise<{
-    coreWorkflow: WorkflowEntity;
-    workspaceWorkflowId: string;
-  }> {
-    const coreWorkflow = await this.resolveCoreWorkflowOrThrow({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowId,
-    });
-
-    const workspaceWorkflowId = coreWorkflow.workspaceWorkflowId;
-
-    if (!isDefined(workspaceWorkflowId)) {
-      throw new WorkflowQueryValidationException(
-        `Core workflow '${coreWorkflowId}' has no workspace mirror row`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow is not correctly linked to its mirror`,
-        },
-      );
-    }
-
-    return { coreWorkflow, workspaceWorkflowId };
-  }
 }
