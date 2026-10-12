@@ -2150,7 +2150,6 @@ enum FeatureFlagKey {
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_VALIDATION_RULES_ENABLED
-  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
 }
 
 type Field {
@@ -2723,6 +2722,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billsCredits: Boolean!
   category: String
   defaultRoleUniversalIdentifier: String
   description: String
