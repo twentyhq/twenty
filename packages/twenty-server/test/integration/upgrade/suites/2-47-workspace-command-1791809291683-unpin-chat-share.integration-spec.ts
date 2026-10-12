@@ -35,8 +35,6 @@ describe('2-47 workspace command - unpin chat share (integration)', () => {
     );
   });
 
-  // The dev seed already holds the new item; down then up proves both
-  // directions
   afterAll(async () => {
     await command.up(RUN_ON_WORKSPACE_ARGS);
   });

@@ -24,9 +24,6 @@ const UNPINNED_CHAT_SHARE = {
     'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt")',
 };
 
-// Participants matter more than sharing on a chat, so Share leaves the header
-// for the actions menu, and no longer waits on the sharing dropdown flag. A
-// Share item a workspace changed keeps its version
 @RegisteredWorkspaceCommand('2.47.0', 1791809291683)
 @Command({
   name: 'upgrade:2-47:unpin-chat-share',
@@ -47,18 +44,30 @@ export class UnpinChatShareCommand extends ProvisionedWorkspaceCommandRunner {
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.moveChatShare(args, FLAGGED_CHAT_SHARE, UNPINNED_CHAT_SHARE);
+    await this.moveChatShare({
+      ...args,
+      from: FLAGGED_CHAT_SHARE,
+      to: UNPINNED_CHAT_SHARE,
+    });
   }
 
   async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.moveChatShare(args, UNPINNED_CHAT_SHARE, FLAGGED_CHAT_SHARE);
+    await this.moveChatShare({
+      ...args,
+      from: UNPINNED_CHAT_SHARE,
+      to: FLAGGED_CHAT_SHARE,
+    });
   }
 
-  private async moveChatShare(
-    { workspaceId, options }: RunOnWorkspaceArgs,
-    from: typeof FLAGGED_CHAT_SHARE,
-    to: typeof FLAGGED_CHAT_SHARE,
-  ): Promise<void> {
+  private async moveChatShare({
+    workspaceId,
+    options,
+    from,
+    to,
+  }: RunOnWorkspaceArgs & {
+    from: typeof FLAGGED_CHAT_SHARE;
+    to: typeof FLAGGED_CHAT_SHARE;
+  }): Promise<void> {
     const { flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
@@ -69,6 +78,7 @@ export class UnpinChatShareCommand extends ProvisionedWorkspaceCommandRunner {
         CHAT_SHARE_UNIVERSAL_IDENTIFIER
       ];
 
+    // A Share item the workspace changed keeps its version
     if (
       !isDefined(chatShare) ||
       chatShare.isPinned !== from.isPinned ||
