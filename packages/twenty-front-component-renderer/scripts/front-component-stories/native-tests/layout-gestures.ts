@@ -140,6 +140,9 @@ for (const runtime of ['react', 'preact']) {
       const slider = page.getByRole('slider', { name: 'Volume', exact: true });
 
       await expect(slider).toBeVisible();
+      await expect(slider).toHaveAttribute('min', '10');
+      await expect(slider).toHaveAttribute('max', '90');
+      await expect(slider).toHaveAttribute('step', '5');
       await slider.focus();
       await page.keyboard.press('ArrowRight');
       await expect(slider).toHaveValue('45');
@@ -162,8 +165,17 @@ for (const runtime of ['react', 'preact']) {
       const control = page.getByTestId('volume-control');
 
       await expect(slider).toBeVisible();
+      await page
+        .getByRole('button', { name: 'Parent action', exact: true })
+        .click();
+      await expect(page.getByText('Parent actions: 1')).toBeVisible();
+      await expect(page.getByText('Parent presses: 1')).toBeVisible();
       const origin = await startDrag({ page, handle: slider });
       await expect(control).toHaveAttribute('data-dragging', '');
+      await expect
+        .poll(() => control.evaluate((element) => element.hasPointerCapture(1)))
+        .toBe(true);
+      await expect(page.getByText('Parent presses: 2')).toBeVisible();
       const bounds = await control.boundingBox();
 
       expect(bounds).not.toBeNull();
@@ -172,6 +184,11 @@ for (const runtime of ['react', 'preact']) {
       await expect(page.getByText('Volume: 90; Committed: 40')).toBeVisible();
       await page.mouse.up();
       await expect(page.getByText('Volume: 90; Committed: 90')).toBeVisible();
+      await expect(page.getByText('Parent presses: 2')).toBeVisible();
+      await expect(page.getByText('Parent actions: 1')).toBeVisible();
+      await expect
+        .poll(() => control.evaluate((element) => element.hasPointerCapture(1)))
+        .toBe(false);
       await page.mouse.move(bounds!.x - 80, origin.y);
       await expect(slider).toHaveValue('90');
     });

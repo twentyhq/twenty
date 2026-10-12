@@ -1,3 +1,5 @@
+import { act, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { type ReactNode } from 'react';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
@@ -70,4 +72,82 @@ runComponentConformance({
   refInstanceOf: HTMLOutputElement,
   ownClassName: styles.value,
   wrapper: RootWrapper,
+});
+
+describe('Slider measurements', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it('shows an edge-aligned thumb when its first geometry arrives after mounting', async () => {
+    let controlWidth = 0;
+    let updateGeometry: (() => void) | undefined;
+    const disconnect = vi.fn();
+
+    vi.stubGlobal(
+      'ResizeObserver',
+      class implements ResizeObserver {
+        constructor(callback: ResizeObserverCallback) {
+          updateGeometry = () => callback([], this);
+        }
+
+        observe = vi.fn();
+        unobserve = vi.fn();
+        disconnect = disconnect;
+      },
+    );
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+      function (this: HTMLElement) {
+        const isControl = this.getAttribute('data-testid') === 'volume-control';
+
+        return DOMRect.fromRect({
+          width: isControl ? controlWidth : 16,
+          height: 16,
+        });
+      },
+    );
+
+    const { unmount } = render(
+      <Slider.Root defaultValue={40}>
+        <Slider.Control data-testid="volume-control">
+          <Slider.Thumb aria-label="Volume" />
+        </Slider.Control>
+      </Slider.Root>,
+    );
+    const thumb = screen.getByLabelText('Volume').parentElement;
+
+    await act(async () => {});
+    expect(thumb).not.toBeVisible();
+    controlWidth = 240;
+    await act(async () => updateGeometry?.());
+    expect(thumb).toBeVisible();
+
+    unmount();
+    expect(disconnect).toHaveBeenCalledOnce();
+  });
+
+  it('does not start an observer after unmounting before the commit microtask', () => {
+    const queuedTasks: (() => void)[] = [];
+    const createObserver = vi.fn();
+
+    vi.stubGlobal('queueMicrotask', (callback: () => void) => {
+      queuedTasks.push(callback);
+    });
+    vi.stubGlobal('ResizeObserver', createObserver);
+
+    const { unmount } = render(
+      <Slider.Root defaultValue={40}>
+        <Slider.Control>
+          <Slider.Thumb aria-label="Volume" />
+        </Slider.Control>
+      </Slider.Root>,
+    );
+
+    unmount();
+    for (const runTask of queuedTasks) {
+      runTask();
+    }
+    expect(createObserver).not.toHaveBeenCalled();
+  });
 });

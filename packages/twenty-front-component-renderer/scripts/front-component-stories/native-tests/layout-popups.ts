@@ -89,13 +89,19 @@ for (const runtime of ['react', 'preact']) {
     });
     await trigger.click();
     await expect(menu).toBeVisible();
-    await expect.poll(async () => {
-      const popup = await menu.boundingBox();
-      const viewport = page.viewportSize()!;
-      return !!popup && popup.x >= -1 && popup.y >= -1 &&
-        popup.x + popup.width <= viewport.width + 1 &&
-        popup.y + popup.height <= viewport.height + 1;
-    }).toBe(true);
+    await expect
+      .poll(async () => {
+        const popup = await menu.boundingBox();
+        const viewport = page.viewportSize()!;
+        return (
+          !!popup &&
+          popup.x >= -1 &&
+          popup.y >= -1 &&
+          popup.x + popup.width <= viewport.width + 1 &&
+          popup.y + popup.height <= viewport.height + 1
+        );
+      })
+      .toBe(true);
   });
   test(`${runtime} popup follows an anchor moving after idle without resizing`, async ({
     page,
@@ -110,7 +116,9 @@ for (const runtime of ['react', 'preact']) {
     await expect(menu).toBeVisible();
     await page.evaluate(async (frameCount) => {
       for (let frame = 0; frame < frameCount; frame += 1) {
-        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) =>
+          requestAnimationFrame(() => resolve()),
+        );
       }
     }, GEOMETRY_IDLE_FRAME_THRESHOLD * 3);
     const before = await trigger.boundingBox();

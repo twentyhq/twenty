@@ -11,33 +11,49 @@ const SliderExample = () => {
   const [isVolumeDisabled, setIsVolumeDisabled] = useState(false);
   const [isVolumeVisible, setIsVolumeVisible] = useState(true);
   const [isVolumeScaled, setIsVolumeScaled] = useState(false);
+  const [parentPointerDownCount, setParentPointerDownCount] = useState(0);
+  const [parentActionCount, setParentActionCount] = useState(0);
+
+  const handleParentAction = () => {
+    setParentActionCount((count) => count + 1);
+  };
+
+  const handleParentPointerDown = () => {
+    setParentPointerDownCount((count) => count + 1);
+  };
 
   return (
     <TwentyUiGalleryCard title="Slider">
       {isVolumeVisible && (
-        <Slider.Root
-          disabled={isVolumeDisabled}
-          style={
-            isVolumeScaled
-              ? { transform: 'scale(0.75)', transformOrigin: 'left center' }
-              : undefined
-          }
-          value={value}
-          min={10}
-          max={90}
-          step={5}
-          onValueChange={setValue}
-          onValueCommitted={setCommittedValue}
+        <div
+          data-testid="volume-pointer-parent"
+          onPointerDown={handleParentPointerDown}
         >
-          <Slider.Label>Volume</Slider.Label>
-          <Slider.Value />
-          <Slider.Control data-testid="volume-control">
-            <Slider.Track>
-              <Slider.Indicator />
-              <Slider.Thumb />
-            </Slider.Track>
-          </Slider.Control>
-        </Slider.Root>
+          <Slider.Root
+            disabled={isVolumeDisabled}
+            style={
+              isVolumeScaled
+                ? { transform: 'scale(0.75)', transformOrigin: 'left center' }
+                : undefined
+            }
+            value={value}
+            min={10}
+            max={90}
+            step={5}
+            onValueChange={setValue}
+            onValueCommitted={setCommittedValue}
+          >
+            <Slider.Label>Volume</Slider.Label>
+            <Slider.Value />
+            <Slider.Control data-testid="volume-control">
+              <Slider.Track>
+                <Slider.Indicator />
+                <Slider.Thumb />
+              </Slider.Track>
+            </Slider.Control>
+          </Slider.Root>
+          <Button onClick={handleParentAction}>Parent action</Button>
+        </div>
       )}
       <Button onClick={() => setIsVolumeDisabled(true)}>Disable volume</Button>
       <Button onClick={() => setIsVolumeVisible(false)}>Hide volume</Button>
@@ -53,6 +69,8 @@ const SliderExample = () => {
       <Text role="status">
         Volume: {value}; Committed: {committedValue}
       </Text>
+      <Text role="status">Parent presses: {parentPointerDownCount}</Text>
+      <Text role="status">Parent actions: {parentActionCount}</Text>
     </TwentyUiGalleryCard>
   );
 };

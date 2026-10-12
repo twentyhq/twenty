@@ -14,10 +14,13 @@ export const sliderRangeTest: TwentyUiGalleryPlayFunction = async ({
     hidden: true,
   });
 
-  await waitFor(() => {
-    expect(minimumThumb).toBeVisible();
-    expect(maximumThumb).toBeVisible();
-  }, { timeout: INTERACTION_TIMEOUT });
+  await waitFor(
+    () => {
+      expect(minimumThumb).toBeVisible();
+      expect(maximumThumb).toBeVisible();
+    },
+    { timeout: INTERACTION_TIMEOUT },
+  );
 
   expect(minimumThumb).toHaveAttribute('aria-label', 'Minimum price');
   expect(minimumThumb).toHaveValue('20');

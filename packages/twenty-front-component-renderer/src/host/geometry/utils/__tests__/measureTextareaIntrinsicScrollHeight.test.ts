@@ -40,6 +40,20 @@ describe('measureTextareaIntrinsicScrollHeight', () => {
     expect(measuredTextarea).toHaveProperty('isConnected', false);
   });
 
+  it('should refresh intrinsic height when rendered metrics change without a value or style update', () => {
+    const textarea = document.createElement('textarea');
+    textarea.setAttribute('data-auto-resize', 'true');
+    textarea.value = 'First\nSecond\nThird';
+    textarea.style.width = '240px';
+    jest
+      .spyOn(Element.prototype, 'scrollHeight', 'get')
+      .mockReturnValueOnce(64)
+      .mockReturnValueOnce(96);
+
+    expect(measureTextareaIntrinsicScrollHeight(textarea)).toBe(64);
+    expect(measureTextareaIntrinsicScrollHeight(textarea)).toBe(96);
+  });
+
   it('should remove the measurement textarea after a layout read fails', () => {
     const textarea = document.createElement('textarea');
     textarea.setAttribute('data-auto-resize', 'true');

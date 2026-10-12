@@ -8,6 +8,7 @@ import { type SliderControlProps } from '../types/SliderControlProps';
 export const SliderControl = ({ className, ...props }: SliderControlProps) => (
   <SliderPrimitive.Control
     {...props}
+    data-twenty-ui-slider-control=""
     className={mergeClassNames(styles.control, className)}
   />
 );

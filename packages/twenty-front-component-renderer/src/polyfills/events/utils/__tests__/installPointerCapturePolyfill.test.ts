@@ -120,6 +120,59 @@ describe('installPointerCapturePolyfill', () => {
     expect(deliveredMoves).toEqual([80]);
   });
 
+  it('should clear capture loss after release from another owned element', async () => {
+    const { documentTarget, connection, polyfillWindow } =
+      createCaptureFixture();
+    const element = documentTarget.createElement('div');
+    const releaseTarget = documentTarget.createElement('button');
+
+    documentTarget.body.append(element, releaseTarget);
+    connectRemoteNode(element, connection);
+    remoteId(element);
+    const removeElementListener = jest.spyOn(element, 'removeEventListener');
+    const removeDocumentListener = jest.spyOn(
+      documentTarget,
+      'removeEventListener',
+    );
+    element.setPointerCapture(1);
+    const captureLoss = new polyfillWindow.Event('lostpointercapture', {
+      bubbles: true,
+    }) as unknown as Event;
+
+    Object.defineProperty(captureLoss, 'pointerId', { value: 1 });
+    element.dispatchEvent(captureLoss);
+    expect(element.hasPointerCapture(1)).toBe(false);
+    const pointerUp = new polyfillWindow.Event('pointerup', {
+      bubbles: true,
+    }) as unknown as Event;
+
+    Object.defineProperty(pointerUp, 'pointerId', { value: 1 });
+    releaseTarget.dispatchEvent(pointerUp);
+    await Promise.resolve();
+    expect(removeElementListener).toHaveBeenCalledTimes(4);
+    expect(removeDocumentListener).toHaveBeenCalledTimes(2);
+  });
+
+  it('should preserve a new capture when the previous release cleanup is queued', async () => {
+    const { documentTarget, connection, polyfillWindow } =
+      createCaptureFixture();
+    const element = documentTarget.createElement('div');
+
+    documentTarget.body.append(element);
+    connectRemoteNode(element, connection);
+    remoteId(element);
+    element.setPointerCapture(1);
+    const pointerUp = new polyfillWindow.Event('pointerup', {
+      bubbles: true,
+    }) as unknown as Event;
+
+    Object.defineProperty(pointerUp, 'pointerId', { value: 1 });
+    element.dispatchEvent(pointerUp);
+    element.setPointerCapture(2);
+    await Promise.resolve();
+    expect(element.hasPointerCapture(2)).toBe(true);
+  });
+
   it('should clear detached capture when host geometry removes its element', () => {
     const { documentTarget, geometryStore, connection } =
       createCaptureFixture();

@@ -34,6 +34,7 @@ describe('createSliderPointerCaptureProps', () => {
   it('should capture only trusted presses on an enabled slider control', () => {
     const remotePointerDown = jest.fn();
     const handler = createSliderPointerCaptureProps({
+      'data-twenty-ui-slider-control': '',
       onPointerDown: remotePointerDown,
     })!.onPointerDown as (event: PointerEvent<HTMLElement>) => void;
     const untrustedPress = createPointerPress({ isTrusted: false });
@@ -52,6 +53,22 @@ describe('createSliderPointerCaptureProps', () => {
     handler(trustedPress.event);
     expect(trustedPress.element.setPointerCapture).toHaveBeenCalledWith(1);
     expect(remotePointerDown).toHaveBeenCalledTimes(3);
+  });
+
+  it('should leave caller ancestors and slider thumbs on their ordinary pointer path', () => {
+    const remotePointerDown = jest.fn();
+
+    expect(
+      createSliderPointerCaptureProps({
+        onPointerDown: remotePointerDown,
+      }),
+    ).toBeUndefined();
+    expect(
+      createSliderPointerCaptureProps({
+        'data-index': '0',
+        onPointerDown: remotePointerDown,
+      }),
+    ).toBeUndefined();
   });
 
   it('should preserve the existing separator capture path', () => {

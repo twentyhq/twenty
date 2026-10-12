@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 const TEXTAREA_MEASUREMENT_STYLE_PROPERTIES = [
   'box-sizing',
   'font',
@@ -29,11 +27,6 @@ const TEXTAREA_MEASUREMENT_STYLE_PROPERTIES = [
   'overflow-y',
 ] as const;
 
-const textareaMeasurements = new WeakMap<
-  HTMLTextAreaElement,
-  { contentSignature: string; scrollHeight: number }
->();
-
 export const measureTextareaIntrinsicScrollHeight = (
   node: Element,
 ): number | undefined => {
@@ -49,22 +42,6 @@ export const measureTextareaIntrinsicScrollHeight = (
     (propertyName) =>
       [propertyName, computedStyle.getPropertyValue(propertyName)] as const,
   );
-  const contentSignature = JSON.stringify({
-    value: node.value,
-    rows: node.rows,
-    wrap: node.wrap,
-    placeholder: node.placeholder,
-    measurementStyles,
-  });
-  const previousMeasurement = textareaMeasurements.get(node);
-
-  if (
-    isDefined(previousMeasurement) &&
-    previousMeasurement.contentSignature === contentSignature
-  ) {
-    return previousMeasurement.scrollHeight;
-  }
-
   const measurement = node.ownerDocument.createElement('textarea');
   measurement.value = node.value;
   measurement.rows = node.rows;
@@ -88,9 +65,7 @@ export const measureTextareaIntrinsicScrollHeight = (
   node.ownerDocument.body.append(measurement);
 
   try {
-    const scrollHeight = measurement.scrollHeight;
-    textareaMeasurements.set(node, { contentSignature, scrollHeight });
-    return scrollHeight;
+    return measurement.scrollHeight;
   } finally {
     measurement.remove();
   }

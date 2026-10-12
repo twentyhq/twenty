@@ -753,19 +753,44 @@ export const AnimatedIconCrossfadePreact: Story = createGalleryStory({
   play: animatedIconCrossfadeTest,
 });
 
-export const ResizeHandleGesturesReact: Story = { ...ResizeHandleReact, play: undefined };
-export const ResizeHandleGesturesPreact: Story = { ...ResizeHandlePreact, play: undefined };
+export const ResizeHandleGesturesReact: Story = {
+  ...ResizeHandleReact,
+  play: undefined,
+};
+export const ResizeHandleGesturesPreact: Story = {
+  ...ResizeHandlePreact,
+  play: undefined,
+};
 export const SliderGesturesReact: Story = { ...SliderReact, play: undefined };
 export const SliderGesturesPreact: Story = { ...SliderPreact, play: undefined };
-export const SliderRangeGesturesReact: Story = { ...SliderRangeReact, play: undefined };
-export const SliderRangeGesturesPreact: Story = { ...SliderRangePreact, play: undefined };
+export const SliderRangeGesturesReact: Story = {
+  ...SliderRangeReact,
+  play: undefined,
+};
+export const SliderRangeGesturesPreact: Story = {
+  ...SliderRangePreact,
+  play: undefined,
+};
 
-export const PortalGeometryReact: Story = { ...PortalBoundsReact, play: undefined };
-export const PortalGeometryPreact: Story = { ...PortalBoundsPreact, play: undefined };
+export const PortalGeometryReact: Story = {
+  ...PortalBoundsReact,
+  play: undefined,
+};
+export const PortalGeometryPreact: Story = {
+  ...PortalBoundsPreact,
+  play: undefined,
+};
 
-export const LayoutMeasurementsReact: Story = createGalleryStory({ frontComponentBundleName: 'geometry-measure', runtime: 'react', play: undefined });
-export const LayoutMeasurementsPreact: Story = createGalleryStory({ frontComponentBundleName: 'geometry-measure', runtime: 'preact', play: undefined });
-
+export const LayoutMeasurementsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'geometry-measure',
+  runtime: 'react',
+  play: undefined,
+});
+export const LayoutMeasurementsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'geometry-measure',
+  runtime: 'preact',
+  play: undefined,
+});
 
 export const OverflowingListInstancesReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-overflowing-list',
@@ -778,7 +803,3 @@ export const OverflowingListInstancesPreact: Story = createGalleryStory({
   runtime: 'preact',
   decorators: [OverflowingListInstancesDecorator],
 });
-
-
-export const ListItemGeometryReact: Story = { ...ListItemReact, play: undefined };
-export const ListItemGeometryPreact: Story = { ...ListItemPreact, play: undefined };

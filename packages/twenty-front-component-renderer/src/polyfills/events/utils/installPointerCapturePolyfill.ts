@@ -8,6 +8,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
 
+const POINTER_GESTURE_END_EVENT_TYPES = ['pointerup', 'pointercancel'] as const;
+
 const CAPTURED_POINTER_EVENT_TYPES = [
   'pointermove',
   'pointerup',
@@ -68,21 +70,24 @@ export const installPointerCapturePolyfill = ({
               capture.isCaptured = false;
             }
           }
-
-          const hasEnded =
-            pointerEvent.type === 'pointerup' ||
-            pointerEvent.type === 'pointercancel';
-
-          if (pointerEvent.pointerId === pointerId && hasEnded) {
-            const endedCapture = capturedPointers.get(element);
-
-            queueMicrotask(() => {
-              if (capturedPointers.get(element) === endedCapture) {
-                clearCapture(element);
-              }
-            });
-          }
         };
+        const endCaptureAfterDispatch = (event: Event) => {
+          if ((event as PointerEvent).pointerId !== pointerId) {
+            return;
+          }
+
+          const endedCapture = capturedPointers.get(element);
+
+          queueMicrotask(() => {
+            if (capturedPointers.get(element) === endedCapture) {
+              clearCapture(element);
+            }
+          });
+        };
+
+        for (const eventType of POINTER_GESTURE_END_EVENT_TYPES) {
+          documentTarget.addEventListener(eventType, endCaptureAfterDispatch);
+        }
 
         for (const eventType of CAPTURED_POINTER_EVENT_TYPES) {
           element.addEventListener(eventType, forwardCapturedEvent);
@@ -92,6 +97,13 @@ export const installPointerCapturePolyfill = ({
           pointerId,
           isCaptured: true,
           removeListeners: () => {
+            for (const eventType of POINTER_GESTURE_END_EVENT_TYPES) {
+              documentTarget.removeEventListener(
+                eventType,
+                endCaptureAfterDispatch,
+              );
+            }
+
             for (const eventType of CAPTURED_POINTER_EVENT_TYPES) {
               element.removeEventListener(eventType, forwardCapturedEvent);
             }

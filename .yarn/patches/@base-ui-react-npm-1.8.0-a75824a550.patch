@@ -1,0 +1,92 @@
+diff --git a/slider/thumb/SliderThumb.js b/slider/thumb/SliderThumb.js
+index 6da38d28be542a18f47eef2acfa830fd8452150c..cb748e66f743dbff7d20888feb6351179763c8ee 100644
+--- a/slider/thumb/SliderThumb.js
++++ b/slider/thumb/SliderThumb.js
+@@ -193,20 +193,28 @@ const SliderThumb = exports.SliderThumb = /*#__PURE__*/React.forwardRef(function
+     if (!inset) {
+       return undefined;
+     }
+-    const control = controlRef.current;
+-    const thumb = thumbRef.current;
+-    if (!control || !thumb) {
+-      return undefined;
+-    }
+-    const ResizeObserverCtor = (0, _owner.ownerWindow)(control).ResizeObserver;
+-    if (typeof ResizeObserverCtor !== 'function') {
+-      return undefined;
+-    }
+-    const resizeObserver = new ResizeObserverCtor(getInsetPosition);
+-    resizeObserver.observe(control);
+-    resizeObserver.observe(thumb);
++    let resizeObserver;
++    let disposed = false;
++    queueMicrotask(() => {
++      if (disposed) {
++        return;
++      }
++      const control = controlRef.current;
++      const thumb = thumbRef.current;
++      if (!control || !thumb) {
++        return;
++      }
++      const ResizeObserverCtor = (0, _owner.ownerWindow)(control).ResizeObserver;
++      if (typeof ResizeObserverCtor !== 'function') {
++        return;
++      }
++      resizeObserver = new ResizeObserverCtor(getInsetPosition);
++      resizeObserver.observe(control);
++      resizeObserver.observe(thumb);
++    });
+     return () => {
+-      resizeObserver.disconnect();
++      disposed = true;
++      resizeObserver?.disconnect();
+     };
+   }, [controlRef, getInsetPosition, inset]);
+   const startEdge = vertical ? 'bottom' : 'insetInlineStart';
+diff --git a/slider/thumb/SliderThumb.mjs b/slider/thumb/SliderThumb.mjs
+index 55e566193eb66259245c7df3e86a27b37b485354..5814fd5f12caf19d668cd97003ef197c391a8a4e 100644
+--- a/slider/thumb/SliderThumb.mjs
++++ b/slider/thumb/SliderThumb.mjs
+@@ -187,20 +187,28 @@ export const SliderThumb = /*#__PURE__*/React.forwardRef(function SliderThumb(co
+     if (!inset) {
+       return undefined;
+     }
+-    const control = controlRef.current;
+-    const thumb = thumbRef.current;
+-    if (!control || !thumb) {
+-      return undefined;
+-    }
+-    const ResizeObserverCtor = ownerWindow(control).ResizeObserver;
+-    if (typeof ResizeObserverCtor !== 'function') {
+-      return undefined;
+-    }
+-    const resizeObserver = new ResizeObserverCtor(getInsetPosition);
+-    resizeObserver.observe(control);
+-    resizeObserver.observe(thumb);
++    let resizeObserver;
++    let disposed = false;
++    queueMicrotask(() => {
++      if (disposed) {
++        return;
++      }
++      const control = controlRef.current;
++      const thumb = thumbRef.current;
++      if (!control || !thumb) {
++        return;
++      }
++      const ResizeObserverCtor = ownerWindow(control).ResizeObserver;
++      if (typeof ResizeObserverCtor !== 'function') {
++        return;
++      }
++      resizeObserver = new ResizeObserverCtor(getInsetPosition);
++      resizeObserver.observe(control);
++      resizeObserver.observe(thumb);
++    });
+     return () => {
+-      resizeObserver.disconnect();
++      disposed = true;
++      resizeObserver?.disconnect();
+     };
+   }, [controlRef, getInsetPosition, inset]);
+   const startEdge = vertical ? 'bottom' : 'insetInlineStart';
