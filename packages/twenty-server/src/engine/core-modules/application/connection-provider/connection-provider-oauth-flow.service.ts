@@ -342,6 +342,10 @@ export class ConnectionProviderOAuthFlowService {
       );
 
       if (updateResult.affected === 0) {
+        this.logger.log(
+          `Reconnect lost a concurrent change on connected account ${reconnectingConnectedAccountId} in workspace ${workspaceId}`,
+        );
+
         await this.appOAuthRevokeService.revokeUnstoredTokens({
           provider,
           accessToken: tokenResponse.accessToken,

@@ -181,6 +181,10 @@ export class ConnectedAccountRefreshTokensService {
 
     // A reconnect, disconnect or transfer may land while the provider refreshes.
     if (updateResult.affected === 0) {
+      this.logger.log(
+        `Token refresh lost a concurrent credential change on connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+      );
+
       const isStillActive = await this.connectedAccountRepository.existsBy({
         id: connectedAccount.id,
         workspaceId,

@@ -489,7 +489,7 @@ export class ConnectedAccountMetadataService {
 
       // A reconnect that revived the account after the lock was released
       // stamped new credentials, which must survive.
-      await this.repository.update(
+      const clearResult = await this.repository.update(
         {
           id: transferredAccount.id,
           workspaceId,
@@ -505,6 +505,12 @@ export class ConnectedAccountMetadataService {
           connectionParameters: null,
         },
       );
+
+      if (clearResult.affected === 0) {
+        this.logger.log(
+          `Transfer kept credentials changed concurrently on connected account ${transferredAccount.id} in workspace ${workspaceId}`,
+        );
+      }
     }
   }
 
