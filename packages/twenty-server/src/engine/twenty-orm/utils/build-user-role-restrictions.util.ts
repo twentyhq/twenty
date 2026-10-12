@@ -10,5 +10,8 @@ export const buildUserRoleRestrictions = ({
   application: { defaultRoleId: string | null } | undefined;
 }): RoleIdsBySource => ({
   userWorkspaceRoleId: userRoleId ?? null,
-  ...resolveApplicationRoleRestriction({ application, isActingAlone: false }),
+  ...resolveApplicationRoleRestriction({
+    application,
+    isMissingApplicationRoleTolerated: true,
+  }),
 });

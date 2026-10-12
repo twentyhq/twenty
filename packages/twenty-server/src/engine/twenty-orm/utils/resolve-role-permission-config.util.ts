@@ -37,7 +37,7 @@ const resolveRoleRestrictionsFromAuthContext = ({
   if (isApplicationAuthContext(authContext)) {
     return resolveApplicationRoleRestriction({
       application: authContext.application,
-      isActingAlone: true,
+      isMissingApplicationRoleTolerated: false,
     });
   }
 

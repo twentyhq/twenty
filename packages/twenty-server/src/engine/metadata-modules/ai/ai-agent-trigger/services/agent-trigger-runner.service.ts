@@ -185,7 +185,10 @@ export class AgentTriggerRunnerService
 
     // the agent never exceeds its application, as in its runAgent runs
     const roleRestrictions: AgentRoleRestrictions =
-      resolveApplicationRoleRestriction({ application, isActingAlone: false });
+      resolveApplicationRoleRestriction({
+        application,
+        isMissingApplicationRoleTolerated: true,
+      });
 
     const actingAgent = { id: agent.id, label: agent.label };
     const createdBy = buildCreatedByFromAgent({

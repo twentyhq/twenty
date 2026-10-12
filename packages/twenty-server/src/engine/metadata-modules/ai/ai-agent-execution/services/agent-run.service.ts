@@ -362,7 +362,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       ...callerRoleRestrictions,
       ...resolveApplicationRoleRestriction({
         application: agentContext.application,
-        isActingAlone: false,
+        isMissingApplicationRoleTolerated: true,
       }),
     };
 

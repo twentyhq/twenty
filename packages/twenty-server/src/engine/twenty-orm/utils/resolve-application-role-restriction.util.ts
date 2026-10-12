@@ -2,13 +2,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
-// An application without a role restricts nothing when it acts with a member or an agent
+// Temporary: the workspace custom and Twenty standard applications have no role yet,
+// so acting with a member or an agent they must not restrict. Drop once they get one.
 export const resolveApplicationRoleRestriction = ({
   application,
-  isActingAlone,
+  isMissingApplicationRoleTolerated,
 }: {
   application: { defaultRoleId: string | null } | undefined;
-  isActingAlone: boolean;
+  isMissingApplicationRoleTolerated: boolean;
 }): Pick<RoleIdsBySource, 'applicationRoleId'> => {
   const applicationRoleId = application?.defaultRoleId;
 
@@ -16,5 +17,5 @@ export const resolveApplicationRoleRestriction = ({
     return { applicationRoleId };
   }
 
-  return isActingAlone ? { applicationRoleId: null } : {};
+  return isMissingApplicationRoleTolerated ? {} : { applicationRoleId: null };
 };

@@ -2,31 +2,31 @@ import { resolveApplicationRoleRestriction } from 'src/engine/twenty-orm/utils/r
 
 describe('resolveApplicationRoleRestriction', () => {
   it.each([true, false])(
-    'restricts to the application role (acting alone: %s)',
-    (isActingAlone) => {
+    'restricts to the application role (missing role tolerated: %s)',
+    (isMissingApplicationRoleTolerated) => {
       expect(
         resolveApplicationRoleRestriction({
           application: { defaultRoleId: 'application-role-id' },
-          isActingAlone,
+          isMissingApplicationRoleTolerated,
         }),
       ).toEqual({ applicationRoleId: 'application-role-id' });
     },
   );
 
-  it('denies an application acting alone without a role', () => {
+  it('denies an application without a role when a missing role is not tolerated', () => {
     expect(
       resolveApplicationRoleRestriction({
         application: { defaultRoleId: null },
-        isActingAlone: true,
+        isMissingApplicationRoleTolerated: false,
       }),
     ).toEqual({ applicationRoleId: null });
   });
 
-  it('adds no restriction for an application without a role acting with another actor', () => {
+  it('adds no restriction for an application without a role when a missing role is tolerated', () => {
     expect(
       resolveApplicationRoleRestriction({
         application: { defaultRoleId: null },
-        isActingAlone: false,
+        isMissingApplicationRoleTolerated: true,
       }),
     ).toEqual({});
   });
@@ -35,7 +35,7 @@ describe('resolveApplicationRoleRestriction', () => {
     expect(
       resolveApplicationRoleRestriction({
         application: undefined,
-        isActingAlone: false,
+        isMissingApplicationRoleTolerated: true,
       }),
     ).toEqual({});
   });
