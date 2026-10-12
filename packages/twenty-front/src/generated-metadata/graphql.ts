@@ -60,7 +60,6 @@ export type AgentChatChannel = {
   id: Scalars['UUID']['output'];
   isAccessible?: Maybe<Scalars['Boolean']['output']>;
   isCustom: Scalars['Boolean']['output'];
-  isOpenToEveryone: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   position: Scalars['Float']['output'];
   roleIds: Array<Scalars['UUID']['output']>;
@@ -74,6 +73,7 @@ export enum AgentChatChannelAssignmentFilter {
 
 export type AgentChatChannelRole = {
   __typename?: 'AgentChatChannelRole';
+  canAccessAllAgentChatChannels: Scalars['Boolean']['output'];
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   label: Scalars['String']['output'];
@@ -1401,7 +1401,6 @@ export type ConnectionParametersInput = {
 export type CreateAgentChatChannelInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
-  isOpenToEveryone?: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   roleIds?: Array<Scalars['UUID']['input']>;
 };
@@ -1657,6 +1656,7 @@ export type CreateRecordExportInput = {
 };
 
 export type CreateRoleInput = {
+  canAccessAllAgentChatChannels?: InputMaybe<Scalars['Boolean']['input']>;
   canAccessAllTools?: InputMaybe<Scalars['Boolean']['input']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']['input']>;
   canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']['input']>;
@@ -6235,6 +6235,7 @@ export type Role = {
   __typename?: 'Role';
   agents: Array<Agent>;
   apiKeys: Array<ApiKeyForRole>;
+  canAccessAllAgentChatChannels: Scalars['Boolean']['output'];
   canAccessAllTools: Scalars['Boolean']['output'];
   canBeAssignedToAgents: Scalars['Boolean']['output'];
   canBeAssignedToApiKeys: Scalars['Boolean']['output'];
@@ -6854,7 +6855,6 @@ export enum UnsubscribeTopicVisibility {
 export type UpdateAgentChatChannelInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
-  isOpenToEveryone?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
   roleIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
@@ -7146,6 +7146,7 @@ export type UpdateRoleInput = {
 };
 
 export type UpdateRolePayload = {
+  canAccessAllAgentChatChannels?: InputMaybe<Scalars['Boolean']['input']>;
   canAccessAllTools?: InputMaybe<Scalars['Boolean']['input']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']['input']>;
   canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']['input']>;

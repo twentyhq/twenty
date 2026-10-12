@@ -37,8 +37,7 @@ const CHANNEL_UNIVERSAL_IDENTIFIERS = Object.values(
 @RegisteredWorkspaceCommand('2.47.0', 1791823542907)
 @Command({
   name: 'upgrade:2-47:add-agent-chat-channels',
-  description:
-    'Give chat threads a channel and create the General channel, open to everyone',
+  description: 'Give chat threads a channel and create the General channel',
 })
 export class AddAgentChatChannelsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -184,7 +183,9 @@ export class AddAgentChatChannelsCommand extends ProvisionedWorkspaceCommandRunn
     ).filter(isDefined);
 
     if (
-      fieldsToDelete.length + indexesToDelete.length + channelsToDelete.length ===
+      fieldsToDelete.length +
+        indexesToDelete.length +
+        channelsToDelete.length ===
       0
     ) {
       return;

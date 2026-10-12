@@ -7,7 +7,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 export class AddAgentChatChannelFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'CREATE TABLE "core"."agentChatChannel" ("workspaceId" uuid NOT NULL, "universalIdentifier" uuid NOT NULL, "applicationId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "icon" character varying, "color" character varying, "position" double precision NOT NULL DEFAULT \'0\', "isOpenToEveryone" boolean NOT NULL DEFAULT false, "isCustom" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_d74b9453b964418b53ca23f4d32" PRIMARY KEY ("id"))',
+      'CREATE TABLE "core"."agentChatChannel" ("workspaceId" uuid NOT NULL, "universalIdentifier" uuid NOT NULL, "applicationId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "icon" character varying, "color" character varying, "position" double precision NOT NULL DEFAULT \'0\', "isCustom" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_d74b9453b964418b53ca23f4d32" PRIMARY KEY ("id"))',
     );
     await queryRunner.query(
       'CREATE UNIQUE INDEX "IDX_19cf74c0bcf8386bbf43e11e22" ON "core"."agentChatChannel" ("workspaceId", "universalIdentifier") ',
@@ -45,9 +45,15 @@ export class AddAgentChatChannelFastInstanceCommand implements FastInstanceComma
     await queryRunner.query(
       'ALTER TABLE "core"."agentChatChannelRole" ADD CONSTRAINT "FK_e01d14cd9ae854f33c70a6385da" FOREIGN KEY ("roleId") REFERENCES "core"."role"("id") ON DELETE CASCADE ON UPDATE NO ACTION',
     );
+    await queryRunner.query(
+      'ALTER TABLE "core"."role" ADD "canAccessAllAgentChatChannels" boolean NOT NULL DEFAULT false',
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      'ALTER TABLE "core"."role" DROP COLUMN "canAccessAllAgentChatChannels"',
+    );
     await queryRunner.query(
       'ALTER TABLE "core"."agentChatChannelRole" DROP CONSTRAINT "FK_e01d14cd9ae854f33c70a6385da"',
     );

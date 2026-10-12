@@ -133,7 +133,6 @@ export class AgentChatChannelResolver {
       name: input.name,
       icon: input.icon ?? null,
       color: input.color ?? null,
-      isOpenToEveryone: input.isOpenToEveryone,
       roleIds: input.roleIds,
       workspaceId,
     });
@@ -154,7 +153,6 @@ export class AgentChatChannelResolver {
         icon: input.icon,
         color: input.color,
         position: input.position ?? undefined,
-        isOpenToEveryone: input.isOpenToEveryone ?? undefined,
         roleIds: input.roleIds ?? undefined,
       },
       workspaceId,

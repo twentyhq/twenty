@@ -19,6 +19,7 @@ export const fromRoleManifestToUniversalFlatRole = ({
     icon: roleManifest.icon ?? null,
     canUpdateAllSettings: roleManifest.canUpdateAllSettings ?? false,
     canAccessAllTools: roleManifest.canAccessAllTools ?? false,
+    canAccessAllAgentChatChannels: false,
     canReadAllObjectRecords: roleManifest.canReadAllObjectRecords ?? false,
     canUpdateAllObjectRecords: roleManifest.canUpdateAllObjectRecords ?? false,
     canSoftDeleteAllObjectRecords:

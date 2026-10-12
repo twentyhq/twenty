@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
+import { type AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-role.dto';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
@@ -22,7 +23,6 @@ type ChannelChanges = {
   icon?: string | null;
   color?: string | null;
   position?: number;
-  isOpenToEveryone?: boolean;
   roleIds?: string[];
 };
 
@@ -49,9 +49,9 @@ export class AgentChatChannelService {
     workspaceMemberId: string;
     canManageChannels: boolean;
   }): Promise<(FlatAgentChatChannelWithRoleIds & { isAccessible: boolean })[]> {
-    const [channels, roleId] = await Promise.all([
+    const [channels, role] = await Promise.all([
       this.channelMetadataService.findChannels(workspaceId),
-      this.channelAccessService.findMemberRoleId({
+      this.channelAccessService.findMemberRole({
         workspaceId,
         workspaceMemberId,
       }),
@@ -60,7 +60,7 @@ export class AgentChatChannelService {
     return channels
       .map((channel) => ({
         ...channel,
-        isAccessible: isAgentChatChannelOpenToRole({ channel, roleId }),
+        isAccessible: isAgentChatChannelOpenToRole({ channel, role }),
       }))
       .filter(({ isAccessible }) => canManageChannels || isAccessible);
   }
@@ -70,14 +70,12 @@ export class AgentChatChannelService {
     name,
     icon,
     color,
-    isOpenToEveryone,
     roleIds,
   }: {
     workspaceId: string;
     name: string;
     icon: string | null;
     color: string | null;
-    isOpenToEveryone: boolean;
     roleIds: string[];
   }): Promise<FlatAgentChatChannelWithRoleIds> {
     return this.channelMetadataService.createChannel({
@@ -85,7 +83,6 @@ export class AgentChatChannelService {
       name,
       icon,
       color,
-      isOpenToEveryone,
       roleIds,
     });
   }
@@ -111,7 +108,6 @@ export class AgentChatChannelService {
     });
 
     const isAccessChanged =
-      before.isOpenToEveryone !== after.isOpenToEveryone ||
       before.roleIds.length !== after.roleIds.length ||
       before.roleIds.some((roleId) => !after.roleIds.includes(roleId));
 
@@ -194,7 +190,7 @@ export class AgentChatChannelService {
   // channel can open to are listed here
   async findAssignableRoles(
     workspaceId: string,
-  ): Promise<{ id: string; label: string; icon: string | null }[]> {
+  ): Promise<AgentChatChannelRoleDTO[]> {
     const { flatRoleMaps } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       ['flatRoleMaps'],
@@ -203,7 +199,12 @@ export class AgentChatChannelService {
     return Object.values(flatRoleMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((role) => role.canBeAssignedToUsers)
-      .map(({ id, label, icon }) => ({ id, label, icon: icon ?? null }))
+      .map(({ id, label, icon, canAccessAllAgentChatChannels }) => ({
+        id,
+        label,
+        icon: icon ?? null,
+        canAccessAllAgentChatChannels,
+      }))
       .sort((left, right) => left.label.localeCompare(right.label));
   }
 
