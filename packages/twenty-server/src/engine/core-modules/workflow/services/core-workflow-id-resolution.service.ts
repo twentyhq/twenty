@@ -23,7 +23,7 @@ export class CoreWorkflowIdResolutionService {
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
 
-  async resolveWorkspaceVersionIdOrThrow({
+  async resolveCoreWorkflowVersionOrThrow({
     workspaceId,
     userWorkspaceId,
     coreWorkflowVersionId,
@@ -31,17 +31,13 @@ export class CoreWorkflowIdResolutionService {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
-  }): Promise<{
-    coreWorkflowVersion: WorkflowVersionEntity;
-    workspaceWorkflowVersionId: string;
-  }> {
-    const resolved = await this.resolveWorkspaceVersionIdIfCoreVersionExists({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowVersionId,
-    });
+  }): Promise<WorkflowVersionEntity> {
+    const coreWorkflowVersion =
+      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+        where: { id: coreWorkflowVersionId },
+      });
 
-    if (!isDefined(resolved)) {
+    if (!isDefined(coreWorkflowVersion)) {
       throw new WorkflowQueryValidationException(
         `Core workflow version '${coreWorkflowVersionId}' not found`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
@@ -49,31 +45,6 @@ export class CoreWorkflowIdResolutionService {
           userFriendlyMessage: msg`Workflow version not found`,
         },
       );
-    }
-
-    return resolved;
-  }
-
-  // Every by-id access goes through here, so this is where a private workflow stops resolving.
-  async resolveWorkspaceVersionIdIfCoreVersionExists({
-    workspaceId,
-    userWorkspaceId,
-    coreWorkflowVersionId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    coreWorkflowVersionId: string;
-  }): Promise<{
-    coreWorkflowVersion: WorkflowVersionEntity;
-    workspaceWorkflowVersionId: string;
-  } | null> {
-    const coreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
-      });
-
-    if (!isDefined(coreWorkflowVersion)) {
-      return null;
     }
 
     await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
@@ -94,26 +65,10 @@ export class CoreWorkflowIdResolutionService {
       );
     }
 
-    const workspaceWorkflowVersionId =
-      coreWorkflowVersion.workspaceWorkflowVersionId;
-
-    if (!isDefined(workspaceWorkflowVersionId)) {
-      throw new WorkflowQueryValidationException(
-        `Core workflow version '${coreWorkflowVersionId}' has no workspace mirror alias`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow version is not correctly linked to its mirror`,
-        },
-      );
-    }
-
-    return {
-      coreWorkflowVersion,
-      workspaceWorkflowVersionId,
-    };
+    return coreWorkflowVersion;
   }
 
-  async resolveWorkspaceWorkflowIdOrThrow({
+  async resolveCoreWorkflowOrThrow({
     workspaceId,
     userWorkspaceId,
     coreWorkflowId,
@@ -121,10 +76,7 @@ export class CoreWorkflowIdResolutionService {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     coreWorkflowId: string;
-  }): Promise<{
-    coreWorkflow: WorkflowEntity;
-    workspaceWorkflowId: string;
-  }> {
+  }): Promise<WorkflowEntity> {
     const coreWorkflow = await this.coreWorkflowRepository.findOne(
       workspaceId,
       { where: { id: coreWorkflowId } },
@@ -144,6 +96,27 @@ export class CoreWorkflowIdResolutionService {
       workspaceId,
       userWorkspaceId,
       coreWorkflowIds: [coreWorkflow.id],
+    });
+
+    return coreWorkflow;
+  }
+
+  async resolveWorkspaceWorkflowIdOrThrow({
+    workspaceId,
+    userWorkspaceId,
+    coreWorkflowId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    coreWorkflowId: string;
+  }): Promise<{
+    coreWorkflow: WorkflowEntity;
+    workspaceWorkflowId: string;
+  }> {
+    const coreWorkflow = await this.resolveCoreWorkflowOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowId,
     });
 
     const workspaceWorkflowId = coreWorkflow.workspaceWorkflowId;
