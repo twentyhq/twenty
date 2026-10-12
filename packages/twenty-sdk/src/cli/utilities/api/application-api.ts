@@ -12,8 +12,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import sdkPackageJson from '../../../../package.json';
 
-// Servers that predate `WorkspaceMigration.serverVersion` reject the whole
-// sync operation at validation time, before anything is applied.
 const isUnknownServerVersionFieldError = (
   message: string | undefined,
 ): boolean => message?.includes('Cannot query field "serverVersion"') ?? false;

@@ -10,8 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { type UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-// The sync flow can run cache-lock retries with real delays, so fake timers
-// would hang it — mirror the other application suites.
 jest.setTimeout(120000);
 
 const TEST_APP_ID = uuidv4();
@@ -110,8 +108,6 @@ describe('Sync application returns the server version', () => {
       );
     }
 
-    // Re-injecting the seeded cursor as a failed attempt makes the workspace
-    // resolve to the previous completed version.
     await global.testDataSource.query(
       `INSERT INTO core."upgradeMigration"
          (name, status, attempt, "executedByVersion", "workspaceId", "isInitial")
