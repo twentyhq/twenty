@@ -27,10 +27,13 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-const buildTriageChange = (
-  action: AgentChatInboxAction,
-  snoozedUntil: Date | null,
-): AgentChatThreadTriageChange | null => {
+const buildTriageChange = ({
+  action,
+  snoozedUntil,
+}: {
+  action: AgentChatInboxAction;
+  snoozedUntil: Date | null;
+}): AgentChatThreadTriageChange | null => {
   switch (action) {
     case AgentChatInboxAction.ARCHIVE:
     case AgentChatInboxAction.MOVE_TO_INBOX:
@@ -70,7 +73,7 @@ export class AgentChatThreadTriageService {
     action: AgentChatInboxAction;
     snoozedUntil: Date | null;
   }): Promise<AgentChatThreadParticipantDTO[]> {
-    const change = buildTriageChange(action, snoozedUntil);
+    const change = buildTriageChange({ action, snoozedUntil });
     const assignedChannelThreads =
       isDefined(change) &&
       (await this.sharingService.hasChannels(memberArgs.workspaceId))

@@ -6,10 +6,13 @@ import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agen
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 
-export const addRoleIdsToFlatAgentChatChannel = (
-  channel: FlatAgentChatChannel,
-  flatAgentChatChannelRoleMaps: FlatEntityMaps<FlatAgentChatChannelRole>,
-): FlatAgentChatChannelWithRoleIds => ({
+export const addRoleIdsToFlatAgentChatChannel = ({
+  channel,
+  flatAgentChatChannelRoleMaps,
+}: {
+  channel: FlatAgentChatChannel;
+  flatAgentChatChannelRoleMaps: FlatEntityMaps<FlatAgentChatChannelRole>;
+}): FlatAgentChatChannelWithRoleIds => ({
   ...channel,
   roleIds: channel.channelRoleIds
     .map(

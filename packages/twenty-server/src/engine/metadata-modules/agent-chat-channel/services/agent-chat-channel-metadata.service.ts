@@ -55,7 +55,10 @@ export class AgentChatChannelMetadataService {
     return Object.values(flatAgentChatChannelMaps.byUniversalIdentifier)
       .filter(isDefined)
       .map((channel) =>
-        addRoleIdsToFlatAgentChatChannel(channel, flatAgentChatChannelRoleMaps),
+        addRoleIdsToFlatAgentChatChannel({
+          channel,
+          flatAgentChatChannelRoleMaps,
+        }),
       )
       .sort(
         (left, right) =>
@@ -75,10 +78,13 @@ export class AgentChatChannelMetadataService {
     const { flatAgentChatChannelMaps, flatAgentChatChannelRoleMaps } =
       await this.getChannelMaps(workspaceId);
 
-    return addRoleIdsToFlatAgentChatChannel(
-      findFlatAgentChatChannelOrThrow(flatAgentChatChannelMaps, channelId),
+    return addRoleIdsToFlatAgentChatChannel({
+      channel: findFlatAgentChatChannelOrThrow({
+        flatAgentChatChannelMaps,
+        channelId,
+      }),
       flatAgentChatChannelRoleMaps,
-    );
+    });
   }
 
   async createChannel({
@@ -138,10 +144,10 @@ export class AgentChatChannelMetadataService {
       channelRolesToCreate: buildAgentChatChannelRolesToCreate({
         channelUniversalIdentifier,
         roleUniversalIdentifiers:
-          findAgentChatChannelRoleUniversalIdentifiersOrThrow(
-            channelMaps.flatRoleMaps,
+          findAgentChatChannelRoleUniversalIdentifiersOrThrow({
+            flatRoleMaps: channelMaps.flatRoleMaps,
             roleIds,
-          ),
+          }),
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         now,
@@ -169,10 +175,10 @@ export class AgentChatChannelMetadataService {
         { workspaceId },
       );
     const channelMaps = await this.getChannelMaps(workspaceId);
-    const channel = findFlatAgentChatChannelOrThrow(
-      channelMaps.flatAgentChatChannelMaps,
+    const channel = findFlatAgentChatChannelOrThrow({
+      flatAgentChatChannelMaps: channelMaps.flatAgentChatChannelMaps,
       channelId,
-    );
+    });
     const now = new Date().toISOString();
 
     const definedChanges = Object.fromEntries(
@@ -194,10 +200,10 @@ export class AgentChatChannelMetadataService {
       .filter(isDefined);
 
     const requestedRoleUniversalIdentifiers = isDefined(roleIds)
-      ? findAgentChatChannelRoleUniversalIdentifiersOrThrow(
-          channelMaps.flatRoleMaps,
+      ? findAgentChatChannelRoleUniversalIdentifiersOrThrow({
+          flatRoleMaps: channelMaps.flatRoleMaps,
           roleIds,
-        )
+        })
       : undefined;
 
     const channelRolesToDelete = isDefined(requestedRoleUniversalIdentifiers)
@@ -232,10 +238,10 @@ export class AgentChatChannelMetadataService {
       channelRolesToCreate.length === 0 &&
       channelRolesToDelete.length === 0
     ) {
-      return addRoleIdsToFlatAgentChatChannel(
+      return addRoleIdsToFlatAgentChatChannel({
         channel,
-        channelMaps.flatAgentChatChannelRoleMaps,
-      );
+        flatAgentChatChannelRoleMaps: channelMaps.flatAgentChatChannelRoleMaps,
+      });
     }
 
     await this.runMigration({
@@ -265,10 +271,10 @@ export class AgentChatChannelMetadataService {
       );
     const { flatAgentChatChannelMaps, flatAgentChatChannelRoleMaps } =
       await this.getChannelMaps(workspaceId);
-    const channel = findFlatAgentChatChannelOrThrow(
+    const channel = findFlatAgentChatChannelOrThrow({
       flatAgentChatChannelMaps,
       channelId,
-    );
+    });
 
     // The standard sync would bring a standard channel back
     if (!channel.isCustom) {
@@ -293,10 +299,10 @@ export class AgentChatChannelMetadataService {
         .filter(isDefined),
     });
 
-    return addRoleIdsToFlatAgentChatChannel(
+    return addRoleIdsToFlatAgentChatChannel({
       channel,
       flatAgentChatChannelRoleMaps,
-    );
+    });
   }
 
   private async getChannelMaps(workspaceId: string): Promise<ChannelMaps> {

@@ -7,10 +7,13 @@ import {
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 
-export const findAgentChatChannelRoleUniversalIdentifiersOrThrow = (
-  flatRoleMaps: FlatEntityMaps<FlatRole>,
-  roleIds: string[],
-): string[] =>
+export const findAgentChatChannelRoleUniversalIdentifiersOrThrow = ({
+  flatRoleMaps,
+  roleIds,
+}: {
+  flatRoleMaps: FlatEntityMaps<FlatRole>;
+  roleIds: string[];
+}): string[] =>
   [...new Set(roleIds)].map((roleId) => {
     const roleUniversalIdentifier =
       flatRoleMaps.universalIdentifierById[roleId];
