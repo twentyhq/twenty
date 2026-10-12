@@ -439,6 +439,15 @@ export const ControlledValue: Story = {
     await expect(event.isFlush).toBe(false);
     handleChange.mockClear();
     await userEvent.click(
+      canvas.getByRole('button', { name: 'Append controlled value' }),
+    );
+    await waitForCodeEditorContent({
+      canvasElement,
+      expectedContent: 'xInitial controlled value (updated)',
+    });
+    await expect(editor.getModel()).toBe(model);
+    await expect(handleChange).not.toHaveBeenCalled();
+    await userEvent.click(
       canvas.getByRole('button', { name: 'Replace controlled value' }),
     );
     await waitForCodeEditorContent({
