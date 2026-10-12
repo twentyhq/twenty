@@ -48,19 +48,17 @@ export class ApplicationPreferencesService {
       );
 
     return sortedInstalledFlatApplications
-      .map(
-        ({ id: applicationId }): ApplicationPreferencesDTO => ({
+      .map(({ id: applicationId }): ApplicationPreferencesDTO => ({
+        applicationId,
+        settingsMenuItems: findFlatEntitiesByApplicationId({
+          flatEntityMaps: flatSettingsMenuItemMaps,
           applicationId,
-          settingsMenuItems: findFlatEntitiesByApplicationId({
-            flatEntityMaps: flatSettingsMenuItemMaps,
-            applicationId,
-          })
-            .filter(({ scope }) => scope === 'USER')
-            .map(fromFlatSettingsMenuItemToSettingsMenuItemDto),
-          variables:
-            myUserApplicationVariableValuesByApplicationId[applicationId],
-        }),
-      )
+        })
+          .filter(({ scope }) => scope === 'USER')
+          .map(fromFlatSettingsMenuItemToSettingsMenuItemDto),
+        variables:
+          myUserApplicationVariableValuesByApplicationId[applicationId],
+      }))
       .filter(
         ({ settingsMenuItems, variables }) =>
           isNonEmptyArray(settingsMenuItems) || isNonEmptyArray(variables),

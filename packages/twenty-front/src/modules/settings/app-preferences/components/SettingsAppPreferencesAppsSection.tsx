@@ -15,13 +15,11 @@ export const SettingsAppPreferencesAppsSection = () => {
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
 
   const apps: AppPreferencesApp[] = [
-    ...enabledNativeAccountApps.map(
-      (nativeAccountApp): AppPreferencesApp => ({
-        type: 'native',
-        id: nativeAccountApp.id,
-        nativeAccountApp,
-      }),
-    ),
+    ...enabledNativeAccountApps.map((nativeAccountApp): AppPreferencesApp => ({
+      type: 'native',
+      id: nativeAccountApp.id,
+      nativeAccountApp,
+    })),
     ...applicationsWithPreferences.map(
       (applicationWithPreferences): AppPreferencesApp => ({
         type: 'installed',
