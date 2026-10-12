@@ -133,9 +133,10 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 - **`USER`** — configured by each member for themselves, under their own user settings.
 
 <Note>
-  `USER` items are not displayed yet. Until their placement under the member's
-  own settings lands, a `USER` item is persisted and synced but nothing renders
-  it.
+  A `USER` item renders as a tab on the app's page under **Settings > App
+  preferences**, where only the signed-in member sees it. That page is not
+  enabled in every workspace yet: where it is not, a `USER` item is persisted
+  and synced but nothing renders it.
 </Note>
 
 A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value. Your component cannot save it: `updateMyUserApplicationVariable` refuses application tokens, so each member sets their own value through their session, as described in [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables). A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
