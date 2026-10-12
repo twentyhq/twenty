@@ -10,10 +10,6 @@ import { findAgentChatChannelRoleUniversalIdentifiersOrThrow } from 'src/engine/
 import { findFlatAgentChatChannelOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-flat-agent-chat-channel-or-throw.util';
 import { validateAgentChatChannelNameOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/validate-agent-chat-channel-name-or-throw.util';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatAgentChatChannelRole } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/types/flat-agent-chat-channel-role.type';
 import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agent-chat-channel/types/flat-agent-chat-channel.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -275,14 +271,6 @@ export class AgentChatChannelMetadataService {
       flatAgentChatChannelMaps,
       channelId,
     });
-
-    // The standard sync would bring a standard channel back
-    if (!channel.isCustom) {
-      throw new AiException(
-        'A standard channel cannot be deleted',
-        AiExceptionCode.CHAT_CHANNEL_MANAGEMENT_FORBIDDEN,
-      );
-    }
 
     await this.runMigration({
       workspaceId,

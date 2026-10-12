@@ -138,10 +138,18 @@ export class AgentChatChannelService {
     channelId: string;
     destinationChannelId: string | null;
   }): Promise<void> {
-    await this.channelMetadataService.findChannelOrThrow({
+    const channel = await this.channelMetadataService.findChannelOrThrow({
       workspaceId,
       channelId,
     });
+
+    // The standard sync would bring a standard channel back, so its chats stay
+    if (!channel.isCustom) {
+      throw new AiException(
+        'A standard channel cannot be deleted',
+        AiExceptionCode.CHAT_CHANNEL_MANAGEMENT_FORBIDDEN,
+      );
+    }
 
     if (isDefined(destinationChannelId)) {
       if (destinationChannelId === channelId) {
