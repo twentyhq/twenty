@@ -110,7 +110,7 @@ export const AiChatThreadDetailsDropdown = ({
     });
   };
 
-  if (!isAiChatInboxEnabled && !areRecordTargetsAvailable) {
+  if (!isAiChatInboxEnabled) {
     return null;
   }
 

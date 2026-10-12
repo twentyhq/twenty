@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { buildRecordValidationRuleViolationsMessage } from 'src/engine/metadata-modules/validation-rule/utils/build-record-validation-rule-violations-message.util';
 
 describe('buildRecordValidationRuleViolationsMessage', () => {

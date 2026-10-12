@@ -39,6 +39,10 @@ describe('Workflow version malformed validation (e2e)', () => {
     id: string;
     settings: { input: Record<string, unknown> };
   };
+  let sendEmailStep: {
+    id: string;
+    settings: { input: Record<string, unknown> };
+  };
 
   beforeAll(async () => {
     const createdCoreWorkflow = await createCoreWorkflow({
@@ -64,6 +68,12 @@ describe('Workflow version malformed validation (e2e)', () => {
       stepType: 'CREATE_RECORD',
     });
 
+    sendEmailStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'SEND_EMAIL',
+      position: { x: 400, y: 0 },
+    });
+
     const coreWorkflowVersion = await findCoreWorkflowVersion({
       coreWorkflowVersionId,
     });
@@ -73,6 +83,46 @@ describe('Workflow version malformed validation (e2e)', () => {
 
   afterAll(async () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
+  });
+
+  const sendEmailStepWithBody = (body: string) => ({
+    ...sendEmailStep,
+    settings: {
+      ...sendEmailStep.settings,
+      input: { ...sendEmailStep.settings.input, body },
+    },
+  });
+
+  it('rejects an email body saved as HTML or plain text', async () => {
+    for (const body of ['<p>Hello</p>', 'Hello {{trigger.name}},\n\nBye']) {
+      const response = await updateStepResponse(
+        coreWorkflowVersionId,
+        sendEmailStepWithBody(body),
+      );
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+      expect(response.body.errors[0].message).toContain(
+        'must be a serialized email document',
+      );
+    }
+  });
+
+  it('accepts an email body saved as an email document', async () => {
+    const response = await updateStepResponse(
+      coreWorkflowVersionId,
+      sendEmailStepWithBody(
+        JSON.stringify({
+          type: 'doc',
+          attrs: { schemaVersion: 1 },
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] },
+          ],
+        }),
+      ),
+    );
+
+    expect(response.body.errors).toBeUndefined();
   });
 
   const stepWithInput = (input: Record<string, unknown>) => ({

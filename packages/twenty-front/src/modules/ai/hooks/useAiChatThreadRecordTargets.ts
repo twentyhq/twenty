@@ -33,8 +33,8 @@ export const useAiChatThreadRecordTargets = ({
   threadId: string;
   recordPickerInstanceId: string;
 }) => {
-  const isConversationsTabEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMorphJunctionConfig = useObjectMorphJunctionConfig({
@@ -61,7 +61,7 @@ export const useAiChatThreadRecordTargets = ({
   );
 
   const isThreadQuerySkipped =
-    !isConversationsTabEnabled || !isDefined(junctionConfig);
+    !isAiChatInboxEnabled || !isDefined(junctionConfig);
 
   const { record: thread, refetch } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.AgentChatThread,
