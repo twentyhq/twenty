@@ -1,31 +1,37 @@
 import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
-import { type EditorProps, type Monaco } from '@monaco-editor/react';
-import { type editor } from 'monaco-editor';
+import { type SettingsLogicFunctionCodeEditorFile } from '@/settings/logic-functions/types/SettingsLogicFunctionCodeEditorFile';
+import { getSettingsLogicFunctionCodeEditorModelPath } from '@/settings/logic-functions/utils/getSettingsLogicFunctionCodeEditorModelPath';
 import { AutoTypings } from 'monaco-editor-auto-typings';
+import { createElement } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/components/code-editor';
+import {
+  CodeEditor,
+  type CodeEditorProps,
+} from 'twenty-ui/components/code-editor';
 
-export type File = {
-  language: string;
-  content: string;
-  path: string;
-};
-
-type SettingsLogicFunctionCodeEditorProps = Omit<EditorProps, 'onChange'> & {
+type SettingsLogicFunctionCodeEditorProps = Omit<
+  CodeEditorProps,
+  | 'value'
+  | 'defaultValue'
+  | 'language'
+  | 'defaultLanguage'
+  | 'path'
+  | 'defaultPath'
+> & {
   currentFilePath: string;
-  files: File[];
-  onChange: (value: string) => void;
+  files: SettingsLogicFunctionCodeEditorFile[];
   applicationVariableKeys?: string[];
 };
 
 export const SettingsLogicFunctionCodeEditor = ({
   currentFilePath,
   files,
-  onChange,
+  onMount,
   height = 450,
-  options = undefined,
+  variant = 'with-header',
   applicationVariableKeys,
+  ...codeEditorProps
 }: SettingsLogicFunctionCodeEditorProps) => {
   const { logicFunctionId = '' } = useParams();
   const { availablePackages } = useGetAvailablePackages({
@@ -34,22 +40,23 @@ export const SettingsLogicFunctionCodeEditor = ({
 
   const currentFile = files.find((file) => file.path === currentFilePath);
 
-  const handleEditorDidMount = async (
-    editor: editor.IStandaloneCodeEditor,
-    monaco: Monaco,
+  const handleEditorDidMount: NonNullable<CodeEditorProps['onMount']> = async (
+    editor,
+    monaco,
   ) => {
+    onMount?.(editor, monaco);
+
     if (files.length > 1) {
-      files.forEach((file) => {
-        const model = monaco.editor.getModel(monaco.Uri.file(file.path));
+      for (const file of files) {
+        const modelUri = monaco.Uri.parse(
+          getSettingsLogicFunctionCodeEditorModelPath(file.path),
+        );
+        const model = monaco.editor.getModel(modelUri);
 
         if (!isDefined(model)) {
-          monaco.editor.createModel(
-            file.content,
-            file.language,
-            monaco.Uri.file(file.path),
-          );
+          monaco.editor.createModel(file.content, file.language, modelUri);
         }
-      });
+      }
 
       monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
         ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
@@ -106,16 +113,15 @@ export const SettingsLogicFunctionCodeEditor = ({
 
   return (
     isDefined(currentFile) &&
-    isDefined(availablePackages) && (
-      <CodeEditor
-        height={height}
-        value={currentFile.content}
-        language={currentFile.language}
-        onMount={handleEditorDidMount}
-        onChange={onChange}
-        options={options}
-        variant="with-header"
-      />
-    )
+    isDefined(availablePackages) &&
+    createElement(CodeEditor, {
+      ...codeEditorProps,
+      height,
+      value: currentFile.content,
+      language: currentFile.language,
+      path: getSettingsLogicFunctionCodeEditorModelPath(currentFile.path),
+      onMount: handleEditorDidMount,
+      variant,
+    })
   );
 };

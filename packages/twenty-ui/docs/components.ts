@@ -782,6 +782,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/code-editor',
     slug: 'components/code-editor/code-editor',
     propDescriptions: CODE_EDITOR_PROP_DESCRIPTIONS,
+    propDefaults: { theme: 'Twenty theme', saveViewState: 'true' },
   },
   {
     name: 'CodeEditorHeader',
