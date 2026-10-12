@@ -6,9 +6,11 @@ import { captureCodeInterpreterSandboxToken } from 'test/integration/graphql/sui
 import { listMcpTools } from 'test/integration/graphql/suites/user-session/utils/list-mcp-tools.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { createFileUploadMutation } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithResources,
+  DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
   setupApplicationWithResources,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
@@ -16,8 +18,10 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 type GlobalTestContext = {
@@ -26,6 +30,7 @@ type GlobalTestContext = {
   agentUniversalIdentifier: string;
   applicationRoleId: string;
   applicationToken: string;
+  attachmentFileFieldMetadataId: string;
 };
 
 const captureSandboxTokenForAgentRun = async ({
@@ -74,6 +79,26 @@ const canFindRecordsThroughMcp = async ({
   return !result.isError && JSON.parse(result.content[0].text).success === true;
 };
 
+const createAttachmentFileUpload = ({
+  globalTestContext,
+  token,
+}: {
+  globalTestContext: GlobalTestContext;
+  token: string;
+}) =>
+  makeMetadataApiRequest(
+    {
+      query: createFileUploadMutation,
+      variables: {
+        filename: 'agent-role-restriction.txt',
+        size: 10,
+        fileFolder: 'FilesField',
+        fieldMetadataId: globalTestContext.attachmentFileFieldMetadataId,
+      },
+    },
+    token,
+  );
+
 const findRecordsThroughGraphql = ({
   objectMetadataSingularName,
   objectMetadataPluralName,
@@ -93,7 +118,7 @@ const findRecordsThroughGraphql = ({
     token,
   );
 
-// The application and the member can read people, the agent's role only companies
+// The application and the member can read people and the application can upload files; the agent's role only reads companies
 describe('Code interpreter sandbox token beyond the agent role should be refused', () => {
   let application: ApplicationWithResources;
   let globalTestContext: GlobalTestContext;
@@ -102,6 +127,10 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
     application = await setupApplicationWithResources({
       name: 'Agent Role Restriction Probe',
       canReadAndUpdateAllObjectRecords: true,
+      permissionFlagUniversalIdentifiers: [
+        ...DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
+        SystemPermissionFlag.UPLOAD_FILE,
+      ],
     });
 
     const [{ universalIdentifier: agentUniversalIdentifier }] =
@@ -162,12 +191,23 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
       applicationId: application.id,
     });
 
+    const [{ id: attachmentFileFieldMetadataId }] =
+      await globalThis.testDataSource.query(
+        `SELECT "fieldMetadata".id FROM core."fieldMetadata"
+          JOIN core."objectMetadata" ON "objectMetadata".id = "fieldMetadata"."objectMetadataId"
+          WHERE "objectMetadata"."nameSingular" = 'attachment'
+            AND "fieldMetadata".name = 'file'
+            AND "fieldMetadata"."workspaceId" = $1`,
+        [SEED_APPLE_WORKSPACE_ID],
+      );
+
     globalTestContext = {
       agentId: application.agentId,
       agentRoleId,
       agentUniversalIdentifier,
       applicationRoleId,
       applicationToken: applicationAccessToken.token,
+      attachmentFileFieldMetadataId,
     };
   }, 120000);
 
@@ -268,5 +308,36 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
         toolName: 'find_many_people',
       }),
     ).toBe(false);
+  });
+
+  it('should let the application own run upload a file when no agent restricts it', async () => {
+    const sandboxToken = await captureSandboxTokenForAgentRun({
+      globalTestContext,
+      token: globalTestContext.applicationToken,
+      isAgentPassed: false,
+    });
+
+    const response = await createAttachmentFileUpload({
+      globalTestContext,
+      token: sandboxToken,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+  });
+
+  it('should refuse a file upload from the application own run when the agent role lacks the permission', async () => {
+    const sandboxToken = await captureSandboxTokenForAgentRun({
+      globalTestContext,
+      token: globalTestContext.applicationToken,
+    });
+
+    const response = await createAttachmentFileUpload({
+      globalTestContext,
+      token: sandboxToken,
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe(
+      ErrorCode.FORBIDDEN,
+    );
   });
 });

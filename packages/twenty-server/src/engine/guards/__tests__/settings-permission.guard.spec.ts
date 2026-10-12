@@ -9,6 +9,8 @@ import {
 } from 'twenty-shared/constants';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import {
   PermissionsException,
@@ -229,18 +231,27 @@ describe('SettingsPermissionGuard', () => {
       });
     });
 
+    const canActivateForAgentRole = (agentRoleId: string | null) =>
+      withWorkspaceAuthContext(
+        {
+          type: 'application',
+          workspace: { id: 'workspace-id' },
+          application: { id: 'application-id' },
+          agentRoleRestriction: { agentId: 'agent-id', roleId: agentRoleId },
+        } as unknown as WorkspaceAuthContext,
+        () => guard.canActivate(mockExecutionContext),
+      );
+
     it('should allow when both the application and the agent roles grant the setting', async () => {
       mockCache({
         defaultRoleId: 'role-id',
         canUpdateAllSettings: true,
         canAgentRoleUpdateAllSettings: true,
       });
-      mockGqlContext.req.agentRoleRestriction = {
-        agentId: 'agent-id',
-        roleId: 'agent-role-id',
-      };
 
-      await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(true);
+      await expect(canActivateForAgentRole('agent-role-id')).resolves.toBe(
+        true,
+      );
     });
 
     it.each([
@@ -250,13 +261,9 @@ describe('SettingsPermissionGuard', () => {
       'should deny with PERMISSION_DENIED a setting the application grants when $title',
       async ({ agentRoleId }) => {
         mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
-        mockGqlContext.req.agentRoleRestriction = {
-          agentId: 'agent-id',
-          roleId: agentRoleId,
-        };
 
         await expect(
-          guard.canActivate(mockExecutionContext),
+          canActivateForAgentRole(agentRoleId),
         ).rejects.toMatchObject({
           code: PermissionsExceptionCode.PERMISSION_DENIED,
         });
