@@ -21,6 +21,7 @@ import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget'
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -264,6 +265,40 @@ const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
+const COMPANY_PEOPLE_TOTAL_COUNT = 836;
+
+const enrichedPersonObjectMetadataItem =
+  getTestEnrichedObjectMetadataItemsMock().find(
+    ({ nameSingular }) => nameSingular === CoreObjectNameSingular.Person,
+  );
+
+if (!enrichedPersonObjectMetadataItem) {
+  throw new Error('Person object metadata item not found');
+}
+
+const JestMetadataAndApolloMocksWithPeopleCountWrapper =
+  getJestMetadataAndApolloMocksWrapper({
+    apolloMocks: [
+      {
+        request: {
+          query: generateAggregateQuery({
+            objectMetadataItem: enrichedPersonObjectMetadataItem,
+            recordGqlFields: { totalCount: true },
+          }),
+          variables: { filter: { companyId: { in: [TEST_RECORD_ID] } } },
+        },
+        result: {
+          data: {
+            people: {
+              __typename: 'PersonConnection',
+              totalCount: COMPANY_PEOPLE_TOTAL_COUNT,
+            },
+          },
+        },
+      },
+    ],
+  });
+
 const CoreClientProviderWrapper = ({
   children,
 }: {
@@ -363,6 +398,7 @@ type FieldWidgetStorySetup = {
   objectMetadataId: string;
   targetRecord: { id: string; nameSingular: string };
   records: Array<{ id: string; record: ObjectRecord }>;
+  MetadataAndApolloMocksWrapper?: typeof JestMetadataAndApolloMocksWrapper;
 };
 
 const renderFieldWidgetStory = ({
@@ -370,6 +406,7 @@ const renderFieldWidgetStory = ({
   objectMetadataId,
   targetRecord,
   records,
+  MetadataAndApolloMocksWrapper = JestMetadataAndApolloMocksWrapper,
 }: FieldWidgetStorySetup) => {
   setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
@@ -393,7 +430,7 @@ const renderFieldWidgetStory = ({
 
   return (
     <div style={{ width: '400px', padding: '20px' }}>
-      <JestMetadataAndApolloMocksWrapper>
+      <MetadataAndApolloMocksWrapper>
         <CoreClientProviderWrapper>
           <PageLayoutTestWrapper store={jotaiStore}>
             <LayoutRenderingProvider
@@ -421,7 +458,7 @@ const renderFieldWidgetStory = ({
             </LayoutRenderingProvider>
           </PageLayoutTestWrapper>
         </CoreClientProviderWrapper>
-      </JestMetadataAndApolloMocksWrapper>
+      </MetadataAndApolloMocksWrapper>
     </div>
   );
 };
@@ -1013,6 +1050,57 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
     expect(
       canvas.queryByTestId('field-widget-show-more-button'),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const OneToManyRelationCardWidgetCountsUnloadedRecords: Story = {
+  render: () => {
+    const mockPeople = generateMockPersonRecords(12);
+    const companyWithManyPeople = {
+      ...mockCompanyRecord,
+      people: mockPeople.map(({ id, __typename, name }) => ({
+        __typename,
+        id,
+        name,
+      })),
+    };
+
+    return renderFieldWidgetStory({
+      widget: buildFieldWidget({
+        id: 'widget-one-to-many-relation-card-unloaded-records',
+        title: 'People',
+        objectMetadataId: companyObjectMetadataItem.id,
+        fieldMetadataId: companyPeopleField.id,
+        fieldDisplayMode: FieldDisplayMode.CARD,
+      }),
+      objectMetadataId: companyObjectMetadataItem.id,
+      targetRecord: companyTargetRecord,
+      records: [
+        { id: TEST_RECORD_ID, record: companyWithManyPeople },
+        ...mockPeople.map((person) => ({ id: person.id, record: person })),
+      ],
+      MetadataAndApolloMocksWrapper:
+        JestMetadataAndApolloMocksWithPeopleCountWrapper,
+    });
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Jane Smith 1');
+
+    await waitFor(() => {
+      expect(
+        canvas.getByTestId('field-widget-show-more-button'),
+      ).toHaveTextContent('More (831)');
+    });
+
+    await userEvent.click(canvas.getByTestId('field-widget-show-more-button'));
+    await userEvent.click(canvas.getByTestId('field-widget-show-more-button'));
+
+    expect(await canvas.findByText('Jack White 12')).toBeVisible();
+    expect(
+      canvas.getByTestId('field-widget-show-more-button'),
+    ).toHaveTextContent('More (824)');
   },
 };
 

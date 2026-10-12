@@ -6,6 +6,7 @@ import { FormFieldInput } from '@/object-record/record-field/ui/components/FormF
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
 import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ValidationRuleViolation } from '@/validation-rules/types/ValidationRuleViolation';
 import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 import { type JsonValue } from 'type-fest';
@@ -18,10 +19,20 @@ const StyledFieldList = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
+const StyledFieldViolation = styled.div`
+  color: ${themeCssVariables.font.color.danger};
+  font-size: ${themeCssVariables.font.size.xs};
+  margin-top: ${themeCssVariables.spacing[0.5]};
+`;
+
 type RecordFormFieldInputsProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   fieldMetadataItems: FieldMetadataItem[];
   draftRecord: Partial<ObjectRecord>;
+  validationRuleViolationsByFieldMetadataId?: Record<
+    string,
+    ValidationRuleViolation[]
+  >;
   onFieldValueChange: (gqlFieldName: string, value: JsonValue) => void;
   onFieldValueClear: (gqlFieldName: string) => void;
 };
@@ -30,6 +41,7 @@ export const RecordFormFieldInputs = ({
   objectMetadataItem,
   fieldMetadataItems,
   draftRecord,
+  validationRuleViolationsByFieldMetadataId = {},
   onFieldValueChange,
   onFieldValueClear,
 }: RecordFormFieldInputsProps) => {
@@ -75,22 +87,31 @@ export const RecordFormFieldInputs = ({
           getFieldMetadataItemGqlFieldName(fieldMetadataItem);
 
         return (
-          <FormFieldInput
-            key={fieldMetadataItem.id}
-            field={formatFieldMetadataItemAsFieldDefinition({
-              field: fieldMetadataItem,
-              objectMetadataItem,
-              showLabel: true,
-            })}
-            defaultValue={
-              Object.hasOwn(draftRecord, gqlFieldName)
-                ? draftRecord[gqlFieldName]
-                : getRecordFormCurrencyFieldDefaultValue(fieldMetadataItem)
-            }
-            onChange={(value) => onFieldValueChange(gqlFieldName, value)}
-            onClear={() => onFieldValueClear(gqlFieldName)}
-            settings={getRecordFormFieldInputSettings(fieldMetadataItem.type)}
-          />
+          <div key={fieldMetadataItem.id}>
+            <FormFieldInput
+              field={formatFieldMetadataItemAsFieldDefinition({
+                field: fieldMetadataItem,
+                objectMetadataItem,
+                showLabel: true,
+              })}
+              defaultValue={
+                Object.hasOwn(draftRecord, gqlFieldName)
+                  ? draftRecord[gqlFieldName]
+                  : getRecordFormCurrencyFieldDefaultValue(fieldMetadataItem)
+              }
+              onChange={(value) => onFieldValueChange(gqlFieldName, value)}
+              onClear={() => onFieldValueClear(gqlFieldName)}
+              settings={getRecordFormFieldInputSettings(fieldMetadataItem.type)}
+            />
+            {(
+              validationRuleViolationsByFieldMetadataId[fieldMetadataItem.id] ??
+              []
+            ).map((violation) => (
+              <StyledFieldViolation key={violation.ruleId} role="alert">
+                {violation.message}
+              </StyledFieldViolation>
+            ))}
+          </div>
         );
       })}
     </StyledFieldList>

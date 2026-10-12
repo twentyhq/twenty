@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';

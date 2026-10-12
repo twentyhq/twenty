@@ -322,14 +322,22 @@ export class UsageLimitStockService {
         (stockLimitDefaultDefinition) =>
           stockLimitDefaultDefinition.operationType === operationType,
       )
-      .map((stockLimitDefaultDefinition) => ({
-        spenderType: stockLimitDefaultDefinition.spenderType,
-        unit: stockLimitDefaultDefinition.unit,
-        isOverridable: stockLimitDefaultDefinition.isOverridable,
-        limitValue: this.twentyConfigService.get(
+      .flatMap((stockLimitDefaultDefinition) => {
+        const limitValue = this.twentyConfigService.get(
           stockLimitDefaultDefinition.limitValueConfigVariable,
-        ),
-      }));
+        );
+
+        return isDefined(limitValue)
+          ? [
+              {
+                spenderType: stockLimitDefaultDefinition.spenderType,
+                unit: stockLimitDefaultDefinition.unit,
+                isOverridable: stockLimitDefaultDefinition.isOverridable,
+                limitValue,
+              },
+            ]
+          : [];
+      });
   }
 
   private async readRemainings({

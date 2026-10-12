@@ -2,8 +2,8 @@ import { StyledComposerTextInput } from '@/activities/components/ComposerTextInp
 import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
 import { usePlaceAutocomplete } from '@/geo-map/hooks/usePlaceAutocomplete';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
-import { Autocomplete } from 'twenty-ui/primitives/input';
 import { isDefined } from 'twenty-shared/utils';
+import { Autocomplete } from 'twenty-ui/primitives/input';
 
 const CALENDAR_EVENT_LOCATION_AUTOCOMPLETE_DROPDOWN_ID =
   'calendar-event-location-autocomplete-dropdown';
