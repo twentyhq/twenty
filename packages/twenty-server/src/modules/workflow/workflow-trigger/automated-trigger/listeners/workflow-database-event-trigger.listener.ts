@@ -389,10 +389,12 @@ export class WorkflowDatabaseEventTriggerListener {
     }
 
     const workflowIdsWithInstalledApplication =
-      await this.findWorkflowIdsWithInstalledApplication(
+      await this.findWorkflowIdsWithInstalledApplication({
         workspaceId,
-        listenersToTrigger.map(({ eventListener }) => eventListener.workflowId),
-      );
+        workflowIds: listenersToTrigger.map(
+          ({ eventListener }) => eventListener.workflowId,
+        ),
+      });
 
     for (const { eventListener, eventPayloads } of listenersToTrigger) {
       if (!workflowIdsWithInstalledApplication.has(eventListener.workflowId)) {
@@ -415,10 +417,13 @@ export class WorkflowDatabaseEventTriggerListener {
     }
   }
 
-  private async findWorkflowIdsWithInstalledApplication(
-    workspaceId: string,
-    workflowIds: string[],
-  ): Promise<Set<string>> {
+  private async findWorkflowIdsWithInstalledApplication({
+    workspaceId,
+    workflowIds,
+  }: {
+    workspaceId: string;
+    workflowIds: string[];
+  }): Promise<Set<string>> {
     const [workflows, { flatApplicationMaps }] = await Promise.all([
       this.workflowRepository.find(workspaceId, {
         where: { id: In(workflowIds) },
