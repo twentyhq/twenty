@@ -23,7 +23,7 @@ export type FlatBillingSubscription = {
   trialStart: Date | null;
   trialEnd: Date | null;
   collectionMethod: BillingSubscriptionCollectionMethod;
-  planAllowanceMicro: number;
+  planAllowanceMicro: number | null;
   creditGrants: CreditAllowanceGrant[];
 };
 
