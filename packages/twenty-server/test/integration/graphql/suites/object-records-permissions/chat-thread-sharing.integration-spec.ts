@@ -511,20 +511,18 @@ describe('Conversation sharing through the authenticated API', () => {
             applicationId: null,
           },
         });
-        await expect(
-          actors.authorize({
-            workspaceId,
-            threadId,
-            sender: {
-              userWorkspaceId: sender.userWorkspaceId,
-              applicationId: null,
-            },
-          }),
-        ).resolves.toMatchObject({
-          rolePermissionConfig: {
-            intersectionOf: {
-              userWorkspaceRoleId: userWorkspaceRoleMap[sender.userWorkspaceId],
-            },
+        const senderAuthorization = await actors.authorize({
+          workspaceId,
+          threadId,
+          sender: {
+            userWorkspaceId: sender.userWorkspaceId,
+            applicationId: null,
+          },
+        });
+
+        expect(senderAuthorization?.rolePermissionConfig).toEqual({
+          intersectionOf: {
+            userWorkspaceRoleId: userWorkspaceRoleMap[sender.userWorkspaceId],
           },
         });
         await expect(

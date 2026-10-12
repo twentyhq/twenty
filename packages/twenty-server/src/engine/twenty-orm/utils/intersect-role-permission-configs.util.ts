@@ -20,6 +20,9 @@ const intersectRoleIds = (
   return left === right ? left : null;
 };
 
+const isEmptyIntersection = (roleIdsBySource: RoleIdsBySource): boolean =>
+  Object.values(roleIdsBySource).every((roleId) => roleId === undefined);
+
 export const intersectRolePermissionConfigs = (
   left: RolePermissionConfig | undefined,
   right: RolePermissionConfig | undefined,
@@ -30,6 +33,15 @@ export const intersectRolePermissionConfigs = (
 
   if (!isDefined(right) || 'shouldBypassPermissionChecks' in right) {
     return left;
+  }
+
+  // An empty intersection denies, so it must stay empty whatever the other side holds
+  if (isEmptyIntersection(left.intersectionOf)) {
+    return left;
+  }
+
+  if (isEmptyIntersection(right.intersectionOf)) {
+    return right;
   }
 
   const sources = new Set([

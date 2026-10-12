@@ -2,8 +2,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
-// Temporary: the workspace custom and Twenty standard applications have no role yet,
-// so acting with a member or an agent they must not restrict. Drop once they get one.
+// Temporary: an application without a role adds no restriction when it acts with a
+// member or an agent, which the workspace custom and Twenty standard applications rely on
+// until they get a role. It covers every application without a role, not only those two.
 export const resolveApplicationRoleId = ({
   application,
   isMissingApplicationRoleTolerated,

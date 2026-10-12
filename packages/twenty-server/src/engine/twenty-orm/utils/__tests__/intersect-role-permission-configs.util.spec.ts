@@ -73,6 +73,16 @@ describe('intersectRolePermissionConfigs', () => {
     ).toEqual({ intersectionOf: { agentRoleId: null } });
   });
 
+  it('keeps an empty intersection denying whatever the other side holds', () => {
+    const empty = { intersectionOf: {} };
+    const config = {
+      intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
+    };
+
+    expect(intersectRolePermissionConfigs(empty, config)).toEqual(empty);
+    expect(intersectRolePermissionConfigs(config, empty)).toEqual(empty);
+  });
+
   it('keeps an empty intersection empty', () => {
     expect(
       intersectRolePermissionConfigs(
