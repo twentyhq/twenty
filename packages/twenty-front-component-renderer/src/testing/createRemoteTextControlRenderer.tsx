@@ -19,6 +19,7 @@ import { workerInputSelectionStore } from '@/polyfills/input-selection/states/wo
 import { type WorkerInputSelectionStore } from '@/polyfills/input-selection/types/WorkerInputSelectionStore';
 import { installInputSelectionPolyfill } from '@/polyfills/input-selection/utils/installInputSelectionPolyfill';
 import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
+import { createHtmlHostWrapperWithDeferredEvents } from '@/testing/createHtmlHostWrapperWithDeferredEvents';
 
 export const createRemoteTextControlRenderer = () => {
   const mountedRoots: Root[] = [];
@@ -30,11 +31,13 @@ export const createRemoteTextControlRenderer = () => {
     type,
     selectionStore = workerInputSelectionStore,
     shouldReadBeforeConnect = true,
+    deferHostEvent,
   }: {
     htmlTag: 'input' | 'textarea';
     type?: string;
     selectionStore?: WorkerInputSelectionStore;
     shouldReadBeforeConnect?: boolean;
+    deferHostEvent?: (dispatchHostEvent: () => void) => void;
   }) => {
     const container = document.createElement('div');
     const remoteRoot = document.createElement(
@@ -53,6 +56,9 @@ export const createRemoteTextControlRenderer = () => {
       batch: scheduleBatch,
     });
     const remoteMutationObserver = new RemoteMutationObserver(connection);
+    const HostControl = isDefined(deferHostEvent)
+      ? createHtmlHostWrapperWithDeferredEvents({ htmlTag, deferHostEvent })
+      : createHtmlHostWrapper(htmlTag);
 
     document.body.append(container, remoteRoot);
     mountedRoots.push(root);
@@ -86,10 +92,7 @@ export const createRemoteTextControlRenderer = () => {
           receiver={receiver}
           components={
             new Map([
-              [
-                `html-${htmlTag}`,
-                createRemoteComponentRenderer(createHtmlHostWrapper(htmlTag)),
-              ],
+              [`html-${htmlTag}`, createRemoteComponentRenderer(HostControl)],
               [
                 'html-div',
                 createRemoteComponentRenderer(createHtmlHostWrapper('div')),

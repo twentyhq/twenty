@@ -1,3 +1,4 @@
+import { badgeTest } from '@/__stories__/twenty-ui-gallery/utils/badgeTest';
 import { currencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/currencyPickerTest';
 import { dropdownTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownTest';
 import { phoneCountryPickerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTest';
@@ -16,6 +17,7 @@ import { progressTest } from '@/__stories__/twenty-ui-gallery/utils/progressTest
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { numberStepperTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperTest';
 import { numberStepperSelectionTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSelectionTest';
+import { numberFieldTest } from '@/__stories__/twenty-ui-gallery/utils/numberFieldTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { layoutTest } from '@/__stories__/twenty-ui-gallery/utils/layoutTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
@@ -47,7 +49,6 @@ import {
   displayHelpersTest,
   galleryRenderTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
-import { menuTest } from '@/__stories__/twenty-ui-gallery/utils/menuTest';
 import { popoverTest } from '@/__stories__/twenty-ui-gallery/utils/popoverTest';
 import { selectTest } from '@/__stories__/twenty-ui-gallery/utils/selectTest';
 import { switchTest } from '@/__stories__/twenty-ui-gallery/utils/switchTest';
@@ -89,6 +90,18 @@ export const DataDisplayPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'preact',
   play: commandBlockTest,
+});
+
+export const BadgeReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-badge',
+  runtime: 'react',
+  play: badgeTest,
+});
+
+export const BadgePreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-badge',
+  runtime: 'preact',
+  play: badgeTest,
 });
 
 export const FeedbackReact: Story = createGalleryStory({
@@ -158,6 +171,18 @@ export const NumberStepperSelectionPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-number-stepper',
   runtime: 'preact',
   play: numberStepperSelectionTest,
+});
+
+export const NumberFieldReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-field',
+  runtime: 'react',
+  play: numberFieldTest,
+});
+
+export const NumberFieldPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-field',
+  runtime: 'preact',
+  play: numberFieldTest,
 });
 
 export const JsonVisualizerReact: Story = createGalleryStory({
@@ -372,17 +397,6 @@ export const TooltipPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tooltip',
   runtime: 'preact',
   play: tooltipEscapeDismissalTest,
-});
-
-export const MenuReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-menu',
-  runtime: 'react',
-  play: menuTest,
-});
-export const MenuPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-menu',
-  runtime: 'preact',
-  play: menuTest,
 });
 
 export const PortalBoundsReact: Story = createGalleryStory({

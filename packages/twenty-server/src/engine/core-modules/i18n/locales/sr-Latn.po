@@ -12521,7 +12521,7 @@ msgstr "Radni tok referencira metapodatke koji nisu dostupni ovoj aplikaciji."
 #. js-lingui-id: W+A2pa
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
 msgid "The workflow schedule is invalid."
-msgstr ""
+msgstr "Raspored toka rada nije važeći."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts

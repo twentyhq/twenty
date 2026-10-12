@@ -12521,7 +12521,7 @@ msgstr "工作流程參照了此應用程式無法使用的中繼資料。"
 #. js-lingui-id: W+A2pa
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
 msgid "The workflow schedule is invalid."
-msgstr ""
+msgstr "工作流程排程無效。"
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
