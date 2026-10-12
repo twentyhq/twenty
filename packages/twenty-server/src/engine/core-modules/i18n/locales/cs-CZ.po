@@ -6778,18 +6778,6 @@ msgctxt "fieldMetadata.label"
 msgid "Is Full Day"
 msgstr "Je celodenní"
 
-#. js-lingui-id: tiNFAr
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Is Hidden"
-msgstr "Je skryté"
-
-#. js-lingui-id: q42yQK
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Is Hidden"
-msgstr "Je skryté"
-
 #. js-lingui-id: fenRdq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -7059,18 +7047,6 @@ msgstr "ID poslední publikované verze"
 msgctxt "fieldMetadata.label"
 msgid "Last read at"
 msgstr "Naposledy přečteno v"
-
-#. js-lingui-id: 2zq4LZ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Last Stream Error"
-msgstr "Poslední chyba streamu"
-
-#. js-lingui-id: 9/jQvG
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Last Stream Error"
-msgstr "Poslední chyba streamu"
 
 #. js-lingui-id: 94QD51
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -10874,18 +10850,6 @@ msgctxt "fieldMetadata.label"
 msgid "Sender application ID"
 msgstr "ID aplikace odesílatele"
 
-#. js-lingui-id: kfnrYJ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Sender workspace membership ID"
-msgstr "ID členství odesílatele v pracovním prostoru"
-
-#. js-lingui-id: YDV32g
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Sender workspace membership ID"
-msgstr "ID členství odesílatele v pracovním prostoru"
-
 #. js-lingui-id: ZYK68w
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -14253,18 +14217,6 @@ msgstr "Časové pásmo uživatele"
 #: src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util.ts
 msgid "User was not created with email/password"
 msgstr "Uživatel nebyl vytvořen s e-mailem/heslem"
-
-#. js-lingui-id: 2S1QaS
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "User Workspace ID"
-msgstr "ID pracovního prostoru uživatele"
-
-#. js-lingui-id: UBndQ2
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "User Workspace ID"
-msgstr "ID pracovního prostoru uživatele"
 
 #. js-lingui-id: lUEEso
 #: src/engine/core-modules/auth/auth.exception.ts
