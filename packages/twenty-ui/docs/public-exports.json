@@ -79,7 +79,8 @@
       "ToastOptions": "components/feedback/Toast/types/ToastOptions",
       "ToastProps": "components/feedback/Toast/types/ToastProps",
       "ToastProviderProps": "components/feedback/Toast/types/ToastProviderProps",
-      "ToastVariant": "components/feedback/Toast/types/ToastVariant"
+      "ToastStatus": "components/feedback/Toast/types/ToastStatus",
+      "ToastUpdate": "components/feedback/Toast/types/ToastUpdate"
     }
   },
   "components/input": {

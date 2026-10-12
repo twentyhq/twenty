@@ -85,7 +85,7 @@ export const FilesFieldInput = () => {
           files.length > 0
         ) {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`Cannot upload more than ${maxNumberOfValues} files`,
           });
           return;

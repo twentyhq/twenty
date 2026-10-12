@@ -57,11 +57,11 @@ const SettingsObjectNewValidationRuleForm = ({
           input: { objectMetadataId: objectMetadataItem.id, ...values },
         },
       });
-      enqueueToast({ variant: 'success', children: t`Rule created.` });
+      enqueueToast({ status: 'success', children: t`Rule created.` });
       navigateToObjectValidationRules();
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           getValidationRuleSaveErrorMessage(error) ??
           t`Failed to create the rule.`,

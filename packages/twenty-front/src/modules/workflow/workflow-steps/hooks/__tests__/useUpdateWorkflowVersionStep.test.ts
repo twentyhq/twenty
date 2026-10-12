@@ -230,7 +230,7 @@ describe('useUpdateWorkflowVersionStep', () => {
     );
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        variant: 'error',
+        status: 'error',
         children: 'Core save failed',
       }),
     );

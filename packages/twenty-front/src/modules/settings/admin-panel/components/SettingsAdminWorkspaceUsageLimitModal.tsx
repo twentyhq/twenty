@@ -141,7 +141,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Limit saved for this workspace.`,
       });
       handleClose();
@@ -162,7 +162,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
 
       if (data?.deleteWorkspaceUsageLimit !== true) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`This override no longer exists. Reload to see the current limit.`,
         });
         handleClose();
@@ -171,7 +171,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Limit reset to the default.`,
       });
       handleClose();

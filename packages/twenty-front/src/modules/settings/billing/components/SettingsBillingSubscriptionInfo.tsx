@@ -354,9 +354,9 @@ export const SettingsBillingSubscriptionInfo = ({
     try {
       await action();
 
-      enqueueToast({ variant: 'success', children: getSuccessMessage() });
+      enqueueToast({ status: 'success', children: getSuccessMessage() });
     } catch (error) {
-      enqueueToast({ variant: 'error', children: getErrorMessage() });
+      enqueueToast({ status: 'error', children: getErrorMessage() });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;

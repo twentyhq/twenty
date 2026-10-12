@@ -67,11 +67,11 @@ export const SettingsValidationRuleEditForm = ({
       await updateValidationRule({
         variables: { input: { id: validationRule.id, update: values } },
       });
-      enqueueToast({ variant: 'success', children: t`Rule updated.` });
+      enqueueToast({ status: 'success', children: t`Rule updated.` });
       navigateToObjectValidationRules();
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           getValidationRuleSaveErrorMessage(error) ??
           t`Failed to update the rule.`,
@@ -87,13 +87,13 @@ export const SettingsValidationRuleEditForm = ({
         variables: { input: { id: validationRule.id, update: { isActive } } },
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: isActive ? t`Rule enabled.` : t`Rule disabled.`,
       });
       navigateToObjectValidationRules();
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           getValidationRuleSaveErrorMessage(error) ??
           t`Failed to update the rule.`,
@@ -104,11 +104,11 @@ export const SettingsValidationRuleEditForm = ({
   const handleDelete = async () => {
     try {
       await deleteValidationRule({ variables: { id: validationRule.id } });
-      enqueueToast({ variant: 'success', children: t`Rule deleted.` });
+      enqueueToast({ status: 'success', children: t`Rule deleted.` });
       navigateToObjectValidationRules();
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to delete the rule.`,
       });
     } finally {

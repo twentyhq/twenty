@@ -136,13 +136,13 @@ export const EnterprisePlanModal = () => {
         closeDialog(ENTERPRISE_PLAN_MODAL_ID);
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Could not open Stripe. Please contact support.`,
         });
       }
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)
           : t`Error opening Stripe`,

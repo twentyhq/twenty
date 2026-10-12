@@ -41,13 +41,13 @@ export const UpdatePaymentMethodModal = ({
     markBillingPaymentMethodAsAdded();
 
     if (!isSubscriptionPaymentOverdue(subscriptionStatus)) {
-      enqueueToast({ variant: 'success', children: t`Payment method added.` });
+      enqueueToast({ status: 'success', children: t`Payment method added.` });
 
       return;
     }
 
     enqueueToast({
-      variant: 'info',
+      status: 'info',
       children: t`Payment method added. Retrying your payment...`,
     });
 

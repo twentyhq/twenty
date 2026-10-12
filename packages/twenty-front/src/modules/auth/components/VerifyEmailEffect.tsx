@@ -54,7 +54,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
     const verifyEmailToken = async () => {
       if (!email || !emailVerificationToken) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Invalid email verification link.`,
           dedupeKey: 'email-verification-link-dedupe-key',
         });
@@ -62,7 +62,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
       }
 
       const successToastOptions = {
-        variant: 'success',
+        status: 'success',
         children: t`Email verified.`,
         dedupeKey: 'email-verification-dedupe-key',
       } satisfies ToastOptions;
@@ -106,7 +106,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
                 dedupeKey: EMAIL_VERIFICATION_ERROR_DEDUPE_KEY,
               })
             : {
-                variant: 'error',
+                status: 'error',
                 children: t`Email verification failed`,
                 dedupeKey: EMAIL_VERIFICATION_ERROR_DEDUPE_KEY,
               },

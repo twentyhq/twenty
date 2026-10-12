@@ -17,7 +17,7 @@ const ToastCountdownExample = () => {
       </Button>
       {isVisible && (
         <Toast
-          variant="success"
+          status="success"
           duration={1200}
           onClose={() => {
             setCloseCount((count) => count + 1);

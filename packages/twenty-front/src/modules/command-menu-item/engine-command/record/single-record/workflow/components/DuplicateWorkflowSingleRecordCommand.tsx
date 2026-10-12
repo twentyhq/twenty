@@ -37,7 +37,7 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
 
     if (isDefined(result) && isNonEmptyString(result.workflowId)) {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Workflow duplicated successfully`,
       });
 
@@ -53,7 +53,7 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
       });
     } else {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to duplicate workflow`,
       });
     }

@@ -9931,84 +9931,112 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Content rendered in the footer, such as an action button."
+        "description": "Optional footer node, such as a Button with a caller-owned action."
       },
       {
         "name": "cancelLabel",
-        "type": "string",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": "Cancel",
-        "description": "Label of the cancel button."
+        "description": "Cancel button content node. Defaults to Cancel. Pass null to hide the control."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Main message node. Callers own its content and accessible text."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Additional class names merged onto the root."
       },
       {
         "name": "closeLabel",
         "type": "string",
         "required": false,
         "defaultValue": "Close",
-        "description": "Accessible name of the close button."
+        "description": "Accessible name of the close button. Defaults to Close."
       },
       {
         "name": "description",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Supporting content rendered below the message."
+        "description": "Optional supporting content node rendered below the message."
       },
       {
         "name": "duration",
         "type": "number",
         "required": false,
         "defaultValue": "6000",
-        "description": "Milliseconds before `onClose` is called. The countdown pauses while the\npointer is over the toast or keyboard focus is inside it."
+        "description": "Milliseconds before onClose is called. The countdown pauses while the pointer is over the toast or keyboard focus is inside it."
       },
       {
         "name": "icon",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Replaces the variant's icon."
+        "description": "Leading icon node. Defaults to the status icon. Pass null to omit it."
       },
       {
         "name": "iconLabel",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Accessible name of the default icon. Without it, the icon is hidden from\nassistive technology."
+        "description": "Accessible name of the default icon. Without it, the icon is decorative."
       },
       {
         "name": "onCancel",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the cancel button is clicked. The button renders only when\nthis callback is provided."
+        "description": "Called when the cancel button is clicked. Providing it and renderable cancelLabel content shows the button."
       },
       {
         "name": "onClose",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the close button is clicked or the countdown completes. The\nbutton renders only when this callback is provided."
+        "description": "Called when the close button is clicked or the countdown completes. Providing it shows the close button."
       },
       {
         "name": "progress",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Completion percentage shown in the progress bar. When set, the countdown\nis disabled."
+        "description": "Completion percentage. Providing it disables the countdown."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or the element supplied through render."
       },
       {
         "name": "render",
         "type": "RenderProp<Record<string, unknown>>",
         "required": false,
         "defaultValue": null,
-        "description": "Replaces the rendered element or composes it with another component.\nAccepts a React element or a function that returns the element to render."
+        "description": "Element or callback composition for the root. Native props and the ref target the rendered element."
       },
       {
-        "name": "variant",
-        "type": "\"default\" | \"error\" | \"info\" | \"success\" | \"warning\"",
+        "name": "status",
+        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
         "required": false,
-        "defaultValue": "default",
-        "description": "Visual variant that selects the icon and colors."
+        "defaultValue": "neutral",
+        "description": "Feedback meaning: neutral, info, success, warning, or error. Defaults to neutral and selects the icon and theme palette."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles forwarded to the root."
       }
     ]
   },
