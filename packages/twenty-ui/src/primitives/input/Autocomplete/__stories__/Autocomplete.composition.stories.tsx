@@ -86,13 +86,27 @@ export const CompositionConfirmation: Story = {
       isComposing: true,
     });
     await body.findByRole('listbox');
+    const apple = body.getByRole('option', { name: 'Apple' });
+    await waitFor(() =>
+      expect(input).toHaveAttribute('aria-activedescendant', apple.id),
+    );
+    await expect(args.onValueChange).not.toHaveBeenCalled();
+    await fireEvent.keyDown(input, {
+      key: 'Enter',
+      code: 'Enter',
+      keyCode: 0,
+      which: 0,
+      isComposing: true,
+    });
+    await expect(input).toHaveValue('Ch');
+    await expect(input).toHaveAttribute('aria-expanded', 'true');
     await expect(args.onValueChange).not.toHaveBeenCalled();
     await fireEvent.keyDown(input, {
       key: 'Enter',
       code: 'Enter',
       keyCode: 229,
       which: 229,
-      isComposing: true,
+      isComposing: false,
     });
     await expect(input).toHaveValue('Ch');
     await expect(input).toHaveAttribute('aria-expanded', 'true');

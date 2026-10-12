@@ -8,10 +8,10 @@ import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents'
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
-import { AutocompleteInput } from '@/ui/input/components/AutocompleteInput';
 import { type AddressInputProps } from '@/ui/field/input/types/AddressInputProps';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { isDefined } from 'twenty-shared/utils';
+import { Autocomplete } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -263,7 +263,7 @@ export const AddressInput = ({
         }
         onClose={closeDropdownOfAutocomplete}
       >
-        <AutocompleteInput
+        <Autocomplete.Input
           aria-label={label}
           render={(inputProps) => (
             <TextInput

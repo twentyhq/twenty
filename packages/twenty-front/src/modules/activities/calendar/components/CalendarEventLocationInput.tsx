@@ -2,8 +2,8 @@ import { StyledComposerTextInput } from '@/activities/components/ComposerTextInp
 import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
 import { usePlaceAutocomplete } from '@/geo-map/hooks/usePlaceAutocomplete';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
-import { AutocompleteInput } from '@/ui/input/components/AutocompleteInput';
 import { isDefined } from 'twenty-shared/utils';
+import { Autocomplete } from 'twenty-ui/primitives/input';
 
 const CALENDAR_EVENT_LOCATION_AUTOCOMPLETE_DROPDOWN_ID =
   'calendar-event-location-autocomplete-dropdown';
@@ -56,7 +56,7 @@ export const CalendarEventLocationInput = ({
       onValueChange={handleLocationChange}
       onClose={closePlaceAutocomplete}
     >
-      <AutocompleteInput
+      <Autocomplete.Input
         type="text"
         autoComplete="off"
         aria-label={ariaLabel}

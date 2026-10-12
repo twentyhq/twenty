@@ -168,6 +168,8 @@ export const ControlledResults: Story = {
 
 const PreventedEnterExample = () => {
   const [enterCount, setEnterCount] = useState(0);
+  const [shouldPreventBaseUIHandler, setShouldPreventBaseUIHandler] =
+    useState(true);
 
   return (
     <>
@@ -175,11 +177,17 @@ const PreventedEnterExample = () => {
         <Autocomplete.Input
           aria-label="Fruit"
           onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              event.preventBaseUIHandler();
-              setEnterCount((count) => count + 1);
+            if (event.key !== 'Enter') {
+              return;
             }
+
+            event.preventDefault();
+
+            if (shouldPreventBaseUIHandler) {
+              event.preventBaseUIHandler();
+            }
+
+            setEnterCount((count) => count + 1);
           }}
         />
         <Autocomplete.Portal>
@@ -197,6 +205,9 @@ const PreventedEnterExample = () => {
         </Autocomplete.Portal>
       </Autocomplete.Root>
       <Text>{`Enter count: ${enterCount}`}</Text>
+      <Button onClick={() => setShouldPreventBaseUIHandler(false)}>
+        Allow Base UI selection
+      </Button>
     </>
   );
 };
@@ -216,5 +227,18 @@ export const PreventedKeyDown: Story = {
     await expect(canvas.getByText('Enter count: 1')).toBeVisible();
     await expect(input).toHaveValue('a');
     await expect(input).toHaveAttribute('aria-expanded', 'true');
+    await userEvent.keyboard('{Escape}');
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Allow Base UI selection' }),
+    );
+    await userEvent.type(input, 'p');
+    const reopenedApple = await body.findByRole('option', { name: 'Apple' });
+    await waitFor(() =>
+      expect(input).toHaveAttribute('aria-activedescendant', reopenedApple.id),
+    );
+    await userEvent.keyboard('{Enter}');
+    await expect(canvas.getByText('Enter count: 2')).toBeVisible();
+    await expect(input).toHaveValue('Apple');
+    await expect(input).toHaveAttribute('aria-expanded', 'false');
   },
 };

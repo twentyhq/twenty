@@ -226,7 +226,9 @@ Keep Root mounted when results arrive asynchronously. Control `open` independent
 
 `InputGroup` provides layout and an anchor without adding input borders. It can contain chips or render an existing wrapper. Use [InputGroup](/ui/primitives/input/input-group) through its `render` prop when the whole group needs input styling. Give the input an accessible label or compose it with [Field](/ui/primitives/input/field).
 
-Root preserves the upstream `name`, `form`, `disabled`, `readOnly`, and native form behavior. Input's native attributes and ref target its input. `submitOnItemClick` opts into form submission when selecting a suggestion; the default does not submit. During IME composition, Enter confirms the composition before it can select a highlighted item.
+Root preserves the upstream `name`, `form`, `disabled`, `readOnly`, and native form behavior. Input's native attributes and ref target its input. `submitOnItemClick` opts into form submission when selecting a suggestion; the default does not submit.
+
+Input calls your `onKeyDown` handler first, then skips Base UI keyboard handling when the native event has `isComposing` set or `keyCode` equal to `229`. This guard allows Enter to confirm IME composition without selecting a suggestion and leaves the browser's default action unchanged.
 
 The installed Base UI version retains an uncontrolled query on native form reset. For a controlled query, handle the form's `onReset` and restore the application's initial value.
 

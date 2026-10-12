@@ -7,7 +7,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { atom, useStore } from 'jotai';
 import {
   type ClipboardEvent,
-  type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
   useContext,
@@ -18,7 +17,10 @@ import {
 } from 'react';
 import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Autocomplete } from 'twenty-ui/primitives/input';
+import {
+  type AutocompleteInputProps,
+  Autocomplete,
+} from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -38,7 +40,6 @@ import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parse
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
-import { AutocompleteInput } from '@/ui/input/components/AutocompleteInput';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -422,7 +423,7 @@ export const EmailRecipientsFieldInput = ({
     dependencies: [handleSubmitHotkey],
   });
 
-  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown: AutocompleteInputProps['onKeyDown'] = (event) => {
     if (
       isKeyboardEventComposing(event.nativeEvent) ||
       event.ctrlKey ||
@@ -439,6 +440,7 @@ export const EmailRecipientsFieldInput = ({
     switch (event.key) {
       case 'Enter': {
         event.preventDefault();
+        event.preventBaseUIHandler();
 
         if (!isEditing && isDropdownOpen && suggestions.length > 0) {
           const highlightedSuggestionId = store.get(
@@ -477,6 +479,7 @@ export const EmailRecipientsFieldInput = ({
       case ',':
       case ';': {
         event.preventDefault();
+        event.preventBaseUIHandler();
 
         if (!bufferIsEmpty) {
           commitInputAndCloseSuggestions();
@@ -486,6 +489,7 @@ export const EmailRecipientsFieldInput = ({
       case ' ': {
         if (isValidEmailRecipientAddress(inputValue.trim())) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           commitInputAndCloseSuggestions();
         }
         return;
@@ -496,6 +500,7 @@ export const EmailRecipientsFieldInput = ({
         }
 
         event.preventDefault();
+        event.preventBaseUIHandler();
 
         if (selectedChipIndices.length > 0) {
           removeSelectedRecipients();
@@ -508,6 +513,7 @@ export const EmailRecipientsFieldInput = ({
       case 'Delete': {
         if (bufferIsEmpty && selectedChipIndices.length > 0) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           removeSelectedRecipients();
         }
         return;
@@ -515,6 +521,7 @@ export const EmailRecipientsFieldInput = ({
       case 'ArrowDown': {
         if (!isEditing && !isDropdownOpen && suggestions.length > 0) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           openSuggestions();
         }
         return;
@@ -525,6 +532,7 @@ export const EmailRecipientsFieldInput = ({
         }
 
         event.preventDefault();
+        event.preventBaseUIHandler();
         scrollChipIntoView(
           event.shiftKey ? extendChipSelection(-1) : moveChipSelection(-1),
         );
@@ -536,6 +544,7 @@ export const EmailRecipientsFieldInput = ({
         }
 
         event.preventDefault();
+        event.preventBaseUIHandler();
         scrollChipIntoView(
           event.shiftKey ? extendChipSelection(1) : moveChipSelection(1),
         );
@@ -544,6 +553,7 @@ export const EmailRecipientsFieldInput = ({
       case 'Escape': {
         if (isDropdownOpen) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           event.stopPropagation();
           closeSuggestions();
           return;
@@ -551,12 +561,14 @@ export const EmailRecipientsFieldInput = ({
 
         if (isEditing) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           cancelEditing();
           return;
         }
 
         if (selectedChipIndices.length > 0) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           clearChipSelection();
         }
         return;
@@ -567,7 +579,7 @@ export const EmailRecipientsFieldInput = ({
   };
 
   const recipientsInput = (
-    <AutocompleteInput
+    <Autocomplete.Input
       key="email-recipients-input"
       render={(inputProps) => (
         // oxlint-disable-next-line react/jsx-props-no-spreading

@@ -132,6 +132,10 @@ export const CommitsBufferWhileSearchIsPending: Story = {
     expect(canvas.getByText('jeff@example.net')).toBeVisible();
     expect(canvas.queryByText('Jeffery Griffin')).not.toBeInTheDocument();
     expect(input).toHaveValue('');
+    expect(input).toHaveFocus();
+    await waitFor(() =>
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
   },
 };
 
@@ -164,6 +168,10 @@ export const KeepsCompositionConfirmationInTheInput: Story = {
 
     expect(canvas.getByText('Jeffery Griffin')).toBeVisible();
     expect(input).toHaveValue('');
+    expect(input).toHaveFocus();
+    await waitFor(() =>
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
   },
 };
 
