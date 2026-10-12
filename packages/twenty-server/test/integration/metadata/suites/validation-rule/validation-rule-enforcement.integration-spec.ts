@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import gql from 'graphql-tag';
 import { FeatureFlagKey } from 'twenty-shared/types';
 

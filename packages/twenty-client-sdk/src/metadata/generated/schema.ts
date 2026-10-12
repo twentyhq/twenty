@@ -673,7 +673,7 @@ export interface BillingEntitlement {
     __typename: 'BillingEntitlement'
 }
 
-export type BillingEntitlementKey = 'AUDIT_LOGS' | 'CUSTOM_DOMAIN' | 'RECORD_SHARING' | 'RLS' | 'SSO' | 'USAGE_LIMIT'
+export type BillingEntitlementKey = 'AUDIT_LOGS' | 'CUSTOM_DOMAIN' | 'RECORD_SHARING' | 'RLS' | 'SSO' | 'USAGE_LIMIT' | 'VALIDATION_RULES'
 
 export interface BillingLicensedProduct {
     description: Scalars['String']
@@ -11245,7 +11245,8 @@ export const enumBillingEntitlementKey = {
    RECORD_SHARING: 'RECORD_SHARING' as const,
    RLS: 'RLS' as const,
    SSO: 'SSO' as const,
-   USAGE_LIMIT: 'USAGE_LIMIT' as const
+   USAGE_LIMIT: 'USAGE_LIMIT' as const,
+   VALIDATION_RULES: 'VALIDATION_RULES' as const
 }
 
 export const enumBillingPlanKey = {

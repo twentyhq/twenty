@@ -836,7 +836,8 @@ export enum BillingEntitlementKey {
   RECORD_SHARING = 'RECORD_SHARING',
   RLS = 'RLS',
   SSO = 'SSO',
-  USAGE_LIMIT = 'USAGE_LIMIT'
+  USAGE_LIMIT = 'USAGE_LIMIT',
+  VALIDATION_RULES = 'VALIDATION_RULES'
 }
 
 export type BillingLicensedProduct = BillingProductDto & {
