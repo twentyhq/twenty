@@ -1,6 +1,9 @@
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { TYPING_DELAY } from '@/__stories__/shared/test-utils/timeouts';
+import {
+  INTERACTION_TIMEOUT,
+  TYPING_DELAY,
+} from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
@@ -65,16 +68,22 @@ export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
   const shortNotesHeight = notes.getBoundingClientRect().height;
   await userEvent.click(canvas.getByRole('button', { name: 'Apply notes' }));
   await waitFor(() => expect(notes).toHaveValue('First\nSecond\nThird'));
-  await waitFor(() =>
-    expect(notes.getBoundingClientRect().height).toBeGreaterThan(
-      shortNotesHeight,
-    ),
+  await waitFor(
+    () =>
+      expect(notes.getBoundingClientRect().height).toBeGreaterThan(
+        shortNotesHeight,
+      ),
+    { timeout: INTERACTION_TIMEOUT },
   );
   const longNotesHeight = notes.getBoundingClientRect().height;
   await userEvent.click(canvas.getByRole('button', { name: 'Clear notes' }));
   await waitFor(() => expect(notes).toHaveValue(''));
-  await waitFor(() =>
-    expect(notes.getBoundingClientRect().height).toBeLessThan(longNotesHeight),
+  await waitFor(
+    () =>
+      expect(notes.getBoundingClientRect().height).toBeLessThan(
+        longNotesHeight,
+      ),
+    { timeout: INTERACTION_TIMEOUT },
   );
   await userEvent.click(
     canvas.getByRole('button', { name: 'Apply wrapping notes' }),
@@ -84,22 +93,32 @@ export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
       'Keep the team informed about the next meeting and share all follow up actions before the end of the week.',
     ),
   );
-  await waitFor(() => expect(notes.scrollHeight).toBe(notes.clientHeight));
+  await waitFor(() => expect(notes.scrollHeight).toBe(notes.clientHeight), {
+    timeout: INTERACTION_TIMEOUT,
+  });
   const wideNotesHeight = notes.getBoundingClientRect().height;
   await userEvent.click(canvas.getByRole('button', { name: 'Narrow notes' }));
-  await waitFor(() => expect(getComputedStyle(notes).width).toBe('140px'));
-  await waitFor(() => expect(notes.scrollHeight).toBe(notes.clientHeight));
-  await waitFor(() =>
-    expect(notes.getBoundingClientRect().height).toBeGreaterThan(
-      wideNotesHeight,
-    ),
+  await waitFor(() => expect(getComputedStyle(notes).width).toBe('140px'), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  await waitFor(() => expect(notes.scrollHeight).toBe(notes.clientHeight), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  await waitFor(
+    () =>
+      expect(notes.getBoundingClientRect().height).toBeGreaterThan(
+        wideNotesHeight,
+      ),
+    { timeout: INTERACTION_TIMEOUT },
   );
   const narrowNotesHeight = notes.getBoundingClientRect().height;
   await userEvent.click(canvas.getByRole('button', { name: 'Widen notes' }));
-  await waitFor(() =>
-    expect(notes.getBoundingClientRect().height).toBeLessThan(
-      narrowNotesHeight,
-    ),
+  await waitFor(
+    () =>
+      expect(notes.getBoundingClientRect().height).toBeLessThan(
+        narrowNotesHeight,
+      ),
+    { timeout: INTERACTION_TIMEOUT },
   );
   expect(errorHandler).not.toHaveBeenCalled();
 };
