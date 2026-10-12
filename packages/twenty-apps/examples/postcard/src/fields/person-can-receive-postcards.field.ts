@@ -1,8 +1,4 @@
-import {
-  defineField,
-  FieldType,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk/define';
+import { defineField, FieldType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 // Field on existing person object
 export default defineField({

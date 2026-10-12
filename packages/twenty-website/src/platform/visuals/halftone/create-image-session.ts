@@ -411,8 +411,9 @@ export function createImageSession({
   syncFootprint();
 
   const pointerRoot: HTMLElement =
-    (pointerRootSelector ? container.closest(pointerRootSelector) : null) ??
-    container;
+    (pointerRootSelector
+      ? (container.closest(pointerRootSelector) as HTMLElement | null)
+      : null) ?? (container as HTMLElement);
 
   const handlePointerMove = (event: PointerEvent) => {
     if (

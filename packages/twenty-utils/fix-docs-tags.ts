@@ -30,7 +30,9 @@ async function getToken(): Promise<string> {
   const token = process.env.CROWDIN_PERSONAL_TOKEN;
 
   if (!token) {
-    console.error('Error: CROWDIN_PERSONAL_TOKEN environment variable not set');
+    console.error(
+      'Error: CROWDIN_PERSONAL_TOKEN environment variable not set',
+    );
     process.exit(1);
   }
 
@@ -184,9 +186,7 @@ async function main() {
     uniqueIssues.set(key, issue);
   }
 
-  console.log(
-    `Processing ${uniqueIssues.size} unique string-language pairs...`,
-  );
+  console.log(`Processing ${uniqueIssues.size} unique string-language pairs...`);
 
   let fixed = 0;
   let skipped = 0;

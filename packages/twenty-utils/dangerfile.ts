@@ -17,14 +17,13 @@ if (packageChanged && !lockfileChanged) {
   warn(`${message} - <i>${idea}</i>`);
 }
 
-const envExampleChanged = danger.git.modified_files.find((x) =>
-  x.includes('.env.example'),
+const envExampleChanged = danger.git.modified_files.find((x) => 
+  x.includes('.env.example')
 );
 
 if (envExampleChanged) {
   const message = 'Changes were made to .env.example';
-  const idea =
-    'Please make sure any new environment variables are properly documented with metadata in config-variables.ts';
+  const idea = 'Please make sure any new environment variables are properly documented with metadata in config-variables.ts';
   warn(`${message} - <i>${idea}</i>`);
 }
 

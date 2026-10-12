@@ -4,13 +4,10 @@ const { buildPersonAggregatesMock } = vi.hoisted(() => ({
   buildPersonAggregatesMock: vi.fn(),
 }));
 
-vi.mock(
-  'src/utils/person-last-contact-aggregation',
-  async (importOriginal) => ({
-    ...(await importOriginal<object>()),
-    buildPersonAggregates: buildPersonAggregatesMock,
-  }),
-);
+vi.mock('src/utils/person-last-contact-aggregation', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  buildPersonAggregates: buildPersonAggregatesMock,
+}));
 
 import { backfillPeopleLastContact } from 'src/utils/backfill-people-last-contact';
 

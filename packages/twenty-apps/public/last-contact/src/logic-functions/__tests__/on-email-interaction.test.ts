@@ -109,7 +109,9 @@ describe('on-email-interaction handler', () => {
       },
     ]);
 
-    await handler(buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]));
+    await handler(
+      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
+    );
 
     expect(mutationMock.mock.calls[0][0].createPeople.__args).toEqual({
       upsert: true,
@@ -154,7 +156,9 @@ describe('on-email-interaction handler', () => {
       ([query]) => query.messageParticipants,
     );
     expect(participantQueries).toHaveLength(1);
-    expect(participantQueries[0][0].messageParticipants.__args.filter).toEqual({
+    expect(
+      participantQueries[0][0].messageParticipants.__args.filter,
+    ).toEqual({
       and: [
         { messageId: { in: [OLDER_MESSAGE_ID, MESSAGE_ID] } },
         {
@@ -165,7 +169,9 @@ describe('on-email-interaction handler', () => {
         },
       ],
     });
-    expect(queryMock.mock.calls.some(([query]) => query.messages)).toBe(false);
+    expect(queryMock.mock.calls.some(([query]) => query.messages)).toBe(
+      false,
+    );
 
     const personUpserts = mutationMock.mock.calls.filter(
       ([mutation]) => mutation.createPeople,
@@ -207,7 +213,9 @@ describe('on-email-interaction handler', () => {
       },
     ]);
 
-    await handler(buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]));
+    await handler(
+      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
+    );
 
     expect(mutationMock).not.toHaveBeenCalled();
   });
@@ -215,7 +223,9 @@ describe('on-email-interaction handler', () => {
   it('counts a message without a sender or team member participant as an inbound email', async () => {
     setupQueryMock([], [{ id: MESSAGE_ID, receivedAt: RECEIVED_AT }]);
 
-    await handler(buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]));
+    await handler(
+      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
+    );
 
     const messageQueries = queryMock.mock.calls.filter(
       ([query]) => query.messages,

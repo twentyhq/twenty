@@ -159,17 +159,16 @@ function fixPlaceholderNames(
         transName !== sourceName
       ) {
         // A matching occurrence count is the only evidence this is the translated source placeholder
-        const sourcePattern = new RegExp(`\\{${sourceName}\\}`, 'g');
+        const sourcePattern = new RegExp(
+          `\\{${sourceName}\\}`,
+          'g',
+        );
         const transPattern = new RegExp(`\\{${transName}\\}`, 'g');
 
         const sourceMatches = sourceText.match(sourcePattern)?.length || 0;
         const transMatches = translationText.match(transPattern)?.length || 0;
 
-        if (
-          sourceMatches > 0 &&
-          transMatches > 0 &&
-          sourceMatches === transMatches
-        ) {
+        if (sourceMatches > 0 && transMatches > 0 && sourceMatches === transMatches) {
           fixedText = fixedText.replace(
             new RegExp(`\\{${transName}\\}`, 'g'),
             `{${sourceName}}`,
@@ -185,9 +184,7 @@ function fixPlaceholderNames(
 
       if (translationText.includes(withoutDollar)) {
         fixedText = fixedText.replace(withoutDollar, sourcePlaceholder);
-        console.log(
-          `    Adding $ prefix: ${withoutDollar} -> ${sourcePlaceholder}`,
-        );
+        console.log(`    Adding $ prefix: ${withoutDollar} -> ${sourcePlaceholder}`);
       }
     }
   }
@@ -323,9 +320,7 @@ async function fixTagsIssues(token: string): Promise<number> {
   let fixed = 0;
 
   for (const check of checks) {
-    console.log(
-      `String ${check.stringId} (${check.languageId}): ${check.text.slice(0, 60)}...`,
-    );
+    console.log(`String ${check.stringId} (${check.languageId}): ${check.text.slice(0, 60)}...`);
 
     try {
       const sourceText = await getSourceString(token, check.stringId);
@@ -341,18 +336,14 @@ async function fixTagsIssues(token: string): Promise<number> {
       }
 
       const sourceTags = sourceText.match(/<\/?[a-zA-Z][^>]*>/g) || [];
-      const translationTags =
-        translation.text.match(/<\/?[a-zA-Z][^>]*>/g) || [];
+      const translationTags = translation.text.match(/<\/?[a-zA-Z][^>]*>/g) || [];
 
       if (check.text.includes('extra formatting tags')) {
         let fixedText = translation.text;
 
         for (const tag of translationTags) {
           if (!sourceTags.includes(tag)) {
-            fixedText = fixedText.replace(
-              new RegExp(tag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
-              '',
-            );
+            fixedText = fixedText.replace(new RegExp(tag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
           }
         }
 
@@ -364,12 +355,7 @@ async function fixTagsIssues(token: string): Promise<number> {
           console.log(`  After:  ${fixedText.slice(0, 60)}`);
 
           await deleteTranslation(token, translation.translationId);
-          await addTranslation(
-            token,
-            check.stringId,
-            check.languageId,
-            fixedText,
-          );
+          await addTranslation(token, check.stringId, check.languageId, fixedText);
 
           console.log('  -> Fixed!\n');
           fixed++;
