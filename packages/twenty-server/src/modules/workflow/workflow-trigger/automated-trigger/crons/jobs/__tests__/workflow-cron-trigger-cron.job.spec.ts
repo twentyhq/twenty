@@ -379,6 +379,35 @@ describe('WorkflowCronTriggerCronJob', () => {
       );
     });
 
+    it('should keep a workflow cached without dispatching it while its application is still installing', async () => {
+      mockApplicationRepository.findOne.mockResolvedValue({ version: null });
+      mockCacheStorageService.hashGetValues.mockResolvedValue([]);
+      mockWorkspaceRepository.find.mockResolvedValue([{ id: WORKSPACE_1 }]);
+      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
+        workflowAutomatedTriggerMaps: {
+          byWorkflowId: {
+            'workflow-1': {
+              workflowId: 'workflow-1',
+              coreWorkflowVersionId: 'core-version-1',
+              workspaceWorkflowVersionId: 'workspace-version-1',
+              type: 'CRON',
+              settings: { pattern: '* * * * *' },
+            },
+          },
+        },
+      } as never);
+
+      await job.handle();
+
+      expect(mockCacheStorageService.hashSetWithExpire).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: 'workflow-1',
+        }),
+      );
+      expect(mockMessageQueueService.add).not.toHaveBeenCalled();
+    });
+
     it('should not write to cache when no workspaces have cron triggers', async () => {
       mockCacheStorageService.hashGetValues.mockResolvedValue([]);
       mockWorkspaceRepository.find.mockResolvedValue([{ id: WORKSPACE_1 }]);

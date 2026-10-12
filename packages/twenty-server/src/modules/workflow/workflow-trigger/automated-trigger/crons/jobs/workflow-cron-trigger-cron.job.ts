@@ -89,13 +89,18 @@ export class WorkflowCronTriggerCronJob {
   private async getAndRunTriggersFromCache(cachedValues: string[], now: Date) {
     for (const serialized of cachedValues) {
       try {
-        const trigger = await this.normalizeCachedTrigger(
+        const normalizedTrigger = await this.normalizeCachedTrigger(
           JSON.parse(serialized) as CachedCronTrigger,
         );
 
-        if (!isDefined(trigger)) {
+        if (
+          !isDefined(normalizedTrigger) ||
+          !normalizedTrigger.isApplicationInstalled
+        ) {
           continue;
         }
+
+        const { trigger } = normalizedTrigger;
 
         const shouldDispatch = await this.shouldDispatch({ trigger, now });
 
@@ -184,7 +189,7 @@ export class WorkflowCronTriggerCronJob {
           continue;
         }
 
-        const cachedTrigger = await this.normalizeCachedTrigger({
+        const normalizedTrigger = await this.normalizeCachedTrigger({
           workspaceId,
           workflowId,
           legacyWorkflowId: cronTrigger.legacyWorkflowId,
@@ -192,11 +197,18 @@ export class WorkflowCronTriggerCronJob {
           pattern,
         });
 
-        if (!isDefined(cachedTrigger)) {
+        if (!isDefined(normalizedTrigger)) {
           continue;
         }
 
+        const { trigger: cachedTrigger, isApplicationInstalled } =
+          normalizedTrigger;
+
         triggersToCache.push(cachedTrigger);
+
+        if (!isApplicationInstalled) {
+          continue;
+        }
 
         const shouldDispatch = await this.shouldDispatch({
           trigger: cachedTrigger,
@@ -257,9 +269,10 @@ export class WorkflowCronTriggerCronJob {
       }));
   }
 
-  private async normalizeCachedTrigger(
-    trigger: CachedCronTrigger,
-  ): Promise<CachedCronTrigger | null> {
+  private async normalizeCachedTrigger(trigger: CachedCronTrigger): Promise<{
+    trigger: CachedCronTrigger;
+    isApplicationInstalled: boolean;
+  } | null> {
     const workflow =
       await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
         trigger.workspaceId,
@@ -278,10 +291,6 @@ export class WorkflowCronTriggerCronJob {
       },
     );
 
-    if (isDefined(application) && !isDefined(application.version)) {
-      return null;
-    }
-
     const version =
       await this.workflowVersionCoreSyncService.findCoreVersionById(
         trigger.workspaceId,
@@ -299,14 +308,18 @@ export class WorkflowCronTriggerCronJob {
     }
 
     return {
-      workspaceId: trigger.workspaceId,
-      workflowId: workflow.id,
-      legacyWorkflowId: workflow.workspaceWorkflowId ?? undefined,
-      ...buildCoreDispatchIds({
-        coreWorkflowVersionId: version.id,
-        workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
-      }),
-      pattern: computeCronPatternFromSchedule(definition),
+      trigger: {
+        workspaceId: trigger.workspaceId,
+        workflowId: workflow.id,
+        legacyWorkflowId: workflow.workspaceWorkflowId ?? undefined,
+        ...buildCoreDispatchIds({
+          coreWorkflowVersionId: version.id,
+          workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
+        }),
+        pattern: computeCronPatternFromSchedule(definition),
+      },
+      isApplicationInstalled:
+        !isDefined(application) || isDefined(application.version),
     };
   }
 
