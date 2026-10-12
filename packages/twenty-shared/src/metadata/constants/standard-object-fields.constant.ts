@@ -877,14 +877,14 @@ export const STANDARD_OBJECT_FIELDS = {
     uniqueClickCount: {
       universalIdentifier: 'd9a4e1c6-5b3f-4e0a-9c8d-4f7b9a3e6c12',
     },
-    totalClickCount: {
-      universalIdentifier: 'ea05f2d7-6c4a-4f1b-8d9e-5a8c0b4f7d23',
+    clickRate: {
+      universalIdentifier: '7999aebc-51f4-4b93-9925-717db707c703',
     },
     uniqueOpenCount: {
       universalIdentifier: '865d188f-3178-4173-a986-80d01a8c7147',
     },
-    totalOpenCount: {
-      universalIdentifier: '409447ab-12e3-4275-b0dd-24da9e92b600',
+    openRate: {
+      universalIdentifier: '77529a55-d723-4c91-9df7-0190fd760e93',
     },
     unsubscribeTopicId: {
       universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',

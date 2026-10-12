@@ -3,6 +3,7 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 import {
   DateDisplayFormat,
   FieldMetadataType,
+  NumberDataType,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
@@ -547,17 +548,17 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         defaultValue: 0,
       },
     }),
-    totalClickCount: createStandardFieldFlatMetadata({
+    clickRate: createStandardFieldFlatMetadata({
       ...base,
       context: {
-        fieldName: 'totalClickCount',
+        fieldName: 'clickRate',
         type: FieldMetadataType.NUMBER,
         label: i18nLabel(
-          msg({ message: `Total clicks`, context: 'fieldMetadata.label' }),
+          msg({ message: `Click rate`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
-            message: `Total clicks on tracked links`,
+            message: `Share of delivered recipients who clicked a tracked link`,
             context: 'fieldMetadata.description',
           }),
         ),
@@ -565,6 +566,11 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         isNullable: false,
         isUIEditable: false,
         defaultValue: 0,
+        settings: {
+          dataType: NumberDataType.FLOAT,
+          decimals: 1,
+          type: 'percentage',
+        },
       },
     }),
     uniqueOpenCount: createStandardFieldFlatMetadata({
@@ -587,17 +593,17 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         defaultValue: 0,
       },
     }),
-    totalOpenCount: createStandardFieldFlatMetadata({
+    openRate: createStandardFieldFlatMetadata({
       ...base,
       context: {
-        fieldName: 'totalOpenCount',
+        fieldName: 'openRate',
         type: FieldMetadataType.NUMBER,
         label: i18nLabel(
-          msg({ message: `Total opens`, context: 'fieldMetadata.label' }),
+          msg({ message: `Open rate`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
-            message: `Total opens of the email`,
+            message: `Share of delivered recipients who opened the email, excluding Apple Mail privacy opens`,
             context: 'fieldMetadata.description',
           }),
         ),
@@ -605,6 +611,11 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         isNullable: false,
         isUIEditable: false,
         defaultValue: 0,
+        settings: {
+          dataType: NumberDataType.FLOAT,
+          decimals: 1,
+          type: 'percentage',
+        },
       },
     }),
     unsubscribeTopicId: createStandardFieldFlatMetadata({

@@ -116,10 +116,11 @@ export class MessageCampaignStatisticsService {
         campaignId,
       });
 
-    await this.persistEngagementCounts({
+    await this.persistEngagementStats({
       workspaceId,
       campaignId,
       engagementCounts,
+      deliveredCount: counts.deliveredCount,
     });
   }
 
@@ -213,14 +214,16 @@ export class MessageCampaignStatisticsService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  private async persistEngagementCounts({
+  private async persistEngagementStats({
     workspaceId,
     campaignId,
     engagementCounts,
+    deliveredCount,
   }: {
     workspaceId: string;
     campaignId: string;
     engagementCounts: CampaignEngagementCounts;
+    deliveredCount: number;
   }): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const campaignRepository = this.workspaceOrmManager.getRepository(
@@ -233,9 +236,9 @@ export class MessageCampaignStatisticsService {
         select: {
           id: true,
           uniqueClickCount: true,
-          totalClickCount: true,
+          clickRate: true,
           uniqueOpenCount: true,
-          totalOpenCount: true,
+          openRate: true,
         },
       });
 
@@ -243,18 +246,39 @@ export class MessageCampaignStatisticsService {
         return;
       }
 
-      const storedEngagementCounts = {
-        uniqueClickCount: campaign.uniqueClickCount,
-        totalClickCount: campaign.totalClickCount,
-        uniqueOpenCount: campaign.uniqueOpenCount,
-        totalOpenCount: campaign.totalOpenCount,
+      const nextEngagementStats = {
+        uniqueClickCount: engagementCounts.uniqueClickCount,
+        clickRate: this.computeRate(
+          engagementCounts.uniqueClickCount,
+          deliveredCount,
+        ),
+        uniqueOpenCount: engagementCounts.uniqueOpenCount,
+        openRate: this.computeRate(
+          engagementCounts.uniqueOpenCount,
+          deliveredCount,
+        ),
       };
 
-      if (fastDeepEqual(storedEngagementCounts, engagementCounts)) {
+      const storedEngagementStats = {
+        uniqueClickCount: campaign.uniqueClickCount,
+        clickRate: campaign.clickRate,
+        uniqueOpenCount: campaign.uniqueOpenCount,
+        openRate: campaign.openRate,
+      };
+
+      if (fastDeepEqual(storedEngagementStats, nextEngagementStats)) {
         return;
       }
 
-      await campaignRepository.update({ id: campaignId }, engagementCounts);
+      await campaignRepository.update({ id: campaignId }, nextEngagementStats);
     }, buildSystemAuthContext(workspaceId));
+  }
+
+  private computeRate(count: number, deliveredCount: number): number {
+    if (deliveredCount === 0) {
+      return 0;
+    }
+
+    return count / deliveredCount;
   }
 }

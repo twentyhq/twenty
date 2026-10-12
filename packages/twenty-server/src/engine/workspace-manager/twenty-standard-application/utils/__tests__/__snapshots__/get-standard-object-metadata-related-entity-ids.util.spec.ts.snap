@@ -1528,6 +1528,9 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "bouncedCount": {
         "id": "00000000-0000-0000-0000-000000000313",
       },
+      "clickRate": {
+        "id": "00000000-0000-0000-0000-000000000317",
+      },
       "complainedCount": {
         "id": "00000000-0000-0000-0000-000000000314",
       },
@@ -1561,6 +1564,9 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "name": {
         "id": "00000000-0000-0000-0000-000000000303",
       },
+      "openRate": {
+        "id": "00000000-0000-0000-0000-000000000319",
+      },
       "position": {
         "id": "00000000-0000-0000-0000-000000000301",
       },
@@ -1591,12 +1597,6 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "timelineActivities": {
         "id": "00000000-0000-0000-0000-000000000322",
       },
-      "totalClickCount": {
-        "id": "00000000-0000-0000-0000-000000000317",
-      },
-      "totalOpenCount": {
-        "id": "00000000-0000-0000-0000-000000000319",
-      },
       "uniqueClickCount": {
         "id": "00000000-0000-0000-0000-000000000316",
       },
@@ -1622,6 +1622,9 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
           "bouncedCount": {
             "id": "00000000-0000-0000-0000-000000000336",
           },
+          "clickRate": {
+            "id": "00000000-0000-0000-0000-000000000341",
+          },
           "complainedCount": {
             "id": "00000000-0000-0000-0000-000000000337",
           },
@@ -1642,6 +1645,9 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
           },
           "name": {
             "id": "00000000-0000-0000-0000-000000000325",
+          },
+          "openRate": {
+            "id": "00000000-0000-0000-0000-000000000343",
           },
           "recipients": {
             "id": "00000000-0000-0000-0000-000000000338",
@@ -1664,12 +1670,6 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
           "subject": {
             "id": "00000000-0000-0000-0000-000000000326",
           },
-          "totalClickCount": {
-            "id": "00000000-0000-0000-0000-000000000341",
-          },
-          "totalOpenCount": {
-            "id": "00000000-0000-0000-0000-000000000343",
-          },
           "uniqueClickCount": {
             "id": "00000000-0000-0000-0000-000000000340",
           },
@@ -1690,6 +1690,9 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
           "bouncedCount": {
             "id": "00000000-0000-0000-0000-000000000352",
           },
+          "clickRate": {
+            "id": "00000000-0000-0000-0000-000000000355",
+          },
           "complainedCount": {
             "id": "00000000-0000-0000-0000-000000000353",
           },
@@ -1698,6 +1701,9 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
           },
           "failedCount": {
             "id": "00000000-0000-0000-0000-000000000350",
+          },
+          "openRate": {
+            "id": "00000000-0000-0000-0000-000000000357",
           },
           "scheduledAt": {
             "id": "00000000-0000-0000-0000-000000000346",
@@ -1713,12 +1719,6 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
           },
           "status": {
             "id": "00000000-0000-0000-0000-000000000345",
-          },
-          "totalClickCount": {
-            "id": "00000000-0000-0000-0000-000000000355",
-          },
-          "totalOpenCount": {
-            "id": "00000000-0000-0000-0000-000000000357",
           },
           "uniqueClickCount": {
             "id": "00000000-0000-0000-0000-000000000354",

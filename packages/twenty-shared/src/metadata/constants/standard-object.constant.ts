@@ -421,9 +421,9 @@ export const STANDARD_OBJECTS = {
           'recipients',
           'createdAt',
           'uniqueClickCount',
-          'totalClickCount',
+          'clickRate',
           'uniqueOpenCount',
-          'totalOpenCount',
+          'openRate',
         ],
       }),
       messageCampaignRecordPageFields: buildStandardObjectRecordPageFieldsView({
@@ -441,9 +441,9 @@ export const STANDARD_OBJECTS = {
           'bouncedCount',
           'complainedCount',
           'uniqueClickCount',
-          'totalClickCount',
+          'clickRate',
           'uniqueOpenCount',
-          'totalOpenCount',
+          'openRate',
         ],
         viewFieldGroupNames: {
           stats: 'Stats',

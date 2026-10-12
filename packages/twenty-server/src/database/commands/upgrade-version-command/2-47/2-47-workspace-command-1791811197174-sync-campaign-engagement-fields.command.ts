@@ -20,27 +20,27 @@ const CAMPAIGN = STANDARD_OBJECTS.messageCampaign;
 
 const ENGAGEMENT_FIELD_UNIVERSAL_IDENTIFIERS = [
   CAMPAIGN.fields.uniqueClickCount.universalIdentifier,
-  CAMPAIGN.fields.totalClickCount.universalIdentifier,
+  CAMPAIGN.fields.clickRate.universalIdentifier,
   CAMPAIGN.fields.uniqueOpenCount.universalIdentifier,
-  CAMPAIGN.fields.totalOpenCount.universalIdentifier,
+  CAMPAIGN.fields.openRate.universalIdentifier,
 ];
 
 const ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
   CAMPAIGN.views.allMessageCampaigns.viewFields.uniqueClickCount
     .universalIdentifier,
-  CAMPAIGN.views.allMessageCampaigns.viewFields.totalClickCount
+  CAMPAIGN.views.allMessageCampaigns.viewFields.clickRate
     .universalIdentifier,
   CAMPAIGN.views.allMessageCampaigns.viewFields.uniqueOpenCount
     .universalIdentifier,
-  CAMPAIGN.views.allMessageCampaigns.viewFields.totalOpenCount
+  CAMPAIGN.views.allMessageCampaigns.viewFields.openRate
     .universalIdentifier,
   CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.uniqueClickCount
     .universalIdentifier,
-  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.totalClickCount
+  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.clickRate
     .universalIdentifier,
   CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.uniqueOpenCount
     .universalIdentifier,
-  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.totalOpenCount
+  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.openRate
     .universalIdentifier,
 ];
 
@@ -48,7 +48,7 @@ const ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
 @Command({
   name: 'upgrade:2-47:sync-campaign-engagement-fields',
   description:
-    'Add the click and open count fields to campaigns, and their columns, in existing workspaces',
+    'Add the click and open fields to campaigns, and their columns, in existing workspaces',
 })
 export class SyncCampaignEngagementFieldsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

@@ -63,10 +63,8 @@ export class CampaignEngagementEventService {
     ]);
 
     return {
-      uniqueClickCount: clicks.uniqueCount,
-      totalClickCount: clicks.totalCount,
-      uniqueOpenCount: opens.uniqueCount,
-      totalOpenCount: opens.totalCount,
+      uniqueClickCount: clicks,
+      uniqueOpenCount: opens,
     };
   }
 
@@ -78,12 +76,11 @@ export class CampaignEngagementEventService {
     table: string;
     workspaceId: string;
     campaignId: string;
-  }): Promise<{ uniqueCount: number; totalCount: number }> {
+  }): Promise<number> {
     const [row] = await this.clickHouseService.selectOrThrow<{
       uniqueCount: string;
-      totalCount: string;
     }>(
-      `SELECT uniqExact(deliveryId) AS uniqueCount, uniqExact(eventId) AS totalCount
+      `SELECT uniqExact(deliveryId) AS uniqueCount
        FROM ${table}
        WHERE workspaceId = {workspaceId:UUID}
          AND messageCampaignId = {campaignId:UUID}
@@ -91,9 +88,6 @@ export class CampaignEngagementEventService {
       { workspaceId, campaignId },
     );
 
-    return {
-      uniqueCount: Number(row?.uniqueCount ?? 0),
-      totalCount: Number(row?.totalCount ?? 0),
-    };
+    return Number(row?.uniqueCount ?? 0);
   }
 }

@@ -19,7 +19,7 @@ export type MessageCampaign = {
   bouncedCount: number;
   complainedCount: number;
   uniqueClickCount: number;
-  totalClickCount: number;
+  clickRate: number;
   uniqueOpenCount: number;
-  totalOpenCount: number;
+  openRate: number;
 };

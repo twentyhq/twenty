@@ -176,13 +176,13 @@ export const computeStandardMessageCampaignViewFields = (
         size: 120,
       },
     }),
-    allMessageCampaignsTotalClickCount: createStandardViewFieldFlatMetadata({
+    allMessageCampaignsClickRate: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageCampaign',
       context: {
         viewName: 'allMessageCampaigns',
-        viewFieldName: 'totalClickCount',
-        fieldName: 'totalClickCount',
+        viewFieldName: 'clickRate',
+        fieldName: 'clickRate',
         position: 16,
         isVisible: true,
         size: 120,
@@ -200,13 +200,13 @@ export const computeStandardMessageCampaignViewFields = (
         size: 120,
       },
     }),
-    allMessageCampaignsTotalOpenCount: createStandardViewFieldFlatMetadata({
+    allMessageCampaignsOpenRate: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageCampaign',
       context: {
         viewName: 'allMessageCampaigns',
-        viewFieldName: 'totalOpenCount',
-        fieldName: 'totalOpenCount',
+        viewFieldName: 'openRate',
+        fieldName: 'openRate',
         position: 18,
         isVisible: true,
         size: 120,
@@ -375,14 +375,14 @@ export const computeStandardMessageCampaignViewFields = (
           viewFieldGroupName: 'stats',
         },
       }),
-    messageCampaignRecordPageFieldsTotalClickCount:
+    messageCampaignRecordPageFieldsClickRate:
       createStandardViewFieldFlatMetadata({
         ...args,
         objectName: 'messageCampaign',
         context: {
           viewName: 'messageCampaignRecordPageFields',
-          viewFieldName: 'totalClickCount',
-          fieldName: 'totalClickCount',
+          viewFieldName: 'clickRate',
+          fieldName: 'clickRate',
           position: 10,
           isVisible: true,
           size: 120,
@@ -403,14 +403,14 @@ export const computeStandardMessageCampaignViewFields = (
           viewFieldGroupName: 'stats',
         },
       }),
-    messageCampaignRecordPageFieldsTotalOpenCount:
+    messageCampaignRecordPageFieldsOpenRate:
       createStandardViewFieldFlatMetadata({
         ...args,
         objectName: 'messageCampaign',
         context: {
           viewName: 'messageCampaignRecordPageFields',
-          viewFieldName: 'totalOpenCount',
-          fieldName: 'totalOpenCount',
+          viewFieldName: 'openRate',
+          fieldName: 'openRate',
           position: 12,
           isVisible: true,
           size: 120,
