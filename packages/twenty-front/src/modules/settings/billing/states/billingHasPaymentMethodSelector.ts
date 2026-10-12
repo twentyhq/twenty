@@ -7,7 +7,6 @@ export const billingHasPaymentMethodSelector = createAtomSelector({
   get: ({ get }) => {
     const currentWorkspace = get(currentWorkspaceState);
 
-    // Invoice-paying customers pay each emailed invoice by bank transfer, so they never need a card on file
     if (
       isSendInvoiceBillingSubscription(
         currentWorkspace?.currentBillingSubscription?.collectionMethod,
