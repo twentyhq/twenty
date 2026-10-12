@@ -297,7 +297,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       conversationActor: isDefined(runAsContext)
         ? {
             type: 'user',
-            userWorkspaceId: runAsContext.authContext.userWorkspaceId,
+            workspaceMemberId: runAsContext.authContext.workspaceMemberId,
           }
         : { type: 'application', applicationId: agentContext.application.id },
       usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,

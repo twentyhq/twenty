@@ -2,6 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { chunk } from 'src/utils/chunk';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
+import { hasLastContactChanged } from 'src/utils/has-last-contact-changed';
 import {
   type RecordUpsert,
   upsertRecordsInBatches,
@@ -19,6 +20,9 @@ const EMPTY_LAST_CONTACT: LastContactData = {
 
 type OpportunityNode = {
   id?: string | null;
+  lastContactAt?: string | null;
+  lastContactItemMessageId?: string | null;
+  lastContactItemCalendarEventId?: string | null;
   pointOfContact?: {
     lastContactAt?: string | null;
     lastContactItemMessageId?: string | null;
@@ -63,6 +67,9 @@ export const recomputeOpportunitiesLastContact = async (
             edges: {
               node: {
                 id: true,
+                lastContactAt: true,
+                lastContactItemMessageId: true,
+                lastContactItemCalendarEventId: true,
                 pointOfContact: {
                   lastContactAt: true,
                   lastContactItemMessageId: true,
@@ -76,10 +83,11 @@ export const recomputeOpportunitiesLastContact = async (
       );
 
       for (const edge of opportunities?.edges ?? []) {
-        const { id, pointOfContact } = edge.node as OpportunityNode;
+        const opportunity = edge.node as OpportunityNode;
+        const data = buildLastContactData(opportunity.pointOfContact);
 
-        if (id) {
-          upserts.push({ id, ...buildLastContactData(pointOfContact) });
+        if (opportunity.id && hasLastContactChanged(opportunity, data)) {
+          upserts.push({ id: opportunity.id, ...data });
         }
       }
 

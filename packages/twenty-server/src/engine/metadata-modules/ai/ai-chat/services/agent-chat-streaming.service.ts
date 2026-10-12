@@ -768,20 +768,18 @@ export class AgentChatStreamingService {
         ),
         metadata: {
           createdAt: new Date(message.createdAt).toISOString(),
-          senderUserWorkspaceId: message.senderUserWorkspaceId,
+          senderWorkspaceMemberId: message.senderWorkspaceMemberId,
         },
       })),
     );
 
     // contexts open their thread, and Google and Bedrock only take system messages ahead of the conversation
     return [
-      ...contexts.map(
-        (context, index): ExtendedUIMessage => ({
-          id: `context-${index}`,
-          role: 'system',
-          parts: [{ type: 'text', text: context }],
-        }),
-      ),
+      ...contexts.map((context, index): ExtendedUIMessage => ({
+        id: `context-${index}`,
+        role: 'system',
+        parts: [{ type: 'text', text: context }],
+      })),
       ...uiMessages,
     ];
   }

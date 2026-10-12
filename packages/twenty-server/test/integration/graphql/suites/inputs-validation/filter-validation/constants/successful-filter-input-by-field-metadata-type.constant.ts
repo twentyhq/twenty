@@ -951,6 +951,15 @@ export const successfulFilterInputByFieldMetadataType: {
         return JSON.stringify(record.rawJsonField).includes('test');
       },
     },
+    {
+      gqlFilterInput: { rawJsonField: { ilike: '%TEST%' } },
+      restFilterInput: 'rawJsonField[ilike]:"%TEST%"',
+      validateFilter: (record: Record<string, any>) => {
+        return JSON.stringify(record.rawJsonField)
+          .toLowerCase()
+          .includes('test');
+      },
+    },
   ],
   [FieldMetadataType.ARRAY]: [
     {
@@ -998,6 +1007,18 @@ export const successfulFilterInputByFieldMetadataType: {
       restFilterInput: 'filesField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return Array.isArray(record.filesField) && record.filesField.length > 0;
+      },
+    },
+    {
+      gqlFilterInput: { filesField: { ilike: '%document.PDF%' } },
+      restFilterInput: 'filesField[ilike]:"%document.PDF%"',
+      validateFilter: (record: Record<string, any>) => {
+        return (
+          Array.isArray(record.filesField) &&
+          record.filesField.some(
+            (file: Record<string, any>) => file.label === 'Document.pdf',
+          )
+        );
       },
     },
   ],

@@ -48,10 +48,11 @@ export const agentChatFirstUnreadMessageIdSelector = createAtomSelector<
       }
 
       if (message.role === AGENT_MESSAGE_ROLE.USER) {
-        const senderUserWorkspaceId = message.metadata?.senderUserWorkspaceId;
+        const senderWorkspaceMemberId =
+          message.metadata?.senderWorkspaceMemberId;
 
-        const isOwnMessage = isDefined(senderUserWorkspaceId)
-          ? senderUserWorkspaceId === currentWorkspaceMember?.userWorkspaceId
+        const isOwnMessage = isDefined(senderWorkspaceMemberId)
+          ? senderWorkspaceMemberId === currentWorkspaceMember?.id
           : isSenderlessMessageOwn;
 
         if (isOwnMessage) {

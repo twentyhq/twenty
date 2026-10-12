@@ -17,11 +17,13 @@ type ManyToOneRelationsConfig<T extends AllMetadataName> =
 export type ResolvedManyToOneRelationUniversalIdentifiers<
   T extends AllMetadataName,
 > = {
-  [K in keyof ManyToOneRelationsConfig<T> as ManyToOneRelationsConfig<T>[K] extends {
-    universalForeignKey: infer UniversalForeignKey extends string;
-  }
-    ? UniversalForeignKey
-    : never]: ManyToOneRelationsConfig<T>[K] extends { isNullable: true }
+  [
+    K in keyof ManyToOneRelationsConfig<T> as ManyToOneRelationsConfig<T>[K] extends {
+      universalForeignKey: infer UniversalForeignKey extends string;
+    }
+      ? UniversalForeignKey
+      : never
+  ]: ManyToOneRelationsConfig<T>[K] extends { isNullable: true }
     ? string | null
     : string;
 } & {
