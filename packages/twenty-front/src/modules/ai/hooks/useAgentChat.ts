@@ -124,7 +124,7 @@ export const useAgentChat = () => {
           JSON.stringify(lastSentBrowsingContext);
     const browsingContextToSend = isBrowsingContextChanged
       ? browsingContext
-      : null;
+      : undefined;
     const messageId = v4();
     const optimisticMessageCreatedAt = new Date().toISOString();
     const rollbackOptimisticRestore = applyOptimisticRestore({

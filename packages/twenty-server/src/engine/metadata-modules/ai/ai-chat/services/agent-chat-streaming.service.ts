@@ -62,7 +62,7 @@ type StreamAgentChatOptions = {
   workspaceMemberId: string;
   workspace: WorkspaceEntity;
   text: string;
-  browsingContext: BrowsingContextType | null;
+  browsingContext: BrowsingContextType | null | undefined;
   modelId?: string;
   messageId?: string;
   fileAttachments?: AiChatFileAttachment[];
@@ -234,7 +234,7 @@ export class AgentChatStreamingService {
             workspaceId,
             workspaceMemberId,
           ),
-          browsingContext,
+          browsingContext: browsingContext ?? null,
           modelId,
           lastUserMessageText: text,
           turnId: savedUserMessage.turnId,

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isUndefined } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -10,7 +11,10 @@ import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/uti
 
 const BROWSING_CONTEXT_TTL_MILLISECONDS = 86_400_000;
 
-type BrowsingContextByMessageId = Record<string, BrowsingContextType>;
+type MessageBrowsingContext = {
+  messageId: string;
+  browsingContext: BrowsingContextType | null;
+};
 
 @Injectable()
 export class AgentChatBrowsingContextService {
@@ -32,23 +36,24 @@ export class AgentChatBrowsingContextService {
   }: {
     threadId: string;
     messageId: string;
-    browsingContext: BrowsingContextType | null;
+    browsingContext: BrowsingContextType | null | undefined;
   }): Promise<void> {
-    if (!isDefined(browsingContext)) {
+    if (isUndefined(browsingContext)) {
       return;
     }
 
-    try {
-      const browsingContextByMessageId =
-        await this.cacheStorageService.get<BrowsingContextByMessageId>(
-          this.getThreadKey(threadId),
-        );
+    const messageBrowsingContext: MessageBrowsingContext = {
+      messageId,
+      browsingContext,
+    };
 
-      await this.cacheStorageService.set<BrowsingContextByMessageId>(
-        this.getThreadKey(threadId),
-        { ...browsingContextByMessageId, [messageId]: browsingContext },
-        BROWSING_CONTEXT_TTL_MILLISECONDS,
-      );
+    try {
+      await this.cacheStorageService.hashSetWithExpire({
+        key: this.getThreadKey(threadId),
+        field: messageId,
+        value: JSON.stringify(messageBrowsingContext),
+        ttlMs: BROWSING_CONTEXT_TTL_MILLISECONDS,
+      });
     } catch (error) {
       this.logger.warn(
         `Could not store the browsing context of thread ${threadId}: ${formatErrorWithCause(error)}`,
@@ -64,17 +69,25 @@ export class AgentChatBrowsingContextService {
     messageIds: string[];
   }): Promise<BrowsingContextType | null> {
     try {
-      const browsingContextByMessageId =
-        await this.cacheStorageService.get<BrowsingContextByMessageId>(
-          this.getThreadKey(threadId),
-        );
-
-      const messageId = messageIds.find((candidateMessageId) =>
-        isDefined(browsingContextByMessageId?.[candidateMessageId]),
+      const browsingContextByMessageId = new Map(
+        (
+          await this.cacheStorageService.hashGetValues(
+            this.getThreadKey(threadId),
+          )
+        )
+          .map((value) => JSON.parse(value) as MessageBrowsingContext)
+          .map(({ messageId, browsingContext }) => [
+            messageId,
+            browsingContext,
+          ]),
       );
 
-      return isDefined(messageId) && isDefined(browsingContextByMessageId)
-        ? browsingContextByMessageId[messageId]
+      const messageId = messageIds.find((candidateMessageId) =>
+        browsingContextByMessageId.has(candidateMessageId),
+      );
+
+      return isDefined(messageId)
+        ? (browsingContextByMessageId.get(messageId) ?? null)
         : null;
     } catch (error) {
       this.logger.warn(

@@ -31,6 +31,7 @@ import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
 import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-chat-message-result.dto';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { AgentChatBrowsingContextService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-browsing-context.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
@@ -84,6 +85,7 @@ export class AgentChatResolver {
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly browsingContextService: AgentChatBrowsingContextService,
   ) {}
 
   @Query(() => AgentChatThreadDTO)
@@ -183,7 +185,7 @@ export class AgentChatResolver {
     @Args('text') text: string,
     @Args('messageId', { type: () => UUIDScalarType }) messageId: string,
     @Args('browsingContext', { type: () => GraphQLJSON, nullable: true })
-    browsingContext: BrowsingContextType | null,
+    browsingContext: BrowsingContextType | null | undefined,
     @Args('modelId', { type: () => String, nullable: true })
     modelId: string | undefined,
     @Args('fileAttachments', {
@@ -243,7 +245,7 @@ export class AgentChatResolver {
     threadId: string;
     text: string;
     messageId: string;
-    browsingContext: BrowsingContextType | null;
+    browsingContext: BrowsingContextType | null | undefined;
     modelId: string | undefined;
     fileAttachments: FileAttachmentInput[] | null;
     userWorkspaceId: string;
@@ -279,6 +281,12 @@ export class AgentChatResolver {
         workspaceMemberId,
       });
 
+      await this.browsingContextService.remember({
+        threadId,
+        messageId: queuedMessage.id,
+        browsingContext,
+      });
+
       await this.eventPublisherService.publish({
         threadId,
         workspaceId: workspace.id,
@@ -290,7 +298,7 @@ export class AgentChatResolver {
 
     const result = await this.agentChatStreamingService.streamAgentChat({
       thread,
-      browsingContext: browsingContext ?? null,
+      browsingContext,
       modelId,
       userWorkspaceId,
       workspaceMemberId,
