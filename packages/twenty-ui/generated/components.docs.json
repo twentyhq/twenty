@@ -398,7 +398,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Accessible value text for the progress ring. Overrides the string value fallback; supply it when formatted content needs more context than a percentage."
+        "description": "Accessible value text for the progress ring. Nonempty text overrides the string value fallback; an empty string uses the ring percentage. Supply it when formatted content needs more context than a percentage."
       },
       {
         "name": "render",
@@ -426,7 +426,7 @@
         "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Preformatted value displayed at the end of the row. String values also supply the progress ring accessible value text."
+        "description": "Preformatted value displayed at the end of the row. Nonempty string values also supply the progress ring accessible value text."
       }
     ]
   },
