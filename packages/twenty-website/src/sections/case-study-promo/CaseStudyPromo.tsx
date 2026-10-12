@@ -79,7 +79,6 @@ const VisualStage = styled.div`
   }
 `;
 
-// The floating count chip overlaps the mic visual at its lower-left corner.
 const CountChip = styled.div`
   align-items: center;
   background-color: ${color('white')};

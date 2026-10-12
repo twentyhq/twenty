@@ -13,7 +13,6 @@ import { CampaignEngagementEventService } from 'src/modules/emailing/services/ca
 import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 import { buildCampaignClickEvent } from 'src/modules/emailing/utils/build-campaign-click-event.util';
-import { getCampaignDeliveryTableName } from 'src/modules/emailing/utils/get-campaign-delivery-table-name.util';
 
 @Injectable()
 export class CampaignEngagementRecordingService {
@@ -68,7 +67,11 @@ export class CampaignEngagementRecordingService {
     }
 
     await this.campaignEngagementEventService.insertClickOrThrow(clickEvent);
-    await this.countClickOnDelivery(observation);
+
+    if (clickEvent.activityClass !== 'UNCLASSIFIED') {
+      return;
+    }
+
     await this.messageCampaignStatisticsService
       .scheduleRefresh({
         workspaceId: observation.workspaceId,
@@ -81,32 +84,5 @@ export class CampaignEngagementRecordingService {
           }`,
         );
       });
-  }
-
-  private async countClickOnDelivery({
-    workspaceId,
-    deliveryId,
-    occurredAt,
-  }: Pick<
-    CampaignEngagementObservation,
-    'workspaceId' | 'deliveryId' | 'occurredAt'
-  >): Promise<void> {
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager
-          .getRepository(
-            CampaignDeliveryWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-            { shouldSkipEventEmission: true },
-          )
-          .executeRaw(
-            `UPDATE ${getCampaignDeliveryTableName(workspaceId)}
-      SET "clickCount" = "clickCount" + 1,
-          "clickedAt" = COALESCE("clickedAt", :occurredAt)
-      WHERE "id" = :deliveryId`,
-            { occurredAt, deliveryId },
-          ),
-      buildSystemAuthContext(workspaceId),
-    );
   }
 }

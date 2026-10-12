@@ -1,4 +1,4 @@
-import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -15,7 +15,7 @@ import {
 
 type SettingsProtectedRouteWrapperProps = {
   children?: ReactNode;
-  settingsPermission?: PermissionFlagType;
+  settingsPermission: PermissionFlagType;
   requiredFeatureFlag?: FeatureFlagKey;
 };
 
@@ -35,9 +35,7 @@ export const SettingsProtectedRouteWrapper = ({
     return null;
   }
 
-  // TODO: this should be part of PageChangeEffect as otherwise we will have multiple sources of redirection that can:
-  // - conflict (race conditions)
-  // - degrade performance as we will redirect multiple times
+  // TODO: move into PageChangeEffect to avoid conflicting and repeated redirects
   if ((requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission) {
     if (workspaceSurface.type === 'side-panel') {
       return (

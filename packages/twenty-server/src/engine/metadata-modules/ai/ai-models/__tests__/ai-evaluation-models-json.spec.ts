@@ -3,10 +3,7 @@ import { z } from 'zod';
 import defaultAiEvaluationModels from 'src/engine/metadata-modules/ai/ai-models/ai-evaluation-models.json';
 import { aiProviderModelConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.schema';
 
-// Hand-maintained, unlike ai-models.json: models.dev has no notion of an
-// evaluation model, so the daily sync can neither add these nor keep them. The
-// sync folds this file into the catalog, which is why it carries what a model
-// is and never how it is reached — routes and credentials live in the spec.
+// hand-maintained: models.dev has no evaluation models, so the daily sync cannot add or keep them
 const evaluationVendorsSchema = z.record(
   z.string(),
   z.object({ models: z.array(aiProviderModelConfigSchema).nonempty() }),
@@ -32,8 +29,7 @@ describe('ai-evaluation-models.json integrity', () => {
   it('should price every model, free output included', () => {
     Object.values(vendors).forEach((vendor) => {
       vendor.models.forEach((model) => {
-        // An omitted price bills nothing while the provider still charges, so
-        // free output has to say so with an explicit 0.
+        // an omitted price bills nothing while the provider still charges
         expect(model.inputCostPerMillionTokens).toBeDefined();
         expect(model.outputCostPerMillionTokens).toBeDefined();
       });
@@ -49,8 +45,7 @@ describe('ai-evaluation-models.json integrity', () => {
     });
   });
 
-  // Where a self-hosted instance processes and retains data depends on its own
-  // provider accounts, so the shipped catalog states neither on its behalf.
+  // residency and retention depend on each self-hosted instance's own provider accounts
   it('should not assert data residency or zero data retention', () => {
     Object.values(vendors).forEach((vendor) => {
       vendor.models.forEach((model) => {
@@ -60,8 +55,7 @@ describe('ai-evaluation-models.json integrity', () => {
     });
   });
 
-  // Routes belong to ai-self-host-spec.json; a credential here would be
-  // committed to the repository and ignored by the pipeline besides.
+  // routes belong to ai-self-host-spec.json, and a credential here would be committed
   it('should carry no routing or credentials', () => {
     Object.values(defaultAiEvaluationModels).forEach((vendor) => {
       expect(Object.keys(vendor)).toEqual(['models']);

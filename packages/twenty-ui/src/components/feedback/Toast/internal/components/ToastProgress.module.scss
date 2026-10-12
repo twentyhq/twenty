@@ -1,0 +1,19 @@
+.countdown {
+  animation: toastCountdown var(--toast-countdown-duration) linear forwards;
+  background-color: var(--toast-countdown-color);
+  height: 100%;
+
+  &[data-paused] {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes toastCountdown {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0;
+  }
+}

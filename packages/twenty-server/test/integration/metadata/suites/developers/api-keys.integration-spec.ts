@@ -123,6 +123,107 @@ describe('apiKeysResolver (e2e)', () => {
     });
   });
 
+  describe('getApiKeyRoles query', () => {
+    it('should return the roles assignable to API keys sorted by label', async () => {
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query GetApiKeyRoles {
+            getApiKeyRoles {
+              id
+              label
+              canBeAssignedToApiKeys
+            }
+          }
+        `,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+      expect(response.body.errors).toBeUndefined();
+
+      const roles: {
+        id: string;
+        label: string;
+        canBeAssignedToApiKeys: boolean;
+      }[] = response.body.data.getApiKeyRoles;
+      const labels = roles.map((role) => role.label);
+
+      expect(roles.map((role) => role.id)).toContain(adminRoleId);
+      expect(roles.every((role) => role.canBeAssignedToApiKeys)).toBe(true);
+      expect(labels).toEqual(
+        [...labels].sort((labelA, labelB) => labelA.localeCompare(labelB)),
+      );
+    });
+  });
+
+  describe('role apiKeys field', () => {
+    const findApiKeyIdsOfRole = async (roleId: string): Promise<string[]> => {
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query GetRole($id: UUID!) {
+            getRole(id: $id) {
+              apiKeys {
+                id
+              }
+            }
+          }
+        `,
+        variables: { id: roleId },
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.getRole.apiKeys.map(
+        (apiKey: { id: string }) => apiKey.id,
+      );
+    };
+
+    it('should list active API keys of the role and drop revoked ones', async () => {
+      const createResponse = await makeMetadataApiRequest({
+        query: gql`
+          mutation CreateApiKey($input: CreateApiKeyInput!) {
+            createApiKey(input: $input) {
+              id
+            }
+          }
+        `,
+        variables: {
+          input: {
+            name: 'Test API Key for Role',
+            expiresAt: '2099-12-31T23:59:59Z',
+            roleId: adminRoleId,
+          },
+        },
+      });
+
+      expect(createResponse.status).toBe(200);
+      expect(createResponse.body.data).toBeDefined();
+
+      const apiKeyId: string = createResponse.body.data.createApiKey.id;
+
+      createdApiKeyId = apiKeyId;
+
+      expect(await findApiKeyIdsOfRole(adminRoleId)).toContain(apiKeyId);
+
+      await makeMetadataApiRequest({
+        query: gql`
+          mutation RevokeApiKey($input: RevokeApiKeyInput!) {
+            revokeApiKey(input: $input) {
+              id
+            }
+          }
+        `,
+        variables: {
+          input: { id: apiKeyId },
+        },
+      });
+
+      expect(await findApiKeyIdsOfRole(adminRoleId)).not.toContain(apiKeyId);
+    });
+  });
+
   describe('createApiKey mutation', () => {
     it('should create an API key successfully', async () => {
       const apiKeyInput = {

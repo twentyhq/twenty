@@ -1,7 +1,6 @@
 import { type DictationFailureReason } from '@/ai/dictation/types/DictationFailureReason';
 
-// getUserMedia rejects with a DOMException whose name is the only stable part
-// of the failure; the message is browser-specific prose.
+// The DOMException name is the only stable part; messages are browser-specific.
 export const mapMediaDeviceError = (error: unknown): DictationFailureReason => {
   const name = error instanceof Error ? error.name : '';
 
@@ -12,8 +11,7 @@ export const mapMediaDeviceError = (error: unknown): DictationFailureReason => {
     case 'NotFoundError':
     case 'OverconstrainedError':
       return 'no-device';
-    // The device exists but another application holds it, which the user fixes
-    // the same way they would a missing one.
+    // Held by another app: the user fixes it the same way as a missing device.
     case 'NotReadableError':
       return 'no-device';
     default:

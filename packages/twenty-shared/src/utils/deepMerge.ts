@@ -27,7 +27,6 @@ export const deepMerge = <T extends object>(
       return;
     }
 
-    // Handle Date and RegExp objects - treat them as primitives
     if (
       targetValue instanceof Date ||
       targetValue instanceof RegExp ||

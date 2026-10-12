@@ -7,7 +7,7 @@ import {
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   buildColumnNameByResultAlias,
-  mapRowToEntity,
+  createRowToEntityMapper,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
@@ -42,6 +42,7 @@ export class WorkspaceMutationQueryBuilder {
   private readonly context: MutationQueryBuilderContext;
   private readonly kind: MutationKind;
   private readonly whereClauses: WhereClause[];
+  private readonly rowAccessConditions: string[];
   private readonly includeDeleted: boolean;
   private parameters: Record<string, unknown>;
   private setRecord: Record<string, unknown> = {};
@@ -52,6 +53,7 @@ export class WorkspaceMutationQueryBuilder {
     kind,
     context,
     whereClauses,
+    rowAccessConditions,
     includeDeleted,
     parameters,
   }: {
@@ -59,6 +61,7 @@ export class WorkspaceMutationQueryBuilder {
     kind: MutationKind;
     context: MutationQueryBuilderContext;
     whereClauses: WhereClause[];
+    rowAccessConditions: string[];
     includeDeleted: boolean;
     parameters: Record<string, unknown>;
   }) {
@@ -67,6 +70,7 @@ export class WorkspaceMutationQueryBuilder {
     this.context = context;
     this.tableShape = context.tableShape;
     this.whereClauses = [...whereClauses];
+    this.rowAccessConditions = [...rowAccessConditions];
     this.includeDeleted = includeDeleted;
     this.parameters = { ...parameters };
   }
@@ -103,9 +107,8 @@ export class WorkspaceMutationQueryBuilder {
       this.alias,
       this.returningColumns,
     );
-    const entities = rows.map((row) =>
-      mapRowToEntity(row, columnNameByResultAlias),
-    );
+    const mapRowToEntity = createRowToEntityMapper(columnNameByResultAlias);
+    const entities = rows.map(mapRowToEntity);
 
     return {
       generatedMaps: this.context.formatResult(entities),
@@ -125,6 +128,7 @@ export class WorkspaceMutationQueryBuilder {
       kind: this.kind,
       setClauses,
       whereClauses: this.whereClauses,
+      rowAccessConditions: this.rowAccessConditions,
       includeDeleted: this.includeDeleted,
       returningColumns: this.returningColumns,
     });

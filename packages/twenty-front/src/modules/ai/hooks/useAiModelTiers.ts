@@ -9,14 +9,13 @@ import { hasCostPerTaskForEveryModel } from '@/ai/utils/hasCostPerTaskForEveryMo
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { getAiModelBlendedCostPerMillionTokens } from '@/settings/ai/utils/getAiModelBlendedCostPerMillionTokens';
+import { getAiModelBlendedCostPerMillionTokens } from '@/ai/utils/getAiModelBlendedCostPerMillionTokens';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
 const REFERENCE_TIER: AiModelTier = 'balanced';
 
-// Every tier's cost delta must use the same basis: the publisher's cost per
-// task when every tier has one, the catalog price otherwise.
+// One basis for every tier: cost per task when all have one, catalog price otherwise.
 const getCostDeltaPercent = ({
   model,
   referenceModel,
@@ -40,8 +39,7 @@ const getCostDeltaPercent = ({
   });
 };
 
-// Mirrors the server rule: a pin counts only while automatic selection is off
-// and the pinned model is still served by the instance.
+// Mirrors the server: a pin counts only with auto-selection off and the model still served.
 export const useAiModelTiers = (): ResolvedAiModelTier[] => {
   const aiModels = useAtomStateValue(aiModelsState);
   const aiModelTiers = useAtomStateValue(aiModelTiersState);

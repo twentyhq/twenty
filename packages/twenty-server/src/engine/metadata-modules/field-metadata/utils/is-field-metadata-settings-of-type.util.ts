@@ -14,7 +14,6 @@ export const isFieldMetadataSettingsOfType = <
   fieldMetadataType: T,
 ): settings is FieldMetadataSettingsMapping[T] => {
   // Settings don't have a discriminator - the type is determined by fieldMetadataType
-  // For required settings types (RELATION, MORPH_RELATION, FILES), ensure settings is defined
   if (
     fieldMetadataType === FieldMetadataType.RELATION ||
     fieldMetadataType === FieldMetadataType.MORPH_RELATION ||
@@ -33,7 +32,6 @@ export const isUniversalFieldMetadataSettingsOftype = <
   fieldMetadataType: T,
 ): settings is UniversalFlatFieldMetadata<T>['universalSettings'] => {
   // Settings don't have a discriminator - the type is determined by fieldMetadataType
-  // For required settings types (RELATION, MORPH_RELATION, FILES), ensure settings is defined
   if (
     fieldMetadataType === FieldMetadataType.RELATION ||
     fieldMetadataType === FieldMetadataType.MORPH_RELATION ||

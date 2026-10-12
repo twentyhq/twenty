@@ -48,8 +48,7 @@ function setPrimaryLightPosition(
 
 // The complete rows-variant halftone scene: standard-material mesh, double
 // gaussian blur chain, row composite — ported from the authored hourglass
-// pipeline. (The band variant with the transmission material arrives with
-// its consumers.)
+// pipeline.
 export function createHalftoneSession({
   container,
   geometry,

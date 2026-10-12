@@ -1,0 +1,9 @@
+import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
+
+const MILLISECONDS_PER_HOUR = 60 * MILLISECONDS_PER_MINUTE;
+
+export const CALL_RECORDING_REQUEST_FOLLOW_UP_RETRY_DELAYS_MS = [
+  MILLISECONDS_PER_HOUR,
+  4 * MILLISECONDS_PER_HOUR,
+  24 * MILLISECONDS_PER_HOUR,
+];

@@ -219,18 +219,6 @@ export const getFieldMetadataCreationInputs = (
           },
         ],
       },
-      // {
-      //   name: 'oneToManyRelationField',
-      //   label: 'oneToManyRelationField',
-      //   type: FieldMetadataType.RELATION,
-      //   objectMetadataId,
-      //   relationCreationPayload: {
-      //     targetObjectMetadataId: targetObjectMetadata1Id,
-      //     targetFieldLabel: 'manyToOneTargetRelationField',
-      //     targetFieldIcon: 'IconListOpportunity',
-      //     type: RelationType.ONE_TO_MANY,
-      //   },
-      // },
     ],
   };
 

@@ -14,8 +14,7 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 const recordIndexId = 'record-table-widget-record-index-id';
 const objectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 
-// View-scoped states resolve against the wrapper's ViewComponentInstanceContext,
-// not the recordIndexId passed to loadRecordIndexStates
+// View-scoped states resolve against the wrapper's ViewComponentInstanceContext, not recordIndexId
 const viewInstanceId = 'instanceId';
 
 const makeView = (

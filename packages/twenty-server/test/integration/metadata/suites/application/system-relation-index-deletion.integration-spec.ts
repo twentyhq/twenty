@@ -114,8 +114,7 @@ describe.each(['sync', 'uninstall'] as const)(
           indexes.length,
         );
 
-        // Older backfills left these generated indexes unflagged and sometimes
-        // owned by Twenty Standard rather than the application owning the field.
+        // Older backfills left these indexes unflagged and sometimes owned by Twenty Standard.
         await globalThis.testDataSource.query(
           `UPDATE core."indexMetadata" SET "isSystemSideEffect" = false,
            "applicationId" = (

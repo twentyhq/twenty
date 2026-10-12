@@ -47,11 +47,7 @@ describe('alignGrantExpiryToPeriodEnd', () => {
     ).toEqual(new Date('2028-01-01T00:00:00.000Z'));
   });
 
-  // Stripe re-expands a month-end anchor rather than walking it down: a
-  // subscription anchored on the 31st renews Feb 28, Mar 31, Apr 30. Stepping
-  // off each clamped result instead would stamp the grant with Mar 28 and
-  // Apr 28, dates the subscription never renews on, putting the deadline back
-  // inside a period.
+  // Stripe re-expands a month-end anchor (Feb 28, Mar 31, Apr 30) rather than walking it down
   it('keeps a month-end anchor on the days the subscription actually renews', () => {
     const alignOnMonthEndAnchor = (requestedExpiresAt: Date) =>
       alignGrantExpiryToPeriodEnd({
@@ -72,9 +68,7 @@ describe('alignGrantExpiryToPeriodEnd', () => {
     );
   });
 
-  // The subscription has already renewed into a short month, so its stored
-  // start is the clamped February date and no boundary on record holds the
-  // anchor on its own. Projecting straight off that start would give Apr 28.
+  // The stored start is the clamped February date, so projecting straight off it would give Apr 28
   it('recovers a month-end anchor the stored period start no longer carries', () => {
     const result = alignGrantExpiryToPeriodEnd({
       requestedExpiresAt: new Date('2026-04-15T00:00:00.000Z'),
@@ -86,8 +80,7 @@ describe('alignGrantExpiryToPeriodEnd', () => {
     expect(result).toEqual(new Date('2026-04-30T00:00:00.000Z'));
   });
 
-  // A leap-day yearly anchor clamps to the 28th in common years and re-expands
-  // to the 29th when it lands back on a leap one.
+  // A leap-day yearly anchor clamps to the 28th in common years and re-expands in leap ones
   it('keeps a leap-day yearly anchor on the day each year actually has', () => {
     const alignOnLeapDayAnchor = (requestedExpiresAt: Date) =>
       alignGrantExpiryToPeriodEnd({
@@ -105,9 +98,7 @@ describe('alignGrantExpiryToPeriodEnd', () => {
     );
   });
 
-  // Between leap years a Feb 29 anchor is indistinguishable from a Feb 28 one:
-  // both boundaries read 28. Landing a day early costs the tail of one period,
-  // where landing a day late would carry the grant into the whole next one.
+  // Feb 29 and Feb 28 anchors look alike between leap years; a day early beats a whole extra period
   it('reads an anchor it cannot tell apart as the earlier day', () => {
     const result = alignGrantExpiryToPeriodEnd({
       requestedExpiresAt: new Date('2027-06-01T00:00:00.000Z'),
@@ -119,9 +110,7 @@ describe('alignGrantExpiryToPeriodEnd', () => {
     expect(result).toEqual(new Date('2028-02-28T00:00:00.000Z'));
   });
 
-  // The column is nullable, and the interval is only needed to project past the
-  // current period. Falling back to null expiry instead would read as "never
-  // expires" and hand out permanent credits for a time-boxed request.
+  // A null expiry fallback would hand out permanent credits for a time-boxed request
   it('stops at the current period end when the interval is unknown', () => {
     expect(alignFrom(new Date('2026-06-15T00:00:00.000Z'), null)).toEqual(
       CURRENT_PERIOD_END,
@@ -136,10 +125,7 @@ describe('alignGrantExpiryToPeriodEnd', () => {
     );
   });
 
-  // Stripe's boundaries are UTC instants. Projecting them with local-time
-  // arithmetic moves each one by the server's offset, which lands the expiry
-  // inside the period it is meant to close: under Europe/Paris this case
-  // returned 2026-03-31T23:00:00Z.
+  // Stripe boundaries are UTC instants: local-time arithmetic lands the expiry inside the period
   describe.each(['Europe/Paris', 'Pacific/Kiritimati', 'America/Los_Angeles'])(
     'with the server in %s',
     (timeZone) => {
@@ -150,8 +136,7 @@ describe('alignGrantExpiryToPeriodEnd', () => {
       });
 
       afterAll(() => {
-        // Assigning undefined would leave the string 'undefined' behind, which
-        // is not the unset state the process started in.
+        // Assigning undefined would leave the string 'undefined' behind
         if (isDefined(originalTimeZone)) {
           process.env.TZ = originalTimeZone;
         } else {

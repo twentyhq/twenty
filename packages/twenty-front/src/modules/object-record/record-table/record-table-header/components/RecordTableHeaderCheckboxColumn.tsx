@@ -8,10 +8,10 @@ import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
+import { allRecordsSelectedStatusComponentSelector } from '@/object-record/record-selection/states/selectors/allRecordsSelectedStatusComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
@@ -42,12 +42,12 @@ export const RecordTableHeaderCheckboxColumn = () => {
   const { t } = useLingui();
 
   const allRowsSelectedStatus = useAtomComponentSelectorValue(
-    allRowsSelectedStatusComponentSelector,
+    allRecordsSelectedStatusComponentSelector,
   );
 
   const { selectAllRows } = useSelectAllRows();
 
-  const { resetTableRowSelection } = useResetTableRowSelection();
+  const { resetRecordSelection } = useResetRecordSelection();
 
   const checked =
     allRowsSelectedStatus === 'all' || allRowsSelectedStatus === 'some';
@@ -70,7 +70,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
 
   const onChange = () => {
     if (checked) {
-      resetTableRowSelection();
+      resetRecordSelection();
     } else {
       selectAllRows();
     }

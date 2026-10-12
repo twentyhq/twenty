@@ -59,9 +59,7 @@ export const useOpenRecordFromIndexView = () => {
         parentViewSorts,
       };
 
-      // The record's related lists read this from the store of the surface they
-      // render on, so it has to land on the destination rather than on the index
-      // that is handing it over.
+      // Related lists read this from their own surface's store, so set it on the destination.
       const setParentViewOn = (instanceId: string) =>
         store.set(
           contextStoreRecordShowParentViewComponentState.atomFamily({

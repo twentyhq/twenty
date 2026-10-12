@@ -117,11 +117,7 @@ const createEntityActionsBuilderTask = <T extends AllMetadataName>(
     if (result.status === 'fail') {
       orchestratorFailureReport[metadataName].push(...result.errors);
     } else {
-      // TS mapped-type invariance: writing into a generic key of a mapped
-      // type widens the expected value to the intersection of all variants.
-      // The runtime value is correctly typed as
-      // MetadataUniversalWorkspaceMigrationActionsRecord<T>, but TS cannot
-      // narrow OrchestratorActionsReport[T] on the assignment side.
+      // TS cannot narrow OrchestratorActionsReport[T] when assigning through a generic mapped-type key
       orchestratorActionsReport[metadataName] =
         result.actions as OrchestratorActionsReport[T];
     }
@@ -170,12 +166,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceMigrationWorkflowVersionActionsBuilderService: WorkspaceMigrationWorkflowVersionActionsBuilderService,
     workspaceMigrationSettingsMenuItemActionsBuilderService: WorkspaceMigrationSettingsMenuItemActionsBuilderService,
   ) {
-    // The order of this array defines the execution order of the per-entity
-    // builders. Each builder may mutate `optimisticAllFlatEntityMaps`, so
-    // subsequent builders see those mutations and downstream entities depend
-    // on upstream ones being processed first. Do not reorder casually.
-    // The constructor parameter order above is irrelevant: NestJS DI resolves
-    // dependencies by type, not by position.
+    // Execution order: builders mutate optimisticAllFlatEntityMaps that downstream builders read, so do not reorder
     this.entityActionsBuilderTasksInExecutionOrder = [
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.objectMetadata,

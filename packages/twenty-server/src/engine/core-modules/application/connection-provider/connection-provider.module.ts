@@ -10,10 +10,8 @@ import { ConnectionProviderService } from 'src/engine/core-modules/application/c
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
@@ -22,9 +20,13 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
+import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 
 @Module({
   imports: [
+    ApplicationLookupModule,
+    ApplicationRegistrationLookupModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       ConnectionProviderEntity,
@@ -34,10 +36,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
       UserEntity,
     ]),
     JwtModule,
-    LogicFunctionExecutorModule,
     SecretEncryptionModule,
     SecureHttpClientModule,
-    TwentyConfigModule,
     FlatConnectionProviderModule,
     ConnectedAccountTokenEncryptionModule,
     WorkspaceCacheModule,

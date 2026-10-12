@@ -1,7 +1,5 @@
 export type AnimatedNumberEasing = (progress: number) => number;
 
-// Pure number-tween math (the pricing cards' price counter): value at an
-// elapsed time, eased and rounded. Ported.
 const DEFAULT_DURATION_MS = 500;
 
 function clampUnitInterval(value: number): number {

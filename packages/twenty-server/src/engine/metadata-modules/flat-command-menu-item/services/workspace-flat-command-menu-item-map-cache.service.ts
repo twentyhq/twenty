@@ -44,6 +44,12 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends MetadataFlatEnt
       createIdToUniversalIdentifierMap(frontComponents);
     const pageLayoutIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(pageLayouts);
+    const objectMetadataUniversalIdentifierById = Object.fromEntries(
+      objectMetadataIdToUniversalIdentifierMap,
+    );
+    const pageLayoutUniversalIdentifierById = Object.fromEntries(
+      pageLayoutIdToUniversalIdentifierMap,
+    );
 
     const flatCommandMenuItemMaps = createEmptyFlatEntityMaps();
 
@@ -55,6 +61,8 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends MetadataFlatEnt
           objectMetadataIdToUniversalIdentifierMap,
           frontComponentIdToUniversalIdentifierMap,
           pageLayoutIdToUniversalIdentifierMap,
+          objectMetadataUniversalIdentifierById,
+          pageLayoutUniversalIdentifierById,
         });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

@@ -10,9 +10,7 @@ export const useSkillSuggestionSearch = () => {
 
   const searchSkills = useCallback(
     async (query: string): Promise<SkillSuggestionItem[]> => {
-      // Settings can delete or deactivate a skill without refetching the
-      // catalog, so the list is refreshed when the menu opens (empty query)
-      // and served from cache while the user narrows it down.
+      // Settings can delete or deactivate a skill without refetching, so refresh on open (empty query) and cache while narrowing
       const { data } = await apolloMetadataClient.query({
         query: FindManySkillsForSuggestionDocument,
         fetchPolicy: query === '' ? 'network-only' : 'cache-first',

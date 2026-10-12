@@ -4,6 +4,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { areRegistrationAssetsStored } from 'src/engine/core-modules/application/application-registration/utils/are-registration-assets-stored.util';
@@ -14,6 +15,7 @@ export class MarketplaceCatalogSyncService {
 
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
     private readonly marketplaceService: MarketplaceService,
   ) {}
@@ -54,7 +56,7 @@ export class MarketplaceCatalogSyncService {
         }
 
         const previousVersion = (
-          await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+          await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
             universalIdentifier,
           )
         )?.latestAvailableVersion;

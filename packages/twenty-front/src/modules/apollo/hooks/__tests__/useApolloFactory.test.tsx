@@ -7,7 +7,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { act, renderHook } from '@testing-library/react';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 import { MemoryRouter, useLocation } from 'react-router-dom';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 
 enableFetchMocks();
 

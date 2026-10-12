@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordDetailSectionWrapper = styled.div`

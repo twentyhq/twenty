@@ -51,8 +51,7 @@ export class UserSessionEntity {
   @Column({ type: 'uuid', nullable: true })
   workspaceId: string | null;
 
-  // Removing someone from a workspace deletes the membership, not the
-  // workspace, so without the cascade a dead session lingers until expiry.
+  // Removing a member deletes the membership, not the workspace, so without the cascade sessions linger until expiry.
   @ManyToOne(() => UserWorkspaceEntity, {
     onDelete: 'CASCADE',
   })

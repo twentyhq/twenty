@@ -6,7 +6,6 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
@@ -17,7 +16,6 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 export class WorkflowDestroyOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
   async execute(
@@ -29,10 +27,6 @@ export class WorkflowDestroyOnePostQueryHook implements WorkspacePostQueryHookIn
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowIds(
-      workspace.id,
-      payload.map((workflow) => workflow.id),
-    );
     await this.workflowCoreSyncService.reconcileWorkspaceWorkflows(
       authContext.workspace.id,
       payload.map((workflow) => workflow.id),

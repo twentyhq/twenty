@@ -10,16 +10,8 @@ type SentFolderResult = {
   path: string;
 } | null;
 
-/**
- * Service to find sent folder using IMAP special-use flags
- *
- * This service uses IMAP special-use extension (RFC 6154) to identify
- * the sent folder by looking for the \Sent flag rather than relying on
- * folder names which can vary across providers and locales.
- *
- * Falls back to regex-based detection if special-use flags are not available.
- * The regex pattern is inspired by imapsync's comprehensive folder mapping.
- */
+// The RFC 6154 \Sent special-use flag is preferred over folder names, which vary
+// across providers and locales; the regex fallback follows imapsync's folder mapping.
 @Injectable()
 export class ImapFindSentFolderService {
   private readonly logger = new Logger(ImapFindSentFolderService.name);

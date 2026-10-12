@@ -1032,8 +1032,7 @@ describe('OAuth (integration)', () => {
         })
         .expect(200);
 
-    // 'read' alone, not the registration's full scope list, so the assertion
-    // fails if the granted scope is ignored in favour of the declared one.
+    // 'read' alone, so the assertion fails if the declared scope is used instead of the granted one.
     it('should record the authorization with the scopes the user granted', async () => {
       await exchangeForTokens('read');
 
@@ -1078,8 +1077,7 @@ describe('OAuth (integration)', () => {
       }).expect(200);
     });
 
-    // Deleting the row leaves a refresh token in the state every token minted
-    // before this table existed is in.
+    // Deleting the row recreates the state of tokens minted before this table existed.
     it('should backfill a refresh token that predates the authorization record without inventing a consent', async () => {
       const { refreshToken } = await exchangeForTokens('read write');
 

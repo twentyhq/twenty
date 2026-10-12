@@ -131,6 +131,7 @@ describe('JWT Legacy HS256 no-kid fallback (integration)', () => {
       workspaceId: sharedLoginPayload.workspaceId,
       authProvider:
         sharedLoginPayload.authProvider ?? AuthProviderEnum.Password,
+      jti: randomUUID(),
     };
 
     const forgedToken = forgeLegacyHs256Token(

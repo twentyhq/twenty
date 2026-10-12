@@ -4,8 +4,6 @@ import { useEffect, useState, type RefObject } from 'react';
 
 import { observeElementSize } from './observe-element-size';
 
-// The uniform scale that fits a fixed design box into a live container
-// (feature scenes author at 411x508 and shrink together). Ported.
 export function useScaleToFit(
   containerRef: RefObject<HTMLElement | null>,
   designWidth: number,

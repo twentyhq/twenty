@@ -5,7 +5,7 @@ import { StyledOnboardingFreeCreditsText } from '@/onboarding/components/free-cr
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -65,7 +65,7 @@ export const OnboardingFreeCreditsProgress = ({
           <OnboardingFreeCreditsAnimatedCount credits={goalCredits} />
         </StyledOnboardingFreeCreditsCount>
         {isMobile ? (
-          <VisibilityHidden>{goalCreditsLabel}</VisibilityHidden>
+          <VisuallyHidden>{goalCreditsLabel}</VisuallyHidden>
         ) : (
           <StyledOnboardingFreeCreditsLabel>
             {goalCreditsLabel}

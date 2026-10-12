@@ -2,7 +2,7 @@ import { IconCoins } from 'twenty-ui/icon';
 
 import { type UsageLimitRow } from '@/settings/billing/types/UsageLimitRow';
 import { filterUsageLimitRows } from '@/settings/billing/utils/filterUsageLimitRows';
-import { UsageResourceType } from '~/generated-metadata/graphql';
+import { UsageResourceType, UsageUnit } from '~/generated-metadata/graphql';
 
 const buildRow = (overrides: Partial<UsageLimitRow> = {}): UsageLimitRow => ({
   id: 'row-id',
@@ -16,7 +16,7 @@ const buildRow = (overrides: Partial<UsageLimitRow> = {}): UsageLimitRow => ({
   consumedPercentage: 60,
   consumedText: '60 credits',
   limitText: '100 credits',
-  isCreditsMeter: true,
+  unit: UsageUnit.CREDIT,
   isExhausted: false,
   periodName: 'Monthly',
   ...overrides,

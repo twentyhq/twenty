@@ -3,8 +3,7 @@ import { type SearchResultItem } from '@/side-panel/pages/search/types/SearchRes
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-// Follows the selection immediately so the card never unmounts between
-// records. Fetching is what gets debounced, one level down.
+// Not debounced so the card never unmounts between records; fetching is debounced one level down
 export const useSidePanelSearchRecordPreviewItem = (
   searchResultItems: SearchResultItem[],
 ): SearchResultItem | null => {

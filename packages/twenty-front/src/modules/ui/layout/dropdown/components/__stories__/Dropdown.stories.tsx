@@ -6,8 +6,6 @@ import {
 } from '@storybook/react-vite';
 import { type PlayFunction } from 'storybook/internal/types';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-// TEMP_DISABLED_TEST: Commented out unused import
-// import { useState } from 'react';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
@@ -200,69 +198,6 @@ const optionsMock = [
   },
 ];
 
-//   return (
-//     <LegacyDropdownContent>
-//       <DropdownMenuItemsContainer hasMaxHeight>
-//         {optionsMock.map((item) => (
-//           <MenuItemSelectAvatar
-//             key={item.id}
-//             selected={selectedItem === item.id}
-//             onClick={() => setSelectedItem(item.id)}
-//             avatar={
-//               hasAvatar ? (
-//                 <Avatar
-//                   placeholder="A"
-//                   avatarUrl={item.avatarUrl}
-//                   size="md"
-//                   type="squared"
-//                 />
-//               ) : undefined
-//             }
-//             text={item.name}
-//           />
-//         ))}
-//       </DropdownMenuItemsContainer>
-//     </LegacyDropdownContent>
-//   );
-// };
-
-// TEMP_DISABLED_TEST: Commented out unused component
-// const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
-//   const [selectedItemsById, setSelectedItemsById] = useState<
-//     Record<string, boolean>
-//   >({});
-
-//   return (
-//     <LegacyDropdownContent>
-//       <DropdownMenuItemsContainer hasMaxHeight>
-//         {optionsMock.map((item) => (
-//           <MenuItemMultiSelectAvatar
-//             key={item.id}
-//             selected={selectedItemsById[item.id]}
-//             onSelectChange={(checked) =>
-//               setSelectedItemsById((previous) => ({
-//                 ...previous,
-//                 [item.id]: checked,
-//               }))
-//             }
-//             avatar={
-//               hasAvatar ? (
-//                 <Avatar
-//                   placeholder="A"
-//                   avatarUrl={item.avatarUrl}
-//                   size="md"
-//                   type="squared"
-//                 />
-//               ) : undefined
-//             }
-//             text={item.name}
-//           />
-//         ))}
-//       </DropdownMenuItemsContainer>
-//     </LegacyDropdownContent>
-//   );
-// };
-
 const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
   const canvas = within(canvasElement.ownerDocument.body);
 
@@ -360,56 +295,3 @@ export const WithInput: Story = {
   },
   play: playInteraction,
 };
-
-// TEMP_DISABLED_TEST: Commented out unused variable
-// const modalId = 'dropdown-modal-test';
-
-// TEMP_DISABLED_TEST: Commented out unused component
-// const ModalWithDropdown = () => {
-//   return (
-//     <>
-//       <Modal modalId={modalId} size="medium" padding="medium" isClosable={true}>
-//         <Modal.Header>Modal with Dropdown Test</Modal.Header>
-//         <Modal.Content>
-//           <p>
-//             This modal contains a dropdown that should appear above the modal
-//             (higher z-index).
-//           </p>
-//           <div style={{ marginTop: '20px' }}>
-//             <Dropdown
-//               clickableComponent={
-//                 <Button
-//                   dataTestId="dropdown-button"
-//                   title="Open Dropdown in Modal"
-//                 />
-//               }
-//               dropdownOffset={{ x: 0, y: 8 }}
-//               dropdownId="modal-dropdown-test"
-//               isDropdownInModal={true}
-//               dropdownComponents={
-//                 <div data-testid="dropdown-content">
-//                   <FakeSelectableMenuItemList hasAvatar />
-//                 </div>
-//               }
-//             />
-//           </div>
-//         </Modal.Content>
-//       </Modal>
-//     </>
-//   );
-// };
-
-//   set(focusStackState, [
-//     {
-//       focusId: modalId,
-//       componentInstance: {
-//         componentType: FocusComponentType.MODAL,
-//         componentInstanceId: modalId,
-//       },
-//       globalHotkeysConfig: {
-//         enableGlobalHotkeysWithModifiers: true,
-//         enableGlobalHotkeysConflictingWithKeyboard: true,
-//       },
-//     },
-//   ]);
-// };

@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
+  WORKFLOW_ACTION_FEATURE_FLAGS,
   workflowActionSchema,
   WorkflowActionType,
   workflowTriggerSchema,
@@ -220,6 +221,17 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
   if (steps.some((step) => step.type === WorkflowActionType.AI_AGENT)) {
     throw new WorkflowVersionStepException(
       'AI_AGENT steps cannot be created via create_complete_workflow because it does not create the underlying agent. Use create_workflow_version_step instead, then call update_agent to configure the agent.',
+      WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+    );
+  }
+
+  const flagGatedStep = steps.find((step) =>
+    isDefined(WORKFLOW_ACTION_FEATURE_FLAGS[step.type]),
+  );
+
+  if (isDefined(flagGatedStep)) {
+    throw new WorkflowVersionStepException(
+      `${flagGatedStep.type} steps cannot be created via create_complete_workflow. Use create_workflow_version_step instead.`,
       WorkflowVersionStepExceptionCode.INVALID_REQUEST,
     );
   }

@@ -29,8 +29,10 @@ import {
   AggregateOperations,
   NavigationMenuItemType,
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   ViewSortDirection,
   ViewType,
+  WidgetType,
 } from 'twenty-shared/types';
 import { describe, expect, it } from 'vitest';
 
@@ -148,7 +150,7 @@ const buildPageLayoutManifest = (
 ): PageLayoutManifest => ({
   universalIdentifier: PAGE_LAYOUT_UID,
   name: 'Pet page',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: PET_UID,
   tabs: [
     {
@@ -160,7 +162,7 @@ const buildPageLayoutManifest = (
         {
           universalIdentifier: WIDGET_UID,
           title: 'Notes',
-          type: 'NOTES',
+          type: WidgetType.NOTES,
           objectUniversalIdentifier: PET_UID,
           position: {
             layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
@@ -516,7 +518,10 @@ describe('buildPullEntities', () => {
     const {
       objectUniversalIdentifier: _objectUniversalIdentifier,
       ...standalonePageManifest
-    } = buildPageLayoutManifest({ name: 'Pet docs', type: 'STANDALONE_PAGE' });
+    } = buildPageLayoutManifest({
+      name: 'Pet docs',
+      type: PageLayoutType.STANDALONE_PAGE,
+    });
     const { entities, skipped } = buildPullEntities(
       buildManifest({ pageLayouts: [standalonePageManifest] }),
     );

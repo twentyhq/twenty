@@ -1,4 +1,3 @@
-/** Human-readable label from a URL — usually the hostname, path included when useful. */
 export function formatPartnerLinkLabel(url: string): string {
   try {
     const parsed = new URL(url.includes('://') ? url : `https://${url}`);

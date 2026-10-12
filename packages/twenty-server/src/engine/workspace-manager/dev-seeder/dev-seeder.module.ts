@@ -1,15 +1,14 @@
+import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
-import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -29,8 +28,9 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
+import { DevSeederAgentChatPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-pending-input.workspace-service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
-import { DevSeederWorkflowAgentQuestionWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-agent-question.workspace-service';
+import { DevSeederWorkflowPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-pending-input.workspace-service';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
@@ -44,12 +44,12 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
 @Module({
   imports: [
     AgentHistoryModule,
+    AiAgentExecutionModule,
     TimelineActivityModule,
     ObjectMetadataModule,
     FieldMetadataModule,
     WorkspaceDataSourceModule,
     WorkspaceCacheStorageModule,
-    TypeORMModule,
     RoleModule,
     RolePermissionFlagModule,
     RoleTargetModule,
@@ -57,8 +57,6 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     ApiKeyModule,
     ApplicationModule,
     ApplicationRegistrationModule,
-    FeatureFlagModule,
-    FileStorageModule,
     TypeOrmModule.forFeature([
       WorkspaceEntity,
       ObjectMetadataEntity,
@@ -76,6 +74,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     UpgradeModule,
     WorkflowRunModule,
     WorkflowAgentConversationModule,
+    RecordShareStorageModule,
   ],
   exports: [DevSeederWorkspaceService],
   providers: [
@@ -84,7 +83,8 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     DevSeederPermissionsService,
     DevSeederDataService,
     TimelineActivitySeederService,
-    DevSeederWorkflowAgentQuestionWorkspaceService,
+    DevSeederWorkflowPendingInputWorkspaceService,
+    DevSeederAgentChatPendingInputWorkspaceService,
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
     provideWorkspaceScopedRepository(WorkflowEntity),

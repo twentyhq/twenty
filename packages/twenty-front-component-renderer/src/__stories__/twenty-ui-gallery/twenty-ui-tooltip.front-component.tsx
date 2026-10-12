@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
@@ -9,6 +10,7 @@ import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twent
 const TooltipExample = () => {
   const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const [handle] = useState(() => Tooltip.createHandle<string>());
 
   useEffect(() => {
     setReady(true);
@@ -31,12 +33,32 @@ const TooltipExample = () => {
           <Tooltip.Trigger render={<span />} delay={0}>
             <Button>Export details</Button>
           </Tooltip.Trigger>
-          <Tooltip.Popup arrow>
-            <Tooltip.Content description="Your current filters are applied.">
-              Export visible records
-            </Tooltip.Content>
-          </Tooltip.Popup>
+          <Tooltip.Portal>
+            <Tooltip.Positioner sideOffset={10} style={{ maxWidth: '300px' }}>
+              <Tooltip.Popup>
+                <Tooltip.Arrow />
+                <Tooltip.Viewport>
+                  <Text style={{ fontWeight: 500 }}>
+                    Export visible records
+                  </Text>
+                  <Text>Your current filters are applied.</Text>
+                </Tooltip.Viewport>
+              </Tooltip.Popup>
+            </Tooltip.Positioner>
+          </Tooltip.Portal>
         </Tooltip.Root>
+        <Tooltip.Trigger
+          handle={handle}
+          payload="Detached export help"
+          render={<Button>Detached export</Button>}
+        />
+        <Tooltip<string>
+          handle={handle}
+          content={({ payload }) => payload}
+          triggerProps={{ payload: 'Local export help' }}
+        >
+          <Button>Local export</Button>
+        </Tooltip>
         <p role="status" aria-busy={!ready}>
           Export help: {open ? 'open' : 'closed'}
         </p>

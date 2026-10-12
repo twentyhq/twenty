@@ -13,8 +13,6 @@ jest.mock('~/utils/sleep', () => ({
   sleep: jest.fn().mockResolvedValue(undefined),
 }));
 
-// The hook only ever calls dispose, but the atom holds a full Client, so the
-// unused members are stubbed rather than cast away.
 const buildSseClient = (dispose: () => void): Client => ({
   subscribe: () => () => {},
   iterate: async function* () {},

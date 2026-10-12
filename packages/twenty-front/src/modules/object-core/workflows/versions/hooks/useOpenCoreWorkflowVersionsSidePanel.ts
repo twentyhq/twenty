@@ -26,7 +26,6 @@ export const useOpenCoreWorkflowVersionsSidePanel = () => {
       pageTitle: t`Workflow versions`,
       pageIcon: IconVersions,
       pageId,
-      resetNavigationStack: true,
     });
   };
 

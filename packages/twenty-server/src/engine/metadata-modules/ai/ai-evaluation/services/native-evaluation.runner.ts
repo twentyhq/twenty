@@ -12,10 +12,7 @@ import { type AiEvaluationRequest } from 'src/engine/metadata-modules/ai/ai-eval
 import { type AiEvaluationRunnerOutput } from 'src/engine/metadata-modules/ai/ai-evaluation/types/ai-evaluation-result.type';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
-// Runs the questions on a model built for them, through the SDK's evaluate()
-// rather than the provider's doEvaluate directly: it validates the answers
-// against the questions asked, so an off-menu option or a distribution that
-// does not sum to one is rejected before a workflow can branch on it.
+// evaluate() rather than doEvaluate validates answers, so invalid ones are rejected before a workflow branches on them
 @Injectable()
 export class NativeEvaluationRunner {
   constructor(
@@ -49,8 +46,7 @@ export class NativeEvaluationRunner {
       model: registeredModel.model,
       state,
       questions,
-      // The workflow step owns retries, so a failure surfaces to it instead of
-      // being spent silently here.
+      // the workflow step owns retries
       maxRetries: 0,
       ...(isDefined(abortSignal) && { abortSignal }),
     });

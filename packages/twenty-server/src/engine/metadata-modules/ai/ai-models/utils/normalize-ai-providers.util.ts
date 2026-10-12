@@ -11,7 +11,10 @@ export const normalizeAiProviders = (
       ...config,
       name: key,
       models: (config.models ?? []).map(
-        (model): AiProviderModelConfig => ({ ...model, source: 'catalog' }),
+        (model): AiProviderModelConfig => ({
+          ...model,
+          source: 'catalog',
+        }),
       ),
     };
   }

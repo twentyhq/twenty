@@ -30,11 +30,7 @@ const jestConfig = {
     '/node_modules/',
     '<rootDir>/src/constants/template/',
   ],
-  collectCoverageFrom: [
-    'src/**/*.{ts,js}',
-    '!src/**/*.d.ts',
-    '!src/cli.ts', // Exclude CLI entry point from coverage
-  ],
+  collectCoverageFrom: ['src/**/*.{ts,js}', '!src/**/*.d.ts', '!src/cli.ts'],
   coverageThreshold: {
     global: {
       statements: 1,

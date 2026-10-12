@@ -1,0 +1,174 @@
+import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
+
+import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
+import { type ToolInput } from '@/ai/types/ToolInput';
+import { buildNamedItemsStatusMessage } from '@/ai/utils/tool-display/buildNamedItemsStatusMessage';
+import { buildToolStatusMessageByCategory } from '@/ai/utils/tool-display/buildToolStatusMessageByCategory';
+import { extractSearchQuery } from '@/ai/utils/tool-display/extractSearchQuery';
+import { pickStatusLabel } from '@/ai/utils/tool-display/pickStatusLabel';
+import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
+
+const ModelGeneratedLabelSchema = z.object({
+  loadingMessage: z.string(),
+  completedMessage: z.string().optional(),
+});
+const LearnToolsSchema = z.object({ toolNames: z.array(z.string()) });
+const LoadSkillsSchema = z.object({ skillNames: z.array(z.string()) });
+const AttachConversationToRecordSchema = z.object({
+  objectNameSingular: z.string(),
+});
+
+export const getToolDisplayMessage = ({
+  input,
+  toolName,
+  isFinished,
+  displayContext,
+  output,
+}: {
+  input: ToolInput;
+  toolName: string;
+  isFinished: boolean;
+  displayContext: ToolDisplayContext;
+  output?: unknown;
+}): string => {
+  const { toolInput, toolName: resolvedToolName } = unwrapToolInput({
+    input,
+    toolName,
+  });
+
+  return buildToolDisplayMessage({
+    input: toolInput,
+    toolName: resolvedToolName,
+    isFinished,
+    displayContext,
+    output,
+  });
+};
+
+const buildToolDisplayMessage = ({
+  input,
+  toolName,
+  isFinished,
+  displayContext,
+  output,
+}: {
+  input: ToolInput;
+  toolName: string;
+  isFinished: boolean;
+  displayContext: ToolDisplayContext;
+  output?: unknown;
+}): string => {
+  switch (toolName) {
+    case 'web_search':
+    case 'app_exa_web_search': {
+      const query = extractSearchQuery(input);
+
+      if (isNonEmptyString(query)) {
+        return pickStatusLabel({
+          isFinished,
+          completedLabel: t`Searched the web for ${query}`,
+          loadingLabel: t`Searching the web for ${query}`,
+        });
+      }
+
+      return pickStatusLabel({
+        isFinished,
+        completedLabel: t`Searched the web`,
+        loadingLabel: t`Searching the web`,
+      });
+    }
+    case 'learn_tools': {
+      const parsed = LearnToolsSchema.safeParse(input);
+
+      return buildNamedItemsStatusMessage({
+        names: parsed.success ? parsed.data.toolNames : [],
+        isFinished,
+        displayContext,
+        output,
+        loadingLabel: (formattedNames) => t`Learning ${formattedNames}`,
+        completedLabel: (formattedNames) => t`Learned ${formattedNames}`,
+        loadingFallback: t`Learning tools...`,
+        completedFallback: t`Learned tools`,
+      });
+    }
+    case 'load_skills': {
+      const parsed = LoadSkillsSchema.safeParse(input);
+
+      return buildNamedItemsStatusMessage({
+        names: parsed.success ? parsed.data.skillNames : [],
+        isFinished,
+        displayContext,
+        output,
+        loadingLabel: (formattedNames) => t`Loading ${formattedNames}`,
+        completedLabel: (formattedNames) => t`Loaded ${formattedNames}`,
+        loadingFallback: t`Loading skills...`,
+        completedFallback: t`Loaded skills`,
+      });
+    }
+    case 'code_interpreter': {
+      const parsed = ModelGeneratedLabelSchema.safeParse(input);
+
+      if (parsed.success && isNonEmptyString(parsed.data.loadingMessage)) {
+        const completedMessage = isNonEmptyString(parsed.data.completedMessage)
+          ? parsed.data.completedMessage
+          : parsed.data.loadingMessage;
+
+        return pickStatusLabel({
+          isFinished,
+          completedLabel: completedMessage,
+          loadingLabel: parsed.data.loadingMessage,
+        });
+      }
+
+      return pickStatusLabel({
+        isFinished,
+        completedLabel: t`Ran code`,
+        loadingLabel: t`Running code`,
+      });
+    }
+    case ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME: {
+      const parsed = AttachConversationToRecordSchema.safeParse(input);
+      const objectMetadataItem = parsed.success
+        ? displayContext.objectMetadataItems.find(
+            (metadataItem) =>
+              metadataItem.nameSingular === parsed.data.objectNameSingular,
+          )
+        : undefined;
+      const hasFailed =
+        isObject(output) && 'success' in output && output.success === false;
+
+      if (isDefined(objectMetadataItem)) {
+        const objectLabel = objectMetadataItem.labelSingular.toLocaleLowerCase(
+          i18n.locale,
+        );
+
+        return pickStatusLabel({
+          isFinished,
+          completedLabel: hasFailed
+            ? t`Could not attach this conversation to the ${objectLabel}`
+            : t`Attached this conversation to the ${objectLabel}`,
+          loadingLabel: t`Attaching this conversation to the ${objectLabel}`,
+        });
+      }
+
+      return pickStatusLabel({
+        isFinished,
+        completedLabel: hasFailed
+          ? t`Could not attach this conversation to a record`
+          : t`Attached this conversation to a record`,
+        loadingLabel: t`Attaching this conversation to a record`,
+      });
+    }
+    default:
+      return buildToolStatusMessageByCategory({
+        toolName,
+        isFinished,
+        displayContext,
+      });
+  }
+};

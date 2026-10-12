@@ -13,8 +13,6 @@ import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
 import { color, fontFamily, tokenCssVariables } from '@/tokens';
 
-// Host Grotesk and Azeret Mono are variable fonts, declared over their full
-// wght axis so the browser interpolates every weight the site asks for.
 const hostGrotesk = localFont({
   src: '../../fonts/host-grotesk-latin-variable.woff2',
   weight: '300 800',
@@ -47,10 +45,7 @@ const vt323 = localFont({
   display: 'swap',
 });
 
-// Inter is twenty-front's product font; the app-preview/CRM mockups render in it
-// (exposed as --font-product so the preview surfaces can rebind to it). Pinned to
-// the exact classic Inter (v12, weights 400/500/600) twenty-front self-hosts, so
-// the mockups match the product pixel-for-pixel rather than Google's current Inter.
+// Pinned to the classic Inter v12 twenty-front self-hosts, so mockups match the product pixel for pixel.
 const inter = localFont({
   src: [
     {
@@ -74,9 +69,6 @@ const inter = localFont({
 });
 
 const globalStyles = css`
-  /* One root rule instead of per-component guards: motion collapses to
-     instant for users who prefer reduced motion. State still applies;
-     only the travel disappears. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

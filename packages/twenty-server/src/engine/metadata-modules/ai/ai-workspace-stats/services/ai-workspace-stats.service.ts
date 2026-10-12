@@ -28,9 +28,7 @@ export class AiWorkspaceStatsService {
         workspaceId,
         flatMapsKeys: ['flatSkillMaps'],
       }),
-      // Count the full tool catalog the user can see (built-in tools + custom
-      // logic-function tools), matching the Tools tab rather than only the
-      // custom subset. The catalog is role-scoped, like the tab.
+      // the full role-scoped catalog, to match the Tools tab
       this.toolRegistryService.buildToolIndex(workspaceId, roleId),
     ]);
 

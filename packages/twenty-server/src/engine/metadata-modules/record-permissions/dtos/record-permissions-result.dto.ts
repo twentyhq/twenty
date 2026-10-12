@@ -1,19 +1,7 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsUUID } from 'class-validator';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
-
-@InputType()
-export class RecordPermissionsTargetInput {
-  @IsUUID()
-  @Field(() => UUIDScalarType)
-  objectMetadataId: string;
-
-  @IsUUID()
-  @Field(() => UUIDScalarType)
-  recordId: string;
-}
+import { RecordPermissionsDTO } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions.dto';
 
 @ObjectType()
 export class RecordPermissionsResult {

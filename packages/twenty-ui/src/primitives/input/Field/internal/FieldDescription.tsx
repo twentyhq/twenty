@@ -3,11 +3,8 @@ import { forwardRef } from 'react';
 
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
+import { type FieldDescriptionProps } from '../types/FieldDescriptionProps';
 import styles from './FieldDescription.module.scss';
-
-type FieldDescriptionProps = React.ComponentPropsWithoutRef<
-  typeof FieldPrimitive.Description
->;
 
 export const FieldDescription = forwardRef<
   React.ElementRef<typeof FieldPrimitive.Description>,

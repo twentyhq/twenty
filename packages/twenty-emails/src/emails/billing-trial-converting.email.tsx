@@ -15,9 +15,7 @@ type BillingTrialConvertingEmailProps = {
   locale: keyof typeof APP_LOCALES;
 };
 
-// Sent 7 days before a trial WITH a credit card ends, i.e. before the first charge.
-// Goal: be transparent and fair — no surprise charge. The user can cancel in one click
-// before the date if Twenty is not the right fit. This is intentionally not a dark pattern.
+// Sent 7 days before a carded trial converts, so the first charge is never a surprise.
 export const BillingTrialConvertingEmail = ({
   userName,
   workspaceDisplayName,

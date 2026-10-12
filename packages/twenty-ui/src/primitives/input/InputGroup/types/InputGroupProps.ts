@@ -4,7 +4,6 @@ import { type ReactNode } from 'react';
 import { type InputSize } from '@ui/primitives/input/types/InputSize';
 
 export type InputGroupProps = useRender.ComponentProps<'div'> & {
-  /** Visual size of the group and its input. */
   size?: InputSize;
   /** Content rendered before the input, such as a prefix or an icon. */
   startElement?: ReactNode;

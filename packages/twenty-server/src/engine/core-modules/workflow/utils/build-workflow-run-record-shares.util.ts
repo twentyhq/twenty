@@ -8,9 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 
-// The rule matches buildCoreWorkflowVisibilitySqlPredicate: everyone reads the
-// runs of a workspace-visible or ownerless workflow, and the creator always
-// reads their own.
+// must agree with buildCoreWorkflowVisibilitySqlPredicate
 export const buildWorkflowRunRecordShares = ({
   objectMetadataId,
   workflowRunIds,

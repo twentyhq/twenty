@@ -1,6 +1,6 @@
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
-import { normalizeGQLField } from '~/utils/normalizeGQLField';
+import { normalizeGQLField } from '~/testing/utils/normalizeGQLField';
 
 const personObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
   (item) => item.nameSingular === 'person',

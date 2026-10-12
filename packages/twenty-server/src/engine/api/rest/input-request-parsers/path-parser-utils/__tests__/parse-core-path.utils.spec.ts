@@ -117,8 +117,6 @@ describe('parseCorePath', () => {
     );
   });
 
-  // Every method has a wildcard route on this controller, so without the
-  // method check DELETE would read the id as a destroy target.
   it.each(['DELETE', 'GET', 'POST', 'PUT'])(
     'should throw for a restore-shaped path on %s',
     (method) => {

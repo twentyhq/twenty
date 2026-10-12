@@ -1,3 +1,4 @@
+import { ADD_APPLICATION_WORKFLOW_SIDE_EFFECTS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-45/add-application-workflow-side-effects-upgrade-command-name.constant';
 import {
   Column,
   CreateDateColumn,
@@ -47,6 +48,13 @@ export enum WorkflowVersionStatus {
 export class WorkflowVersionEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_APPLICATION_WORKFLOW_SIDE_EFFECTS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'boolean', default: false })
+  isSystemSideEffect: boolean;
 
   @Column({ type: 'jsonb', nullable: true })
   triggers: WorkflowTrigger[] | null;

@@ -1,10 +1,11 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
 import { useInView } from 'react-intersection-observer';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LOG_CONSOLE_ANIMATION_EASING } from '@/log-console/constants/LogConsoleAnimationEasing';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
@@ -103,7 +104,6 @@ export const LogConsoleTable = ({
   onEntryClick,
 }: LogConsoleTableProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement(
     LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID,
@@ -183,11 +183,7 @@ export const LogConsoleTable = ({
           />
         )}
         {(isInitialLoading || isLoadingNextPage) && (
-          <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
+          <>
             {Array.from({ length: SKELETON_ROW_COUNT }, (_, rowIndex) => (
               <TableRow
                 key={`skel-${rowIndex}`}
@@ -195,12 +191,12 @@ export const LogConsoleTable = ({
               >
                 {columns.map((column) => (
                   <TableCell key={column.id}>
-                    <Skeleton width={80} height={16} />
+                    <SkeletonLine width={80} height={16} />
                   </TableCell>
                 ))}
               </TableRow>
             ))}
-          </SkeletonTheme>
+          </>
         )}
       </StyledTable>
     </ScrollWrapper>

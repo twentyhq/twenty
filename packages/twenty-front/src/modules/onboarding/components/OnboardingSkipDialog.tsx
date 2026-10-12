@@ -6,10 +6,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { Dialog, type DialogPopupProps } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHeader = styled(Dialog.Header)`
@@ -34,7 +34,7 @@ type OnboardingSkipDialogProps = {
   title: string;
   description?: string;
   actions: OnboardingRewardAction[];
-  creditsReward: number;
+  finalFocus?: DialogPopupProps['finalFocus'];
   onSkip: () => void;
 };
 
@@ -44,7 +44,7 @@ export const OnboardingSkipDialog = ({
   title,
   description,
   actions,
-  creditsReward,
+  finalFocus,
   onSkip,
 }: OnboardingSkipDialogProps) => {
   const { t } = useLingui();
@@ -58,11 +58,12 @@ export const OnboardingSkipDialog = ({
 
   return (
     <DialogInstance dialogId={dialogId} dismissible renderInDocumentBody>
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="compact"
           initialFocus={firstActionRef}
+          finalFocus={finalFocus}
           data-globally-prevent-click-outside
         >
           <StyledHeader>
@@ -89,13 +90,15 @@ export const OnboardingSkipDialog = ({
                 ref={index === 0 ? firstActionRef : undefined}
                 label={action.label}
                 Icon={action.Icon}
-                creditsReward={creditsReward}
+                creditsReward={action.creditsReward}
+                isRewardPerItem={action.isRewardPerItem}
                 onClick={() => runAction(action)}
               />
             ))}
             <Button
               variant="ghost"
               fullWidth
+              data-testid="onboarding-skip-dialog-skip-anyway"
               onClick={() => {
                 closeDialog(dialogId);
                 onSkip();

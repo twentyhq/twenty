@@ -12,7 +12,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -128,10 +128,10 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       dismissible
       onClose={handleClose}
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={t`Install ${appDisplayName} on your workspace`}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="fullscreen"
           style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
         >

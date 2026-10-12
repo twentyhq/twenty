@@ -1,0 +1,86 @@
+.root {
+  display: flex;
+  flex-direction: row;
+}
+
+.preview {
+  @include focus-ring;
+
+  align-items: center;
+  background: var(--t-background-transparent-light);
+  block-size: 66px;
+  border: 1px solid var(--t-border-color-medium);
+  border-radius: var(--t-border-radius-md);
+  box-sizing: content-box;
+  color: var(--t-font-color-light);
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  inline-size: 66px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
+  transition: background 0.1s ease;
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    background: var(--t-background-secondary);
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled, [aria-disabled='true']) {
+    @include hover-capable {
+      &:hover {
+        background: var(--t-background-transparent-medium);
+      }
+
+      &:has(.image):hover {
+        background: transparent;
+      }
+
+      &:hover svg {
+        color: var(--t-font-color-tertiary);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.fileInput {
+  display: none;
+}
+
+.image {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--t-spacing-3);
+  justify-content: start;
+  margin-inline-start: var(--t-spacing-4);
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  gap: var(--t-spacing-2);
+}
+
+.helperText {
+  color: var(--t-font-color-light);
+  font-size: var(--t-font-size-xs);
+}
+
+.errorMessage {
+  color: var(--t-font-color-danger);
+  font-size: var(--t-font-size-xs);
+  margin-block-start: var(--t-spacing-1);
+}

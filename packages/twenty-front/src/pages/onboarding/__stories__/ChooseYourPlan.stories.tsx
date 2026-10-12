@@ -1,7 +1,7 @@
 import { getOperationName } from '~/utils/getOperationName';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { within } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
@@ -14,7 +14,10 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
-import { mockedOnboardingUserData } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedOnboardingUserData,
+} from '~/testing/mock-data/users';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/ChooseYourPlan',
@@ -30,7 +33,13 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
             data: {
-              currentUser: mockedOnboardingUserData(OnboardingStatus.COMPLETED),
+              currentUser: {
+                ...mockedOnboardingUserData(OnboardingStatus.COMPLETED),
+                currentWorkspace: {
+                  ...mockCurrentWorkspace,
+                  billingSubscriptions: [],
+                },
+              },
             },
           });
         }),
@@ -51,6 +60,12 @@ export const Default: Story = {
     await canvas.findByText('Upgrade your free trial', undefined, {
       timeout: 3000,
     });
+
+    await expect(
+      await canvas.findByRole('button', {
+        name: 'Continue, earn 2 free credits',
+      }),
+    ).toBeInTheDocument();
   },
 };
 

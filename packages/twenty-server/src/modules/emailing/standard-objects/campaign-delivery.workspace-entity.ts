@@ -22,8 +22,4 @@ export class CampaignDeliveryWorkspaceEntity {
   complainedAt: Date | null;
   rejectedAt: Date | null;
   renderingFailedAt: Date | null;
-  clickedAt: Date | null;
-  clickCount: number;
-  openedAt: Date | null;
-  openCount: number;
 }

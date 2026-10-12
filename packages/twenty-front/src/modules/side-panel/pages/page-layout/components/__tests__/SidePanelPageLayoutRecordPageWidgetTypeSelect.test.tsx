@@ -9,6 +9,7 @@ import {
   makeTab,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
+import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 import { render, screen } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
@@ -47,16 +48,6 @@ jest.mock(
   () => ({
     useNavigatePageLayoutSidePanel: () => ({
       navigatePageLayoutSidePanel: mockNavigatePageLayoutSidePanel,
-    }),
-  }),
-);
-
-jest.mock(
-  '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore',
-  () => ({
-    usePageLayoutIdFromContextStore: () => ({
-      pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-      objectNameSingular: 'company',
     }),
   }),
 );
@@ -123,7 +114,17 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
 
     render(
       <PageLayoutTestWrapper store={store}>
-        <SidePanelPageLayoutRecordPageWidgetTypeSelect />
+        <PageLayoutSidePanelTargetContext.Provider
+          value={{
+            pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+            targetRecordIdentifier: {
+              id: 'company-record-id',
+              targetObjectNameSingular: 'company',
+            },
+          }}
+        >
+          <SidePanelPageLayoutRecordPageWidgetTypeSelect />
+        </PageLayoutSidePanelTargetContext.Provider>
       </PageLayoutTestWrapper>,
     );
 

@@ -11,8 +11,7 @@ const GradientBackdrop = styled.div`
   position: absolute;
 `;
 
-// Intro-only hero on the shared hero rhythm (Heading->Body 12px); no CTA, no
-// visual. The catalog of case studies lands below later.
+// Intro-only hero on the shared hero rhythm (Heading->Body 12px); no CTA, no visual.
 const IntroStack = styled.div`
   align-items: center;
   display: flex;

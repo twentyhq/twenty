@@ -1,16 +1,14 @@
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { type RecordGqlFields, FieldMetadataType } from 'twenty-shared/types';
 import { type GenerateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/types/GenerateDepthRecordGqlFieldsFromFields';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type GetTimelineActivityRecordGqlFieldsParams = Pick<
   GenerateDepthRecordGqlFieldsFromFields,
   'objectMetadataItems' | 'fields'
 >;
 
-// Cached linked labels are captured before record permissions are applied, so
-// only the authorized live record identifier may reach the native renderer.
-// Morph targets are resolved separately because each target has its own query.
+// Cached linked labels predate permission checks, so only the authorized live record identifier may render.
+// Morph relations are skipped because each morph target is resolved by its own query.
 export const getTimelineActivityRecordGqlFields = ({
   objectMetadataItems,
   fields,

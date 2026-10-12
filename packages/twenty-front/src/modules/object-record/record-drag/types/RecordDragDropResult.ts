@@ -1,11 +1,6 @@
 export type RecordDragDropResult = {
-  draggableId: string;
-  source: {
-    droppableId: string;
-    index: number;
-  };
-  destination: {
-    droppableId: string;
-    index: number;
-  } | null;
+  draggedRecordId: string;
+  sourceDroppableId: string;
+  destinationDroppableId: string;
+  destinationIndex: number;
 };

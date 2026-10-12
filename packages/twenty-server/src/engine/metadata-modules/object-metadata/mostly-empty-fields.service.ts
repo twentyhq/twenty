@@ -12,10 +12,7 @@ import { computeMostlyEmptyFieldMetadataIds } from 'src/engine/metadata-modules/
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-// Detects fields that are empty in almost all records of an object, reading
-// Postgres planner statistics (pg_class / pg_stats) instead of scanning the
-// table: cost is a catalog lookup regardless of table size, at the price of
-// approximate results — acceptable for a settings-page hint
+// Reads Postgres planner statistics instead of scanning: approximate, but constant cost whatever the table size
 @Injectable()
 export class MostlyEmptyFieldsService {
   constructor(
@@ -60,10 +57,7 @@ export class MostlyEmptyFieldsService {
       return [];
     }
 
-    // Per-column emptiness: null fraction plus the sampled frequency of the
-    // column type's empty sentinel — '' for text columns (NOT NULL DEFAULT ''),
-    // '{}' for arrays, '{}'/'[]' for json. Sentinels are matched per physical
-    // column type so a text value that happens to be '{}' does not count
+    // Empty sentinels are matched per physical column type so a text value of '{}' does not count as empty
     const columnStatisticsRows: {
       column_name: string;
       empty_fraction: number;

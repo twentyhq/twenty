@@ -10,15 +10,24 @@ export const Radio = <TValue,>({
   children,
   className,
   size = 'sm',
+  variant = 'default',
   ...props
 }: RadioProps<TValue>) => (
   <RadioPrimitive.Root
+    render={variant === 'card' ? <div /> : undefined}
     {...props}
-    className={mergeClassNames(clsx(styles.root, styles[size]), className)}
+    className={mergeClassNames(
+      clsx(styles.root, styles[size], variant === 'card' && styles.card),
+      className,
+    )}
   >
     <span className={styles.control} aria-hidden>
       <RadioPrimitive.Indicator className={styles.indicator} />
     </span>
-    {children}
+    {variant === 'card' ? (
+      <div className={styles.cardContent}>{children}</div>
+    ) : (
+      children
+    )}
   </RadioPrimitive.Root>
 );

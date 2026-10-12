@@ -10,8 +10,8 @@ import {
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
-import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
-import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 
@@ -42,12 +42,12 @@ export const useSetRecordTableData = ({
   );
 
   const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
-    isRowSelectedComponentFamilyState,
+    isRecordSelectedComponentFamilyState,
     recordTableId,
   );
 
-  const hasUserSelectedAllRows = useAtomComponentStateCallbackState(
-    hasUserSelectedAllRowsComponentState,
+  const hasUserSelectedAllRecords = useAtomComponentStateCallbackState(
+    hasUserSelectedAllRecordsComponentState,
     recordTableId,
   );
 
@@ -99,7 +99,7 @@ export const useSetRecordTableData = ({
           )
         : store.get(recordIndexAllRecordIdsSelector);
 
-      const isAllRowsSelected = store.get(hasUserSelectedAllRows);
+      const isAllRowsSelected = store.get(hasUserSelectedAllRecords);
 
       const recordIds = records.map((record) => record.id);
 
@@ -149,7 +149,7 @@ export const useSetRecordTableData = ({
     [
       recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
-      hasUserSelectedAllRows,
+      hasUserSelectedAllRecords,
       unfocusRecordTableCell,
       unfocusRecordTableRow,
       setRecordTableHoverPosition,

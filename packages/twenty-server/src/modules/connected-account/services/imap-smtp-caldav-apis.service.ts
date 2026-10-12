@@ -65,9 +65,6 @@ export class ImapSmtpCalDavApiService {
     handle: string;
     userWorkspaceId: string;
     workspaceId: string;
-    // Caller (resolver) has already validated the input through
-    // `ImapSmtpCaldavService.validateAndTestConnectionParameters`, which
-    // produces fully plaintext passwords ready for re-encryption.
     connectionParameters: PlaintextImapSmtpCaldavParams;
     existingAccount?: ConnectedAccountEntity | null;
   }): Promise<string> {

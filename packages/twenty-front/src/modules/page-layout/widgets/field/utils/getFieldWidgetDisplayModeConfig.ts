@@ -1,7 +1,6 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { FieldDisplayMode, RelationType } from '~/generated-metadata/graphql';
-
-import { FIELD_WIDGET_CONFIG } from '@/page-layout/widgets/field/constants/fieldWidgetConfig';
+import { FIELD_WIDGET_CONFIG } from '@/page-layout/widgets/field/constants/FieldWidgetConfig';
 
 export const getFieldWidgetConfig = (fieldType: FieldMetadataType) =>
   FIELD_WIDGET_CONFIG[fieldType];

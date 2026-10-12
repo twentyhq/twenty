@@ -1,7 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as path from 'path';
 
-// Front-end base URL of the running Twenty instance under test.
 const FRONT_BASE_URL = process.env.FRONT_BASE_URL ?? 'http://localhost:3001';
 
 export default defineConfig({
@@ -31,8 +30,7 @@ export default defineConfig({
       name: 'setup',
       testMatch: /.*\.setup\.ts/,
     },
-    // Chromium only: the fake media device flags that make getUserMedia and
-    // MediaRecorder deterministic in CI are Chromium-specific.
+    // The fake media device flags are Chromium-specific.
     {
       name: 'chromium',
       use: {
@@ -40,8 +38,6 @@ export default defineConfig({
         storageState: path.resolve(__dirname, 'e2e/.auth/user.json'),
         permissions: ['microphone', 'camera'],
         launchOptions: {
-          // Lets sandboxed environments point at a preinstalled Chromium
-          // instead of downloading the pinned revision.
           executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
           args: [
             '--use-fake-ui-for-media-stream',

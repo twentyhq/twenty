@@ -36,7 +36,6 @@ import { ModulesModule } from 'src/modules/modules.module';
 
 import { ClickHouseModule } from './database/clickhouse/clickhouse.module';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
-import { I18nModule } from './engine/core-modules/i18n/i18n.module';
 
 // TODO: Remove this middleware when all the rest endpoints are migrated to TwentyORM
 const MIGRATED_REST_METHODS = [
@@ -70,7 +69,6 @@ const MIGRATED_REST_METHODS = [
     JwtModule,
     UserSessionModule,
     WorkspaceMetadataVersionModule,
-    I18nModule,
     FrontendModule,
   ],
   providers: [
@@ -100,8 +98,7 @@ export class AppModule {
     // Before any middleware that authenticates from the session cookie.
     consumer
       .apply(CookieSessionCsrfMiddleware)
-      // A cross-origin form post from the identity provider, authenticated on the
-      // assertion rather than the cookie.
+      // A cross-origin form post from the identity provider, authenticated on the assertion, not the cookie
       .exclude({
         path: `${ApiPath.Auth}/saml/callback/:identityProviderId`,
         method: RequestMethod.POST,

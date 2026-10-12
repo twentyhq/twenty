@@ -33,7 +33,6 @@ export class GoogleAuthController {
     NoPermissionGuard,
   )
   async googleAuth() {
-    // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 

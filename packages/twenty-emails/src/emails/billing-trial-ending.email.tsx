@@ -15,9 +15,7 @@ type BillingTrialEndingEmailProps = {
   locale: keyof typeof APP_LOCALES;
 };
 
-// Sent the day before a trial WITHOUT a credit card ends. Goal: get the user to
-// add a payment method so they keep their workspace and data. No card on file means
-// there is no surprise charge risk, only a data-loss risk, so the framing is helpful.
+// Sent the day before a cardless trial ends; the risk is data loss, not a surprise charge.
 export const BillingTrialEndingEmail = ({
   userName,
   workspaceDisplayName,

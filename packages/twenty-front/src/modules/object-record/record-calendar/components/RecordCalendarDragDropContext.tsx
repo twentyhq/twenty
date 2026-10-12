@@ -1,12 +1,16 @@
-import { DragDropProvider, DragOverlay } from '@dnd-kit/react';
+import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
 import type { ReactNode } from 'react';
+import { Temporal } from 'temporal-polyfill';
+import { useToast } from 'twenty-ui/components/feedback';
 
-import { useRecordCalendarDndKit } from '@/object-record/record-calendar/hooks/useRecordCalendarDndKit';
 import { RecordCalendarCardDragOverlayContent } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardDragOverlayContent';
-import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
-import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
-import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
-import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
+import { RecordDragDropContextProvider } from '@/object-record/record-drag/components/RecordDragDropContextProvider';
+import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/useProcessCalendarCardDrop';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
+import { logError } from '~/utils/logError';
 
 type RecordCalendarDragDropContextProps = {
   children: ReactNode;
@@ -15,22 +19,43 @@ type RecordCalendarDragDropContextProps = {
 export const RecordCalendarDragDropContext = ({
   children,
 }: RecordCalendarDragDropContextProps) => {
-  const { contextValues, handlers } = useRecordCalendarDndKit();
+  const store = useStore();
+
+  const { userTimezone } = useUserTimezone();
+
+  const { enqueueToast } = useToast();
+
+  const calendarDayRecordIdsSelector =
+    useAtomComponentFamilySelectorCallbackState(
+      calendarDayRecordIdsComponentFamilySelector,
+    );
+
+  const { processCalendarCardDrop } = useProcessCalendarCardDrop();
 
   return (
-    <DragDropItemDndContext.Provider value={contextValues}>
-      <DragDropProvider<DragDropItemData>
-        sensors={DND_KIT_SENSORS}
-        plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
-        onDragStart={handlers.onDragStart}
-        onDragMove={handlers.onDragMove}
-        onDragEnd={handlers.onDragEnd}
-      >
-        {children}
-        <DragOverlay>
-          {(source) => <RecordCalendarCardDragOverlayContent source={source} />}
-        </DragOverlay>
-      </DragDropProvider>
-    </DragDropItemDndContext.Provider>
+    <RecordDragDropContextProvider
+      getDroppableItemCount={(droppableId) =>
+        store.get(
+          calendarDayRecordIdsSelector({
+            day: Temporal.PlainDate.from(droppableId),
+            timeZone: userTimezone,
+          }),
+        ).length
+      }
+      onRecordDrop={(result) => {
+        void processCalendarCardDrop(result).catch((error) => {
+          logError(error);
+          enqueueToast({
+            variant: 'error',
+            children: t`Failed to move record`,
+          });
+        });
+      }}
+      renderDragOverlay={(source) => (
+        <RecordCalendarCardDragOverlayContent source={source} />
+      )}
+    >
+      {children}
+    </RecordDragDropContextProvider>
   );
 };

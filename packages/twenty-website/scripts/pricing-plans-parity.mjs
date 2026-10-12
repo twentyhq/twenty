@@ -13,7 +13,6 @@ const { compare, fail, finish, ok } = createBattery('pricing-plans-parity');
 
 const browser = await launchBrowser();
 
-// Reads the two plan cards: heading, price value/suffix, CTA, bullets.
 function readPlanCards(page) {
   return page.evaluate(() => {
     const headings = [...document.querySelectorAll('h3')].filter((el) =>
@@ -70,7 +69,6 @@ const newPage = await openPage(browser, `${NEW_BASE}/pricing`, {
 await scrollToPlans(oldPage);
 await scrollToPlans(newPage);
 
-// --- Default state (cloud + yearly) ------------------------------------
 const oldDefault = await readPlanCards(oldPage);
 const newDefault = await readPlanCards(newPage);
 
@@ -97,7 +95,6 @@ if (oldDefault.length !== 2 || newDefault.length !== 2) {
   ]);
 }
 
-// --- Billing toggle: yearly -> monthly raises Pro to $12 ----------------
 await clickToggle(oldPage, 'Monthly');
 await clickToggle(newPage, 'Monthly');
 const oldMonthly = await readPlanCards(oldPage);
@@ -109,7 +106,6 @@ if (newMonthly[0].price.includes('12')) {
   fail('Pro rises to $12 on monthly billing', newMonthly[0].price);
 }
 
-// --- Self-host toggle: Pro drops to $0, bullets swap to self-host -------
 await clickToggle(oldPage, 'Selfhosting');
 await clickToggle(newPage, 'Selfhosting');
 const oldSelfHost = await readPlanCards(oldPage);

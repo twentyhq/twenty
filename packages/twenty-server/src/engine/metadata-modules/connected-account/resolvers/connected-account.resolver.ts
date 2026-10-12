@@ -16,7 +16,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ApplicationConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/application-connected-account.dto';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
@@ -24,8 +24,21 @@ import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-accou
 import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @UseInterceptors(ConnectedAccountGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => ConnectedAccountDTO)
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
@@ -51,11 +64,14 @@ export class ConnectedAccountResolver {
   }
 
   @Query(() => [ApplicationConnectedAccountDTO])
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async applicationConnectedAccounts(
     @ApplicationTargetArg(
       'applicationId',
-      { kind: 'applicationId' },
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
       { type: () => UUIDScalarType },
     )
     applicationId: string,

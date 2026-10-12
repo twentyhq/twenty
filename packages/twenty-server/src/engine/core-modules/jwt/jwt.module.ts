@@ -16,7 +16,6 @@ import { SigningKeyEntityCacheProviderService } from 'src/engine/core-modules/jw
 import { SigningKeyRotationService } from 'src/engine/core-modules/jwt/services/signing-key-rotation.service';
 import { SigningKeyVerifyCounterService } from 'src/engine/core-modules/jwt/services/signing-key-verify-counter.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const InternalJwtModule = NestJwtModule.registerAsync({
@@ -38,7 +37,6 @@ const InternalJwtModule = NestJwtModule.registerAsync({
 @Module({
   imports: [
     InternalJwtModule,
-    TwentyConfigModule,
     TypeOrmModule.forFeature([SigningKeyEntity]),
     CoreEntityCacheModule,
     SecretEncryptionModule,
@@ -57,7 +55,6 @@ const InternalJwtModule = NestJwtModule.registerAsync({
     JwtWrapperService,
     JwtKeyManagerService,
     SigningKeyVerifyCounterService,
-    SigningKeyRotationService,
   ],
 })
 export class JwtModule {}

@@ -1,3 +1,5 @@
+import { runInNewContext } from 'node:vm';
+
 import { And, Equal, In, LessThan, Not } from 'typeorm';
 
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -203,5 +205,50 @@ describe('WorkspaceSelectQueryBuilder where', () => {
       .where({ companyId: null });
 
     expect(queryBuilder.getQuery()).toContain('("person"."companyId" IS NULL)');
+  });
+
+  it('should filter on an object-literal where built in another realm', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where(runInNewContext("({ companyId: 'company-1' })"));
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain('("person"."companyId" = $1)');
+    expect(values).toEqual(['company-1']);
+  });
+
+  it('should apply a find operator from another copy of typeorm', () => {
+    let isolatedIn: typeof In = In;
+
+    jest.isolateModules(() => {
+      isolatedIn = jest.requireActual<typeof import('typeorm')>('typeorm').In;
+    });
+
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ companyId: isolatedIn(['company-1', 'company-2']) });
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(isolatedIn).not.toBe(In);
+    expect(text).toContain('("person"."companyId" IN ($1, $2))');
+    expect(values).toEqual(['company-1', 'company-2']);
+  });
+
+  it('should refuse a where condition it cannot read instead of dropping it', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+
+    expect(() =>
+      queryBuilder.where(
+        new Map([['companyId', 'company-1']]) as unknown as string,
+      ),
+    ).toThrow(TwentyOrmException);
   });
 });

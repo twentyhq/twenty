@@ -1,18 +1,14 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { validate as uuidValidate, version as uuidVersion } from 'uuid';
-
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type Manifest,
+  isValidUniversalIdentifier,
+} from 'twenty-shared/application';
 import { RelationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   getDuplicateValues,
-  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
   isRelationFieldManifest,
 } from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
-
-const isValidUniversalIdentifier = (universalIdentifier: string): boolean =>
-  uuidValidate(universalIdentifier) &&
-  uuidVersion(universalIdentifier) >= MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION;
 
 export const validateTimelineActivityTypes = (
   manifest: Pick<

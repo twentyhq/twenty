@@ -24,8 +24,7 @@ export class StripeProductService {
     );
   }
 
-  // Archived products are fetched too: the sync is the only thing that can repair
-  // a local active flag left stale by a missed product.updated webhook.
+  // Includes archived: only the sync repairs an active flag left stale by a missed product.updated webhook
   async getAllProducts() {
     const products: Stripe.Product[] = [];
 

@@ -103,7 +103,6 @@ describe('DPA resolver (integration)', () => {
 
       createdAgreementIds.push(result.agreement.id);
 
-      // The stored copy is downloadable and is a real PDF.
       const downloadUrl = new URL(result.downloadUrl);
       const downloadResponse = await request(
         `http://localhost:${APP_PORT}`,

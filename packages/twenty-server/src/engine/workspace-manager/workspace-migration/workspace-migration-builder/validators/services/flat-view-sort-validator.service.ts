@@ -88,8 +88,8 @@ export class FlatViewSortValidatorService {
 
     const equivalentExistingFlatViewSortExists = otherFlatViewSorts.some(
       (flatViewSort) =>
-        flatViewSort.universalIdentifier ===
-          flatViewSortToValidate.universalIdentifier &&
+        flatViewSort.viewUniversalIdentifier ===
+          flatViewSortToValidate.viewUniversalIdentifier &&
         flatViewSort.fieldMetadataUniversalIdentifier ===
           flatViewSortToValidate.fieldMetadataUniversalIdentifier,
     );

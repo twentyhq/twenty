@@ -24,6 +24,8 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
       return import('date-fns/locale/en-US');
     case 'es-ES':
       return import('date-fns/locale/es');
+    case 'fa-IR':
+      return import('date-fns/locale/fa-IR');
     case 'fi-FI':
       return import('date-fns/locale/fi');
     case 'fr-FR':
@@ -72,10 +74,7 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
     case 'zh-TW':
       return import('date-fns/locale/zh-TW');
     default: {
-      // getDateFnsLocale passes an arbitrary string, so unknown input still
-      // lands here at runtime. A locale in APP_LOCALES must not: without this
-      // the switch would silently format its dates in US English, and nothing
-      // - not a type, not a test, not a lint rule - would say so.
+      // Unknown strings land here at runtime, but an APP_LOCALES locale must not silently format in en-US
       locale satisfies never;
 
       return import('date-fns/locale/en-US');

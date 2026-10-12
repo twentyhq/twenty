@@ -1,9 +1,10 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { t } from '@lingui/core/macro';
-import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  RecordSharePrincipalType,
   type RecordSharingGrantDto,
   type RecordSharingRoleDto,
 } from '~/generated-metadata/graphql';
@@ -14,9 +15,9 @@ export const getRecordShareLabel = ({
   role,
   currentWorkspaceMember,
 }: {
-  share: RecordSharingGrantDto;
+  share: Pick<RecordSharingGrantDto, 'principalId' | 'principalType'>;
   member: PartialWorkspaceMember | undefined;
-  role: RecordSharingRoleDto | undefined;
+  role: Pick<RecordSharingRoleDto, 'label'> | undefined;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
 }): string => {
   if (share.principalId === currentWorkspaceMember?.id) {
@@ -28,10 +29,7 @@ export const getRecordShareLabel = ({
   }
 
   if (isDefined(member)) {
-    return (
-      `${member.name.firstName} ${member.name.lastName}`.trim() ||
-      member.userEmail
-    );
+    return getWorkspaceMemberNameOrEmail(member);
   }
 
   return t`Deleted member`;

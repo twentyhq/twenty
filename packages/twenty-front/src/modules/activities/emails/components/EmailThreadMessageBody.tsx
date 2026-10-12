@@ -6,8 +6,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledThreadMessageBody = styled(motion.div)`
   color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  flex-direction: column;
   margin-top: ${themeCssVariables.spacing[4]};
   overflow-wrap: break-word;
   white-space: pre-line;
@@ -35,17 +33,19 @@ export const EmailThreadMessageBody = ({
   isDisplayed,
 }: EmailThreadMessageBodyProps) => {
   return (
-    <Collapsible isExpanded={isDisplayed} duration="fast">
-      <StyledThreadMessageBody>
-        <Linkify
-          options={{
-            target: '_blank',
-            rel: 'noopener noreferrer',
-          }}
-        >
-          {body}
-        </Linkify>
-      </StyledThreadMessageBody>
-    </Collapsible>
+    <Collapsible.Root open={isDisplayed}>
+      <Collapsible.Panel duration="fast">
+        <StyledThreadMessageBody>
+          <Linkify
+            options={{
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            }}
+          >
+            {body}
+          </Linkify>
+        </StyledThreadMessageBody>
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

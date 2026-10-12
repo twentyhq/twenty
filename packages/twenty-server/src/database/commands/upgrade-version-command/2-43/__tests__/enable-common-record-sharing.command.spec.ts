@@ -1,10 +1,6 @@
 import { preserveLegacyRecordAccess } from 'src/database/commands/upgrade-version-command/2-43/utils/preserve-legacy-record-access.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  MetadataWritability,
-} from 'twenty-shared/types';
+import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 
 import { ServiceUnavailableException } from '@nestjs/common';
 
@@ -92,7 +88,7 @@ describe('Common sharing upgrade', () => {
     async (flag, entitlement, wasRecordSharingEnabled) => {
       const { command, maps, billing } = buildCommand();
       Object.assign(maps.featureFlagsMap, {
-        [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: flag,
+        IS_RECORD_SHARING_ENABLED: flag,
       });
       billing.getWorkspaceEntitlementValue.mockResolvedValue(entitlement);
       await command.up(args);

@@ -73,8 +73,7 @@ export const extractApplicationTranslations = async ({
 
   await ensureDir(localesDir);
 
-  // The source file carries the message as its own translation, so a
-  // translator sees the original next to every hole they are filling.
+  // The source file carries the message as its own translation, so translators see the original
   await writeJson(
     path.join(localesDir, `${SOURCE_LOCALE}.json`),
     buildLocaleCatalog(

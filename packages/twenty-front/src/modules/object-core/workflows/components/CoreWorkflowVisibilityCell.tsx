@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { Tag } from 'twenty-ui/primitives/data-display';
 
 import { type WorkflowVisibility } from '~/generated/graphql';
 import { CORE_WORKFLOW_VISIBILITY_OPTIONS } from '@/object-core/workflows/constants/CoreWorkflowVisibilityOptions';
@@ -20,5 +20,5 @@ export const CoreWorkflowVisibilityCell = ({
     return null;
   }
 
-  return <OverflowingTextWithTooltip text={t(visibilityOption.label)} />;
+  return <Tag color="gray">{t(visibilityOption.label)}</Tag>;
 };

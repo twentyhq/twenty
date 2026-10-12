@@ -19,6 +19,7 @@ export { useLocale } from './hooks/useLocale';
 export { useRecordId } from './hooks/useRecordId';
 export { useToolCall } from './hooks/useToolCall';
 export { useSelectedRecordIds } from './hooks/useSelectedRecordIds';
+export { useSelectedRecordsFilter } from './hooks/useSelectedRecordsFilter';
 export { useSelectedObjectMetadata } from './hooks/useSelectedObjectMetadata';
 export { useTimelineActivityId } from './hooks/useTimelineActivityId';
 export { useUserId } from './hooks/useUserId';

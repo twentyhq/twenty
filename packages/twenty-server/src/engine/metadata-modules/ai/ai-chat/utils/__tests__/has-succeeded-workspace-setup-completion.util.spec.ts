@@ -58,7 +58,7 @@ describe('hasSucceededWorkspaceSetupCompletion', () => {
     const messages = [
       buildMessage([
         {
-          type: 'tool-ask_questions',
+          type: 'tool-ask_question',
           toolCallId: 'call-1',
           input: {},
           state: 'output-available',

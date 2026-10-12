@@ -91,4 +91,13 @@ export const buttonControlsTest: TwentyUiGalleryPlayFunction = async (
   await waitFor(() =>
     expect(canvas.getByLabelText('Activations')).toHaveTextContent('7'),
   );
+  const logOut = canvas.getByRole('button', { name: 'Log out' });
+  await userEvent.click(logOut);
+  logOut.focus();
+  await userEvent.keyboard('{Enter} ');
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Activations')).toHaveTextContent('10'),
+  );
+  await expect(getComputedStyle(logOut).borderTopWidth).toBe('0px');
+  await expect(getComputedStyle(logOut).paddingInlineStart).toBe('4px');
 };

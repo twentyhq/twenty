@@ -41,7 +41,6 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
     const apiKeyId = request.apiKey?.id;
     const applicationId = request.application?.id;
 
-    // Allow during workspace creation
     if (
       [
         WorkspaceActivationStatus.PENDING_CREATION,

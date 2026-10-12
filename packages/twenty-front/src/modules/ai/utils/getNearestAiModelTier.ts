@@ -4,9 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
-// Where a pinned model sits on the slider: its own tier when a tier resolves
-// to it, otherwise the tier whose model is closest in intelligence, so the
-// handle lands somewhere honest rather than always in the middle.
+// A pinned model sits on its own tier, else on the tier closest in intelligence.
 export const getNearestAiModelTier = (
   model: ClientAiModelConfig | undefined,
   tiers: ResolvedAiModelTier[],

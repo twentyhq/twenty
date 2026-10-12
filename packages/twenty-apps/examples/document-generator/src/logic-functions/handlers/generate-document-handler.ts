@@ -12,7 +12,6 @@ import {
 } from 'src/logic-functions/utils/load-record-values';
 import { renderTemplate } from 'src/logic-functions/utils/render-template';
 
-// Builds a filesystem-safe PDF filename from the document name.
 const toPdfFileName = (documentName: string): string => {
   const slug = documentName
     .normalize('NFKD')
@@ -143,7 +142,10 @@ export const generateDocumentHandler = async (
     (documentTemplate.body as unknown as { markdown: string | null } | null)
       ?.markdown ?? '';
 
-  const { content, missingTokens } = renderTemplate(bodyMarkdown, record.values);
+  const { content, missingTokens } = renderTemplate(
+    bodyMarkdown,
+    record.values,
+  );
 
   const documentName = `${documentTemplate.name ?? 'Document'} — ${record.displayName}`;
 

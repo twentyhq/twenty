@@ -2,12 +2,11 @@ import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/
 import { USAGE_LIMIT_OPERATION_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitOperationTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitResourceTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitResourceTypeLabels';
-import { getUsageLimitOperationTypes } from '@/settings/billing/utils/getUsageLimitOperationTypes';
 import { USAGE_OPERATION_TYPE_LABELS } from '@/settings/usage/constants/UsageOperationTypeLabels';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   type UsageOperationType,
   type UsageQuotaDefinitionsQuery,
@@ -81,28 +80,30 @@ export const SettingsBillingLimitUsageSelect = ({
             {t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[definition.resourceType])}
           </Dropdown.Back>
           <Dropdown.Section>
-            {getUsageLimitOperationTypes(definition).map((candidate) => (
-              <Dropdown.OptionItem
-                key={candidate}
-                selected={
-                  resourceType === definition.resourceType &&
-                  operationType === candidate
-                }
-                onSelect={() =>
-                  onChange({
-                    resourceType: definition.resourceType,
-                    operationType: candidate,
-                  })
-                }
-                startIcon={
-                  <SelectOptionIcon
-                    Icon={USAGE_LIMIT_OPERATION_TYPE_ICONS[candidate]}
-                  />
-                }
-              >
-                {t(USAGE_OPERATION_TYPE_LABELS[candidate])}
-              </Dropdown.OptionItem>
-            ))}
+            {definition.allowedOperations.map(
+              ({ operationType: candidate }) => (
+                <Dropdown.OptionItem
+                  key={candidate}
+                  selected={
+                    resourceType === definition.resourceType &&
+                    operationType === candidate
+                  }
+                  onSelect={() =>
+                    onChange({
+                      resourceType: definition.resourceType,
+                      operationType: candidate,
+                    })
+                  }
+                  startIcon={
+                    <SelectOptionIcon
+                      Icon={USAGE_LIMIT_OPERATION_TYPE_ICONS[candidate]}
+                    />
+                  }
+                >
+                  {t(USAGE_OPERATION_TYPE_LABELS[candidate])}
+                </Dropdown.OptionItem>
+              ),
+            )}
           </Dropdown.Section>
         </Dropdown.Page>
       ))}

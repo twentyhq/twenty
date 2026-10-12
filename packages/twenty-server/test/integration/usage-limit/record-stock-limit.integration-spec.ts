@@ -14,6 +14,7 @@ import { RECORD_STOCK_TRACKED_SYSTEM_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/en
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -168,7 +169,7 @@ describe('Record stock limit', () => {
         limitKind: 'stock',
         periodCount: 1,
         periodUnit: 'lifetime',
-        meter: 'quantity',
+        unit: UsageUnit.RECORD,
         limitValue: baselineRecordCount + HEADROOM,
         burstValue: null,
       },

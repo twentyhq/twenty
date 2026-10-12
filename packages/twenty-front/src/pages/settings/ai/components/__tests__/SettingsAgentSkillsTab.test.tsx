@@ -172,7 +172,6 @@ describe('SettingsAgentSkillsTab', () => {
 
     renderSkillsTab();
 
-    // fr-FR translates the workspace custom application label
     expect(await screen.findByText('Personnalisé')).toBeInTheDocument();
 
     await userEvent.type(

@@ -24,8 +24,7 @@ export const RecordCalendarWidget = ({
   const { objectNameSingular, recordIndexId, viewBarInstanceId } =
     useRecordIndexContextOrThrow();
 
-  // Hydrated per widget instance from the backing view (draft or persisted)
-  // by the widget view load effect, so edit-mode previews work before save.
+  // Hydrated from the backing view (draft or persisted) so edit-mode previews work before save.
   const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
     recordIndexCalendarFieldMetadataIdComponentState,
     recordIndexId,

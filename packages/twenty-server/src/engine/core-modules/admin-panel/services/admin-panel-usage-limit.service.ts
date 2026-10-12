@@ -53,7 +53,7 @@ export class AdminPanelUsageLimitService {
           limitKind: usageLimitDefault.limitKind,
           periodCount: usageLimitDefault.periodCount,
           periodUnit: usageLimitDefault.periodUnit,
-          meter: usageLimitDefault.meter,
+          unit: usageLimitDefault.unit,
           limitValue: usageLimitDefault.limitValue,
           isOverridable: usageLimitDefault.isOverridable,
           overriddenByUsageLimitId: overridingUsageLimit?.id ?? null,

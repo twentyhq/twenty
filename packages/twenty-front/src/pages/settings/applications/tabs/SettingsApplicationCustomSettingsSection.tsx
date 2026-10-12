@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { Suspense, lazy } from 'react';
 
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 const FrontComponentRenderer = lazy(() =>
   import('@/front-components/components/FrontComponentRenderer').then(

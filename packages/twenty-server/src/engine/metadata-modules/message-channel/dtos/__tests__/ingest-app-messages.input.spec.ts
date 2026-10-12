@@ -29,8 +29,7 @@ const anInput = (receivedAt: unknown) => ({
 const validationErrors = (receivedAt: unknown) =>
   validate(plainToInstance(IngestAppMessagesInput, anInput(receivedAt)));
 
-// `receivedAt` is the one field whose wire representation is not the type the
-// validator checks, so it is the one that can silently reject every call.
+// receivedAt's wire type differs from what the validator checks, so it can silently reject every call
 describe('IngestAppMessagesInput receivedAt', () => {
   it('accepts what the GraphQL DateTime scalar produces', async () => {
     const fromTheScalar = GraphQLISODateTime.parseValue(

@@ -1,9 +1,7 @@
-import { type RemoteRootElement } from '@remote-dom/core/elements';
-
 import { type RemoteStyleProperties } from '@/remote/generated/remote-elements';
 import { createMockCssStyleSheet } from '@/polyfills/style/utils/createMockCssStyleSheet';
 
-export const installStyleBridge = (remoteRoot: RemoteRootElement): void => {
+export const installStyleBridge = (styleContainer: Element): void => {
   const styleElementMap = new WeakMap<
     Element,
     Element & RemoteStyleProperties
@@ -125,7 +123,7 @@ export const installStyleBridge = (remoteRoot: RemoteRootElement): void => {
       remoteStyleElement.cssText = existingContent;
     }
 
-    remoteRoot.appendChild(remoteStyleElement);
+    styleContainer.appendChild(remoteStyleElement);
   };
 
   const untrackStyleElement = (styleElement: Element): void => {

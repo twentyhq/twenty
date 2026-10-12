@@ -4,7 +4,7 @@ import { settingsDataModelFieldSettingsFormSchema } from '@/settings/data-model/
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { settingsDataModelFieldTypeFormSchema } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
+import { settingsDataModelFieldTypeFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsDataModelFieldTypeFormSchema';
 
 type SettingsFieldFormSchemaOptions = {
   existingOtherLabels?: string[];

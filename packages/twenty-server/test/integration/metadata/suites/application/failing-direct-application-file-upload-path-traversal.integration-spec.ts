@@ -11,6 +11,12 @@ import { v4 as uuidv4 } from 'uuid';
 const TEST_APP_ID = uuidv4();
 const UNKNOWN_APP_ID = uuidv4();
 
+const normalizeMessage = (message: string) =>
+  message.replace(
+    new RegExp(UNKNOWN_APP_ID, 'g'),
+    '<applicationUniversalIdentifier>',
+  );
+
 type FailureLevel = 'request' | 'file';
 
 type TestContext = {
@@ -191,7 +197,7 @@ describe('Application file upload reservation should fail', () => {
       jest.useFakeTimers();
 
       if (context.failureLevel === 'request') {
-        expectOneNotInternalServerErrorSnapshot({ errors });
+        expectOneNotInternalServerErrorSnapshot({ errors, normalizeMessage });
 
         return;
       }

@@ -1,3 +1,5 @@
+import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
+import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
 import { SettingsRolePermissionsObjectLevelObjectPicker } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker';
@@ -36,25 +38,10 @@ export const SettingsRoleAddObjectLevel = () => {
 
   const breadcrumbLinks =
     fromAgentId && isDefined(agent)
-      ? [
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.General),
-          },
-          {
-            children: t`AI`,
-            href: getSettingsPath(SettingsPath.AI),
-          },
-          {
-            children: agent.label,
-            href: getSettingsPath(SettingsPath.AiAgentDetail, {
-              agentId: agent.id,
-            }),
-          },
-          {
-            children: t`Add object permission`,
-          },
-        ]
+      ? getCoreAgentBreadcrumbLinks([
+          { children: agent.label, href: getCoreAgentLink(agent.id) },
+          { children: t`Add object permission` },
+        ])
       : [
           {
             children: t`Workspace`,

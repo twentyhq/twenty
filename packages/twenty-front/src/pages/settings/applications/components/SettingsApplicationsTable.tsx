@@ -6,7 +6,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SearchInput, Section } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
@@ -14,7 +15,7 @@ import {
   APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
-import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/ApplicationWithoutRelation';
+import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const StyledTableRowsContainer = styled.div`
@@ -68,7 +69,7 @@ export const SettingsApplicationsTable = ({
         <SearchInput
           placeholder={t`Search an application`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
         />
       </StyledSearchInputContainer>
       <Table>

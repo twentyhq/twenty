@@ -14,7 +14,8 @@ import {
 } from '@ui/testing';
 
 const meta: Meta<typeof MenuItem> = {
-  title: 'UI/Navigation/Menu/MenuItem/MenuItem',
+  id: 'ui-navigation-menu-menuitem-menuitem',
+  title: 'UI/Components/Navigation/MenuItem/MenuItem',
   component: MenuItem,
 };
 
@@ -144,9 +145,9 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
 
 export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
   args: {
-    text: 'Menu item with hotkeys',
+    text: 'Menu item with shortcut',
     LeftIcon: IconBell,
-    hotKeys: ['⌘', 'K'],
+    shortcut: ['Mod', 'K'],
   },
   argTypes: {
     className: { control: false },
@@ -159,23 +160,25 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
       dimensions: [
         {
           name: 'hotKeyTypes',
-          values: ['no hotkeys', 'single key', 'modifier + key'],
+          values: ['no shortcut', 'single key', 'modifier + key'],
           props: (choice: string) => {
             switch (choice) {
-              case 'no hotkeys':
-                return { hotKeys: undefined };
+              case 'no shortcut':
+                return { shortcut: undefined };
               case 'single key':
-                return { hotKeys: ['K'] };
+                return { shortcut: ['K'] };
               case 'modifier + key':
-                return { hotKeys: ['⌘', 'K'] };
+                return {
+                  shortcut: ['Mod', 'K'],
+                };
               default:
                 return {};
             }
           },
           labels: (choice: string) => {
             switch (choice) {
-              case 'no hotkeys':
-                return 'No hotkeys';
+              case 'no shortcut':
+                return 'No shortcut';
               case 'single key':
                 return 'Single key (K)';
               case 'modifier + key':

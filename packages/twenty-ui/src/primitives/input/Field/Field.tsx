@@ -6,6 +6,7 @@ import { FieldLabel } from './internal/FieldLabel';
 
 export const Field = {
   Root: FieldPrimitive.Root,
+  Item: FieldPrimitive.Item,
   Label: FieldLabel,
   Control: FieldPrimitive.Control,
   Description: FieldDescription,

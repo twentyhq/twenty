@@ -3,14 +3,10 @@ import { type StatusProps } from '../src/primitives/data-display/Status/types/St
 export const STATUS_PROP_DESCRIPTIONS = {
   color: 'Theme color used for the status background, text, and loader.',
   weight: 'Font weight of the label.',
-  disabled:
-    'Applies disabled styling and disables activation when `onClick` is supplied.',
   loading:
-    'Shows a loader after the label. Does not disable the control or announce a status change by itself.',
+    'Shows a decorative loader after the label and defaults aria-busy to true. The caller owns announcements and disabled interaction.',
   onClick:
-    'Handles activation and renders a native button by default. Without it, the default element is a span.',
-  nativeButton:
-    'Set to `false` when using `render` with an element other than a native button.',
+    'Native click handler. Does not change the default span or add keyboard activation.',
   render:
-    'Replaces the default element. Required when `nativeButton` is `false`.',
+    'Replaces the default span. Compose a button or link to provide explicit interaction semantics.',
 } satisfies Partial<Record<keyof StatusProps, string>>;

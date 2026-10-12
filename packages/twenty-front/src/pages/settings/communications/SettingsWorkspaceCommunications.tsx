@@ -8,24 +8,16 @@ import { SettingsWorkspaceBlocklistSection } from '@/settings/workspace/componen
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsWorkspaceEmailSyncSection } from '@/settings/workspace/components/SettingsWorkspaceEmailSyncSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
-import {
-  IconBrandWhatsapp,
-  IconMail,
-  IconMailX,
-  IconPhone,
-} from 'twenty-ui/icon';
+import { Section } from 'twenty-ui/components/layout';
+import { IconMailX } from 'twenty-ui/icon';
 import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/communications/assets/cover-light.png';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-
-const COMMUNICATIONS_TABS_INSTANCE_ID = 'settings-communications-tabs';
 
 const StyledCardsColumn = styled.div`
   display: flex;
@@ -44,34 +36,9 @@ export const SettingsWorkspaceCommunications = () => {
     FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
 
-  const tabs = [
-    { id: 'emails', title: t`Emails`, Icon: IconMail },
-    {
-      id: 'whatsapp',
-      title: t`Whatsapp`,
-      Icon: IconBrandWhatsapp,
-      disabled: true,
-      pill: t`Soon`,
-    },
-    {
-      id: 'calls',
-      title: t`Calls`,
-      Icon: IconPhone,
-      disabled: true,
-      pill: t`Soon`,
-    },
-  ];
-
   return (
     <SettingsPageLayout
       title={t`Communication`}
-      secondaryBar={
-        <SettingsTabBar
-          aria-label={t`Workspace communications`}
-          tabs={tabs}
-          componentInstanceId={COMMUNICATIONS_TABS_INSTANCE_ID}
-        />
-      }
       links={[
         {
           children: t`Workspace`,

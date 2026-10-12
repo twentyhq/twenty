@@ -22,10 +22,8 @@ describe('buildAppMessageHeaderMessageId', () => {
     );
   });
 
-  // The collision that matters: providers commonly scope message ids per
-  // conversation or per account, so two members can legitimately both send
-  // "1". Merging those would discard one body and attach the other member's
-  // channel to it.
+  // providers scope ids per conversation or account, so two members can both send "1"; merging them would
+  // discard one body and attach the other member's channel to it
   it('separates two members whose provider reuses the same external id', () => {
     expect(
       buildAppMessageHeaderMessageId({

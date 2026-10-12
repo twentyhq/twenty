@@ -248,10 +248,6 @@ export class InternalServerError extends BaseGraphQLError {
   }
 }
 
-/**
- * Converts a GraphQLError to a BaseGraphQLError with the appropriate ErrorCode
- * based on HTTP status code if present in extensions.
- */
 export const convertGraphQLErrorToBaseGraphQLError = (
   error: GraphQLError,
 ): BaseGraphQLError => {

@@ -1,6 +1,3 @@
-// The halftone studio's settings vocabulary (ported from the old
-// lib/halftone state model; interfaces → types per the redone convention).
-
 export type HalftoneTabId = 'design' | 'animations' | 'export';
 export type HalftoneSourceMode = 'shape' | 'image';
 export type HalftoneMaterialSurface = 'solid' | 'glass';

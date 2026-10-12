@@ -1,7 +1,3 @@
-export type PopoverSide =
-  | 'top'
-  | 'bottom'
-  | 'left'
-  | 'right'
-  | 'inline-start'
-  | 'inline-end';
+import { type PopoverPositionerProps } from './PopoverPositionerProps';
+
+export type PopoverSide = NonNullable<PopoverPositionerProps['side']>;

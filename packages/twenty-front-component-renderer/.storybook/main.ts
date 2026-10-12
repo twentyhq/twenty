@@ -2,6 +2,8 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { createAvatarImageFixturePlugin } from '../scripts/front-component-stories/createAvatarImageFixturePlugin';
+
 const dirname =
   typeof __dirname !== 'undefined'
     ? __dirname
@@ -32,6 +34,10 @@ const config: StorybookConfig = {
   viteFinal: async (viteConfig) => {
     return {
       ...viteConfig,
+      plugins: [
+        ...(viteConfig.plugins ?? []),
+        createAvatarImageFixturePlugin(),
+      ],
       resolve: {
         ...viteConfig.resolve,
         tsconfigPaths: true,

@@ -32,8 +32,7 @@ export const buildAgentChatThreadUpdateEvent = ({
       flatFieldMetadataMaps,
     );
 
-  // The generic diff leaves updatedAt out, but a sent message changes nothing
-  // else and conversation lists are ordered by it
+  // the generic diff omits updatedAt, yet a sent message changes only that and lists sort by it
   if (
     Object.keys(diff).length === 0 &&
     !fastDeepEqual(threadBefore.updatedAt, threadAfter.updatedAt)

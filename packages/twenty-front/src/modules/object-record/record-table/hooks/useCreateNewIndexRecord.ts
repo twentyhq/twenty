@@ -59,9 +59,9 @@ export const useCreateNewIndexRecord = ({
         );
 
         if (isDefined(recordGroup)) {
-          const currentRecordIds = store.get(
-            recordIndexRecordIdsByGroupCallbackState(recordGroup.id),
-          );
+          const currentRecordIds = store
+            .get(recordIndexRecordIdsByGroupCallbackState(recordGroup.id))
+            .filter((recordId) => recordId !== createdRecord.id);
 
           if (recordInput?.position === 'first') {
             const newRecordIds = [createdRecord.id, ...currentRecordIds];

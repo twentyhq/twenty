@@ -2,6 +2,7 @@ import { RecordCalendarComponentInstanceContext } from '@/object-record/record-c
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
 import { RecordListComponentInstanceContext } from '@/object-record/record-list/states/contexts/RecordListComponentInstanceContext';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
+import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { type PropsWithChildren } from 'react';
@@ -33,7 +34,11 @@ export const RecordComponentInstanceContextsWrapper = ({
               <RecordListComponentInstanceContext.Provider
                 value={{ instanceId: componentInstanceId }}
               >
-                {children}
+                <RecordSelectionComponentInstanceContext.Provider
+                  value={{ instanceId: componentInstanceId }}
+                >
+                  {children}
+                </RecordSelectionComponentInstanceContext.Provider>
               </RecordListComponentInstanceContext.Provider>
             </RecordCalendarComponentInstanceContext.Provider>
           </RecordFieldsComponentInstanceContext.Provider>

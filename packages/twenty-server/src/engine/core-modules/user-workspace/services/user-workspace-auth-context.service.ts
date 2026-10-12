@@ -53,11 +53,9 @@ export class UserWorkspaceAuthContextService {
         AuthExceptionCode.UNAUTHENTICATED,
       );
     }
-    const membership = await this.userWorkspaceRepository.findOne({
-      where: { workspaceId, userId: member.userId },
-      select: { id: true },
-    });
-    if (!isDefined(membership)) {
+    const userWorkspaceId =
+      flatWorkspaceMemberMaps.userWorkspaceIdByUserId[member.userId];
+    if (!isDefined(userWorkspaceId)) {
       throw new AuthException(
         'User workspace not found',
         AuthExceptionCode.UNAUTHENTICATED,
@@ -65,7 +63,7 @@ export class UserWorkspaceAuthContextService {
     }
     const authContext = await this.resolve({
       workspaceId,
-      userWorkspaceId: membership.id,
+      userWorkspaceId,
       applicationId,
     });
     if (authContext.workspaceMemberId !== workspaceMemberId) {

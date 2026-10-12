@@ -5,7 +5,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { VerifyEmailingDomainDocument } from '~/generated-metadata/graphql';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 type SettingsEmailingDomainVerifyButtonProps = {
   emailingDomainId: string;

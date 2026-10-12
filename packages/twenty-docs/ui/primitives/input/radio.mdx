@@ -44,6 +44,35 @@ export const ContactMethod = () => (
 
 The `size` prop accepts `sm` or `md` and defaults to `sm`. Use the same size for options in a group.
 
+## Card options
+
+Use `variant="card"` for full-width options with an inset radio indicator. Card options render a div with radio semantics and accept the same size, disabled, and native props as standard radios. Keep interactive controls outside the card content.
+
+<StoryEmbed
+  storyId="ui-input-radio--cards-documentation"
+  title="Radio card options"
+  height={280}
+/>
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const ViewChoice = () => (
+  <RadioGroup
+    aria-label="Default view"
+    defaultValue="table"
+    style={{ width: 280 }}
+  >
+    <Radio variant="card" value="table">
+      Table view
+    </Radio>
+    <Radio variant="card" value="board">
+      Board view
+    </Radio>
+  </RadioGroup>
+);
+```
+
 ## Keyboard and selection
 
 Tab enters or leaves the group. Arrow keys move between enabled options and select the focused option. Space selects the focused radio. Selection and change handlers belong on `RadioGroup`; see its [uncontrolled example](/ui/primitives/input/radio-group#uncontrolled-state) and [controlled example](/ui/primitives/input/radio-group#controlled-state).

@@ -7,7 +7,7 @@ import { ComponentDecorator } from '@ui/testing';
 import { NotificationCounter } from '../NotificationCounter';
 
 const meta = {
-  title: 'UI/Navigation/Tabs',
+  title: 'UI/Components/Data display/NotificationCounter',
   component: NotificationCounter,
   tags: ['!autodocs'],
   args: { count: 3, variant: 'secondary' },
@@ -32,6 +32,7 @@ export const WithIconAndBadge: Story = {
         </Tabs.Tab>
         <Tabs.Tab value="activity">Activity</Tabs.Tab>
         <Tabs.Tab value="settings">Settings</Tabs.Tab>
+        <Tabs.Indicator />
       </Tabs.List>
       <Tabs.Panel value="overview" style={{ padding: 'var(--t-spacing-4)' }}>
         Record overview

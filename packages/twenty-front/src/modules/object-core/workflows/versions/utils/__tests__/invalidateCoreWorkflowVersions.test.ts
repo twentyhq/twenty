@@ -23,6 +23,7 @@ describe('invalidateCoreWorkflowVersions', () => {
                 data: {
                   coreWorkflow: {
                     id: operation.variables.coreWorkflowId,
+                    applicationId: '23c5bdee-5cc3-42a4-8f90-8d89e1418851',
                     name,
                     statuses: ['DRAFT'],
                     lastPublishedCoreWorkflowVersionId: null,

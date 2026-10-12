@@ -165,6 +165,31 @@ $colors: (
   }
 }
 
+.button[data-variant='link'] {
+  --tw-button-background: transparent;
+  --tw-button-border: transparent;
+  --tw-button-hover: transparent;
+  --tw-button-active: transparent;
+
+  block-size: var(--tw-button-size, auto);
+  border: 0;
+  font-size: var(--t-font-size-sm);
+  line-height: inherit;
+  padding-inline: var(--tw-button-padding-inline, var(--t-spacing-1));
+
+  &[data-color='neutral'] {
+    --tw-button-color: var(--t-font-color-light);
+
+    &:not([data-disabled]) {
+      @include hover-capable {
+        &:hover {
+          color: var(--t-font-color-tertiary);
+        }
+      }
+    }
+  }
+}
+
 .content {
   align-items: center;
   display: inline-flex;

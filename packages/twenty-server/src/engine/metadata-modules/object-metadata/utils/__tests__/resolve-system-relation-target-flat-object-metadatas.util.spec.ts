@@ -43,8 +43,6 @@ describe('resolveSystemRelationTargetFlatObjectMetadatas', () => {
     expect(missingDefaultRelationObjectNameSingulars).toEqual([]);
   });
 
-  // Its upgrade command provisions the chat target and backfills the objects
-  // created before it ran, so creating an object meanwhile must still work.
   it('leaves out the chat target without reporting it while it is not provisioned', () => {
     const {
       standardTargetFlatObjectMetadataByNameSingular,

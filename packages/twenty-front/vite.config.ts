@@ -214,46 +214,6 @@ export default defineConfig(({ mode }) => {
             },
             // TODO; later - think about prefetching modules such
             // as date time picker, phone input etc...
-            /*
-            {
-              name: 'add-prefetched-modules',
-              transformIndexHtml(html: string,
-                ctx: {
-                  path: string;
-                  filename: string;
-                  server?: ViteDevServer;
-                  bundle?: import('rollup').OutputBundle;
-                  chunk?: import('rollup').OutputChunk;
-                }) {
-
-                  const bundles = Object.keys(ctx.bundle ?? {});
-
-                  let modernBundles = bundles.filter(
-                    (bundle) => bundle.endsWith('.map') === false
-                  );
-
-
-                  // Remove existing files and concatenate them into link tags
-                  const prefechBundlesString = modernBundles
-                    .filter((bundle) => html.includes(bundle) === false)
-                    .map((bundle) => `<link rel="prefetch" href="${ctx.server?.config.base}${bundle}">`)
-                    .join('');
-
-                  // Use regular expression to get the content within <head> </head>
-                  const headContent = html.match(/<head>([\s\S]*)<\/head>/)?.[1] ?? '';
-                  // Insert the content of prefetch into the head
-                  const newHeadContent = `${headContent}${prefechBundlesString}`;
-                  // Replace the original head
-                  html = html.replace(
-                    /<head>([\s\S]*)<\/head>/,
-                    `<head>${newHeadContent}</head>`
-                  );
-
-                  return html;
-
-
-              },
-            }*/
           ],
         },
       },

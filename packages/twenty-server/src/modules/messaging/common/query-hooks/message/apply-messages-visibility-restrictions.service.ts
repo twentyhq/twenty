@@ -135,10 +135,8 @@ export class ApplyMessagesVisibilityRestrictionsService {
             }
           }
 
-          // The same bypass as above, resolved through the application that
-          // owns the connection rather than the user who owns it. An email
-          // connection carries no applicationId, so this can only ever match
-          // a channel the calling application created.
+          // Same bypass as above, via the application owning the connection; email connections carry no
+          // applicationId, so this only matches channels the calling application created
           if (isDefined(applicationId)) {
             const connectedAccounts =
               await this.connectedAccountRepository.find({

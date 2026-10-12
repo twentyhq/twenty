@@ -10,32 +10,24 @@ const BILLING_CHARGE_TIMEOUT_MS = 5_000;
 export type ChargeCreditsParams = {
   creditsUsedMicro: number;
   quantity?: number;
-  // Who the spend belongs to, for runs with no triggering user (a webhook, a
-  // cron). Ignored otherwise: the token already names them.
+  // Who the spend belongs to when no user triggered the run (webhook, cron); ignored otherwise
   userWorkspaceId?: string;
 } & (
   | {
-      // An operation name declared in `billing.operations` on the application
-      // manifest. The platform resolves its billing category and its label.
+      // An operation declared in the manifest's `billing.operations`; the platform resolves its category and label
       operation: string;
       operationType?: never;
       resourceContext?: never;
     }
   | {
-      // For applications that declare no billable operations: name the
-      // platform billing category directly, unlabelled.
+      // For applications that declare no billable operations: names the platform billing category directly
       operationType: UsageOperationTypeValue;
       operation?: never;
       resourceContext?: string;
     }
 );
 
-// Records credit usage against the running application via the Twenty
-// server's `/app/billing/charge` endpoint. Reads `TWENTY_API_URL` and the
-// application access token from the execution env (injected by the
-// logic-function runtime). No-ops silently when either is missing so
-// local/test runs don't crash. Failures are non-fatal — a billing error
-// never surfaces as a tool failure.
+// No-ops without an API URL or access token, and never throws: a billing error must not fail a tool
 export const chargeCredits = async ({
   creditsUsedMicro,
   quantity = 1,

@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application token tarball upload should fail with a user-bound application token for another application should refuse to complete a tarball upload 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token tarball upload should fail with a user-bound application token for another application should refuse to upload a tarball 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token tarball upload should fail with a user-bound application token for its own application should refuse to complete a tarball upload 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token tarball upload should fail with a user-bound application token for its own application should refuse to upload a tarball 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token tarball upload should fail with a user-bound application token should refuse to create a tarball upload 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token tarball upload should fail with an application token without user binding for another application should refuse to complete a tarball upload 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token tarball upload should fail with an application token without user binding for another application should refuse to upload a tarball 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token tarball upload should fail with an application token without user binding for its own application should refuse to complete a tarball upload 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token tarball upload should fail with an application token without user binding for its own application should refuse to upload a tarball 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token tarball upload should fail with an application token without user binding should refuse to create a tarball upload 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;

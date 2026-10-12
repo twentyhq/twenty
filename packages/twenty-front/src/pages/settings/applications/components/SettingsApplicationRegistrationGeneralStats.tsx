@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { SettingsApplicationRegistrationInstalledWorkspaces } from '~/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces';
 import { SettingsApplicationRegistrationInstallStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsApplicationRegistrationGeneralStats = ({
   registration,

@@ -19,6 +19,7 @@ import { messages as deMessages } from 'src/engine/core-modules/i18n/locales/gen
 import { messages as elMessages } from 'src/engine/core-modules/i18n/locales/generated/el-GR';
 import { messages as enMessages } from 'src/engine/core-modules/i18n/locales/generated/en';
 import { messages as esMessages } from 'src/engine/core-modules/i18n/locales/generated/es-ES';
+import { messages as faMessages } from 'src/engine/core-modules/i18n/locales/generated/fa-IR';
 import { messages as fiMessages } from 'src/engine/core-modules/i18n/locales/generated/fi-FI';
 import { messages as frMessages } from 'src/engine/core-modules/i18n/locales/generated/fr-FR';
 import { messages as heMessages } from 'src/engine/core-modules/i18n/locales/generated/he-IL';
@@ -51,10 +52,7 @@ export class I18nService implements OnModuleInit {
     {} as Record<keyof typeof APP_LOCALES, I18n>;
 
   async loadTranslations() {
-    // The global i18n singleton backs server-side t`…` calls and has no
-    // compiled catalog, so it needs a runtime message compiler. Since lingui
-    // 5.9 it also throws unless a locale is activated, so activate the source
-    // locale (t`…` then renders the English source text via the compiler).
+    // The global singleton backs server-side t`` with no compiled catalog, so it needs a runtime compiler; since lingui 5.9 it also throws unless a locale is active.
     i18n.setMessagesCompiler(compileMessage);
     i18n.load(SOURCE_LOCALE, enMessages);
     i18n.activate(SOURCE_LOCALE);
@@ -70,6 +68,7 @@ export class I18nService implements OnModuleInit {
       'de-DE': deMessages,
       'el-GR': elMessages,
       'es-ES': esMessages,
+      'fa-IR': faMessages,
       'fi-FI': fiMessages,
       'fr-FR': frMessages,
       'he-IL': heMessages,

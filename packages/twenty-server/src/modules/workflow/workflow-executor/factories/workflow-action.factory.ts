@@ -20,11 +20,13 @@ import { IteratorWorkflowAction } from 'src/modules/workflow/workflow-executor/w
 import { LogicFunctionWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/logic-function.workflow-action';
 import { DraftEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/draft-email.workflow-action';
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
+import { SendChatMessageWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { PickRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/pick-record.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
+import { WaitForEventWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/wait-for-event.workflow-action';
 import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record.workflow-action';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
@@ -46,11 +48,13 @@ export class WorkflowActionFactory {
     private readonly httpRequestWorkflowAction: HttpRequestWorkflowAction,
     private readonly sendEmailWorkflowAction: SendEmailWorkflowAction,
     private readonly draftEmailWorkflowAction: DraftEmailWorkflowAction,
+    private readonly sendChatMessageWorkflowAction: SendChatMessageWorkflowAction,
     private readonly createCalendarEventWorkflowAction: CreateCalendarEventWorkflowAction,
     private readonly aiAgentWorkflowAction: AiAgentWorkflowAction,
     private readonly classifyWorkflowAction: ClassifyWorkflowAction,
     private readonly emptyWorkflowAction: EmptyWorkflowAction,
     private readonly delayWorkflowAction: DelayWorkflowAction,
+    private readonly waitForEventWorkflowAction: WaitForEventWorkflowAction,
   ) {}
 
   get(stepType: WorkflowActionType): WorkflowAction {
@@ -63,6 +67,8 @@ export class WorkflowActionFactory {
         return this.sendEmailWorkflowAction;
       case WorkflowActionType.DRAFT_EMAIL:
         return this.draftEmailWorkflowAction;
+      case WorkflowActionType.SEND_CHAT_MESSAGE:
+        return this.sendChatMessageWorkflowAction;
       case WorkflowActionType.CREATE_CALENDAR_EVENT:
         return this.createCalendarEventWorkflowAction;
       case WorkflowActionType.CREATE_RECORD:
@@ -95,6 +101,8 @@ export class WorkflowActionFactory {
         return this.emptyWorkflowAction;
       case WorkflowActionType.DELAY:
         return this.delayWorkflowAction;
+      case WorkflowActionType.WAIT_FOR_EVENT:
+        return this.waitForEventWorkflowAction;
       default:
         throw new WorkflowStepExecutorException(
           `Workflow step executor not found for step type '${stepType}'`,

@@ -4,6 +4,7 @@ import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { CallRecordingSummaryConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-summary-configuration.dto';
 import { CallRecordingTranscriptConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-transcript-configuration.dto';
+import { ChatConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/chat-configuration.dto';
 import { ChatThreadsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/chat-threads-configuration.dto';
 import { EmailThreadConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/email-thread-configuration.dto';
 import { FormFieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/form-field-configuration.dto';
@@ -149,6 +150,12 @@ export const validateWidgetConfigurationInput = ({
     case WidgetConfigurationType.CHAT_THREADS:
       errors = validateWidgetConfigurationByDto(
         ChatThreadsConfigurationDTO,
+        configuration,
+      );
+      break;
+    case WidgetConfigurationType.CHAT:
+      errors = validateWidgetConfigurationByDto(
+        ChatConfigurationDTO,
         configuration,
       );
       break;

@@ -43,8 +43,7 @@ export const fromIndexManifestToUniversalFlatIndex = ({
     );
   }
 
-  const resolvedIndexType = (indexManifest.indexType ??
-    IndexType.BTREE) as IndexType;
+  const resolvedIndexType = indexManifest.indexType ?? IndexType.BTREE;
   const resolvedFieldsForValidation: Array<{
     type: FieldMetadataType;
     name: string;

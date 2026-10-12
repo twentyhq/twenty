@@ -1,6 +1,5 @@
 import { defineFrontComponent } from '@/sdk/define';
 
-// Mock component for testing
 const MockComponent = () => null;
 
 describe('defineFrontComponent', () => {

@@ -134,11 +134,8 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
     return standardFolder === StandardFolder.SENT;
   }
 
-  /*
-   * All Microsoft folders have a parentFolderId including the standard folders
-   * which point to root node which doesn't exits in the API response.
-   * We remove this to simplify the folder hierarchy on frontend.
-   */
+  // Standard folders point at a root parentFolderId that the API response never
+  // includes, so it is detected here and stripped to flatten the hierarchy.
   private getRootFolderId(folders: MicrosoftGraphFolder[]): string | null {
     for (const folder of folders) {
       if (isDefined(folder.wellKnownName) && isDefined(folder.parentFolderId)) {

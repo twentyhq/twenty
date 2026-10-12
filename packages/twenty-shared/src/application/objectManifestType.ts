@@ -3,6 +3,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 import { type MetadataReadability } from '@/types/MetadataReadability';
 import { type MetadataWritability } from '@/types/MetadataWritability';
 import { type ObjectOpenRecordIn } from '@/types/ObjectOpenRecordIn';
+import { type ObjectSharingReach } from '@/types/ObjectSharingReach';
 
 export type ObjectManifest = SyncableEntityOptions & {
   nameSingular: string;
@@ -14,13 +15,12 @@ export type ObjectManifest = SyncableEntityOptions & {
   color?: string | null;
   isLabelSyncedWithName?: boolean;
   isSearchable?: boolean;
-  // When false, the generic UI shows no affordance to create records of this object
   isUICreatable?: boolean;
-  // When false, records of this object are not editable through the generic UI
   isUIEditable?: boolean;
   writability?: MetadataWritability;
   readability?: MetadataReadability;
   readabilityParentFieldUniversalIdentifiers?: string[] | null;
+  sharingReach?: ObjectSharingReach;
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;

@@ -1,16 +1,5 @@
-/**
- * Script to fetch and display QA issues from Crowdin
- *
- * This script uses Crowdin's native QA checks API to:
- * - Fetch all QA issues detected by Crowdin
- * - Group and display them by category and language
- * - Provide actionable information for fixing
- *
- * Usage:
- *   CROWDIN_PERSONAL_TOKEN=xxx npx ts-node packages/twenty-utils/translation-qa-report.ts
- *
- * The token can be obtained from: https://twenty.crowdin.com/u/settings#api-key
- */
+// Usage: CROWDIN_PERSONAL_TOKEN=xxx npx ts-node packages/twenty-utils/translation-qa-report.ts
+// Token: https://twenty.crowdin.com/u/settings#api-key
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -33,9 +22,7 @@ async function getToken(): Promise<string> {
   const token = process.env.CROWDIN_PERSONAL_TOKEN;
 
   if (!token) {
-    console.error(
-      'Error: CROWDIN_PERSONAL_TOKEN environment variable not set',
-    );
+    console.error('Error: CROWDIN_PERSONAL_TOKEN environment variable not set');
     console.error(
       'Get your token from: https://twenty.crowdin.com/u/settings#api-key',
     );
@@ -87,7 +74,6 @@ async function fetchAllQAChecks(token: string): Promise<QACheck[]> {
 }
 
 function generateReport(checks: QACheck[]): string {
-  // Group by category
   const byCategory = new Map<string, QACheck[]>();
 
   for (const check of checks) {
@@ -98,7 +84,6 @@ function generateReport(checks: QACheck[]): string {
     byCategory.set(key, existing);
   }
 
-  // Group by language within each category
   let report = `# Crowdin QA Issues Report
 
 Generated: ${new Date().toISOString()}
@@ -134,7 +119,6 @@ Generated: ${new Date().toISOString()}
   for (const [category, categoryChecks] of sortedCategories) {
     const desc = categoryChecks[0]?.categoryDescription || category;
 
-    // Group by language
     const byLang = new Map<string, QACheck[]>();
 
     for (const check of categoryChecks) {
@@ -148,7 +132,6 @@ Generated: ${new Date().toISOString()}
 
 `;
 
-    // Show top issues per language
     const sortedLangs = Array.from(byLang.entries()).sort(
       (a, b) => b[1].length - a[1].length,
     );
@@ -158,7 +141,9 @@ Generated: ${new Date().toISOString()}
 
       for (const check of langChecks.slice(0, 5)) {
         const truncatedText =
-          check.text.length > 100 ? check.text.slice(0, 100) + '...' : check.text;
+          check.text.length > 100
+            ? check.text.slice(0, 100) + '...'
+            : check.text;
 
         report += `- String #${check.stringId}: ${truncatedText}\n`;
       }
@@ -210,7 +195,6 @@ async function main() {
 
   console.log(`\nTotal QA issues: ${checks.length}`);
 
-  // Group by category for summary
   const byCategory = new Map<string, number>();
 
   for (const check of checks) {
@@ -223,7 +207,6 @@ async function main() {
     console.log(`  ${cat}: ${count}`);
   }
 
-  // Generate report
   const report = generateReport(checks);
   const reportPath = path.join(process.cwd(), 'TRANSLATION_QA_REPORT.md');
 
@@ -234,7 +217,9 @@ async function main() {
   const criticalIssues = checks.filter((c) => c.category !== 'spellcheck');
 
   if (criticalIssues.length > 0) {
-    console.log(`\n⚠️  ${criticalIssues.length} critical issues found (excluding spellcheck)`);
+    console.log(
+      `\n⚠️  ${criticalIssues.length} critical issues found (excluding spellcheck)`,
+    );
     process.exit(1);
   }
 }

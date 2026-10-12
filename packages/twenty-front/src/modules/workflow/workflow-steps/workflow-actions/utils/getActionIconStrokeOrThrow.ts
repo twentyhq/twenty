@@ -20,10 +20,12 @@ export const getActionIconStrokeOrThrow = (
     case 'IF_ELSE':
       return 'sm';
     case 'FORM':
+    case 'SEND_CHAT_MESSAGE':
     case 'ITERATOR':
     case 'EMPTY':
     case 'FILTER':
     case 'DELAY':
+    case 'WAIT_FOR_EVENT':
     case 'AI_AGENT':
     case 'CLASSIFY':
       return undefined;

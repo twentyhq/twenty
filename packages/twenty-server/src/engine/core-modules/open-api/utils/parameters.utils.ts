@@ -5,6 +5,8 @@ import {
 } from 'twenty-shared/constants';
 import { OrderByDirection } from 'twenty-shared/types';
 
+import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-parsers/constants/rest-api-default-max-fields.constant';
+
 export const computeLimitParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'limit',
@@ -55,6 +57,33 @@ export const computeDepthParameters = (): OpenAPIV3_1.ParameterObject => {
       type: 'integer',
       enum: [0, 1],
       default: 1,
+    },
+  };
+};
+
+export const computeFieldsParameters = (): OpenAPIV3_1.ParameterObject => {
+  return {
+    name: 'fields',
+    in: 'query',
+    description: `Comma-separated list of field names to return, e.g. **id,name,emails,company**.
+    - **id** is always returned.
+    - Composite fields are selected as a whole by their field name.
+    - A many-to-one relation field returns its join column (e.g. **companyId**) with depth=0, and its related record with depth=1. One-to-many relation fields are only returned with depth=1. With depth=1, only the relation fields listed here are expanded.
+    - Unknown fields or fields you cannot read return a 400 error.
+    When omitted on an object with more than ${REST_API_DEFAULT_MAX_FIELDS} readable fields, a default set of ${REST_API_DEFAULT_MAX_FIELDS} fields is returned for each record: id, label identifier, image identifier, createdAt, updatedAt, deletedAt, position, then standard fields before custom fields, by name. Pass fields explicitly to read any other field.`,
+    required: false,
+    schema: {
+      type: 'string',
+    },
+    examples: {
+      simple: {
+        value: 'id,name',
+        summary: 'A simple fields param',
+      },
+      withRelation: {
+        value: 'id,name,emails,company',
+        summary: 'A fields param with a composite and a relation field',
+      },
     },
   };
 };

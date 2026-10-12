@@ -36,13 +36,10 @@ export const DraggableList = ({
   draggableItems,
   onDragEnd,
 }: DraggableListProps) => {
-  // The group id doubles as the items' dnd type, so drags from this list can't
-  // land on outer providers' targets (or the other way around).
+  // The group id doubles as the items' dnd type, so drags cannot cross with outer providers' targets
   const [group] = useState(() => v4());
 
-  // Items register their index so the list can place the trailing drop target
-  // and resolve the append position in the consumers' own index space, which
-  // may be offset (a non-draggable header can occupy the leading indices).
+  // Consumer indices can be offset by a non-draggable header, so items register theirs to resolve the append position
   const [itemIndexByDraggableId] = useState(() => new Map<string, number>());
   const [trailingIndex, setTrailingIndex] = useState(0);
 

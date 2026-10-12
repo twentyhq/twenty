@@ -13,12 +13,27 @@ const buildParticipantKey = ({
   handle: string | null;
 }): string => `${calendarEventId}:${handle}`;
 
+const hasParticipantChanged = ({
+  existingParticipant,
+  fetchedParticipant,
+}: {
+  existingParticipant: CalendarEventParticipantWorkspaceEntity;
+  fetchedParticipant: FetchedParticipantWithCalendarEventId;
+}): boolean =>
+  (existingParticipant.displayName ?? '') !==
+    (fetchedParticipant.displayName ?? '') ||
+  (existingParticipant.responseStatus ?? '') !==
+    (fetchedParticipant.responseStatus ?? '') ||
+  existingParticipant.isOrganizer !== fetchedParticipant.isOrganizer;
+
 export const buildCalendarEventParticipantSaveOperations = ({
   fetchedParticipants,
   existingParticipants,
+  shouldSkipUnchangedParticipants,
 }: {
   fetchedParticipants: FetchedParticipantWithCalendarEventId[];
   existingParticipants: CalendarEventParticipantWorkspaceEntity[];
+  shouldSkipUnchangedParticipants: boolean;
 }): CalendarEventParticipantSaveOperations => {
   const existingParticipantByKey = new Map<
     string,
@@ -52,6 +67,13 @@ export const buildCalendarEventParticipantSaveOperations = ({
         id: uuid(),
       });
 
+      continue;
+    }
+
+    if (
+      shouldSkipUnchangedParticipants &&
+      !hasParticipantChanged({ existingParticipant, fetchedParticipant })
+    ) {
       continue;
     }
 

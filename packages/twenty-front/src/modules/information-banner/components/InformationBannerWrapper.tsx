@@ -10,7 +10,7 @@ import { InformationBannerNonProductionInstance } from '@/information-banner/com
 import { InformationBannerMaintenance } from '@/information-banner/components/maintenance/InformationBannerMaintenance';
 import { InformationBannerReconnectAccountEmailAliases } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases';
 import { InformationBannerReconnectAccountInsufficientPermissions } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
@@ -33,9 +33,9 @@ const StyledInformationBannerWrapper = styled.div`
 
 export const InformationBannerWrapper = () => {
   const subscriptionStatus = useSubscriptionStatus();
-  const permissionMap = usePermissionFlagMap();
-  const isAccountSyncEnabled =
-    permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS];
+  const isAccountSyncEnabled = useHasPermissionFlag(
+    PermissionFlagType.CONNECTED_ACCOUNTS,
+  );
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );

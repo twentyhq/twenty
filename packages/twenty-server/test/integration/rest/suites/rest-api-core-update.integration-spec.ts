@@ -67,6 +67,40 @@ describe('Core REST API Update One endpoint', () => {
     expect(updatedPerson.companyId).toBe(TEST_COMPANY_1_ID);
   });
 
+  it.each([
+    {
+      path: `/people/${TEST_PERSON_1_ID}`,
+      responseKey: 'updatePerson',
+      isMany: false,
+    },
+    {
+      path: `/people?filter=id[eq]:${TEST_PERSON_1_ID}`,
+      responseKey: 'updatePeople',
+      isMany: true,
+    },
+  ])(
+    'should return only selected fields for $responseKey',
+    async ({ path, responseKey, isMany }) => {
+      const jobTitle = `Selected fields update ${responseKey}`;
+      const response = await makeRestApiRequest({
+        method: 'patch',
+        path: `${path}${path.includes('?') ? '&' : '?'}fields=id`,
+        body: { ...updatedData, jobTitle },
+      }).expect(200);
+
+      expect(response.body.data[responseKey]).toEqual(
+        isMany ? [{ id: TEST_PERSON_1_ID }] : { id: TEST_PERSON_1_ID },
+      );
+
+      const readResponse = await makeRestApiRequest({
+        method: 'get',
+        path: `/people/${TEST_PERSON_1_ID}?fields=jobTitle`,
+      }).expect(200);
+
+      expect(readResponse.body.data.person.jobTitle).toBe(jobTitle);
+    },
+  );
+
   it('should support depth 0 parameter', async () => {
     await makeRestApiRequest({
       method: 'patch',

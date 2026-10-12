@@ -29,7 +29,7 @@ export type ToastProps = ComponentPropsWithRef<'div'> & {
   progress?: number;
   /**
    * Milliseconds before `onClose` is called. The countdown pauses while the
-   * pointer is over the toast.
+   * pointer is over the toast or keyboard focus is inside it.
    */
   duration?: number;
   /**

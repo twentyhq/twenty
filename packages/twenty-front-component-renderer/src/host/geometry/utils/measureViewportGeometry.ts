@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { readInputMediaFeatures } from '@/host/geometry/utils/readInputMediaFeatures';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
 export const measureViewportGeometry = (
@@ -21,5 +22,6 @@ export const measureViewportGeometry = (
     rootContainerHeight: rootContainerRect?.height ?? 0,
     rootContainerClientWidth: rootContainer?.clientWidth ?? 0,
     rootContainerClientHeight: rootContainer?.clientHeight ?? 0,
+    ...readInputMediaFeatures(),
   };
 };

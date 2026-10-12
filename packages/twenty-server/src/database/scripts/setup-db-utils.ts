@@ -25,6 +25,7 @@ export const performQuery = async <T = unknown>(
       message = `Performed '${consoleDescription}' successfully`;
     } else {
       message = `Failed to perform '${consoleDescription}': ${err}`;
+      process.exitCode = 1;
     }
     if (withLog) {
       // oxlint-disable-next-line no-console

@@ -1,13 +1,25 @@
 import { type ComponentProps } from 'react';
-
 import { type InlineBanner } from '../src/components/feedback/InlineBanner/InlineBanner';
 
 export const INLINE_BANNER_PROP_DESCRIPTIONS = {
-  color: 'Banner palette color. An omitted color uses Banner’s default.',
-  message: 'Message, truncated with its full text available in a tooltip.',
-  embedded: 'Uses the embedded banner appearance.',
-  button:
-    'Optional action with title, onClick, hidden, disabled, and Icon fields.',
-  LeftIcon: 'Leading icon component. Defaults to the information icon.',
-  className: 'Class applied to the banner.',
+  children:
+    'Caller-provided content. Standard plain strings truncate with a focusable tooltip; rich nodes render directly. Compact content wraps.',
+  status:
+    'Feedback meaning: neutral, info, success, warning or error. Defaults to info. Roles and announcements remain caller-owned.',
+  variant:
+    'Solid or soft appearance, independently of status and layout. Defaults to soft.',
+  color:
+    'Gray, blue, green, orange or red palette override. An omitted color follows status.',
+  layout:
+    'Standard full-width layout or compact wrapping layout with a 512px maximum content width. Defaults to standard.',
+  embedded:
+    'Removes the standard bottom margin. Compact layouts have no bottom margin.',
+  icon: 'Leading ReactNode. Defaults to a decorative information icon. Pass null to omit it.',
+  action:
+    'Optional trailing ReactNode. InlineBanner.Action supplies the shared banner action preset and inherits the resolved banner color; arbitrary controls are also accepted.',
+  className: 'Class merged onto the root div or composed element.',
+  style: 'Inline styles applied to the root div or composed element.',
+  ref: 'Ref to the root div, or to the DOM element supplied through render.',
+  render:
+    'Base UI root element or render callback, receiving native props/ref and resolved Banner state.',
 } satisfies Partial<Record<keyof ComponentProps<typeof InlineBanner>, string>>;

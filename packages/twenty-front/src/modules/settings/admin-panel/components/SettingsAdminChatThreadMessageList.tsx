@@ -6,7 +6,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { AgentMessageRole } from '~/generated-admin/graphql';
 
 import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
 import { SettingsAdminChatMessage } from '@/settings/admin-panel/components/SettingsAdminChatMessage';
@@ -26,10 +25,8 @@ const StyledMessagesContainer = styled.div`
 export const SettingsAdminChatThreadMessageList = ({
   messages,
 }: SettingsAdminChatThreadMessageListProps) => {
-  const visibleMessages = messages.filter(
-    (message) =>
-      message.role !== AgentMessageRole.SYSTEM &&
-      message.parts.some(isRenderableAdminChatMessagePart),
+  const visibleMessages = messages.filter((message) =>
+    message.parts.some(isRenderableAdminChatMessagePart),
   );
 
   if (!isNonEmptyArray(visibleMessages)) {

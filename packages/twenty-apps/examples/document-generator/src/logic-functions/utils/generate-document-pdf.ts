@@ -7,9 +7,8 @@ import {
   StandardFonts,
 } from 'pdf-lib';
 
-// Renders a document (title + Markdown body) into a marketable, multi-page A4
-// PDF using pdf-lib: a coloured header band, real typography, bold/italic runs,
-// headings and lists.
+// Renders Markdown content into a multi-page A4 PDF using pdf-lib, with
+// bold/italic runs, headings and lists.
 
 const PAGE_WIDTH = 595.28; // A4
 const PAGE_HEIGHT = 841.89;
@@ -36,7 +35,13 @@ type Ctx = {
   fonts: Fonts;
 };
 
-type Run = { text: string; bold: boolean; italic: boolean; code: boolean; link: boolean };
+type Run = {
+  text: string;
+  bold: boolean;
+  italic: boolean;
+  code: boolean;
+  link: boolean;
+};
 
 // The built-in fonts use WinAnsi encoding and throw on characters they can't
 // encode. Map common punctuation and drop anything outside Latin-1 so the PDF
@@ -58,7 +63,6 @@ const pickFont = (fonts: Fonts, run: Run): PDFFont => {
   return fonts.regular;
 };
 
-// Flatten marked inline tokens into styled runs.
 const toRuns = (
   tokens: Token[] | undefined,
   style: Omit<Run, 'text'>,
@@ -68,13 +72,18 @@ const toRuns = (
   return tokens.flatMap((token): Run[] => {
     switch (token.type) {
       case 'strong':
-        return toRuns((token as Tokens.Strong).tokens, { ...style, bold: true });
+        return toRuns((token as Tokens.Strong).tokens, {
+          ...style,
+          bold: true,
+        });
       case 'em':
         return toRuns((token as Tokens.Em).tokens, { ...style, italic: true });
       case 'link':
         return toRuns((token as Tokens.Link).tokens, { ...style, link: true });
       case 'codespan':
-        return [{ ...style, code: true, text: (token as Tokens.Codespan).text }];
+        return [
+          { ...style, code: true, text: (token as Tokens.Codespan).text },
+        ];
       case 'br':
         return [{ ...style, text: '\n' }];
       default: {
@@ -84,7 +93,8 @@ const toRuns = (
         if (Array.isArray(nested) && nested.length > 0) {
           return toRuns(nested, style);
         }
-        const text = (token as Tokens.Text).text ?? (token as { raw?: string }).raw ?? '';
+        const text =
+          (token as Tokens.Text).text ?? (token as { raw?: string }).raw ?? '';
         return text ? [{ ...style, text }] : [];
       }
     }
@@ -120,14 +130,21 @@ const drawRuns = (
 
   // Break a token that is wider than a whole line into chunks that fit, so long
   // URLs or identifiers wrap instead of overflowing the right margin.
-  const pushWord = (text: string, font: PDFFont, color: ReturnType<typeof rgb>) => {
+  const pushWord = (
+    text: string,
+    font: PDFFont,
+    color: ReturnType<typeof rgb>,
+  ) => {
     if (text.length <= 1 || font.widthOfTextAtSize(text, size) <= lineWidth) {
       words.push({ text, font, color });
       return;
     }
     let chunk = '';
     for (const char of text) {
-      if (chunk !== '' && font.widthOfTextAtSize(chunk + char, size) > lineWidth) {
+      if (
+        chunk !== '' &&
+        font.widthOfTextAtSize(chunk + char, size) > lineWidth
+      ) {
         words.push({ text: chunk, font, color });
         chunk = char;
       } else {
@@ -202,11 +219,11 @@ const drawBlocks = (ctx: Ctx, tokens: Token[], indent = 0) => {
         const heading = token as Tokens.Heading;
         const size = heading.depth === 1 ? 18 : heading.depth === 2 ? 15 : 13;
         ctx.y -= 8;
-        drawRuns(
-          ctx,
-          toRuns(heading.tokens, { ...EMPTY_STYLE, bold: true }),
-          { size, indent, lineHeight: size + 6 },
-        );
+        drawRuns(ctx, toRuns(heading.tokens, { ...EMPTY_STYLE, bold: true }), {
+          size,
+          indent,
+          lineHeight: size + 6,
+        });
         break;
       }
       case 'paragraph': {
@@ -295,7 +312,10 @@ const drawBlocks = (ctx: Ctx, tokens: Token[], indent = 0) => {
       default: {
         const text = (token as { text?: string }).text;
         if (text) {
-          drawRuns(ctx, [{ ...EMPTY_STYLE, text }], { size: BODY_SIZE, indent });
+          drawRuns(ctx, [{ ...EMPTY_STYLE, text }], {
+            size: BODY_SIZE,
+            indent,
+          });
         }
       }
     }
@@ -314,9 +334,13 @@ export const generateDocumentPdf = async (
     mono: await pdf.embedFont(StandardFonts.Courier),
   };
 
-  const ctx: Ctx = { pdf, page: pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]), y: 0, fonts };
+  const ctx: Ctx = {
+    pdf,
+    page: pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]),
+    y: 0,
+    fonts,
+  };
 
-  // Render the template content only — no title header or footer.
   ctx.y = PAGE_HEIGHT - MARGIN;
 
   // Match the HTML renderer (breaks: true) so a single newline in a template

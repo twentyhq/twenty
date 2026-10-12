@@ -1,3 +1,6 @@
+import { isThirdPartyApplication } from '@/applications/utils/isThirdPartyApplication';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,6 +29,7 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   isInPreviewMode,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
   const isCore = useIsWorkflowCoreEnabled();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
     isCore ? [] : selectedWorkflowRecordIds,
   );
@@ -36,6 +40,20 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   const workflows = isCore
     ? coreWorkflowsWithCurrentVersions
     : workflowsWithCurrentVersions;
+
+  const applicationManagedWorkflowIds = new Set(
+    coreWorkflowsWithCurrentVersions
+      .filter((workflow) =>
+        isThirdPartyApplication({
+          application: currentWorkspace?.installedApplications.find(
+            (installedApplication) =>
+              installedApplication.id === workflow.applicationId,
+          ),
+          currentWorkspace,
+        }),
+      )
+      .map((workflow) => workflow.id),
+  );
 
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
     (record) => {
@@ -54,6 +72,14 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
         statuses: workflowWithCurrentVersion.statuses,
         lastPublishedVersionId:
           workflowWithCurrentVersion.lastPublishedVersionId,
+        ...(applicationManagedWorkflowIds.has(record.id) && {
+          recordPermissions: {
+            ...record.recordPermissions,
+            canUpdate: false,
+            canSoftDelete: false,
+            canDelete: false,
+          },
+        }),
       };
     },
   );

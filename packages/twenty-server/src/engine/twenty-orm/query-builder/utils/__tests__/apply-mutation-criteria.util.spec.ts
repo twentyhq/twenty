@@ -1,3 +1,5 @@
+import { runInNewContext } from 'node:vm';
+
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -89,5 +91,26 @@ describe('applyMutationCriteriaToQueryBuilder', () => {
     expect(() =>
       applyMutationCriteriaToQueryBuilder(buildQueryBuilder(), ''),
     ).toThrow(TwentyOrmException);
+  });
+
+  it.each([
+    ['an empty where object', {}],
+    ['an empty null-prototype where object', Object.create(null)],
+    ['a where array with an empty entry', [{ name: 'Ada' }, {}]],
+    ['a where array with an empty null-prototype entry', [Object.create(null)]],
+  ])('throws on %s, which would reach every row', (_label, criteria) => {
+    expect(() =>
+      applyMutationCriteriaToQueryBuilder(buildQueryBuilder(), criteria),
+    ).toThrow(TwentyOrmException);
+  });
+
+  it('applies a where object built in another realm', () => {
+    const [text, values] = applyMutationCriteriaToQueryBuilder(
+      buildQueryBuilder(),
+      [runInNewContext("({ name: 'Ada' })")],
+    ).getQueryAndParameters();
+
+    expect(text).toContain('"person"."name" = $1');
+    expect(values).toContain('Ada');
   });
 });

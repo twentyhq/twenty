@@ -17,7 +17,6 @@ import { FieldWidgetEditAction } from '@/page-layout/widgets/field/components/Fi
 import { FieldWidgetRelationEditAction } from '@/page-layout/widgets/field/components/FieldWidgetRelationEditAction';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
@@ -89,10 +88,7 @@ export const WidgetActionFieldEdit = ({
     isDisplayModeFixHeight: false,
     isRecordFieldReadOnly: isRecordFieldReadOnly({
       isRecordReadOnly,
-      objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
-        objectPermissionsByObjectMetadataId,
-        objectMetadataId: objectMetadataItem.id,
-      }),
+      objectMetadataId: objectMetadataItem.id,
       fieldMetadataItem,
       fieldDefinition,
       objectPermissionsByObjectMetadataId,
@@ -101,16 +97,14 @@ export const WidgetActionFieldEdit = ({
   } satisfies GenericFieldContextType;
 
   return (
-    <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
-      <RecordFieldComponentInstanceContext.Provider
-        value={{
-          instanceId: recordFieldInputInstanceId,
-        }}
-      >
-        <FieldContext.Provider value={fieldContextValue}>
-          <FieldWidgetEditAction />
-        </FieldContext.Provider>
-      </RecordFieldComponentInstanceContext.Provider>
-    </RecordFieldsScopeContextProvider>
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: recordFieldInputInstanceId,
+      }}
+    >
+      <FieldContext.Provider value={fieldContextValue}>
+        <FieldWidgetEditAction />
+      </FieldContext.Provider>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };

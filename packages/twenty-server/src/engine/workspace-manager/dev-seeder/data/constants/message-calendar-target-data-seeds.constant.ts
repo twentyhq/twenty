@@ -6,8 +6,7 @@ import { type MessageParticipantDataSeed } from 'src/engine/workspace-manager/de
 import { OPPORTUNITY_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import { PERSON_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 
-// Raw seeds bypass participant reconciliation, so seeded timelines need the
-// person, company, and point-of-contact opportunity targets it would create.
+// Raw seeds bypass participant reconciliation, so the targets it would create are seeded here
 
 type TargetColumnsDataSeed = {
   targetPersonId: string | null;

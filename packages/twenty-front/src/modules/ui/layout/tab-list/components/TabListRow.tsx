@@ -49,6 +49,7 @@ export const TabListRow = ({
       render={<StyledContainer isScrollable={isScrollable} />}
     >
       {children}
+      <Tabs.Indicator />
     </Tabs.List>
   );
 };

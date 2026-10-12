@@ -26,6 +26,17 @@ export const useMentionSearch = () => {
     [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
   );
 
+  const objectLabelPluralByNameSingular = useMemo(
+    () =>
+      Object.fromEntries(
+        searchableObjectMetadataItems.map(({ nameSingular, labelPlural }) => [
+          nameSingular,
+          labelPlural,
+        ]),
+      ),
+    [searchableObjectMetadataItems],
+  );
+
   const objectsToSearch = useMemo(
     () => searchableObjectMetadataItems.map(({ nameSingular }) => nameSingular),
     [searchableObjectMetadataItems],
@@ -51,11 +62,14 @@ export const useMentionSearch = () => {
         recordId: searchRecord.recordId,
         objectNameSingular: searchRecord.objectNameSingular,
         objectLabelSingular: searchRecord.objectLabelSingular,
+        objectLabelPlural:
+          objectLabelPluralByNameSingular[searchRecord.objectNameSingular] ??
+          searchRecord.objectLabelSingular,
         label: searchRecord.label,
         imageUrl: searchRecord.imageUrl ?? '',
       }));
     },
-    [apolloCoreClient, objectsToSearch],
+    [apolloCoreClient, objectsToSearch, objectLabelPluralByNameSingular],
   );
 
   return { searchMentionRecords, searchableObjectMetadataItems };

@@ -7,20 +7,20 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 @InputType()
 export class SubmitFormStepInput {
   @Field(() => UUIDScalarType, {
-    description: 'Workflow step ID',
-    nullable: false,
-  })
-  stepId: string;
-
-  @Field(() => UUIDScalarType, {
     description: 'Workflow run ID',
     nullable: false,
   })
   workflowRunId: string;
 
-  @Field(() => graphqlTypeJson, {
-    description: 'Form response in JSON format',
+  @Field(() => UUIDScalarType, {
+    description: 'Form step ID',
     nullable: false,
   })
-  response: JSON;
+  stepId: string;
+
+  @Field(() => graphqlTypeJson, {
+    description: 'Form values keyed by field name',
+    nullable: false,
+  })
+  response: Record<string, unknown>;
 }

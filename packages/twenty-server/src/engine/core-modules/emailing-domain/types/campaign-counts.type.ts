@@ -7,8 +7,4 @@ export type CampaignCounts = {
   skippedCount: number;
   bouncedCount: number;
   complainedCount: number;
-  uniqueClickCount: number;
-  totalClickCount: number;
-  uniqueOpenCount: number;
-  totalOpenCount: number;
 };

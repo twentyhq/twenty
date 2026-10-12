@@ -21,7 +21,6 @@ describe('Agent update should succeed', () => {
         prompt: 'Original prompt',
         modelId: TEST_AI_MODEL_ID,
         responseFormat: { type: 'text' },
-        evaluationInputs: ['input 1'],
       },
     });
 
@@ -206,21 +205,6 @@ describe('Agent update should succeed', () => {
     });
   });
 
-  it('should update agent evaluationInputs', async () => {
-    const { data } = await updateOneAgent({
-      expectToFail: false,
-      input: {
-        id: testAgentId,
-        evaluationInputs: ['new input 1', 'new input 2', 'new input 3'],
-      },
-    });
-
-    expect(data.updateOneAgent).toMatchObject({
-      id: testAgentId,
-      evaluationInputs: ['new input 1', 'new input 2', 'new input 3'],
-    });
-  });
-
   it('should update multiple agent properties at once', async () => {
     const { data } = await updateOneAgent({
       expectToFail: false,
@@ -235,7 +219,6 @@ describe('Agent update should succeed', () => {
           type: 'json',
           schema: DEFAULT_TOOL_INPUT_SCHEMA as AgentResponseSchema,
         },
-        evaluationInputs: ['eval 1', 'eval 2'],
       },
     });
 
@@ -250,7 +233,6 @@ describe('Agent update should succeed', () => {
         type: 'json',
         schema: { type: 'object' },
       },
-      evaluationInputs: ['eval 1', 'eval 2'],
     });
   });
 
@@ -294,18 +276,48 @@ describe('Agent update should succeed', () => {
     });
   });
 
-  it('should clear evaluationInputs by setting to empty array', async () => {
-    const { data } = await updateOneAgent({
+  it('should set and then clear agent triggers', async () => {
+    const triggers = [
+      {
+        id: '6f1b5a3e-3c3f-4f4a-9a43-0a7f5d6c2b11',
+        type: 'DATABASE_EVENT' as const,
+        isActive: true,
+        instructions: 'Qualify the new company',
+        settings: { eventName: 'company.created' },
+      },
+      {
+        id: '0d2b1a8c-77a4-4e2e-8f0c-3a8e9f6b4c22',
+        type: 'CRON' as const,
+        isActive: false,
+        instructions: null,
+        settings: { pattern: '0 9 * * 1' },
+      },
+    ];
+
+    const { data: updateData } = await updateOneAgent({
       expectToFail: false,
       input: {
         id: testAgentId,
-        evaluationInputs: [],
+        triggers,
       },
     });
 
-    expect(data.updateOneAgent).toMatchObject({
+    expect(updateData.updateOneAgent).toMatchObject({
       id: testAgentId,
-      evaluationInputs: [],
+      triggers,
+    });
+
+    const { data: clearData } = await updateOneAgent({
+      expectToFail: false,
+      input: {
+        id: testAgentId,
+        triggers: [],
+      },
+    });
+
+    expect(clearData.updateOneAgent).toMatchObject({
+      id: testAgentId,
+      triggers: [],
     });
   });
 });

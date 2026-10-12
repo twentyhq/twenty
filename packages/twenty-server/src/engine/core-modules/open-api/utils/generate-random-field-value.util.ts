@@ -16,8 +16,7 @@ type ExampleField = Pick<
 // Its own instance so seeding cannot disturb the shared faker other callers use.
 const faker = new Faker({ locale: en });
 
-// CI diffs this document against the one main generates, so an example may only
-// depend on the field it describes. Field ids are per-workspace, hence the name.
+// CI diffs this document against main's, so seed from the field name and type (ids are per-workspace).
 const seedForField = (field: ExampleField) => {
   let seed = 0;
 

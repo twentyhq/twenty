@@ -1,12 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
+import { LIMIT_KIND_RULES } from 'src/engine/core-modules/usage-limit/constants/limit-kind-rules.constant';
 import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
+import { findAllowedUsageLimitUnits } from 'src/engine/core-modules/usage-limit/utils/find-allowed-usage-limit-units.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
@@ -25,9 +26,14 @@ export const validateUsageLimitAgainstDefinition = (
     );
   }
 
+  const spansEveryOperation = input.operationType === UsageOperationType.ALL;
+
   if (
-    input.operationType !== UsageOperationType.ALL &&
-    !definition.allowedOperationTypes.includes(input.operationType)
+    !spansEveryOperation &&
+    !definition.allowedOperations.some(
+      (allowedOperation) =>
+        allowedOperation.operationType === input.operationType,
+    )
   ) {
     throw new UsageLimitException(
       `${input.resourceType} ${input.limitKind} limits cannot target the ${input.operationType} operation`,
@@ -49,14 +55,25 @@ export const validateUsageLimitAgainstDefinition = (
     );
   }
 
-  if ('allowedMeters' in definition) {
-    const allowedMeters: readonly UsageMeter[] = definition.allowedMeters;
+  if (
+    spansEveryOperation &&
+    !LIMIT_KIND_RULES[input.limitKind].isAllOperationTypeAllowed
+  ) {
+    return;
+  }
 
-    if (!allowedMeters.includes(input.meter)) {
-      throw new UsageLimitException(
-        `${input.resourceType} ${input.limitKind} limits cannot be metered on ${input.meter}`,
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
+  const allowedUnits = findAllowedUsageLimitUnits({
+    limitKind: input.limitKind,
+    definition,
+    operationType: input.operationType,
+  });
+
+  if (!allowedUnits.includes(input.unit)) {
+    throw new UsageLimitException(
+      spansEveryOperation
+        ? `A ${input.unit} quota needs an operation: only credits aggregate across operations`
+        : `${input.resourceType} ${input.operationType} ${input.limitKind} limits cannot count ${input.unit}, only ${allowedUnits.join(', ')}`,
+      UsageLimitExceptionCode.LIMIT_INVALID,
+    );
   }
 };

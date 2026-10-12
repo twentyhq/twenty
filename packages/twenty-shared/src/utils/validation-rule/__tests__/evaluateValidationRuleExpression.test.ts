@@ -27,6 +27,11 @@ const FIELDS: ValidationRuleFieldDescriptor[] = [
     universalIdentifier: 'opportunity-close-date',
   },
   {
+    name: 'signedOn',
+    type: FieldMetadataType.DATE,
+    universalIdentifier: 'opportunity-signed-on',
+  },
+  {
     name: 'isQualified',
     type: FieldMetadataType.BOOLEAN,
     universalIdentifier: 'opportunity-is-qualified',
@@ -156,6 +161,44 @@ describe('evaluateValidationRuleExpression', () => {
     ).toEqual({ status: 'failed' });
   });
 
+  it('should compare a date against now by UTC calendar day', () => {
+    const today = { signedOn: '2026-09-23' };
+    const yesterday = { signedOn: '2026-09-22' };
+
+    expect(evaluate('signedOn >= now', today)).toEqual({ status: 'passed' });
+    expect(evaluate('signedOn <= now', today)).toEqual({ status: 'passed' });
+    expect(evaluate('signedOn < now', today)).toEqual({ status: 'failed' });
+    expect(evaluate('signedOn > now', today)).toEqual({ status: 'failed' });
+    expect(evaluate('now <= signedOn', today)).toEqual({ status: 'passed' });
+    expect(evaluate('signedOn >= now', yesterday)).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate('signedOn < now', yesterday)).toEqual({ status: 'passed' });
+  });
+
+  it('should compare a date against a date-time by its UTC calendar day', () => {
+    expect(
+      evaluate('signedOn >= closeDate', {
+        signedOn: '2026-09-23',
+        closeDate: '2026-09-24T01:00:00+02:00',
+      }),
+    ).toEqual({ status: 'passed' });
+    expect(
+      evaluate('closeDate > "2026-09-23"', {
+        closeDate: '2026-09-23T10:00:00.000Z',
+      }),
+    ).toEqual({ status: 'failed' });
+  });
+
+  it('should keep comparing dates and plain texts as strings', () => {
+    expect(
+      evaluate('signedOn < "2026-09-24"', { signedOn: '2026-09-23' }),
+    ).toEqual({ status: 'passed' });
+    expect(
+      evaluate('signedOn < "not a date"', { signedOn: '2026-09-23' }),
+    ).toEqual({ status: 'passed' });
+  });
+
   it('should check that a text contains another text', () => {
     const expression = 'includes(company.industry, "Soft")';
 
@@ -174,6 +217,40 @@ describe('evaluateValidationRuleExpression', () => {
     expect(
       evaluate('includes(tags, "PRIORITY")', { tags: ['NEW', 'PRIORITY'] }),
     ).toEqual({ status: 'passed' });
+  });
+
+  it('should check that a value is in a list field', () => {
+    const expression = '"PRIORITY" in tags';
+
+    expect(evaluate(expression, { tags: ['NEW', 'PRIORITY'] })).toEqual({
+      status: 'passed',
+    });
+    expect(evaluate(expression, { tags: ['NEW'] })).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate(expression, { tags: [] })).toEqual({ status: 'failed' });
+    expect(evaluate(expression, { tags: null })).toEqual({ status: 'failed' });
+    expect(evaluate(expression, {})).toEqual({ status: 'failed' });
+  });
+
+  it('should not look for a value inside a text', () => {
+    expect(evaluate('"W" in stage', { stage: 'WON' })).toEqual({
+      status: 'failed',
+    });
+  });
+
+  it('should check that a value is in a list of values', () => {
+    const expression = 'stage in ["WON", "LOST"]';
+
+    expect(evaluate(expression, { stage: 'LOST' })).toEqual({
+      status: 'passed',
+    });
+    expect(evaluate(expression, { stage: 'OPEN' })).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate(expression, { stage: null })).toEqual({
+      status: 'failed',
+    });
   });
 
   it('should not treat whitespace as empty', () => {

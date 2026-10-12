@@ -24,16 +24,10 @@ interface TestingModuleCreatePreHook {
   (moduleBuilder: TestingModuleBuilder): TestingModuleBuilder;
 }
 
-/**
- * Hook for adding items to nest application
- */
 export type TestingAppCreatePreHook = (
   app: NestExpressApplication,
 ) => Promise<void>;
 
-/**
- * Sets basic integration testing module of app
- */
 export const createApp = async (
   config: {
     moduleBuilderHook?: TestingModuleCreatePreHook;

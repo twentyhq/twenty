@@ -5,8 +5,7 @@ import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSe
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// An undefined request id lets the server fall back to the workspace chat
-// tier, so the client never has to know that setting to send a message.
+// undefined lets the server fall back to the workspace chat tier.
 export const useAgentChatModelId = () => {
   const agentChatUserSelectedModelTier = useAtomStateValue(
     agentChatUserSelectedModelTierState,

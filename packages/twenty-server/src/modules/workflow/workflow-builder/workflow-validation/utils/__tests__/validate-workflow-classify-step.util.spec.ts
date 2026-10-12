@@ -122,8 +122,7 @@ describe('validateWorkflowClassifyStep', () => {
     ).toEqual([]);
   });
 
-  // A dot would be read as structure by the variable resolver, so the answer
-  // this step advertises could never be referenced.
+  // The variable resolver reads a dot as structure, so a dotted answer name could never be referenced
   it('should refuse an answer name that is not a valid variable key', () => {
     expect(
       codesFor({
@@ -182,11 +181,7 @@ describe('validateWorkflowClassifyStep', () => {
     ).toEqual(['CLASSIFY_INCOMPLETE_QUESTION']);
   });
 
-  // A step should report every reason it cannot activate at once; otherwise an
-  // author fixes one problem only to be told about the next.
-  // An option keys its probability, so a dot in it advertises
-  // {{step.answers.intent.probabilities.v1.2}}, which the resolver walks as two
-  // keys. A space survives, because escapePathSegment brackets it.
+  // A dotted option advertises a probabilities path the resolver walks as two keys; escapePathSegment brackets spaces
   it('should refuse a choice option whose name cannot be read back', () => {
     expect(
       codesFor({
@@ -225,8 +220,7 @@ describe('validateWorkflowClassifyStep', () => {
     ).toEqual([]);
   });
 
-  // Score probabilities are keyed by level index, so a label never becomes a
-  // path segment and stays free text.
+  // Score probabilities are keyed by level index, so labels stay free text
   it('should accept a score level label containing a dot', () => {
     expect(
       codesFor({

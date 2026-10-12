@@ -1,7 +1,7 @@
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
 import { SettingsRadioSettingsCard } from '@/settings/components/SettingsRadioSettingsCard';
 import { msg } from '@lingui/core/macro';
-import { MessageChannelVisibility } from '~/generated/graphql';
+import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 
 type SettingsAccountsMessageVisibilityCardProps = {
   onChange: (nextValue: MessageChannelVisibility) => void;

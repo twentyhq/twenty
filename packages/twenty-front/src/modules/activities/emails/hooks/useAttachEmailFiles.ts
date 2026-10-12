@@ -37,9 +37,7 @@ export const useAttachEmailFiles = ({
       return;
     }
 
-    // Appended against the latest state rather than the list captured when the
-    // picker opened: an upload can finish after the user has removed or added
-    // other attachments.
+    // An upload can finish after the user changed the attachments, so append to the latest state.
     onFilesAttached((previousFiles) => [
       ...previousFiles,
       ...successfulUploads,
@@ -50,8 +48,7 @@ export const useAttachEmailFiles = ({
     openFileUpload({ multiple: true, onUpload: handleUploadFiles });
   };
 
-  // Attachments only join the draft once their upload resolves, so sending has
-  // to wait or the mail goes out without the file the user just picked.
+  // Attachments join the draft only once uploaded, so sending must wait for them.
   return {
     openAttachmentPicker,
     isUploadingAttachments: pendingUploadCount > 0,

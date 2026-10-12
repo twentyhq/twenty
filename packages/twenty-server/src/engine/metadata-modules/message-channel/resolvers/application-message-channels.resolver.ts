@@ -14,7 +14,7 @@ import { AuthApplication } from 'src/engine/decorators/auth/auth-application.dec
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CreateAppMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/create-app-message-channel.input';
 import { ListAppMessageChannelsInput } from 'src/engine/metadata-modules/message-channel/dtos/list-app-message-channels.input';
@@ -24,7 +24,15 @@ import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadat
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
-@UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: false,
+    apiKey: false,
+    oauthClient: false,
+    application: true,
+  }),
+  NoPermissionGuard,
+)
 @UseInterceptors(MessageChannelGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()

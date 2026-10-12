@@ -76,8 +76,7 @@ const renderNavigateToRecordPage = ({
       }
 
       if (parentView !== undefined) {
-        // The panel page holds it, since that is the surface the peek read it
-        // from; expanding is what moves it to the main one.
+        // The peek read it from the panel page; expanding is what moves it to the main one
         initializedStore.set(
           contextStoreRecordShowParentViewComponentState.atomFamily({
             instanceId: PAGE_INSTANCE_ID,

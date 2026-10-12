@@ -122,8 +122,7 @@ const buildModel = ({
   return model;
 };
 
-// Which vendors we carry is a deployment decision, so it is read from the
-// spec that states it rather than inferred from how the SDK names a package.
+// Carried vendors are a deployment decision, read from the spec rather than inferred from SDK package names
 export const buildCatalog = ({
   data,
   vendors,

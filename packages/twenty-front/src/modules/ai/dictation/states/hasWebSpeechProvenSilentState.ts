@@ -1,8 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-// Remembered per browser because a silent engine is a property of this WebView
-// rather than of the workspace or the user: once one has accepted start() and
-// then said nothing, offering the button again only costs another recording.
+// Per browser: a silent engine is a property of the WebView, not of the workspace or user.
 export const hasWebSpeechProvenSilentState = createAtomState<boolean>({
   key: 'ai/hasWebSpeechProvenSilent',
   defaultValue: false,

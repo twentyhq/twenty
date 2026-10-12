@@ -39,8 +39,5 @@ export abstract class CustomException<
   }
 }
 
-/**
- * Exception class for test scenarios and edge cases.
- * Prefer domain-specific exceptions in production code.
- */
+// For test scenarios and edge cases; prefer domain-specific exceptions in production code.
 export class UnknownException extends CustomException {}

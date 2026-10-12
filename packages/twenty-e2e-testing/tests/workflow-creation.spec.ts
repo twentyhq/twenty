@@ -43,7 +43,6 @@ test('Create workflow', async ({ page }) => {
       .getByTestId('top-bar-title')
       .getByText(NEW_WORKFLOW_NAME);
 
-    // Wait for the name to be visible and not hidden
     await workflowName.waitFor({ state: 'visible' });
     await expect(workflowName).toBeVisible();
 

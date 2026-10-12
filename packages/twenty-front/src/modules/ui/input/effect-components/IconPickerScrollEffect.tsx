@@ -1,52 +1,54 @@
+import { type RefObject, useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { ICON_PICKER_DEFAULT_VISIBLE_COUNT } from '@/ui/input/components/constants/IconPickerDefaultVisibleCount';
 import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useEffect } from 'react';
 
 type IconPickerScrollEffectProps = {
-  sentinelId: string;
+  sentinelRef: RefObject<HTMLDivElement | null>;
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
   dropdownId: string;
+  enabled: boolean;
 };
 
 export const IconPickerScrollEffect = ({
-  sentinelId,
+  sentinelRef,
+  scrollContainerRef,
   dropdownId,
+  enabled,
 }: IconPickerScrollEffectProps) => {
-  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
-
   const setIconPickerVisibleCount = useSetAtomFamilyState(
     iconPickerVisibleCountState,
     dropdownId,
   );
 
   useEffect(() => {
-    const element = document.querySelector(
-      `#${sentinelId}`,
-    ) as HTMLElement | null;
+    const sentinel = sentinelRef.current;
+    const scrollContainer = scrollContainerRef.current;
 
-    if (!element) return;
+    if (!enabled || !isDefined(sentinel) || !isDefined(scrollContainer)) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        for (const entry of entries) {
           if (entry.isIntersecting) {
-            setIconPickerVisibleCount((previousCount) => previousCount + 25);
+            setIconPickerVisibleCount(
+              (previousCount) =>
+                previousCount + ICON_PICKER_DEFAULT_VISIBLE_COUNT,
+            );
           }
-        });
+        }
       },
-      {
-        root: scrollWrapperHTMLElement,
-        rootMargin: '10px',
-        threshold: 1.0,
-      },
+      { root: scrollContainer, rootMargin: '10px', threshold: 1 },
     );
 
-    observer.observe(element);
+    observer.observe(sentinel);
 
-    return () => {
-      observer.disconnect();
-    };
-  }, [sentinelId, scrollWrapperHTMLElement, setIconPickerVisibleCount]);
+    return () => observer.disconnect();
+  }, [enabled, sentinelRef, scrollContainerRef, setIconPickerVisibleCount]);
 
   return null;
 };

@@ -123,7 +123,7 @@ export const RecordTableCellFieldContextGeneric = ({
           isInvalidJunctionRelation ||
           isRecordFieldReadOnly({
             isRecordReadOnly: isRecordReadOnly ?? false,
-            objectPermissions,
+            objectMetadataId: objectMetadataItem.id,
             fieldMetadataItem,
             fieldDefinition,
             objectPermissionsByObjectMetadataId,

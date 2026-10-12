@@ -7,13 +7,7 @@ import {
 } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export interface MessageQueueProcessorOptions {
-  /**
-   * Specifies the name of the queue to subscribe to.
-   */
   queueName: MessageQueue;
-  /**
-   * Specifies the lifetime of an injected Processor.
-   */
   scope?: Scope;
 }
 

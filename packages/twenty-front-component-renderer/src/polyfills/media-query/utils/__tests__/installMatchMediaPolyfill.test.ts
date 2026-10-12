@@ -1,0 +1,330 @@
+import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
+import { type WorkerMediaQueryList } from '@/polyfills/media-query/types/WorkerMediaQueryList';
+import { createMediaQueryEnvironmentFixture } from '@/testing/createMediaQueryEnvironmentFixture';
+import { createSubscriptionStub } from '@/testing/createSubscriptionStub';
+import { installMatchMediaPolyfill } from '../installMatchMediaPolyfill';
+
+type MatchMediaFunction = (query: unknown) => WorkerMediaQueryList;
+
+const setupMatchMedia = () => {
+  let environment = createMediaQueryEnvironmentFixture();
+
+  const environmentSubscription = createSubscriptionStub();
+
+  const globalScope: Record<string, unknown> = {};
+
+  installMatchMediaPolyfill({
+    globalScope,
+    environmentSource: {
+      readEnvironment: () => environment,
+      subscribeToEnvironmentUpdates: environmentSubscription.subscribe,
+    },
+  });
+
+  const setEnvironment = (overrides: Partial<MediaQueryEnvironment>) => {
+    environment = { ...environment, ...overrides };
+
+    environmentSubscription.notify();
+  };
+
+  return {
+    matchMedia: globalScope.matchMedia as MatchMediaFunction,
+    globalScope,
+    setEnvironment,
+  };
+};
+
+describe('installMatchMediaPolyfill', () => {
+  it('should evaluate min-width and max-width against the environment', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024 });
+
+    expect(matchMedia('(min-width: 800px)').matches).toBe(true);
+    expect(matchMedia('(min-width: 1024px)').matches).toBe(true);
+    expect(matchMedia('(min-width: 1200px)').matches).toBe(false);
+    expect(matchMedia('(max-width: 1024px)').matches).toBe(true);
+    expect(matchMedia('(max-width: 1000px)').matches).toBe(false);
+  });
+
+  it('should evaluate combined and comma-separated queries', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024 });
+
+    expect(
+      matchMedia('screen and (min-width: 800px) and (max-width: 1200px)')
+        .matches,
+    ).toBe(true);
+    expect(matchMedia('(min-width: 2000px), (max-width: 1100px)').matches).toBe(
+      true,
+    );
+    expect(matchMedia('print').matches).toBe(false);
+    expect(matchMedia('not print').matches).toBe(true);
+  });
+
+  it('should evaluate device pixel ratio queries against the environment', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ devicePixelRatio: 2 });
+
+    expect(matchMedia('(-webkit-min-device-pixel-ratio: 2)').matches).toBe(
+      true,
+    );
+    expect(matchMedia('(min-resolution: 192dpi)').matches).toBe(true);
+    expect(matchMedia('(min-resolution: 3dppx)').matches).toBe(false);
+    expect(matchMedia('(min-device-pixel-ratio: 2)').matches).toBe(false);
+  });
+
+  it.each([
+    '(width: max(10px, screen, 20px))',
+    '(width: max(min(10px, 20px), screen, 30px))',
+    '(unknown: "), screen, (")',
+    '(unknown: "\\\r\n), screen, (")',
+    '(unknown: /* ), screen, ( */ value)',
+    '(unknown: [), screen, (])',
+    '(unknown: {), screen, (})',
+    '(width: max(10px, screen, 20px)',
+  ])('should not treat nested commas as query separators in %s', (query) => {
+    const { matchMedia } = setupMatchMedia();
+
+    expect(matchMedia(query).matches).toBe(false);
+  });
+
+  it('should preserve independent queries around an unsupported expression', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024 });
+
+    expect(
+      matchMedia('(width: max(10px, screen, 20px)), (min-width: 800px)')
+        .matches,
+    ).toBe(true);
+    expect(
+      matchMedia('(min-width: 800px), (width: max(10px, screen, 20px))')
+        .matches,
+    ).toBe(true);
+    expect(
+      matchMedia('(width: max(10px, screen, 20px)), (min-width: 1200px)')
+        .matches,
+    ).toBe(false);
+    expect(matchMedia('(unknown: "unterminated\n), all').matches).toBe(true);
+  });
+
+  it('should evaluate range syntax against the environment', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 700, componentHeight: 300 });
+
+    expect(matchMedia('(width >= 600px)').matches).toBe(true);
+    expect(matchMedia('(400px <= width <= 800px)').matches).toBe(true);
+    expect(matchMedia('(width < 700px)').matches).toBe(false);
+    expect(matchMedia('(width = 700px)').matches).toBe(true);
+    expect(matchMedia('(height > 300px)').matches).toBe(false);
+  });
+
+  it('should report zero component sizes before the first environment update', () => {
+    const { matchMedia } = setupMatchMedia();
+
+    expect(matchMedia('(min-width: 1px)').matches).toBe(false);
+    expect(matchMedia('(max-width: 100px)').matches).toBe(true);
+    expect(matchMedia('(width)').matches).toBe(false);
+  });
+
+  it('should return false for unknown or unparseable queries without throwing', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024 });
+
+    expect(matchMedia('(prefers-reduced-motion: reduce)').matches).toBe(false);
+    expect(matchMedia('(min-width >= 600px)').matches).toBe(false);
+    expect(matchMedia('garbage').matches).toBe(false);
+    expect(matchMedia('not garbage').matches).toBe(true);
+    expect(matchMedia(undefined).matches).toBe(false);
+    expect(matchMedia('(constructor: 1)').matches).toBe(false);
+    expect(matchMedia('garbage').media).toBe('garbage');
+  });
+
+  it('should match the empty query like the all media type', () => {
+    const { matchMedia } = setupMatchMedia();
+
+    expect(matchMedia('').matches).toBe(true);
+    expect(matchMedia('   ').matches).toBe(true);
+    expect(matchMedia('all').matches).toBe(true);
+  });
+
+  it('should treat an empty query inside a list as never matching', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 320 });
+
+    expect(matchMedia('(min-width: 2000px),').matches).toBe(false);
+    expect(
+      matchMedia('(min-width: 2000px), , (min-width: 3000px)').matches,
+    ).toBe(false);
+    expect(matchMedia('(min-width: 2000px), (min-width: 100px)').matches).toBe(
+      true,
+    );
+  });
+
+  it('should evaluate orientation from the component box', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024, componentHeight: 400 });
+
+    expect(matchMedia('(orientation: landscape)').matches).toBe(true);
+    expect(matchMedia('(orientation: portrait)').matches).toBe(false);
+
+    setEnvironment({ componentWidth: 400, componentHeight: 1024 });
+
+    expect(matchMedia('(orientation: portrait)').matches).toBe(true);
+    expect(matchMedia('(orientation: landscape)').matches).toBe(false);
+  });
+
+  it('should evaluate prefers-color-scheme from the environment', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+
+    expect(matchMedia('(prefers-color-scheme: light)').matches).toBe(true);
+    expect(matchMedia('(prefers-color-scheme: dark)').matches).toBe(false);
+
+    setEnvironment({ colorScheme: 'dark' });
+
+    expect(matchMedia('(prefers-color-scheme: dark)').matches).toBe(true);
+  });
+
+  it('should dispatch a change event when the color scheme flips', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    const changeListener = jest.fn();
+
+    const mediaQueryList = matchMedia('(prefers-color-scheme: dark)');
+    mediaQueryList.addEventListener('change', changeListener);
+
+    setEnvironment({ colorScheme: 'dark' });
+
+    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(changeListener).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'change',
+        media: '(prefers-color-scheme: dark)',
+        matches: true,
+      }),
+    );
+  });
+
+  it('should notify a change listener exactly once per flip', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024 });
+
+    const changeListener = jest.fn();
+    const mediaQueryList = matchMedia('(min-width: 1000px)');
+    mediaQueryList.addEventListener('change', changeListener);
+
+    setEnvironment({ componentWidth: 800 });
+    setEnvironment({ componentWidth: 700 });
+
+    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(changeListener).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        type: 'change',
+        media: '(min-width: 1000px)',
+        matches: false,
+      }),
+    );
+
+    setEnvironment({ componentWidth: 1200 });
+
+    expect(changeListener).toHaveBeenCalledTimes(2);
+    expect(changeListener).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        type: 'change',
+        media: '(min-width: 1000px)',
+        matches: true,
+      }),
+    );
+  });
+
+  it('should install matchMedia on both the global scope and a distinct window', () => {
+    const polyfillWindow: Record<string, unknown> = {};
+    const globalScope: Record<string, unknown> = { window: polyfillWindow };
+
+    installMatchMediaPolyfill({
+      globalScope,
+      environmentSource: {
+        readEnvironment: () => createMediaQueryEnvironmentFixture(),
+        subscribeToEnvironmentUpdates: () => () => {},
+      },
+    });
+
+    expect(typeof globalScope.matchMedia).toBe('function');
+    expect(globalScope.matchMedia).toBe(polyfillWindow.matchMedia);
+  });
+
+  it('should ignore CSS comments the way browsers do', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024 });
+
+    expect(matchMedia('(min-width: 600px) /* tablet */').matches).toBe(true);
+    expect(matchMedia('/* tablet */ (min-width: 600px)').matches).toBe(true);
+    expect(matchMedia('(min-width: /* tablet */ 600px)').matches).toBe(true);
+    expect(
+      matchMedia('screen /* tablet */ and (min-width: 600px)').matches,
+    ).toBe(true);
+    expect(matchMedia('screen/**/and/**/(min-width: 600px)').matches).toBe(
+      true,
+    );
+    expect(matchMedia('/* */').matches).toBe(true);
+    expect(matchMedia('/* */, (min-width: 2000px)').matches).toBe(false);
+    expect(matchMedia('(unknown: "/*"), (min-width: 800px)').matches).toBe(
+      true,
+    );
+  });
+
+  it('should let the rest of a negated query decide around an unknown condition', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024 });
+
+    expect(
+      matchMedia('not print and (prefers-reduced-motion: reduce)').matches,
+    ).toBe(true);
+    expect(matchMedia('not print and (min-width: calc(1px))').matches).toBe(
+      true,
+    );
+    expect(
+      matchMedia('not all and (prefers-reduced-motion: reduce)').matches,
+    ).toBe(false);
+    expect(
+      matchMedia(
+        'not all and (prefers-reduced-motion: reduce) and (min-width: 2000px)',
+      ).matches,
+    ).toBe(true);
+    expect(matchMedia('not (prefers-reduced-motion: reduce)').matches).toBe(
+      false,
+    );
+    expect(
+      matchMedia('print and (prefers-reduced-motion: reduce)').matches,
+    ).toBe(false);
+  });
+
+  it('should evaluate hover and pointer from the host input', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ hover: 'none', pointer: 'coarse' });
+
+    expect(matchMedia('(hover: none) and (pointer: coarse)').matches).toBe(
+      true,
+    );
+    expect(matchMedia('(pointer: fine)').matches).toBe(false);
+    expect(matchMedia('(hover)').matches).toBe(false);
+    expect(matchMedia('(pointer)').matches).toBe(true);
+
+    setEnvironment({ hover: 'hover', pointer: 'fine' });
+
+    expect(matchMedia('(hover: none) and (pointer: coarse)').matches).toBe(
+      false,
+    );
+    expect(matchMedia('(hover: hover) and (pointer: fine)').matches).toBe(true);
+    expect(matchMedia('(any-pointer: coarse)').matches).toBe(false);
+  });
+
+  it('should evaluate absolute length units', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1000 });
+
+    expect(matchMedia('(min-width: 480pt)').matches).toBe(true);
+    expect(matchMedia('(max-width: 10in)').matches).toBe(false);
+    expect(matchMedia('(max-width: 11in)').matches).toBe(true);
+    expect(matchMedia('(max-width: 25cm)').matches).toBe(false);
+    expect(matchMedia('(width >= 480pt)').matches).toBe(true);
+  });
+});

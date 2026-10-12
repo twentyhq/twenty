@@ -221,8 +221,6 @@ describe('evaluateWidgetVisibility', () => {
         },
       });
 
-      // Expression says MOBILE only, so DESKTOP should be hidden
-      // even though conditionalDisplay says DESKTOP is visible
       expect(result).toBe(false);
     });
 
@@ -245,8 +243,6 @@ describe('evaluateWidgetVisibility', () => {
         },
       });
 
-      // Expression is null, so conditionalDisplay takes over
-      // conditionalDisplay says MOBILE only → DESKTOP hidden
       expect(result).toBe(false);
     });
 

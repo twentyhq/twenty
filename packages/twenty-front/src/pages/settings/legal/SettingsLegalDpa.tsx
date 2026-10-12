@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';

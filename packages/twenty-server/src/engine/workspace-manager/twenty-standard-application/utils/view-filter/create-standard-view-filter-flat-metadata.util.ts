@@ -11,9 +11,6 @@ import { type AllStandardObjectViewFilterName } from 'src/engine/workspace-manag
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
-// A relation traversal filter applies the operand to a field of the related
-// records instead of the filtered field itself, e.g. people whose list
-// memberships point at the current list.
 export type StandardViewFilterRelationTargetField = {
   [TargetObjectName in AllStandardObjectName]: {
     objectName: TargetObjectName;

@@ -23,7 +23,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+import { updatedObjectNamePluralState } from '@/settings/data-model/object-details/states/updatedObjectNamePluralState';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
 const ROLE_ID = 'role-1';

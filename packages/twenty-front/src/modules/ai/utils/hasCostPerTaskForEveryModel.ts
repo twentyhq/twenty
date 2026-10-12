@@ -2,8 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
-// Cost per task and price per token are different bases, so a comparison
-// across tiers uses cost per task only when every resolved model has one.
+// Cost per task and price per token aren't comparable across tiers.
 export const hasCostPerTaskForEveryModel = (
   models: (Pick<ClientAiModelConfig, 'costPerTask'> | undefined)[],
 ): boolean =>

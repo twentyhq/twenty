@@ -2,7 +2,7 @@ import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputCon
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { Field } from 'twenty-ui/primitives/input';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -134,9 +134,7 @@ export const FormBooleanFieldInput = ({
             hasRightElement={isDefined(VariablePicker) && !readonly}
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            dropdownOffset={{
-              y: parseInt(theme.spacing[1], 10),
-            }}
+            dropdownSideOffset={parseInt(theme.spacing[1], 10)}
           />
         ) : (
           <FormFieldInputInnerContainer

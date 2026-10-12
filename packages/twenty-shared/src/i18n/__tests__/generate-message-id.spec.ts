@@ -1,10 +1,7 @@
 import { generateMessageId } from '@/i18n/generate-message-id';
 
-// These ids are not arbitrary: each pair below was lifted from the
-// `js-lingui-id` comments in twenty-server's committed en.po, so this suite
-// asserts our implementation still agrees with what the Lingui CLI actually
-// emits. If it goes red, every persisted metadata label has silently stopped
-// resolving against its catalog.
+// Pairs lifted from twenty-server's en.po `js-lingui-id` comments, pinning parity with the Lingui CLI.
+// A failure means persisted metadata labels no longer resolve against their catalog.
 describe('generateMessageId', () => {
   it.each([
     ['A company', 'kZR6+h'],

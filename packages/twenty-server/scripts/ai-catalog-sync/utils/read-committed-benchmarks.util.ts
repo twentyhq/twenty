@@ -61,9 +61,7 @@ const file = ({
   }
 };
 
-// The last published measurements, read back so a failed fetch degrades to
-// stale data rather than deleting the catalog's benchmarks. Each record keeps
-// its own measuredAt, so a stale entry stays visibly stale.
+// Read back so a failed fetch degrades to stale data; each record keeps its own measuredAt
 export const readCommittedBenchmarks = (filePath: string): BenchmarkIndex => {
   if (!fs.existsSync(filePath)) {
     return new Map();

@@ -1,5 +1,0 @@
-export const SLACK_CHANNEL_RULE_MODE = {
-  OPEN: 'OPEN',
-  LINKED_MEMBERS_ONLY: 'LINKED_MEMBERS_ONLY',
-  SILENT: 'SILENT',
-} as const;

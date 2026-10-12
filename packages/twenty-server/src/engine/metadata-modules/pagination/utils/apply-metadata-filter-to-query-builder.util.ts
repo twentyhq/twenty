@@ -114,10 +114,6 @@ const applyComparisonToQueryBuilder = ({
   }
 };
 
-// Translates a nestjs-query style filter ({ and, or, field: { eq, in, ... } })
-// into TypeORM query builder conditions. Top-level field conditions, `and`
-// entries and separate comparisons on one field are combined with AND; `or`
-// groups are bracketed and combined with OR.
 export const applyMetadataFilterToQueryBuilder = <
   TFilter extends MetadataFilterShape<TFilter>,
 >({

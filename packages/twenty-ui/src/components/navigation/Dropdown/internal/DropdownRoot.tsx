@@ -1,6 +1,7 @@
 import { useCallback, useContext, useRef, useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
+import { preventDismissingClickActivation } from '@ui/utilities/internal/preventDismissingClickActivation';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownRootProps } from '../types/DropdownRootProps';
@@ -10,7 +11,6 @@ import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
 import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
-import { preventDismissingClickActivation } from './preventDismissingClickActivation';
 import { useRegisteredElementId } from './useRegisteredElementId';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
@@ -58,17 +58,23 @@ export const DropdownRoot = ({
   const [triggerId, registerTrigger] = useRegisteredElementId();
   const [titleId, registerTitle] = useRegisteredElementId();
 
-  if (previousOpen !== open) {
-    setPreviousOpen(open);
+  const isOpening = open && !previousOpen;
+  const isClosing = !open && previousOpen;
 
-    if (!open) {
-      setPageHistory([{ id: defaultPage }]);
-      setActivePage(undefined);
-      setPageFocusRequest(undefined);
-      setInitialFocusEdge('first');
-      setFocusOnOpen(true);
-      setSearchTargetId(undefined);
-    }
+  if (isOpening || isClosing) {
+    setPreviousOpen(open);
+  }
+
+  if (isOpening) {
+    setPageHistory([{ id: defaultPage }]);
+    setActivePage(undefined);
+    setPageFocusRequest(undefined);
+  }
+
+  if (isClosing) {
+    setInitialFocusEdge('first');
+    setFocusOnOpen(true);
+    setSearchTargetId(undefined);
   }
 
   const setOpen = (nextOpen: boolean) => {

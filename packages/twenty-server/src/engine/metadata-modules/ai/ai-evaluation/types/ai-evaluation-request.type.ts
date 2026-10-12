@@ -5,8 +5,7 @@ import {
 
 export type AiEvaluationRequest = {
   workspaceId: string;
-  // Attributes the spend to the member who triggered the run, and is the
-  // spender the quota check is made against.
+  // spend attribution and quota check target
   userWorkspaceId?: string | null;
   state: AiEvaluationModelInput;
   questions: Record<string, AiEvaluationModelQuestion>;

@@ -1,6 +1,7 @@
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -16,13 +17,16 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout, LightIconButton } from 'twenty-ui/components';
+import { Callout } from 'twenty-ui/components/feedback';
+import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconAlertTriangle,
   IconChevronDown,
@@ -33,6 +37,8 @@ import {
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export type WorkflowEditActionFormBuilderProps = {
   triggerType: WorkflowTriggerType | undefined;
@@ -141,6 +147,13 @@ const StyledCalloutContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledInstructionsContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[4]};
+  padding-left: ${themeCssVariables.spacing[7]};
+  padding-right: ${themeCssVariables.spacing[7]};
+  padding-top: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledNotClosableCalloutContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[4]};
   padding-left: ${themeCssVariables.spacing[7]};
@@ -157,10 +170,16 @@ export const WorkflowEditActionFormBuilder = ({
   const theme = useTheme();
 
   const [formData, setFormData] = useState<FormData>(action.settings.input);
+  const [instructions, setInstructions] = useState(
+    action.settings.instructions,
+  );
 
   const [isCalloutVisible, setIsCalloutVisible] = useState<boolean>(true);
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [hoveredField, setHoveredField] = useState<string | null>(null);
+  const isSendChatMessageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+  );
 
   const isFieldSelected = (fieldName: string) => selectedField === fieldName;
 
@@ -189,7 +208,7 @@ export const WorkflowEditActionFormBuilder = ({
 
     setFormData(updatedFormData);
 
-    saveAction(updatedFormData);
+    saveAction({ input: updatedFormData, instructions });
   };
 
   const handleDragEnd = ({ source, destination }: DraggableListDropResult) => {
@@ -210,22 +229,32 @@ export const WorkflowEditActionFormBuilder = ({
 
     setFormData(copiedFormData);
 
-    saveAction(copiedFormData);
+    saveAction({ input: copiedFormData, instructions });
   };
 
-  const saveAction = useDebouncedCallback(async (formData: FormData) => {
+  const saveAction = useDebouncedCallback(
+    (settings: { input: FormData; instructions: string | undefined }) => {
+      if (actionOptions.readonly === true) {
+        return;
+      }
+
+      actionOptions.onActionUpdate({
+        ...action,
+        settings: { ...action.settings, ...settings },
+      });
+    },
+    1_000,
+  );
+
+  const handleInstructionsChange = (updatedInstructions: string) => {
     if (actionOptions.readonly === true) {
       return;
     }
 
-    actionOptions.onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: formData,
-      },
-    });
-  }, 1_000);
+    setInstructions(updatedInstructions);
+
+    saveAction({ input: formData, instructions: updatedInstructions });
+  };
 
   useEffect(() => {
     return () => {
@@ -242,32 +271,51 @@ export const WorkflowEditActionFormBuilder = ({
         {triggerType && triggerType !== 'MANUAL' && isCalloutVisible && (
           <StyledCalloutContainer>
             <Callout
-              variant={'warning'}
-              Icon={IconAlertTriangle}
-              title={t`This form will appear in workflow runs.`}
-              description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
-              isClosable
+              status={'warning'}
+              icon={
+                <IconAlertTriangle
+                  size={themeCssVariables.icon.size.md}
+                  aria-hidden="true"
+                />
+              }
+              title={t`Forms are meant for manual triggers`}
+              description={
+                isSendChatMessageEnabled
+                  ? t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead.`
+                  : t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run.`
+              }
               closeLabel={t`Close`}
-              onClose={() => setIsCalloutVisible(false)}
-              action={{
-                label: t`Learn more`,
-                onClick: () =>
-                  window.open(
-                    'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form',
-                    '_blank',
-                    'noopener,noreferrer',
-                  ),
-              }}
+              onDismiss={() => setIsCalloutVisible(false)}
+              action={
+                <Callout.Action
+                  type="button"
+                  onClick={() =>
+                    openUrlInNewTab(
+                      'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form',
+                    )
+                  }
+                >{t`Learn more`}</Callout.Action>
+              }
             />
           </StyledCalloutContainer>
         )}
+        <StyledInstructionsContainer>
+          <FormTextFieldInput
+            label={t`Instructions`}
+            placeholder={t`Shown above the fields, for example what to fill in and why`}
+            multiline
+            readonly={actionOptions.readonly}
+            defaultValue={instructions}
+            onChange={handleInstructionsChange}
+            VariablePicker={WorkflowVariablePicker}
+          />
+        </StyledInstructionsContainer>
         {formData.length === 0 && (
           <StyledNotClosableCalloutContainer>
             <Callout
-              variant={'neutral'}
-              isClosable={false}
+              status={'neutral'}
               title={t`Add inputs to your form`}
-              description={t`Click on "Add Field" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page.`}
+              description={t`Click on "Add Field" below to add the first input to your form. The form pops up for the person who launches the workflow manually. For workflows with other triggers, it is filled in from the workflow run.`}
             />
           </StyledNotClosableCalloutContainer>
         )}
@@ -357,13 +405,11 @@ export const WorkflowEditActionFormBuilder = ({
 
                                 setFormData(updatedFormData);
 
-                                actionOptions.onActionUpdate({
-                                  ...action,
-                                  settings: {
-                                    ...action.settings,
-                                    input: updatedFormData,
-                                  },
+                                saveAction({
+                                  input: updatedFormData,
+                                  instructions,
                                 });
+                                saveAction.flush();
                               }}
                             >
                               <IconTrash />
@@ -410,15 +456,12 @@ export const WorkflowEditActionFormBuilder = ({
                       label,
                     };
 
-                    setFormData([...formData, newField]);
+                    const updatedFormData = [...formData, newField];
 
-                    actionOptions.onActionUpdate({
-                      ...action,
-                      settings: {
-                        ...action.settings,
-                        input: [...action.settings.input, newField],
-                      },
-                    });
+                    setFormData(updatedFormData);
+
+                    saveAction({ input: updatedFormData, instructions });
+                    saveAction.flush();
 
                     setSelectedField(newField.id);
                   }}

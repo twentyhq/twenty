@@ -5,8 +5,6 @@ import { useEffect, type RefObject } from 'react';
 import { createAnimationFrameLoop } from './animation-frame-loop';
 import { computeScrollProgress } from './compute-scroll-progress';
 
-// Reports the container's scroll progress, batched to animation frames
-// (one read per frame regardless of scroll event rate).
 export function useScrollProgress(
   scrollContainerRef: RefObject<HTMLElement | null>,
   onProgress: (progress: number) => void,

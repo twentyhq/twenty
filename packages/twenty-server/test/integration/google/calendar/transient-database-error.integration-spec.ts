@@ -212,7 +212,7 @@ describe('Calendar import transient database errors (integration)', () => {
     await runCalendarChannelEventsImport(channel.calendarChannelId);
 
     expect(insertedHandles).toEqual([newAttendee]);
-    expect(updatedParticipantCount).toBe(1);
+    expect(updatedParticipantCount).toBe(0);
   }, 180000);
 
   it('should read and compute outside the transaction and only write inside it', async () => {

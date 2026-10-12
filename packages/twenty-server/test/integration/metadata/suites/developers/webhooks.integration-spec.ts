@@ -330,8 +330,7 @@ describe('webhooksResolver (e2e)', () => {
         expect(createPersonResponse.body.errors).toBeUndefined();
         createdPersonId = createPersonResponse.body.data.createPerson.id;
 
-        // Delivery crosses two BullMQ hops behind a fire-and-forget event
-        // emit, so poll the receiver instead of guessing at the latency.
+        // Delivery crosses two BullMQ hops behind a fire-and-forget emit.
         await expectEventually(
           () => {
             expect(receiver.receivedPayloads.length).toBe(1);
