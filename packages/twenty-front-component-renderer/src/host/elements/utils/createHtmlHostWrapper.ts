@@ -92,7 +92,6 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       selectionCommands,
       onSelectionUpdate,
       acknowledgedNativeEditSequence,
-      shouldPreserveNativeEdits: !isFileInput,
     });
 
     if (

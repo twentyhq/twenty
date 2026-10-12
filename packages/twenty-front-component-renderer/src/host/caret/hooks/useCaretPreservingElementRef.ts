@@ -4,7 +4,6 @@ import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingE
 import { applyNewInputSelectionCommands } from '@/host/caret/utils/applyNewInputSelectionCommands';
 import { createInputSelectionListenerRef } from '@/host/caret/utils/createInputSelectionListenerRef';
 import { createInputSelectionPublisher } from '@/host/caret/utils/createInputSelectionPublisher';
-import { createNativeEditListenerRef } from '@/host/caret/utils/createNativeEditListenerRef';
 import { isOlderThanLatestNativeEdit } from '@/host/caret/utils/isOlderThanLatestNativeEdit';
 import { syncValuePreservingCaret } from '@/host/caret/utils/syncValuePreservingCaret';
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
@@ -15,14 +14,12 @@ export const useCaretPreservingElementRef = ({
   selectionCommands,
   onSelectionUpdate,
   acknowledgedNativeEditSequence,
-  shouldPreserveNativeEdits,
 }: {
   composedElementRef: ElementRefCallback;
   value: unknown;
   selectionCommands?: unknown;
   onSelectionUpdate?: unknown;
   acknowledgedNativeEditSequence?: unknown;
-  shouldPreserveNativeEdits: boolean;
 }): ElementRefCallback => {
   const latestComposedElementRefRef = useRef(composedElementRef);
   latestComposedElementRefRef.current = composedElementRef;
@@ -40,7 +37,6 @@ export const useCaretPreservingElementRef = ({
   );
 
   const [caretPreservingElementRef] = useState(() => {
-    const nativeEditListenerRef = createNativeEditListenerRef();
     const inputSelectionListenerRef = createInputSelectionListenerRef({
       onSelectionChange: () =>
         publishInputSelection({ shouldSkipUnchanged: false }),
@@ -48,7 +44,6 @@ export const useCaretPreservingElementRef = ({
 
     return (element: Element | null) => {
       attachedElementRef.current = element as CaretPreservingElement | null;
-      nativeEditListenerRef(element);
       inputSelectionListenerRef(element);
       latestComposedElementRefRef.current(element);
     };
@@ -57,12 +52,10 @@ export const useCaretPreservingElementRef = ({
   useLayoutEffect(() => {
     const attachedElement = attachedElementRef.current;
 
-    const isRemoteValueOlderThanLatestNativeEdit =
-      shouldPreserveNativeEdits &&
-      isOlderThanLatestNativeEdit({
-        hostElement: attachedElement,
-        nativeEditSequence: acknowledgedNativeEditSequence,
-      });
+    const isRemoteValueOlderThanLatestNativeEdit = isOlderThanLatestNativeEdit({
+      hostElement: attachedElement,
+      nativeEditSequence: acknowledgedNativeEditSequence,
+    });
 
     const didWriteValue =
       !isRemoteValueOlderThanLatestNativeEdit &&
