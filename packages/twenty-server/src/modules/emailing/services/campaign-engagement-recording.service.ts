@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
@@ -15,12 +16,15 @@ import { buildCampaignClickEvent } from 'src/modules/emailing/utils/build-campai
 
 @Injectable()
 export class CampaignEngagementRecordingService {
+  private readonly logger = new Logger(CampaignEngagementRecordingService.name);
+
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
     private readonly messageSuppressionService: MessageSuppressionService,
+    private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
   ) {}
 
   async record(observation: CampaignEngagementObservation): Promise<void> {
@@ -63,5 +67,22 @@ export class CampaignEngagementRecordingService {
     }
 
     await this.campaignEngagementEventService.insertClickOrThrow(clickEvent);
+
+    if (clickEvent.activityClass !== 'UNCLASSIFIED') {
+      return;
+    }
+
+    await this.messageCampaignStatisticsService
+      .scheduleRefresh({
+        workspaceId: observation.workspaceId,
+        campaignId: delivery.campaignId,
+      })
+      .catch((error) => {
+        this.logger.error(
+          `Campaign ${delivery.campaignId} could not schedule a statistics refresh: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
   }
 }
