@@ -407,6 +407,15 @@ export class ConnectedAccountMetadataService {
     );
 
     await this.repository.manager.transaction(async (entityManager) => {
+      // Archived first so the reassignment stays out of the active-connection
+      // unique index, which the custodian may already occupy for the same
+      // external account.
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
+        { archivedAt: new Date() },
+      );
+
       await entityManager.update(
         ConnectedAccountEntity,
         { id: In(connectedAccountIds), workspaceId },
@@ -416,12 +425,6 @@ export class ConnectedAccountMetadataService {
           refreshToken: null,
           connectionParameters: null,
         },
-      );
-
-      await entityManager.update(
-        ConnectedAccountEntity,
-        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
-        { archivedAt: new Date() },
       );
 
       await entityManager.update(
@@ -458,7 +461,7 @@ export class ConnectedAccountMetadataService {
     });
 
     for (const connectedAccount of connectedAccounts) {
-      await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+      await this.revokeUnlessGrantIsStillUsed(connectedAccount);
     }
   }
 
