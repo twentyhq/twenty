@@ -29,6 +29,7 @@ import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/
 import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { isApplicationInstallPending } from 'src/engine/core-modules/application/utils/is-application-install-pending.util';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -365,97 +366,68 @@ export class WorkflowDatabaseEventTriggerListener {
 
     const admittedRecordIds = await this.resolveAdmittedRecordIds(payload);
 
-    const listenersToTrigger = eventListeners
-      .map((eventListener) => ({
-        eventListener,
-        eventPayloads: payload.events.filter((eventPayload) =>
-          this.shouldTriggerJob({
-            eventPayload,
-            eventListener,
-            action,
-            admittedRecordIds,
-          }),
-        ),
-      }))
-      .filter(({ eventPayloads }) => eventPayloads.length > 0);
-
-    if (listenersToTrigger.length === 0) {
-      return;
-    }
-
-    const workflowIdsWithInstalledApplication =
-      await this.findWorkflowIdsWithInstalledApplication({
-        workspaceId,
-        workflowIds: listenersToTrigger.map(
-          ({ eventListener }) => eventListener.workflowId,
-        ),
-      });
-
-    for (const { eventListener, eventPayloads } of listenersToTrigger) {
-      if (!workflowIdsWithInstalledApplication.has(eventListener.workflowId)) {
-        continue;
-      }
-
-      for (const eventPayload of eventPayloads) {
-        await this.messageQueueService.add<WorkflowTriggerJobData>(
-          WorkflowTriggerJob.name,
-          {
-            workspaceId,
-            workflowId:
-              eventListener.legacyWorkflowId ?? eventListener.workflowId,
-            ...buildCoreDispatchIds(eventListener),
-            payload: omitInheritedReadabilityChildRecords(eventPayload),
-          },
-          { retryLimit: 3 },
-        );
-      }
-    }
-  }
-
-  private async findWorkflowIdsWithInstalledApplication({
-    workspaceId,
-    workflowIds,
-  }: {
-    workspaceId: string;
-    workflowIds: string[];
-  }): Promise<Set<string>> {
-    const { flatWorkflowMaps, flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkflowMaps',
-        'flatApplicationMaps',
-      ]);
-
-    return new Set(
-      workflowIds.filter((workflowId) => {
-        const workflow = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: workflowId,
-          flatEntityMaps: flatWorkflowMaps,
+    for (const eventListener of eventListeners) {
+      for (const eventPayload of payload.events) {
+        const shouldTriggerJob = this.shouldTriggerJob({
+          eventPayload,
+          eventListener,
+          action,
+          admittedRecordIds,
         });
 
-        if (!isDefined(workflow)) {
-          return false;
+        if (shouldTriggerJob) {
+          await this.messageQueueService.add<WorkflowTriggerJobData>(
+            WorkflowTriggerJob.name,
+            {
+              workspaceId,
+              workflowId:
+                eventListener.legacyWorkflowId ?? eventListener.workflowId,
+              ...buildCoreDispatchIds(eventListener),
+              payload: omitInheritedReadabilityChildRecords(eventPayload),
+            },
+            { retryLimit: 3 },
+          );
         }
-
-        const application = flatApplicationMaps.byId[workflow.applicationId];
-
-        return !isDefined(application) || isDefined(application.version);
-      }),
-    );
+      }
+    }
   }
 
   private async getDatabaseEventListeners(
     workspaceId: string,
     databaseEventName: string,
   ): Promise<DatabaseEventTriggerListener[]> {
-    const { workflowAutomatedTriggerMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'workflowAutomatedTriggerMaps',
-      ]);
+    const {
+      workflowAutomatedTriggerMaps,
+      flatWorkflowMaps,
+      flatApplicationMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'workflowAutomatedTriggerMaps',
+      'flatWorkflowMaps',
+      'flatApplicationMaps',
+    ]);
 
     return Object.values(workflowAutomatedTriggerMaps.byWorkflowId).filter(
-      (trigger) =>
-        isCachedDatabaseEventTrigger(trigger) &&
-        trigger.settings.eventName === databaseEventName,
+      (trigger) => {
+        if (
+          !isCachedDatabaseEventTrigger(trigger) ||
+          trigger.settings.eventName !== databaseEventName
+        ) {
+          return false;
+        }
+
+        const workflow = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: trigger.workflowId,
+          flatEntityMaps: flatWorkflowMaps,
+        });
+
+        return (
+          !isDefined(workflow) ||
+          !isApplicationInstallPending(
+            flatApplicationMaps,
+            workflow.applicationId,
+          )
+        );
+      },
     );
   }
 

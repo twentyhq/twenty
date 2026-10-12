@@ -28,10 +28,16 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let messageQueueService: jest.Mocked<MessageQueueService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let recordShareStorageService: jest.Mocked<RecordShareStorageService>;
+
   const setTriggerMap = (
     listeners: Array<{ workflowId: string; settings: object; type?: unknown }>,
-    applicationVersion: string | null = '1.0.1',
+    {
+      applicationVersion = '1.0.1',
+      isWorkflowCached = true,
+    }: { applicationVersion?: string | null; isWorkflowCached?: boolean } = {},
   ) => {
+    const cachedListeners = isWorkflowCached ? listeners : [];
+
     workspaceCacheService.getOrRecompute.mockResolvedValue({
       flatObjectMetadataMaps: { byUniversalIdentifier: {} },
       featureFlagsMap: {},
@@ -41,13 +47,13 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       },
       flatWorkflowMaps: {
         byUniversalIdentifier: Object.fromEntries(
-          listeners.map((listener) => [
+          cachedListeners.map((listener) => [
             listener.workflowId,
             { id: listener.workflowId, applicationId: 'application-id' },
           ]),
         ),
         universalIdentifierById: Object.fromEntries(
-          listeners.map((listener) => [
+          cachedListeners.map((listener) => [
             listener.workflowId,
             listener.workflowId,
           ]),
@@ -221,11 +227,22 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should not trigger workflow while its application is still installing', async () => {
-      setTriggerMap(mockEventListeners, null);
+      setTriggerMap(mockEventListeners, { applicationVersion: null });
 
       await listener.handleObjectRecordUpdateEvent(mockPayload);
 
       expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('should trigger workflow missing from the workflow cache', async () => {
+      setTriggerMap(mockEventListeners, {
+        applicationVersion: null,
+        isWorkflowCached: false,
+      });
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
     });
 
     it('should trigger workflow when no fields are specified', async () => {
@@ -469,16 +486,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                   },
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
-                flatWorkflowMaps: {
-                  byUniversalIdentifier: {
-                    [workflowId]: {
-                      id: workflowId,
-                      applicationId: 'workflow-application-id',
-                    },
-                  },
-                  universalIdentifierById: { [workflowId]: workflowId },
-                  universalIdentifiersByApplicationId: {},
-                },
                 rolesPermissions: {},
                 roleIdsWithAllRecordsAccess: [],
                 flatRowLevelPermissionPredicateMaps:
@@ -488,6 +495,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
               }
             : {
+                flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+                flatWorkflowMaps: createEmptyFlatEntityMaps(),
                 workflowAutomatedTriggerMaps: {
                   byWorkflowId: {
                     [workflowId]: {
@@ -552,16 +561,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                   idByUniversalIdentifier: {},
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
-                flatWorkflowMaps: {
-                  byUniversalIdentifier: {
-                    [workflowId]: {
-                      id: workflowId,
-                      applicationId: 'workflow-application-id',
-                    },
-                  },
-                  universalIdentifierById: { [workflowId]: workflowId },
-                  universalIdentifiersByApplicationId: {},
-                },
                 rolesPermissions: {},
                 roleIdsWithAllRecordsAccess: [],
                 flatRowLevelPermissionPredicateMaps:
@@ -571,6 +570,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
               }
             : {
+                flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+                flatWorkflowMaps: createEmptyFlatEntityMaps(),
                 workflowAutomatedTriggerMaps: {
                   byWorkflowId: {
                     [workflowId]: {
