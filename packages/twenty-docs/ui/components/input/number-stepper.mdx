@@ -4,9 +4,9 @@ description: Edit a number with optional bounds and increment or decrement butto
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-import NumberStepperReference from '/snippets/ui/generated/input/number-stepper.mdx';
+import NumberStepperReference from '/snippets/ui/generated/components/input/number-stepper.mdx';
 
-`NumberStepper` combines a compact numeric text field with decrement and increment buttons. It owns numeric editing, bounds, and step interactions. Your application chooses the limits and handles persistence.
+`NumberStepper` is the compact convenience preset built from [NumberField](/ui/primitives/input/number-field). It combines a numeric text input with optional decrement and increment buttons. Import it from `twenty-ui/components/input`. Use `NumberField` when you need locale or formatting options, different modifier steps, scrubbing, or independent part composition.
 
 <StoryEmbed
   storyId="ui-input-numberstepper--default"
@@ -19,7 +19,8 @@ import NumberStepperReference from '/snippets/ui/generated/input/number-stepper.
 Use `defaultValue` to set the initial quantity. The input owns subsequent changes.
 
 ```tsx
-import { Field, NumberStepper } from 'twenty-ui/primitives/input';
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
 
 export const QuantityInput = () => (
   <Field.Root>
@@ -36,7 +37,8 @@ Pass a number or `null` through `value` and update it in `onValueChange` to own 
 
 ```tsx
 import { useState } from 'react';
-import { Field, NumberStepper } from 'twenty-ui/primitives/input';
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
 
 export const QuantityInput = () => {
   const [quantity, setQuantity] = useState<number | null>(3);
@@ -59,6 +61,8 @@ export const QuantityInput = () => {
 ```
 
 Clearing the field reports `null`. Incomplete text such as `-` or `+` remains editable without reporting an invalid number until it is replaced or stepped. By default, parseable numeric edits report the bounded value; the displayed draft is normalized on blur. Values equal to the current value do not call `onValueChange` again.
+
+`onValueCommitted(value, details)` reports the value after an edit is committed: on blur after typing or clearing, on pointer release after a button adjustment, and immediately for keyboard adjustments. Its details contain the native `event` and `reason`. `onValueChange` retains change details, including cancellation methods and the optional stepping direction.
 
 ## Application validation
 
@@ -84,11 +88,13 @@ Use a controlled `value` when your application needs to reset the field. A nativ
 
 `disabled` prevents changes and excludes the value from form submission. `readOnly` prevents changes while keeping the input focusable and its value available to the form.
 
-Native input attributes and handlers, `className`, `style`, and `ref` apply to the visible input. For example, call `ref.current?.focus()` to focus the field. Combine the input with `Field.Description` and `Field.Error` for guidance and validation messages.
+Native input attributes and handlers, `className`, `style`, `ref`, and `render` apply to the visible text input. The ref receives an `HTMLInputElement`; call `ref.current?.focus()` to focus it. When composing through `render`, forward the supplied props and ref to a native input. Customize the surrounding layout with a separate element, or use the `NumberField.Root` and `NumberField.Group` parts when wrapper access is required. Combine the input with `Field.Description` and `Field.Error` for guidance and validation messages.
+
+The preset deliberately uses compact styling, Latin digits, up to 15 fraction digits, grouping from five integer digits, and the same `step` for ordinary, Shift, and Alt adjustments. These choices apply only to `NumberStepper`. The full `NumberField` primitive retains Base UI's formatting and stepping options.
 
 ## Front component renderer
 
-The React and Preact renderer sandboxes support typing, keyboard adjustments, bounds, and form values. Pointer stepping is currently blocked because the sandbox input does not implement `setSelectionRange`. Pasting is not supported: without input selection, the pasted text is inserted around the whole value, that wrong number is reported, and the front component then stops rendering. These limitations do not affect normal React rendering.
+The React and Preact renderer sandboxes support typing, keyboard adjustments, bounds, form values, pointer stepping, and pasting over selected text. The renderer gallery verifies these interactions in both runtimes. As with `NumberField`, pointer adjustments report changes, but the sandbox does not currently deliver the corresponding commit callback on pointer release. Ordinary React hosts retain the complete commit behavior.
 
 ## Props
 
