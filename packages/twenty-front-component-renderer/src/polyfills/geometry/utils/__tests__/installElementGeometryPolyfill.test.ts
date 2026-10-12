@@ -215,7 +215,7 @@ describe('installElementGeometryPolyfill', () => {
     expect(element.scrollLeft).toBe(0);
   });
 
-  it('should not throw when scrollTop is assigned and should keep reading the mirrored value', () => {
+  it('should mirror scroll offsets as read-only getters', () => {
     installOn(
       createWorkerGeometryStoreStub({
         resolveElementSnapshot: () => createElementGeometrySnapshotFixture(),
@@ -224,10 +224,11 @@ describe('installElementGeometryPolyfill', () => {
 
     const element = asPolyfilled(new FakeElement());
 
-    expect(() => {
-      element.scrollTop = 999;
-    }).not.toThrow();
     expect(element.scrollTop).toBe(15);
+    expect(element.scrollLeft).toBe(16);
+    expect(
+      Object.getOwnPropertyDescriptor(FakeElement.prototype, 'scrollTop')?.set,
+    ).toBeUndefined();
   });
 
   it('should return the document body from offsetParent', () => {
