@@ -160,7 +160,8 @@ describe('RadioGroup selection', () => {
   });
 
   it('leaves controlled selection updates to the caller', async () => {
-    const onValueChange = vi.fn();
+    const onValueChange =
+      vi.fn<NonNullable<RadioGroupProps<number>['onValueChange']>>();
     const inputRef = createRef<HTMLInputElement>();
     const { rerender } = render(
       <RadioGroup aria-label="Number" value={0} onValueChange={onValueChange}>
@@ -175,6 +176,13 @@ describe('RadioGroup selection', () => {
     await userEvent.click(one);
 
     expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange).toHaveBeenCalledWith(
+      1,
+      expect.objectContaining({
+        reason: 'none',
+        event: expect.any(MouseEvent),
+      }),
+    );
     expect(one).not.toBeChecked();
     expect(inputRef.current).not.toBeChecked();
     expect(screen.getByRole('radio', { name: 'Zero' })).toBeChecked();

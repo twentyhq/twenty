@@ -228,6 +228,7 @@ export const Controlled: Story = {
     await expect(
       canvas.getByLabelText('Selected appearance'),
     ).toHaveTextContent('dark');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await expect(args.onValueChange).toHaveBeenCalledWith(
       'dark',
       expect.objectContaining({ reason: 'none' }),
