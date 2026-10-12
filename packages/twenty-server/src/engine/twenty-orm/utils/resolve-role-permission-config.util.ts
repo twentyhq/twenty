@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
@@ -12,7 +10,7 @@ import {
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
 import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
-import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
+import { isDenyingRoleIdsBySource } from 'src/engine/twenty-orm/utils/is-denying-role-ids-by-source.util';
 
 const resolveRoleIdsBySourceFromAuthContext = ({
   authContext,
@@ -64,7 +62,7 @@ export const resolveRolePermissionConfig = ({
     apiKeyRoleMap,
   });
 
-  return isDefined(getRoleIdsToIntersect(roleIdsBySource))
-    ? { intersectionOf: roleIdsBySource }
-    : null;
+  return isDenyingRoleIdsBySource(roleIdsBySource)
+    ? null
+    : { intersectionOf: roleIdsBySource };
 };

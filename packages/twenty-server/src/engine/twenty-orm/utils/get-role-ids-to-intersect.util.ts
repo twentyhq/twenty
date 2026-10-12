@@ -1,4 +1,7 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { isDenyingRoleIdsBySource } from 'src/engine/twenty-orm/utils/is-denying-role-ids-by-source.util';
 
 // The intersection keeps the first role's row-level predicates, so the order must stay stable
 const ROLE_SOURCES_IN_INTERSECTION_ORDER = [
@@ -12,13 +15,15 @@ const ROLE_SOURCES_IN_INTERSECTION_ORDER = [
 export const getRoleIdsToIntersect = (
   roleIdsBySource: RoleIdsBySource,
 ): string[] | null => {
-  const roleIds: (string | null)[] = ROLE_SOURCES_IN_INTERSECTION_ORDER.map(
-    (source) => roleIdsBySource[source],
-  ).filter((roleId) => roleId !== undefined);
-
-  if (roleIds.length === 0 || roleIds.includes(null)) {
+  if (isDenyingRoleIdsBySource(roleIdsBySource)) {
     return null;
   }
 
-  return [...new Set(roleIds as string[])];
+  return [
+    ...new Set(
+      ROLE_SOURCES_IN_INTERSECTION_ORDER.map(
+        (source) => roleIdsBySource[source],
+      ).filter(isDefined),
+    ),
+  ];
 };
