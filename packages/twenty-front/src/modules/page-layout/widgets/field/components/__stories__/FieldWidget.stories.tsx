@@ -1100,7 +1100,7 @@ export const OneToManyRelationCardWidgetCountsUnloadedRecords: Story = {
     expect(await canvas.findByText('Jack White 12')).toBeVisible();
     expect(
       canvas.getByTestId('field-widget-show-more-button'),
-    ).toHaveTextContent('More (821)');
+    ).toHaveTextContent('More (824)');
   },
 };
 

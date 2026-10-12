@@ -142,7 +142,7 @@ export const FieldWidgetRelationRecordsCard = ({
     relationRecordsTotalCount ?? 0,
     relationRecords.length,
   );
-  const remainingCount = totalRecordsCount - visibleItemsCount;
+  const remainingCount = totalRecordsCount - visibleRelationRecords.length;
   const hasMoreRecords =
     hasHiddenLoadedRecords || (remainingCount > 0 && isDefined(seeAllHref));
 
