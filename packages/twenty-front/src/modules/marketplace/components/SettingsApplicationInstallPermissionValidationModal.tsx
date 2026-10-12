@@ -24,7 +24,6 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   defaultRole?: RoleManifest;
   requestedCapabilities?: string[];
   billsCredits?: boolean;
-  pricingDescription?: string;
   onAuthorize: () => void;
   isInstalling?: boolean;
 };
@@ -101,7 +100,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   defaultRole,
   requestedCapabilities = [],
   billsCredits = false,
-  pricingDescription,
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
@@ -115,9 +113,9 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     return [
       ...rolePermissionItems,
       ...buildApplicationCapabilitySummary(requestedCapabilities),
-      ...buildApplicationBillingSummary({ billsCredits, pricingDescription }),
+      ...buildApplicationBillingSummary(billsCredits),
     ];
-  }, [requestedCapabilities, defaultRole, billsCredits, pricingDescription]);
+  }, [requestedCapabilities, defaultRole, billsCredits]);
 
   const handleAuthorize = () => {
     closeDialog(modalInstanceId);

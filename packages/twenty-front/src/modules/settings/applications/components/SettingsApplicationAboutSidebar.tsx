@@ -21,6 +21,7 @@ import {
   IconWorld,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type DeveloperLinks = {
@@ -42,6 +43,7 @@ type SettingsApplicationAboutSidebarProps = {
   installCount?: number;
   category?: string;
   pricingDescription?: string;
+  billsCredits?: boolean;
   developerLinks?: DeveloperLinks;
 };
 
@@ -49,6 +51,7 @@ type AboutRow = {
   Icon: IconComponent;
   label: string;
   tooltip?: string;
+  iconTooltip?: string;
 };
 
 type ResourceLink = AboutRow & {
@@ -151,6 +154,7 @@ export const SettingsApplicationAboutSidebar = ({
   installCount,
   category,
   pricingDescription,
+  billsCredits = false,
   developerLinks,
 }: SettingsApplicationAboutSidebarProps) => {
   const theme = useTheme();
@@ -192,7 +196,13 @@ export const SettingsApplicationAboutSidebar = ({
     ...getInstallCountRows(),
     ...(isNonEmptyString(category) ? [{ Icon: IconTag, label: category }] : []),
     ...(isNonEmptyString(pricingDescription)
-      ? [{ Icon: IconCurrencyDollar, label: pricingDescription }]
+      ? [
+          {
+            Icon: IconCurrencyDollar,
+            label: pricingDescription,
+            iconTooltip: billsCredits ? t`This app bills credits` : undefined,
+          },
+        ]
       : []),
   ];
 
@@ -265,11 +275,13 @@ export const SettingsApplicationAboutSidebar = ({
       {aboutRows.length > 0 && (
         <StyledSection>
           <StyledSectionLabel>{t`About`}</StyledSectionLabel>
-          {aboutRows.map(({ Icon, label, tooltip }) => (
+          {aboutRows.map(({ Icon, label, tooltip, iconTooltip }) => (
             <StyledRow key={label}>
-              <StyledRowIcon>
-                <Icon size={theme.icon.size.sm} />
-              </StyledRowIcon>
+              <Tooltip content={iconTooltip}>
+                <StyledRowIcon aria-label={iconTooltip}>
+                  <Icon size={theme.icon.size.sm} />
+                </StyledRowIcon>
+              </Tooltip>
               <OverflowingTextWithTooltip
                 text={label}
                 tooltipContent={tooltip}

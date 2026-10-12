@@ -38,6 +38,7 @@ const DEVELOPER_LINKS: DeveloperLinks = {
 
 type RenderAboutTabOptions = {
   aboutDescription?: string | null;
+  billsCredits?: boolean;
   description?: string | null;
   developerLinks?: DeveloperLinks;
   installCount?: number;
@@ -47,6 +48,7 @@ type RenderAboutTabOptions = {
 // null opts out of a default, undefined keeps it.
 const renderAboutTab = ({
   aboutDescription = ABOUT_DESCRIPTION,
+  billsCredits = false,
   description = SHORT_DESCRIPTION,
   developerLinks = DEVELOPER_LINKS,
   installCount = 7,
@@ -67,6 +69,7 @@ const renderAboutTab = ({
         installCount={installCount}
         category="Finance"
         pricingDescription="Free"
+        billsCredits={billsCredits}
         developerLinks={developerLinks}
         onShare={onShare ?? undefined}
       />
@@ -91,6 +94,24 @@ describe('SettingsApplicationDetailAboutTab', () => {
     await userEvent.setup().hover(estimatedInstallCount);
 
     expect(await screen.findByText('1,098 installs')).toBeVisible();
+  });
+
+  it('explains on the price icon that the application bills credits', async () => {
+    renderAboutTab({ billsCredits: true });
+
+    await userEvent
+      .setup()
+      .hover(screen.getByLabelText('This app bills credits'));
+
+    expect(await screen.findByText('This app bills credits')).toBeVisible();
+  });
+
+  it('does not claim credit billing for an application that bills none', () => {
+    renderAboutTab();
+
+    expect(
+      screen.queryByLabelText('This app bills credits'),
+    ).not.toBeInTheDocument();
   });
 
   it('renders the application identity, metadata and resources', () => {
