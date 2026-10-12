@@ -12231,6 +12231,48 @@
     ]
   },
   {
+    "name": "StackIcon",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/stack-icon",
+    "props": [
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the container root."
+      },
+      {
+        "name": "icon",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Main icon content. The caller controls its dimensions and stroke."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the div root while preserving the icon content and native props."
+      },
+      {
+        "name": "stackedIcon",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Smaller content stacked on the bottom-right corner of the main icon, such as a 12px avatar."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the container root."
+      }
+    ]
+  },
+  {
     "name": "Callout",
     "entryPoint": "twenty-ui/components/feedback",
     "slug": "components/feedback/callout",
@@ -13438,6 +13480,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Accepted for compatibility; currently has no effect."
+      },
+      {
+        "name": "LeftComponent",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Custom leading content."
       },
       {
         "name": "LeftIcon",

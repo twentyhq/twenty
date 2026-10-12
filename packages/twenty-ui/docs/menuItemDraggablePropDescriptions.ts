@@ -4,6 +4,7 @@ import { type MenuItemDraggable } from '../src/components/navigation/MenuItemDra
 
 export const MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS = {
   LeftIcon: 'Leading icon component.',
+  LeftComponent: 'Custom leading content.',
   withIconContainer: 'Places leading content in an icon container.',
   accent: 'Default, danger, or placeholder row styling.',
   iconButtons: 'Trailing action elements.',
