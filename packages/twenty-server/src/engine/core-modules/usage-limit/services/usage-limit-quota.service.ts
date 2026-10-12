@@ -53,6 +53,7 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-sp
 import { fromRecordUsageInputToUsageConsumptionRow } from 'src/engine/core-modules/usage/utils/from-record-usage-input-to-usage-consumption-row.util';
 import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { withDeadline } from 'src/utils/with-deadline';
 
 const SEED_READ_TIMEOUT_MS = 1_000;
 
@@ -79,8 +80,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
   private readonly logger = new Logger(UsageLimitQuotaService.name);
 
   private creditAllowanceProvider: CreditAllowanceProvider;
-
-  private readonly inFlightSeedReads = new Map<string, Promise<unknown>>();
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
@@ -151,14 +150,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
   }
 
   async dropIntraWorkspaceLimitCounters(workspaceId: string): Promise<void> {
-    const { usageLimits } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['usageLimits'],
-    );
-
-    const limits = Object.values(usageLimits.byResourceType).flatMap(
-      (resourceTypeLimits) => resourceTypeLimits ?? [],
-    );
+    const limits = await this.findAllLimits(workspaceId);
 
     const keys = buildIntraWorkspaceLimitCounterKeys({
       workspaceId,
@@ -320,6 +312,17 @@ export class UsageLimitQuotaService implements OnModuleInit {
           },
         ] as const;
       }),
+    );
+  }
+
+  private async findAllLimits(workspaceId: string): Promise<FlatUsageLimit[]> {
+    const { usageLimits } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['usageLimits'],
+    );
+
+    return Object.values(usageLimits.byResourceType).flatMap(
+      (limits) => limits ?? [],
     );
   }
 
@@ -574,12 +577,13 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return [];
     }
 
-    const [enforceableLimits, periodByUnit] = await Promise.all([
-      this.usageLimitEntitlementService.findEnforceableLimits({
-        workspaceId,
-        limits: quotaLimits,
-      }),
-      this.usagePeriodService.findCurrentPeriodsByUnit({
+    return buildQuotaCounters({
+      limits: quotaLimits,
+      quotaLimitDefaults,
+      usageSpenders: spenders,
+      workspaceId,
+      operationType,
+      periodByUnit: await this.usagePeriodService.findCurrentPeriodsByUnit({
         workspaceId,
         periodUnits: [
           ...quotaLimits.map((limit) => limit.periodUnit),
@@ -588,15 +592,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
           ),
         ],
       }),
-    ]);
-
-    return buildQuotaCounters({
-      limits: enforceableLimits,
-      quotaLimitDefaults,
-      usageSpenders: spenders,
-      workspaceId,
-      operationType,
-      periodByUnit,
     });
   }
 
@@ -687,9 +682,14 @@ export class UsageLimitQuotaService implements OnModuleInit {
       ['usageLimits'],
     );
 
-    return (usageLimits.byResourceType[resourceType] ?? []).filter(
+    const quotaLimits = (usageLimits.byResourceType[resourceType] ?? []).filter(
       isQuotaLimit,
     );
+
+    return this.usageLimitEntitlementService.findEnforceableLimits({
+      workspaceId,
+      limits: quotaLimits,
+    });
   }
 
   private async readConsumedValuesAdmittingOnFailure({
@@ -721,31 +721,20 @@ export class UsageLimitQuotaService implements OnModuleInit {
       counters.map((counter) => counter.key),
     );
 
-    const coldLimitCounters = counters.filter(
+    const coldCounters = counters.filter(
       (_, index) => !isDefined(storedValues[index]),
     );
 
-    const rowsByPeriod =
-      coldLimitCounters.length > 0
-        ? await this.fetchConsumptionRowsByPeriod({
-            workspaceId,
-            coldLimitCounters,
-          })
-        : new Map<string, UsageConsumptionRow[]>();
+    const seeds = await this.readSeeds({ workspaceId, counters: coldCounters });
 
-    return counters.map((counter, index) => {
-      const storedValue = storedValues[index];
+    const seedByKey = new Map(
+      coldCounters.map((counter, index) => [counter.key, seeds[index]]),
+    );
 
-      if (isDefined(storedValue)) {
-        return storedValue;
-      }
-
-      const rows = rowsByPeriod.get(buildPeriodGroupKey(counter));
-
-      return isDefined(rows)
-        ? computeQuotaConsumed({ rows, scope: counter })
-        : null;
-    });
+    return counters.map(
+      (counter, index) =>
+        storedValues[index] ?? seedByKey.get(counter.key) ?? null,
+    );
   }
 
   private async addToCounters({
@@ -864,8 +853,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
           periodGroupKey,
           this.readSeedTruth({
             workspaceId,
-            readKey: `${workspaceId}:${periodGroupKey}`,
-            read: () => this.fetchConsumptionRows({ workspaceId, counter }),
+            read: this.fetchConsumptionRows({ workspaceId, counter }),
           }),
         );
       }
@@ -876,12 +864,9 @@ export class UsageLimitQuotaService implements OnModuleInit {
         if (counter.kind === 'allowance') {
           return this.readSeedTruth({
             workspaceId,
-            readKey: `${workspaceId}:allowance:${counter.periodStart.getTime()}`,
-            read: () =>
-              this.usageAnalyticsService.getCreditsUsedMicroForBillingPeriod({
-                workspaceId,
-                periodStart: counter.periodStart,
-              }),
+            read: this.usageAnalyticsService.getCreditsUsedMicroForBillingPeriod(
+              { workspaceId, periodStart: counter.periodStart },
+            ),
           });
         }
 
@@ -898,96 +883,25 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
   private async readSeedTruth<T>({
     workspaceId,
-    readKey,
     read,
   }: {
     workspaceId: string;
-    readKey: string;
-    read: () => Promise<T>;
+    read: Promise<T>;
   }): Promise<T | null> {
     try {
-      return await this.raceSeedDeadline(
-        this.joinInFlightSeedRead({ readKey, read }),
-      );
+      return await withDeadline({
+        promise: read,
+        timeoutMs: SEED_READ_TIMEOUT_MS,
+        createTimeoutError: () =>
+          new Error(`Seed read exceeded ${SEED_READ_TIMEOUT_MS}ms deadline`),
+      });
     } catch (error) {
       this.logger.error(
-        `Usage quota seed read ${readKey} failed for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
+        `Usage quota seed read failed for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
       );
 
       return null;
     }
-  }
-
-  private joinInFlightSeedRead<T>({
-    readKey,
-    read,
-  }: {
-    readKey: string;
-    read: () => Promise<T>;
-  }): Promise<T> {
-    const inFlightSeedRead = this.inFlightSeedReads.get(readKey);
-
-    if (isDefined(inFlightSeedRead)) {
-      return inFlightSeedRead as Promise<T>;
-    }
-
-    const seedRead = read().finally(() =>
-      this.inFlightSeedReads.delete(readKey),
-    );
-
-    this.inFlightSeedReads.set(readKey, seedRead);
-
-    return seedRead;
-  }
-
-  private async raceSeedDeadline<T>(read: Promise<T>): Promise<T> {
-    let timeout: NodeJS.Timeout | undefined;
-
-    try {
-      return await Promise.race([
-        read,
-        new Promise<never>((_, reject) => {
-          timeout = setTimeout(
-            () =>
-              reject(
-                new Error(
-                  `Seed read exceeded ${SEED_READ_TIMEOUT_MS}ms deadline`,
-                ),
-              ),
-            SEED_READ_TIMEOUT_MS,
-          );
-        }),
-      ]);
-    } finally {
-      clearTimeout(timeout);
-    }
-  }
-
-  private async fetchConsumptionRowsByPeriod({
-    workspaceId,
-    coldLimitCounters,
-  }: {
-    workspaceId: string;
-    coldLimitCounters: LimitQuotaCounter[];
-  }): Promise<Map<string, UsageConsumptionRow[]>> {
-    const countersByPeriod = new Map<string, LimitQuotaCounter>();
-
-    for (const counter of coldLimitCounters) {
-      countersByPeriod.set(buildPeriodGroupKey(counter), counter);
-    }
-
-    const rowsByPeriod = new Map<string, UsageConsumptionRow[]>();
-
-    await Promise.all(
-      [...countersByPeriod.entries()].map(async ([periodGroupKey, counter]) => {
-        rowsByPeriod.set(
-          periodGroupKey,
-          await this.fetchConsumptionRows({ workspaceId, counter }),
-        );
-      }),
-    );
-
-    return rowsByPeriod;
   }
 
   private fetchConsumptionRows({
