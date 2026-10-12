@@ -308,6 +308,7 @@ describe('Billing one-time credit top-up price and purchase (integration)', () =
     expect(grants[0]).toMatchObject({
       type: BillingCreditGrantType.PURCHASE,
       amountMicro: 7_000_000,
+      idempotencyKey: expect.stringMatching(/^credit-top-up:ii_/),
     });
   });
 
@@ -322,12 +323,18 @@ describe('Billing one-time credit top-up price and purchase (integration)', () =
 
     const idempotencyKey = randomUUID();
 
-    await purchaseCreditOneTimeTopUp({ creditAmount: 7, idempotencyKey });
+    const first = await purchaseCreditOneTimeTopUp({
+      creditAmount: 7,
+      idempotencyKey,
+    });
     const replay = await purchaseCreditOneTimeTopUp({
       creditAmount: 7,
       idempotencyKey,
     });
 
+    expect(first.body.data.purchaseCreditOneTimeTopUp.status).toBe(
+      'ADDED_TO_NEXT_INVOICE',
+    );
     expect(replay.body.errors).toBeUndefined();
     expect(await listCreditGrants(workspaceId)).toHaveLength(1);
   });

@@ -87,13 +87,13 @@ export class StripeInvoiceService {
   async createImmediateUpgradeInvoice({
     stripeCustomerId,
     stripeSubscriptionId,
-    diffAmountInCents,
+    amountInCents,
     currency,
     description,
   }: {
     stripeCustomerId: string;
     stripeSubscriptionId: string;
-    diffAmountInCents: number;
+    amountInCents: number;
     currency: string;
     description: string;
   }): Promise<void> {
@@ -106,7 +106,7 @@ export class StripeInvoiceService {
       invoiceId: invoice.id,
       stripeCustomerId,
       stripeSubscriptionId,
-      amountInCents: diffAmountInCents,
+      amountInCents,
       currency,
       description,
     });

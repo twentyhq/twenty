@@ -416,18 +416,15 @@ export class BillingSubscriptionUpdateService {
     const upgradeInvoiceItem = {
       stripeCustomerId: subscription.stripeCustomerId,
       stripeSubscriptionId: subscription.stripeSubscriptionId,
-      diffAmountInCents: diffInCents,
+      amountInCents: diffInCents,
       description: `Resource usage - Upgrade resource credit price from $${Number(currentPrice.unitAmount) / 100} to $${Number(newPrice.unitAmount) / 100}`,
       currency: newPrice.currency,
     };
 
     if (isSendInvoiceSubscription(subscription)) {
-      const { diffAmountInCents, ...pendingInvoiceItem } = upgradeInvoiceItem;
-
-      await this.stripeInvoiceService.createPendingInvoiceItem({
-        ...pendingInvoiceItem,
-        amountInCents: diffAmountInCents,
-      });
+      await this.stripeInvoiceService.createPendingInvoiceItem(
+        upgradeInvoiceItem,
+      );
 
       return;
     }

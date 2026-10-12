@@ -16,15 +16,16 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNT_RANGE } from 'src/engine/core-modules/billing/constants/credit-one-time-top-up-credit-amount-range.constant';
 import { type BillingCreditOneTimeTopUpPriceDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-one-time-top-up-price.dto';
+import { type BillingCreditOneTimeTopUpDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-one-time-top-up.dto';
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { BillingCreditOneTimeTopUpStatus } from 'src/engine/core-modules/billing/enums/billing-credit-one-time-top-up-status.enum';
 import { BillingInvoicePaymentStatus } from 'src/engine/core-modules/billing/enums/billing-invoice-payment-status.enum';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
-import { type OneOffInvoicePayment } from 'src/engine/core-modules/billing/types/one-off-invoice-payment.type';
 import { buildCreditOneTimeTopUpInvoiceMetadata } from 'src/engine/core-modules/billing/utils/build-credit-one-time-top-up-invoice-metadata.util';
 import { canComputeAutomaticTax } from 'src/engine/core-modules/billing/utils/can-compute-automatic-tax.util';
 import { computeCreditOneTimeTopUpUnitPriceCents } from 'src/engine/core-modules/billing/utils/compute-credit-one-time-top-up-unit-price-cents.util';
@@ -90,7 +91,9 @@ export class BillingCreditOneTimeTopUpService {
     userId: string;
     creditAmount: number;
     idempotencyKey: string;
-  }): Promise<Pick<OneOffInvoicePayment, 'status' | 'hostedInvoiceUrl'>> {
+  }): Promise<
+    Pick<BillingCreditOneTimeTopUpDTO, 'status' | 'hostedInvoiceUrl'>
+  > {
     if (!isValidCreditOneTimeTopUpCreditAmount(creditAmount)) {
       const { minimum, maximum } = CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNT_RANGE;
 
@@ -151,15 +154,22 @@ export class BillingCreditOneTimeTopUpService {
           idempotencyKey: `${stripeIdempotencyKey}-pending-invoice-item`,
         });
 
-      await this.grantPurchasedCredits({
-        workspaceId,
-        creditAmountMicro,
-        stripeObjectId: invoiceItem.id,
-        reason: `Credit top-up, billed on the next invoice (${invoiceItem.id})`,
-      });
+      try {
+        await this.grantPurchasedCredits({
+          workspaceId,
+          creditAmountMicro,
+          stripeObjectId: invoiceItem.id,
+          reason: `Credit top-up, billed on the next invoice (${invoiceItem.id})`,
+        });
+      } catch (error) {
+        throw new BillingException(
+          `Pending invoice item ${invoiceItem.id} bills workspace ${workspaceId} for ${creditAmount} credits that were not granted: ${error instanceof Error ? error.message : 'unknown error'}`,
+          BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED,
+        );
+      }
 
       return {
-        status: BillingInvoicePaymentStatus.ADDED_TO_NEXT_INVOICE,
+        status: BillingCreditOneTimeTopUpStatus.ADDED_TO_NEXT_INVOICE,
         hostedInvoiceUrl: null,
       };
     }
@@ -202,7 +212,10 @@ export class BillingCreditOneTimeTopUpService {
       });
     }
 
-    return payment;
+    return {
+      status: BillingCreditOneTimeTopUpStatus[payment.status],
+      hostedInvoiceUrl: payment.hostedInvoiceUrl,
+    };
   }
 
   async grantPurchasedCreditsForPaidInvoice(

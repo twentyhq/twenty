@@ -3,12 +3,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
-import { BillingInvoicePaymentStatus } from 'src/engine/core-modules/billing/enums/billing-invoice-payment-status.enum';
+import { BillingCreditOneTimeTopUpStatus } from 'src/engine/core-modules/billing/enums/billing-credit-one-time-top-up-status.enum';
 
 @ObjectType('BillingCreditOneTimeTopUp')
 export class BillingCreditOneTimeTopUpDTO extends BillingUpdateDTO {
-  @Field(() => BillingInvoicePaymentStatus)
-  status: BillingInvoicePaymentStatus;
+  @Field(() => BillingCreditOneTimeTopUpStatus)
+  status: BillingCreditOneTimeTopUpStatus;
 
   @Field(() => String, {
     description:

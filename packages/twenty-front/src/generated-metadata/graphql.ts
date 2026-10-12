@@ -812,7 +812,7 @@ export type BillingCreditOneTimeTopUp = {
   currentBillingSubscription: BillingSubscription;
   /** Stripe page where the customer completes a payment that needs their action */
   hostedInvoiceUrl?: Maybe<Scalars['String']['output']>;
-  status: BillingInvoicePaymentStatus;
+  status: BillingCreditOneTimeTopUpStatus;
 };
 
 export type BillingCreditOneTimeTopUpPrice = {
@@ -823,6 +823,14 @@ export type BillingCreditOneTimeTopUpPrice = {
   /** Price of one credit before tax, in cents, rounded up */
   unitPriceCents: Scalars['Int']['output'];
 };
+
+/** Where a one-time credit top-up stands */
+export enum BillingCreditOneTimeTopUpStatus {
+  ADDED_TO_NEXT_INVOICE = 'ADDED_TO_NEXT_INVOICE',
+  PAID = 'PAID',
+  PROCESSING = 'PROCESSING',
+  REQUIRES_ACTION = 'REQUIRES_ACTION'
+}
 
 export type BillingCustomer = {
   __typename?: 'BillingCustomer';
@@ -858,14 +866,6 @@ export enum BillingEntitlementKey {
   SSO = 'SSO',
   USAGE_LIMIT = 'USAGE_LIMIT',
   VALIDATION_RULES = 'VALIDATION_RULES'
-}
-
-/** Where the payment of a one-time purchase stands */
-export enum BillingInvoicePaymentStatus {
-  ADDED_TO_NEXT_INVOICE = 'ADDED_TO_NEXT_INVOICE',
-  PAID = 'PAID',
-  PROCESSING = 'PROCESSING',
-  REQUIRES_ACTION = 'REQUIRES_ACTION'
 }
 
 export type BillingLicensedProduct = BillingProductDto & {
