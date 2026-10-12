@@ -46,7 +46,6 @@ export class GlobalWorkspaceMemberListener {
     );
   }
 
-  // The request locale is read from userWorkspace.locale
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.UPDATED)
   async syncUserWorkspaceLocale(
     payload: WorkspaceEventBatch<
