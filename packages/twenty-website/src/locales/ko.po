@@ -506,6 +506,11 @@ msgstr "150"
 msgid "150 hrs"
 msgstr "150시간"
 
+#. js-lingui-id: Ur5nZV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "2 hours"
+msgstr ""
+
 #. js-lingui-id: 2z1Znr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "2 years contract"
@@ -1243,6 +1248,11 @@ msgstr "API는 추가 요금입니다. 단순함에는 가격이 따릅니다."
 #: src/sections/menu/data/menu.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "CRM 데이터 위에 Twenty를 확장하고 앱을 구축하기 위한 API, SDK, 웹훅을 제공합니다."
+
+#. js-lingui-id: Oh+wHS
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "App logs"
+msgstr ""
 
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
@@ -2495,6 +2505,11 @@ msgstr "사용자 지정 사이드바"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom views"
 msgstr "커스텀 뷰"
+
+#. js-lingui-id: T8n/Qf
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom, up to 3 years"
+msgstr ""
 
 #. js-lingui-id: 876pfE
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -4915,6 +4930,11 @@ msgstr "락인"
 msgid "Log in"
 msgstr "로그인"
 
+#. js-lingui-id: qakNlV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Log retention"
+msgstr ""
+
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Looking to hire a partner?"
@@ -6299,6 +6319,11 @@ msgstr "실시간 데이터"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Real-time is a state of mind, not a feature."
 msgstr "실시간은 기능이 아니라 마음가짐입니다."
+
+#. js-lingui-id: v5nqef
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Record change logs"
+msgstr ""
 
 #. js-lingui-id: TnoD2J
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -9065,6 +9090,10 @@ msgid "Yemen 🇾🇪"
 msgstr "예멘 🇾🇪"
 
 #. js-lingui-id: l75CjT
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts

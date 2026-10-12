@@ -503,6 +503,11 @@ msgstr "150"
 msgid "150 hrs"
 msgstr "150 hrs"
 
+#. js-lingui-id: Ur5nZV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "2 hours"
+msgstr "2 hours"
+
 #. js-lingui-id: 2z1Znr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "2 years contract"
@@ -1240,6 +1245,11 @@ msgstr "APIs are extra. Simplicity has a price."
 #: src/sections/menu/data/menu.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
+
+#. js-lingui-id: Oh+wHS
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "App logs"
+msgstr "App logs"
 
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
@@ -2492,6 +2502,11 @@ msgstr "Custom sidebar"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom views"
 msgstr "Custom views"
+
+#. js-lingui-id: T8n/Qf
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom, up to 3 years"
+msgstr "Custom, up to 3 years"
 
 #. js-lingui-id: 876pfE
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -4912,6 +4927,11 @@ msgstr "Lock-in"
 msgid "Log in"
 msgstr "Log in"
 
+#. js-lingui-id: qakNlV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Log retention"
+msgstr "Log retention"
+
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Looking to hire a partner?"
@@ -6296,6 +6316,11 @@ msgstr "Real-time data"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Real-time is a state of mind, not a feature."
 msgstr "Real-time is a state of mind, not a feature."
+
+#. js-lingui-id: v5nqef
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Record change logs"
+msgstr "Record change logs"
 
 #. js-lingui-id: TnoD2J
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -9072,6 +9097,10 @@ msgid "Yemen 🇾🇪"
 msgstr "Yemen 🇾🇪"
 
 #. js-lingui-id: l75CjT
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts

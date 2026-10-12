@@ -508,6 +508,11 @@ msgstr "150"
 msgid "150 hrs"
 msgstr "150 小时"
 
+#. js-lingui-id: Ur5nZV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "2 hours"
+msgstr ""
+
 #. js-lingui-id: 2z1Znr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "2 years contract"
@@ -1245,6 +1250,11 @@ msgstr "API 需额外付费。简洁也有代价。"
 #: src/sections/menu/data/menu.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "通过 API、SDK 和 webhook 扩展 Twenty，并在你的 CRM 数据之上构建应用。"
+
+#. js-lingui-id: Oh+wHS
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "App logs"
+msgstr ""
 
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
@@ -2497,6 +2507,11 @@ msgstr "自定义侧边栏"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom views"
 msgstr "自定义视图"
+
+#. js-lingui-id: T8n/Qf
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom, up to 3 years"
+msgstr ""
 
 #. js-lingui-id: 876pfE
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -4917,6 +4932,11 @@ msgstr "锁定"
 msgid "Log in"
 msgstr "登录"
 
+#. js-lingui-id: qakNlV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Log retention"
+msgstr ""
+
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Looking to hire a partner?"
@@ -6301,6 +6321,11 @@ msgstr "实时数据"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Real-time is a state of mind, not a feature."
 msgstr "“实时”是一种心态，而不是一个功能。"
+
+#. js-lingui-id: v5nqef
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Record change logs"
+msgstr ""
 
 #. js-lingui-id: TnoD2J
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -9077,6 +9102,10 @@ msgid "Yemen 🇾🇪"
 msgstr "也门 🇾🇪"
 
 #. js-lingui-id: l75CjT
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
