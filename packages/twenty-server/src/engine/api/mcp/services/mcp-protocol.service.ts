@@ -32,8 +32,10 @@ import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-respo
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
+import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -59,6 +61,7 @@ import {
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { buildAgentRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-agent-role-ids-by-source.util';
 import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
@@ -146,11 +149,13 @@ export class McpProtocolService {
     userWorkspaceId,
     apiKey,
     application,
+    agentRoleRestriction,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
     apiKey?: FlatApiKey;
     application?: FlatApplication;
+    agentRoleRestriction?: AgentRoleRestriction;
   }): Promise<{ roleId: string; rolePermissionConfig: RolePermissionConfig }> {
     if (isDefined(apiKey)) {
       const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
@@ -161,6 +166,25 @@ export class McpProtocolService {
       return {
         roleId: apiKeyRoleId,
         rolePermissionConfig: { intersectionOf: { apiKeyRoleId } },
+      };
+    }
+
+    if (!userWorkspaceId && isDefined(application)) {
+      if (!isDefined(application.defaultRoleId)) {
+        throw new HttpException(
+          'Application has no role',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      return {
+        roleId: application.defaultRoleId,
+        rolePermissionConfig: {
+          intersectionOf: {
+            applicationRoleId: application.defaultRoleId,
+            ...buildAgentRoleIdsBySource(agentRoleRestriction),
+          },
+        },
       };
     }
 
@@ -179,12 +203,41 @@ export class McpProtocolService {
     return {
       roleId: userRoleId,
       rolePermissionConfig: {
-        intersectionOf: buildUserRoleIdsBySource({
-          userRoleId,
-          application,
-        }),
+        intersectionOf: {
+          ...buildUserRoleIdsBySource({ userRoleId, application }),
+          ...buildAgentRoleIdsBySource(agentRoleRestriction),
+        },
       },
     };
+  }
+
+  // tools build a user's context themselves, so only callers without a user need one here
+  private buildToolAuthContext({
+    workspace,
+    userWorkspaceId,
+    apiKey,
+    application,
+    agentRoleRestriction,
+  }: {
+    workspace: FlatWorkspace;
+    userWorkspaceId?: string;
+    apiKey?: FlatApiKey;
+    application?: FlatApplication;
+    agentRoleRestriction?: AgentRoleRestriction;
+  }): WorkspaceAuthContext | undefined {
+    if (isDefined(apiKey)) {
+      return buildApiKeyAuthContext({ workspace, apiKey });
+    }
+
+    if (!isDefined(userWorkspaceId) && isDefined(application)) {
+      return buildApplicationAuthContext({
+        workspace,
+        application,
+        agentRoleRestriction,
+      });
+    }
+
+    return undefined;
   }
 
   private async buildActorContext(
@@ -334,6 +387,7 @@ export class McpProtocolService {
       userWorkspaceId,
       apiKey,
       application,
+      agentRoleRestriction,
       isDirectMode,
     }: {
       workspace: FlatWorkspace;
@@ -341,6 +395,7 @@ export class McpProtocolService {
       userWorkspaceId?: string;
       apiKey: FlatApiKey | undefined;
       application?: FlatApplication;
+      agentRoleRestriction?: AgentRoleRestriction;
       isDirectMode: boolean;
     },
     sseWriter?: (data: Record<string, unknown>) => void,
@@ -357,6 +412,7 @@ export class McpProtocolService {
           userWorkspaceId,
           apiKey,
           application,
+          agentRoleRestriction,
         });
 
         return this.handleInitialize(id, {
@@ -397,11 +453,16 @@ export class McpProtocolService {
         userWorkspaceId,
         apiKey,
         application,
+        agentRoleRestriction,
       });
 
-      const authContext = isDefined(apiKey)
-        ? buildApiKeyAuthContext({ workspace, apiKey })
-        : undefined;
+      const authContext = this.buildToolAuthContext({
+        workspace,
+        userWorkspaceId,
+        apiKey,
+        application,
+        agentRoleRestriction,
+      });
 
       const { toolSet, toolContext } = await Sentry.startSpan(
         { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
