@@ -22,7 +22,7 @@ export const createFillOpenFormTool = (openForm: AiChatOpenForm) => ({
   execute: async ({ values }: { values: Record<string, string> }) => ({
     success: true,
     message:
-      'The values are in the open form. Nothing is saved until the user saves it.',
+      'Sent the values to the open form. Nothing is saved until the user saves it.',
     result: { formId: openForm.formId, values },
   }),
 });

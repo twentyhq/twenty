@@ -63,6 +63,7 @@ const build = () => {
     {} as never,
     {} as never,
     {} as never,
+    { remember: jest.fn(), recall: jest.fn().mockResolvedValue(null) } as never,
   );
   return { service, threads, queue, chat, actors, heartbeat };
 };

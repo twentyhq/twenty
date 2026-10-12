@@ -34,7 +34,7 @@ describe('fill_open_form tool', () => {
     ).resolves.toEqual({
       success: true,
       message:
-        'The values are in the open form. Nothing is saved until the user saves it.',
+        'Sent the values to the open form. Nothing is saved until the user saves it.',
       result: { formId: 'form-1', values: { name: 'Domain required' } },
     });
   });

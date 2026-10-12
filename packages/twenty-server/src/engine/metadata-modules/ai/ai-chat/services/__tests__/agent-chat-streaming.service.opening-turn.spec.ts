@@ -71,6 +71,10 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
       {} as never,
       {} as never,
       {} as never,
+      {
+        remember: jest.fn(),
+        recall: jest.fn().mockResolvedValue(null),
+      } as never,
     );
 
     return {

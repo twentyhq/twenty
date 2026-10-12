@@ -38,6 +38,7 @@ import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agen
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
+import { AgentChatBrowsingContextService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-browsing-context.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -95,6 +96,7 @@ export class AgentChatStreamingService {
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly agentRunConversationService: AgentRunConversationService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly browsingContextService: AgentChatBrowsingContextService,
   ) {}
 
   async tryClaimStream({
@@ -171,6 +173,14 @@ export class AgentChatStreamingService {
         workspaceMemberId,
       });
 
+      if (isDefined(browsingContext)) {
+        await this.browsingContextService.remember({
+          threadId,
+          messageId: queuedMessage.id,
+          browsingContext,
+        });
+      }
+
       if (hasQueuedBacklog) {
         await this.flushNextQueuedMessage({ threadId, workspaceId });
       }
@@ -196,6 +206,14 @@ export class AgentChatStreamingService {
           },
           workspaceId,
         });
+
+        if (isDefined(browsingContext)) {
+          await this.browsingContextService.remember({
+            threadId,
+            messageId: savedUserMessage.id,
+            browsingContext,
+          });
+        }
 
         await this.eventPublisherService.publish({
           workspaceId,
@@ -410,7 +428,10 @@ export class AgentChatStreamingService {
           userWorkspaceId,
           workspaceId,
           messages,
-          browsingContext: null,
+          browsingContext: await this.browsingContextService.recall({
+            threadId,
+            messageId: message?.id,
+          }),
           modelId,
           lastUserMessageText: textPart?.text ?? '',
           turnId,
@@ -455,7 +476,7 @@ export class AgentChatStreamingService {
         workspace.id,
         workspaceMemberId,
       ),
-      browsingContext: null,
+      browsingContext: await this.browsingContextService.recall({ threadId }),
       modelId,
       lastUserMessageText: '',
       turnId,
@@ -617,7 +638,10 @@ export class AgentChatStreamingService {
           userWorkspaceId,
           workspaceId,
           messages,
-          browsingContext: null,
+          browsingContext: await this.browsingContextService.recall({
+            threadId,
+            messageId: nextQueued.id,
+          }),
           lastUserMessageText: messageText,
           turnId,
           messageId: nextQueued.id,

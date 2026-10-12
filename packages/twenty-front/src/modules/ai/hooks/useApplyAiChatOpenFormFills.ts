@@ -41,12 +41,17 @@ export const useApplyAiChatOpenFormFills = () => {
     }
 
     const aiChatOpenForm = store.get(aiChatOpenFormState.atom);
+    const fillsForOpenForm = newFills.filter(
+      (fill) => fill.formId === aiChatOpenForm?.formId,
+    );
 
-    for (const fill of newFills) {
-      if (aiChatOpenForm?.formId === fill.formId) {
-        aiChatOpenForm.onFill(fill.values);
-      }
+    if (!isDefined(aiChatOpenForm) || fillsForOpenForm.length === 0) {
+      return;
     }
+
+    aiChatOpenForm.onFill(
+      Object.assign({}, ...fillsForOpenForm.map((fill) => fill.values)),
+    );
   };
 
   return { applyAiChatOpenFormFills };

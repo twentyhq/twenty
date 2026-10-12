@@ -51,7 +51,7 @@ export const SettingsValidationRuleForm = ({
 
   useRegisterAiChatOpenForm({
     formId: aiChatOpenFormId,
-    description: `Validation rule on the ${objectMetadataItem.labelSingular} object (objectMetadataId: ${objectMetadataItem.id}). Before filling it, get the field names with get_field_metadata and check the expression with validate_validation_rule_expression.`,
+    description: `Validation rule on the ${objectMetadataItem.labelSingular} object (object name: ${objectMetadataItem.nameSingular}). Before filling it, get the field names with get_field_metadata and check the expression with validate_validation_rule_expression.`,
     fields: VALIDATION_RULE_AI_CHAT_FORM_FIELDS,
     onFill: (filledValues) => {
       onChange(

@@ -12,20 +12,21 @@ import {
 
 const CURRENT_USER_WORKSPACE_ID = 'user-workspace-me';
 
+const buildFillPart = (
+  formId: string,
+  values: Record<string, string> = { name: 'Domain required' },
+  toolCallId = `call-${formId}`,
+) =>
+  ({
+    type: 'tool-fill_open_form',
+    toolCallId,
+    state: 'output-available',
+    input: { values },
+    output: { success: true, message: 'Sent', result: { formId, values } },
+  }) as unknown as ExtendedUIMessagePart;
+
 const buildFillMessage = (formId: string) => ({
-  parts: [
-    {
-      type: 'tool-fill_open_form',
-      toolCallId: `call-${formId}`,
-      state: 'output-available',
-      input: { values: { name: 'Domain required' } },
-      output: {
-        success: true,
-        message: 'Filled',
-        result: { formId, values: { name: 'Domain required' } },
-      },
-    } as unknown as ExtendedUIMessagePart,
-  ],
+  parts: [buildFillPart(formId)],
 });
 
 const renderApplyHook = () => {
@@ -69,6 +70,30 @@ describe('useApplyAiChatOpenFormFills', () => {
 
     expect(onFill).toHaveBeenCalledTimes(1);
     expect(onFill).toHaveBeenCalledWith({ name: 'Domain required' });
+  });
+
+  it('fills the open form once with every fill of the same pass', () => {
+    const { onFill, applyAiChatOpenFormFills } = renderApplyHook();
+
+    applyAiChatOpenFormFills({
+      message: {
+        parts: [
+          buildFillPart('form-1', { name: 'Domain required' }, 'call-1'),
+          buildFillPart(
+            'form-1',
+            { expression: 'not isEmpty(domainName)' },
+            'call-2',
+          ),
+        ],
+      },
+      turnSenderUserWorkspaceId: CURRENT_USER_WORKSPACE_ID,
+    });
+
+    expect(onFill).toHaveBeenCalledTimes(1);
+    expect(onFill).toHaveBeenCalledWith({
+      name: 'Domain required',
+      expression: 'not isEmpty(domainName)',
+    });
   });
 
   it('leaves the open form alone for another form or another member', () => {

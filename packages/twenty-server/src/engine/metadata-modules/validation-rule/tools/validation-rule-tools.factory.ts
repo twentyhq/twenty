@@ -2,28 +2,38 @@ import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { VALIDATION_RULE_EXPRESSION_SYNTAX_DESCRIPTION } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { getObjectMetadataIdByName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-object-metadata-id-by-name.util';
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { type ValidationRuleDTO } from 'src/engine/metadata-modules/validation-rule/dtos/validation-rule.dto';
 import { ValidationRuleService } from 'src/engine/metadata-modules/validation-rule/validation-rule.service';
+
+const OBJECT_NAME_DESCRIPTION =
+  'Object name, singular or plural (e.g. "company" or "companies").';
 
 const MESSAGE_DESCRIPTION =
   'Message shown to the person saving the record when the expression is false.';
 
 const GetValidationRulesInputSchema = z.object({
-  objectMetadataId: z.uuid().describe('Object ID'),
+  objectName: z.string().describe(OBJECT_NAME_DESCRIPTION),
 });
 
 const ValidateValidationRuleExpressionInputSchema = z.object({
-  objectMetadataId: z.uuid().describe('Object ID'),
+  objectName: z.string().describe(OBJECT_NAME_DESCRIPTION),
   expression: z
     .string()
     .describe(VALIDATION_RULE_EXPRESSION_SYNTAX_DESCRIPTION),
 });
 
 const CreateValidationRuleInputSchema = z.object({
-  objectMetadataId: z.uuid().describe('Object ID'),
+  objectName: z.string().describe(OBJECT_NAME_DESCRIPTION),
   name: z.string().describe('Short rule name'),
   expression: z
     .string()
@@ -60,7 +70,37 @@ const UpdateValidationRuleInputSchema = z.object({
 
 @Injectable()
 export class ValidationRuleToolsFactory {
-  constructor(private readonly validationRuleService: ValidationRuleService) {}
+  constructor(
+    private readonly validationRuleService: ValidationRuleService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+  ) {}
+
+  private async getObjectMetadataIdOrThrow(
+    workspaceId: string,
+    objectName: string,
+  ): Promise<string> {
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const objectMetadataId = getObjectMetadataIdByName({
+      flatObjectMetadataMaps,
+      objectName,
+    });
+
+    if (!isDefined(objectMetadataId)) {
+      throw new ObjectMetadataException(
+        `Object "${objectName}" not found. Use get_object_metadata to list available objects.`,
+        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
+    return objectMetadataId;
+  }
 
   generateTools(workspaceId: string): ToolSet {
     return {
@@ -69,11 +109,14 @@ export class ValidationRuleToolsFactory {
           'List the validation rules of an object: conditions a record must meet to be saved.',
         inputSchema: GetValidationRulesInputSchema,
         execute: async (parameters: {
-          objectMetadataId: string;
+          objectName: string;
         }): Promise<ToolOutput<ValidationRuleDTO[]>> => {
           const validationRules =
             await this.validationRuleService.findByObjectMetadataId({
-              objectMetadataId: parameters.objectMetadataId,
+              objectMetadataId: await this.getObjectMetadataIdOrThrow(
+                workspaceId,
+                parameters.objectName,
+              ),
               workspaceId,
             });
 
@@ -88,12 +131,19 @@ export class ValidationRuleToolsFactory {
         description:
           'Check a validation rule expression against an object without saving anything. An invalid expression is rejected with the reason.',
         inputSchema: ValidateValidationRuleExpressionInputSchema,
-        execute: async (parameters: {
-          objectMetadataId: string;
+        execute: async ({
+          objectName,
+          expression,
+        }: {
+          objectName: string;
           expression: string;
         }): Promise<ToolOutput> => {
           await this.validationRuleService.validateExpressionOrThrow({
-            ...parameters,
+            objectMetadataId: await this.getObjectMetadataIdOrThrow(
+              workspaceId,
+              objectName,
+            ),
+            expression,
             workspaceId,
           });
 
@@ -104,15 +154,24 @@ export class ValidationRuleToolsFactory {
         description:
           'Create a validation rule on an object. An invalid expression is rejected with the reason.',
         inputSchema: CreateValidationRuleInputSchema,
-        execute: async (parameters: {
-          objectMetadataId: string;
+        execute: async ({
+          objectName,
+          ...input
+        }: {
+          objectName: string;
           name: string;
           expression: string;
           message: string;
           errorFieldMetadataId?: string;
         }): Promise<ToolOutput<ValidationRuleDTO>> => {
           const validationRule = await this.validationRuleService.create({
-            input: parameters,
+            input: {
+              ...input,
+              objectMetadataId: await this.getObjectMetadataIdOrThrow(
+                workspaceId,
+                objectName,
+              ),
+            },
             workspaceId,
           });
 
