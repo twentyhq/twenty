@@ -57,10 +57,6 @@ export const GroupedObjectInteractions: Story = {
 
 export const ExternalFiltering: Story = {
   render: () => <AutocompleteFilteredExample />,
-};
-
-export const ExternalFilteringInteractions: Story = {
-  ...ExternalFiltering,
   play: async ({ canvasElement }) => {
     const input = within(canvasElement).getByRole('combobox', {
       name: 'City prefix',

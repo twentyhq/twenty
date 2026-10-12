@@ -16,9 +16,7 @@ const meta: Meta<typeof AutocompletePositionedExample> = {
 export default meta;
 type Story = StoryObj<typeof AutocompletePositionedExample>;
 
-export const ExplicitDestination: Story = {};
-
-export const PositioningComposition: Story = {
+export const ExplicitDestination: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('combobox', { name: 'Fruit' });
@@ -59,10 +57,6 @@ export const PositioningComposition: Story = {
 
 export const InlineGrid: Story = {
   render: () => <AutocompleteGridExample />,
-};
-
-export const InlineGridInteractions: Story = {
-  ...InlineGrid,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('combobox', { name: 'Fruit grid' });
