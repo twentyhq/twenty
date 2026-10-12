@@ -65,7 +65,7 @@ export class MergeAiChatInboxFeatureFlagsCommand extends ProvisionedWorkspaceCom
       toExpression: AI_CHAT_INBOX_WIDGET_EXPRESSION,
     });
 
-    if (args.options.dryRun ?? false) {
+    if (args.options.dryRun) {
       return;
     }
 
@@ -100,7 +100,7 @@ export class MergeAiChatInboxFeatureFlagsCommand extends ProvisionedWorkspaceCom
       toExpression: CONVERSATIONS_TAB_WIDGET_EXPRESSION,
     });
 
-    if (args.options.dryRun ?? false) {
+    if (args.options.dryRun) {
       return;
     }
 
@@ -156,7 +156,7 @@ export class MergeAiChatInboxFeatureFlagsCommand extends ProvisionedWorkspaceCom
       `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: moving ${widgetsToUpdate.length} Conversations widget(s) to ${toExpression}`,
     );
 
-    if (options.dryRun ?? false) {
+    if (options.dryRun) {
       return;
     }
 
