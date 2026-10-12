@@ -1,10 +1,12 @@
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
+import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { GET_MODELS_DEV_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getModelsDevProviders';
 import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
+import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
 import { getProviderIcon } from '@/ai/utils/getProviderIcon';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -22,11 +24,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { slugify } from 'transliteration';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
-import { capitalize, getSettingsPath } from 'twenty-shared/utils';
+import { capitalize, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
 
@@ -64,6 +68,11 @@ export const SettingsAdminNewAiProvider = () => {
   const { data: modelsDevData } = useQuery<{
     getModelsDevProviders: ModelsDevProvider[];
   }>(GET_MODELS_DEV_PROVIDERS, { client: apolloAdminClient });
+
+  const { data: providersData } = useQuery<GetAiProvidersResult>(
+    GET_AI_PROVIDERS,
+    { client: apolloAdminClient },
+  );
 
   const modelsDevProviders = useMemo(
     () => modelsDevData?.getModelsDevProviders ?? [],
@@ -108,6 +117,18 @@ export const SettingsAdminNewAiProvider = () => {
   const isModelsDevWithoutNativeSdk =
     selectedModelsDevId !== null && isOpenAiCompatible;
 
+  const providerName = slugify(form.watch('label'), { separator: '-' });
+  const existingProvider = providersData?.getAiProviders[providerName];
+  const catalogApiKeyConfigVariable =
+    existingProvider?.source === AI_PROVIDER_SOURCE.CATALOG
+      ? existingProvider.apiKeyConfigVariable
+      : undefined;
+  const catalogApiKeyConfigPath = isDefined(catalogApiKeyConfigVariable)
+    ? getSettingsPath(SettingsPath.AdminPanelConfigVariableDetails, {
+        variableName: catalogApiKeyConfigVariable,
+      })
+    : undefined;
+
   const handleProviderSelected = (providerId: string) => {
     setSelectedModelsDevId(providerId);
     setIsCustomMode(false);
@@ -137,8 +158,6 @@ export const SettingsAdminNewAiProvider = () => {
 
       return;
     }
-
-    const providerName = slugify(values.label, { separator: '-' });
 
     if (!providerName) {
       form.setError('label', {
@@ -253,7 +272,16 @@ export const SettingsAdminNewAiProvider = () => {
         children: t`Provider "${values.label.trim()}" added`,
       });
       navigate(AI_ADMIN_PATH);
-    } catch {
+    } catch (error) {
+      if (isGraphqlErrorOfType(error, 'BUILT_IN_AI_PROVIDER_NAME')) {
+        form.setError('label', {
+          type: 'manual',
+          message: getErrorMessageFromApolloError(error),
+        });
+
+        return;
+      }
+
       enqueueToast({ status: 'error', children: t`Failed to add provider` });
     } finally {
       setIsSubmitting(false);
@@ -327,6 +355,21 @@ export const SettingsAdminNewAiProvider = () => {
               }}
             />
           </Section.Root>
+
+          {isDefined(catalogApiKeyConfigPath) && (
+            <InlineBanner
+              layout="compact"
+              status="info"
+              action={
+                <InlineBanner.Action
+                  href={catalogApiKeyConfigPath}
+                  nativeButton={false}
+                  role="link"
+                  render={<Link to={catalogApiKeyConfigPath} />}
+                >{t`Configure`}</InlineBanner.Action>
+              }
+            >{t`To use the built-in provider, set its API key in ${catalogApiKeyConfigVariable}.`}</InlineBanner>
+          )}
 
           {isModelsDevWithoutNativeSdk && (
             <InlineBanner
