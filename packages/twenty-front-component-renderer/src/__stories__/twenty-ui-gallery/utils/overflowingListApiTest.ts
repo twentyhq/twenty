@@ -59,8 +59,17 @@ export const overflowingListApiTest: TwentyUiGalleryPlayFunction = async ({
       'false:escape-key:keydown',
     ),
   );
-  await expect(popup).toBeVisible();
-  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await waitFor(async () => {
+    await expect(popup).toBeVisible();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(within(popup).getAllByRole('button')).toHaveLength(2);
+
+    for (const targetName of ['Controlled Bravo', 'Controlled Charlie']) {
+      await expect(
+        within(popup).getByRole('button', { name: targetName }),
+      ).toBeVisible();
+    }
+  });
   await expect(
     canvas.getByLabelText('Overflow native targets'),
   ).toHaveTextContent('controlled,custom,section');
