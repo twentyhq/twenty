@@ -343,7 +343,11 @@ export class AgentChatService {
       role: AgentMessageRole.USER,
       agentId: null,
       status: AgentMessageStatus.QUEUED,
-      ...this.getMessageSenderValues({ workspaceId, userWorkspaceId }),
+      senderWorkspaceMemberId: workspaceMemberId,
+      senderApplicationId: this.getMessageSenderValues({
+        workspaceId,
+        userWorkspaceId,
+      }).senderApplicationId,
     };
 
     const insertResult = await this.messageRepository.insert(

@@ -10,7 +10,6 @@ import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -54,14 +53,11 @@ const seedChatThreads = async ({
   workspaceId,
 }: SeedChatThreadsArgs) => {
   let threadId: string;
-  let userWorkspaceId: string;
 
   if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
     threadId = AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_DEFAULT_THREAD;
-    userWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
   } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
     threadId = AGENT_CHAT_THREAD_DATA_SEED_IDS.YCOMBINATOR_DEFAULT_THREAD;
-    userWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM_ACME;
   } else {
     throw new Error(
       `Unsupported workspace ID for agent chat thread seeding: ${workspaceId}`,
@@ -81,7 +77,6 @@ const seedChatThreads = async ({
     .into(`${schemaName}.${agentChatThreadTableName}`, [
       'id',
       'workspaceMemberId',
-      'userWorkspaceId',
       'title',
       'createdAt',
       'updatedAt',
@@ -91,7 +86,6 @@ const seedChatThreads = async ({
       {
         id: threadId,
         workspaceMemberId,
-        userWorkspaceId,
         title,
         createdAt: now,
         updatedAt: now,
@@ -114,7 +108,6 @@ const seedChatThreads = async ({
       .into(`${schemaName}.${agentChatThreadTableName}`, [
         'id',
         'workspaceMemberId',
-        'userWorkspaceId',
         'title',
         'createdAt',
         'updatedAt',
@@ -133,7 +126,6 @@ const seedChatThreads = async ({
         ].map((thread) => ({
           id: thread.id,
           workspaceMemberId,
-          userWorkspaceId,
           title: thread.title,
           createdAt: now,
           updatedAt: now,
