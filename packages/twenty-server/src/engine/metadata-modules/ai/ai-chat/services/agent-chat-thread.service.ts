@@ -107,10 +107,7 @@ export class AgentChatThreadService {
           id: In(threadsBefore.map(({ id }) => id)),
           ...unassignedThreadCriteria,
         },
-        {
-          workspaceMemberId,
-          userWorkspaceId: authContext.userWorkspaceId,
-        },
+        { workspaceMemberId },
       );
 
     if (!isNonEmptyArray(assignedThreads)) {

@@ -210,14 +210,13 @@ export const AiChatMessage = ({
     return null;
   }
 
-  const senderId = agentChatMessage.metadata?.senderUserWorkspaceId;
+  const senderId = agentChatMessage.metadata?.senderWorkspaceMemberId;
   const sender = currentWorkspaceMembers.find(
-    (member) => isDefined(senderId) && member.userWorkspaceId === senderId,
+    (member) => isDefined(senderId) && member.id === senderId,
   );
   const senderLabel = getAgentChatSenderLabel({
     sender,
-    isCurrentWorkspaceMember:
-      senderId === currentWorkspaceMember?.userWorkspaceId,
+    isCurrentWorkspaceMember: senderId === currentWorkspaceMember?.id,
   });
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
   const shouldShowError =

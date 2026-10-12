@@ -330,6 +330,9 @@ export default {
             "senderUserWorkspaceId": [
                 488
             ],
+            "senderWorkspaceMemberId": [
+                488
+            ],
             "status": [
                 1
             ],
