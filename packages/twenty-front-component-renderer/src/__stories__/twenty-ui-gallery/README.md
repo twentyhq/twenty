@@ -178,16 +178,11 @@ Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popov
 
 An invisible popup is not a compatibility pass.
 
-Tabs still depends on C05 geometry acceptance for Indicator measurements and
-physical activation direction. The worker lazily requests host snapshots on
-first geometry reads and has no ResizeObserver to remeasure the initial
-Indicator. Its first inactive-tab read returns a zero rectangle while the
-active tab already has a snapshot, so a forward selection initially reports
-`left` instead of `right`. The fixture pins both the zero-width Indicator and
-incorrect initial direction with known-failure assertions while checking
-selection, callback values/reasons, focus, panel relationships and native
-composition. Passing these stories does not establish Indicator visibility or
-physical-direction accuracy in the renderer.
+Tabs geometry passes in both React and Preact with the C05 measurement
+adapter. The fixture verifies that the Indicator is visible and aligns with
+the active tab initially and after selection. The first forward selection
+reports the physical activation direction `right`. Selection, callback
+values/reasons, focus, panel relationships and native composition also pass.
 
 Native anchor Enter activation also remains a separate renderer limitation.
 Base UI recognizes native links by `tagName === 'A'`, while worker refs retain
