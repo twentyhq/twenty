@@ -76,7 +76,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', length: 512, nullable: true })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.47.0_AddConnectedAccountExternalAccountIdFastInstanceCommand_1791808820952',
+      '2.47.0_AddConnectedAccountExternalAccountIdFastInstanceCommand_1791818621673',
   })
   externalAccountId: string | null;
 
