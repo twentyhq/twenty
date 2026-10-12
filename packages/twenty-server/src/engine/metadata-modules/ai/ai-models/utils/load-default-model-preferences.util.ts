@@ -5,21 +5,21 @@ import { type AiModelTier } from 'twenty-shared/ai';
 // efforts match the benchmarked effort and let one family back neighbouring tiers
 export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
   extraFast: [
-    'openai/gpt-5.6-luna@low',
+    'openai/gpt-6-luna@low',
     'google/gemini-3.8-flash@low',
     'anthropic/claude-sonnet-5@low',
     'xai/grok-4.5@low',
     'mistral/mistral-small-latest@none',
   ],
   fast: [
-    'openai/gpt-5.6-luna@medium',
+    'openai/gpt-6-luna@medium',
     'google/gemini-3.8-flash@medium',
     'anthropic/claude-sonnet-5@medium',
     'xai/grok-4.5@medium',
     'mistral/mistral-medium-latest',
   ],
   balanced: [
-    'openai/gpt-5.6-luna@high',
+    'openai/gpt-6-luna@high',
     'google/gemini-3.8-flash@high',
     'anthropic/claude-sonnet-5@high',
     'xai/grok-4.6@medium',

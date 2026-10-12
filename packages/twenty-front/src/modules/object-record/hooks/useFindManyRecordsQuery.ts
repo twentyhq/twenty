@@ -7,7 +7,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import {
   type QueryCursorDirection,
-  type RecordGqlOperationGqlRecordFields,
+  type RecordGqlFields,
 } from 'twenty-shared/types';
 
 export const useFindManyRecordsQuery = ({
@@ -17,7 +17,7 @@ export const useFindManyRecordsQuery = ({
   cursorDirection = 'after',
 }: {
   objectNameSingular: string;
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   cursorDirection?: QueryCursorDirection;
 }) => {

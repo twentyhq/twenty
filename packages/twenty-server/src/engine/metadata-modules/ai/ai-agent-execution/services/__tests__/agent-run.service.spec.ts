@@ -32,7 +32,10 @@ const buildService = () => {
   const agentActorContextService = {
     buildRunAsWorkspaceMemberContext: jest.fn().mockResolvedValue({
       actorContext: RUN_AS_ACTOR,
-      authContext: { userWorkspaceId: RUN_AS_USER_WORKSPACE_ID },
+      authContext: {
+        userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+        workspaceMemberId: RUN_AS_ACTOR.workspaceMemberId,
+      },
       roleId: 'role-id',
     }),
     buildApplicationAgentContext: jest.fn().mockResolvedValue({
@@ -187,7 +190,7 @@ describe('AgentRunService', () => {
       rolePermissionConfig: { intersectionOf: ['role-id'] },
       conversationActor: {
         type: 'user',
-        userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+        workspaceMemberId: RUN_AS_ACTOR.workspaceMemberId,
       },
     });
   });

@@ -17,7 +17,7 @@ export const mapDBMessagesToUIMessages = (
       .filter(isDefined),
     metadata: {
       createdAt: dbMessage.createdAt,
-      senderUserWorkspaceId: dbMessage.senderUserWorkspaceId,
+      senderWorkspaceMemberId: dbMessage.senderWorkspaceMemberId,
       ...(dbMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT
         ? {
             startedAt: dbMessage.createdAt,

@@ -1,4 +1,3 @@
-import { addAgentMessageSenderWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-history/utils/add-agent-message-sender-workspace-member.util';
 import { hydrateAgentHistoryFiles } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-history-files.util';
 import { removeAgentHistoryFileRelations } from 'src/engine/metadata-modules/ai/ai-history/utils/remove-agent-history-file-relations.util';
 import {
@@ -140,31 +139,15 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
   ) {
-    return this.run(workspaceId, async (repository, context) => {
-      return repository.insert(
-        await addAgentMessageSenderWorkspaceMember({
-          name: this.name,
-          values,
-          workspaceId,
-          context,
-        }),
-      );
-    });
+    return this.run(workspaceId, (repository) => repository.insert(values));
   }
 
   insertAndReturnOne(
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord>,
   ): Promise<TRecord> {
-    return this.run(workspaceId, async (repository, context) => {
-      const result = await repository.insert(
-        await addAgentMessageSenderWorkspaceMember({
-          name: this.name,
-          values,
-          workspaceId,
-          context,
-        }),
-      );
+    return this.run(workspaceId, async (repository) => {
+      const result = await repository.insert(values);
       return result.raw[0] as TRecord;
     });
   }

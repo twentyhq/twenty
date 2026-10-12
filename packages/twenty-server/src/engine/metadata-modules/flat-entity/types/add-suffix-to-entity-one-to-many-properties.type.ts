@@ -7,9 +7,11 @@ export type AddSuffixToEntityOneToManyProperties<
   TEntity,
   TSuffix extends string,
 > = {
-  [P in ExtractEntityOneToManyEntityRelationProperties<
-    TEntity,
-    SyncableEntity
-  > &
-    string as `${RemoveSuffix<P, 's'>}${Capitalize<TSuffix>}`]: string[];
+  [
+    P in ExtractEntityOneToManyEntityRelationProperties<
+      TEntity,
+      SyncableEntity
+    > &
+      string as `${RemoveSuffix<P, 's'>}${Capitalize<TSuffix>}`
+  ]: string[];
 };
