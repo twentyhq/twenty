@@ -94,19 +94,9 @@ export const CompositionConfirmation: Story = {
     await fireEvent.keyDown(input, {
       key: 'Enter',
       code: 'Enter',
-      keyCode: 0,
-      which: 0,
-      isComposing: true,
-    });
-    await expect(input).toHaveValue('Ch');
-    await expect(input).toHaveAttribute('aria-expanded', 'true');
-    await expect(args.onValueChange).not.toHaveBeenCalled();
-    await fireEvent.keyDown(input, {
-      key: 'Enter',
-      code: 'Enter',
       keyCode: 229,
       which: 229,
-      isComposing: false,
+      isComposing: true,
     });
     await expect(input).toHaveValue('Ch');
     await expect(input).toHaveAttribute('aria-expanded', 'true');

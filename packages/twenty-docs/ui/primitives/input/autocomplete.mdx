@@ -228,7 +228,7 @@ Keep Root mounted when results arrive asynchronously. Control `open` independent
 
 Root preserves the upstream `name`, `form`, `disabled`, `readOnly`, and native form behavior. Input's native attributes and ref target its input. `submitOnItemClick` opts into form submission when selecting a suggestion; the default does not submit.
 
-Input calls your `onKeyDown` handler first, then skips Base UI keyboard handling when the native event has `isComposing` set or `keyCode` equal to `229`. This guard allows Enter to confirm IME composition without selecting a suggestion and leaves the browser's default action unchanged.
+Input preserves Base UI's native IME handling, including composition events and its keyboard confirmation guard.
 
 The installed Base UI version retains an uncontrolled query on native form reset. For a controlled query, handle the form's `onReset` and restore the application's initial value.
 

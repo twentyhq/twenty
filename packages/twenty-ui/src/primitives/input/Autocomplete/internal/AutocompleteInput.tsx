@@ -9,12 +9,9 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type AutocompleteInputProps } from '../types/AutocompleteInputProps';
 
-const IME_COMPOSITION_KEY_CODE = 229;
-
 export const AutocompleteInput = ({
   size,
   className,
-  onKeyDown,
   ...props
 }: AutocompleteInputProps) => {
   const inputGroup = useContext(InputGroupContext);
@@ -28,17 +25,6 @@ export const AutocompleteInput = ({
         className,
       )}
       data-grouped={isDefined(inputGroup) || undefined}
-      onKeyDown={(event) => {
-        onKeyDown?.(event);
-
-        const isNativeComposition =
-          event.nativeEvent.isComposing ||
-          event.nativeEvent.keyCode === IME_COMPOSITION_KEY_CODE;
-
-        if (isNativeComposition) {
-          event.preventBaseUIHandler();
-        }
-      }}
     />
   );
 };

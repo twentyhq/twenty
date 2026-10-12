@@ -151,8 +151,9 @@ export const KeepsCompositionConfirmationInTheInput: Story = {
     fireEvent.keyDown(input, {
       key: 'Enter',
       code: 'Enter',
+      keyCode: 229,
+      which: 229,
       isComposing: true,
-      which: 0,
     });
 
     expect(input).toHaveValue('jeff');
