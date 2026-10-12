@@ -4,7 +4,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { type DeveloperLinks } from '@/settings/applications/components/SettingsApplicationAboutSidebar';
-import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
+import { SettingsApplicationDetailAbout } from '~/pages/settings/applications/components/SettingsApplicationDetailAbout';
 
 jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownRenderer: ({
@@ -36,7 +36,7 @@ const DEVELOPER_LINKS: DeveloperLinks = {
   sourcePackageUrl: 'https://www.npmjs.com/package/stripe-app',
 };
 
-type RenderAboutTabOptions = {
+type RenderAboutOptions = {
   aboutDescription?: string | null;
   description?: string | null;
   developerLinks?: DeveloperLinks;
@@ -45,16 +45,16 @@ type RenderAboutTabOptions = {
 };
 
 // null opts out of a default, undefined keeps it.
-const renderAboutTab = ({
+const renderAbout = ({
   aboutDescription = ABOUT_DESCRIPTION,
   description = SHORT_DESCRIPTION,
   developerLinks = DEVELOPER_LINKS,
   installCount = 7,
   onShare = jest.fn(),
-}: RenderAboutTabOptions = {}) =>
+}: RenderAboutOptions = {}) =>
   render(
     <I18nProvider i18n={i18n}>
-      <SettingsApplicationDetailAboutTab
+      <SettingsApplicationDetailAbout
         displayName="Stripe"
         description={description ?? undefined}
         aboutDescription={aboutDescription ?? undefined}
@@ -73,15 +73,15 @@ const renderAboutTab = ({
     </I18nProvider>,
   );
 
-describe('SettingsApplicationDetailAboutTab', () => {
+describe('SettingsApplicationDetailAbout', () => {
   it('hides the install count when nobody installed the application', () => {
-    renderAboutTab({ installCount: 0 });
+    renderAbout({ installCount: 0 });
 
     expect(screen.queryByText(/installs?$/)).not.toBeInTheDocument();
   });
 
   it('estimates large install counts and reveals the exact count on hover', async () => {
-    renderAboutTab({ installCount: 1098 });
+    renderAbout({ installCount: 1098 });
 
     const estimatedInstallCount = screen.getByText('+1,000 installs');
 
@@ -94,7 +94,7 @@ describe('SettingsApplicationDetailAboutTab', () => {
   });
 
   it('renders the application identity, metadata and resources', () => {
-    renderAboutTab();
+    renderAbout();
 
     expect(screen.getByText('Stripe')).toBeVisible();
     expect(screen.getByText(SHORT_DESCRIPTION)).toBeVisible();
@@ -135,7 +135,7 @@ describe('SettingsApplicationDetailAboutTab', () => {
   it('shows the selected screenshot and lets the user switch it', async () => {
     const user = userEvent.setup();
 
-    renderAboutTab();
+    renderAbout();
 
     expect(screen.getByAltText('Stripe screenshot 1')).toHaveAttribute(
       'src',
@@ -153,7 +153,7 @@ describe('SettingsApplicationDetailAboutTab', () => {
   it('opens the screenshots in full screen and navigates between them', async () => {
     const user = userEvent.setup();
 
-    renderAboutTab();
+    renderAbout();
 
     await user.click(
       screen.getByRole('button', { name: 'View screenshot in full screen' }),
@@ -184,7 +184,7 @@ describe('SettingsApplicationDetailAboutTab', () => {
     const user = userEvent.setup();
     const onShare = jest.fn();
 
-    renderAboutTab({ onShare });
+    renderAbout({ onShare });
 
     await user.click(screen.getByRole('button', { name: /^Share\b/ }));
 
@@ -192,7 +192,7 @@ describe('SettingsApplicationDetailAboutTab', () => {
   });
 
   it('hides the share button when the application cannot be shared', () => {
-    renderAboutTab({ onShare: null });
+    renderAbout({ onShare: null });
 
     expect(
       screen.queryByRole('button', { name: /^Share\b/ }),
@@ -200,7 +200,7 @@ describe('SettingsApplicationDetailAboutTab', () => {
   });
 
   it('skips resource links that are not http, https or mailto', () => {
-    renderAboutTab({ developerLinks: { websiteUrl: 'ftp://stripe.com' } });
+    renderAbout({ developerLinks: { websiteUrl: 'ftp://stripe.com' } });
 
     expect(screen.queryByText('Resources')).not.toBeInTheDocument();
     expect(
@@ -209,14 +209,14 @@ describe('SettingsApplicationDetailAboutTab', () => {
   });
 
   it('does not repeat the short description as the about content', () => {
-    renderAboutTab({ aboutDescription: null });
+    renderAbout({ aboutDescription: null });
 
     expect(screen.getByText(SHORT_DESCRIPTION)).toBeVisible();
     expect(screen.queryByTestId('markdown-renderer')).not.toBeInTheDocument();
   });
 
   it('renders a long description as the about content and summarizes it in the sidebar', () => {
-    renderAboutTab({
+    renderAbout({
       aboutDescription: null,
       description:
         'Host your workspace customizations.\n\n#### What it includes\n\nEverything you build on top of the standard app.',
@@ -231,7 +231,7 @@ describe('SettingsApplicationDetailAboutTab', () => {
   });
 
   it('shows a placeholder when the application has no description at all', () => {
-    renderAboutTab({ aboutDescription: null, description: null });
+    renderAbout({ aboutDescription: null, description: null });
 
     expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
       'No description available for this application',

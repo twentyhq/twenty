@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 
-type SettingsApplicationDetailAboutTabProps = {
+type SettingsApplicationDetailAboutProps = {
   applicationId?: string | null;
   logoUrl?: string | null;
   displayName: string;
@@ -125,7 +125,7 @@ const StyledMarkdownContent = styled.div`
   }
 `;
 
-export const SettingsApplicationDetailAboutTab = ({
+export const SettingsApplicationDetailAbout = ({
   applicationId,
   logoUrl,
   displayName,
@@ -139,7 +139,7 @@ export const SettingsApplicationDetailAboutTab = ({
   category,
   developerLinks,
   onShare,
-}: SettingsApplicationDetailAboutTabProps) => {
+}: SettingsApplicationDetailAboutProps) => {
   const hasScreenshots = isDefined(screenshots) && screenshots.length > 0;
 
   const descriptionSummary = getApplicationDescriptionSummary(description);

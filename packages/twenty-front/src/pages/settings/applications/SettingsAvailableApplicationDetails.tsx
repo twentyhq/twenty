@@ -24,7 +24,7 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
+import { SettingsApplicationDetailAbout } from '~/pages/settings/applications/components/SettingsApplicationDetailAbout';
 
 export const SettingsAvailableApplicationDetails = () => {
   const { availableApplicationId = '' } = useParams<{
@@ -135,7 +135,7 @@ export const SettingsAvailableApplicationDetails = () => {
             >{t`Application not listed on the marketplace. It was shared via a direct link`}</InlineBanner>
           )}
           {isDefined(detail) ? (
-            <SettingsApplicationDetailAboutTab
+            <SettingsApplicationDetailAbout
               applicationId={application?.id}
               logoUrl={detail.logoUrl}
               displayName={displayName}
