@@ -46,7 +46,7 @@
 
   &[data-badge-color='primary'] {
     background: var(--t-color-blue);
-    color: white;
+    color: var(--t-font-color-on-accent);
   }
 
   &[data-badge-color='secondary'] {
