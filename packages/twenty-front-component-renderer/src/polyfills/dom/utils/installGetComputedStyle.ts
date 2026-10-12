@@ -39,14 +39,17 @@ export const installGetComputedStyle = ({
       if (isDefined(measuredValue)) {
         return measuredValue;
       }
-      if (
-        !isObject(declaredStyle) ||
-        !('getPropertyValue' in declaredStyle) ||
-        !isFunction(declaredStyle.getPropertyValue)
-      ) {
+      if (!isObject(declaredStyle)) {
         return '';
       }
-      const declaredValue: unknown = declaredStyle.getPropertyValue.call(
+      const getDeclaredPropertyValue: unknown = Reflect.get(
+        declaredStyle,
+        'getPropertyValue',
+      );
+      if (!isFunction(getDeclaredPropertyValue)) {
+        return '';
+      }
+      const declaredValue: unknown = getDeclaredPropertyValue.call(
         declaredStyle,
         propertyName,
       );

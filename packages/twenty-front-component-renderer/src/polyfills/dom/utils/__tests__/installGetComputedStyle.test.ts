@@ -1,3 +1,6 @@
+import { isFunction } from '@sniptt/guards';
+
+import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
 import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
 import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
 import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
@@ -42,6 +45,25 @@ describe('installGetComputedStyle', () => {
       (globalScope.getComputedStyle as GetComputedStyleLike)({ style })
         .fontSize,
     ).toBe('14px');
+  });
+
+  it('reads declared values from the renderer style proxy before measurement', () => {
+    const globalScope: Record<string, unknown> = {};
+    installGetComputedStyle({
+      globalScope,
+      geometryStore: createWorkerGeometryStoreStub(),
+      documentTarget: {},
+    });
+    const declaredStyle = createStyleProxy(() => {});
+    declaredStyle.setProperty('font-size', '14px');
+
+    const getComputedStyle = globalScope.getComputedStyle;
+    if (!isFunction<GetComputedStyleLike, unknown>(getComputedStyle)) {
+      throw new Error('getComputedStyle was not installed');
+    }
+    const computedStyle = getComputedStyle({ style: declaredStyle });
+
+    expect(computedStyle.fontSize).toBe('14px');
   });
 
   it('should return an empty declaration for an element without a style', () => {
