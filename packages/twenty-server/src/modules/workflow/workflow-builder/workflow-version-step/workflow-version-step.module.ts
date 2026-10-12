@@ -14,12 +14,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
 import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/code-step-build.module';
-import { WorkflowVersionStepCreationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-creation.workspace-service';
-import { WorkflowVersionStepDeletionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-deletion.workspace-service';
-import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
-import { WorkflowVersionStepUpdateWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-update.workspace-service';
-import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 
 @Module({
@@ -38,18 +33,10 @@ import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-cru
     RecordCrudModule,
   ],
   providers: [
-    WorkflowVersionStepWorkspaceService,
     WorkflowVersionStepOperationsWorkspaceService,
-    WorkflowVersionStepHelpersWorkspaceService,
-    WorkflowVersionStepCreationWorkspaceService,
-    WorkflowVersionStepUpdateWorkspaceService,
-    WorkflowVersionStepDeletionWorkspaceService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
   ],
-  exports: [
-    WorkflowVersionStepWorkspaceService,
-    WorkflowVersionStepOperationsWorkspaceService,
-  ],
+  exports: [WorkflowVersionStepOperationsWorkspaceService],
 })
 export class WorkflowVersionStepModule {}

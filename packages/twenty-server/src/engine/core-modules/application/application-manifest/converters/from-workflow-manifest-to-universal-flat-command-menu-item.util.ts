@@ -2,10 +2,7 @@ import {
   getWorkflowCommandMenuItemUniversalIdentifier,
   type WorkflowManifest,
 } from 'twenty-shared/application';
-import {
-  CommandMenuItemAvailabilityType,
-  FeatureFlagKey,
-} from 'twenty-shared/types';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -46,7 +43,7 @@ export const fromWorkflowManifestToUniversalFlatCommandMenuItem = ({
     availabilityType: isRecordSelection
       ? CommandMenuItemAvailabilityType.RECORD_SELECTION
       : CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression: `featureFlags.${FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED}`,
+    conditionalAvailabilityExpression: null,
     conditionalPinnedExpression: null,
     frontComponentUniversalIdentifier: null,
     availabilityObjectMetadataUniversalIdentifier: isRecordSelection
