@@ -1,14 +1,11 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
+import { useFieldWidgetRelationSeeAllHref } from '@/page-layout/widgets/field/hooks/useFieldWidgetRelationSeeAllHref';
 import { WidgetCardHeaderActionLink } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionLink';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
 import { t } from '@lingui/core/macro';
-import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/icon';
 
 type WidgetActionFieldSeeAllProps = {
@@ -22,53 +19,18 @@ export const WidgetActionFieldSeeAll = ({
 
   const { fieldDefinition } = useFieldWidgetFieldDefinition(widget);
 
-  const relationMetadata =
-    isDefined(fieldDefinition) && isFieldRelation(fieldDefinition)
-      ? fieldDefinition.metadata
-      : null;
+  const { seeAllHref, relationObjectMetadataItem } =
+    useFieldWidgetRelationSeeAllHref({
+      recordId: targetRecord.id,
+      relationMetadata:
+        isDefined(fieldDefinition) && isFieldRelation(fieldDefinition)
+          ? fieldDefinition.metadata
+          : null,
+    });
 
-  const { objectMetadataItems } = useObjectMetadataItems();
-
-  const relationObjectMetadataItem = objectMetadataItems.find(
-    (item) =>
-      item.nameSingular ===
-      relationMetadata?.relationObjectMetadataNameSingular,
-  );
-
-  const relationFieldMetadataItem = relationObjectMetadataItem?.fields.find(
-    ({ id }) => id === relationMetadata?.relationFieldMetadataId,
-  );
-
-  const indexViewId = useAtomFamilySelectorValue(
-    indexViewIdFromObjectMetadataItemFamilySelector,
-    { objectMetadataItemId: relationObjectMetadataItem?.id ?? '' },
-  );
-
-  if (
-    !isDefined(relationObjectMetadataItem) ||
-    !isDefined(relationFieldMetadataItem)
-  ) {
+  if (!isDefined(seeAllHref) || !isDefined(relationObjectMetadataItem)) {
     return null;
   }
-
-  const filterQueryParams = {
-    filter: {
-      [relationFieldMetadataItem.name]: {
-        [ViewFilterOperand.IS]: {
-          selectedRecordIds: [targetRecord.id],
-        },
-      },
-    },
-    viewId: indexViewId,
-  };
-
-  const filterLinkHref = getAppPath(
-    AppPath.RecordIndexPage,
-    {
-      objectNamePlural: relationObjectMetadataItem.namePlural,
-    },
-    filterQueryParams,
-  );
 
   const relationLabelPlural =
     relationObjectMetadataItem.labelPlural.toLowerCase();
@@ -78,7 +40,7 @@ export const WidgetActionFieldSeeAll = ({
     <WidgetCardHeaderActionLink
       Icon={IconArrowUpRight}
       label={actionLabel}
-      to={filterLinkHref}
+      to={seeAllHref}
     />
   );
 };

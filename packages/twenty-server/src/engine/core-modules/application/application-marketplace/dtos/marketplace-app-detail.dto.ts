@@ -128,6 +128,9 @@ export class MarketplaceAppDetailDTO {
   @Field(() => [String])
   requestedCapabilities: ApplicationCapability[];
 
+  @Field(() => Boolean)
+  billsCredits: boolean;
+
   @Field(() => GraphQLJSON, {
     nullable: true,
     deprecationReason:
