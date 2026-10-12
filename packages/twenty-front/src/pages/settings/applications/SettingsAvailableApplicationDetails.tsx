@@ -8,7 +8,6 @@ import { SettingsApplicationActionButton } from '@/settings/applications/compone
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -17,7 +16,7 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import { IconEyeOff, IconInfoSquareRounded } from 'twenty-ui/icon';
+import { IconEyeOff } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
@@ -26,8 +25,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
-
-const AVAILABLE_APPLICATION_DETAIL_ID = 'available-application-detail';
 
 export const SettingsAvailableApplicationDetails = () => {
   const { availableApplicationId = '' } = useParams<{
@@ -91,8 +88,6 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
-  const tabs = [{ id: 'about', title: t`About`, Icon: IconInfoSquareRounded }];
-
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
       <SettingsPageLayout
@@ -131,13 +126,6 @@ export const SettingsAvailableApplicationDetails = () => {
               installProgress={installProgress}
             />
           ) : undefined
-        }
-        secondaryBar={
-          <SettingsTabBar
-            aria-label={t`Available application details`}
-            tabs={tabs}
-            componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
-          />
         }
       >
         <SettingsPageContainer overflow="visible">
