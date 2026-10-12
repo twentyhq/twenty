@@ -6,6 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AGENT_CHAT_CHANNEL_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-columns.constant';
 import { AGENT_CHAT_CHANNEL_MEMBER_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-member-columns.constant';
 import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
@@ -21,6 +22,7 @@ import { buildAgentChatDefaultChannelId } from 'src/engine/metadata-modules/ai/a
 import { findAgentChatChannelRoleIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-channel-role-ids.util';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import { insertAgentChatChannelMembers } from 'src/engine/metadata-modules/ai/ai-chat/utils/insert-agent-chat-channel-members.util';
+import { writeAgentChatChannelOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/write-agent-chat-channel-owner-grants.util';
 import { writeAgentChatChannelGeneralAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/write-agent-chat-channel-general-access.util';
 import { writeAgentChatChannelRoleAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/write-agent-chat-channel-role-access.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -43,8 +45,6 @@ type ChannelChanges = {
 };
 
 type ChannelWithRoles = AgentChatChannelWorkspaceEntity & { roleIds: string[] };
-
-const CHANNEL_COLUMNS = `id, name, icon, color, visibility, "createdAt", "updatedAt", "deletedAt"`;
 
 // Channels are written in SQL so each membership and its grant land
 // together: a member reads and replies in a private channel through the
@@ -89,10 +89,9 @@ export class AgentChatChannelService {
 
     const validRoleIds = await this.validateRoleIds(workspaceId, roleIds);
 
-    const { channelObjectMetadataId } =
-      await this.channelAccessService.findChannelObjectMetadataIds(workspaceId);
-    const { channelTable, recordShareTable } =
-      getAgentChatChannelTables(workspaceId);
+    const channelObjectMetadataId =
+      await this.channelAccessService.findChannelObjectMetadataId(workspaceId);
+    const { channelTable } = getAgentChatChannelTables(workspaceId);
 
     const { channel, members } = await this.threadRepository.query(
       workspaceId,
@@ -100,28 +99,19 @@ export class AgentChatChannelService {
         const [channel] = await manager.query<
           AgentChatChannelWorkspaceEntity[]
         >(
-          `WITH channel AS (
-             INSERT INTO ${channelTable} (id, name, icon, color, visibility)
-             VALUES ($1, $2, $3, $4, $5)
-             RETURNING ${CHANNEL_COLUMNS}
-           ), owner_grant AS (
-             INSERT INTO ${recordShareTable}
-               ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
-             SELECT $6::uuid, channel.id, $7::uuid, 'WORKSPACE_MEMBER', 'FULL', 'OWNER', channel.id
-             FROM channel
-             ON CONFLICT DO NOTHING
-           )
-           SELECT * FROM channel`,
-          [
-            randomUUID(),
-            this.validateName(name),
-            icon,
-            color,
-            visibility,
-            channelObjectMetadataId,
-            workspaceMemberId,
-          ],
+          `INSERT INTO ${channelTable} (id, name, icon, color, visibility)
+           VALUES ($1, $2, $3, $4, $5)
+           RETURNING ${AGENT_CHAT_CHANNEL_COLUMNS}`,
+          [randomUUID(), this.validateName(name), icon, color, visibility],
         );
+
+        await writeAgentChatChannelOwnerGrants({
+          manager,
+          workspaceId,
+          channelId: channel.id,
+          ownerIds: [workspaceMemberId],
+          channelObjectMetadataId,
+        });
 
         await writeAgentChatChannelGeneralAccess({
           manager,
@@ -177,11 +167,10 @@ export class AgentChatChannelService {
   }: AgentChatChannelAccessArgs & {
     changes: ChannelChanges;
   }): Promise<ChannelWithRoles> {
-    await this.channelAccessService.assertMemberOrManager(args);
-
-    const canManage = await this.channelAccessService.canManageChannel(args);
-    const { channelObjectMetadataId } =
-      await this.channelAccessService.findChannelObjectMetadataIds(
+    const canManage =
+      await this.channelAccessService.assertMemberOrManager(args);
+    const channelObjectMetadataId =
+      await this.channelAccessService.findChannelObjectMetadataId(
         args.workspaceId,
       );
     const { channelTable } = getAgentChatChannelTables(args.workspaceId);
@@ -193,7 +182,7 @@ export class AgentChatChannelService {
       args.workspaceId,
       async ({ manager }) => {
         const [before] = await manager.query<AgentChatChannelWorkspaceEntity[]>(
-          `SELECT ${CHANNEL_COLUMNS} FROM ${channelTable}
+          `SELECT ${AGENT_CHAT_CHANNEL_COLUMNS} FROM ${channelTable}
            WHERE id = $1 AND "deletedAt" IS NULL
            FOR UPDATE`,
           [args.channelId],
@@ -267,7 +256,7 @@ export class AgentChatChannelService {
              UPDATE ${channelTable}
              SET ${[...assignments, '"updatedAt" = now()'].join(', ')}
              WHERE id = $1
-             RETURNING ${CHANNEL_COLUMNS}
+             RETURNING ${AGENT_CHAT_CHANNEL_COLUMNS}
            )
            SELECT * FROM updated_channel`,
           parameters,
@@ -323,8 +312,6 @@ export class AgentChatChannelService {
       );
     }
 
-    const channel = await this.findChannelOrThrow(args);
-
     if (isDefined(destinationChannelId)) {
       if (destinationChannelId === args.channelId) {
         throw new AiException(
@@ -343,82 +330,91 @@ export class AgentChatChannelService {
     const { channelTable, memberTable, recordShareTable } =
       getAgentChatChannelTables(args.workspaceId);
 
-    const { members, movedThreads } = await this.threadRepository.query(
-      args.workspaceId,
-      async ({ manager, table }) => {
-        // Taken first so a chat moved into the channel meanwhile is seen
-        await manager.query(
-          `SELECT id FROM ${channelTable} WHERE id = $1 FOR UPDATE`,
-          [args.channelId],
-        );
+    const { channel, members, movedThreads } =
+      await this.threadRepository.query(
+        args.workspaceId,
+        async ({ manager, table }) => {
+          // Taken first so a chat moved into the channel meanwhile is seen
+          const [channel] = await manager.query<
+            AgentChatChannelWorkspaceEntity[]
+          >(
+            `SELECT ${AGENT_CHAT_CHANNEL_COLUMNS} FROM ${channelTable}
+           WHERE id = $1 AND "deletedAt" IS NULL
+           FOR UPDATE`,
+            [args.channelId],
+          );
 
-        // Chats keep their status in the channel they join
-        const threadsBefore = isDefined(destinationChannelId)
-          ? await manager.query<AgentChatThreadWorkspaceEntity[]>(
-              `SELECT * FROM ${table('agentChatThread')}
+          if (!isDefined(channel)) {
+            return throwAgentChatChannelNotFound();
+          }
+
+          // Chats keep their status in the channel they join
+          const threadsBefore = isDefined(destinationChannelId)
+            ? await manager.query<AgentChatThreadWorkspaceEntity[]>(
+                `SELECT * FROM ${table('agentChatThread')}
                WHERE "channelId" = $1 FOR UPDATE`,
-              [args.channelId],
-            )
-          : [];
-        const threadsAfter = isDefined(destinationChannelId)
-          ? await manager.query<AgentChatThreadWorkspaceEntity[]>(
-              `WITH moved_thread AS (
+                [args.channelId],
+              )
+            : [];
+          const threadsAfter = isDefined(destinationChannelId)
+            ? await manager.query<AgentChatThreadWorkspaceEntity[]>(
+                `WITH moved_thread AS (
                  UPDATE ${table('agentChatThread')}
                  SET "channelId" = $2, "updatedAt" = now()
                  WHERE "channelId" = $1
                  RETURNING *
                )
                SELECT * FROM moved_thread`,
-              [args.channelId, destinationChannelId],
-            )
-          : [];
-        const threadBeforeById = new Map(
-          threadsBefore.map((thread) => [thread.id, thread]),
-        );
-        const movedThreads = threadsAfter.flatMap((after) => {
-          const before = threadBeforeById.get(after.id);
-
-          return isDefined(before) ? [{ before, after }] : [];
-        });
-
-        const [{ remainingThreadCount }] = await manager.query<
-          { remainingThreadCount: number }[]
-        >(
-          `SELECT count(*)::int AS "remainingThreadCount"
-           FROM ${table('agentChatThread')} WHERE "channelId" = $1`,
-          [args.channelId],
-        );
-
-        if (remainingThreadCount > 0) {
-          throw new AiException(
-            'The channel still has chats',
-            AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY,
+                [args.channelId, destinationChannelId],
+              )
+            : [];
+          const threadBeforeById = new Map(
+            threadsBefore.map((thread) => [thread.id, thread]),
           );
-        }
+          const movedThreads = threadsAfter.flatMap((after) => {
+            const before = threadBeforeById.get(after.id);
 
-        const members = await manager.query<
-          AgentChatChannelMemberWorkspaceEntity[]
-        >(
-          `WITH deleted_member AS (
+            return isDefined(before) ? [{ before, after }] : [];
+          });
+
+          const [{ remainingThreadCount }] = await manager.query<
+            { remainingThreadCount: number }[]
+          >(
+            `SELECT count(*)::int AS "remainingThreadCount"
+           FROM ${table('agentChatThread')} WHERE "channelId" = $1`,
+            [args.channelId],
+          );
+
+          if (remainingThreadCount > 0) {
+            throw new AiException(
+              'The channel still has chats',
+              AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY,
+            );
+          }
+
+          const members = await manager.query<
+            AgentChatChannelMemberWorkspaceEntity[]
+          >(
+            `WITH deleted_member AS (
              DELETE FROM ${memberTable} WHERE "channelId" = $1
              RETURNING ${AGENT_CHAT_CHANNEL_MEMBER_COLUMNS}
            )
            SELECT * FROM deleted_member`,
-          [args.channelId],
-        );
+            [args.channelId],
+          );
 
-        await manager.query(
-          `DELETE FROM ${recordShareTable}
+          await manager.query(
+            `DELETE FROM ${recordShareTable}
            WHERE "recordId" = $1 OR "sourceId" = ANY($2::uuid[])`,
-          [args.channelId, members.map(({ id }) => id)],
-        );
-        await manager.query(`DELETE FROM ${channelTable} WHERE id = $1`, [
-          args.channelId,
-        ]);
+            [args.channelId, members.map(({ id }) => id)],
+          );
+          await manager.query(`DELETE FROM ${channelTable} WHERE id = $1`, [
+            args.channelId,
+          ]);
 
-        return { members, movedThreads };
-      },
-    );
+          return { channel, members, movedThreads };
+        },
+      );
 
     await this.threadRecordEventService.emitThreadsUpdated({
       workspaceId: args.workspaceId,
@@ -459,13 +455,10 @@ export class AgentChatChannelService {
     memberIds,
     ...args
   }: AgentChatChannelAccessArgs & { memberIds: string[] }): Promise<void> {
-    await this.channelAccessService.assertMemberOrManager(args);
+    const canManage =
+      await this.channelAccessService.assertMemberOrManager(args);
 
-    await this.addMembersToChannel({
-      ...args,
-      memberIds,
-      canManage: await this.channelAccessService.canManageChannel(args),
-    });
+    await this.addMembersToChannel({ ...args, memberIds, canManage });
   }
 
   // Members leave on their own; removing someone else is left to who manages
@@ -529,8 +522,8 @@ export class AgentChatChannelService {
     memberIds: string[];
     canManage: boolean;
   }): Promise<void> {
-    const { channelObjectMetadataId } =
-      await this.channelAccessService.findChannelObjectMetadataIds(
+    const channelObjectMetadataId =
+      await this.channelAccessService.findChannelObjectMetadataId(
         args.workspaceId,
       );
     const { channelTable } = getAgentChatChannelTables(args.workspaceId);
@@ -574,25 +567,6 @@ export class AgentChatChannelService {
       action: DatabaseEventAction.CREATED,
       recordsAfter: members,
     });
-  }
-
-  private async findChannelOrThrow({
-    workspaceId,
-    channelId,
-  }: AgentChatChannelAccessArgs): Promise<AgentChatChannelWorkspaceEntity> {
-    const { channelTable } = getAgentChatChannelTables(workspaceId);
-
-    const [channel] = await this.threadRepository.query(
-      workspaceId,
-      ({ manager }) =>
-        manager.query<AgentChatChannelWorkspaceEntity[]>(
-          `SELECT ${CHANNEL_COLUMNS} FROM ${channelTable}
-           WHERE id = $1 AND "deletedAt" IS NULL`,
-          [channelId],
-        ),
-    );
-
-    return channel ?? throwAgentChatChannelNotFound();
   }
 
   // Whoever sets up a channel may not see the roles settings, so the roles a

@@ -1,20 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { type AgentChatChannelListItemDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-list-item.dto';
-import { type AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { buildAgentChatChannelRoleGrantCondition } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-role-grant-condition.util';
 import { buildAgentChatDefaultChannelId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-default-channel-id.util';
 import { buildAgentChatJoinedChannelsQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-joined-channels-query.util';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
-type ChannelRow = Omit<
-  AgentChatChannelListItemDTO,
-  'canManage' | 'isSystem'
-> & {
-  visibility: AgentChatChannelVisibility;
-};
+type ChannelRow = Omit<AgentChatChannelListItemDTO, 'canManage' | 'isSystem'>;
 
 // The channels a member can read: the ones they are in first, in their
 // sidebar order, then the public ones they can join
@@ -69,9 +64,8 @@ export class AgentChatChannelListService {
               WHERE member."channelId" = channel.id) AS "memberCount",
              ARRAY(
                SELECT DISTINCT role_grant."principalId" FROM ${recordShareTable} role_grant
-               WHERE role_grant."recordId" = channel.id AND role_grant."principalType" = 'ROLE'
-                 AND role_grant."rowCause" = 'RULE' AND role_grant."sourceId" = channel.id
-                 AND role_grant."deletedAt" IS NULL
+               WHERE role_grant."recordId" = channel.id
+                 AND ${buildAgentChatChannelRoleGrantCondition('role_grant')}
              ) AS "roleIds"
            FROM ${channelTable} channel
            LEFT JOIN (${buildAgentChatJoinedChannelsQuery({

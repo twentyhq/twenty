@@ -9,6 +9,7 @@ import {
   GetAgentChatChannelsDocument,
   GetAgentChatChannelSummariesDocument,
 } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 // A failed load keeps what was shown, as the next change loads again
 export const useRefreshAgentChatChannels = () => {
@@ -29,15 +30,22 @@ export const useRefreshAgentChatChannels = () => {
       return;
     }
 
-    store.set(
-      agentChatChannelSummariesState.atom,
-      Object.fromEntries(
-        summaries.map(({ channelId, openCount, hasUnreadOpen }) => [
-          channelId,
-          { openCount, hasUnreadOpen },
-        ]),
-      ),
+    const summariesByChannelId = Object.fromEntries(
+      summaries.map(({ channelId, openCount, hasUnreadOpen }) => [
+        channelId,
+        { openCount, hasUnreadOpen },
+      ]),
     );
+
+    // Most chat changes leave the counts as they were
+    if (
+      !isDeeplyEqual(
+        store.get(agentChatChannelSummariesState.atom),
+        summariesByChannelId,
+      )
+    ) {
+      store.set(agentChatChannelSummariesState.atom, summariesByChannelId);
+    }
   }, [apolloClient, store]);
 
   const refreshAgentChatChannels = useCallback(async () => {

@@ -85,6 +85,16 @@ const findSystemThreadIds = async (
 };
 
 describe('Default chat channels', () => {
+  // Other suites remove members from every channel they are in
+  beforeAll(async () => {
+    await getAppProviderByClassName<AgentChatDefaultChannelService>(
+      'AgentChatDefaultChannelService',
+    ).addMembersToGeneral({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberIds: [JONY],
+    });
+  });
+
   const createdThreadIds: string[] = [];
 
   // No member owns these chats, so none can destroy them through the API

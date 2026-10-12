@@ -5,11 +5,10 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 import { useLoadAgentChatChannelThreads } from '@/ai/hooks/useLoadAgentChatChannelThreads';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
-import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type AiChatInboxThreadPaginationProps = {
@@ -29,8 +28,8 @@ export const AiChatInboxThreadPagination = ({
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
-  const agentChatChannelThreadList = useAtomStateValue(
-    agentChatChannelThreadListState,
+  const agentChatShownChannelThreadList = useAtomStateValue(
+    agentChatShownChannelThreadListSelector,
   );
   const { loadAgentChatChannelThreads } = useLoadAgentChatChannelThreads();
   const index = threads.findIndex(({ id }) => id === threadId);
@@ -41,9 +40,7 @@ export const AiChatInboxThreadPagination = ({
   }
 
   const hasMoreThreads = isDefined(agentChatShownChannelView)
-    ? agentChatChannelThreadList?.viewKey ===
-        getAgentChatChannelViewKey(agentChatShownChannelView) &&
-      agentChatChannelThreadList.hasNextPage
+    ? (agentChatShownChannelThreadList?.hasNextPage ?? false)
     : isDefined(agentChatThreadList) && agentChatThreadList.hasNextPage;
   // A channel view pages through its own list
   const fetchMoreThreads = () =>

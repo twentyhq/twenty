@@ -16,6 +16,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import {
   type AgentChatChannelListItem,
   AgentChatChannelVisibility,
+  type UpdateAgentChatChannelInput,
 } from '~/generated-metadata/graphql';
 
 type NavigationDrawerAiChatChannelActionsDropdownProps = {
@@ -23,8 +24,7 @@ type NavigationDrawerAiChatChannelActionsDropdownProps = {
   destinationChannels: AgentChatChannelListItem[];
   dropdownId: string;
   onRename: () => void;
-  onSetVisibility: (visibility: AgentChatChannelVisibility) => void;
-  onSetRoles: (roleIds: string[]) => void;
+  onUpdate: (input: UpdateAgentChatChannelInput) => void;
   onLeave: () => void;
   onDelete: (destinationChannelId: string | null) => void;
 };
@@ -34,8 +34,7 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
   destinationChannels,
   dropdownId,
   onRename,
-  onSetVisibility,
-  onSetRoles,
+  onUpdate,
   onLeave,
   onDelete,
 }: NavigationDrawerAiChatChannelActionsDropdownProps) => {
@@ -61,18 +60,18 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
               <Dropdown.ActionItem
                 startIcon={isPublic ? <IconLock /> : <IconWorld />}
                 onClick={() =>
-                  onSetVisibility(
-                    isPublic
+                  onUpdate({
+                    visibility: isPublic
                       ? AgentChatChannelVisibility.PRIVATE
                       : AgentChatChannelVisibility.PUBLIC,
-                  )
+                  })
                 }
               >
                 {isPublic ? t`Make private` : t`Make public`}
               </Dropdown.ActionItem>
               <NavigationDrawerAiChatChannelRolesSubmenu
                 roleIds={channel.roleIds}
-                onChange={onSetRoles}
+                onChange={(roleIds) => onUpdate({ roleIds })}
               />
             </>
           )}

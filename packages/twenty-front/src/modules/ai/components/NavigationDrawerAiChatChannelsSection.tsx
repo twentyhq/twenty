@@ -3,14 +3,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconPlus } from 'twenty-ui/icon';
+import { IconHash, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NavigationDrawerAiChatBrowseChannelsDropdown } from '@/ai/components/NavigationDrawerAiChatBrowseChannelsDropdown';
 import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
-import { AGENT_CHAT_CHANNEL_DEFAULT_ICON } from '@/ai/constants/AgentChatChannelDefaultIcon';
 import { useAgentChatChannelActions } from '@/ai/hooks/useAgentChatChannelActions';
-import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
 import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
@@ -39,9 +37,6 @@ export const NavigationDrawerAiChatChannelsSection = () => {
   );
   const { createAgentChatChannel } = useAgentChatChannelActions();
   const { openAgentChatChannel } = useOpenAgentChatChannel();
-  const DefaultChannelIcon = useAgentChatChannelIcon(
-    AGENT_CHAT_CHANNEL_DEFAULT_ICON,
-  );
   const [newChannelName, setNewChannelName] = useState<string | null>(null);
 
   if (!isDefined(agentChatChannels)) {
@@ -104,7 +99,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
       ))}
       {isDefined(newChannelName) ? (
         <NavigationDrawerInput
-          Icon={DefaultChannelIcon}
+          Icon={IconHash}
           value={newChannelName}
           onChange={setNewChannelName}
           onSubmit={(name) => void commitCreate(name)}

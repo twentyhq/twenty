@@ -1,5 +1,7 @@
+import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { type EntityManager } from 'typeorm';
 
+import { buildAgentChatChannelRoleGrantCondition } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-role-grant-condition.util';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 
 // Everyone holding one of the roles reads and replies in the channel, so a
@@ -10,21 +12,22 @@ export const writeAgentChatChannelRoleAccess = async ({
   channelId,
   roleIds,
   channelObjectMetadataId,
-  accessLevel = 'READ_WRITE',
+  accessLevel = RecordShareAccessLevel.READ_WRITE,
 }: {
   manager: EntityManager;
   workspaceId: string;
   channelId: string;
   roleIds: string[];
   channelObjectMetadataId: string;
-  accessLevel?: 'READ_WRITE' | 'FULL';
+  accessLevel?: RecordShareAccessLevel;
 }): Promise<void> => {
   const { recordShareTable } = getAgentChatChannelTables(workspaceId);
 
   await manager.query(
-    `DELETE FROM ${recordShareTable}
-     WHERE "recordId" = $1 AND "principalType" = 'ROLE' AND "rowCause" = 'RULE'
-       AND "sourceId" = $1 AND NOT ("principalId" = ANY($2::uuid[]))`,
+    `DELETE FROM ${recordShareTable} role_grant
+     WHERE role_grant."recordId" = $1
+       AND ${buildAgentChatChannelRoleGrantCondition('role_grant')}
+       AND NOT (role_grant."principalId" = ANY($2::uuid[]))`,
     [channelId, roleIds],
   );
 

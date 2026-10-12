@@ -6,12 +6,12 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { useRefreshAgentChatChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
-  type AgentChatChannelVisibility,
   CreateAgentChatChannelDocument,
   DeleteAgentChatChannelDocument,
   JoinAgentChatChannelDocument,
   LeaveAgentChatChannelDocument,
   UpdateAgentChatChannelDocument,
+  type UpdateAgentChatChannelInput,
 } from '~/generated-metadata/graphql';
 
 export const useAgentChatChannelActions = () => {
@@ -50,36 +50,15 @@ export const useAgentChatChannelActions = () => {
     [runChannelMutation],
   );
 
-  const renameAgentChatChannel = useCallback(
-    ({ channelId, name }: { channelId: string; name: string }) =>
-      runChannelMutation(UpdateAgentChatChannelDocument, {
-        channelId,
-        input: { name },
-      }),
-    [runChannelMutation],
-  );
-
-  const setAgentChatChannelVisibility = useCallback(
+  const updateAgentChatChannel = useCallback(
     ({
       channelId,
-      visibility,
+      input,
     }: {
       channelId: string;
-      visibility: AgentChatChannelVisibility;
+      input: UpdateAgentChatChannelInput;
     }) =>
-      runChannelMutation(UpdateAgentChatChannelDocument, {
-        channelId,
-        input: { visibility },
-      }),
-    [runChannelMutation],
-  );
-
-  const setAgentChatChannelRoles = useCallback(
-    ({ channelId, roleIds }: { channelId: string; roleIds: string[] }) =>
-      runChannelMutation(UpdateAgentChatChannelDocument, {
-        channelId,
-        input: { roleIds },
-      }),
+      runChannelMutation(UpdateAgentChatChannelDocument, { channelId, input }),
     [runChannelMutation],
   );
 
@@ -112,9 +91,7 @@ export const useAgentChatChannelActions = () => {
 
   return {
     createAgentChatChannel,
-    renameAgentChatChannel,
-    setAgentChatChannelVisibility,
-    setAgentChatChannelRoles,
+    updateAgentChatChannel,
     joinAgentChatChannel,
     leaveAgentChatChannel,
     deleteAgentChatChannel,

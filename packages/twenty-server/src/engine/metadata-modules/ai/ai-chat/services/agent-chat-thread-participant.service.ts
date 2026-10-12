@@ -24,6 +24,7 @@ import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/meta
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { findAgentChatSnoozeRemainingDelay } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-snooze-remaining-delay.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -263,10 +264,11 @@ export class AgentChatThreadParticipantService {
     snoozedUntil,
     ...args
   }: EndAgentChatThreadSnoozeJobData): Promise<void> {
-    const remainingDelay = await this.findRemainingSnoozeDelay({
-      workspaceId: args.workspaceId,
-      snoozedUntil,
-    });
+    const remainingDelay = await this.threadRepository.query(
+      args.workspaceId,
+      ({ manager }) =>
+        findAgentChatSnoozeRemainingDelay({ manager, snoozedUntil }),
+    );
 
     // This server's clock ran ahead of the database's
     if (remainingDelay > 0) {
@@ -531,25 +533,6 @@ export class AgentChatThreadParticipantService {
     );
 
     return participant ?? null;
-  }
-
-  private async findRemainingSnoozeDelay({
-    workspaceId,
-    snoozedUntil,
-  }: {
-    workspaceId: string;
-    snoozedUntil: string;
-  }): Promise<number> {
-    const [{ remainingDelay }] = await this.threadRepository.query(
-      workspaceId,
-      ({ manager }) =>
-        manager.query<{ remainingDelay: number }[]>(
-          `SELECT GREATEST(CEIL(EXTRACT(EPOCH FROM $1::timestamptz - clock_timestamp()) * 1000), 0)::int AS "remainingDelay"`,
-          [snoozedUntil],
-        ),
-    );
-
-    return remainingDelay;
   }
 
   private async assertCanWriteInboxState({
