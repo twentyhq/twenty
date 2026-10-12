@@ -10,7 +10,17 @@ type ArrayDisplayProps = {
 
 export const ArrayDisplay = ({ value }: ArrayDisplayProps) => {
   return (
-    <OverflowingList overflowLabel={t`Show all items`}>
+    <OverflowingList
+      triggerProps={{
+        onClick: (event) => event.stopPropagation(),
+        onKeyDown: (event) => event.stopPropagation(),
+      }}
+      popupProps={{
+        onClick: (event) => event.stopPropagation(),
+        onKeyDown: (event) => event.stopPropagation(),
+      }}
+      overflowLabel={t`Show hidden items`}
+    >
       {value?.map((item, index) => (
         <Chip key={`${item}-${index}`} variant="soft">
           {getChipLabel(item).content}

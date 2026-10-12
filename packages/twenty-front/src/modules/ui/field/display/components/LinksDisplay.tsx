@@ -47,7 +47,17 @@ export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
   }, [value]);
 
   return (
-    <OverflowingList overflowLabel={t`Show all items`}>
+    <OverflowingList
+      triggerProps={{
+        onClick: (event) => event.stopPropagation(),
+        onKeyDown: (event) => event.stopPropagation(),
+      }}
+      popupProps={{
+        onClick: (event) => event.stopPropagation(),
+        onKeyDown: (event) => event.stopPropagation(),
+      }}
+      overflowLabel={t`Show hidden items`}
+    >
       {links.map(({ url, label, displayLabel, type }, index) =>
         isSocialLinkType(type) ? (
           <SocialLink

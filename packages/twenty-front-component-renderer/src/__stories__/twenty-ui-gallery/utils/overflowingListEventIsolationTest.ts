@@ -19,12 +19,14 @@ export const overflowingListEventIsolationTest: TwentyUiGalleryPlayFunction =
     await expectFrontComponentMounted(canvas);
 
     const trigger = await canvas.findByRole('button', {
-      name: /Show all targets$/,
+      name: /Show hidden targets$/,
     });
     trigger.focus();
     await userEvent.keyboard('{Enter}');
 
-    const popup = await page.findByRole('dialog', { name: 'Show all targets' });
+    const popup = await page.findByRole('dialog', {
+      name: 'Show hidden targets',
+    });
     const lastTarget = within(popup).getByRole('button', { name: 'Delta' });
     await waitFor(() => expect(lastTarget).toBeVisible());
     expect(trigger).toHaveAttribute('aria-expanded', 'true');

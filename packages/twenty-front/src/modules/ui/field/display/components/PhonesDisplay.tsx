@@ -53,7 +53,18 @@ export const PhonesDisplay = ({
   };
 
   return isFocused ? (
-    <OverflowingList overflowLabel={t`Show all items`} showOverflowCount>
+    <OverflowingList
+      triggerProps={{
+        onClick: (event) => event.stopPropagation(),
+        onKeyDown: (event) => event.stopPropagation(),
+      }}
+      popupProps={{
+        onClick: (event) => event.stopPropagation(),
+        onKeyDown: (event) => event.stopPropagation(),
+      }}
+      overflowLabel={t`Show hidden items`}
+      showOverflowCount
+    >
       {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
           parsePhoneNumberOrReturnInvalidValue(callingCode + number);

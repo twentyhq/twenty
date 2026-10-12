@@ -12,9 +12,16 @@ export const useFocusedElementUnmountRef = (
       }
 
       return () => {
-        if (element.contains(element.ownerDocument.activeElement)) {
-          onFocusedElementUnmount();
-        }
+        const document = element.ownerDocument;
+        const hadFocus = element.contains(document.activeElement);
+
+        queueMicrotask(() => {
+          const hasLostFocus = document.activeElement === document.body;
+
+          if (hadFocus && !element.isConnected && hasLostFocus) {
+            onFocusedElementUnmount();
+          }
+        });
       };
     },
     [onFocusedElementUnmount],

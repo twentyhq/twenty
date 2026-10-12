@@ -113,7 +113,15 @@ export const CalendarEventComposerTargetsInput = ({
         {hasChips ? (
           <>
             <OverflowingList
-              overflowLabel={t`Show all items`}
+              triggerProps={{
+                onClick: (event) => event.stopPropagation(),
+                onKeyDown: (event) => event.stopPropagation(),
+              }}
+              popupProps={{
+                onClick: (event) => event.stopPropagation(),
+                onKeyDown: (event) => event.stopPropagation(),
+              }}
+              overflowLabel={t`Show hidden items`}
               showOverflowCount
             >
               {chips}

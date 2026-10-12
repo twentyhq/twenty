@@ -19,9 +19,9 @@ type OpenTargetsPopupScenario = OverflowingListPopupScenario & {
   targetsPopup: HTMLElement;
 };
 
-const TARGETS_POPUP_NAME = 'Show all targets';
-const REVIEWERS_POPUP_NAME = 'Show all reviewers';
-const INITIAL_TARGET_NAMES = ['Alpha', 'Bravo', 'Charlie', 'Delta'];
+const TARGETS_POPUP_NAME = 'Show hidden targets';
+const REVIEWERS_POPUP_NAME = 'Show hidden reviewers';
+const OVERFLOW_TARGET_NAMES = ['Charlie', 'Delta'];
 
 const expectCollapsedListsShowHiddenItemCounts = async ({
   canvas,
@@ -58,21 +58,31 @@ const expectTargetsPopupInsideLightThemePortalScope = async ({
   );
 };
 
-const expectTargetsPopupListsInitialTargets = async ({
+const expectTargetsPopupListsOverflowTargets = async ({
   reviewersTrigger,
   targetsPopup,
+  targetsTrigger,
 }: OpenTargetsPopupScenario) => {
   const targets = within(targetsPopup);
-  for (const targetName of INITIAL_TARGET_NAMES) {
-    await waitFor(() =>
-      expect(targets.getByRole('button', { name: targetName })).toBeVisible(),
-    );
-  }
+
+  await waitFor(async () => {
+    for (const targetName of OVERFLOW_TARGET_NAMES) {
+      await expect(
+        targets.getByRole('button', { name: targetName }),
+      ).toBeVisible();
+    }
+
+    await expect(targets.queryByRole('button', { name: 'Alpha' })).toBeNull();
+    await expect(targets.queryByRole('button', { name: 'Bravo' })).toBeNull();
+    await expect(targetsTrigger).toHaveTextContent('+2');
+    await expect(targets.getAllByRole('button')).toHaveLength(2);
+  });
   await expect(reviewersTrigger).toHaveAttribute('aria-expanded', 'false');
 };
 
 const expectSelectingDeltaUpdatesSelectedTarget = async ({
   canvas,
+  canvasElement,
   targetsPopup,
 }: OpenTargetsPopupScenario) => {
   await userEvent.click(
@@ -81,6 +91,20 @@ const expectSelectingDeltaUpdatesSelectedTarget = async ({
   await waitFor(() =>
     expect(canvas.getByLabelText('Selected target')).toHaveTextContent('Delta'),
   );
+  await expect(
+    within(targetsPopup).getByLabelText('Delta activations'),
+  ).toHaveTextContent('1');
+  const deltaButton = within(targetsPopup).getByRole('button', {
+    name: 'Delta',
+  });
+  const descriptionId = deltaButton.getAttribute('aria-describedby');
+  await expect(
+    within(targetsPopup).getByLabelText('Delta activations'),
+  ).toHaveAttribute('id', descriptionId);
+  const matchingButtons = canvasElement.ownerDocument.querySelectorAll(
+    `[id="${deltaButton.id}"]`,
+  );
+  await expect(matchingButtons).toHaveLength(1);
 };
 
 const expectEscapeClosesPopupAndRestoresTriggerFocus = async ({
@@ -91,7 +115,7 @@ const expectEscapeClosesPopupAndRestoresTriggerFocus = async ({
   trigger: HTMLElement;
 }) => {
   await userEvent.keyboard('{Escape}');
-  await waitFor(() => expect(popup).not.toBeInTheDocument());
+  await waitFor(() => expect(popup).not.toBeVisible());
   await waitFor(() => expect(trigger).toHaveFocus());
 };
 
@@ -124,8 +148,11 @@ const expectAddedTargetAppearsInTargetsPopup = async ({
     ).toBeVisible(),
   );
   await expect(within(updatedTargetsPopup).getAllByRole('button')).toHaveLength(
-    5,
+    3,
   );
+  await expect(
+    within(updatedTargetsPopup).getByLabelText('Delta activations'),
+  ).toHaveTextContent('1');
   await expectEscapeClosesPopupAndRestoresTriggerFocus({
     popup: updatedTargetsPopup,
     trigger: targetsTrigger,
@@ -159,10 +186,10 @@ export const overflowingListPopupTest: TwentyUiGalleryPlayFunction = async ({
   await expectFrontComponentMounted(canvas);
 
   const targetsTrigger = await canvas.findByRole('button', {
-    name: /Show all targets$/,
+    name: /Show hidden targets$/,
   });
   const reviewersTrigger = canvas.getByRole('button', {
-    name: /Show all reviewers$/,
+    name: /Show hidden reviewers$/,
   });
   const scenario: OverflowingListPopupScenario = {
     canvasElement,
@@ -179,7 +206,7 @@ export const overflowingListPopupTest: TwentyUiGalleryPlayFunction = async ({
     ...scenario,
     targetsPopup,
   });
-  await expectTargetsPopupListsInitialTargets({ ...scenario, targetsPopup });
+  await expectTargetsPopupListsOverflowTargets({ ...scenario, targetsPopup });
   await expectSelectingDeltaUpdatesSelectedTarget({
     ...scenario,
     targetsPopup,

@@ -6814,7 +6814,7 @@
           },
           {
             "name": "ref",
-            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (RefObject<...> | ((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)))) | null",
+            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<...>)) | null",
             "required": false,
             "defaultValue": null,
             "description": "Ref to the trigger button, or the element supplied through render."
@@ -9581,7 +9581,7 @@
           },
           {
             "name": "ref",
-            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (RefObject<...> | ((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)))) | null",
+            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<...>)) | null",
             "required": false,
             "defaultValue": null,
             "description": "Ref to the rendered trigger element, a button by default."
@@ -11956,28 +11956,70 @@
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>>[]",
         "required": true,
         "defaultValue": null,
-        "description": "Complete ordered list of elements, each with a stable key."
+        "description": "Complete ordered list of elements, each with a stable key. The popup contains only items that do not fit in the compact row."
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Initial popup visibility when uncontrolled. Defaults to false."
       },
       {
         "name": "maxInlineCount",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum number of items mounted in the compact row. The popup still contains every item."
+        "description": "Maximum number of items visible in the compact row. Available width can reduce this count further. Remaining items belong to the popup."
+      },
+      {
+        "name": "onOpenChange",
+        "type": "((open: boolean, eventDetails: PopoverRootChangeEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the requested open state and unchanged Base UI event details, including reason, event, trigger, cancel() and preventUnmountOnClose()."
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled popup visibility. A popup can appear only when items overflow and showOverflowCount is not false."
       },
       {
         "name": "overflowLabel",
         "type": "string",
         "required": false,
-        "defaultValue": "Show all items",
-        "description": "Accessible label for the popup. The overflow button is named by its visible count followed by this label. Defaults to Show all items."
+        "defaultValue": "Show hidden items",
+        "description": "Accessible label for the popup. The default overflow button is named by its visible count followed by this label. Defaults to Show hidden items."
+      },
+      {
+        "name": "popupProps",
+        "type": "Omit<PopoverPopupProps, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Popover.Popup native props, handlers, ref, render composition and focus options for the overflow content."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the compact row root div."
       },
       {
         "name": "showOverflowCount",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Shows the overflow count on hover and keyboard focus by default. Use true to show it whenever items overflow, or false to omit the trigger. An open popup stays open until it is dismissed."
+        "description": "Shows the count on hover, keyboard focus or while open by default. Use true to keep it visible whenever items overflow, or false to clip the row without a trigger or exposed popup. Empty lists and lists that fit have no trigger."
+      },
+      {
+        "name": "triggerProps",
+        "type": "Omit<\n      ComponentPropsWithRef<typeof Popover.Trigger>,\n      'handle' | 'payload' | 'ref'\n    > & { ref?: Ref<HTMLElement> }",
+        "required": false,
+        "defaultValue": null,
+        "description": "Popover.Trigger native props, handlers, ref, children and render composition for the count button. Custom components must forward supplied props and ref."
       }
     ]
   },

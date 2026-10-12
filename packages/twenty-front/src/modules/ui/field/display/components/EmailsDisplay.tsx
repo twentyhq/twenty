@@ -43,7 +43,18 @@ export const EmailsDisplay = ({
   );
 
   return isFocused ? (
-    <OverflowingList overflowLabel={t`Show all items`} showOverflowCount>
+    <OverflowingList
+      triggerProps={{
+        onClick: (event) => event.stopPropagation(),
+        onKeyDown: (event) => event.stopPropagation(),
+      }}
+      popupProps={{
+        onClick: (event) => event.stopPropagation(),
+        onKeyDown: (event) => event.stopPropagation(),
+      }}
+      overflowLabel={t`Show hidden items`}
+      showOverflowCount
+    >
       {emails.map((email, index) => (
         <RoundedLink
           key={index}

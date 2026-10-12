@@ -11,7 +11,7 @@ export const overflowingListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   await expectFrontComponentMounted(canvas);
 
   const trigger = await canvas.findByRole('button', {
-    name: /Show all measured items$/,
+    name: /Show hidden measured items$/,
   });
   await waitFor(() => expect(trigger).toHaveTextContent('+3'));
   await expect(
@@ -26,7 +26,7 @@ export const overflowingListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   );
   await waitFor(() =>
     expect(
-      canvas.queryByRole('button', { name: /Show all measured items$/ }),
+      canvas.queryByRole('button', { name: /Show hidden measured items$/ }),
     ).toBeNull(),
   );
   await expect(
@@ -42,7 +42,7 @@ export const overflowingListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.click(canvas.getByRole('button', { name: 'Add target' }));
   await waitFor(() =>
     expect(
-      canvas.getByRole('button', { name: /Show all targets$/ }),
+      canvas.getByRole('button', { name: /Show hidden targets$/ }),
     ).toHaveTextContent('+3'),
   );
   await expect(errorHandler).not.toHaveBeenCalled();
