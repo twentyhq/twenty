@@ -3,7 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   type DataSource,
   IsNull,
@@ -304,6 +304,41 @@ export class ApplicationService {
       .andWhere('application.deletedAt IS NULL')
       .andWhere('workspace.deletedAt IS NULL')
       .getCount();
+  }
+
+  async countInstalledWorkspacesByApplicationRegistrationIds(
+    applicationRegistrationIds: string[],
+  ): Promise<Map<string, number>> {
+    if (!isNonEmptyArray(applicationRegistrationIds)) {
+      return new Map();
+    }
+
+    const installCounts: {
+      applicationRegistrationId: string;
+      installCount: number;
+    }[] = await this.applicationRepository
+      .createQueryBuilder('application')
+      .select(
+        'application."applicationRegistrationId"',
+        'applicationRegistrationId',
+      )
+      .addSelect('COUNT(*)::int', 'installCount')
+      .innerJoin('application.workspace', 'workspace')
+      .where(
+        'application."applicationRegistrationId" IN (:...applicationRegistrationIds)',
+        { applicationRegistrationIds },
+      )
+      .andWhere('application.deletedAt IS NULL')
+      .andWhere('workspace.deletedAt IS NULL')
+      .groupBy('application."applicationRegistrationId"')
+      .getRawMany();
+
+    return new Map(
+      installCounts.map(({ applicationRegistrationId, installCount }) => [
+        applicationRegistrationId,
+        installCount,
+      ]),
+    );
   }
 
   async isUninstallBlockedByOtherWorkspaceInstallations({

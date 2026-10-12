@@ -35,11 +35,14 @@ import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
 import {
-  type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
   FindAllApplicationRegistrationsDocument,
+  type FindAllApplicationRegistrationsQuery,
   SyncMarketplaceCatalogDocument,
 } from '~/generated-admin/graphql';
+
+type AdminApplicationRegistration =
+  FindAllApplicationRegistrationsQuery['findAllApplicationRegistrations']['registrations'][number];
 
 const StyledTableContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -52,8 +55,8 @@ const StyledShowMoreContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
-const TABLE_GRID = '1fr 100px 100px 100px 40px';
-const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
+const TABLE_GRID = '1fr 110px 70px 70px 60px 90px 40px';
+const TABLE_GRID_MOBILE = '3fr 2fr 1fr 1fr 1fr 1fr 40px';
 const PAGE_SIZE = 25;
 
 const SOURCE_TYPE_FILTER_OPTIONS: {
@@ -163,9 +166,7 @@ export const SettingsAdminApps = () => {
     });
   };
 
-  const getFormattedSource = (
-    registration: ApplicationRegistrationFragmentFragment,
-  ) => {
+  const getFormattedSource = (registration: AdminApplicationRegistration) => {
     switch (registration.sourceType) {
       case ApplicationRegistrationSourceType.TARBALL: {
         return 'Tarball';
@@ -288,7 +289,9 @@ export const SettingsAdminApps = () => {
                 mobileGridAutoColumns={TABLE_GRID_MOBILE}
               >
                 <TableHeader>{t`Name`}</TableHeader>
+                <TableHeader>{t`Author`}</TableHeader>
                 <TableHeader align="right">{t`Source`}</TableHeader>
+                <TableHeader align="right">{t`Installs`}</TableHeader>
                 <TableHeader align="right">{t`Listed`}</TableHeader>
                 <TableHeader align="right">{t`Configured`}</TableHeader>
                 <TableHeader></TableHeader>
@@ -322,10 +325,8 @@ export const SettingsAdminApps = () => {
 };
 
 type SettingsAdminAppsTableRowProps = {
-  registration: ApplicationRegistrationFragmentFragment;
-  getFormattedSource: (
-    registration: ApplicationRegistrationFragmentFragment,
-  ) => string;
+  registration: AdminApplicationRegistration;
+  getFormattedSource: (registration: AdminApplicationRegistration) => string;
 };
 
 const SettingsAdminAppsTableRow = ({
@@ -352,9 +353,11 @@ const SettingsAdminAppsTableRow = ({
           }}
         />
       </StyledNameTableCell>
+      <TableCell overflow="hidden">{registration.author ?? '—'}</TableCell>
       <TableCell overflow="hidden" align="right">
         {getFormattedSource(registration)}
       </TableCell>
+      <TableCell align="right">{registration.installCount}</TableCell>
       <TableCell align="right">
         {registration.isListed ? t`Yes` : t`No`}
       </TableCell>

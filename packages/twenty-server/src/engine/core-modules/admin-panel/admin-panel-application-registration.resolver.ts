@@ -1,4 +1,4 @@
-import { Context, Parent, ResolveField } from '@nestjs/graphql';
+import { Context, Int, Parent, ResolveField } from '@nestjs/graphql';
 
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
@@ -19,6 +19,21 @@ export class AdminPanelApplicationRegistrationResolver {
     return context.loaders.isConfiguredLoader.load({
       applicationRegistrationId: registration.id,
     });
+  }
+
+  @ResolveField(() => Int)
+  async installCount(
+    @Parent() registration: ApplicationRegistrationEntity,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<number> {
+    return context.loaders.applicationRegistrationInstallCountLoader.load({
+      applicationRegistrationId: registration.id,
+    });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  author(@Parent() registration: ApplicationRegistrationEntity): string | null {
+    return registration.author;
   }
 
   @ResolveField(() => String, { nullable: true })

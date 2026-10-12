@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationRegistrationVariableModule } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.module';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { FieldMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/field-metadata-connection-loader.factory';
@@ -14,6 +15,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   imports: [
     ApplicationTranslationCatalogModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    ApplicationModule,
     ApplicationRegistrationVariableModule,
     RowLevelPermissionModule,
     WorkspaceCacheModule,
