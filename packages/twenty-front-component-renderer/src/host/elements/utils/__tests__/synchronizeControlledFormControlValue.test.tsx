@@ -254,6 +254,53 @@ describe('controlled form control value synchronization with pending edits', () 
     expect(hostControl.value).toBe('reset');
   });
 
+  it('should apply native edits from a remounted host control after earlier edits were acknowledged', async () => {
+    const {
+      connection,
+      container,
+      hostControl,
+      remoteControl,
+      remoteRoot,
+      dispatchAllHostEvents,
+    } = renderRemoteControlWithDeferredHostEvents('input');
+
+    hostControl.focus();
+    act(() => editNativeValue({ hostControl, value: 'ab', selectionStart: 2 }));
+    await dispatchAllHostEvents();
+
+    expect(remoteControl.value).toBe('ab');
+
+    await act(async () => {
+      remoteControl.remove();
+      await Promise.resolve();
+      connection.flush();
+    });
+    await act(async () => {
+      remoteRoot.prepend(remoteControl);
+      await Promise.resolve();
+      connection.flush();
+    });
+
+    const remountedHostControl = container.querySelector(
+      'input',
+    ) as CaretPreservingElement;
+
+    expect(remountedHostControl).not.toBe(hostControl);
+
+    remountedHostControl.focus();
+    act(() =>
+      editNativeValue({
+        hostControl: remountedHostControl,
+        value: 'abc',
+        selectionStart: 3,
+      }),
+    );
+    await dispatchAllHostEvents();
+
+    expect(remoteControl.value).toBe('abc');
+    expect(remountedHostControl.value).toBe('abc');
+  });
+
   it('should forward both input and change callbacks without replaying the native value over a transform', async () => {
     const { connection, hostControl, remoteControl, dispatchAllHostEvents } =
       renderRemoteControlWithDeferredHostEvents('input');

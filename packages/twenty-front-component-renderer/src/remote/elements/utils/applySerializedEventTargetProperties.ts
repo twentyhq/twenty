@@ -1,11 +1,10 @@
-import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { INPUT_VALUE_SEQUENCE_BRIDGE_PROPERTY } from '@/constants/InputValueSequenceBridgeProperty';
 import { SERIALIZED_EVENT_TARGET_PROPERTY_KEYS } from '@/remote/elements/constants/SerializedEventTargetPropertyKeys';
-import { workerInputValueSequenceByElement } from '@/remote/elements/states/workerInputValueSequenceByElement';
+import { acknowledgeNativeEdit } from '@/remote/elements/utils/acknowledgeNativeEdit';
 import { applySelectedOptionIndexes } from '@/remote/elements/utils/applySelectedOptionIndexes';
+import { isNativeEditAcknowledged } from '@/remote/elements/utils/isNativeEditAcknowledged';
 import { uncheckOtherRadioButtons } from '@/remote/elements/utils/uncheckOtherRadioButtons';
 import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
 import { readInputSelectionState } from '@/utils/readInputSelectionState';
@@ -18,22 +17,21 @@ export const applySerializedEventTargetProperties = ({
   element: object;
   eventData: SerializedEventData;
 }): void => {
-  const { inputValueSequence } = eventData;
-  const isStaleInputValue =
-    isNumber(inputValueSequence) &&
-    inputValueSequence <= (workerInputValueSequenceByElement.get(element) ?? 0);
+  const { nativeEditSequence } = eventData;
+  const hasNativeEditSequence = isNumber(nativeEditSequence);
+  const isValueFromAcknowledgedNativeEdit =
+    hasNativeEditSequence &&
+    isNativeEditAcknowledged({ remoteElement: element, nativeEditSequence });
 
-  if (isNumber(inputValueSequence) && !isStaleInputValue) {
-    workerInputValueSequenceByElement.set(element, inputValueSequence);
-    updateRemoteElementProperty(
-      element as Element,
-      INPUT_VALUE_SEQUENCE_BRIDGE_PROPERTY,
-      inputValueSequence,
-    );
+  if (hasNativeEditSequence && !isValueFromAcknowledgedNativeEdit) {
+    acknowledgeNativeEdit({ remoteElement: element, nativeEditSequence });
   }
 
   for (const key of SERIALIZED_EVENT_TARGET_PROPERTY_KEYS) {
-    if (key === 'value' && isStaleInputValue) {
+    const shouldKeepCurrentValue =
+      key === 'value' && isValueFromAcknowledgedNativeEdit;
+
+    if (shouldKeepCurrentValue) {
       continue;
     }
 

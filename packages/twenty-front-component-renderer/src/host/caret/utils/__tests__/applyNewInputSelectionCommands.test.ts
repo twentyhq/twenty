@@ -24,7 +24,6 @@ describe('applyNewInputSelectionCommands', () => {
         { sequence: 2, request: { property: 'selectionEnd', value: 4 } },
       ],
       appliedSelectionSequenceRef,
-      latestInputValueSequence: 0,
     });
 
     expect(input.selectionStart).toBe(4);
@@ -51,7 +50,6 @@ describe('applyNewInputSelectionCommands', () => {
         element: input,
         selectionCommands,
         appliedSelectionSequenceRef,
-        latestInputValueSequence: 0,
       });
 
       expect(input.selectionStart).toBe(11);
