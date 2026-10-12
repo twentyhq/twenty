@@ -1,6 +1,5 @@
-import { OnboardingFreeCreditsProgressBarGrowEffect } from '@/onboarding/components/free-credits/OnboardingFreeCreditsProgressBarGrowEffect';
+import { OnboardingFreeCreditsProgressBarReducedMotionEffect } from '@/onboarding/components/free-credits/OnboardingFreeCreditsProgressBarReducedMotionEffect';
 import { styled } from '@linaria/react';
-import { useRef } from 'react';
 import {
   Progress,
   type ProgressRootProps,
@@ -120,16 +119,20 @@ export const OnboardingFreeCreditsProgressBar = ({
   hasTrackGrown,
   onTrackGrown,
 }: OnboardingFreeCreditsProgressBarProps) => {
-  const progressBarRef = useRef<HTMLDivElement>(null);
-
   return (
     <>
       <Progress.Root
-        ref={progressBarRef}
         value={value}
         max={max}
         aria-label={ariaLabel}
         data-grow-in={!hasTrackGrown || undefined}
+        onAnimationEnd={({ target, currentTarget }) => {
+          if (hasTrackGrown || target !== currentTarget) {
+            return;
+          }
+
+          onTrackGrown();
+        }}
         render={<StyledProgressBar />}
       >
         <Progress.Track render={<StyledTrack />}>
@@ -140,8 +143,7 @@ export const OnboardingFreeCreditsProgressBar = ({
           </Progress.Indicator>
         </Progress.Track>
       </Progress.Root>
-      <OnboardingFreeCreditsProgressBarGrowEffect
-        progressBarRef={progressBarRef}
+      <OnboardingFreeCreditsProgressBarReducedMotionEffect
         hasTrackGrown={hasTrackGrown}
         onTrackGrown={onTrackGrown}
       />
