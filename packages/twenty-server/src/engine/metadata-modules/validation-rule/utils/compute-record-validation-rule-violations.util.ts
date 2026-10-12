@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import {
   type ObjectRecord,
   type ValidationRuleFieldDescriptor,

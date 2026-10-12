@@ -3,6 +3,7 @@ import React from 'react';
 
 import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
+import { recordNativeEdit } from '@/host/caret/utils/recordNativeEdit';
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
 
 const resolveInitialValue = (candidate: unknown): string | undefined => {
@@ -37,6 +38,7 @@ export const createCaretPreservingElement = ({
     defaultValue,
     onFocus: forwardedOnFocus,
     onBlur: forwardedOnBlur,
+    onInput: forwardedOnInput,
     ...rest
   } = reactBindableProps;
   const initialValue =
@@ -56,12 +58,20 @@ export const createCaretPreservingElement = ({
     }
   };
 
+  const handleInput = (event: React.FormEvent<CaretPreservingElement>) => {
+    recordNativeEdit(event.currentTarget);
+    if (isFunction(forwardedOnInput)) {
+      forwardedOnInput(event);
+    }
+  };
+
   return React.createElement(htmlTag, {
     ...rest,
     ...hostEnforcedProps,
     defaultValue: initialValue,
     onFocus: handleFocus,
     onBlur: handleBlur,
+    onInput: handleInput,
     ref: caretPreservingElementRef,
   });
 };
