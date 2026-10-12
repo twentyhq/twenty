@@ -1,0 +1,331 @@
+import { PermissionFlagType } from 'twenty-shared/constants';
+import { FieldActorSource } from 'twenty-shared/types';
+
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { AgentToolProvider } from 'src/engine/core-modules/tool-provider/providers/agent-tool.provider';
+import { type AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import { AgentToolWorkspaceService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/agent-tool.workspace-service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+
+const workspaceId = 'workspace-id';
+const agentId = '20202020-0000-4000-8000-000000000001';
+const roleId = '20202020-0000-4000-8000-000000000002';
+const existingTriggerId = '20202020-0000-4000-8000-000000000003';
+
+const buildAgent = (overrides: Record<string, unknown> = {}) => ({
+  id: agentId,
+  name: 'dealWatcher',
+  label: 'Deal watcher',
+  description: null,
+  icon: null,
+  prompt: 'Watch deals',
+  modelId: 'workspace-default-model',
+  roleId,
+  triggers: [],
+  applicationId: 'application-id',
+  isCustom: true,
+  isSystem: false,
+  ...overrides,
+});
+
+const buildProvider = (options?: { hasAiSettingsPermission?: boolean }) => {
+  const agentService = {
+    findManyAgents: jest.fn().mockResolvedValue([]),
+    findOneAgentById: jest.fn().mockResolvedValue(buildAgent()),
+    createOneAgent: jest
+      .fn()
+      .mockImplementation(async (input) => buildAgent(input)),
+    updateOneAgent: jest
+      .fn()
+      .mockImplementation(async ({ input }) => buildAgent(input)),
+    deleteOneAgent: jest.fn().mockResolvedValue(buildAgent()),
+  };
+  const aiModelRegistryService = {
+    validateModelAvailability: jest.fn(),
+  };
+  const permissionsService = {
+    checkRolesPermissions: jest
+      .fn()
+      .mockResolvedValue(options?.hasAiSettingsPermission ?? true),
+  };
+
+  const provider = new AgentToolProvider(
+    new AgentToolWorkspaceService(
+      agentService as unknown as AgentService,
+      aiModelRegistryService as unknown as AiModelRegistryService,
+    ),
+    permissionsService as unknown as PermissionsService,
+  );
+
+  return {
+    provider,
+    agentService,
+    aiModelRegistryService,
+    permissionsService,
+  };
+};
+
+const context: ToolProviderContext = {
+  workspaceId,
+  roleId: 'caller-role-id',
+  rolePermissionConfig: { unionOf: ['caller-role-id'] },
+  userWorkspaceId: 'caller-user-workspace-id',
+  actorContext: {
+    source: FieldActorSource.MANUAL,
+    workspaceMemberId: 'caller-workspace-member-id',
+    name: 'Caller',
+    context: {},
+  },
+};
+
+describe('AgentToolProvider', () => {
+  describe('isAvailable', () => {
+    it('is available when the caller has the AI settings permission', async () => {
+      const { provider, permissionsService } = buildProvider();
+
+      await expect(provider.isAvailable(context)).resolves.toBe(true);
+      expect(permissionsService.checkRolesPermissions).toHaveBeenCalledWith(
+        context.rolePermissionConfig,
+        workspaceId,
+        PermissionFlagType.AI_SETTINGS,
+      );
+    });
+
+    it('is not available without the AI settings permission', async () => {
+      const { provider } = buildProvider({ hasAiSettingsPermission: false });
+
+      await expect(provider.isAvailable(context)).resolves.toBe(false);
+    });
+  });
+
+  it('exposes the agent management tools', async () => {
+    const { provider } = buildProvider();
+
+    const descriptors = await provider.generateDescriptors(context, {
+      includeSchemas: true,
+    });
+
+    expect(descriptors.map((descriptor) => descriptor.name)).toEqual([
+      'list_agents',
+      'create_agent',
+      'update_agent',
+      'delete_agent',
+    ]);
+  });
+
+  describe('list_agents', () => {
+    it('leaves out the agents backing workflow steps', async () => {
+      const { provider, agentService } = buildProvider();
+
+      agentService.findManyAgents.mockResolvedValue([
+        buildAgent(),
+        buildAgent({ id: 'workflow-step-agent-id', isSystem: true }),
+      ]);
+
+      const output = await provider.executeStaticTool(
+        'list_agents',
+        {},
+        context,
+      );
+
+      expect(output.success).toBe(true);
+      expect(output.result).toMatchObject({
+        count: 1,
+        agents: [{ id: agentId }],
+      });
+    });
+  });
+
+  describe('create_agent', () => {
+    it('creates an agent on the workspace default model with generated trigger ids', async () => {
+      const { provider, agentService, aiModelRegistryService } =
+        buildProvider();
+
+      const output = await provider.executeStaticTool(
+        'create_agent',
+        {
+          label: 'Deal watcher',
+          prompt: 'Watch deals',
+          roleId,
+          triggers: [
+            {
+              type: 'DATABASE_EVENT',
+              instructions: 'Post a note on the new deal',
+              settings: { eventName: 'opportunity.created' },
+            },
+            { type: 'CRON', settings: { pattern: '0 9 * * 1' } },
+          ],
+        },
+        context,
+      );
+
+      expect(output.success).toBe(true);
+      expect(
+        aiModelRegistryService.validateModelAvailability,
+      ).toHaveBeenCalledWith('workspace-default-model');
+
+      const [createAgentInput, calledWorkspaceId] =
+        agentService.createOneAgent.mock.calls[0];
+
+      expect(calledWorkspaceId).toBe(workspaceId);
+      expect(createAgentInput).toMatchObject({
+        label: 'Deal watcher',
+        prompt: 'Watch deals',
+        roleId,
+        modelId: 'workspace-default-model',
+        triggers: [
+          {
+            type: 'DATABASE_EVENT',
+            isActive: true,
+            instructions: 'Post a note on the new deal',
+            settings: { eventName: 'opportunity.created' },
+          },
+          {
+            type: 'CRON',
+            isActive: true,
+            instructions: null,
+            settings: { pattern: '0 9 * * 1' },
+          },
+        ],
+      });
+      expect(createAgentInput.triggers[0].id).toEqual(expect.any(String));
+      expect(createAgentInput.triggers[0].id).not.toBe(
+        createAgentInput.triggers[1].id,
+      );
+    });
+
+    it('surfaces the underlying validation errors from a failed migration build', async () => {
+      const { provider, agentService } = buildProvider();
+
+      agentService.createOneAgent.mockRejectedValue(
+        new WorkspaceMigrationBuilderException(
+          {
+            status: 'fail',
+            report: {
+              agent: [
+                {
+                  flatEntityMinimalInformation: { name: 'dealWatcher' },
+                  errors: [
+                    {
+                      code: 'INVALID_AGENT_INPUT',
+                      message: 'Cron triggers need a valid cron pattern',
+                    },
+                  ],
+                },
+              ],
+            },
+          } as unknown as ConstructorParameters<
+            typeof WorkspaceMigrationBuilderException
+          >[0],
+          'Multiple validation errors occurred while creating agent',
+        ),
+      );
+
+      const output = await provider.executeStaticTool(
+        'create_agent',
+        { label: 'Deal watcher', prompt: 'Watch deals' },
+        context,
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error).toContain('Cron triggers need a valid cron pattern');
+    });
+  });
+
+  describe('update_agent', () => {
+    it('keeps the ids of the triggers passed back and only sends the given fields', async () => {
+      const { provider, agentService, aiModelRegistryService } =
+        buildProvider();
+
+      const output = await provider.executeStaticTool(
+        'update_agent',
+        {
+          id: agentId,
+          triggers: [
+            {
+              id: existingTriggerId,
+              type: 'CRON',
+              isActive: false,
+              settings: { pattern: '0 9 * * 1' },
+            },
+          ],
+        },
+        context,
+      );
+
+      expect(output.success).toBe(true);
+      expect(
+        aiModelRegistryService.validateModelAvailability,
+      ).not.toHaveBeenCalled();
+      expect(agentService.updateOneAgent).toHaveBeenCalledWith({
+        input: {
+          id: agentId,
+          triggers: [
+            {
+              id: existingTriggerId,
+              type: 'CRON',
+              isActive: false,
+              instructions: null,
+              settings: { pattern: '0 9 * * 1' },
+            },
+          ],
+        },
+        workspaceId,
+      });
+    });
+
+    it('refuses to change an agent backing a workflow step', async () => {
+      const { provider, agentService } = buildProvider();
+
+      agentService.findOneAgentById.mockResolvedValue(
+        buildAgent({ isSystem: true }),
+      );
+
+      const output = await provider.executeStaticTool(
+        'update_agent',
+        { id: agentId, prompt: 'Something else' },
+        context,
+      );
+
+      expect(output.success).toBe(false);
+      expect(agentService.updateOneAgent).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('delete_agent', () => {
+    it('deletes the agent', async () => {
+      const { provider, agentService } = buildProvider();
+
+      const output = await provider.executeStaticTool(
+        'delete_agent',
+        { id: agentId },
+        context,
+      );
+
+      expect(output.success).toBe(true);
+      expect(agentService.deleteOneAgent).toHaveBeenCalledWith(
+        agentId,
+        workspaceId,
+      );
+    });
+
+    it('refuses to delete an agent backing a workflow step', async () => {
+      const { provider, agentService } = buildProvider();
+
+      agentService.findOneAgentById.mockResolvedValue(
+        buildAgent({ isSystem: true }),
+      );
+
+      const output = await provider.executeStaticTool(
+        'delete_agent',
+        { id: agentId },
+        context,
+      );
+
+      expect(output.success).toBe(false);
+      expect(agentService.deleteOneAgent).not.toHaveBeenCalled();
+    });
+  });
+});

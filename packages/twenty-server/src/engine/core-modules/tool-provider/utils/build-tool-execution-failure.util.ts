@@ -4,7 +4,7 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
-const getToolExecutionErrorMessage = (error: unknown): string => {
+export const getToolExecutionErrorMessage = (error: unknown): string => {
   if (error instanceof WorkspaceMigrationBuilderException) {
     return formatValidationErrors(error);
   }
