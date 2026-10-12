@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   ObjectRecordCreateEvent,
@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { buildAgentChatThreadUpdateEvent } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-update-event.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -18,6 +19,8 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 // chat history writes skip record events, so subscribers only hear of them from here
 @Injectable()
 export class AgentChatThreadRecordEventService {
+  private readonly logger = new Logger(AgentChatThreadRecordEventService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -96,6 +99,36 @@ export class AgentChatThreadRecordEventService {
       objectMetadata,
       workspaceId,
     });
+  }
+
+  // Chat lists show which chats wait on an answer. The marker is already
+  // cleared, so a lost event must not fail the caller
+  async emitPendingQuestionCleared({
+    workspaceId,
+    threadId,
+    messageId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    messageId: string;
+  }): Promise<void> {
+    try {
+      const thread = await this.findThread({ workspaceId, threadId });
+
+      if (!isDefined(thread)) {
+        return;
+      }
+
+      await this.emitThreadUpdated({
+        workspaceId,
+        threadBefore: { ...thread, pendingQuestionMessageId: messageId },
+        threadAfter: thread,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not emit the cleared question on thread ${threadId}: ${formatErrorWithCause(error)}`,
+      );
+    }
   }
 
   private findThread({

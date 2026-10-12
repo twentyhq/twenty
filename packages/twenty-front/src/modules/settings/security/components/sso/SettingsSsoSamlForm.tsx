@@ -1,14 +1,16 @@
 import { parseSamlMetadataFromXmlFile } from '@/settings/security/utils/parseSamlMetadataFromXmlFile';
+import { useBuildServerUrl } from '@/settings/security/hooks/useBuildServerUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconCheck, IconCopy, IconDownload, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { LabeledDivider } from '@/ui/layout/line/components/LabeledDivider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -53,6 +55,7 @@ export const SettingsSsoSamlForm = () => {
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
+  const buildServerUrl = useBuildServerUrl();
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
@@ -73,8 +76,8 @@ export const SettingsSsoSamlForm = () => {
     }
   };
 
-  const entityID = `${REACT_APP_SERVER_BASE_URL}/auth/saml/login/${getValues('id')}`;
-  const acsUrl = `${REACT_APP_SERVER_BASE_URL}/auth/saml/callback/${getValues('id')}`;
+  const entityID = buildServerUrl(`/auth/saml/login/${getValues('id')}`);
+  const acsUrl = buildServerUrl(`/auth/saml/callback/${getValues('id')}`);
 
   const inputFileRef = useRef<HTMLInputElement>(null);
 
@@ -155,7 +158,7 @@ export const SettingsSsoSamlForm = () => {
               type="button"
             >{t`Download file`}</Button>
           </StyledContainer>
-          <HorizontalSeparator text={t`Or`} />
+          <LabeledDivider>{t`Or`}</LabeledDivider>
           <StyledContainer>
             <StyledLinkContainer>
               <SettingsTextInput

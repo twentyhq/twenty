@@ -11,7 +11,7 @@ import { Select } from '@/ui/input/components/Select';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { IconDecimal, IconEye } from 'twenty-ui/icon';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
+import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
   settings: numberFieldDefaultValueSchema,

@@ -13,7 +13,7 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import ButtonGroupReference from '/snippets/ui/generated/input/button-group.mdx';
 
-Give a group an accessible name and place related buttons inside it. The group joins adjacent borders and can apply a shared size, variant, and color. Buttons retain their own tab stops.
+Give a group an accessible name and place related buttons inside it. The group joins adjacent borders and can apply defaults for size, variant, and color. Buttons retain their own tab stops.
 
 ## State ownership
 
@@ -34,37 +34,66 @@ export const RecordActions = () => (
 );
 ```
 
+## Appearance precedence
+
+Each appearance prop resolves independently: the child's explicit prop, then the group default, then the component default. This applies to both Button and IconButton, including an explicit `IconButton size="xs"`. Defaults reach children through fragments, wrappers, and tooltip anchors.
+
+```tsx
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup
+    aria-label="Activity actions"
+    variant="solid"
+    color="accent"
+    size="sm"
+  >
+    <Button>New activity</Button>
+    <Button variant="ghost" color="danger" size="md">
+      Delete activity
+    </Button>
+    <Button color="neutral">Duplicate activity</Button>
+  </ButtonGroup>
+);
+```
+
+<StoryEmbed
+  storyId="ui-input-button-buttongroup--appearance-overrides"
+  title="Individual appearance in a button group"
+  height={180}
+/>
+
 ## Props
 
 <ButtonGroupReference />
 
 ## Detached controls
 
-Set `attached={false}` to keep each control's rounded corners and a 2px gap. Shared size, surface, and color still apply through wrappers and tooltip anchors.
+Set `attached={false}` to keep each control's rounded corners and a 2px gap. Group defaults still apply through wrappers and tooltip anchors; explicit child props take precedence.
 
 ## Framed controls
 
-Set `framed` to add a translucent background, border, 2px padding, and concentric corners. The frame works with attached or detached controls and preserves each button's size and appearance unless you set them on the group. Use `size="xs"` on [LightIconButton](/ui/components/input/light-icon-button) for compact 20px actions.
+Set `framed` to add a translucent background, border, 2px padding, and concentric corners. The frame works with attached or detached controls and preserves explicit child appearance. Use `size="xs"` on [IconButton](/ui/components/input/icon-button) for compact 20px actions.
 
 <StoryEmbed
-  storyId="ui-input-button-buttongroup--framed-documentation"
+  storyId="ui-components-iconbutton--framed-group-documentation"
   title="Framed button group"
   height={180}
 />
 
 ```tsx
-import { LightIconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconPlus, IconTrash } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 
 export const CompactRecordActions = () => (
   <ButtonGroup framed attached={false} aria-label="Record actions">
-    <LightIconButton size="xs" aria-label="Add" emphasis="subtle">
+    <IconButton size="xs" aria-label="Add" variant="ghost">
       <IconPlus />
-    </LightIconButton>
-    <LightIconButton size="xs" aria-label="Delete" emphasis="subtle" disabled>
+    </IconButton>
+    <IconButton size="xs" aria-label="Delete" variant="ghost" disabled>
       <IconTrash />
-    </LightIconButton>
+    </IconButton>
   </ButtonGroup>
 );
 ```

@@ -5,6 +5,7 @@ import { USAGE_LIMIT_SPENDER_TYPE_LABELS } from '@/settings/billing/constants/Us
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
 import { type UsageLimitPeriodUnit } from '@/settings/billing/types/UsageLimitPeriodUnit';
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
+import { buildUsageQuotaScopeInput } from '@/settings/billing/utils/buildUsageQuotaScopeInput';
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 import {
   UsageOperationType,
@@ -62,9 +63,26 @@ export const getUsageLimitFormOptions = ({
     )?.allowedUnits ??
     (values.operationType === UsageOperationType.ALL ? [UsageUnit.CREDIT] : []);
 
+  const isOperatorOnlyPeriodUnit = (periodUnit: UsageLimitPeriodUnit) => {
+    const scope = buildUsageQuotaScopeInput({ ...values, periodUnit });
+
+    return (
+      isDefined(scope) &&
+      !isDefined(scope.spenderId) &&
+      definition.operatorOnlyScopes.some(
+        (operatorOnlyScope) =>
+          operatorOnlyScope.operationType === scope.operationType &&
+          operatorOnlyScope.spenderType === scope.spenderType &&
+          operatorOnlyScope.unit === scope.unit &&
+          operatorOnlyScope.periodUnit === scope.periodUnit,
+      )
+    );
+  };
+
   const periodUnits = ANCHORED_USAGE_LIMIT_PERIOD_UNITS.filter(
     (periodUnit) =>
-      periodUnit !== 'allowancePeriod' || definitions.hasAllowancePeriod,
+      (periodUnit !== 'allowancePeriod' || definitions.hasAllowancePeriod) &&
+      !isOperatorOnlyPeriodUnit(periodUnit),
   );
 
   return {

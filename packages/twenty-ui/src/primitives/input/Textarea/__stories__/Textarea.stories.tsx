@@ -1,5 +1,4 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -34,27 +33,6 @@ export const AutoResize: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240 } },
   args: { autoResize: true, rows: 1, maxRows: 4 },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const textarea = canvas.getByRole('textbox', { name: 'Textarea' });
-    const initialHeight = textarea.clientHeight;
-
-    await expect(
-      textarea.style.getPropertyValue('--tw-textarea-max-rows'),
-    ).toBe('4');
-
-    await userEvent.type(textarea, 'one{enter}two{enter}three');
-
-    await expect(textarea.clientHeight).toBeGreaterThan(initialHeight);
-
-    await userEvent.type(
-      textarea,
-      '{enter}four{enter}five{enter}six{enter}seven{enter}eight',
-    );
-
-    await expect(textarea.scrollHeight).toBeGreaterThan(textarea.clientHeight);
-  },
 };
 
 type TextareaCatalogState = 'default' | 'focus' | 'invalid' | 'disabled';

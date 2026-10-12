@@ -7,6 +7,7 @@ export const HTML_COMMON_PROPERTIES: Record<string, PropertySchema> = {
   style: { type: 'string', optional: true },
   title: { type: 'string', optional: true },
   tabIndex: { type: 'number', optional: true },
+  hidden: { type: 'boolean', optional: true },
   role: { type: 'string', optional: true },
   'aria-label': { type: 'string', optional: true },
   'aria-hidden': { type: 'boolean', optional: true },

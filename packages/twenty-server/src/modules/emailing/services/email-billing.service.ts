@@ -6,7 +6,6 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { buildEmailQuotaCost } from 'src/modules/emailing/utils/build-email-quota-cost.util';
 import { computeEmailCreditsUsedMicro } from 'src/modules/emailing/utils/compute-email-credits-used-micro.util';
@@ -21,7 +20,6 @@ type EmailSendScope = EmailUsageScope & { emailCount?: number };
 @Injectable()
 export class EmailBillingService {
   constructor(
-    private readonly usageRecorderService: UsageRecorderService,
     private readonly billingUsageService: BillingUsageService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
@@ -63,28 +61,18 @@ export class EmailBillingService {
       return;
     }
 
-    const creditsUsedMicro = computeEmailCreditsUsedMicro(sentEmailCount);
-
-    await this.usageLimitQuotaService.consumeQuota({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
-      resourceType: UsageResourceType.EMAIL,
-      operationType: UsageOperationType.EMAIL_SEND,
-      spenders,
-      cost: {
-        [UsageUnit.CREDIT]: creditsUsedMicro,
-        [UsageUnit.INVOCATION]: sentEmailCount,
-      },
+      events: [
+        {
+          resourceType: UsageResourceType.EMAIL,
+          operationType: UsageOperationType.EMAIL_SEND,
+          creditsUsedMicro: computeEmailCreditsUsedMicro(sentEmailCount),
+          quantity: sentEmailCount,
+          unit: UsageUnit.INVOCATION,
+          spenders,
+        },
+      ],
     });
-
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.EMAIL,
-        operationType: UsageOperationType.EMAIL_SEND,
-        creditsUsedMicro,
-        quantity: sentEmailCount,
-        unit: UsageUnit.INVOCATION,
-        spenders,
-      },
-    ]);
   }
 }

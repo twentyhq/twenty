@@ -2,6 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { chunk } from 'src/utils/chunk';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
+import { hasLastContactChanged } from 'src/utils/has-last-contact-changed';
 import {
   type RecordUpsert,
   upsertRecordsInBatches,
@@ -17,99 +18,30 @@ const EMPTY_LAST_CONTACT: LastContactData = {
   lastContactItemCalendarEventId: null,
 };
 
-type PersonLastContact = {
+type OpportunityNode = {
+  id?: string | null;
   lastContactAt?: string | null;
-  lastContactItemMessage?: { id: string } | null;
-  lastContactItemCalendarEvent?: { id: string } | null;
+  lastContactItemMessageId?: string | null;
+  lastContactItemCalendarEventId?: string | null;
+  pointOfContact?: {
+    lastContactAt?: string | null;
+    lastContactItemMessageId?: string | null;
+    lastContactItemCalendarEventId?: string | null;
+  } | null;
 };
 
-const collectPointOfContactIdByOpportunityId = async (
-  client: CoreApiClient,
-  opportunityIds: string[],
-): Promise<Map<string, string | null>> => {
-  const pointOfContactIdByOpportunityId = new Map<string, string | null>();
-
-  for (const ids of chunk(opportunityIds, PAGE_SIZE)) {
-    let after: string | undefined;
-
-    do {
-      const { opportunities } = await executeWithRetry(() =>
-        client.query({
-          opportunities: {
-            __args: { filter: { id: { in: ids } }, first: PAGE_SIZE, after },
-            edges: { node: { id: true, pointOfContactId: true } },
-            pageInfo: { hasNextPage: true, endCursor: true },
-          },
-        }),
-      );
-
-      for (const edge of opportunities?.edges ?? []) {
-        const { id, pointOfContactId } = edge.node;
-
-        if (id) {
-          pointOfContactIdByOpportunityId.set(id, pointOfContactId ?? null);
-        }
+const buildLastContactData = (
+  pointOfContact: OpportunityNode['pointOfContact'],
+): LastContactData =>
+  pointOfContact
+    ? {
+        lastContactAt: pointOfContact.lastContactAt ?? null,
+        lastContactItemMessageId:
+          pointOfContact.lastContactItemMessageId ?? null,
+        lastContactItemCalendarEventId:
+          pointOfContact.lastContactItemCalendarEventId ?? null,
       }
-
-      after = opportunities?.pageInfo.hasNextPage
-        ? (opportunities.pageInfo.endCursor ?? undefined)
-        : undefined;
-    } while (after);
-  }
-
-  return pointOfContactIdByOpportunityId;
-};
-
-const collectLastContactByPersonId = async (
-  client: CoreApiClient,
-  personIds: string[],
-): Promise<Map<string, LastContactData>> => {
-  const lastContactByPersonId = new Map<string, LastContactData>();
-
-  for (const ids of chunk(personIds, PAGE_SIZE)) {
-    let after: string | undefined;
-
-    do {
-      const { people } = await executeWithRetry(() =>
-        client.query({
-          people: {
-            __args: { filter: { id: { in: ids } }, first: PAGE_SIZE, after },
-            edges: {
-              node: {
-                id: true,
-                lastContactAt: true,
-                lastContactItemMessage: { id: true },
-                lastContactItemCalendarEvent: { id: true },
-              },
-            },
-            pageInfo: { hasNextPage: true, endCursor: true },
-          },
-        }),
-      );
-
-      for (const edge of people?.edges ?? []) {
-        const person = edge.node as PersonLastContact & { id?: string | null };
-
-        if (!person.id) {
-          continue;
-        }
-
-        lastContactByPersonId.set(person.id, {
-          lastContactAt: person.lastContactAt ?? null,
-          lastContactItemMessageId: person.lastContactItemMessage?.id ?? null,
-          lastContactItemCalendarEventId:
-            person.lastContactItemCalendarEvent?.id ?? null,
-        });
-      }
-
-      after = people?.pageInfo.hasNextPage
-        ? (people.pageInfo.endCursor ?? undefined)
-        : undefined;
-    } while (after);
-  }
-
-  return lastContactByPersonId;
-};
+    : EMPTY_LAST_CONTACT;
 
 // An opportunity's last contact mirrors its point of contact, so it must be
 // recomputed whenever the opportunity is created or its point of contact changes,
@@ -122,28 +54,48 @@ export const recomputeOpportunitiesLastContact = async (
     return;
   }
 
-  const pointOfContactIdByOpportunityId =
-    await collectPointOfContactIdByOpportunityId(client, opportunityIds);
-  const personIds = [
-    ...new Set(
-      [...pointOfContactIdByOpportunityId.values()].filter(
-        (pointOfContactId): pointOfContactId is string => !!pointOfContactId,
-      ),
-    ),
-  ];
-  const lastContactByPersonId = await collectLastContactByPersonId(
-    client,
-    personIds,
-  );
+  const upserts: RecordUpsert[] = [];
 
-  const upserts: RecordUpsert[] = [
-    ...pointOfContactIdByOpportunityId,
-  ].map(([opportunityId, pointOfContactId]) => ({
-    id: opportunityId,
-    ...((pointOfContactId
-      ? lastContactByPersonId.get(pointOfContactId)
-      : undefined) ?? EMPTY_LAST_CONTACT),
-  }));
+  for (const ids of chunk(opportunityIds, PAGE_SIZE)) {
+    let after: string | undefined;
+
+    do {
+      const { opportunities } = await executeWithRetry(() =>
+        client.query({
+          opportunities: {
+            __args: { filter: { id: { in: ids } }, first: PAGE_SIZE, after },
+            edges: {
+              node: {
+                id: true,
+                lastContactAt: true,
+                lastContactItemMessageId: true,
+                lastContactItemCalendarEventId: true,
+                pointOfContact: {
+                  lastContactAt: true,
+                  lastContactItemMessageId: true,
+                  lastContactItemCalendarEventId: true,
+                },
+              },
+            },
+            pageInfo: { hasNextPage: true, endCursor: true },
+          },
+        }),
+      );
+
+      for (const edge of opportunities?.edges ?? []) {
+        const opportunity = edge.node as OpportunityNode;
+        const data = buildLastContactData(opportunity.pointOfContact);
+
+        if (opportunity.id && hasLastContactChanged(opportunity, data)) {
+          upserts.push({ id: opportunity.id, ...data });
+        }
+      }
+
+      after = opportunities?.pageInfo.hasNextPage
+        ? (opportunities.pageInfo.endCursor ?? undefined)
+        : undefined;
+    } while (after);
+  }
 
   await upsertRecordsInBatches(client, 'createOpportunities', upserts);
 };

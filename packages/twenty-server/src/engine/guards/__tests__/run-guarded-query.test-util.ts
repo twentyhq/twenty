@@ -22,7 +22,13 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { type GraphQLSchema, graphql } from 'graphql';
 import supertest from 'supertest';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
+
+const EXCEPTION_HANDLER_SERVICE_PROVIDER = {
+  provide: ExceptionHandlerService,
+  useValue: { captureExceptions: () => [] },
+};
 
 // real Nest + Yoga app so a guard refusal reaches the catch-all filter as in production
 export const runGuardedQuery = async ({
@@ -52,7 +58,10 @@ export const runGuardedQuery = async ({
       }),
       FeatureModule,
     ],
-    providers: [{ provide: APP_FILTER, useClass: UnhandledExceptionFilter }],
+    providers: [
+      { provide: APP_FILTER, useClass: UnhandledExceptionFilter },
+      EXCEPTION_HANDLER_SERVICE_PROVIDER,
+    ],
   })
   class RootModule {}
 
@@ -96,7 +105,10 @@ export const runGuardedRestRequest = async ({
 
   @Module({
     controllers: [TestController],
-    providers: [{ provide: APP_FILTER, useClass: UnhandledExceptionFilter }],
+    providers: [
+      { provide: APP_FILTER, useClass: UnhandledExceptionFilter },
+      EXCEPTION_HANDLER_SERVICE_PROVIDER,
+    ],
   })
   class RootModule {}
 

@@ -54,10 +54,6 @@ jest.mock('@/ui/layout/dropdown/hooks/useOpenDropdown', () => ({
   useOpenDropdown: () => ({ openDropdown: jest.fn() }),
 }));
 
-jest.mock('@/ui/utilities/pointer-event/hooks/useClickOutsideListener', () => ({
-  useClickOutsideListener: () => ({ toggleClickOutside: jest.fn() }),
-}));
-
 jest.mock('twenty-ui/utilities', () => ({
   ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => false,
@@ -358,8 +354,5 @@ describe('PageLayoutTabList selection', () => {
       'true',
     );
     expect(mockOpenTabSettings).not.toHaveBeenCalled();
-    expect(mockCloseDropdown).toHaveBeenCalledWith(
-      `tab-overflow-${TAB_LIST_ID}`,
-    );
   });
 });

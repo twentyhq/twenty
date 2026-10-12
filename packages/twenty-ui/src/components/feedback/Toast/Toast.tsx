@@ -9,7 +9,7 @@ import {
   IconX,
 } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { HorizontalSeparator } from '@ui/primitives/layout/HorizontalSeparator/HorizontalSeparator';
+import { Separator } from '@ui/primitives/layout/Separator/Separator';
 import { useTheme } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -137,7 +137,7 @@ export const Toast = ({
           )}
           {isDefined(action) && (
             <div className={styles.footer}>
-              <HorizontalSeparator noMargin />
+              <Separator />
               <div className={styles.footerAction}>{action}</div>
             </div>
           )}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isSafeInternalPath } from 'twenty-shared/utils';
 
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -8,7 +8,6 @@ import { SIDE_PANEL_PATH_SEARCH_PARAM } from '@/side-panel/routing/constants/Sid
 import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { isWorkspaceLocationAvailableOnSurface } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
-import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
 
 export const SidePanelPathUrlSyncEffect = () => {
   const location = useLocation();

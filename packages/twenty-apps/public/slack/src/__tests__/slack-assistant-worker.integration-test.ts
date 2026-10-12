@@ -1,8 +1,11 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence.util';
 import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw.util';
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
+import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
 import { SLACK_ASSISTANT_DEADLINE_ERROR } from 'src/logic-functions/constants/slack-assistant-deadline-error';
 import { SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-deadline-failure-text';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
@@ -18,6 +21,7 @@ import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-
 const CHANNEL_ID = 'C0WORKERTEST';
 const DIRECT_MESSAGE_CHANNEL_ID = 'D0WORKERTEST';
 const REQUESTER_USER_ID = 'U0REQUESTER';
+const CONFIRMED_MEMBER_EMAIL = 'jane.austen@apple.dev';
 
 type SlackAssistantRequestStatus =
   (typeof SLACK_ASSISTANT_REQUEST_STATUS)[keyof typeof SLACK_ASSISTANT_REQUEST_STATUS];
@@ -38,6 +42,19 @@ describe('Slack assistant worker', () => {
   const createdRequestIds: string[] = [];
   const nextMessageTimestamp = createSlackMessageTimestampSequence(1);
 
+  const mentionBot = (text: string): string => `<@${slack.botUserId}> ${text}`;
+
+  const addConfirmedRequester = (): void => {
+    slack.addUser({
+      id: REQUESTER_USER_ID,
+      displayName: 'Ada',
+      email: CONFIRMED_MEMBER_EMAIL,
+    });
+  };
+
+  const botMessagesIn = (channelId: string) =>
+    slack.messagesIn(channelId).filter((message) => isDefined(message.botId));
+
   const createRequestRecord = async (fields: {
     slackChannelId: string;
     slackMessageTimestamp: string;
@@ -55,6 +72,11 @@ describe('Slack assistant worker', () => {
             slackThreadTimestamp: '',
             slackUserId: REQUESTER_USER_ID,
             slackEventId: `Ev${fields.slackMessageTimestamp}`,
+            createdBy: {
+              source: 'APPLICATION',
+              workspaceMemberId: null,
+              name: 'Slack',
+            },
             ...fields,
           },
         },
@@ -116,11 +138,28 @@ describe('Slack assistant worker', () => {
     }
 
     createdRequestIds.length = 0;
+
+    const linkQuery = await coreClient.query({
+      slackUserLinks: {
+        __args: { filter: { slackUserId: { eq: REQUESTER_USER_ID } } },
+        edges: { node: { id: true } },
+      },
+    });
+
+    for (const edge of linkQuery.slackUserLinks?.edges ?? []) {
+      const linkId = edge?.node?.id;
+
+      if (isNonEmptyString(linkId)) {
+        await coreClient.mutation({
+          destroySlackUserLink: { __args: { id: linkId }, id: true },
+        });
+      }
+    }
   });
 
   it('should resolve mentions and channel references before the agent sees them', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
-    slack.addUser({ id: REQUESTER_USER_ID, displayName: 'Ada' });
+    addConfirmedRequester();
     slack.addUser({ id: 'U0UNLINKED', displayName: 'Bob Lee' });
 
     const slackMessageTimestamp = nextMessageTimestamp();
@@ -131,7 +170,7 @@ describe('Slack assistant worker', () => {
       channelId: CHANNEL_ID,
       timestamp: slackMessageTimestamp,
       userId: REQUESTER_USER_ID,
-      text: requestText,
+      text: mentionBot(requestText),
     });
 
     const request = await createRequestRecord({
@@ -163,14 +202,14 @@ describe('Slack assistant worker', () => {
 
   it('should answer a channel request in its thread, store the answer and subscribe the thread', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
-    slack.addUser({ id: REQUESTER_USER_ID, displayName: 'Ada' });
+    addConfirmedRequester();
     const slackMessageTimestamp = nextMessageTimestamp();
 
     slack.addMessage({
       channelId: CHANNEL_ID,
       timestamp: slackMessageTimestamp,
       userId: REQUESTER_USER_ID,
-      text: 'how many open deals does Acme have?',
+      text: mentionBot('how many open deals does Acme have?'),
     });
     slack.addMessage({
       channelId: CHANNEL_ID,
@@ -208,9 +247,6 @@ describe('Slack assistant worker', () => {
 
     expect(result).toEqual({ done: true });
 
-    // The thread is replayed as turns, the bot's own earlier reply as an
-    // assistant turn without its footer, and the message that triggered this
-    // run is left out of its own context.
     expect(appRuntime.lastAgentMessages).toEqual([
       {
         role: 'user',
@@ -224,17 +260,15 @@ describe('Slack assistant worker', () => {
         ),
       },
     ]);
-    // A request record the app did not write earns no run-as, so the agent
-    // keeps its own role.
     const agentMessages = appRuntime.lastAgentMessages;
     const agentRuns = appRuntime.agentRuns;
+    const runAsWorkspaceMemberId =
+      agentRuns[agentRuns.length - 1]?.runAsWorkspaceMemberId;
 
+    expect(isNonEmptyString(runAsWorkspaceMemberId)).toBe(true);
     expect(agentMessages[agentMessages.length - 1]?.content).toContain(
-      "You are answering with the app's own role",
+      `You are acting as workspace member ${runAsWorkspaceMemberId}, with that member's own permissions.`,
     );
-    expect(
-      agentRuns[agentRuns.length - 1]?.runAsWorkspaceMemberId,
-    ).toBeUndefined();
 
     expect(slack.assistantStatuses).toEqual([
       {
@@ -249,14 +283,12 @@ describe('Slack assistant worker', () => {
       .find(
         (message) =>
           message.threadTimestamp === slackMessageTimestamp &&
-          message.botId !== undefined &&
+          isDefined(message.botId) &&
           message.blocks !== undefined,
       );
 
     expect(postedAnswer?.blocks).toEqual([
       { type: 'markdown', text: 'Acme has 3 open deals.' },
-      // The feedback buttons carry the request record id, which is how a click
-      // finds the answer it rates.
       expect.objectContaining({
         type: 'context_actions',
         block_id: request.id,
@@ -268,7 +300,6 @@ describe('Slack assistant worker', () => {
         ],
       }),
     ]);
-    // Record links in the answer must not turn into Slack previews.
     expect(slack.lastCallTo('chat.postMessage')?.args).toEqual(
       expect.objectContaining({ unfurl_links: false, unfurl_media: false }),
     );
@@ -293,7 +324,15 @@ describe('Slack assistant worker', () => {
 
   it('should title the assistant thread of a first direct message instead of subscribing it', async () => {
     slack.addChannel({ id: DIRECT_MESSAGE_CHANNEL_ID, name: 'twenty' });
+    addConfirmedRequester();
     const slackMessageTimestamp = nextMessageTimestamp();
+
+    slack.addMessage({
+      channelId: DIRECT_MESSAGE_CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: 'list my tasks for today',
+    });
 
     const request = await createRequestRecord({
       slackChannelId: DIRECT_MESSAGE_CHANNEL_ID,
@@ -332,7 +371,15 @@ describe('Slack assistant worker', () => {
 
   it('should post the failure notice and fail the request when the agent errors', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    addConfirmedRequester();
     const slackMessageTimestamp = nextMessageTimestamp();
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('who owns Acme?'),
+    });
 
     appRuntime.setAgentResult({
       success: false,
@@ -359,7 +406,7 @@ describe('Slack assistant worker', () => {
       failed: true,
       reason: 'Agent is not available',
     });
-    expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+    expect(botMessagesIn(CHANNEL_ID)).toEqual([
       expect.objectContaining({
         text: SLACK_ASSISTANT_FAILURE_TEXT,
         threadTimestamp: slackMessageTimestamp,
@@ -375,7 +422,15 @@ describe('Slack assistant worker', () => {
 
   it('should tell the member to narrow the request when the answer deadline passes', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    addConfirmedRequester();
     const slackMessageTimestamp = nextMessageTimestamp();
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('summarize every opportunity we opened this year'),
+    });
 
     appRuntime.setAgentResult({
       success: false,
@@ -402,7 +457,7 @@ describe('Slack assistant worker', () => {
       failed: true,
       reason: SLACK_ASSISTANT_DEADLINE_ERROR,
     });
-    expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+    expect(botMessagesIn(CHANNEL_ID)).toEqual([
       expect.objectContaining({
         text: SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT,
         threadTimestamp: slackMessageTimestamp,
@@ -418,7 +473,15 @@ describe('Slack assistant worker', () => {
 
   it('should invite the member to ask again when the agent answers with nothing', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    addConfirmedRequester();
     const slackMessageTimestamp = nextMessageTimestamp();
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('what changed on Acme this week?'),
+    });
 
     appRuntime.setAgentResult({
       success: true,
@@ -445,7 +508,7 @@ describe('Slack assistant worker', () => {
       failed: true,
       reason: SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR,
     });
-    expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+    expect(botMessagesIn(CHANNEL_ID)).toEqual([
       expect.objectContaining({
         text: SLACK_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT,
         threadTimestamp: slackMessageTimestamp,
@@ -461,8 +524,16 @@ describe('Slack assistant worker', () => {
 
   it('should fail the request when Slack refuses to deliver the answer', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    addConfirmedRequester();
     slack.failNextCall('chat.postMessage', 'channel_not_found');
     const slackMessageTimestamp = nextMessageTimestamp();
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('summarize the Acme thread'),
+    });
 
     const request = await createRequestRecord({
       slackChannelId: CHANNEL_ID,
@@ -492,8 +563,16 @@ describe('Slack assistant worker', () => {
 
   it('should keep the feedback buttons on an answer too long for a markdown block', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    addConfirmedRequester();
     const slackMessageTimestamp = nextMessageTimestamp();
     const longResponse = 'a'.repeat(SLACK_MARKDOWN_BLOCK_MAX_LENGTH + 1);
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('give me the full account history'),
+    });
 
     appRuntime.setAgentResult({
       success: true,
@@ -537,6 +616,49 @@ describe('Slack assistant worker', () => {
       expect.objectContaining({
         status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
         responseText: longResponse,
+      }),
+    );
+  });
+
+  it('should decline a requester it cannot tie to a workspace member', async () => {
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    slack.addUser({ id: REQUESTER_USER_ID, displayName: 'Ada' });
+    const slackMessageTimestamp = nextMessageTimestamp();
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('who owns Acme?'),
+    });
+
+    const request = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp,
+      requestText: 'who owns Acme?',
+    });
+
+    const result = await slackAssistantWorkerHandler(
+      buildPendingRequest({
+        ...request,
+        slackChannelId: CHANNEL_ID,
+        slackMessageTimestamp,
+        requestText: 'who owns Acme?',
+      }),
+    );
+
+    expect(result).toEqual({ done: true, declined: true });
+    expect(appRuntime.agentRuns).toHaveLength(0);
+    expect(botMessagesIn(CHANNEL_ID)).toEqual([
+      expect.objectContaining({
+        markdownText: SLACK_ACCESS_DENIED_TEXT,
+        threadTimestamp: slackMessageTimestamp,
+      }),
+    ]);
+    await expect(readRequest(request.id)).resolves.toEqual(
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: SLACK_ACCESS_DENIED_TEXT,
       }),
     );
   });

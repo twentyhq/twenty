@@ -30,7 +30,6 @@ const StyledText = styled.div`
 
 const StyledSwitch = styled(Switch)`
   ${StyledContainer} & {
-    align-self: center;
     color: ${themeCssVariables.color.yellow};
   }
 `;

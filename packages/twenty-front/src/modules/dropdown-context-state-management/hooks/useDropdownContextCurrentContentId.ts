@@ -1,12 +1,16 @@
 import { useCallback, useState } from 'react';
 
-export const useDropdownContextCurrentContentId = <T>() => {
-  const [currentContentId, setCurrentContentId] = useState<T | null>(null);
+export const useDropdownContextCurrentContentId = <TContentId>() => {
+  const [currentContentId, setCurrentContentId] = useState<TContentId | null>(
+    null,
+  );
 
-  const [previousContentId, setPreviousContentId] = useState<T | null>(null);
+  const [previousContentId, setPreviousContentId] = useState<TContentId | null>(
+    null,
+  );
 
   const handleContentChange = useCallback(
-    (key: T) => {
+    (key: TContentId) => {
       setPreviousContentId(currentContentId);
       setCurrentContentId(key);
     },

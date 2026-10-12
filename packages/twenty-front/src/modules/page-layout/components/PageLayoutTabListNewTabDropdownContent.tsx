@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
@@ -6,32 +6,23 @@ import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/stat
 import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
 
 type PageLayoutTabListNewTabDropdownContentProps = {
   onCreate: () => void;
-  dropdownId: string;
 };
 
 export const PageLayoutTabListNewTabDropdownContent = ({
   onCreate,
-  dropdownId,
 }: PageLayoutTabListNewTabDropdownContentProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { closeDropdown } = useCloseDropdown();
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const { updatePageLayoutTab } = useUpdatePageLayoutTab();
@@ -46,11 +37,6 @@ export const PageLayoutTabListNewTabDropdownContent = ({
     currentPageLayout.tabs.filter(isReactivatableTab),
   );
 
-  const handleCreateEmptyTab = useCallback(() => {
-    onCreate();
-    closeDropdown(dropdownId);
-  }, [onCreate, closeDropdown, dropdownId]);
-
   const handleReactivateTab = useCallback(
     (tabId: string) => {
       updatePageLayoutTab(tabId, { isActive: true });
@@ -60,34 +46,32 @@ export const PageLayoutTabListNewTabDropdownContent = ({
         resetNavigationStack: true,
       });
       setPageLayoutTabSettingsOpenTabId(tabId);
-      closeDropdown(dropdownId);
     },
     [
       updatePageLayoutTab,
       setActiveTabId,
       setPageLayoutTabSettingsOpenTabId,
       navigatePageLayoutSidePanel,
-      closeDropdown,
-      dropdownId,
     ],
   );
 
   return (
-    <LegacyDropdownContent>
-      <DropdownMenuHeader>{t`New tab`}</DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
-        <ListItem
+    <>
+      <Dropdown.Header>
+        <Dropdown.Title>{t`New tab`}</Dropdown.Title>
+      </Dropdown.Header>
+      <Dropdown.Section>
+        <Dropdown.ActionItem
           startIcon={<IconPlus />}
-          onClick={handleCreateEmptyTab}
-        >{t`Empty tab`}</ListItem>
-      </DropdownMenuItemsContainer>
-      {inactiveTabs.length > 0 && (
+          onClick={onCreate}
+        >{t`Empty tab`}</Dropdown.ActionItem>
+      </Dropdown.Section>
+      {isNonEmptyArray(inactiveTabs) && (
         <>
-          <DropdownMenuSeparator />
-          <DropdownMenuSectionLabel label={t`Disabled`} />
-          <DropdownMenuItemsContainer>
+          <Dropdown.Separator />
+          <Dropdown.Section label={t`Disabled`}>
             {inactiveTabs.map((tab) => (
-              <ListItem
+              <Dropdown.ActionItem
                 key={tab.id}
                 startIcon={
                   <SelectOptionIcon
@@ -97,11 +81,11 @@ export const PageLayoutTabListNewTabDropdownContent = ({
                 onClick={() => handleReactivateTab(tab.id)}
               >
                 {tab.title}
-              </ListItem>
+              </Dropdown.ActionItem>
             ))}
-          </DropdownMenuItemsContainer>
+          </Dropdown.Section>
         </>
       )}
-    </LegacyDropdownContent>
+    </>
   );
 };

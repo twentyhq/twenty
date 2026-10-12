@@ -88,7 +88,7 @@ Native input attributes and handlers, `className`, `style`, and `ref` apply to t
 
 ## Front component renderer
 
-The React and Preact renderer sandboxes support keyboard adjustments, bounds, and form values. Pointer stepping and text editing are currently blocked by missing input selection and native event support in the renderer. Pasting is not supported: without input selection, the pasted text is inserted around the whole value, that wrong number is reported, and the front component then stops rendering. These limitations do not affect normal React rendering.
+The React and Preact renderer sandboxes support typing, keyboard adjustments, bounds, and form values. Pointer stepping is currently blocked because the sandbox input does not implement `setSelectionRange`. Pasting is not supported: without input selection, the pasted text is inserted around the whole value, that wrong number is reported, and the front component then stops rendering. These limitations do not affect normal React rendering.
 
 ## Props
 

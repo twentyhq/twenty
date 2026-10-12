@@ -9,6 +9,7 @@ import type Stripe from 'stripe';
 
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/billing/payment-received';
+import { getCustomerIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-customer-id-from-invoice.util';
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import {
   BillingException,
@@ -19,11 +20,13 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
+import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
+import { isCreditTopUpInvoice } from 'src/engine/core-modules/billing/utils/is-credit-top-up-invoice.util';
 import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -43,6 +46,7 @@ export class BillingWebhookInvoiceService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
+    private readonly billingCreditOneTimeTopUpService: BillingCreditOneTimeTopUpService,
     private readonly billingUsageService: BillingUsageService,
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
@@ -70,12 +74,11 @@ export class BillingWebhookInvoiceService {
   ) {
     const {
       billing_reason: billingReason,
-      customer,
       created: invoiceCreatedAtInSeconds,
     } = data.object;
 
     const stripeSubscriptionId = getSubscriptionIdFromInvoice(data.object);
-    const stripeCustomerId = customer as string | undefined;
+    const stripeCustomerId = getCustomerIdFromInvoice(data.object);
 
     if (
       !isDefined(stripeSubscriptionId) ||
@@ -179,8 +182,12 @@ export class BillingWebhookInvoiceService {
   }
 
   private async processInvoicePaid(data: Stripe.InvoicePaidEvent.Data) {
+    if (isCreditTopUpInvoice(data.object)) {
+      return this.processCreditTopUpInvoicePaid(data.object);
+    }
+
     const stripeSubscriptionId = getSubscriptionIdFromInvoice(data.object);
-    const stripeCustomerId = data.object.customer as string | undefined;
+    const stripeCustomerId = getCustomerIdFromInvoice(data.object);
     const paidInvoicePeriodEnd = data.object.period_end;
 
     if (
@@ -215,6 +222,23 @@ export class BillingWebhookInvoiceService {
     }
 
     return { stripeSubscriptionId };
+  }
+
+  private async processCreditTopUpInvoicePaid(invoice: Stripe.Invoice) {
+    const workspaceId =
+      await this.billingCreditOneTimeTopUpService.grantPurchasedCreditsForPaidInvoice(
+        invoice,
+      );
+
+    if (isDefined(workspaceId)) {
+      void this.eventLogEmitterService
+        .createContext({ workspaceId })
+        .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
+          amountPaid: invoice.amount_paid,
+        });
+    }
+
+    return { stripeInvoiceId: invoice.id };
   }
 
   private async finalizePastDueDraftInvoicesAfterPaidInvoice(

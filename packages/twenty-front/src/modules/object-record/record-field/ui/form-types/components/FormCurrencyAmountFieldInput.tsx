@@ -1,11 +1,11 @@
+import {
+  convertCurrencyAmountToCurrencyMicros,
+  convertCurrencyMicrosToCurrencyAmount,
+} from 'twenty-shared/utils';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { type ComponentProps } from 'react';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import {
-  convertCurrencyAmountToCurrencyMicros,
-  convertCurrencyMicrosToCurrencyAmount,
-} from '~/utils/convertCurrencyToCurrencyMicros';
 
 type FormCurrencyAmountFieldInputProps = Pick<
   ComponentProps<typeof FormNumberFieldInput>,

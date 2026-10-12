@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
+import { GOOGLE_ALIAS_DISPLAY_NAME } from 'test/integration/google/mocks/google-alias-display-name.constant';
 import { GOOGLE_OAUTH_SCOPES } from 'test/integration/google/mocks/google-oauth-scopes.constant';
 import { type MswHandler } from 'test/integration/utils/http-mock.util';
 
@@ -30,7 +31,11 @@ export const googleIdentityHandlers = (
     HttpResponse.json({
       sendAs: [
         { sendAsEmail: handle, isPrimary: true },
-        ...aliases.map((alias) => ({ sendAsEmail: alias, isPrimary: false })),
+        ...aliases.map((alias) => ({
+          sendAsEmail: alias,
+          displayName: GOOGLE_ALIAS_DISPLAY_NAME,
+          isPrimary: false,
+        })),
       ],
     }),
   ),

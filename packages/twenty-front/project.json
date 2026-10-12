@@ -106,7 +106,14 @@
         "fix": {}
       }
     },
-    "test": {},
+    "test": {
+      "configurations": {
+        "ci": {
+          "maxWorkers": 3,
+          "coverage": false
+        }
+      }
+    },
     "storybook:build": {
       "options": {
         "env": {

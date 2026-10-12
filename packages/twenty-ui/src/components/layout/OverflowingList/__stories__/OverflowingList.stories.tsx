@@ -8,7 +8,8 @@ import { OverflowingList } from '../OverflowingList';
 import { OVERFLOWING_LIST_STORY_ITEMS } from './OVERFLOWING_LIST_STORY_ITEMS';
 
 const meta: Meta<typeof OverflowingList> = {
-  title: 'UI/Components/OverflowingList',
+  id: 'ui-components-overflowinglist',
+  title: 'UI/Components/Layout/OverflowingList',
   component: OverflowingList,
   decorators: [ComponentDecorator],
   parameters: {

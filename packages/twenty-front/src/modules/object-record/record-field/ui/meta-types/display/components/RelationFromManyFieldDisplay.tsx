@@ -11,7 +11,7 @@ import { extractTargetRecordsFromJunction } from '@/object-record/record-field/u
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 
-import { OverflowingList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components/layout';
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 

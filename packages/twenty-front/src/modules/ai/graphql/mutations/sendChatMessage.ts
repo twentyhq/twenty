@@ -8,6 +8,7 @@ export const SEND_CHAT_MESSAGE = gql`
     $browsingContext: JSON
     $modelId: String
     $fileAttachments: [FileAttachmentInput!]
+    $mentionedWorkspaceMemberIds: [UUID!]
   ) {
     sendChatMessage(
       threadId: $threadId
@@ -16,10 +17,12 @@ export const SEND_CHAT_MESSAGE = gql`
       browsingContext: $browsingContext
       modelId: $modelId
       fileAttachments: $fileAttachments
+      mentionedWorkspaceMemberIds: $mentionedWorkspaceMemberIds
     ) {
       messageId
       queued
       streamId
+      mentionedParticipantWorkspaceMemberIds
     }
   }
 `;

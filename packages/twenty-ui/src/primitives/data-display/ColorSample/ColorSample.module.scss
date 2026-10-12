@@ -15,20 +15,3 @@
   border-radius: 50%;
   corner-shape: round;
 }
-
-.pipeline {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-
-  &::after {
-    display: block;
-    width: var(--t-spacing-1);
-    height: var(--t-spacing-1);
-    border-radius: var(--t-border-radius-rounded);
-    corner-shape: round;
-    background-color: var(--color-sample-color);
-    content: '';
-  }
-}

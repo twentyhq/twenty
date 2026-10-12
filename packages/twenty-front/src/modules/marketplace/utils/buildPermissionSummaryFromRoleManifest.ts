@@ -1,5 +1,5 @@
 import { type RoleManifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconAddressBook,
@@ -54,7 +54,7 @@ export const buildPermissionSummaryFromRoleManifest = (
 
     items.push({
       Icon: IconAddressBook,
-      label: label.charAt(0).toUpperCase() + label.slice(1) + ' records',
+      label: capitalize(label) + ' records',
     });
   }
 

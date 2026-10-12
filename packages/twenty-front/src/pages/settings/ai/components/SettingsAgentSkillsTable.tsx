@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import Skeleton from 'react-loading-skeleton';
 
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -59,7 +60,13 @@ export const SettingsAgentSkillsTable = ({
       </StyledTableHeaderRowContainer>
       {showSkeleton
         ? Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton height={32} borderRadius={4} key={index} />
+            <SkeletonLine
+              baseColor={LEGACY_SKELETON_COLORS.base}
+              highlightColor={LEGACY_SKELETON_COLORS.highlight}
+              height={32}
+              borderRadius={4}
+              key={index}
+            />
           ))
         : skills.map((skill) => (
             <SettingsSkillTableRow

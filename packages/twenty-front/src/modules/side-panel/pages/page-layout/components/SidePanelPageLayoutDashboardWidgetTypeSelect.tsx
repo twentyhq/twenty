@@ -13,7 +13,7 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
 import { isExistingWidgetMissingOrDifferentType } from '@/side-panel/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -38,7 +38,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
-  const { pageLayoutId, recordId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId, targetRecordIdentifier } =
+    usePageLayoutSidePanelTarget();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -54,7 +55,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
     pageLayoutId,
     layoutType: pageLayoutDraft.type,
-    targetRecordIdentifier: { id: recordId, targetObjectNameSingular: '' },
+    targetRecordIdentifier,
   });
 
   const { createPageLayoutGraphWidget } = useCreatePageLayoutGraphWidget({

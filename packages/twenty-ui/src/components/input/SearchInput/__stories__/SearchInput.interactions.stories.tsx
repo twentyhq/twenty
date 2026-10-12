@@ -106,7 +106,8 @@ const FilterPanelExample = ({
 };
 
 const meta: Meta = {
-  title: 'UI/Input/SearchInput/Interactions',
+  id: 'ui-input-searchinput-interactions',
+  title: 'UI/Components/Input/SearchInput/Interactions',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   beforeEach: () => {

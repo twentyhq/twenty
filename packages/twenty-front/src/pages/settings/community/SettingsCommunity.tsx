@@ -5,7 +5,7 @@ import { SettingsLabContent } from '@/settings/lab/components/SettingsLabContent
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconBrandX,
   IconBriefcase,

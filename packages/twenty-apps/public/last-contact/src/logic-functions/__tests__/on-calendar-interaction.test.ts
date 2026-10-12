@@ -1,8 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { queryMock, mutationMock } = vi.hoisted(() => ({
+const { queryMock, mutationMock, enqueueJobsMock } = vi.hoisted(() => ({
   queryMock: vi.fn(),
   mutationMock: vi.fn(),
+  enqueueJobsMock: vi.fn(),
+}));
+vi.mock('twenty-sdk/logic-function', () => ({
+  enqueueJobs: enqueueJobsMock,
 }));
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: vi.fn(function () {
@@ -16,6 +20,7 @@ const PERSON_ID = '11111111-1111-1111-1111-111111111111';
 const CALENDAR_EVENT_ID = '22222222-2222-2222-2222-222222222222';
 const NOW = '2026-06-12T12:00:00.000Z';
 const PAST_EVENT_STARTS_AT = '2026-06-10T09:00:00.000Z';
+const UPCOMING_EVENT_STARTS_AT = '2026-06-12T14:20:00.000Z';
 
 const handler = onCalendarInteraction.config.handler as (
   batch: unknown,
@@ -79,6 +84,8 @@ beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
   mutationMock.mockResolvedValue({});
+  enqueueJobsMock.mockReset();
+  enqueueJobsMock.mockResolvedValue({ enqueued: true });
 });
 
 afterEach(() => {
@@ -131,6 +138,33 @@ describe('on-calendar-interaction handler', () => {
         lastMeetingId: CALENDAR_EVENT_ID,
       },
     ]);
+  });
+
+  it('schedules a meeting that has not started yet instead of applying it', async () => {
+    setupQueryMock([
+      {
+        calendarEventId: CALENDAR_EVENT_ID,
+        isOrganizer: null,
+        workspaceMemberId: null,
+        calendarEvent: {
+          startsAt: UPCOMING_EVENT_STARTS_AT,
+          isCanceled: false,
+        },
+      },
+    ]);
+
+    await handler(
+      buildBatch([
+        { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
+      ]),
+    );
+
+    expect(mutationMock).not.toHaveBeenCalled();
+    expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
+    expect(enqueueJobsMock.mock.calls[0][0].jobs[0].payload).toEqual({
+      slotStart: '2026-06-12T14:20:00.000Z',
+      slotEnd: '2026-06-12T14:25:00.000Z',
+    });
   });
 
   it('should do nothing when no participant has both a person and a calendar event', async () => {

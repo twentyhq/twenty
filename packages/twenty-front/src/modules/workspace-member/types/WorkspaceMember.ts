@@ -1,14 +1,11 @@
-import type { UI_SCALE_VALUES } from 'twenty-shared/constants';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+import { type UiScale } from '@/ui/theme/types/UiScale';
 import { type OpenRecordIn } from 'twenty-shared/types';
 import {
   type WorkspaceMemberDateFormatEnum,
   type WorkspaceMemberNumberFormatEnum,
   type WorkspaceMemberTimeFormatEnum,
 } from '~/generated-metadata/graphql';
-
-export type ColorScheme = 'Dark' | 'Light' | 'System';
-
-export type UiScale = (typeof UI_SCALE_VALUES)[number];
 
 export type WorkspaceMember = {
   __typename: 'WorkspaceMember';

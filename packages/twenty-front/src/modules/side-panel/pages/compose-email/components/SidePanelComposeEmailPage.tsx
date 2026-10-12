@@ -16,7 +16,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconPaperclip, IconSend, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 
 import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
 

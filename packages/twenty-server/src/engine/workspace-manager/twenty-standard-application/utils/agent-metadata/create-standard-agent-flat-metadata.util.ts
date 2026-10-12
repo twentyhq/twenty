@@ -60,6 +60,7 @@ export const createStandardAgentFlatMetadata = ({
     isCustom,
     isSystem,
     modelConfiguration,
+    triggers: [],
     workspaceId,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:

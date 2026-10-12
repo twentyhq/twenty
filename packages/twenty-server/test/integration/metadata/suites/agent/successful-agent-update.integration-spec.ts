@@ -275,4 +275,49 @@ describe('Agent update should succeed', () => {
       modelConfiguration: null,
     });
   });
+
+  it('should set and then clear agent triggers', async () => {
+    const triggers = [
+      {
+        id: '6f1b5a3e-3c3f-4f4a-9a43-0a7f5d6c2b11',
+        type: 'DATABASE_EVENT' as const,
+        isActive: true,
+        instructions: 'Qualify the new company',
+        settings: { eventName: 'company.created' },
+      },
+      {
+        id: '0d2b1a8c-77a4-4e2e-8f0c-3a8e9f6b4c22',
+        type: 'CRON' as const,
+        isActive: false,
+        instructions: null,
+        settings: { pattern: '0 9 * * 1' },
+      },
+    ];
+
+    const { data: updateData } = await updateOneAgent({
+      expectToFail: false,
+      input: {
+        id: testAgentId,
+        triggers,
+      },
+    });
+
+    expect(updateData.updateOneAgent).toMatchObject({
+      id: testAgentId,
+      triggers,
+    });
+
+    const { data: clearData } = await updateOneAgent({
+      expectToFail: false,
+      input: {
+        id: testAgentId,
+        triggers: [],
+      },
+    });
+
+    expect(clearData.updateOneAgent).toMatchObject({
+      id: testAgentId,
+      triggers: [],
+    });
+  });
 });

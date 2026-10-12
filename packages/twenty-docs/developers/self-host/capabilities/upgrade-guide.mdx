@@ -25,6 +25,16 @@ If you use Docker Compose, follow these steps:
 
 The server runs all required upgrade migrations automatically on startup. No manual command is needed.
 
+### Redis cache prefix
+
+`REDIS_CACHE_PREFIX` is optional and defaults to an empty string. Leaving it empty preserves existing cache key names exactly, with no extra colon and no key migration.
+
+For Redis Enterprise or Azure Managed Redis deployments that report `CROSSSLOT` errors during cache operations, set `REDIS_CACHE_PREFIX={twenty-cache}` on every server, worker, and upgrade command. The braces make all cache-storage keys share one Redis hash slot. This does not distribute cache data across shards. `REDIS_QUEUE_PREFIX` applies only to queues and remains separate.
+
+For example, `engine:workspace:flatObjectMetadataMaps:123:hash` becomes `{twenty-cache}:engine:workspace:flatObjectMetadataMaps:123:hash` only when that prefix is configured. `cache:flush` automatically uses the configured prefix.
+
+Changing the prefix switches to a separate cache namespace. Stop all Twenty servers and workers before changing it, then restart them with the same value. Existing entries under the previous prefix remain untouched. If you reuse a previously used prefix, run `yarn command:prod cache:flush` with that value before restarting to remove stale entries. Rolling deployments with different prefix values are not supported.
+
 ## Upgrading to v2.34+ — PostgreSQL 15 minimum
 
 Twenty v2.34 requires PostgreSQL 15 or newer. The official Docker Compose configuration uses PostgreSQL 16. If your instance connects to an externally managed database, upgrade it before starting the v2.34 server.

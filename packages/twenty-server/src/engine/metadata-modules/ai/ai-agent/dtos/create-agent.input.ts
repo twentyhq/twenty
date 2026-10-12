@@ -2,6 +2,7 @@ import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsNotEmpty,
   IsObject,
   IsOptional,
@@ -9,6 +10,7 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
+import { type AgentTrigger } from 'twenty-shared/application';
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -74,6 +76,12 @@ export class CreateAgentInput {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   modelConfiguration?: ModelConfiguration;
+
+  @IsArray()
+  @IsObject({ each: true })
+  @IsOptional()
+  @Field(() => [GraphQLJSON], { nullable: true })
+  triggers?: AgentTrigger[];
 
   @HideField()
   applicationId?: string;

@@ -341,7 +341,7 @@ export const AsyncExportStaysOpenWithProgress: Story = {
       name: /Export 37%/,
     });
 
-    expect(exportAction).toHaveAttribute('aria-disabled', 'true');
+    expect(exportAction).toBeDisabled();
     await userEvent.click(exportAction);
 
     expect(jotaiStore.get(headlessCommandContextApisState.atom)).toBe(

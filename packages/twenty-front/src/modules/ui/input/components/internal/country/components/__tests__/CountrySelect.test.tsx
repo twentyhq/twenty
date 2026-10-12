@@ -68,7 +68,7 @@ describe('CountrySelect frontend adapter', () => {
 
     unmount();
 
-    expect(store.get(dropdownOpenState)).toBe(false);
+    await waitFor(() => expect(store.get(dropdownOpenState)).toBe(false));
     expect(store.get(activeDropdownFocusIdState.atom)).toBeNull();
     expect(store.get(focusStackState.atom)).toEqual([]);
   });

@@ -3,14 +3,14 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   type Agent,
   type ApiKeyForRole,
   FindManyAgentsDocument,
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 type EntityData = Agent | ApiKeyForRole;
 

@@ -25,6 +25,8 @@ const jestConfig: JestConfigWithTsJest = {
   moduleFileExtensions: ['js', 'mjs', 'json', 'ts'],
   rootDir: '.',
   testEnvironment: 'node',
+  cacheDirectory:
+    '<rootDir>/../../.cache/jest/packages/twenty-server-integration',
   testPathIgnorePatterns: [
     ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
     ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),

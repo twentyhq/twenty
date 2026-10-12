@@ -52,17 +52,15 @@ const fields: SpreadsheetImportField[] = [
   ...[
     { key: 'addressStreet1', label: 'Street 1' },
     { key: 'addressCity', label: 'City' },
-  ].map(
-    ({ key, label }): SpreadsheetImportField => ({
-      Icon: null,
-      key: `address.${key}`,
-      label: `Address / ${label}`,
-      fieldMetadataItemId: addressField.id,
-      fieldMetadataType: FieldMetadataType.ADDRESS,
-      fieldType: { type: 'input' },
-      isNestedField: true,
-    }),
-  ),
+  ].map(({ key, label }): SpreadsheetImportField => ({
+    Icon: null,
+    key: `address.${key}`,
+    label: `Address / ${label}`,
+    fieldMetadataItemId: addressField.id,
+    fieldMetadataType: FieldMetadataType.ADDRESS,
+    fieldType: { type: 'input' },
+    isNestedField: true,
+  })),
   {
     Icon: null,
     key: 'team',

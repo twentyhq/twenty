@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getOrderByForRelationField } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
+import { getOrderByForRelationField } from '@/object-metadata/utils/getOrderByForRelationField';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('getOrderByForRelationField', () => {

@@ -12,7 +12,6 @@ import {
 } from 'src/engine/core-modules/record-share/record-share.exception';
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
-import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -78,14 +77,14 @@ export class RecordSharePrincipalService {
     workspaceId,
     transactionScope,
     flatObjectMetadata,
-    isRecordSharingEnabled,
+    canShareBeyondRole,
     principals,
     recordIds,
   }: {
     workspaceId: string;
     transactionScope: WorkspaceTransactionScope;
     flatObjectMetadata: FlatObjectMetadata;
-    isRecordSharingEnabled: boolean;
+    canShareBeyondRole: boolean;
     principals: RecordSharePrincipal[];
     recordIds: string[];
   }): Promise<void> {
@@ -97,11 +96,7 @@ export class RecordSharePrincipalService {
     if (
       namedPrincipals.length === 0 ||
       recordIds.length === 0 ||
-      isRecordGrantBeyondRoleAllowed({
-        flatObjectMetadata,
-        operationType: 'select',
-        isRecordSharingEnabled,
-      })
+      canShareBeyondRole
     ) {
       return;
     }

@@ -1,7 +1,7 @@
 import { DomainShell } from '@/app/components/DomainShell';
 import { I18nActivationGate } from '@/app/components/I18nActivationGate';
 import { LocaleDirectionProvider } from '@/app/components/LocaleDirectionProvider';
-import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
+import { ApolloDevLogEffect } from '@/apollo/components/ApolloDevLogEffect';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
@@ -11,7 +11,7 @@ import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 import { IconsProvider } from 'twenty-ui/icon';
 import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
 

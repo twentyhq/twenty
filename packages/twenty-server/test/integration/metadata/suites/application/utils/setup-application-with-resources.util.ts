@@ -31,7 +31,7 @@ const BUILT_FRONT_COMPONENT_PATH = 'src/front-components/component.mjs';
 const SHARED_DEPENDENCIES_BUILT_PATH =
   'src/front-component-shared-dependencies.mjs';
 
-const DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS = [
+export const DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS = [
   SystemPermissionFlag.APPLICATIONS,
   SystemPermissionFlag.API_KEYS_AND_WEBHOOKS,
   SystemPermissionFlag.WORKFLOWS,

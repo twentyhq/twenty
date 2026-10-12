@@ -7,20 +7,12 @@ import {
   EmailingDomainStatus,
   UnsubscribeHostnameStatus,
 } from '~/generated-metadata/graphql';
-import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
-import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusText';
+import { getEmailingDomainStatusDisplay } from '@/settings/emailing-domains/utils/getEmailingDomainStatusDisplay';
 
 type VerificationRecordGroupStatusDisplay = {
   label: string;
   color: ThemeColor;
 };
-
-const toStatusDisplay = (
-  status: EmailingDomainStatus,
-): VerificationRecordGroupStatusDisplay => ({
-  label: getTextByEmailingDomainStatus(status),
-  color: getColorByEmailingDomainStatus(status),
-});
 
 export const getVerificationRecordGroupStatusDisplay = ({
   groupKey,
@@ -31,11 +23,11 @@ export const getVerificationRecordGroupStatusDisplay = ({
 }): VerificationRecordGroupStatusDisplay => {
   switch (groupKey) {
     case 'AUTHENTICATION':
-      return toStatusDisplay(emailingDomain.status);
+      return getEmailingDomainStatusDisplay(emailingDomain.status);
     case 'DMARC':
       return { label: t`Not set`, color: 'gray' };
     case 'UNSUBSCRIBE':
-      return toStatusDisplay(
+      return getEmailingDomainStatusDisplay(
         emailingDomain.unsubscribeHostnameStatus ===
           UnsubscribeHostnameStatus.ACTIVE
           ? EmailingDomainStatus.VERIFIED

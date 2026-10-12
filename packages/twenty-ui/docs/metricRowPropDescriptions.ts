@@ -4,8 +4,9 @@ import { type MetricRow } from '../src/components/data-display/MetricRow/MetricR
 
 export const METRIC_ROW_PROP_DESCRIPTIONS = {
   children:
-    'Required nonempty text label that also names the optional progress ring.',
-  startIcon: 'Decorative icon before the label, rendered at 14px.',
+    'Label content whose accessible text also names the optional progress ring.',
+  startIcon:
+    'Decorative node content before the label. The caller controls icon geometry.',
   value:
     'Preformatted value displayed at the end of the row. String values also supply the progress ring accessible value text.',
   progress:

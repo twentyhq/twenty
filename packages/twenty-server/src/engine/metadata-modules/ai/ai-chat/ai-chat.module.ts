@@ -9,27 +9,22 @@ import { AiChatUsageResolver } from 'src/engine/metadata-modules/ai/ai-chat/reso
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
-import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-proposal.service';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
@@ -60,20 +55,16 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     AiAgentExecutionModule,
     BillingModule,
     FeatureFlagModule,
-    ThrottlerModule,
     FileModule,
     PermissionsModule,
     SkillModule,
-    WorkspaceCacheStorageModule,
     WorkspaceCacheModule,
     WorkspaceDomainsModule,
-    TokenModule,
     UserWorkspaceModule,
     AiBillingModule,
     MetricsModule,
     ToolProviderModule,
     DashboardToolsModule,
-    WorkflowToolsModule,
   ],
   providers: [
     AgentChatActorService,
@@ -96,7 +87,6 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     MessagePruningService,
     StreamAgentChatJob,
     SystemPromptBuilderService,
-    AiGraphqlApiExceptionInterceptor,
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
@@ -104,7 +94,6 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     AgentChatActorService,
     AgentChatService,
     AgentChatStreamingService,
-    AgentChatThreadTargetService,
     AgentChatTurnPreflightService,
   ],
 })

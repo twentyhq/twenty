@@ -1,0 +1,4 @@
+export const CONFIG_FILE_MODE = {
+  PRIVATE_DIRECTORY: 0o700,
+  PRIVATE_FILE: 0o600,
+} as const;

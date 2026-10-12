@@ -68,7 +68,6 @@ const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
       messages {
         id
         role
-        isHidden
         parts {
           type
           orderIndex
@@ -131,30 +130,34 @@ describe('Admin panel global chat threads (integration)', () => {
   const insertThread = async ({
     id,
     title,
-    lastStreamError,
+    hasFailedTurn = false,
   }: {
     id: string;
     title: string;
-    lastStreamError?: object;
+    hasFailedTurn?: boolean;
   }): Promise<string> => {
     await insertHistory(
       'agentChatThread',
-      [
-        'id',
-        'workspaceMemberId',
-        'userWorkspaceId',
-        'title',
-        'lastStreamError',
-      ],
-      [
-        id,
-        workspaceMemberId,
-        userWorkspaceId,
-        title,
-        lastStreamError ? JSON.stringify(lastStreamError) : null,
-      ],
-      'ON CONFLICT (id) DO UPDATE SET "lastStreamError" = EXCLUDED."lastStreamError"',
+      ['id', 'workspaceMemberId', 'title'],
+      [id, workspaceMemberId, title],
+      'ON CONFLICT (id) DO NOTHING',
     );
+
+    if (hasFailedTurn) {
+      await insertHistory(
+        'agentTurn',
+        ['id', 'threadId', 'status', 'error'],
+        [
+          randomUUID(),
+          id,
+          'failed',
+          JSON.stringify({
+            code: 'STREAM_EXECUTION_FAILED',
+            message: 'stream failed',
+          }),
+        ],
+      );
+    }
 
     seededThreadIds.push(id);
 
@@ -164,20 +167,18 @@ describe('Admin panel global chat threads (integration)', () => {
   const insertMessage = async ({
     threadId,
     role,
-    isHidden = false,
     createdAt,
   }: {
     threadId: string;
     role: 'system' | 'user' | 'assistant';
-    isHidden?: boolean;
     createdAt: string;
   }): Promise<string> => {
     const id = randomUUID();
 
     await insertHistory(
       'agentMessage',
-      ['id', 'threadId', 'role', 'isHidden', 'createdAt'],
-      [id, threadId, role, isHidden, createdAt],
+      ['id', 'threadId', 'role', 'createdAt'],
+      [id, threadId, role, createdAt],
     );
 
     seededMessageIds.push(id);
@@ -336,7 +337,7 @@ describe('Admin panel global chat threads (integration)', () => {
     regularThreadId = await insertThread({
       id: randomUUID(),
       title: 'integration-regular-thread',
-      lastStreamError: { message: 'stream failed' },
+      hasFailedTurn: true,
     });
     const regularAssistantMessageId = await insertMessage({
       threadId: regularThreadId,
@@ -365,8 +366,7 @@ describe('Admin panel global chat threads (integration)', () => {
     });
     await insertMessage({
       threadId: answeredQuestionThreadId,
-      role: 'user',
-      isHidden: true,
+      role: 'system',
       createdAt: '2026-01-01T00:04:00Z',
     });
 
@@ -401,8 +401,7 @@ describe('Admin panel global chat threads (integration)', () => {
     });
     await insertMessage({
       threadId: pendingQuestionThreadId,
-      role: 'user',
-      isHidden: true,
+      role: 'system',
       createdAt: '2026-01-01T00:06:00Z',
     });
 
@@ -524,8 +523,8 @@ describe('Admin panel global chat threads (integration)', () => {
 
       await insertHistory(
         'agentChatThread',
-        ['id', 'userWorkspaceId', 'title'],
-        [ownerlessThreadId, null, 'Workflow run conversation'],
+        ['id', 'title'],
+        [ownerlessThreadId, 'Workflow run conversation'],
         'ON CONFLICT (id) DO NOTHING',
       );
       seededThreadIds.push(ownerlessThreadId);
@@ -714,10 +713,7 @@ describe('Admin panel global chat threads (integration)', () => {
 
       expect(result.thread.messageCount).toBe(2);
       expect(result.messages).toHaveLength(3);
-      expect(result.messages[0]).toMatchObject({
-        role: 'SYSTEM',
-        isHidden: false,
-      });
+      expect(result.messages[0]).toMatchObject({ role: 'SYSTEM' });
       expect(result.messages[0].parts[0].textContent).toBe(
         'kickoff prompt with company context',
       );

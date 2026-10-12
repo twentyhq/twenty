@@ -5,11 +5,13 @@ import { RecordTableWidgetRelationPickerDropdownContent } from '@/object-record/
 import { type RecordTableWidgetJunctionCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useCreateJunctionRecordFromTableWidget } from '@/object-record/record-table-widget/hooks/useCreateJunctionRecordFromTableWidget';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 import { logError } from '~/utils/logError';
 
@@ -24,7 +26,6 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   junctionCreateThrough,
   targetRecordsFilter = junctionCreateThrough.targetRecordsFilter,
 }: RecordTableWidgetJunctionAddNewRowProps) => {
-  const { closeDropdown } = useCloseDropdown();
   const { enqueueToast } = useToast();
 
   const { objectMetadataItem: junctionObjectMetadataItem } =
@@ -51,7 +52,6 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   }
 
   const handleTargetRecordSelected = (targetRecordId: string) => {
-    closeDropdown(dropdownId);
     createJunctionRecord(targetRecordId).catch((error) => {
       logError(error);
       enqueueToast({ variant: 'error', children: t`Failed to add record` });
@@ -59,14 +59,15 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   };
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="bottom-start"
-      clickableComponentWidth="100%"
-      clickableComponent={
+    <DropdownRoot dropdownId={dropdownId} type="picker">
+      <Dropdown.Trigger
+        render={<div />}
+        nativeButton={false}
+        style={{ width: '100%' }}
+      >
         <RecordTableActionRow LeftIcon={IconPlus} text={t`Add New`} />
-      }
-      dropdownComponents={
+      </Dropdown.Trigger>
+      <DropdownContent align="start" width={GenericDropdownContentWidth.Medium}>
         <RecordTableWidgetRelationPickerDropdownContent
           objectNameSingular={
             junctionCreateThrough.targetObjectMetadataNameSingular
@@ -74,7 +75,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
           recordsFilter={targetRecordsFilter}
           onRelationRecordSelected={handleTargetRecordSelected}
         />
-      }
-    />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

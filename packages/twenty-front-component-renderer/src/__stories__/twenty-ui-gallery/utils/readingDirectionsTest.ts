@@ -15,6 +15,21 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
       { timeout: MOUNT_TIMEOUT },
     );
     const content = within(scope);
+    for (const scopeName of ['Inherited', 'Nested']) {
+      const handle = content.getByRole('separator', {
+        name: `${scopeName} ${direction} resize`,
+      });
+      const isRightToLeft =
+        scopeName === 'Inherited' ? direction === 'rtl' : direction === 'ltr';
+      handle.focus();
+      await userEvent.keyboard('{ArrowRight}');
+      await waitFor(() =>
+        expect(handle).toHaveAttribute(
+          'aria-valuenow',
+          isRightToLeft ? '90' : '110',
+        ),
+      );
+    }
     const first = content.getByRole('button', { name: 'First action' });
     const last = content.getByRole('button', { name: 'Last action' });
     expect(getComputedStyle(scope).direction).toBe(direction);

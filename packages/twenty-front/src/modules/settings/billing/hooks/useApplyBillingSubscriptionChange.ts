@@ -9,7 +9,7 @@ import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   CancelSwitchBillingIntervalDocument,
   CancelSwitchBillingPlanDocument,

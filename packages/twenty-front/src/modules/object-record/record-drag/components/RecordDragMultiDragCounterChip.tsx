@@ -1,7 +1,7 @@
 import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { NotificationCounter } from 'twenty-ui/components';
+import { NotificationCounter } from 'twenty-ui/components/data-display';
 
 const StyledNotificationCounterContainer = styled.div`
   position: absolute;

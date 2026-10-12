@@ -7,7 +7,8 @@ import { ThemeProvider } from '@ui/theme/ThemeProvider';
 import { CountrySelectExample } from './CountrySelectExample';
 
 const meta: Meta<typeof CountrySelectExample> = {
-  title: 'UI/Input/CountrySelect',
+  id: 'ui-input-countryselect',
+  title: 'UI/Components/Input/CountrySelect',
   component: CountrySelectExample,
   decorators: [ComponentDecorator],
   parameters: {

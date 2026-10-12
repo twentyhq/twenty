@@ -24,7 +24,7 @@ jest.mock('@/settings/roles/components/SettingsRolesQueryEffect', () => ({
   SettingsRolesQueryEffect: () => null,
 }));
 
-jest.mock('@/app/routing/components/WorkspaceRouteUnavailable', () => ({
+jest.mock('@/ui/layout/page/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div>Role unavailable</div>,
 }));
 
@@ -40,8 +40,8 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: () => mockNavigateSettings,
 }));
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 

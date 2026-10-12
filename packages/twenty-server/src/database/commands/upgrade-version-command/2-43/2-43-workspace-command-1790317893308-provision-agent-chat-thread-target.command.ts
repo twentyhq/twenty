@@ -6,6 +6,7 @@ import { type DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { readExistingColumnNamesByTableName } from 'src/database/commands/upgrade-version-command/2-38/utils/read-existing-column-names-by-table-name.util';
 import { findObjectsMissingAgentChatThreadTargetRelation } from 'src/database/commands/upgrade-version-command/2-43/utils/find-objects-missing-agent-chat-thread-target-relation.util';
 import { getAgentChatThreadTargetSchemaAdditions } from 'src/database/commands/upgrade-version-command/2-43/utils/get-agent-chat-thread-target-schema-additions.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -15,6 +16,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildSystemRelationFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -244,19 +246,24 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
       objectMetadata: targetFlatObjectMetadata,
     });
 
-    const columnRows = await dataSource.query<{ column_name: string }[]>(
-      `SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2`,
-      [schemaName, tableName],
-    );
+    const columnNamesByTableName = await readExistingColumnNamesByTableName({
+      dataSource,
+      schemaName,
+      tableNames: Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .map((flatObjectMetadata) =>
+          computeObjectTargetTable(flatObjectMetadata),
+        ),
+    });
 
     const { flatObjectMetadatas, unprovisionableRelations } =
       findObjectsMissingAgentChatThreadTargetRelation({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         targetFlatObjectMetadata,
-        existingTargetColumnNames: new Set(
-          columnRows.map(({ column_name }) => column_name),
-        ),
+        existingTargetColumnNames:
+          columnNamesByTableName.get(tableName) ?? new Set(),
+        existingTableNames: new Set(columnNamesByTableName.keys()),
         twentyStandardApplicationUniversalIdentifier,
       });
 
