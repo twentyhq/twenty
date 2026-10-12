@@ -899,6 +899,7 @@ describe('Chat channels through the authenticated API', () => {
     );
 
     const { data: afterDeleteData } = await findNavigationMenuItems({
+      input: undefined,
       gqlFields: 'id',
     });
 
