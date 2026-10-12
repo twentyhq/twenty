@@ -1,4 +1,5 @@
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { agentChatUploadAbortControllersState } from '@/ai/states/agentChatUploadAbortControllersState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -20,12 +21,32 @@ export const useAiChatFileUpload = () => {
   const setAgentChatUploadedFiles = useSetAtomState(
     agentChatUploadedFilesState,
   );
+  const setAgentChatUploadAbortControllers = useSetAtomState(
+    agentChatUploadAbortControllersState,
+  );
   const store = useStore();
 
+  const forgetAbortController = (file: File) => {
+    setAgentChatUploadAbortControllers((previousControllers) => {
+      const nextControllers = new Map(previousControllers);
+
+      nextControllers.delete(file);
+
+      return nextControllers;
+    });
+  };
+
   const sendFile = async (file: File): Promise<AgentChatFileUIPart | null> => {
+    const abortController = new AbortController();
+
+    setAgentChatUploadAbortControllers((previousControllers) =>
+      new Map(previousControllers).set(file, abortController),
+    );
+
     try {
       const uploadedFile = await directUploadFile(file, {
         fileFolder: FileFolder.AgentChat,
+        signal: abortController.signal,
       });
 
       if (!store.get(agentChatSelectedFilesState.atom).includes(file)) {
@@ -41,12 +62,19 @@ export const useAiChatFileUpload = () => {
       };
     } catch {
       const fileName = file.name;
-      enqueueToast({
-        status: 'error',
-        children: t`Failed to upload file: ${fileName}`,
-      });
+
+      // An abort is the person pressing stop or removing the attachment, so it
+      // is not worth a toast telling them their own action failed.
+      if (!abortController.signal.aborted) {
+        enqueueToast({
+          status: 'error',
+          children: t`Failed to upload file: ${fileName}`,
+        });
+      }
+
       return null;
     } finally {
+      forgetAbortController(file);
       setAgentChatSelectedFiles((previousSelectedFiles) =>
         previousSelectedFiles.filter((selectedFile) => selectedFile !== file),
       );
@@ -71,5 +99,15 @@ export const useAiChatFileUpload = () => {
     }
   };
 
-  return { uploadFiles };
+  const cancelUpload = (file: File) => {
+    store.get(agentChatUploadAbortControllersState.atom).get(file)?.abort();
+  };
+
+  const cancelAllUploads = () => {
+    store
+      .get(agentChatUploadAbortControllersState.atom)
+      .forEach((abortController) => abortController.abort());
+  };
+
+  return { uploadFiles, cancelUpload, cancelAllUploads };
 };

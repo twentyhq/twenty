@@ -1,3 +1,4 @@
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
@@ -20,6 +21,8 @@ export const AgentChatContextPreview = () => {
     agentChatUploadedFilesState,
   );
 
+  const { cancelUpload } = useAiChatFileUpload();
+
   const handleRemoveUploadedFile = (fileIndex: number) => {
     setAgentChatUploadedFiles(
       agentChatUploadedFiles.filter((_, index) => fileIndex !== index),
@@ -40,6 +43,7 @@ export const AgentChatContextPreview = () => {
           file={file}
           key={`${index}-${file.name}`}
           onRemove={() => {
+            cancelUpload(file);
             setAgentChatSelectedFiles(
               agentChatSelectedFiles.filter(
                 (selectedFile) => selectedFile !== file,

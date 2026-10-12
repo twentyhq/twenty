@@ -100,6 +100,11 @@ export const useAgentChat = () => {
     const agentChatSelectedFiles = store.get(agentChatSelectedFilesState.atom);
 
     if (agentChatSelectedFiles.length > 0) {
+      enqueueToast({
+        status: 'error',
+        children: t`Wait for the attachments to finish uploading.`,
+      });
+
       return;
     }
 
