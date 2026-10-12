@@ -6,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
+import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
@@ -39,7 +40,6 @@ const StyledSectionsContainer = styled.div`
 `;
 
 const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
-const AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
 // Triage and channels open the inbox page, which replaces the recent chats;
 // without the inbox the drawer lists them
@@ -87,15 +87,11 @@ export const NavigationDrawerAiChatContent = () => {
               <NavigationDrawerAiChatChannelsSection />
             </>
           )}
-          {agentChatFavoriteThreads.length > 0 && (
-            <NavigationDrawerAiChatThreadSection
-              sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
-              title={t`Favorites`}
-              threads={agentChatFavoriteThreads}
-              currentThreadId={currentAiChatThread}
-              onThreadClick={handleThreadClick}
-            />
-          )}
+          <NavigationDrawerAiChatFavoritesSection
+            threads={agentChatFavoriteThreads}
+            currentThreadId={currentAiChatThread}
+            onThreadClick={handleThreadClick}
+          />
           {recentThreads.length > 0 && (
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}

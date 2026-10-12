@@ -7,7 +7,6 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { useNavigateToNavigationMenuItemLink } from '@/navigation-menu-item/common/hooks/useNavigateToNavigationMenuItemLink';
-import { useAgentChatChannelNavigationMenuItem } from '@/navigation-menu-item/display/agent-chat-channel/hooks/useAgentChatChannelNavigationMenuItem';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
@@ -73,16 +72,14 @@ export const NavigationMenuItemFolderSubItem = ({
 
   const { activeNavigationMenuItemIds } =
     useIdentifyActiveNavigationMenuItems();
-  const agentChatChannelNavigationMenuItem =
-    useAgentChatChannelNavigationMenuItem(navigationMenuItem);
 
-  const isActive =
-    activeNavigationMenuItemIds.includes(navigationMenuItem.id) ||
-    agentChatChannelNavigationMenuItem?.isActive === true;
+  const isActive = activeNavigationMenuItemIds.includes(navigationMenuItem.id);
 
-  const label =
-    agentChatChannelNavigationMenuItem?.channel.name ??
-    getNavigationMenuItemLabel(navigationMenuItem, objectMetadataItems, views);
+  const label = getNavigationMenuItemLabel(
+    navigationMenuItem,
+    objectMetadataItems,
+    views,
+  );
   const computedLink = getNavigationMenuItemComputedLink({
     item: navigationMenuItem,
     objectMetadataItems,
@@ -114,7 +111,6 @@ export const NavigationMenuItemFolderSubItem = ({
 
   const handleClick =
     onClick ??
-    agentChatChannelNavigationMenuItem?.openChannel ??
     (isEditable
       ? () =>
           onNavigationMenuItemClick({
@@ -141,21 +137,9 @@ export const NavigationMenuItemFolderSubItem = ({
         })
       : undefined;
 
-  const agentChatChannelOpenCount =
-    agentChatChannelNavigationMenuItem?.summary?.openCount ?? 0;
-
   const secondaryLabel = isCoreWorkflowsIndexItem
     ? t`System`
-    : agentChatChannelOpenCount > 0
-      ? `${agentChatChannelOpenCount}`
-      : viewSecondaryLabel;
-
-  if (
-    navigationMenuItem.type === NavigationMenuItemType.AGENT_CHAT_CHANNEL &&
-    !isDefined(agentChatChannelNavigationMenuItem)
-  ) {
-    return null;
-  }
+    : viewSecondaryLabel;
 
   return (
     <NavigationMenuItemEditable item={navigationMenuItem}>
@@ -165,16 +149,9 @@ export const NavigationMenuItemFolderSubItem = ({
         Icon={() => (
           <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
         )}
-        to={
-          isDragging ||
-          isEditable ||
-          isDefined(agentChatChannelNavigationMenuItem)
-            ? undefined
-            : computedLink
-        }
+        to={isDragging || isEditable ? undefined : computedLink}
         onClick={handleClick}
         active={isActive}
-        isUnread={agentChatChannelNavigationMenuItem?.summary?.hasUnreadOpen}
         isSelectedInEditMode={isEditHighlightedInNavigationMenu}
         subItemState={getNavigationSubItemLeftAdornment({
           index,

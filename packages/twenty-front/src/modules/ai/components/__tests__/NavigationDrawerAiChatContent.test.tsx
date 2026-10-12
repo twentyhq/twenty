@@ -2,6 +2,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, within } from '@testing-library/react';
 import { atom, Provider as JotaiProvider } from 'jotai';
+import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
@@ -11,6 +12,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { type AgentChatChannel } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
@@ -26,6 +28,7 @@ const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
 });
 
 const mockFavoriteThreadsAtom = atom<AgentChatThreadListItem[]>([]);
+const mockFavoriteChannelsAtom = atom<AgentChatChannel[]>([]);
 let mockThreads: AgentChatThreadRecord[] = [];
 
 jest.mock('@/ai/states/selectors/agentChatFavoriteThreadsSelector', () => ({
@@ -37,6 +40,49 @@ jest.mock('@/ai/states/selectors/agentChatFavoriteThreadsSelector', () => ({
     },
   },
 }));
+
+jest.mock('@/ai/states/selectors/agentChatFavoriteChannelsSelector', () => ({
+  agentChatFavoriteChannelsSelector: {
+    type: 'Selector',
+    key: 'agentChatFavoriteChannelsSelector',
+    get atom() {
+      return mockFavoriteChannelsAtom;
+    },
+  },
+}));
+
+jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
+  useHasPermissionFlag: () => false,
+}));
+
+jest.mock('@/ai/components/NavigationDrawerAiChatChannelItem', () => ({
+  NavigationDrawerAiChatChannelItem: ({
+    channel,
+  }: {
+    channel: AgentChatChannel;
+  }) => <div>{channel.name}</div>,
+}));
+
+jest.mock('@/ai/components/NavigationDrawerAiChatThreadItem', () => ({
+  NavigationDrawerAiChatThreadItem: ({
+    thread,
+  }: {
+    thread: AgentChatThreadListItem;
+  }) => <div>{thread.title}</div>,
+}));
+
+jest.mock(
+  '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection',
+  () => ({
+    CollapsibleNavigationDrawerSection: ({
+      label,
+      children,
+    }: {
+      label: string;
+      children: ReactNode;
+    }) => <section aria-label={label}>{children}</section>,
+  }),
+);
 
 jest.mock('@/ai/hooks/useChatThreads', () => ({
   useChatThreads: () => ({ threads: mockThreads, loading: false }),
@@ -120,6 +166,36 @@ describe('NavigationDrawerAiChatContent', () => {
     expect(queryByText('Pipeline review')).toBeNull();
   });
 
+  it('lists favorite channels before favorite chats', () => {
+    jotaiStore.set(mockFavoriteChannelsAtom, [
+      {
+        __typename: 'AgentChatChannel',
+        id: 'channel-1',
+        name: 'Support',
+        icon: null,
+        color: null,
+        position: 1,
+        isOpenToEveryone: true,
+        roleIds: [],
+        isCustom: true,
+        isAccessible: true,
+      },
+    ]);
+    jotaiStore.set(mockFavoriteThreadsAtom, [
+      { id: 'chat-2', title: 'Quarterly plan', deletedAt: null },
+    ]);
+
+    const { getByRole } = renderContent();
+
+    const favorites = getByRole('region', { name: 'Favorites' });
+
+    expect(
+      within(favorites)
+        .getAllByText(/Support|Quarterly plan/)
+        .map((element) => element.textContent),
+    ).toEqual(['Support', 'Quarterly plan']);
+  });
+
   it('shows the triage section with the inbox feature flag on', () => {
     const { getByRole } = renderContent();
 
@@ -135,7 +211,7 @@ describe('NavigationDrawerAiChatContent', () => {
     expect(queryByRole('region', { name: 'Recent' })).toBeInTheDocument();
   });
 
-  it('shows no Favorites section without favorite chats', () => {
+  it('shows no Favorites section without favorite chats or channels', () => {
     jotaiStore.set(mockFavoriteThreadsAtom, []);
 
     const { queryByRole } = renderContent();

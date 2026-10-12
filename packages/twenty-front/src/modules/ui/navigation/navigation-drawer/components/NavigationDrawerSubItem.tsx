@@ -18,7 +18,6 @@ export const NavigationDrawerSubItem = ({
   isSelectedInEditMode,
   triggerEvent,
   variant,
-  isUnread,
 }: NavigationDrawerSubItemProps) => {
   return (
     <NavigationDrawerItem
@@ -37,7 +36,6 @@ export const NavigationDrawerSubItem = ({
       isSelectedInEditMode={isSelectedInEditMode}
       triggerEvent={triggerEvent}
       variant={variant}
-      isUnread={isUnread}
     />
   );
 };
