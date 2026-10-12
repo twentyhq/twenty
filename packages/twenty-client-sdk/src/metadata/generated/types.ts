@@ -13299,6 +13299,9 @@ export default {
             "isCampaignClickTrackingEnabled": [
                 4
             ],
+            "isCampaignOpenTrackingEnabled": [
+                4
+            ],
             "isGoogleAuthBypassEnabled": [
                 4
             ],

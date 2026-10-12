@@ -5086,6 +5086,7 @@ input UpdateWorkspaceInput {
   inviteHash: String
   isAutoModelSelectionEnabled: Boolean
   isCampaignClickTrackingEnabled: Boolean
+  isCampaignOpenTrackingEnabled: Boolean
   isGoogleAuthBypassEnabled: Boolean
   isGoogleAuthEnabled: Boolean
   isInternalMessagesImportEnabled: Boolean
