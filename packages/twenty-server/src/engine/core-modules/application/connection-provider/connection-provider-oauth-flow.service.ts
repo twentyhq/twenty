@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,6 +12,7 @@ import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import {
   assertOAuthProvider,
@@ -68,6 +69,7 @@ export class ConnectionProviderOAuthFlowService {
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly appConnectionAccessService: AppConnectionAccessService,
+    private readonly appOAuthRevokeService: AppOAuthRevokeService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserEntity)
@@ -324,10 +326,33 @@ export class ConnectionProviderOAuthFlowService {
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {
-      await this.connectedAccountRepository.update(
-        { id: reconnectingConnectedAccountId, workspaceId },
+      // Access was checked when the flow started; the row may since have been
+      // disconnected, transferred away or made personal to another member.
+      const updateResult = await this.connectedAccountRepository.update(
+        buildConnectedAccountUsableByCallerWhere({
+          baseWhere: {
+            id: reconnectingConnectedAccountId,
+            workspaceId,
+            connectionProviderId: provider.id,
+            archivedAt: IsNull(),
+          },
+          userWorkspaceId,
+        }),
         { ...sharedFields, userWorkspaceId },
       );
+
+      if (updateResult.affected === 0) {
+        await this.appOAuthRevokeService.revokeUnstoredTokens({
+          provider,
+          accessToken: tokenResponse.accessToken,
+          refreshToken: tokenResponse.refreshToken,
+        });
+
+        throw new ConnectionProviderException(
+          `Cannot reconnect connectedAccount ${reconnectingConnectedAccountId}: it was disconnected, transferred, or is no longer usable by this member.`,
+          ConnectionProviderExceptionCode.RECONNECT_TARGET_UNAVAILABLE,
+        );
+      }
 
       return this.connectedAccountRepository.findOneByOrFail({
         id: reconnectingConnectedAccountId,

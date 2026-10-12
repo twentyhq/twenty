@@ -7,6 +7,7 @@ import { ConnectionProviderEntity } from 'src/engine/core-modules/application/co
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -49,6 +50,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ConnectionProviderService,
     ConnectionProviderOAuthFlowService,
     ConnectionProviderLifecycleHookService,
+    AppOAuthRevokeService,
     ApplicationConnectionProviderResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
@@ -56,6 +58,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ConnectionProviderService,
     ConnectionProviderOAuthFlowService,
     ConnectionProviderLifecycleHookService,
+    AppOAuthRevokeService,
   ],
 })
 export class ConnectionProviderModule {}

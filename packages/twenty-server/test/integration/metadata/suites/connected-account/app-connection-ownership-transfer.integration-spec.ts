@@ -1,3 +1,4 @@
+import { insertApplicationRegistrationVariable } from 'test/integration/metadata/suites/application-registration-variable/utils/insert-application-registration-variable.util';
 import {
   type ApplicationWithAppConnection,
   cleanupApplicationWithAppConnection,
@@ -16,6 +17,9 @@ import {
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { type ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
@@ -31,14 +35,16 @@ const CUSTODIAN_USER_ID = uuidv4();
 const DEPARTING_MEMBER_ID = uuidv4();
 const CUSTODIAN_MEMBER_ID = uuidv4();
 const REVOKE_ENDPOINT = 'https://slack.com/api/auth.revoke';
+const TOKEN_ENDPOINT = 'https://slack.com/api/oauth.v2.access';
 
 describe('app connection ownership transfer', () => {
   let application: ApplicationWithAppConnection;
   let providerId: string;
   let service: ConnectedAccountMetadataService;
+  let oauthFlowService: ConnectionProviderOAuthFlowService;
   let encryptionService: ConnectedAccountTokenEncryptionService;
 
-  const revokeRequest = jest.fn(
+  const revokeRequest = jest.fn<Promise<Response>, Parameters<typeof fetch>>(
     async () => new Response(null, { status: 200 }),
   );
   const accounts = () =>
@@ -165,9 +171,29 @@ describe('app connection ownership transfer', () => {
       oauthConfig: { ...provider.oauthConfig, revokeEndpoint: REVOKE_ENDPOINT },
     });
     service = getAppProviderByClassName('ConnectedAccountMetadataService');
+    oauthFlowService = getAppProviderByClassName(
+      'ConnectionProviderOAuthFlowService',
+    );
     encryptionService = getAppProviderByClassName(
       'ConnectedAccountTokenEncryptionService',
     );
+
+    const { applicationRegistrationId } =
+      await getCoreRepository<ApplicationEntity>(
+        ApplicationEntity,
+      ).findOneByOrFail({ id: application.applicationId });
+
+    assertIsDefinedOrThrow(applicationRegistrationId);
+
+    for (const variable of [
+      { key: 'SLACK_CLIENT_ID', value: 'ownership-test-client' },
+      { key: 'SLACK_CLIENT_SECRET', value: 'ownership-test-secret' },
+    ]) {
+      await insertApplicationRegistrationVariable({
+        applicationRegistrationId,
+        ...variable,
+      });
+    }
 
     // Offboarding must not affect seeded members used by other suites.
     await globalThis.testDataSource.query(
@@ -327,6 +353,73 @@ describe('app connection ownership transfer', () => {
         body: new URLSearchParams({
           token: 'refreshed-before-transfer',
           token_type_hint: 'access_token',
+        }).toString(),
+      }),
+    );
+  });
+
+  it('refuses a reconnect callback that arrives after the member was offboarded', async () => {
+    const account = await createAccount({
+      userWorkspaceId: DEPARTING_MEMBER_ID,
+    });
+    const connectionProvider =
+      await getCoreRepository<ConnectionProviderEntity>(
+        ConnectionProviderEntity,
+      ).findOneByOrFail({ id: providerId });
+
+    const { authorizationUrl } = await oauthFlowService.startAuthorizationFlow({
+      connectionProvider,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      userId: DEPARTING_USER_ID,
+      userWorkspaceId: DEPARTING_MEMBER_ID,
+      visibility: 'user',
+      reconnectingConnectedAccountId: account.id,
+      redirectLocation: null,
+    });
+    const state = new URL(authorizationUrl).searchParams.get('state');
+
+    assertIsDefinedOrThrow(state);
+
+    await transfer();
+
+    revokeRequest.mockImplementation(async (url) =>
+      url === TOKEN_ENDPOINT
+        ? new Response(
+            JSON.stringify({
+              access_token: 'late-access',
+              refresh_token: 'late-refresh',
+            }),
+            { status: 200 },
+          )
+        : new Response(null, { status: 200 }),
+    );
+
+    await expect(
+      oauthFlowService.completeAuthorizationFlow({ code: 'late-code', state }),
+    ).rejects.toMatchObject({
+      code: ConnectionProviderExceptionCode.RECONNECT_TARGET_UNAVAILABLE,
+    });
+    expect(await accounts().findOneByOrFail({ id: account.id })).toMatchObject({
+      userWorkspaceId: CUSTODIAN_MEMBER_ID,
+      archivedAt: expect.anything(),
+      accessToken: null,
+      refreshToken: null,
+    });
+    expect(revokeRequest).toHaveBeenCalledWith(
+      REVOKE_ENDPOINT,
+      expect.objectContaining({
+        body: new URLSearchParams({
+          token: 'late-access',
+          token_type_hint: 'access_token',
+        }).toString(),
+      }),
+    );
+    expect(revokeRequest).toHaveBeenCalledWith(
+      REVOKE_ENDPOINT,
+      expect.objectContaining({
+        body: new URLSearchParams({
+          token: 'late-refresh',
+          token_type_hint: 'refresh_token',
         }).toString(),
       }),
     );

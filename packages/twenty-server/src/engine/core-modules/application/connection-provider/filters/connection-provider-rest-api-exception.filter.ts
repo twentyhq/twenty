@@ -22,6 +22,7 @@ const connectionProviderExceptionCodeToHttpStatus = (
     case ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND:
     case ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND:
     case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND:
+    case ConnectionProviderExceptionCode.RECONNECT_TARGET_UNAVAILABLE:
       return 404;
     case ConnectionProviderExceptionCode.FORBIDDEN:
       return 403;

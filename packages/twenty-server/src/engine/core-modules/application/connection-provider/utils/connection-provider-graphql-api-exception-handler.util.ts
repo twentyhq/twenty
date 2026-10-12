@@ -17,6 +17,7 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
       case ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND:
       case ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND:
       case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND:
+      case ConnectionProviderExceptionCode.RECONNECT_TARGET_UNAVAILABLE:
         throw new NotFoundError(error);
       case ConnectionProviderExceptionCode.FORBIDDEN:
         throw new ForbiddenError(error);
