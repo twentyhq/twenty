@@ -92,6 +92,10 @@ export class BillingReminderService {
     );
 
     for (const subscription of trialingSubscriptions) {
+      if (isSendInvoiceSubscription(subscription)) {
+        continue;
+      }
+
       const trialEnd = subscription.trialEnd;
 
       if (!isDefined(trialEnd)) {
@@ -176,10 +180,7 @@ export class BillingReminderService {
   private isWithCreditCardTrial(
     subscription: BillingSubscriptionEntity,
   ): boolean {
-    if (
-      isSendInvoiceSubscription(subscription) ||
-      subscription.billingCustomer?.hasPaymentMethod === true
-    ) {
+    if (subscription.billingCustomer?.hasPaymentMethod === true) {
       return true;
     }
 
