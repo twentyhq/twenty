@@ -769,6 +769,7 @@ enum BillingEntitlementKey {
   RLS
   SSO
   USAGE_LIMIT
+  VALIDATION_RULES
 }
 
 type BillingLicensedProduct implements BillingProductDTO {
@@ -1854,6 +1855,8 @@ enum EngineComponentKey {
   ACTIVATE_WORKFLOW
   ADD_NODE_WORKFLOW
   ADD_TO_FAVORITES
+  ADD_TO_MESSAGE_LIST
+  ADD_VIEW_TO_MESSAGE_LIST
   ASK_AI
   ASSIGN_AI_CHAT
   CANCEL_DASHBOARD_LAYOUT
@@ -3150,6 +3153,7 @@ type Mutation {
   syncMarketplaceCatalog: Boolean!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
+  triggerAddPeopleToMessageListJob(input: TriggerAddPeopleToMessageListJobInput!): TriggerAddPeopleToMessageListJobResult!
   triggerInstallApplication(input: TriggerInstallApplicationInput!): TriggerInstallApplicationResult!
   triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult! @deprecated(reason: "Use triggerInstallApplication instead")
   triggerUninstallApplication(input: TriggerUninstallApplicationInput!): TriggerUninstallApplicationResult!
@@ -4468,6 +4472,15 @@ type ToolIndexEntry {
 
 type TransientToken {
   transientToken: AuthToken!
+}
+
+input TriggerAddPeopleToMessageListJobInput {
+  messageListId: UUID!
+  personFilter: JSON!
+}
+
+type TriggerAddPeopleToMessageListJobResult {
+  jobId: String!
 }
 
 input TriggerInstallApplicationInput {
