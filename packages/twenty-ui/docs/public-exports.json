@@ -94,7 +94,8 @@
       "MainButton": "components/input/MainButton/MainButton",
       "NumberStepper": "components/input/NumberStepper/NumberStepper",
       "PhoneCountryPicker": "components/input/PhoneCountryPicker/PhoneCountryPicker",
-      "SearchInput": "components/input/SearchInput/SearchInput"
+      "SearchInput": "components/input/SearchInput/SearchInput",
+      "SegmentedControl": "components/input/SegmentedControl/SegmentedControl"
     },
     "types": {
       "CountryChoice": "components/input/CountrySelect/types/CountryChoice",
@@ -111,7 +112,9 @@
       "PhoneCountryOption": "components/input/PhoneCountryPicker/types/PhoneCountryOption",
       "PhoneCountryPickerOptionsProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerOptionsProps",
       "PhoneCountryPickerTriggerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerTriggerProps",
-      "SearchInputProps": "components/input/SearchInput/types/SearchInputProps"
+      "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
+      "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
+      "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps"
     }
   },
   "components/layout": {
@@ -794,7 +797,6 @@
       "NumberField": "primitives/input/NumberField/NumberField",
       "Radio": "primitives/input/Radio/Radio",
       "RadioGroup": "primitives/input/RadioGroup/RadioGroup",
-      "SegmentedControl": "primitives/input/SegmentedControl/SegmentedControl",
       "Select": "primitives/input/Select/Select",
       "Slider": "primitives/input/Slider/Slider",
       "Switch": "primitives/input/Switch/Switch",
@@ -891,10 +893,15 @@
       "NumberFieldScrubAreaCursorState": "primitives/input/NumberField/types/NumberFieldScrubAreaCursorState",
       "NumberFieldScrubAreaProps": "primitives/input/NumberField/types/NumberFieldScrubAreaProps",
       "NumberFieldScrubAreaState": "primitives/input/NumberField/types/NumberFieldScrubAreaState",
+      "RadioGroupChangeEventDetails": "primitives/input/RadioGroup/types/RadioGroupChangeEventDetails",
+      "RadioGroupChangeEventReason": "primitives/input/RadioGroup/types/RadioGroupChangeEventReason",
       "RadioGroupProps": "primitives/input/RadioGroup/types/RadioGroupProps",
+      "RadioGroupState": "primitives/input/RadioGroup/types/RadioGroupState",
+      "RadioIndicatorProps": "primitives/input/Radio/types/RadioIndicatorProps",
+      "RadioIndicatorState": "primitives/input/Radio/types/RadioIndicatorState",
       "RadioProps": "primitives/input/Radio/types/RadioProps",
-      "SegmentedControlOption": "primitives/input/SegmentedControl/types/SegmentedControlOption",
-      "SegmentedControlProps": "primitives/input/SegmentedControl/types/SegmentedControlProps",
+      "RadioRootProps": "primitives/input/Radio/types/RadioRootProps",
+      "RadioRootState": "primitives/input/Radio/types/RadioRootState",
       "SelectArrowProps": "primitives/input/Select/types/SelectArrowProps",
       "SelectArrowState": "primitives/input/Select/types/SelectArrowState",
       "SelectBackdropProps": "primitives/input/Select/types/SelectBackdropProps",

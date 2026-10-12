@@ -1,6 +1,7 @@
-import { Radio as RadioPrimitive } from '@base-ui/react/radio';
 import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
 import { clsx } from 'clsx';
+
+import { Radio } from '@ui/primitives/input/Radio/Radio';
 
 import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
@@ -21,7 +22,7 @@ export const SegmentedControl = <TValue extends string>({
   >
     {options.map(
       ({ 'aria-label': ariaLabel, disabled, label, startIcon, value }) => (
-        <RadioPrimitive.Root
+        <Radio.Root
           key={value}
           value={value}
           disabled={disabled}
@@ -39,7 +40,7 @@ export const SegmentedControl = <TValue extends string>({
           {isRenderableSlot(label) && (
             <span className={styles.label}>{label}</span>
           )}
-        </RadioPrimitive.Root>
+        </Radio.Root>
       ),
     )}
   </RadioGroupPrimitive>

@@ -173,12 +173,10 @@ const buildWorkspaceMember = (id: string, firstName: string) => ({
 
 const renderDetails = async ({
   permissions = EDITABLE_PERMISSIONS,
-  isConversationsTabEnabled = true,
   isAiChatInboxEnabled = true,
   shouldOpenDetails = true,
 }: {
   permissions?: typeof EDITABLE_PERMISSIONS;
-  isConversationsTabEnabled?: boolean;
   isAiChatInboxEnabled?: boolean;
   shouldOpenDetails?: boolean;
 } = {}) => {
@@ -191,10 +189,6 @@ const renderDetails = async ({
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
         featureFlags: [
-          {
-            key: FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
-            value: isConversationsTabEnabled,
-          },
           {
             key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
             value: isAiChatInboxEnabled,
@@ -385,29 +379,14 @@ describe('AiChatThreadDetailsDropdown', () => {
     expect(refetchThread).toHaveBeenCalledTimes(1);
   });
 
-  it('leaves out the assignee and followers while the inbox feature flag is off', async () => {
-    await renderDetails({ isAiChatInboxEnabled: false });
-
-    expect(await screen.findByText('Linked to')).toBeVisible();
-    expect(screen.queryByText('Assignee')).not.toBeInTheDocument();
-    expect(screen.queryByText('Owner Member')).not.toBeInTheDocument();
-  });
-
-  it('hides the chat details with neither the inbox nor the conversations tab enabled', async () => {
+  it('hides the chat details while the inbox feature flag is off', async () => {
     await renderDetails({
       isAiChatInboxEnabled: false,
-      isConversationsTabEnabled: false,
       shouldOpenDetails: false,
     });
 
     expect(
       screen.queryByRole('button', { name: 'Chat details' }),
     ).not.toBeInTheDocument();
-  });
-
-  it('leaves out the linked records until the conversations tab is enabled', async () => {
-    await renderDetails({ isConversationsTabEnabled: false });
-
-    expect(screen.queryByText('Acme')).not.toBeInTheDocument();
   });
 });

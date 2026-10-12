@@ -34,7 +34,7 @@ const CHANNEL_UNIVERSAL_IDENTIFIERS = Object.values(
   STANDARD_AGENT_CHAT_CHANNEL,
 ).map(({ universalIdentifier }) => universalIdentifier);
 
-@RegisteredWorkspaceCommand('2.47.0', 1791817862425)
+@RegisteredWorkspaceCommand('2.47.0', 1791823542907)
 @Command({
   name: 'upgrade:2-47:add-agent-chat-channels',
   description:
