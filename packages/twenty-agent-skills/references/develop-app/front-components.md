@@ -25,6 +25,8 @@ export default defineFrontComponent({
 });
 ```
 
+Every non-headless front component is offered in the widget picker when a page layout is edited. Set `excludeFromWidgetSelection: true` to hide one that is not meant to be placed as a widget. A component pointed at by a settings menu item (see `layout.md`) is excluded by default; set `excludeFromWidgetSelection: false` to offer it as a widget too.
+
 Do not import or call `react-dom/client` in the component source. The SDK renderer mounts front components.
 
 ## Runtime Imports
