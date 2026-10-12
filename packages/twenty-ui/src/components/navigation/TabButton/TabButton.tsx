@@ -1,6 +1,8 @@
 import { clsx } from 'clsx';
+import { useContext } from 'react';
 
 import { Button } from '@ui/primitives/input/Button/Button';
+import { ButtonGroupContext } from '@ui/primitives/input/ButtonGroup/internal/ButtonGroupContext';
 import { TabsTabContent } from '@ui/primitives/navigation/internal/tab/TabsTabContent';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
@@ -15,18 +17,23 @@ export const TabButton = ({
   startIcon,
   endIcon,
   badge,
-  size = 'sm',
+  size,
   ...props
-}: TabButtonProps) => (
-  <Button
-    {...props}
-    variant="ghost"
-    size={size}
-    data-active={active || undefined}
-    className={mergeClassNames(clsx(tabStyles.tab, styles.button), className)}
-  >
-    <TabsTabContent startIcon={startIcon} endIcon={endIcon} badge={badge}>
-      {children}
-    </TabsTabContent>
-  </Button>
-);
+}: TabButtonProps) => {
+  const buttonGroup = useContext(ButtonGroupContext);
+  const resolvedSize = size ?? buttonGroup?.size ?? 'sm';
+
+  return (
+    <Button
+      {...props}
+      variant="ghost"
+      size={resolvedSize}
+      data-active={active || undefined}
+      className={mergeClassNames(clsx(tabStyles.tab, styles.button), className)}
+    >
+      <TabsTabContent startIcon={startIcon} endIcon={endIcon} badge={badge}>
+        {children}
+      </TabsTabContent>
+    </Button>
+  );
+};

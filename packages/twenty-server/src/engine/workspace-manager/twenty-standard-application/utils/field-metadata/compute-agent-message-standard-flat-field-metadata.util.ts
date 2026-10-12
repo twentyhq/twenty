@@ -94,33 +94,6 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  senderUserWorkspaceId: {
-    ...createStandardFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'senderUserWorkspaceId',
-        type: FieldMetadataType.UUID,
-        label: i18nLabel(
-          msg({
-            message: 'Sender workspace membership ID',
-            context: 'fieldMetadata.label',
-          }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'Sender workspace membership ID',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconUser',
-        isSystem: true,
-        isUIEditable: false,
-        isNullable: true,
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
   senderApplicationId: {
     ...createStandardFieldFlatMetadata({
       ...args,
@@ -186,29 +159,6 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         isUIEditable: false,
         isNullable: false,
         defaultValue: "'sent'",
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
-  // Only marks contexts the 2.46 upgrade has not turned into system messages yet; the 2.42 history move still copies it
-  isHidden: {
-    ...createStandardFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'isHidden',
-        type: FieldMetadataType.BOOLEAN,
-        label: i18nLabel(
-          msg({ message: 'Is Hidden', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({ message: 'Is Hidden', context: 'fieldMetadata.description' }),
-        ),
-        icon: 'IconToggleLeft',
-        isSystem: true,
-        isUIEditable: false,
-        isNullable: false,
-        defaultValue: false,
       },
     }),
     writability: MetadataWritability.SYSTEM,

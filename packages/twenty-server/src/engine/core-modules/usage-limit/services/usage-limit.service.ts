@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { IsNull, Not } from 'typeorm';
-
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -58,10 +56,7 @@ export class UsageLimitService {
   ) {}
 
   async findAll(workspaceId: string): Promise<UsageLimitEntity[]> {
-    // Legacy quantity scopes without an equivalent unit stay stored for reconciliation.
-    return this.usageLimitRepository.find(workspaceId, {
-      where: { unit: Not(IsNull()) },
-    });
+    return this.usageLimitRepository.find(workspaceId);
   }
 
   async create({
@@ -113,7 +108,7 @@ export class UsageLimitService {
     isOperator: boolean;
   }): Promise<UsageLimitEntity> {
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
-      where: { id: input.id, unit: Not(IsNull()) },
+      where: { id: input.id },
     });
 
     if (!isDefined(usageLimit)) {
@@ -261,7 +256,7 @@ export class UsageLimitService {
     isOperator: boolean;
   }): Promise<boolean> {
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
-      where: { id: usageLimitId, unit: Not(IsNull()) },
+      where: { id: usageLimitId },
     });
 
     if (!isDefined(usageLimit)) {

@@ -40,7 +40,6 @@
       "getIconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "JsonTree": "components/data-display/JsonTree/JsonTree",
       "MetricRow": "components/data-display/MetricRow/MetricRow",
-      "NotificationCounter": "components/data-display/NotificationCounter/NotificationCounter",
       "TintedIconTile": "components/data-display/TintedIconTile/TintedIconTile"
     },
     "types": {
@@ -725,9 +724,9 @@
     "values": {
       "Avatar": "primitives/data-display/Avatar/Avatar",
       "AVATAR_PROPERTIES_BY_SIZE": "primitives/data-display/Avatar/constants/AvatarPropertiesBySize",
+      "Badge": "primitives/data-display/Badge/Badge",
       "Chip": "primitives/data-display/Chip/Chip",
       "ColorSample": "primitives/data-display/ColorSample/ColorSample",
-      "Pill": "primitives/data-display/Pill/Pill",
       "Status": "primitives/data-display/Status/Status",
       "Tag": "primitives/data-display/Tag/Tag"
     },
@@ -742,6 +741,10 @@
       "AvatarRootState": "primitives/data-display/Avatar/types/AvatarRootState",
       "AvatarShape": "primitives/data-display/Avatar/types/AvatarShape",
       "AvatarSize": "primitives/data-display/Avatar/types/AvatarSize",
+      "BadgeColor": "primitives/data-display/Badge/types/BadgeColor",
+      "BadgeProps": "primitives/data-display/Badge/types/BadgeProps",
+      "BadgeShape": "primitives/data-display/Badge/types/BadgeShape",
+      "BadgeSize": "primitives/data-display/Badge/types/BadgeSize",
       "ChipProps": "primitives/data-display/Chip/types/ChipProps",
       "ChipSize": "primitives/data-display/Chip/types/ChipSize",
       "ChipVariant": "primitives/data-display/Chip/types/ChipVariant",
@@ -910,11 +913,26 @@
       "ListItemIndicator": "primitives/navigation/ListItem/types/ListItemIndicator",
       "ListItemProps": "primitives/navigation/ListItem/types/ListItemProps",
       "ListItemState": "primitives/navigation/ListItem/types/ListItemState",
+      "TabsIndicatorProps": "primitives/navigation/Tabs/types/TabsIndicatorProps",
+      "TabsIndicatorState": "primitives/navigation/Tabs/types/TabsIndicatorState",
       "TabsListProps": "primitives/navigation/Tabs/types/TabsListProps",
+      "TabsListState": "primitives/navigation/Tabs/types/TabsListState",
+      "TabsPanelMetadata": "primitives/navigation/Tabs/types/TabsPanelMetadata",
       "TabsPanelProps": "primitives/navigation/Tabs/types/TabsPanelProps",
+      "TabsPanelState": "primitives/navigation/Tabs/types/TabsPanelState",
+      "TabsRootChangeEventDetails": "primitives/navigation/Tabs/types/TabsRootChangeEventDetails",
+      "TabsRootChangeEventReason": "primitives/navigation/Tabs/types/TabsRootChangeEventReason",
+      "TabsRootOrientation": "primitives/navigation/Tabs/types/TabsRootOrientation",
       "TabsRootProps": "primitives/navigation/Tabs/types/TabsRootProps",
+      "TabsRootState": "primitives/navigation/Tabs/types/TabsRootState",
       "TabsSize": "primitives/navigation/Tabs/types/TabsSize",
-      "TabsTabProps": "primitives/navigation/Tabs/types/TabsTabProps"
+      "TabsTabActivationDirection": "primitives/navigation/Tabs/types/TabsTabActivationDirection",
+      "TabsTabMetadata": "primitives/navigation/Tabs/types/TabsTabMetadata",
+      "TabsTabPosition": "primitives/navigation/Tabs/types/TabsTabPosition",
+      "TabsTabProps": "primitives/navigation/Tabs/types/TabsTabProps",
+      "TabsTabSize": "primitives/navigation/Tabs/types/TabsTabSize",
+      "TabsTabState": "primitives/navigation/Tabs/types/TabsTabState",
+      "TabsTabValue": "primitives/navigation/Tabs/types/TabsTabValue"
     }
   },
   "primitives/surfaces": {
