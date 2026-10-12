@@ -7,7 +7,6 @@ let mockParameters = {
   objectNameSingular: 'person',
   objectRecordId: 'record-1',
 };
-let mockIsWorkflowCoreIndexPageEnabled = false;
 let mockRecordResource: {
   record: { id: string } | undefined;
   loading: boolean;
@@ -22,10 +21,6 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => mockParameters,
   Navigate: ({ to }: { to: string }) => <div data-testid="navigate">{to}</div>,
-}));
-
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsWorkflowCoreIndexPageEnabled,
 }));
 
 jest.mock('@/object-core/utils/findCoreObjectShowPage', () => ({
@@ -139,7 +134,6 @@ describe('RecordShowPage workspace surface composition', () => {
       objectNameSingular: 'person',
       objectRecordId: 'record-1',
     };
-    mockIsWorkflowCoreIndexPageEnabled = false;
     mockRecordResource = {
       record: { id: 'record-1' },
       loading: false,
@@ -152,7 +146,6 @@ describe('RecordShowPage workspace surface composition', () => {
       objectNameSingular: 'workflow',
       objectRecordId: 'workspace-workflow-1',
     };
-    mockIsWorkflowCoreIndexPageEnabled = true;
 
     render(<RecordShowPage />);
 
@@ -160,20 +153,6 @@ describe('RecordShowPage workspace surface composition', () => {
       'workspace-workflow-1',
     );
     expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
-  });
-
-  it('keeps the workspace show page for core-owned records when the flag is disabled', () => {
-    mockParameters = {
-      objectNameSingular: 'workflow',
-      objectRecordId: 'workspace-workflow-1',
-    };
-
-    render(<RecordShowPage />);
-
-    expect(screen.getByTestId('record-renderer')).toBeInTheDocument();
-    expect(
-      screen.queryByTestId('core-object-show-page'),
-    ).not.toBeInTheDocument();
   });
 
   it('sends a chat record to the chat page', () => {
