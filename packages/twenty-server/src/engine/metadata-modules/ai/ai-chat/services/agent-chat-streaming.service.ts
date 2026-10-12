@@ -173,13 +173,10 @@ export class AgentChatStreamingService {
         workspaceMemberId,
       });
 
-      if (isDefined(browsingContext)) {
-        await this.browsingContextService.remember({
-          threadId,
-          messageId: queuedMessage.id,
-          browsingContext,
-        });
-      }
+      await this.browsingContextService.remember({
+        messageId: queuedMessage.id,
+        browsingContext,
+      });
 
       if (hasQueuedBacklog) {
         await this.flushNextQueuedMessage({ threadId, workspaceId });
@@ -207,13 +204,10 @@ export class AgentChatStreamingService {
           workspaceId,
         });
 
-        if (isDefined(browsingContext)) {
-          await this.browsingContextService.remember({
-            threadId,
-            messageId: savedUserMessage.id,
-            browsingContext,
-          });
-        }
+        await this.browsingContextService.remember({
+          messageId: savedUserMessage.id,
+          browsingContext,
+        });
 
         await this.eventPublisherService.publish({
           workspaceId,
@@ -428,10 +422,9 @@ export class AgentChatStreamingService {
           userWorkspaceId,
           workspaceId,
           messages,
-          browsingContext: await this.browsingContextService.recall({
-            threadId,
-            messageId: message?.id,
-          }),
+          browsingContext: isDefined(message)
+            ? await this.recallLatestBrowsingContext(messages)
+            : null,
           modelId,
           lastUserMessageText: textPart?.text ?? '',
           turnId,
@@ -466,17 +459,19 @@ export class AgentChatStreamingService {
       where: { id: threadId },
     });
 
+    const messages = await this.loadMessagesFromDB(
+      threadId,
+      workspace.id,
+      workspaceMemberId,
+    );
+
     await this.enqueueStreamJob({
       thread,
       streamId,
       userWorkspaceId,
       workspaceId: workspace.id,
-      messages: await this.loadMessagesFromDB(
-        threadId,
-        workspace.id,
-        workspaceMemberId,
-      ),
-      browsingContext: await this.browsingContextService.recall({ threadId }),
+      messages,
+      browsingContext: await this.recallLatestBrowsingContext(messages),
       modelId,
       lastUserMessageText: '',
       turnId,
@@ -639,8 +634,7 @@ export class AgentChatStreamingService {
           workspaceId,
           messages,
           browsingContext: await this.browsingContextService.recall({
-            threadId,
-            messageId: nextQueued.id,
+            messageIds: [nextQueued.id],
           }),
           lastUserMessageText: messageText,
           turnId,
@@ -744,6 +738,15 @@ export class AgentChatStreamingService {
       'There is no failed turn to retry on this thread',
       AiExceptionCode.NO_FAILED_TURN_TO_RETRY,
     );
+  }
+
+  private recallLatestBrowsingContext(messages: ExtendedUIMessage[]) {
+    return this.browsingContextService.recall({
+      messageIds: messages
+        .filter(({ role }) => role === 'user')
+        .map(({ id }) => id)
+        .reverse(),
+    });
   }
 
   private async loadMessagesFromDB(

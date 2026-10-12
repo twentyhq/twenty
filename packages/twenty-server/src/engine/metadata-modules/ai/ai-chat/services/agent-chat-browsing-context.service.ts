@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
@@ -14,68 +14,54 @@ export class AgentChatBrowsingContextService {
 
   constructor(private readonly redisClientService: RedisClientService) {}
 
-  private getThreadKey(threadId: string): string {
-    return `agent-chat-browsing-context:thread:${threadId}`;
-  }
-
   private getMessageKey(messageId: string): string {
     return `agent-chat-browsing-context:message:${messageId}`;
   }
 
   async remember({
-    threadId,
     messageId,
     browsingContext,
   }: {
-    threadId: string;
     messageId: string;
-    browsingContext: BrowsingContextType;
+    browsingContext: BrowsingContextType | null;
   }): Promise<void> {
-    const serializedBrowsingContext = JSON.stringify(browsingContext);
-
     await this.redisClientService
       .getClient()
-      .multi()
-      .set(
-        this.getThreadKey(threadId),
-        serializedBrowsingContext,
-        'EX',
-        BROWSING_CONTEXT_TTL_SECONDS,
-      )
       .set(
         this.getMessageKey(messageId),
-        serializedBrowsingContext,
+        JSON.stringify(browsingContext ?? null),
         'EX',
         BROWSING_CONTEXT_TTL_SECONDS,
       )
-      .exec()
       .catch((error) => {
         this.logger.warn(
-          `Could not store the browsing context of thread ${threadId}: ${formatErrorWithCause(error)}`,
+          `Could not store the browsing context of message ${messageId}: ${formatErrorWithCause(error)}`,
         );
       });
   }
 
   async recall({
-    threadId,
-    messageId,
+    messageIds,
   }: {
-    threadId: string;
-    messageId?: string;
+    messageIds: string[];
   }): Promise<BrowsingContextType | null> {
+    if (!isNonEmptyArray(messageIds)) {
+      return null;
+    }
+
     try {
-      const client = this.redisClientService.getClient();
-      const serializedBrowsingContext =
-        (isDefined(messageId)
-          ? await client.get(this.getMessageKey(messageId))
-          : null) ?? (await client.get(this.getThreadKey(threadId)));
+      const serializedBrowsingContext = (
+        await this.redisClientService
+          .getClient()
+          .mget(messageIds.map((messageId) => this.getMessageKey(messageId)))
+      ).find(isDefined);
 
       return isDefined(serializedBrowsingContext)
-        ? (JSON.parse(serializedBrowsingContext) as BrowsingContextType)
+        ? (JSON.parse(serializedBrowsingContext) as BrowsingContextType | null)
         : null;
     } catch (error) {
       this.logger.warn(
-        `Could not read the browsing context of thread ${threadId}: ${formatErrorWithCause(error)}`,
+        `Could not read the browsing context of message ${messageIds[0]}: ${formatErrorWithCause(error)}`,
       );
 
       return null;

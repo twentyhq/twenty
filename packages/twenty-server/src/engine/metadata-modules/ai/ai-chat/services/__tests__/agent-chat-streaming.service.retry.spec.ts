@@ -235,15 +235,22 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       path: '/settings/objects/companies/validation-rules/rule-1',
     };
     const { service, messageQueueService, browsingContextService } =
-      buildService();
+      buildService({
+        threadMessages: [
+          {
+            ...userMessageEntity,
+            id: 'earlier-message-id',
+          } as unknown as AgentMessageWorkspaceEntity,
+          userMessageEntity,
+        ],
+      });
 
     browsingContextService.recall.mockResolvedValue(browsingContext);
 
     await service.retryLastFailedTurn(retryArguments);
 
     expect(browsingContextService.recall).toHaveBeenCalledWith({
-      threadId: 'thread-id',
-      messageId: 'user-message-id',
+      messageIds: ['user-message-id', 'earlier-message-id'],
     });
     expect(messageQueueService.add).toHaveBeenCalledWith(
       expect.any(String),
