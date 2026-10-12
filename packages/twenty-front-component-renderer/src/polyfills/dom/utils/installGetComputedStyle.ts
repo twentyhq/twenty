@@ -1,7 +1,11 @@
-import { isNonEmptyString, isObject, isString } from '@sniptt/guards';
+import {
+  isFunction,
+  isNonEmptyString,
+  isObject,
+  isString,
+} from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ElementWithStyle } from '@/polyfills/dom/types/ElementWithStyle';
 import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
 import { resolveCssPropertyNameFromJsPropertyName } from '@/polyfills/dom/utils/resolveCssPropertyNameFromJsPropertyName';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
@@ -23,7 +27,7 @@ export const installGetComputedStyle = ({
       return createEmptyStyleDeclaration();
     }
 
-    const declaredStyle = (element as ElementWithStyle).style;
+    const declaredStyle = 'style' in element ? element.style : undefined;
     const readProperty = (propertyName: string): string => {
       const isDocumentElement =
         element === documentTarget.body ||
@@ -35,13 +39,18 @@ export const installGetComputedStyle = ({
       if (isDefined(measuredValue)) {
         return measuredValue;
       }
-      if (!isObject(declaredStyle)) {
+      if (
+        !isObject(declaredStyle) ||
+        !('getPropertyValue' in declaredStyle) ||
+        !isFunction(declaredStyle.getPropertyValue)
+      ) {
         return '';
       }
-      const getPropertyValue = (
-        declaredStyle as { getPropertyValue?: (name: string) => string }
-      ).getPropertyValue;
-      return getPropertyValue?.call(declaredStyle, propertyName) ?? '';
+      const declaredValue: unknown = declaredStyle.getPropertyValue.call(
+        declaredStyle,
+        propertyName,
+      );
+      return isString(declaredValue) ? declaredValue : '';
     };
 
     return new Proxy(createEmptyStyleDeclaration(), {
