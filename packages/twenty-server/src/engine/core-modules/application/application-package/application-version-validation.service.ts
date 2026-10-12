@@ -39,26 +39,47 @@ export class ApplicationVersionValidationService {
   async validateServerCompatibility(
     requiredServerVersion: string | undefined,
   ): Promise<VersionValidationResult> {
-    if (!isDefined(requiredServerVersion)) {
-      return { compatible: true };
-    }
+    const [validation] = await this.validateManyServerCompatibilities([
+      requiredServerVersion,
+    ]);
 
-    if (!isDefined(semver.validRange(requiredServerVersion))) {
-      return {
-        compatible: false,
-        reason: 'INVALID_REQUIRED_VERSION',
-        message: `App manifest declares invalid engines.twenty value "${requiredServerVersion}". Must be a valid semver range.`,
-      };
-    }
+    return validation;
+  }
 
-    const instanceCompletedVersion =
-      await this.upgradeStatusService.getInstanceCompletedVersion();
+  async validateManyServerCompatibilities(
+    requiredServerVersions: (string | undefined)[],
+  ): Promise<VersionValidationResult[]> {
+    const hasValidRequiredServerVersion = requiredServerVersions.some(
+      (requiredServerVersion) =>
+        isDefined(requiredServerVersion) &&
+        isDefined(semver.validRange(requiredServerVersion)),
+    );
 
-    return this.validateVersionAgainstRange({
-      version: instanceCompletedVersion,
-      requiredVersionRange: requiredServerVersion,
-      scope: 'instance',
-    });
+    const instanceCompletedVersion = hasValidRequiredServerVersion
+      ? await this.upgradeStatusService.getInstanceCompletedVersion()
+      : null;
+
+    return requiredServerVersions.map(
+      (requiredServerVersion): VersionValidationResult => {
+        if (!isDefined(requiredServerVersion)) {
+          return { compatible: true };
+        }
+
+        if (!isDefined(semver.validRange(requiredServerVersion))) {
+          return {
+            compatible: false,
+            reason: 'INVALID_REQUIRED_VERSION',
+            message: `App manifest declares invalid engines.twenty value "${requiredServerVersion}". Must be a valid semver range.`,
+          };
+        }
+
+        return this.validateVersionAgainstRange({
+          version: instanceCompletedVersion,
+          requiredVersionRange: requiredServerVersion,
+          scope: 'instance',
+        });
+      },
+    );
   }
 
   async validateWorkspaceCompatibility({
