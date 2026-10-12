@@ -3,9 +3,13 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 // Containment boundary for third-party widget content, which the page cannot
 // style and must not let bleed into its neighbours.
-export const StyledWidgetContentFrame = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+export const StyledWidgetContentFrame = styled.div<{ isBorderless?: boolean }>`
+  border: ${({ isBorderless }) =>
+    isBorderless
+      ? 'none'
+      : `1px solid ${themeCssVariables.border.color.medium}`};
+  border-radius: ${({ isBorderless }) =>
+    isBorderless ? '0' : themeCssVariables.border.radius.md};
   box-sizing: border-box;
   width: 100%;
 `;
