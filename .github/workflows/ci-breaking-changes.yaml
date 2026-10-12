@@ -27,6 +27,7 @@ jobs:
         packages/twenty-emails/**
         packages/twenty-shared/**
         .github/workflows/ci-breaking-changes.yaml
+        packages/twenty-utils/graphql-breaking-change-rules.cjs
 
   api-breaking-changes:
     needs: changed-files-check
@@ -482,6 +483,10 @@ jobs:
           echo "Checking GraphQL schema for breaking changes..."
           if inspect_schema_diff main-schema-introspection.json current-schema-introspection.json > graphql-schema-diff.log 2>&1; then
             echo "✅ No breaking changes in GraphQL schema"
+          elif ! grep -qE 'Detected [0-9]+ breaking change' graphql-schema-diff.log; then
+            cat graphql-schema-diff.log
+            echo "::error::graphql-inspector could not compare the GraphQL schema"
+            exit 1
           else
             echo "⚠️ Breaking changes detected in GraphQL schema, generating report..."
             echo "core_breaking=true" >> $GITHUB_OUTPUT
@@ -497,6 +502,10 @@ jobs:
           echo "Checking GraphQL metadata schema for breaking changes..."
           if inspect_schema_diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json > graphql-metadata-diff.log 2>&1; then
             echo "✅ No breaking changes in GraphQL metadata schema"
+          elif ! grep -qE 'Detected [0-9]+ breaking change' graphql-metadata-diff.log; then
+            cat graphql-metadata-diff.log
+            echo "::error::graphql-inspector could not compare the GraphQL metadata schema"
+            exit 1
           else
             echo "⚠️ Breaking changes detected in GraphQL metadata schema, generating report..."
             echo "metadata_breaking=true" >> $GITHUB_OUTPUT
