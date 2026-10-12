@@ -21,10 +21,10 @@ export const getEffectiveParentStatus = ({
   }
 
   const isBranchTarget = parentStep.settings.input.branches.some((branch) =>
-    branch.nextStepIds.includes(childStepId),
+    branch.nextStepIds?.includes(childStepId),
   );
 
-  if (!isBranchTarget && parentStep.nextStepIds?.includes(childStepId)) {
+  if (!isBranchTarget) {
     return parentStatus;
   }
 
