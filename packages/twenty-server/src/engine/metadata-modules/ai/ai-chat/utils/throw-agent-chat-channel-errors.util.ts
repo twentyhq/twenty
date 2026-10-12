@@ -16,3 +16,10 @@ export const throwAgentChatChannelManagementForbidden = (): never => {
     AiExceptionCode.CHAT_CHANNEL_MANAGEMENT_FORBIDDEN,
   );
 };
+
+export const throwAgentChatChannelsUnavailable = (): never => {
+  throw new AiException(
+    'Chat channels are not available until this workspace finishes upgrading',
+    AiExceptionCode.CHAT_CHANNELS_UNAVAILABLE,
+  );
+};

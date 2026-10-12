@@ -373,19 +373,15 @@ export class AgentChatThreadService {
         channelId,
         operationType: 'update',
       });
-    } else if (!isDefined(thread.workspaceMemberId)) {
-      throw new AiException(
-        'A chat without an owner cannot leave its channel',
-        AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL,
-      );
     }
 
     if ((thread.channelId ?? null) === channelId) {
       return;
     }
 
-    // The owner is checked again under the row lock, as removing a member
-    // from the workspace clears it on their channel chats
+    // A chat without an owner stays in a channel. The owner is read under the
+    // row lock, as removing a member from the workspace clears it on their
+    // channel chats
     const movedThreadIds = await this.threadRepository.query(
       args.workspaceId,
       ({ manager, table }) =>

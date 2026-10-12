@@ -72,15 +72,14 @@ export class AddAgentChatChannelsCommand extends ProvisionedWorkspaceCommandRunn
         'flatIndexMaps',
       ]);
 
+    const threadObject =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      ];
+
     // Workspaces without chat history objects get channels when the 2.42
     // history move provisions them
-    if (
-      !isDefined(
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThread.universalIdentifier
-        ],
-      )
-    ) {
+    if (!isDefined(threadObject)) {
       this.logger.log(
         `agentChatThread object not found for workspace ${workspaceId}, skipping`,
       );
@@ -127,12 +126,8 @@ export class AddAgentChatChannelsCommand extends ProvisionedWorkspaceCommandRunn
         universalIdentifiers: INDEX_UNIVERSAL_IDENTIFIERS,
       });
 
-    const threadObject =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.universalIdentifier
-      ];
     const isThreadReadThroughChannel =
-      threadObject?.readability === MetadataReadability.INHERITED &&
+      threadObject.readability === MetadataReadability.INHERITED &&
       threadObject.readabilityParentFieldUniversalIdentifiers?.includes(
         THREAD_CHANNEL_FIELD_UNIVERSAL_IDENTIFIER,
       ) === true;
@@ -177,7 +172,7 @@ export class AddAgentChatChannelsCommand extends ProvisionedWorkspaceCommandRunn
       });
     }
 
-    if (isThreadReadThroughChannel || !isDefined(threadObject)) {
+    if (isThreadReadThroughChannel) {
       return;
     }
 
