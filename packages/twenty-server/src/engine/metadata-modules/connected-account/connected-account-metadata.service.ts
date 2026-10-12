@@ -527,7 +527,14 @@ export class ConnectedAccountMetadataService {
       });
     }
 
-    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+    // The hook may have refreshed the tokens through getConnection.
+    const latestConnectedAccount = await this.repository.findOne({
+      where: { id, workspaceId },
+    });
+
+    if (isDefined(latestConnectedAccount)) {
+      await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
+    }
 
     const [messageChannels, calendarChannels] = await Promise.all([
       this.messageChannelRepository.find({

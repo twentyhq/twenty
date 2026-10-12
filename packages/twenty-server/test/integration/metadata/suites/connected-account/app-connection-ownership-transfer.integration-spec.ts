@@ -558,4 +558,45 @@ describe('app connection ownership transfer', () => {
       refreshToken: null,
     });
   });
+
+  it('revokes the credential the onDisconnect hook refreshed when disconnecting', async () => {
+    const account = await createAccount({
+      userWorkspaceId: DEPARTING_MEMBER_ID,
+    });
+
+    jest
+      .spyOn(
+        getAppProviderByClassName<ConnectionProviderLifecycleHookService>(
+          'ConnectionProviderLifecycleHookService',
+        ),
+        'runOnDisconnect',
+      )
+      .mockImplementation(async ({ connectedAccountId }) => {
+        await accounts().update(connectedAccountId, {
+          accessToken: encrypt('refreshed-by-hook'),
+          lastCredentialsRefreshedAt: new Date(),
+        });
+      });
+
+    await service.disconnect({
+      id: account.id,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
+
+    expect(revokeRequest).toHaveBeenCalledTimes(1);
+    expect(revokeRequest).toHaveBeenCalledWith(
+      REVOKE_ENDPOINT,
+      expect.objectContaining({
+        body: new URLSearchParams({
+          token: 'refreshed-by-hook',
+          token_type_hint: 'access_token',
+        }).toString(),
+      }),
+    );
+    expect(await accounts().findOneByOrFail({ id: account.id })).toMatchObject({
+      archivedAt: expect.anything(),
+      accessToken: null,
+      refreshToken: null,
+    });
+  });
 });
