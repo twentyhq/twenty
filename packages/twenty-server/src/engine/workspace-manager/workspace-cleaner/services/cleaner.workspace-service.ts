@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
+import { differenceInDays } from 'date-fns';
 import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
@@ -38,7 +39,6 @@ import {
   DestroySoftDeletedWorkspaceJob,
   type DestroySoftDeletedWorkspaceJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/destroy-soft-deleted-workspace.job';
-import { getSuspendedWorkspaceCleanupStep } from 'src/engine/workspace-manager/workspace-cleaner/utils/get-suspended-workspace-cleanup-step.util';
 import { hasPassedDestroyGracePeriod } from 'src/engine/workspace-manager/workspace-cleaner/utils/has-passed-destroy-grace-period.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -97,6 +97,16 @@ export class CleanerWorkspaceService {
       this.twentyConfigService.get(
         'MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION',
       );
+  }
+
+  async computeDaysSinceSuspended(
+    workspace: WorkspaceEntity,
+  ): Promise<number | null> {
+    if (isDefined(workspace.suspendedAt)) {
+      return differenceInDays(new Date(), workspace.suspendedAt);
+    }
+
+    return null;
   }
 
   private async enqueueWorkspaceDestruction(
@@ -371,25 +381,16 @@ export class CleanerWorkspaceService {
       );
 
       try {
-        const cleanupStep = getSuspendedWorkspaceCleanupStep({
-          workspace,
-          isAlreadyWarned: alreadyWarnedWorkspaceIds.has(workspace.id),
-          inactiveDaysBeforeWarn: this.inactiveDaysBeforeWarn,
-          inactiveDaysBeforeSoftDelete: this.inactiveDaysBeforeSoftDelete,
-        });
+        const isSoftDeletedWorkspace = isDefined(workspace.deletedAt);
+        const isWithinDeletionLimit =
+          enqueuedWorkspacesCount <
+          this.maxNumberOfWorkspacesDeletedPerExecution;
 
         if (
-          !isDefined(cleanupStep) ||
-          (isDefined(onlyOperation) && cleanupStep.operation !== onlyOperation)
+          (!isDefined(onlyOperation) || onlyOperation === 'destroy') &&
+          isSoftDeletedWorkspace &&
+          isWithinDeletionLimit
         ) {
-          continue;
-        }
-
-        if (cleanupStep.operation === 'destroy') {
-          const isWithinDeletionLimit =
-            enqueuedWorkspacesCount <
-            this.maxNumberOfWorkspacesDeletedPerExecution;
-
           const canDestroy =
             ignoreDestroyGracePeriod ||
             hasPassedDestroyGracePeriod({
@@ -399,7 +400,7 @@ export class CleanerWorkspaceService {
                 this.inactiveDaysBeforeSoftDelete,
             });
 
-          if (isWithinDeletionLimit && canDestroy) {
+          if (canDestroy) {
             this.logger.log(
               `${dryRun ? 'DRY RUN - ' : ''}Enqueuing destruction of workspace ${workspace.id} ${workspace.displayName}`,
             );
@@ -420,21 +421,42 @@ export class CleanerWorkspaceService {
           continue;
         }
 
-        if (cleanupStep.operation === 'soft-delete') {
+        if (isSoftDeletedWorkspace) {
+          continue;
+        }
+
+        const inactiveDaysSinceSuspended =
+          await this.computeDaysSinceSuspended(workspace);
+
+        if (inactiveDaysSinceSuspended === null) {
+          continue;
+        }
+
+        if (
+          (!isDefined(onlyOperation) || onlyOperation === 'soft-delete') &&
+          inactiveDaysSinceSuspended > this.inactiveDaysBeforeSoftDelete
+        ) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
-            cleanupStep.daysSinceSuspended,
+            inactiveDaysSinceSuspended,
             dryRun,
           );
 
           continue;
         }
 
-        await this.warnWorkspaceMembers(
-          workspace,
-          cleanupStep.daysSinceSuspended,
-          dryRun,
-        );
+        if (
+          (!isDefined(onlyOperation) || onlyOperation === 'warn') &&
+          !alreadyWarnedWorkspaceIds.has(workspace.id) &&
+          inactiveDaysSinceSuspended > this.inactiveDaysBeforeWarn &&
+          inactiveDaysSinceSuspended <= this.inactiveDaysBeforeSoftDelete
+        ) {
+          await this.warnWorkspaceMembers(
+            workspace,
+            inactiveDaysSinceSuspended,
+            dryRun,
+          );
+        }
       } catch (error) {
         this.logger.error(
           `Error while processing workspace ${workspace.id} ${workspace.displayName}: ${error}`,
