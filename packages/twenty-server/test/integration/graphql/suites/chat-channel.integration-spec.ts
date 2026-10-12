@@ -1,9 +1,12 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
+import { findNavigationMenuItems } from 'test/integration/metadata/suites/navigation-menu-item/utils/find-navigation-menu-items.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
@@ -865,6 +868,43 @@ describe('Chat channels through the authenticated API', () => {
           ),
       ),
     ).toBe(true);
+  });
+
+  it('pins a channel to the sidebar until the channel is deleted', async () => {
+    const channelId = await createChannel();
+
+    const { errors: missingChannelErrors } = await createNavigationMenuItem({
+      input: { type: NavigationMenuItemType.AGENT_CHAT_CHANNEL },
+      expectToFail: true,
+    });
+
+    expect(missingChannelErrors).toBeDefined();
+
+    const { data } = await createNavigationMenuItem({
+      input: {
+        type: NavigationMenuItemType.AGENT_CHAT_CHANNEL,
+        agentChatChannelId: channelId,
+      },
+      gqlFields: 'id agentChatChannelId',
+    });
+    const navigationMenuItemId = data.createNavigationMenuItem.id;
+
+    expect(data.createNavigationMenuItem.agentChatChannelId).toBe(channelId);
+
+    expectNoErrors(
+      await makeMetadataApiRequest({
+        query: DELETE_CHANNEL,
+        variables: { channelId },
+      }),
+    );
+
+    const { data: afterDeleteData } = await findNavigationMenuItems({
+      gqlFields: 'id',
+    });
+
+    expect(
+      afterDeleteData.navigationMenuItems.map(({ id }) => id),
+    ).not.toContain(navigationMenuItemId);
   });
 
   it('counts open chats for each channel the member reaches, and their own only once they follow', async () => {

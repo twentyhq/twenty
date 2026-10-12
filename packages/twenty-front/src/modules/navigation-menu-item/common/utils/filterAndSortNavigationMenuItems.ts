@@ -45,6 +45,9 @@ export const filterAndSortNavigationMenuItems = (
       if (item.type === NavigationMenuItemType.PAGE_LAYOUT) {
         return isDefined(item.pageLayoutId);
       }
+      if (item.type === NavigationMenuItemType.AGENT_CHAT_CHANNEL) {
+        return isDefined(item.agentChatChannelId);
+      }
       if (item.type === NavigationMenuItemType.OBJECT) {
         return (
           isDefined(item.targetObjectMetadataId) &&

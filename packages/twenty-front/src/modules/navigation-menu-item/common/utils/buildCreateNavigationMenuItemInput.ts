@@ -36,6 +36,8 @@ export const buildCreateNavigationMenuItemInput = (
     input.pageLayoutId = draftItem.pageLayoutId;
     input.name = draftItem.name ?? undefined;
     input.icon = draftItem.icon ?? null;
+  } else if (isDefined(draftItem.agentChatChannelId)) {
+    input.agentChatChannelId = draftItem.agentChatChannelId;
   } else if (isDefined(draftItem.viewId)) {
     input.viewId = draftItem.viewId;
   } else if (isDefined(draftItem.targetRecordId)) {

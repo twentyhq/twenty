@@ -1581,6 +1581,7 @@ export type CreateMessageSuppressionInput = {
 };
 
 export type CreateNavigationMenuItemInput = {
+  agentChatChannelId?: InputMaybe<Scalars['UUID']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
   folderId?: InputMaybe<Scalars['UUID']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
@@ -4893,6 +4894,7 @@ export type NativeModelCapabilities = {
 
 export type NavigationMenuItem = {
   __typename?: 'NavigationMenuItem';
+  agentChatChannelId?: Maybe<Scalars['UUID']['output']>;
   applicationId?: Maybe<Scalars['UUID']['output']>;
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
@@ -4913,6 +4915,7 @@ export type NavigationMenuItem = {
 };
 
 export enum NavigationMenuItemType {
+  AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   OBJECT = 'OBJECT',

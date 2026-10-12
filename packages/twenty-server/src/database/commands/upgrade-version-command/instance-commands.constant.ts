@@ -241,6 +241,7 @@ import { RestoreUsageLimitMeterCompatibilityFastInstanceCommand } from 'src/data
 import { DropUsageLimitMeterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791720497488-drop-usage-limit-meter';
 import { SetWorkspaceEventLogRetentionDefaultFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791790299002-set-workspace-event-log-retention-default';
 import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791817054773-add-agent-chat-channel';
+import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791824617778-add-agent-chat-channel-navigation-menu-item';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -484,4 +485,5 @@ export const INSTANCE_COMMANDS = [
   DropUsageLimitMeterFastInstanceCommand,
   SetWorkspaceEventLogRetentionDefaultFastInstanceCommand,
   AddAgentChatChannelFastInstanceCommand,
+  AddAgentChatChannelNavigationMenuItemFastInstanceCommand,
 ];

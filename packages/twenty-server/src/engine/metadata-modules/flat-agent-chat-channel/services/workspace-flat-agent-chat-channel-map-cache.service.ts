@@ -17,6 +17,10 @@ const FLAT_AGENT_CHAT_CHANNEL_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['channelId'],
   },
+  navigationMenuItem: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['agentChatChannelId'],
+  },
 } as const;
 
 @Injectable()
@@ -33,6 +37,7 @@ export class WorkspaceFlatAgentChatChannelMapCacheService extends MetadataFlatEn
       agentChatChannel: entities,
       application: applications,
       agentChatChannelRole: channelRoles,
+      navigationMenuItem: navigationMenuItems,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -45,6 +50,8 @@ export class WorkspaceFlatAgentChatChannelMapCacheService extends MetadataFlatEn
         entity: {
           ...entity,
           channelRoles: channelRoles.byChannelId.get(entity.id) || [],
+          navigationMenuItems:
+            navigationMenuItems.byAgentChatChannelId.get(entity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
       });

@@ -1,5 +1,6 @@
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemAgentChatChannelDisplay } from '@/navigation-menu-item/display/agent-chat-channel/components/NavigationMenuItemAgentChatChannelDisplay';
 import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
 import { NavigationMenuItemLinkDisplay } from '@/navigation-menu-item/display/link/components/NavigationMenuItemLinkDisplay';
 import { NavigationMenuItemObjectDisplay } from '@/navigation-menu-item/display/object/components/NavigationMenuItemObjectDisplay';
@@ -57,6 +58,23 @@ export const NavigationMenuItemDisplay = ({
       return (
         <NavigationMenuItemEditable item={item}>
           <NavigationMenuItemPageLayoutDisplay
+            item={item}
+            isEditInPlace={isEditInPlace}
+            editModeProps={editModeProps}
+            isDragging={isDragging}
+            folderChildrenById={folderChildrenById}
+            folderCount={folderCount}
+            rightOptions={rightOptions}
+            onNavigationMenuItemClick={onNavigationMenuItemClick}
+            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+            readOnly={readOnly}
+          />
+        </NavigationMenuItemEditable>
+      );
+    case NavigationMenuItemType.AGENT_CHAT_CHANNEL:
+      return (
+        <NavigationMenuItemEditable item={item}>
+          <NavigationMenuItemAgentChatChannelDisplay
             item={item}
             isEditInPlace={isEditInPlace}
             editModeProps={editModeProps}

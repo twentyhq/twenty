@@ -12,6 +12,7 @@ import {
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
+import { NavigationMenuItemAgentChatChannelIcon } from '@/navigation-menu-item/display/agent-chat-channel/components/NavigationMenuItemAgentChatChannelIcon';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
@@ -80,6 +81,14 @@ export const NavigationMenuItemIcon = ({
           navigationMenuItem,
           objectMetadataItem,
         )}
+      />
+    );
+  }
+
+  if (navigationMenuItem.type === NavigationMenuItemType.AGENT_CHAT_CHANNEL) {
+    return (
+      <NavigationMenuItemAgentChatChannelIcon
+        navigationMenuItem={navigationMenuItem}
       />
     );
   }
