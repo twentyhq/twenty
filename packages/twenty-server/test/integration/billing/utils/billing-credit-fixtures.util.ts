@@ -14,9 +14,9 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 export const TEST_STRIPE_CUSTOMER_ID = 'cus_default0';
 export const TEST_STRIPE_SUBSCRIPTION_ID = 'sub_default0';
 
-export const TEST_STRIPE_PRODUCT_ID = 'prod_resource_credit_test';
+const TEST_STRIPE_PRODUCT_ID = 'prod_resource_credit_test';
 const TEST_STRIPE_PRICE_ID = 'price_resource_credit_test';
-export const TEST_STRIPE_SUBSCRIPTION_ITEM_ID = 'si_resource_credit_test';
+const TEST_STRIPE_SUBSCRIPTION_ITEM_ID = 'si_resource_credit_test';
 
 export type CreditGrantRow = {
   id: string;
@@ -96,10 +96,19 @@ export const setupResourceCreditSubscription = async ({
     [TEST_STRIPE_PRODUCT_ID, JSON.stringify({ productKey: 'RESOURCE_CREDIT' })],
   );
 
-  await upsertResourceCreditPrice({
-    stripePriceId: TEST_STRIPE_PRICE_ID,
-    creditAmountMicro,
-  });
+  await query(
+    `INSERT INTO core."billingPrice"
+       ("stripePriceId", "stripeProductId", active, currency, "taxBehavior",
+        type, "billingScheme", "usageType", interval, "unitAmount", metadata)
+     VALUES ($1, $2, true, 'usd', 'UNSPECIFIED', 'RECURRING', 'PER_UNIT',
+             'LICENSED', 'month', 1000, $3)
+     ON CONFLICT ("stripePriceId") DO UPDATE SET metadata = EXCLUDED.metadata`,
+    [
+      TEST_STRIPE_PRICE_ID,
+      TEST_STRIPE_PRODUCT_ID,
+      JSON.stringify({ credit_amount: String(creditAmountMicro) }),
+    ],
+  );
 
   await query(
     `INSERT INTO core."billingSubscriptionItem"
@@ -119,28 +128,6 @@ export const setupResourceCreditSubscription = async ({
   );
 
   return { subscriptionId: subscription.id };
-};
-
-export const upsertResourceCreditPrice = async ({
-  stripePriceId,
-  creditAmountMicro,
-}: {
-  stripePriceId: string;
-  creditAmountMicro: number;
-}): Promise<void> => {
-  await query(
-    `INSERT INTO core."billingPrice"
-       ("stripePriceId", "stripeProductId", active, currency, "taxBehavior",
-        type, "billingScheme", "usageType", interval, "unitAmount", metadata)
-     VALUES ($1, $2, true, 'usd', 'UNSPECIFIED', 'RECURRING', 'PER_UNIT',
-             'LICENSED', 'month', 1000, $3)
-     ON CONFLICT ("stripePriceId") DO UPDATE SET metadata = EXCLUDED.metadata`,
-    [
-      stripePriceId,
-      TEST_STRIPE_PRODUCT_ID,
-      JSON.stringify({ credit_amount: String(creditAmountMicro) }),
-    ],
-  );
 };
 
 export const insertCreditGrant = async ({
@@ -209,17 +196,6 @@ export const refreshCurrentBillingSubscription = (
     'WorkspaceCacheService',
   ).invalidateAndRecompute(workspaceId, ['currentBillingSubscription']);
 
-export const flushQuotaCounters = async (
-  workspaceId: string,
-): Promise<void> => {
-  const redis = await getRedisClient();
-  const counterKeys = await redis.keys(`*{${workspaceId}}:quota*`);
-
-  if (isNonEmptyArray(counterKeys)) {
-    await redis.del(counterKeys);
-  }
-};
-
 export const debitInFlightCredits = async (
   workspaceId: string,
   creditsUsedMicro: number,
@@ -258,12 +234,11 @@ export const resetBillingCreditState = async (
     [workspaceId],
   );
 
-  await flushQuotaCounters(workspaceId);
-
   const redis = await getRedisClient();
-  const staleKeys = await redis.keys(
-    `*currentBillingSubscription:${workspaceId}*`,
-  );
+  const staleKeys = [
+    ...(await redis.keys(`*{${workspaceId}}:quota*`)),
+    ...(await redis.keys(`*currentBillingSubscription:${workspaceId}*`)),
+  ];
 
   if (isNonEmptyArray(staleKeys)) {
     await redis.del(staleKeys);

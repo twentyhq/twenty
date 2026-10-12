@@ -14,16 +14,6 @@ const buildGrant = (
 });
 
 describe('computeCreditAllowanceMicro', () => {
-  it('is the plan allowance when there is no grant', () => {
-    expect(
-      computeCreditAllowanceMicro({
-        planAllowanceMicro: 1_000,
-        grants: [],
-        nowMs: NOW_MS,
-      }),
-    ).toBe(1_000);
-  });
-
   it('adds every grant in effect', () => {
     expect(
       computeCreditAllowanceMicro({

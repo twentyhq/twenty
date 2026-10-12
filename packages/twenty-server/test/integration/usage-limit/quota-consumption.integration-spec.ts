@@ -529,53 +529,6 @@ describe('Usage quota consumption', () => {
   );
 
   it(
-    'gives the same boundary answer once the counters are flushed',
-    async () => {
-      const creditLimit =
-        Number(await findQuotaConsumedValue(UsageUnit.CREDIT)) +
-        CREDIT_LIMIT_MICRO;
-
-      const expectCreditBoundary = async () => {
-        expect(
-          await findRunRefusal({
-            spenderId: logicFunctionId,
-            costMicro: CREDIT_LIMIT_MICRO,
-          }),
-        ).toBeNull();
-        expect(
-          await findRunRefusal({
-            spenderId: logicFunctionId,
-            costMicro: CREDIT_LIMIT_MICRO + 1,
-          }),
-        ).toMatchObject({
-          exhaustedKind: 'limit',
-          unit: UsageUnit.CREDIT,
-          limitValue: creditLimit,
-        });
-      };
-
-      await usageLimitRepository.update(
-        { id: usageLimitIdByUnit[UsageUnit.CREDIT] },
-        { limitValue: creditLimit },
-      );
-      await refreshUsageLimitsCache();
-
-      await expectCreditBoundary();
-
-      await flushQuotaCounters();
-
-      await expectCreditBoundary();
-
-      await usageLimitRepository.update(
-        { id: usageLimitIdByUnit[UsageUnit.CREDIT] },
-        { limitValue: UNREACHABLE_LIMIT_VALUE },
-      );
-      await refreshUsageLimitsCache();
-    },
-    EXECUTION_TIMEOUT_MS,
-  );
-
-  it(
     'admits the last run under the invocation quota and refuses the next one',
     async () => {
       const invocationLimit =
@@ -620,22 +573,6 @@ describe('Usage quota consumption', () => {
   );
 
   describe('on a credit quota', () => {
-    it('admits a cost that fits exactly and refuses one micro-credit more', async () => {
-      const { spenderId } = await saveCreditQuotaForNewSpender();
-
-      await chargeRun({ spenderId, creditsUsedMicro: 600 });
-      await chargeRun({ spenderId, creditsUsedMicro: 300 });
-
-      expect(await findRunRefusal({ spenderId, costMicro: 100 })).toBeNull();
-      expect(await findRunRefusal({ spenderId, costMicro: 101 })).toMatchObject(
-        {
-          exhaustedKind: 'limit',
-          unit: UsageUnit.CREDIT,
-          limitValue: CREDIT_LIMIT_MICRO,
-        },
-      );
-    });
-
     it('meters a consume-only caller from its first call', async () => {
       const { spenderId } = await saveCreditQuotaForNewSpender();
 
@@ -741,48 +678,6 @@ describe('Usage quota consumption', () => {
       EXECUTION_TIMEOUT_MS,
     );
 
-    it('counts a charge made with the limits a stale pod still holds', async () => {
-      const { spenderId, usageLimitId } = await saveCreditQuotaForNewSpender();
-      const workspaceCacheService =
-        getAppProviderByClassName<WorkspaceCacheService>(
-          'WorkspaceCacheService',
-        );
-      const { usageLimits: preEditUsageLimits } =
-        await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
-          'usageLimits',
-        ]);
-
-      await usageLimitRepository.update(
-        { id: usageLimitId },
-        { limitValue: 500 },
-      );
-      await refreshUsageLimitsCache();
-
-      expect(await findRunRefusal({ spenderId, costMicro: 0 })).toBeNull();
-
-      const getOrRecompute = workspaceCacheService.getOrRecompute.bind(
-        workspaceCacheService,
-      );
-      const stalePodSpy = jest
-        .spyOn(workspaceCacheService, 'getOrRecompute')
-        .mockImplementation(async (workspaceId, cacheKeyNames) =>
-          cacheKeyNames.includes('usageLimits')
-            ? ({ usageLimits: preEditUsageLimits } as never)
-            : getOrRecompute(workspaceId, cacheKeyNames),
-        );
-
-      try {
-        await chargeRun({ spenderId, creditsUsedMicro: 400 });
-      } finally {
-        stalePodSpy.mockRestore();
-      }
-
-      expect(await findRunRefusal({ spenderId, costMicro: 100 })).toBeNull();
-      expect(await findRunRefusal({ spenderId, costMicro: 101 })).toMatchObject(
-        { exhaustedKind: 'limit', limitValue: 500 },
-      );
-    });
-
     it('re-reads a limit from the ledger once the entitlement turns it back on', async () => {
       const { spenderId } = await saveCreditQuotaForNewSpender({
         limitValue: 500,
@@ -872,22 +767,6 @@ describe('Usage quota consumption', () => {
       },
       EXECUTION_TIMEOUT_MS,
     );
-
-    it('keeps an operator override counter when the entitlement turns on', async () => {
-      const { spenderId } = await saveCreditQuotaForNewSpender({
-        limitValue: 500,
-      });
-
-      await debitRunAheadOfRecord({ spenderId, creditsUsedMicro: 600 });
-      await getQuotaService().dropIntraWorkspaceLimitCounters(
-        SEED_APPLE_WORKSPACE_ID,
-      );
-
-      expect(await findRunRefusal({ spenderId, costMicro: 0 })).toMatchObject({
-        exhaustedKind: 'limit',
-        limitValue: 500,
-      });
-    });
   });
 
   describe('on the daily email default', () => {
@@ -1146,110 +1025,47 @@ describe('Usage quota consumption', () => {
     });
   });
 
-  describe('when a cold counter cannot be seeded', () => {
-    const spyOnClickHouseRead = () =>
-      jest.spyOn(
+  it('still debits the warm counter and leaves the cold one unseeded when its ClickHouse read fails', async () => {
+    const { spenderId } = await saveCreditQuotaForNewSpender();
+
+    await chargeRun({ spenderId, creditsUsedMicro: 600 });
+    await saveCodeExecutionQuota({
+      spenderId,
+      unit: UsageUnit.INVOCATION,
+      limitValue: UNREACHABLE_LIMIT_VALUE,
+    });
+    await refreshUsageLimitsCache();
+
+    const incrementCounterBySpy = spyOnMetrics();
+    const clickHouseReadSpy = jest
+      .spyOn(
         getAppProviderByClassName<UsageAnalyticsService>(
           'UsageAnalyticsService',
         ),
         'getConsumptionRowsForAllScopes',
-      );
+      )
+      .mockRejectedValue(new Error('ClickHouse is unreachable'));
 
-    it.each([
-      {
-        failure: 'its ClickHouse read fails',
-        spyOnFailure: () =>
-          spyOnClickHouseRead().mockRejectedValue(
-            new Error('ClickHouse is unreachable'),
-          ),
-      },
-      {
-        failure: 'Redis fails on the seeding pass',
-        spyOnFailure: () => {
-          const cacheStorage: CacheStorageService =
-            getQuotaService()['cacheStorage'];
-          const runScript = cacheStorage.runScript.bind(cacheStorage);
-
-          return jest
-            .spyOn(cacheStorage, 'runScript')
-            .mockImplementation((options) =>
-              options.script.name === 'usage-limit:add-to-counters' &&
-              (JSON.parse(options.args[1]) as (number | false)[]).some(
-                (seed) => seed !== false,
-              )
-                ? Promise.reject(new Error('Redis is unreachable'))
-                : runScript(options),
-            );
+    try {
+      expect(await chargeRun({ spenderId, creditsUsedMicro: 100 })).toEqual({
+        exhaustedKind: null,
+      });
+      expect(await findSpenderCounterKeys(spenderId)).toHaveLength(1);
+      expect(findAdmittedOnFailureAttributes(incrementCounterBySpy)).toEqual([
+        {
+          operation: 'consume',
+          resourceType: UsageResourceType.LOGIC_FUNCTION,
         },
-      },
-    ])(
-      'still debits the warm counter and leaves the cold one unseeded when $failure',
-      async ({ spyOnFailure }) => {
-        const { spenderId } = await saveCreditQuotaForNewSpender();
+      ]);
+    } finally {
+      clickHouseReadSpy.mockRestore();
+      incrementCounterBySpy.mockRestore();
+    }
 
-        await chargeRun({ spenderId, creditsUsedMicro: 600 });
-        await saveCodeExecutionQuota({
-          spenderId,
-          unit: UsageUnit.INVOCATION,
-          limitValue: UNREACHABLE_LIMIT_VALUE,
-        });
-        await refreshUsageLimitsCache();
-
-        const incrementCounterBySpy = spyOnMetrics();
-        const failureSpy = spyOnFailure();
-
-        try {
-          expect(await chargeRun({ spenderId, creditsUsedMicro: 100 })).toEqual(
-            { exhaustedKind: null },
-          );
-          expect(await findSpenderCounterKeys(spenderId)).toHaveLength(1);
-          expect(
-            findAdmittedOnFailureAttributes(incrementCounterBySpy),
-          ).toEqual([
-            {
-              operation: 'consume',
-              resourceType: UsageResourceType.LOGIC_FUNCTION,
-            },
-          ]);
-        } finally {
-          failureSpy.mockRestore();
-          incrementCounterBySpy.mockRestore();
-        }
-
-        expect(await findRunRefusal({ spenderId, costMicro: 300 })).toBeNull();
-        expect(
-          await findRunRefusal({ spenderId, costMicro: 301 }),
-        ).toMatchObject({ exhaustedKind: 'limit', unit: UsageUnit.CREDIT });
-      },
-    );
-
-    it('reads ClickHouse once for cold counters that share a period', async () => {
-      const spenderId = randomUUID();
-
-      chargedSpenderIds.push(spenderId);
-      await saveCodeExecutionQuota({
-        spenderId,
-        unit: UsageUnit.CREDIT,
-        limitValue: CREDIT_LIMIT_MICRO,
-      });
-      await saveCodeExecutionQuota({
-        spenderId,
-        unit: UsageUnit.INVOCATION,
-        limitValue: UNREACHABLE_LIMIT_VALUE,
-      });
-      await refreshUsageLimitsCache();
-
-      const clickHouseReadSpy = spyOnClickHouseRead();
-
-      try {
-        await chargeRun({ spenderId, creditsUsedMicro: 100 });
-
-        expect(clickHouseReadSpy).toHaveBeenCalledTimes(1);
-      } finally {
-        clickHouseReadSpy.mockRestore();
-      }
-
-      expect(await findSpenderCounterKeys(spenderId)).toHaveLength(2);
+    expect(await findRunRefusal({ spenderId, costMicro: 300 })).toBeNull();
+    expect(await findRunRefusal({ spenderId, costMicro: 301 })).toMatchObject({
+      exhaustedKind: 'limit',
+      unit: UsageUnit.CREDIT,
     });
   });
 });

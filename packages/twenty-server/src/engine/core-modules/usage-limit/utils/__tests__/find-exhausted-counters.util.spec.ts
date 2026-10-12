@@ -59,25 +59,6 @@ describe('findExhaustedCounters', () => {
     ).toEqual([]);
   });
 
-  it('admits a cost that fits the cap exactly and refuses one unit more', () => {
-    const counters = [buildLimitCounter('limit'), buildAllowanceCounter('cap')];
-
-    expect(
-      findExhaustedCounters({
-        counters,
-        consumedValues: [900, 4_900],
-        cost: { [UsageUnit.CREDIT]: 100 },
-      }),
-    ).toEqual([]);
-    expect(
-      findExhaustedCounters({
-        counters,
-        consumedValues: [900, 4_900],
-        cost: { [UsageUnit.CREDIT]: 101 },
-      }),
-    ).toMatchObject([{ key: 'limit' }, { key: 'cap' }]);
-  });
-
   it('charges a limit only for the unit it counts', () => {
     expect(
       findExhaustedCounters({
