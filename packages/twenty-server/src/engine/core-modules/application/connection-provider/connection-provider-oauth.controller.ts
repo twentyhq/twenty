@@ -1,7 +1,15 @@
-import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Logger,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Response } from 'express';
+import { type CookieOptions, type Request, type Response } from 'express';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -10,6 +18,8 @@ import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/appl
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { isHttpsUrl } from 'src/engine/core-modules/application/application-registration/utils/is-https-url.util';
+import { readRequestCookie } from 'src/engine/core-modules/application/application-registration/utils/read-request-cookie.util';
 import {
   AuthException,
   AuthExceptionCode,
@@ -23,6 +33,9 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+
+const FLOW_COOKIE_NAME = 'twenty-app-oauth-flow';
+const FLOW_SECURE_COOKIE_NAME = `__Host-${FLOW_COOKIE_NAME}`;
 
 @Controller(`${ApiPath.Auth}/apps`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -122,7 +135,7 @@ export class ConnectionProviderOAuthController {
         );
       }
 
-      const { authorizationUrl } =
+      const { authorizationUrl, stateId, stateTtlMs } =
         await this.oauthProviderFlowService.startAuthorizationFlow({
           connectionProvider: provider,
           workspaceId,
@@ -134,6 +147,11 @@ export class ConnectionProviderOAuthController {
             reconnectingConnectedAccountId ?? null,
           redirectLocation: redirectLocation ?? null,
         });
+
+      res.cookie(this.getFlowCookieName(), stateId, {
+        ...this.getFlowCookieOptions(),
+        maxAge: stateTtlMs,
+      });
 
       return res.redirect(authorizationUrl);
     } catch (error) {
@@ -153,9 +171,14 @@ export class ConnectionProviderOAuthController {
     @Query('state') state: string,
     @Query('error') errorParam: string | undefined,
     @Query('error_description') errorDescription: string | undefined,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
     let workspace: WorkspaceEntity | null = null;
+
+    const stateIdFromCookie = readRequestCookie(req, this.getFlowCookieName());
+
+    res.clearCookie(this.getFlowCookieName(), this.getFlowCookieOptions());
 
     if (errorParam) {
       return this.redirectToError(
@@ -182,6 +205,7 @@ export class ConnectionProviderOAuthController {
         await this.oauthProviderFlowService.completeAuthorizationFlow({
           code,
           state,
+          stateIdFromCookie,
         });
 
       workspace = await this.workspaceRepository.findOneBy({
@@ -216,6 +240,27 @@ export class ConnectionProviderOAuthController {
     } catch (error) {
       return this.redirectToError(res, error, workspace);
     }
+  }
+
+  // Lax suffices: authorize and callback are both top-level navigations, and
+  // __Host- stops a sibling subdomain from planting a cookie for its own state
+  private getFlowCookieOptions(): CookieOptions {
+    return {
+      httpOnly: true,
+      secure: this.isSecureDeployment(),
+      sameSite: 'lax',
+      path: '/',
+    };
+  }
+
+  private getFlowCookieName(): string {
+    return this.isSecureDeployment()
+      ? FLOW_SECURE_COOKIE_NAME
+      : FLOW_COOKIE_NAME;
+  }
+
+  private isSecureDeployment(): boolean {
+    return isHttpsUrl(this.twentyConfigService.get('SERVER_URL'));
   }
 
   private redirectToError(

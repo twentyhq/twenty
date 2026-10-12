@@ -62,6 +62,7 @@ type AuthorizeArgs = {
 type CallbackArgs = {
   code: string;
   state: string;
+  stateIdFromCookie: string | undefined;
 };
 
 type CallbackResult = {
@@ -91,9 +92,11 @@ export class ConnectionProviderOAuthFlowService {
     private readonly cacheStorage: CacheStorageService,
   ) {}
 
-  async startAuthorizationFlow(
-    args: AuthorizeArgs,
-  ): Promise<{ authorizationUrl: string }> {
+  async startAuthorizationFlow(args: AuthorizeArgs): Promise<{
+    authorizationUrl: string;
+    stateId: string;
+    stateTtlMs: number;
+  }> {
     const { connectionProvider, workspaceId, userId, userWorkspaceId } = args;
 
     assertOAuthProvider(connectionProvider);
@@ -178,11 +181,22 @@ export class ConnectionProviderOAuthFlowService {
       authorizationUrl.searchParams.set(key, value);
     }
 
-    return { authorizationUrl: authorizationUrl.toString() };
+    return {
+      authorizationUrl: authorizationUrl.toString(),
+      stateId,
+      stateTtlMs: STATE_TTL_MS,
+    };
   }
 
   async completeAuthorizationFlow(args: CallbackArgs): Promise<CallbackResult> {
     const statePayload = await this.verifyState(args.state);
+
+    if (args.stateIdFromCookie !== statePayload.jti) {
+      throw new ConnectionProviderException(
+        'OAuth state was not issued to this browser',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
+    }
 
     const stateEntry =
       await this.cacheStorage.getAndDelete<AppOAuthStateCacheEntry>(

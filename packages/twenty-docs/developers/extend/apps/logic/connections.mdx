@@ -95,6 +95,8 @@ The OAuth callback URL your provider needs to whitelist is:
 https://<your-twenty-server>/auth/apps/callback
 ```
 
+The provider must redirect to it in the same browser that started the connection, once, and within 10 minutes; any other callback is rejected as an invalid state.
+
 </Accordion>
 
 <Accordion title="Run a logic function on connect" description="React the moment a connection is established">
