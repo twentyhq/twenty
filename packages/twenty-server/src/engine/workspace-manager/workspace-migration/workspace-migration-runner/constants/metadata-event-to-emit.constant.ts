@@ -34,6 +34,8 @@ export const METADATA_EVENTS_TO_EMIT = {
   timelineActivityType: true,
   validationRule: true,
   searchFieldMetadata: true,
+  agentChatChannel: true,
+  agentChatChannelRole: true,
   settingsMenuItem: true,
   workflow: true,
   workflowVersion: true,

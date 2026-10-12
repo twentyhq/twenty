@@ -7,6 +7,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
+import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
@@ -35,6 +36,7 @@ export class AgentChatThreadService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly channelAccessService: AgentChatChannelAccessService,
+    private readonly channelGrantService: AgentChatChannelGrantService,
   ) {}
 
   async createThread(
@@ -45,7 +47,6 @@ export class AgentChatThreadService {
         workspaceId: args.workspaceId,
         workspaceMemberId: args.workspaceMemberId,
         channelId: args.channelId,
-        operationType: 'update',
       });
     }
 
@@ -353,9 +354,10 @@ export class AgentChatThreadService {
     });
   }
 
-  // Members who reach the chat only through its former channel lose it. A
-  // chat with no owner reads through nothing outside a channel, so it stays
-  // in one. Its place in the new channel starts open.
+  // Members who reach the chat only through its former channel lose it, as
+  // its grants follow the new one. A chat with no owner reads through nothing
+  // outside a channel, so it stays in one. Its place in the new channel
+  // starts open.
   async moveToChannel({
     channelId,
     ...args
@@ -368,7 +370,6 @@ export class AgentChatThreadService {
       await this.channelAccessService.assertChannelAccess({
         ...args,
         channelId,
-        operationType: 'update',
       });
     }
 
@@ -381,8 +382,8 @@ export class AgentChatThreadService {
     // channel chats
     const movedThreadIds = await this.threadRepository.query(
       args.workspaceId,
-      ({ manager, table }) =>
-        manager.query<{ id: string }[]>(
+      async ({ manager, table }) => {
+        const movedThreads = await manager.query<{ id: string }[]>(
           `WITH moved_thread AS (
              UPDATE ${table('agentChatThread')}
              SET "channelId" = $2::uuid,
@@ -395,7 +396,16 @@ export class AgentChatThreadService {
            )
            SELECT id FROM moved_thread`,
           [args.threadId, channelId],
-        ),
+        );
+
+        await this.channelGrantService.rewriteGrantsInTransaction({
+          manager,
+          workspaceId: args.workspaceId,
+          threadIds: movedThreads.map(({ id }) => id),
+        });
+
+        return movedThreads;
+      },
     );
 
     if (movedThreadIds.length === 0) {

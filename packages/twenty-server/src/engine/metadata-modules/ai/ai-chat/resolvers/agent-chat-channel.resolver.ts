@@ -7,6 +7,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -24,6 +25,7 @@ import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AgentChatChannelThreadsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-threads.service';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
 @UseGuards(
@@ -49,6 +51,7 @@ export class AgentChatChannelResolver {
     private readonly threadService: AgentChatThreadService,
     private readonly triageService: AgentChatThreadTriageService,
     private readonly channelThreadsService: AgentChatChannelThreadsService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   @Query(() => AgentChatChannelThreadIdsDTO)
@@ -91,6 +94,27 @@ export class AgentChatChannelResolver {
     });
   }
 
+  @Query(() => [AgentChatChannelDTO])
+  async agentChatChannels(
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatChannelDTO[]> {
+    const canManageChannels =
+      await this.permissionsService.userHasWorkspaceSettingPermission({
+        workspaceId,
+        userWorkspaceId,
+        setting: PermissionFlagType.AI_SETTINGS,
+        applicationId: undefined,
+      });
+
+    return this.channelService.findChannels({
+      workspaceId,
+      workspaceMemberId,
+      canManageChannels,
+    });
+  }
+
   @Query(() => [AgentChatChannelRoleDTO])
   async agentChatChannelRoles(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -99,30 +123,28 @@ export class AgentChatChannelResolver {
   }
 
   @Mutation(() => AgentChatChannelDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async createAgentChatChannel(
     @Args('input', { type: () => CreateAgentChatChannelInput })
     input: CreateAgentChatChannelInput,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatChannelDTO> {
     return this.channelService.createChannel({
       name: input.name,
       icon: input.icon ?? null,
       color: input.color ?? null,
-      visibility: input.visibility,
-      memberIds: input.memberIds,
+      isOpenToEveryone: input.isOpenToEveryone,
       roleIds: input.roleIds,
-      workspaceMemberId,
       workspaceId,
     });
   }
 
   @Mutation(() => AgentChatChannelDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async updateAgentChatChannel(
     @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
     @Args('input', { type: () => UpdateAgentChatChannelInput })
     input: UpdateAgentChatChannelInput,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatChannelDTO> {
     return this.channelService.updateChannel({
@@ -131,16 +153,17 @@ export class AgentChatChannelResolver {
         name: input.name ?? undefined,
         icon: input.icon,
         color: input.color,
-        visibility: input.visibility ?? undefined,
+        position: input.position ?? undefined,
+        isOpenToEveryone: input.isOpenToEveryone ?? undefined,
         roleIds: input.roleIds ?? undefined,
       },
-      workspaceMemberId,
       workspaceId,
     });
   }
 
   // A channel that still has chats needs somewhere to move them
   @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async deleteAgentChatChannel(
     @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
     @Args('destinationChannelId', {
@@ -161,74 +184,6 @@ export class AgentChatChannelResolver {
     return true;
   }
 
-  @Mutation(() => Boolean)
-  async joinAgentChatChannel(
-    @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<boolean> {
-    await this.channelService.joinChannel({
-      channelId,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    return true;
-  }
-
-  @Mutation(() => Boolean)
-  async leaveAgentChatChannel(
-    @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<boolean> {
-    await this.channelService.removeMember({
-      channelId,
-      memberId: workspaceMemberId,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    return true;
-  }
-
-  @Mutation(() => Boolean)
-  async addAgentChatChannelMembers(
-    @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
-    @Args('workspaceMemberIds', { type: () => [UUIDScalarType] })
-    memberIds: string[],
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<boolean> {
-    await this.channelService.addMembers({
-      channelId,
-      memberIds,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    return true;
-  }
-
-  @Mutation(() => Boolean)
-  async removeAgentChatChannelMember(
-    @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
-    @Args('memberWorkspaceMemberId', { type: () => UUIDScalarType })
-    memberId: string,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<boolean> {
-    await this.channelService.removeMember({
-      channelId,
-      memberId,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    return true;
-  }
-
-  // Takes the chat out of any channel when none is given
   @Mutation(() => Boolean)
   async moveAgentChatThreadToChannel(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,

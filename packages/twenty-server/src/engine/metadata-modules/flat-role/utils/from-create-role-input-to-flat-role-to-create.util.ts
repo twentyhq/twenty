@@ -60,7 +60,9 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     fieldPermissionIds: [],
     fieldPermissionUniversalIdentifiers: [],
     rowLevelPermissionPredicateIds: [],
+    agentChatChannelRoleIds: [],
     rowLevelPermissionPredicateUniversalIdentifiers: [],
+    agentChatChannelRoleUniversalIdentifiers: [],
     rowLevelPermissionPredicateGroupIds: [],
     rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
   };

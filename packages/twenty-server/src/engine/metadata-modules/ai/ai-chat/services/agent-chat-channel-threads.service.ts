@@ -14,10 +14,8 @@ import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-thread-cursor.type';
-import { buildAgentChatJoinedChannelsQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-joined-channels-query.util';
 import { decodeAgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/decode-agent-chat-channel-thread-cursor.util';
 import { encodeAgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/encode-agent-chat-channel-thread-cursor.util';
-import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-errors.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -101,7 +99,6 @@ export class AgentChatChannelThreadsService {
     await this.channelAccessService.assertChannelAccess({
       ...args,
       channelId,
-      operationType: 'select',
     });
 
     const rows = await this.queryReadableThreads<{
@@ -138,42 +135,44 @@ export class AgentChatChannelThreadsService {
     };
   }
 
-  // One per channel the member is in, in their sidebar order
+  // One per channel the member can reach, in the channels' order
   async findSummaries(args: MemberArgs): Promise<AgentChatChannelSummaryDTO[]> {
     if (!(await this.sharingService.hasChannels(args.workspaceId))) {
       return [];
     }
 
-    const { channelTable } = getAgentChatChannelTables(args.workspaceId);
-    const roleId = await this.channelAccessService.findMemberRoleId(args);
+    const channels =
+      await this.channelAccessService.findAccessibleChannels(args);
 
-    return this.queryReadableThreads<{
+    if (channels.length === 0) {
+      return [];
+    }
+
+    const counts = await this.queryReadableThreads<{
       channelId: string;
       openCount: number;
       hasUnreadOpen: boolean;
     }>(args, ({ fromClause, parameters }) => ({
-      sql: `WITH channel_thread AS (
-              SELECT thread."channelId",
-                count(*) FILTER (WHERE ${STATUS.OPEN})::int AS "openCount",
-                COALESCE(bool_or(${STATUS.OPEN} AND ${IS_UNREAD}), false) AS "hasUnreadOpen"
-              ${fromClause}
-              AND thread."channelId" IS NOT NULL
-              GROUP BY thread."channelId"
-            )
-            SELECT joined_channel."channelId",
-              COALESCE(channel_thread."openCount", 0) AS "openCount",
-              COALESCE(channel_thread."hasUnreadOpen", false) AS "hasUnreadOpen"
-            FROM (${buildAgentChatJoinedChannelsQuery({
-              workspaceId: args.workspaceId,
-              workspaceMemberIdParameter:
-                ':channelThreadsWorkspaceMemberId::uuid',
-              roleIdParameter: ':channelThreadsRoleId::uuid',
-            })}) joined_channel
-            JOIN ${channelTable} channel
-              ON channel.id = joined_channel."channelId" AND channel."deletedAt" IS NULL
-            LEFT JOIN channel_thread ON channel_thread."channelId" = joined_channel."channelId"
-            ORDER BY joined_channel.position NULLS LAST, lower(channel.name), channel.id`,
-      parameters: { ...parameters, channelThreadsRoleId: roleId ?? null },
+      sql: `SELECT thread."channelId",
+              count(*) FILTER (WHERE ${STATUS.OPEN})::int AS "openCount",
+              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_UNREAD}), false) AS "hasUnreadOpen"
+            ${fromClause}
+            AND thread."channelId" = ANY(:channelThreadsChannelIds::uuid[])
+            GROUP BY thread."channelId"`,
+      parameters: {
+        ...parameters,
+        channelThreadsChannelIds: channels.map(({ id }) => id),
+      },
+    }));
+
+    const countByChannelId = new Map(
+      counts.map((count) => [count.channelId, count]),
+    );
+
+    return channels.map(({ id }) => ({
+      channelId: id,
+      openCount: countByChannelId.get(id)?.openCount ?? 0,
+      hasUnreadOpen: countByChannelId.get(id)?.hasUnreadOpen ?? false,
     }));
   }
 

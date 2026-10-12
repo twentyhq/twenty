@@ -1,7 +1,6 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 
 @ObjectType('AgentChatChannel')
 export class AgentChatChannelDTO {
@@ -17,9 +16,22 @@ export class AgentChatChannelDTO {
   @Field(() => String, { nullable: true })
   color: string | null;
 
-  @Field(() => AgentChatChannelVisibility)
-  visibility: AgentChatChannelVisibility;
+  @Field(() => Float)
+  position: number;
+
+  // Everyone reads and replies in its chats; otherwise only its roles do
+  @Field(() => Boolean)
+  isOpenToEveryone: boolean;
 
   @Field(() => [UUIDScalarType])
   roleIds: string[];
+
+  // A standard channel, such as General, cannot be deleted
+  @Field(() => Boolean)
+  isCustom: boolean;
+
+  // Whether the member reads its chats; who manages channels also lists the
+  // ones that are not open to them
+  @Field(() => Boolean, { nullable: true })
+  isAccessible?: boolean;
 }

@@ -138,4 +138,9 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   workflow: {},
   workflowVersion: {},
+  agentChatChannel: {},
+  agentChatChannelRole: {
+    agentChatChannel: true,
+    role: true,
+  },
 } as const satisfies MetadataRequiredForValidation;

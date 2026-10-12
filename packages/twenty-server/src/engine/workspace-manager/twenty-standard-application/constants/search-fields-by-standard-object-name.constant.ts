@@ -7,8 +7,6 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   agentChatThread: [],
   agentChatThreadTarget: [],
   agentChatThreadParticipant: [],
-  agentChatChannel: [],
-  agentChatChannelMember: [],
   agentTurn: [],
   agentMessage: [],
   agentMessagePart: [],

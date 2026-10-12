@@ -1,3 +1,4 @@
+import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
@@ -50,25 +51,22 @@ export class AgentChatSharingService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly channelGrantService: AgentChatChannelGrantService,
   ) {}
 
   // Fence for the 2.47 cross-upgrade window: until the 2.47 channels command
-  // has reached a workspace, it lacks the channel objects and the thread's
-  // channel columns, and its chats are not read through their channel. Remove
-  // once 2.47 leaves the window.
+  // has reached a workspace, its chats have no channel column. Remove once
+  // 2.47 leaves the window.
   async hasChannels(workspaceId: string): Promise<boolean> {
-    const { flatObjectMetadataMaps } =
+    const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
       ]);
 
-    return (
-      findAgentChatFlatObjectMetadata(
-        flatObjectMetadataMaps,
-        'agentChatThread',
-      )?.readabilityParentFieldUniversalIdentifiers?.includes(
-        STANDARD_OBJECTS.agentChatThread.fields.channel.universalIdentifier,
-      ) === true
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.fields.channelId.universalIdentifier
+      ],
     );
   }
 
@@ -219,7 +217,7 @@ export class AgentChatSharingService {
     title?: string;
     // filed under done for its owner, until activity brings it back to their inbox
     isArchived?: boolean;
-    // checked by the caller, as the member must be able to write in it
+    // checked by the caller, as the member must be able to reach it
     channelId?: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
@@ -270,6 +268,13 @@ export class AgentChatSharingService {
             'Thread owner is no longer a workspace member',
             AiExceptionCode.THREAD_NOT_FOUND,
           );
+        }
+        if (isDefined(args.channelId)) {
+          await this.channelGrantService.rewriteGrantsInTransaction({
+            manager,
+            workspaceId: args.workspaceId,
+            threadIds: [record.id],
+          });
         }
         const [setUpRecord] = await this.setUpCreatedThreadsInboxState({
           manager,
