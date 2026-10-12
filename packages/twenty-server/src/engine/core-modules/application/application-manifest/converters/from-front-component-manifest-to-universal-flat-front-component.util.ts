@@ -1,7 +1,6 @@
 import {
   DEFAULT_FRONT_COMPONENT_AVAILABLE_ON,
   type FrontComponentManifest,
-  SETTINGS_FRONT_COMPONENT_AVAILABLE_ON,
 } from 'twenty-shared/application';
 
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
@@ -10,13 +9,13 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
   frontComponentManifest,
   applicationUniversalIdentifier,
   isSettingsFrontComponent,
-  isReferencedBySettingsMenuItem,
+  isReferencedByMenuItem,
   now,
 }: {
   frontComponentManifest: FrontComponentManifest;
   applicationUniversalIdentifier: string;
   isSettingsFrontComponent: boolean;
-  isReferencedBySettingsMenuItem: boolean;
+  isReferencedByMenuItem: boolean;
   now: string;
 }): UniversalFlatFrontComponent => {
   return {
@@ -32,10 +31,12 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
     isHeadless: isSettingsFrontComponent
       ? false
       : (frontComponentManifest.isHeadless ?? false),
+    // A settings page or a command form expects to be opened from its menu,
+    // not dropped into a layout, so it stays out of the widget pickers.
     availableOn: [
       ...(frontComponentManifest.availableOn ??
-        (isSettingsFrontComponent || isReferencedBySettingsMenuItem
-          ? SETTINGS_FRONT_COMPONENT_AVAILABLE_ON
+        (isSettingsFrontComponent || isReferencedByMenuItem
+          ? []
           : DEFAULT_FRONT_COMPONENT_AVAILABLE_ON)),
     ],
     usesSdkClient: frontComponentManifest.usesSdkClient ?? false,

@@ -2468,8 +2468,7 @@ export type FrontComponentConfiguration = {
 
 export enum FrontComponentSurface {
   DASHBOARDS = 'DASHBOARDS',
-  OBJECTS = 'OBJECTS',
-  SETTINGS = 'SETTINGS'
+  OBJECTS = 'OBJECTS'
 }
 
 export type FullName = {

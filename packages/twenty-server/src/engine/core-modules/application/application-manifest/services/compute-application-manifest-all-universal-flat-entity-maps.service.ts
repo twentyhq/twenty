@@ -231,10 +231,13 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     const settingsFrontComponentUniversalIdentifier =
       manifest.application.settingsFrontComponent?.universalIdentifier;
 
-    const settingsMenuItemFrontComponentUniversalIdentifiers = new Set(
-      (manifest.settingsMenuItems ?? []).map(
-        (settingsMenuItemManifest) =>
-          settingsMenuItemManifest.frontComponentUniversalIdentifier,
+    const menuItemFrontComponentUniversalIdentifiers = new Set(
+      [
+        ...(manifest.settingsMenuItems ?? []),
+        ...(manifest.commandMenuItems ?? []),
+      ].map(
+        (menuItemManifest) =>
+          menuItemManifest.frontComponentUniversalIdentifier,
       ),
     );
 
@@ -247,8 +250,8 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             isSettingsFrontComponent:
               frontComponentManifest.universalIdentifier ===
               settingsFrontComponentUniversalIdentifier,
-            isReferencedBySettingsMenuItem:
-              settingsMenuItemFrontComponentUniversalIdentifiers.has(
+            isReferencedByMenuItem:
+              menuItemFrontComponentUniversalIdentifiers.has(
                 frontComponentManifest.universalIdentifier,
               ),
             now,

@@ -14,13 +14,10 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   conditionalPinnedExpression?: string;
 };
 
-// Where a front component can be placed: as a widget on record pages, as a
-// widget on dashboards, or as the page behind a settings menu item.
-export const FRONT_COMPONENT_SURFACES = [
-  'OBJECTS',
-  'DASHBOARDS',
-  'SETTINGS',
-] as const;
+// Layout editors whose widget picker offers a front component. It never limits
+// where a component can be displayed: commands, settings menu items and page
+// layouts declared by an app render it wherever they point.
+export const FRONT_COMPONENT_SURFACES = ['OBJECTS', 'DASHBOARDS'] as const;
 
 export type FrontComponentSurface = (typeof FRONT_COMPONENT_SURFACES)[number];
 
@@ -32,10 +29,6 @@ export const isFrontComponentSurface = (
 export const DEFAULT_FRONT_COMPONENT_AVAILABLE_ON: FrontComponentSurface[] = [
   'OBJECTS',
   'DASHBOARDS',
-];
-
-export const SETTINGS_FRONT_COMPONENT_AVAILABLE_ON: FrontComponentSurface[] = [
-  'SETTINGS',
 ];
 
 export type FrontComponentManifest = {

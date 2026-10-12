@@ -19,66 +19,66 @@ const buildManifest = (
 });
 
 describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
-  it('should make a regular front component available on objects and dashboards by default', () => {
+  it('should offer a front component in both widget pickers by default', () => {
     const result = fromFrontComponentManifestToUniversalFlatFrontComponent({
       frontComponentManifest: buildManifest(),
       applicationUniversalIdentifier: APP_UID,
       isSettingsFrontComponent: false,
-      isReferencedBySettingsMenuItem: false,
+      isReferencedByMenuItem: false,
       now: NOW,
     });
 
     expect(result.availableOn).toEqual(['OBJECTS', 'DASHBOARDS']);
   });
 
-  it('should make a settings front component available on settings only by default', () => {
+  it('should keep the settings front component out of the widget pickers by default', () => {
     const result = fromFrontComponentManifestToUniversalFlatFrontComponent({
       frontComponentManifest: buildManifest(),
       applicationUniversalIdentifier: APP_UID,
       isSettingsFrontComponent: true,
-      isReferencedBySettingsMenuItem: false,
+      isReferencedByMenuItem: false,
       now: NOW,
     });
 
-    expect(result.availableOn).toEqual(['SETTINGS']);
+    expect(result.availableOn).toEqual([]);
   });
 
-  it('should make a front component rendered by a settings menu item available on settings only by default', () => {
+  it('should keep a front component opened from a menu item out of the widget pickers by default', () => {
     const result = fromFrontComponentManifestToUniversalFlatFrontComponent({
       frontComponentManifest: buildManifest(),
       applicationUniversalIdentifier: APP_UID,
       isSettingsFrontComponent: false,
-      isReferencedBySettingsMenuItem: true,
+      isReferencedByMenuItem: true,
       now: NOW,
     });
 
-    expect(result.availableOn).toEqual(['SETTINGS']);
+    expect(result.availableOn).toEqual([]);
   });
 
   it('should honor an explicit availableOn over the default', () => {
     const regularResult =
       fromFrontComponentManifestToUniversalFlatFrontComponent({
         frontComponentManifest: buildManifest({
-          availableOn: ['DASHBOARDS'],
+          availableOn: [],
         }),
         applicationUniversalIdentifier: APP_UID,
         isSettingsFrontComponent: false,
-        isReferencedBySettingsMenuItem: false,
+        isReferencedByMenuItem: false,
         now: NOW,
       });
 
-    const settingsResult =
+    const menuItemResult =
       fromFrontComponentManifestToUniversalFlatFrontComponent({
         frontComponentManifest: buildManifest({
-          availableOn: ['SETTINGS', 'OBJECTS'],
+          availableOn: ['DASHBOARDS'],
         }),
         applicationUniversalIdentifier: APP_UID,
         isSettingsFrontComponent: true,
-        isReferencedBySettingsMenuItem: true,
+        isReferencedByMenuItem: true,
         now: NOW,
       });
 
-    expect(regularResult.availableOn).toEqual(['DASHBOARDS']);
-    expect(settingsResult.availableOn).toEqual(['SETTINGS', 'OBJECTS']);
+    expect(regularResult.availableOn).toEqual([]);
+    expect(menuItemResult.availableOn).toEqual(['DASHBOARDS']);
   });
 });

@@ -179,7 +179,6 @@ export {
   FRONT_COMPONENT_SURFACES,
   isFrontComponentSurface,
   DEFAULT_FRONT_COMPONENT_AVAILABLE_ON,
-  SETTINGS_FRONT_COMPONENT_AVAILABLE_ON,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
 export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';

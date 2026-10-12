@@ -5,6 +5,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
 import {
+  type CommandMenuItemManifest,
   type FrontComponentManifest,
   type FrontComponentSurface,
   type Manifest,
@@ -16,11 +17,12 @@ import { v4 as uuidv4 } from 'uuid';
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const WIDGET_FRONT_COMPONENT_ID = uuidv4();
-const SETTINGS_FRONT_COMPONENT_ID = uuidv4();
+const MENU_FRONT_COMPONENT_ID = uuidv4();
 const SETTINGS_MENU_ITEM_ID = uuidv4();
+const COMMAND_MENU_ITEM_ID = uuidv4();
 
 const WIDGET_COMPONENT_NAME = 'WidgetComponent';
-const SETTINGS_COMPONENT_NAME = 'SettingsComponent';
+const MENU_COMPONENT_NAME = 'MenuComponent';
 
 const buildFrontComponent = ({
   universalIdentifier,
@@ -43,18 +45,26 @@ const buildFrontComponent = ({
 
 const SETTINGS_MENU_ITEM: SettingsMenuItemManifest = {
   universalIdentifier: SETTINGS_MENU_ITEM_ID,
-  frontComponentUniversalIdentifier: SETTINGS_FRONT_COMPONENT_ID,
+  frontComponentUniversalIdentifier: MENU_FRONT_COMPONENT_ID,
   title: 'Settings',
+};
+
+const COMMAND_MENU_ITEM: CommandMenuItemManifest = {
+  universalIdentifier: COMMAND_MENU_ITEM_ID,
+  frontComponentUniversalIdentifier: MENU_FRONT_COMPONENT_ID,
+  label: 'Open form',
 };
 
 const buildManifest = ({
   settingsMenuItems = [],
+  commandMenuItems = [],
   widgetAvailableOn,
-  settingsAvailableOn,
+  menuAvailableOn,
 }: {
   settingsMenuItems?: SettingsMenuItemManifest[];
+  commandMenuItems?: CommandMenuItemManifest[];
   widgetAvailableOn?: FrontComponentSurface[];
-  settingsAvailableOn?: FrontComponentSurface[];
+  menuAvailableOn?: FrontComponentSurface[];
 } = {}): Manifest =>
   buildBaseManifest({
     appId: TEST_APP_ID,
@@ -67,12 +77,13 @@ const buildManifest = ({
           availableOn: widgetAvailableOn,
         }),
         buildFrontComponent({
-          universalIdentifier: SETTINGS_FRONT_COMPONENT_ID,
-          componentName: SETTINGS_COMPONENT_NAME,
-          availableOn: settingsAvailableOn,
+          universalIdentifier: MENU_FRONT_COMPONENT_ID,
+          componentName: MENU_COMPONENT_NAME,
+          availableOn: menuAvailableOn,
         }),
       ],
       settingsMenuItems,
+      commandMenuItems,
     },
   });
 
@@ -90,7 +101,7 @@ const findAvailableOnByUniversalIdentifier = async (): Promise<
   return Object.fromEntries(
     data.frontComponents
       .filter((frontComponent) =>
-        [WIDGET_FRONT_COMPONENT_ID, SETTINGS_FRONT_COMPONENT_ID].includes(
+        [WIDGET_FRONT_COMPONENT_ID, MENU_FRONT_COMPONENT_ID].includes(
           frontComponent.universalIdentifier ?? '',
         ),
       )
@@ -129,7 +140,7 @@ describe('Manifest sync - front component availableOn', () => {
     jest.useRealTimers();
 
     await uploadBuiltComponentFile(WIDGET_COMPONENT_NAME);
-    await uploadBuiltComponentFile(SETTINGS_COMPONENT_NAME);
+    await uploadBuiltComponentFile(MENU_COMPONENT_NAME);
   }, 120000);
 
   beforeEach(async () => {
@@ -145,14 +156,14 @@ describe('Manifest sync - front component availableOn', () => {
     });
   });
 
-  it('makes front components available on objects and dashboards by default', async () => {
+  it('offers front components in both widget pickers by default', async () => {
     expect(await findAvailableOnByUniversalIdentifier()).toEqual({
       [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
-      [SETTINGS_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+      [MENU_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
     });
   }, 60000);
 
-  it('makes a front component rendered by a settings menu item available on settings only by default', async () => {
+  it('keeps a front component rendered by a settings menu item out of the widget pickers by default', async () => {
     await syncApplication({
       manifest: buildManifest({ settingsMenuItems: [SETTINGS_MENU_ITEM] }),
       expectToFail: false,
@@ -160,11 +171,23 @@ describe('Manifest sync - front component availableOn', () => {
 
     expect(await findAvailableOnByUniversalIdentifier()).toEqual({
       [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
-      [SETTINGS_FRONT_COMPONENT_ID]: ['SETTINGS'],
+      [MENU_FRONT_COMPONENT_ID]: [],
     });
   }, 60000);
 
-  it('makes the deprecated settings front component available on settings only by default', async () => {
+  it('keeps a front component opened by a command menu item out of the widget pickers by default', async () => {
+    await syncApplication({
+      manifest: buildManifest({ commandMenuItems: [COMMAND_MENU_ITEM] }),
+      expectToFail: false,
+    });
+
+    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+      [MENU_FRONT_COMPONENT_ID]: [],
+    });
+  }, 60000);
+
+  it('keeps the deprecated settings front component out of the widget pickers by default', async () => {
     const baseManifest = buildManifest();
 
     await syncApplication({
@@ -173,7 +196,7 @@ describe('Manifest sync - front component availableOn', () => {
         application: {
           ...baseManifest.application,
           settingsFrontComponent: {
-            universalIdentifier: SETTINGS_FRONT_COMPONENT_ID,
+            universalIdentifier: MENU_FRONT_COMPONENT_ID,
           },
         },
       },
@@ -182,7 +205,7 @@ describe('Manifest sync - front component availableOn', () => {
 
     expect(await findAvailableOnByUniversalIdentifier()).toEqual({
       [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
-      [SETTINGS_FRONT_COMPONENT_ID]: ['SETTINGS'],
+      [MENU_FRONT_COMPONENT_ID]: [],
     });
   }, 60000);
 
@@ -190,21 +213,25 @@ describe('Manifest sync - front component availableOn', () => {
     await syncApplication({
       manifest: buildManifest({
         settingsMenuItems: [SETTINGS_MENU_ITEM],
-        widgetAvailableOn: ['DASHBOARDS'],
-        settingsAvailableOn: ['SETTINGS', 'OBJECTS'],
+        commandMenuItems: [COMMAND_MENU_ITEM],
+        widgetAvailableOn: [],
+        menuAvailableOn: ['OBJECTS'],
       }),
       expectToFail: false,
     });
 
     expect(await findAvailableOnByUniversalIdentifier()).toEqual({
-      [WIDGET_FRONT_COMPONENT_ID]: ['DASHBOARDS'],
-      [SETTINGS_FRONT_COMPONENT_ID]: ['SETTINGS', 'OBJECTS'],
+      [WIDGET_FRONT_COMPONENT_ID]: [],
+      [MENU_FRONT_COMPONENT_ID]: ['OBJECTS'],
     });
   }, 60000);
 
-  it('restores the default once no settings menu item renders the front component', async () => {
+  it('restores the default once no menu item opens the front component', async () => {
     await syncApplication({
-      manifest: buildManifest({ settingsMenuItems: [SETTINGS_MENU_ITEM] }),
+      manifest: buildManifest({
+        settingsMenuItems: [SETTINGS_MENU_ITEM],
+        commandMenuItems: [COMMAND_MENU_ITEM],
+      }),
       expectToFail: false,
     });
 
@@ -214,16 +241,14 @@ describe('Manifest sync - front component availableOn', () => {
     });
 
     expect(
-      (await findAvailableOnByUniversalIdentifier())[
-        SETTINGS_FRONT_COMPONENT_ID
-      ],
+      (await findAvailableOnByUniversalIdentifier())[MENU_FRONT_COMPONENT_ID],
     ).toEqual(['OBJECTS', 'DASHBOARDS']);
   }, 60000);
 
-  it('rejects an unknown surface', async () => {
+  it('rejects a surface that is not a layout editor', async () => {
     const { errors } = await syncApplication({
       manifest: buildManifest({
-        widgetAvailableOn: ['UNKNOWN' as FrontComponentSurface],
+        widgetAvailableOn: ['SETTINGS' as FrontComponentSurface],
       }),
       expectToFail: true,
     });
@@ -232,7 +257,7 @@ describe('Manifest sync - front component availableOn', () => {
     expect(errors?.[0]?.extensions?.code).not.toBe('INTERNAL_SERVER_ERROR');
     expect(await findAvailableOnByUniversalIdentifier()).toEqual({
       [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
-      [SETTINGS_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+      [MENU_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
     });
   }, 60000);
 });

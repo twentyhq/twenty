@@ -22,7 +22,7 @@ describe('isFrontComponentAvailableOn', () => {
       isFrontComponentAvailableOn({
         frontComponent: {
           isHeadless: false,
-          availableOn: [FrontComponentSurface.SETTINGS],
+          availableOn: [FrontComponentSurface.DASHBOARDS],
         },
         surface: FrontComponentSurface.OBJECTS,
       }),

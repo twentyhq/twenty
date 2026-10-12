@@ -1507,7 +1507,7 @@ export interface FrontComponentConfiguration {
     __typename: 'FrontComponentConfiguration'
 }
 
-export type FrontComponentSurface = 'DASHBOARDS' | 'OBJECTS' | 'SETTINGS'
+export type FrontComponentSurface = 'DASHBOARDS' | 'OBJECTS'
 
 export interface FullName {
     firstName: Scalars['String']
@@ -11560,8 +11560,7 @@ export const enumFileFolder = {
 
 export const enumFrontComponentSurface = {
    DASHBOARDS: 'DASHBOARDS' as const,
-   OBJECTS: 'OBJECTS' as const,
-   SETTINGS: 'SETTINGS' as const
+   OBJECTS: 'OBJECTS' as const
 }
 
 export const enumGraphOrderBy = {
