@@ -14,14 +14,7 @@ for i = 1, #KEYS do
   end
 
   if redis.call('EXISTS', KEYS[i]) == 1 then
-    local value = redis.call('INCRBY', KEYS[i], amounts[i])
-
-    if value < 0 then
-      redis.call('SET', KEYS[i], 0, 'KEEPTTL')
-      value = 0
-    end
-
-    result[i] = value
+    result[i] = redis.call('INCRBY', KEYS[i], amounts[i])
   else
     result[i] = false
   end

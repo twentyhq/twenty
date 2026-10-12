@@ -4,8 +4,10 @@ export const buildConsumeScriptArguments = (
   entries: { amount: number; warm: { value: number; ttl: number } | null }[],
 ): string[] => {
   for (const { amount, warm } of entries) {
-    if (!Number.isSafeInteger(amount)) {
-      throw new Error(`Counter amount ${amount} is not a safe integer`);
+    if (!(Number.isSafeInteger(amount) && amount >= 0)) {
+      throw new Error(
+        `Counter amount ${amount} is not a non-negative safe integer`,
+      );
     }
 
     if (

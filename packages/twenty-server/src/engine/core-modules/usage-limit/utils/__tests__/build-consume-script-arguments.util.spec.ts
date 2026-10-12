@@ -1,12 +1,12 @@
 import { buildConsumeScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-consume-script-arguments.util';
 
 describe('buildConsumeScriptArguments', () => {
-  it.each([1.5, Number.MAX_SAFE_INTEGER + 1, Number.NaN])(
+  it.each([-1, 1.5, Number.MAX_SAFE_INTEGER + 1, Number.NaN])(
     'refuses the amount %s',
     (amount) => {
       expect(() =>
         buildConsumeScriptArguments([{ amount, warm: null }]),
-      ).toThrow(/not a safe integer/);
+      ).toThrow(/^Counter amount .* is not a non-negative safe integer$/);
     },
   );
 
@@ -18,7 +18,7 @@ describe('buildConsumeScriptArguments', () => {
     { value: 10, ttl: 1.5 },
   ])('refuses the warm value $value with TTL $ttl', (warm) => {
     expect(() => buildConsumeScriptArguments([{ amount: 1, warm }])).toThrow(
-      /not a non-negative safe integer/,
+      /^Counter warm value .* is not a non-negative safe integer with a positive safe TTL$/,
     );
   });
 });
