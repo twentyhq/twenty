@@ -226,6 +226,19 @@ export const readAllowanceConsumedMicro = async (
   return allowanceUsage.consumedValue;
 };
 
+export const readAllowanceLimitMicro = async (
+  workspaceId: string,
+): Promise<number> => {
+  const allowanceUsage =
+    await getUsageLimitQuotaService().getAllowanceUsage(workspaceId);
+
+  if (!isDefined(allowanceUsage)) {
+    throw new Error(`No allowance for workspace ${workspaceId}`);
+  }
+
+  return allowanceUsage.limitValue;
+};
+
 export const resetBillingCreditState = async (
   workspaceId: string,
 ): Promise<void> => {
