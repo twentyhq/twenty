@@ -74,7 +74,6 @@ export class AppConnectionAccessService {
 
     const member = await entityManager.findOne(UserWorkspaceEntity, {
       where: { id: userWorkspaceId, userId, workspaceId },
-      lock: isTransactionActive ? { mode: 'pessimistic_read' } : undefined,
     });
 
     if (!isDefined(member)) {
