@@ -183,6 +183,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_DATA_DISPLAY_TAG: '/ui/primitives/data-display/tag',
   UI_PRIMITIVES_FEEDBACK_BANNER: '/ui/primitives/feedback/banner',
   UI_PRIMITIVES_FEEDBACK_LOADER: '/ui/primitives/feedback/loader',
+  UI_PRIMITIVES_FEEDBACK_PROGRESS: '/ui/primitives/feedback/progress',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_BAR: '/ui/primitives/feedback/progress-bar',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_RING: '/ui/primitives/feedback/progress-ring',
   UI_PRIMITIVES_FEEDBACK_SKELETON: '/ui/primitives/feedback/skeleton',

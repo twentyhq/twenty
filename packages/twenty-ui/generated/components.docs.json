@@ -258,14 +258,14 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "ID of the visible label that names the measured operation."
+        "description": "ID of the visible label that names the operation."
       },
       {
         "name": "aria-valuetext",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Human-readable progress value when a percentage alone is insufficient."
+        "description": "Human-readable progress value overriding the default formatted value."
       },
       {
         "name": "barColor",
@@ -279,21 +279,63 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional preformatted value displayed before the ring."
+        "description": "Optional preformatted value or Progress parts displayed before the ring."
       },
       {
         "name": "className",
-        "type": "string",
+        "type": "string | ((state: ProgressRootState) => string | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the progress root."
+        "description": "Class applied to the progress root, or a callback receiving its status."
+      },
+      {
+        "name": "format",
+        "type": "NumberFormatOptions",
+        "required": false,
+        "defaultValue": null,
+        "description": "Intl.NumberFormat options for the clamped numeric value. The default displays the normalized percentage."
+      },
+      {
+        "name": "getAriaValueText",
+        "type": "((formattedValue: string, value: number | null) => string)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the formatted value and raw value, including null, and returns an accessible value description."
+      },
+      {
+        "name": "locale",
+        "type": "LocalesArgument",
+        "required": false,
+        "defaultValue": null,
+        "description": "Locale or locale list used to format the value. Defaults to the runtime locale."
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false,
+        "defaultValue": "100",
+        "description": "Inclusive maximum. Defaults to 100."
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "Inclusive minimum. Defaults to 0."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or the element composed through render."
       },
       {
         "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressRootState>",
         "required": false,
         "defaultValue": null,
-        "description": "Replaces the root element while preserving progress semantics."
+        "description": "Composes the root with an element or render callback. Forward the supplied props and ref to retain progress semantics."
       },
       {
         "name": "size",
@@ -304,17 +346,17 @@
       },
       {
         "name": "style",
-        "type": "CSSProperties",
+        "type": "CSSProperties | ((state: ProgressRootState) => CSSProperties | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "Inline styles applied to the progress root."
+        "description": "Inline styles applied to the progress root, or a callback receiving its status."
       },
       {
         "name": "value",
-        "type": "number",
+        "type": "number | null",
         "required": true,
         "defaultValue": null,
-        "description": "Controlled progress from 0 to 100. Out-of-range values are bounded and NaN renders as zero."
+        "description": "Controlled value in the min/max range. Use null for indeterminate progress."
       }
     ]
   },
@@ -914,16 +956,294 @@
     ]
   },
   {
+    "name": "Progress",
+    "entryPoint": "twenty-ui/primitives/feedback",
+    "slug": "feedback/progress",
+    "props": [],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "aria-label",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Accessible name identifying the measured operation."
+          },
+          {
+            "name": "aria-labelledby",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the visible label that names the operation."
+          },
+          {
+            "name": "aria-valuetext",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Human-readable progress value overriding the default formatted value."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composed Progress parts and supporting content."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: ProgressRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "format",
+            "type": "NumberFormatOptions",
+            "required": false,
+            "defaultValue": null,
+            "description": "Intl.NumberFormat options for the clamped numeric value. The default displays the normalized percentage."
+          },
+          {
+            "name": "getAriaValueText",
+            "type": "((formattedValue: string, value: number | null) => string)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Receives the formatted value and raw value, including null, and returns an accessible value description."
+          },
+          {
+            "name": "locale",
+            "type": "LocalesArgument",
+            "required": false,
+            "defaultValue": null,
+            "description": "Locale or locale list used to format the value. Defaults to the runtime locale."
+          },
+          {
+            "name": "max",
+            "type": "number",
+            "required": false,
+            "defaultValue": "100",
+            "description": "Inclusive maximum. Defaults to 100."
+          },
+          {
+            "name": "min",
+            "type": "number",
+            "required": false,
+            "defaultValue": "0",
+            "description": "Inclusive minimum. Defaults to 0."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the root div, or the element composed through Root.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ProgressRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "value",
+            "type": "number | null",
+            "required": true,
+            "defaultValue": null,
+            "description": "Controlled value in the min/max range. Use null for indeterminate progress."
+          }
+        ]
+      },
+      {
+        "name": "Track",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "The indicator and optional supporting content."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: ProgressTrackState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the track div, or the element composed through Track.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressTrackState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ProgressTrackState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its progress status."
+          }
+        ]
+      },
+      {
+        "name": "Indicator",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ProgressIndicatorState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the indicator div, or the element composed through Indicator.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressIndicatorState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ProgressIndicatorState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its progress status."
+          }
+        ]
+      },
+      {
+        "name": "Value",
+        "props": [
+          {
+            "name": "children",
+            "type": "((formattedValue: string | null, value: number | null) => ReactNode) | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional callback receiving the formatted value and raw value. Indeterminate progress passes indeterminate as formatted text. Without a callback, indeterminate progress displays no content."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: ProgressValueState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLSpanElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the value span, or the element composed through Value.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressValueState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ProgressValueState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its progress status."
+          }
+        ]
+      },
+      {
+        "name": "Label",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Visible text that supplies the accessible name of the root."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: ProgressLabelState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLSpanElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the label span, or the element composed through Label.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressLabelState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ProgressLabelState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its progress status."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "ProgressBar",
     "entryPoint": "twenty-ui/primitives/feedback",
     "slug": "feedback/progress-bar",
     "props": [
       {
-        "name": "ariaLabel",
+        "name": "aria-label",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Accessible name describing the operation being measured."
+        "description": "Accessible name identifying the measured operation."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the visible label that names the operation."
+      },
+      {
+        "name": "aria-valuetext",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Human-readable progress value overriding the default formatted value."
       },
       {
         "name": "backgroundColor",
@@ -940,32 +1260,88 @@
         "description": "CSS color of the filled bar. Defaults to the primary text color."
       },
       {
-        "name": "className",
-        "type": "string",
+        "name": "children",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the progress root."
+        "description": "Additional Progress parts or supporting content inside the root."
       },
       {
-        "name": "onGrowInComplete",
-        "type": "(() => void)",
+        "name": "className",
+        "type": "string | ((state: ProgressRootState) => string | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the grow-in animation ends."
+        "description": "Class applied to the progress root, or a callback receiving its status."
+      },
+      {
+        "name": "format",
+        "type": "NumberFormatOptions",
+        "required": false,
+        "defaultValue": null,
+        "description": "Intl.NumberFormat options for the clamped numeric value. The default displays the normalized percentage."
+      },
+      {
+        "name": "getAriaValueText",
+        "type": "((formattedValue: string, value: number | null) => string)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the formatted value and raw value, including null, and returns an accessible value description."
+      },
+      {
+        "name": "locale",
+        "type": "LocalesArgument",
+        "required": false,
+        "defaultValue": null,
+        "description": "Locale or locale list used to format the value. Defaults to the runtime locale."
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false,
+        "defaultValue": "100",
+        "description": "Inclusive maximum. Defaults to 100."
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "Inclusive minimum. Defaults to 0."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or the element composed through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressRootState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Composes the root with an element or render callback. Forward the supplied props and ref to retain progress semantics."
       },
       {
         "name": "size",
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Bar height: `sm` (6px) or `md` (8px)."
+        "description": "Bar height: sm (6px) or md (8px)."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ProgressRootState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the progress root, or a callback receiving its status."
       },
       {
         "name": "value",
-        "type": "number",
+        "type": "number | null",
         "required": true,
         "defaultValue": null,
-        "description": "Current progress from 0 to 100."
+        "description": "Controlled value in the min/max range. Use null for indeterminate progress."
       },
       {
         "name": "withBorderRadius",
@@ -975,32 +1351,11 @@
         "description": "Rounds the track and indicator corners."
       },
       {
-        "name": "withGlint",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Sweeps a highlight across the filled bar each time the value changes."
-      },
-      {
-        "name": "withGrowIn",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Grows the bar in from zero width when it mounts."
-      },
-      {
         "name": "withMinimumFillWidth",
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": "Keeps a small visible fill for any value above zero."
-      },
-      {
-        "name": "withSpringFill",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Animates value changes with a spring that slightly overshoots the target."
+        "description": "Applies a cosmetic minimum of up to 12px, capped at half the track width, only above the minimum and below completion."
       }
     ]
   },

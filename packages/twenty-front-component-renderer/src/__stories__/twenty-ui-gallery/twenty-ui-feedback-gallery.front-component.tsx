@@ -88,7 +88,7 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'ProgressBar',
-    node: <ProgressBar value={50} ariaLabel="Progress" />,
+    node: <ProgressBar value={50} aria-label="Progress" />,
   },
   {
     name: 'Skeleton',

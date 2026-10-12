@@ -25,6 +25,7 @@
     "NumberField",
     "OverflowingTextWithTooltip",
     "Popover",
+    "Progress",
     "ProgressBar",
     "ProgressRing",
     "Radio",

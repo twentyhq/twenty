@@ -762,6 +762,7 @@
     "values": {
       "Banner": "primitives/feedback/Banner/Banner",
       "Loader": "primitives/feedback/Loader/Loader",
+      "Progress": "primitives/feedback/Progress/Progress",
       "ProgressBar": "primitives/feedback/ProgressBar/ProgressBar",
       "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing",
       "Skeleton": "primitives/feedback/Skeleton/Skeleton",
@@ -776,7 +777,18 @@
       "BannerVariant": "primitives/feedback/Banner/types/BannerVariant",
       "LoaderProps": "primitives/feedback/Loader/types/LoaderProps",
       "ProgressBarProps": "primitives/feedback/ProgressBar/types/ProgressBarProps",
+      "ProgressIndicatorProps": "primitives/feedback/Progress/types/ProgressIndicatorProps",
+      "ProgressIndicatorState": "primitives/feedback/Progress/types/ProgressIndicatorState",
+      "ProgressLabelProps": "primitives/feedback/Progress/types/ProgressLabelProps",
+      "ProgressLabelState": "primitives/feedback/Progress/types/ProgressLabelState",
       "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps",
+      "ProgressRootProps": "primitives/feedback/Progress/types/ProgressRootProps",
+      "ProgressRootState": "primitives/feedback/Progress/types/ProgressRootState",
+      "ProgressStatus": "primitives/feedback/Progress/types/ProgressStatus",
+      "ProgressTrackProps": "primitives/feedback/Progress/types/ProgressTrackProps",
+      "ProgressTrackState": "primitives/feedback/Progress/types/ProgressTrackState",
+      "ProgressValueProps": "primitives/feedback/Progress/types/ProgressValueProps",
+      "ProgressValueState": "primitives/feedback/Progress/types/ProgressValueState",
       "SkeletonProps": "primitives/feedback/Skeleton/types/SkeletonProps"
     }
   },

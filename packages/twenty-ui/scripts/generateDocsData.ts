@@ -216,11 +216,15 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
   (component) => {
     const source = program.getSourceFile(resolve(sourceRoot, component.source));
     const moduleSymbol = source && checker.getSymbolAtLocation(source);
-    const symbol =
+    let symbol =
       moduleSymbol &&
       checker
         .getExportsOfModule(moduleSymbol)
         .find((candidate) => candidate.name === component.name);
+
+    if (isDefined(symbol) && symbol.flags & ts.SymbolFlags.Alias) {
+      symbol = checker.getAliasedSymbol(symbol);
+    }
 
     if (!symbol?.valueDeclaration) {
       throw new Error(`Could not find the export for ${component.name}`);
@@ -266,11 +270,17 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
     const parts = componentParts.map((part) => {
       const declaration = part.valueDeclaration;
 
-      if (!declaration || !ts.isPropertyAssignment(declaration)) {
+      const isNamespaceExport = Boolean(part.flags & ts.SymbolFlags.Alias);
+      const isObjectPart =
+        isDefined(declaration) && ts.isPropertyAssignment(declaration);
+
+      if (!isObjectPart && !isNamespaceExport) {
         throw new Error(`Could not resolve ${component.name}.${part.name}`);
       }
 
-      let partSymbol = checker.getSymbolAtLocation(declaration.initializer);
+      let partSymbol = isObjectPart
+        ? checker.getSymbolAtLocation(declaration.initializer)
+        : part;
 
       if (!partSymbol) {
         throw new Error(`Could not find ${component.name}.${part.name}`);
