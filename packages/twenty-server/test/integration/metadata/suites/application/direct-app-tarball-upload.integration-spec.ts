@@ -2,6 +2,7 @@ import crypto from 'crypto';
 
 import gql from 'graphql-tag';
 import { type ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
+import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { completeAppTarballUpload } from 'test/integration/metadata/suites/application/utils/complete-app-tarball-upload.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
@@ -504,6 +505,58 @@ describe('Direct app tarball upload', () => {
     } finally {
       storeRegistrationAssetsSpy.mockRestore();
       enqueueAutoUpgradeSpy.mockRestore();
+    }
+  });
+
+  it('records the version on a retried completion when the first attempt failed after attaching the tarball', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const first = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+    );
+
+    expect(first.completion.errors).toBeUndefined();
+
+    const recordPublishedVersionSpy = jest
+      .spyOn(
+        getAppProviderByClassName<ApplicationRegistrationVersionService>(
+          'ApplicationRegistrationVersionService',
+        ),
+        'recordPublishedVersion',
+      )
+      .mockRejectedValueOnce(new Error('Database unavailable'));
+
+    try {
+      const second = await deployTarball(
+        await buildValidTarball({ universalIdentifier, version: '1.1.0' }),
+        { expectToFail: true },
+      );
+
+      expect(second.completion.errors).toBeDefined();
+
+      const registrationId = first.completion.data!.completeAppTarballUpload.id;
+
+      // The registration already points to the new tarball, so the retry
+      // resumes from there instead of re-running the progression check
+      expect((await findRegistrationRow(registrationId)).tarballFileId).toBe(
+        second.uploadTarget.fileId,
+      );
+      expect(await findVersionRows(registrationId)).toMatchObject([
+        { version: '1.0.0' },
+      ]);
+
+      const { data, errors } = await completeAppTarballUpload({
+        fileId: second.uploadTarget.fileId,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data?.completeAppTarballUpload.id).toBe(registrationId);
+      expect(await findVersionRows(registrationId)).toMatchObject([
+        { version: '1.0.0', tarballFileId: first.uploadTarget.fileId },
+        { version: '1.1.0', tarballFileId: second.uploadTarget.fileId },
+      ]);
+    } finally {
+      recordPublishedVersionSpy.mockRestore();
     }
   });
 
