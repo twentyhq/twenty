@@ -12521,7 +12521,7 @@ msgstr "گردش کار به فراداده‌ای ارجاع می‌دهد که
 #. js-lingui-id: W+A2pa
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
 msgid "The workflow schedule is invalid."
-msgstr ""
+msgstr "زمان‌بندی گردش کار نامعتبر است."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts

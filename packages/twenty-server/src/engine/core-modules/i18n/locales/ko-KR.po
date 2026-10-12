@@ -12521,7 +12521,7 @@ msgstr "워크플로가 이 애플리케이션에서 사용할 수 없는 메타
 #. js-lingui-id: W+A2pa
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
 msgid "The workflow schedule is invalid."
-msgstr ""
+msgstr "워크플로 일정이 잘못되었습니다."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
