@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { usePartner } from '@/auth/hooks/usePartner';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
+import { partnerCookieState } from '@/auth/states/partnerCookieState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/BillingCheckoutSession';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
@@ -12,7 +12,6 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useInitializeQueryParamState = () => {
   const store = useStore();
-  const { setPartner } = usePartner();
   const initializeQueryParamState = useCallback(() => {
     const handlers: Record<string, (value: string) => void> = {
       billingCheckoutSession: (value: string) => {
@@ -57,7 +56,7 @@ export const useInitializeQueryParamState = () => {
         const partner = normalizePartner(value);
 
         if (isDefined(partner)) {
-          setPartner(partner);
+          store.set(partnerCookieState.atom, { partner });
         }
       },
     };
@@ -70,7 +69,7 @@ export const useInitializeQueryParamState = () => {
         handler(value);
       }
     }
-  }, [store, setPartner]);
+  }, [store]);
 
   return { initializeQueryParamState };
 };

@@ -7,7 +7,6 @@ import { type ReactNode } from 'react';
 
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -46,9 +45,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const storePartnerCookie = (partner: string) => {
-  Cookies.set('partner', JSON.stringify({ partner }), {
-    domain: '.localhost',
-  });
+  Cookies.set('partner', JSON.stringify({ partner }));
 };
 
 const createWorkspace = async () => {
@@ -65,12 +62,6 @@ describe('useSignUpInNewWorkspace', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(isMultiWorkspaceEnabledState.atom, true);
-    jotaiStore.set(domainConfigurationState.atom, {
-      frontDomain: 'localhost',
-      defaultSubdomain: 'app',
-      publicFunctionDomain: undefined,
-      serverUrl: 'http://localhost:3000',
-    });
     signUpInNewWorkspaceMutationMock.mockResolvedValue({
       data: {
         signUpInNewWorkspace: {
@@ -88,7 +79,7 @@ describe('useSignUpInNewWorkspace', () => {
   });
 
   afterEach(() => {
-    Cookies.remove('partner', { domain: '.localhost' });
+    Cookies.remove('partner');
     jest.clearAllMocks();
   });
 

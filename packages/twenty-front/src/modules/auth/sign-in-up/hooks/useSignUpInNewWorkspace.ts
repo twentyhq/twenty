@@ -1,10 +1,10 @@
 import { useAuth } from '@/auth/hooks/useAuth';
-import { usePartner } from '@/auth/hooks/usePartner';
 import { partnerCookieState } from '@/auth/states/partnerCookieState';
 import { useUploadNewWorkspaceLogo } from '@/auth/sign-in-up/hooks/useUploadNewWorkspaceLogo';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -28,13 +28,7 @@ export const useSignUpInNewWorkspace = () => {
     SignUpInNewWorkspaceDocument,
   );
   const { uploadNewWorkspaceLogo } = useUploadNewWorkspaceLogo();
-  const partnerCookie = useAtomStateValue(partnerCookieState);
-  const { setPartner } = usePartner();
-
-  const partner =
-    isDefined(partnerCookie) && 'partner' in partnerCookie
-      ? partnerCookie.partner
-      : undefined;
+  const [partnerCookie, setPartnerCookie] = useAtomState(partnerCookieState);
 
   const createWorkspace = async ({
     displayName,
@@ -47,11 +41,13 @@ export const useSignUpInNewWorkspace = () => {
   } = {}): Promise<boolean> => {
     try {
       const { data } = await signUpInNewWorkspaceMutation({
-        variables: { input: { displayName, subdomain, partner } },
+        variables: {
+          input: { displayName, subdomain, partner: partnerCookie?.partner },
+        },
       });
       assertIsDefinedOrThrow(data?.signUpInNewWorkspace);
 
-      setPartner(null);
+      setPartnerCookie(null);
 
       const workspaceId = data.signUpInNewWorkspace.workspace.id;
 

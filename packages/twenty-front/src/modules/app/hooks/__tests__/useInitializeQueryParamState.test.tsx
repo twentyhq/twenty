@@ -4,7 +4,6 @@ import Cookies from 'js-cookie';
 import { type ReactNode } from 'react';
 
 import { useInitializeQueryParamState } from '@/app/hooks/useInitializeQueryParamState';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -29,16 +28,10 @@ const initializeQueryParamStateAt = (url: string) => {
 describe('useInitializeQueryParamState', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(domainConfigurationState.atom, {
-      frontDomain: 'localhost',
-      defaultSubdomain: 'app',
-      publicFunctionDomain: undefined,
-      serverUrl: 'http://localhost:3000',
-    });
   });
 
   afterEach(() => {
-    Cookies.remove('partner', { domain: '.localhost' });
+    Cookies.remove('partner');
     window.history.pushState({}, '', '/');
   });
 
@@ -72,9 +65,7 @@ describe('useInitializeQueryParamState', () => {
   });
 
   it('should keep the stored partner when the new one is invalid', () => {
-    Cookies.set('partner', JSON.stringify({ partner: 'acme' }), {
-      domain: '.localhost',
-    });
+    Cookies.set('partner', JSON.stringify({ partner: 'acme' }));
 
     initializeQueryParamStateAt('/welcome?partner=%3Cx%3E');
 
