@@ -2,9 +2,9 @@
 export type Scalars = {
     String: string,
     Boolean: boolean,
+    Float: number,
     Int: number,
     ID: string,
-    Float: number,
     BigInt: any,
     ConnectionCursor: any,
     DateTime: string,
@@ -38,9 +38,12 @@ export interface AgentChatChannel {
     color?: Scalars['String']
     icon?: Scalars['String']
     id: Scalars['UUID']
+    isAccessible?: Scalars['Boolean']
+    isCustom: Scalars['Boolean']
+    isOpenToEveryone: Scalars['Boolean']
     name: Scalars['String']
+    position: Scalars['Float']
     roleIds: Scalars['UUID'][]
-    visibility: AgentChatChannelVisibility
     __typename: 'AgentChatChannel'
 }
 
@@ -68,8 +71,6 @@ export interface AgentChatChannelThreadIds {
 }
 
 export type AgentChatChannelThreadStatus = 'DONE' | 'OPEN' | 'SNOOZED'
-
-export type AgentChatChannelVisibility = 'PRIVATE' | 'PUBLIC'
 
 export interface AgentChatEvent {
     event: Scalars['JSON']
@@ -226,7 +227,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -2035,7 +2036,6 @@ export type ModelFamily = 'CLAUDE' | 'GEMINI' | 'GPT' | 'GROK' | 'MISTRAL'
 export interface Mutation {
     activateSkill: Skill
     activateWorkspace: Workspace
-    addAgentChatChannelMembers: Scalars['Boolean']
     addQueryToEventStream: Scalars['Boolean']
     assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
@@ -2185,13 +2185,10 @@ export interface Mutation {
     installApplication: Application
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
-    joinAgentChatChannel: Scalars['Boolean']
-    leaveAgentChatChannel: Scalars['Boolean']
     markAgentChatThreadAsDoneInChannel: Scalars['Boolean']
     moveAgentChatThreadToChannel: Scalars['Boolean']
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
-    removeAgentChatChannelMember: Scalars['Boolean']
     removeQueryFromEventStream: Scalars['Boolean']
     removeRecordShare: RecordSharingDTO
     removeRoleFromAgent: Scalars['Boolean']
@@ -2750,6 +2747,7 @@ export interface Query {
     agentChatChannelRoles: AgentChatChannelRole[]
     agentChatChannelSummaries: AgentChatChannelSummary[]
     agentChatChannelThreadIds: AgentChatChannelThreadIds
+    agentChatChannels: AgentChatChannel[]
     agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
@@ -4014,9 +4012,12 @@ export interface AgentChatChannelGenqlSelection{
     color?: boolean | number
     icon?: boolean | number
     id?: boolean | number
+    isAccessible?: boolean | number
+    isCustom?: boolean | number
+    isOpenToEveryone?: boolean | number
     name?: boolean | number
+    position?: boolean | number
     roleIds?: boolean | number
-    visibility?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5193,7 +5194,7 @@ export interface ConnectedImapSmtpCaldavAccountGenqlSelection{
 
 export interface ConnectionParametersInput {connectionSecurity?: (EmailConnectionSecurity | null),host: Scalars['String'],password?: (Scalars['String'] | null),port: Scalars['Float'],username?: (Scalars['String'] | null)}
 
-export interface CreateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),memberIds: Scalars['UUID'][],name: Scalars['String'],roleIds: Scalars['UUID'][],visibility: AgentChatChannelVisibility}
+export interface CreateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isOpenToEveryone: Scalars['Boolean'],name: Scalars['String'],roleIds: Scalars['UUID'][]}
 
 export interface CreateAgentInput {description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),label: Scalars['String'],modelConfiguration?: (Scalars['JSON'] | null),modelId: Scalars['String'],name?: (Scalars['String'] | null),prompt: Scalars['String'],responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
 
@@ -6279,7 +6280,6 @@ export interface MinimalViewGenqlSelection{
 export interface MutationGenqlSelection{
     activateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
-    addAgentChatChannelMembers?: { __args: {channelId: Scalars['UUID'], workspaceMemberIds: Scalars['UUID'][]} }
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
@@ -6429,13 +6429,10 @@ export interface MutationGenqlSelection{
     installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
-    joinAgentChatChannel?: { __args: {channelId: Scalars['UUID']} }
-    leaveAgentChatChannel?: { __args: {channelId: Scalars['UUID']} }
     markAgentChatThreadAsDoneInChannel?: { __args: {threadId: Scalars['UUID']} }
     moveAgentChatThreadToChannel?: { __args: {channelId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
-    removeAgentChatChannelMember?: { __args: {channelId: Scalars['UUID'], memberWorkspaceMemberId: Scalars['UUID']} }
     removeQueryFromEventStream?: { __args: {input: RemoveQueryFromEventStreamInput} }
     removeRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {principal: RecordSharePrincipalInput, target: RecordTargetInput} })
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
@@ -7029,6 +7026,7 @@ export interface QueryGenqlSelection{
     agentChatChannelRoles?: AgentChatChannelRoleGenqlSelection
     agentChatChannelSummaries?: AgentChatChannelSummaryGenqlSelection
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
+    agentChatChannels?: AgentChatChannelGenqlSelection
     agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
@@ -7758,7 +7756,7 @@ export interface UnsubscribeTopicGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface UpdateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),name?: (Scalars['String'] | null),roleIds?: (Scalars['UUID'][] | null),visibility?: (AgentChatChannelVisibility | null)}
+export interface UpdateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isOpenToEveryone?: (Scalars['Boolean'] | null),name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),roleIds?: (Scalars['UUID'][] | null)}
 
 export interface UpdateAgentInput {description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],label?: (Scalars['String'] | null),modelConfiguration?: (Scalars['JSON'] | null),modelId?: (Scalars['String'] | null),name?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
 
@@ -11277,11 +11275,6 @@ export const enumAgentChatChannelThreadStatus = {
    SNOOZED: 'SNOOZED' as const
 }
 
-export const enumAgentChatChannelVisibility = {
-   PRIVATE: 'PRIVATE' as const,
-   PUBLIC: 'PUBLIC' as const
-}
-
 export const enumAgentChatInboxAction = {
    ARCHIVE: 'ARCHIVE' as const,
    MOVE_TO_INBOX: 'MOVE_TO_INBOX' as const,
@@ -11325,6 +11318,8 @@ export const enumAiModelTier = {
 
 export const enumAllMetadataName = {
    agent: 'agent' as const,
+   agentChatChannel: 'agentChatChannel' as const,
+   agentChatChannelRole: 'agentChatChannelRole' as const,
    applicationVariable: 'applicationVariable' as const,
    commandMenuItem: 'commandMenuItem' as const,
    connectionProvider: 'connectionProvider' as const,

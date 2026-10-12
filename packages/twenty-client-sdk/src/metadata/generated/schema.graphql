@@ -34,9 +34,12 @@ type AgentChatChannel {
   color: String
   icon: String
   id: UUID!
+  isAccessible: Boolean
+  isCustom: Boolean!
+  isOpenToEveryone: Boolean!
   name: String!
+  position: Float!
   roleIds: [UUID!]!
-  visibility: AgentChatChannelVisibility!
 }
 
 enum AgentChatChannelAssignmentFilter {
@@ -67,11 +70,6 @@ enum AgentChatChannelThreadStatus {
   DONE
   OPEN
   SNOOZED
-}
-
-enum AgentChatChannelVisibility {
-  PRIVATE
-  PUBLIC
 }
 
 type AgentChatEvent {
@@ -258,6 +256,8 @@ type AiSystemPromptSection {
 
 enum AllMetadataName {
   agent
+  agentChatChannel
+  agentChatChannelRole
   applicationVariable
   commandMenuItem
   connectionProvider
@@ -1291,10 +1291,9 @@ input ConnectionParametersInput {
 input CreateAgentChatChannelInput {
   color: String
   icon: String
-  memberIds: [UUID!]! = []
+  isOpenToEveryone: Boolean! = true
   name: String!
   roleIds: [UUID!]! = []
-  visibility: AgentChatChannelVisibility! = PUBLIC
 }
 
 input CreateAgentInput {
@@ -3016,7 +3015,6 @@ enum ModelFamily {
 type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
-  addAgentChatChannelMembers(channelId: UUID!, workspaceMemberIds: [UUID!]!): Boolean!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
@@ -3164,13 +3162,10 @@ type Mutation {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   installApplication(universalIdentifier: String!, version: String): Application!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
-  joinAgentChatChannel(channelId: UUID!): Boolean!
-  leaveAgentChatChannel(channelId: UUID!): Boolean!
   markAgentChatThreadAsDoneInChannel(threadId: UUID!): Boolean!
   moveAgentChatThreadToChannel(channelId: UUID, threadId: UUID!): Boolean!
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
-  removeAgentChatChannelMember(channelId: UUID!, memberWorkspaceMemberId: UUID!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
   removeRecordShare(principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   removeRoleFromAgent(agentId: UUID!): Boolean!
@@ -3805,6 +3800,7 @@ type Query {
   agentChatChannelRoles: [AgentChatChannelRole!]!
   agentChatChannelSummaries: [AgentChatChannelSummary!]!
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
+  agentChatChannels: [AgentChatChannel!]!
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
@@ -4663,9 +4659,10 @@ enum UnsubscribeTopicVisibility {
 input UpdateAgentChatChannelInput {
   color: String
   icon: String
+  isOpenToEveryone: Boolean
   name: String
+  position: Float
   roleIds: [UUID!]
-  visibility: AgentChatChannelVisibility
 }
 
 input UpdateAgentInput {

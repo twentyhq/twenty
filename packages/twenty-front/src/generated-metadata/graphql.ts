@@ -58,9 +58,12 @@ export type AgentChatChannel = {
   color?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
+  isAccessible?: Maybe<Scalars['Boolean']['output']>;
+  isCustom: Scalars['Boolean']['output'];
+  isOpenToEveryone: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
+  position: Scalars['Float']['output'];
   roleIds: Array<Scalars['UUID']['output']>;
-  visibility: AgentChatChannelVisibility;
 };
 
 export enum AgentChatChannelAssignmentFilter {
@@ -94,11 +97,6 @@ export enum AgentChatChannelThreadStatus {
   DONE = 'DONE',
   OPEN = 'OPEN',
   SNOOZED = 'SNOOZED'
-}
-
-export enum AgentChatChannelVisibility {
-  PRIVATE = 'PRIVATE',
-  PUBLIC = 'PUBLIC'
 }
 
 export type AgentChatEvent = {
@@ -296,6 +294,8 @@ export type AiSystemPromptSection = {
 
 export enum AllMetadataName {
   agent = 'agent',
+  agentChatChannel = 'agentChatChannel',
+  agentChatChannelRole = 'agentChatChannelRole',
   applicationVariable = 'applicationVariable',
   commandMenuItem = 'commandMenuItem',
   connectionProvider = 'connectionProvider',
@@ -1400,10 +1400,9 @@ export type ConnectionParametersInput = {
 export type CreateAgentChatChannelInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
-  memberIds?: Array<Scalars['UUID']['input']>;
+  isOpenToEveryone?: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   roleIds?: Array<Scalars['UUID']['input']>;
-  visibility?: AgentChatChannelVisibility;
 };
 
 export type CreateAgentInput = {
@@ -3181,7 +3180,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateSkill: Skill;
   activateWorkspace: Workspace;
-  addAgentChatChannelMembers: Scalars['Boolean']['output'];
   addQueryToEventStream: Scalars['Boolean']['output'];
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
@@ -3331,13 +3329,10 @@ export type Mutation = {
   installApplication: Application;
   /** @deprecated Use installApplication instead */
   installMarketplaceApp: Scalars['Boolean']['output'];
-  joinAgentChatChannel: Scalars['Boolean']['output'];
-  leaveAgentChatChannel: Scalars['Boolean']['output'];
   markAgentChatThreadAsDoneInChannel: Scalars['Boolean']['output'];
   moveAgentChatThreadToChannel: Scalars['Boolean']['output'];
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
-  removeAgentChatChannelMember: Scalars['Boolean']['output'];
   removeQueryFromEventStream: Scalars['Boolean']['output'];
   removeRecordShare: RecordSharingDto;
   removeRoleFromAgent: Scalars['Boolean']['output'];
@@ -3482,12 +3477,6 @@ export type MutationActivateSkillArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
-};
-
-
-export type MutationAddAgentChatChannelMembersArgs = {
-  channelId: Scalars['UUID']['input'];
-  workspaceMemberIds: Array<Scalars['UUID']['input']>;
 };
 
 
@@ -4213,16 +4202,6 @@ export type MutationInstallMarketplaceAppArgs = {
 };
 
 
-export type MutationJoinAgentChatChannelArgs = {
-  channelId: Scalars['UUID']['input'];
-};
-
-
-export type MutationLeaveAgentChatChannelArgs = {
-  channelId: Scalars['UUID']['input'];
-};
-
-
 export type MutationMarkAgentChatThreadAsDoneInChannelArgs = {
   threadId: Scalars['UUID']['input'];
 };
@@ -4231,12 +4210,6 @@ export type MutationMarkAgentChatThreadAsDoneInChannelArgs = {
 export type MutationMoveAgentChatThreadToChannelArgs = {
   channelId?: InputMaybe<Scalars['UUID']['input']>;
   threadId: Scalars['UUID']['input'];
-};
-
-
-export type MutationRemoveAgentChatChannelMemberArgs = {
-  channelId: Scalars['UUID']['input'];
-  memberWorkspaceMemberId: Scalars['UUID']['input'];
 };
 
 
@@ -5450,6 +5423,7 @@ export type Query = {
   agentChatChannelRoles: Array<AgentChatChannelRole>;
   agentChatChannelSummaries: Array<AgentChatChannelSummary>;
   agentChatChannelThreadIds: AgentChatChannelThreadIds;
+  agentChatChannels: Array<AgentChatChannel>;
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary;
   agentRuns: Array<AgentRun>;
   aiChatUsage?: Maybe<AiChatUsage>;
@@ -6880,9 +6854,10 @@ export enum UnsubscribeTopicVisibility {
 export type UpdateAgentChatChannelInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
+  isOpenToEveryone?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['Float']['input']>;
   roleIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
-  visibility?: InputMaybe<AgentChatChannelVisibility>;
 };
 
 export type UpdateAgentInput = {
