@@ -14,6 +14,7 @@ import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agen
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type OwnerWaitingState } from 'src/engine/core-modules/pending-wake-up/types/owner-waiting-state.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
+import { resolveApplicationRoleRestriction } from 'src/engine/twenty-orm/utils/resolve-application-role-restriction.util';
 import { type AgentRoleRestrictions } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-role-restrictions.type';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
@@ -183,11 +184,8 @@ export class AgentTriggerRunnerService
     }
 
     // the agent never exceeds its application, as in its runAgent runs
-    const roleRestrictions: AgentRoleRestrictions = isDefined(
-      application.defaultRoleId,
-    )
-      ? { application: application.defaultRoleId }
-      : {};
+    const roleRestrictions: AgentRoleRestrictions =
+      resolveApplicationRoleRestriction({ application, isActingAlone: false });
 
     const actingAgent = { id: agent.id, label: agent.label };
     const createdBy = buildCreatedByFromAgent({

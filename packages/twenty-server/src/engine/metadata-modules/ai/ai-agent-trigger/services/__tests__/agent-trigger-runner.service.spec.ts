@@ -130,6 +130,25 @@ describe('AgentTriggerRunnerService', () => {
     );
   });
 
+  it("should keep the agent's role alone when its application has no role", async () => {
+    findApplication.mockResolvedValue({
+      id: 'application-id',
+      name: 'App',
+      defaultRoleId: null,
+    });
+
+    await service.run(JOB_DATA);
+
+    expect(runAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        executionContext: expect.objectContaining({
+          rolePermissionConfig: { intersectionOf: { agent: AGENT_ROLE_ID } },
+          roleRestrictions: {},
+        }),
+      }),
+    );
+  });
+
   it("should restrict the agent's role to its application's default role", async () => {
     findApplication.mockResolvedValue({
       id: 'application-id',

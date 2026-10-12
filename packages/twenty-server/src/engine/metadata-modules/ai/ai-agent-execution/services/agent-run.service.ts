@@ -35,6 +35,7 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
+import { resolveApplicationRoleRestriction } from 'src/engine/twenty-orm/utils/resolve-application-role-restriction.util';
 import { type AgentRoleRestrictions } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-role-restrictions.type';
 import { type AgentRunCallerContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-context.type';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
@@ -356,12 +357,13 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       ? authContext.workspaceMemberId
       : null;
 
-    const applicationRoleId = agentContext.application.defaultRoleId;
-
     // a run never exceeds the agent's application, whoever calls it
     const roleRestrictions: AgentRoleRestrictions = {
       ...callerRoleRestrictions,
-      ...(isDefined(applicationRoleId) && { application: applicationRoleId }),
+      ...resolveApplicationRoleRestriction({
+        application: agentContext.application,
+        isActingAlone: false,
+      }),
     };
 
     return {

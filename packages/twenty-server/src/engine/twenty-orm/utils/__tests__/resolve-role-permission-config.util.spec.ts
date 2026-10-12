@@ -95,6 +95,23 @@ describe('resolveRolePermissionConfig', () => {
     ).toBeNull();
   });
 
+  it('allows nothing for a user without a role, with an application without a role', () => {
+    expect(
+      resolve(
+        buildUserContext({
+          userWorkspaceId: 'unknown-user-workspace',
+          application: { defaultRoleId: null },
+        }),
+      ),
+    ).toBeNull();
+  });
+
+  it('allows nothing for a user without a role acting alone', () => {
+    expect(
+      resolve(buildUserContext({ userWorkspaceId: 'unknown-user-workspace' })),
+    ).toBeNull();
+  });
+
   it('restricts an api key request to the api key role', () => {
     expect(resolve(buildApiKeyContext(API_KEY_ID))).toEqual({
       intersectionOf: { apiKey: API_KEY_ROLE_ID },

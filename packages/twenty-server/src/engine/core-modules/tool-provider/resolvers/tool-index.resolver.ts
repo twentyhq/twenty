@@ -149,7 +149,7 @@ export class ToolIndexResolver {
       rolePermissionConfig: {
         intersectionOf: buildUserRoleRestrictions({
           userRoleId,
-          applicationRoleId: application?.defaultRoleId,
+          application,
         }),
       },
     };

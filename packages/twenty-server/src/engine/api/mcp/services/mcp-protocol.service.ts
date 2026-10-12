@@ -181,7 +181,7 @@ export class McpProtocolService {
       rolePermissionConfig: {
         intersectionOf: buildUserRoleRestrictions({
           userRoleId,
-          applicationRoleId: application?.defaultRoleId,
+          application,
         }),
       },
     };

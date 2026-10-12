@@ -408,7 +408,7 @@ export class ObjectRecordEventPublisher {
       return {
         intersectionOf: buildUserRoleRestrictions({
           userRoleId,
-          applicationRoleId: undefined,
+          application: undefined,
         }),
       };
     }
@@ -426,7 +426,7 @@ export class ObjectRecordEventPublisher {
     return {
       intersectionOf: buildUserRoleRestrictions({
         userRoleId,
-        applicationRoleId: application.defaultRoleId,
+        application,
       }),
     };
   }

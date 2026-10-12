@@ -45,6 +45,47 @@ describe('getRoleIdsToIntersect', () => {
     ).toBeNull();
   });
 
+  const OTHER_SOURCES_WITH_ROLES = {
+    agent: 'agent-role-id',
+    userWorkspace: 'member-role-id',
+    apiKey: 'api-key-role-id',
+    application: 'application-role-id',
+  } as const;
+
+  const buildCombinations = (
+    sources: (keyof typeof OTHER_SOURCES_WITH_ROLES)[],
+  ): Record<string, string>[] =>
+    sources.reduce<Record<string, string>[]>(
+      (combinations, source) => [
+        ...combinations,
+        ...combinations.map((combination) => ({
+          ...combination,
+          [source]: OTHER_SOURCES_WITH_ROLES[source],
+        })),
+      ],
+      [{}],
+    );
+
+  it.each(['userWorkspace', 'apiKey', 'agent'] as const)(
+    'denies a %s without a role in every combination',
+    (sourceWithoutRole) => {
+      const otherSources = (
+        Object.keys(
+          OTHER_SOURCES_WITH_ROLES,
+        ) as (keyof typeof OTHER_SOURCES_WITH_ROLES)[]
+      ).filter((source) => source !== sourceWithoutRole);
+
+      for (const combination of buildCombinations(otherSources)) {
+        expect(
+          getRoleIdsToIntersect({
+            ...combination,
+            [sourceWithoutRole]: null,
+          }),
+        ).toBeNull();
+      }
+    },
+  );
+
   it('denies when no source restricts', () => {
     expect(getRoleIdsToIntersect({})).toBeNull();
   });

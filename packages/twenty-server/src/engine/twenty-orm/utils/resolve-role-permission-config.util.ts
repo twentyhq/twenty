@@ -11,6 +11,7 @@ import {
   type RoleRestrictionsBySource,
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { buildUserRoleRestrictions } from 'src/engine/twenty-orm/utils/build-user-role-restrictions.util';
+import { resolveApplicationRoleRestriction } from 'src/engine/twenty-orm/utils/resolve-application-role-restriction.util';
 import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 
 const resolveRoleRestrictionsFromAuthContext = ({
@@ -25,7 +26,7 @@ const resolveRoleRestrictionsFromAuthContext = ({
   if (isUserAuthContext(authContext)) {
     return buildUserRoleRestrictions({
       userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
-      applicationRoleId: authContext.application?.defaultRoleId,
+      application: authContext.application,
     });
   }
 
@@ -34,7 +35,10 @@ const resolveRoleRestrictionsFromAuthContext = ({
   }
 
   if (isApplicationAuthContext(authContext)) {
-    return { application: authContext.application.defaultRoleId ?? null };
+    return resolveApplicationRoleRestriction({
+      application: authContext.application,
+      isActingAlone: true,
+    });
   }
 
   return {};
