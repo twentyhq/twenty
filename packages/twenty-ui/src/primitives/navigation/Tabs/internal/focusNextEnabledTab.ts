@@ -10,6 +10,16 @@ type FocusNextEnabledTabOptions = {
   loopFocus: boolean;
 };
 
+const TAB_SELECTOR = '[role="tab"]';
+const TAB_LIST_SELECTOR = '[role="tablist"]';
+const UNAVAILABLE_TAB_ANCESTOR_SELECTOR = '[hidden], [inert]';
+
+const isUnavailableTab = (tab: HTMLElement) =>
+  tab.hasAttribute('data-disabled') ||
+  tab.hasAttribute('disabled') ||
+  tab.getAttribute('aria-disabled') === 'true' ||
+  isDefined(tab.closest(UNAVAILABLE_TAB_ANCESTOR_SELECTOR));
+
 export const focusNextEnabledTab = ({
   event,
   direction,
@@ -20,9 +30,14 @@ export const focusNextEnabledTab = ({
   }
 
   const list = event.currentTarget;
-  const tabs = Array.from(
-    list.querySelectorAll<HTMLElement>('[role="tab"]'),
-  ).filter((tab) => tab.closest('[role="tablist"]') === list);
+  const tabs: HTMLElement[] = [];
+  list.querySelectorAll<HTMLElement>(TAB_SELECTOR).forEach((tab) => {
+    if (tab.closest(TAB_LIST_SELECTOR) !== list) {
+      return;
+    }
+
+    tabs.push(tab);
+  });
   const currentIndex = tabs.findIndex((tab) => tab === event.target);
 
   if (currentIndex === -1) {
@@ -34,7 +49,7 @@ export const focusNextEnabledTab = ({
       ? ['ArrowLeft', 'ArrowRight']
       : ['ArrowRight', 'ArrowLeft'];
   const [forwardKey, backwardKey] =
-    list.getAttribute('aria-orientation') === 'vertical'
+    list.getAttribute('data-orientation') === 'vertical'
       ? ['ArrowDown', 'ArrowUp']
       : horizontalKeys;
 
@@ -42,42 +57,55 @@ export const focusNextEnabledTab = ({
     return;
   }
 
-  // Base UI 1.5 intentionally focuses disabled tabs; Twenty skips them.
-  event.preventBaseUIHandler();
-  event.preventDefault();
-
-  const enabledTabs = tabs.filter(
-    (tab) =>
-      !tab.hasAttribute('data-disabled') &&
-      !tab.hasAttribute('disabled') &&
-      tab.getAttribute('aria-disabled') !== 'true' &&
-      !tab.closest('[hidden], [inert]'),
-  );
+  const isBackward = event.key === backwardKey;
+  let candidateIndex = currentIndex + (isBackward ? -1 : 1);
 
   if (event.key === 'Home') {
-    enabledTabs[0]?.focus();
-    return;
+    candidateIndex = 0;
   }
 
   if (event.key === 'End') {
-    enabledTabs[enabledTabs.length - 1]?.focus();
+    candidateIndex = tabs.length - 1;
+  }
+
+  const isOutsideTabs = candidateIndex < 0 || candidateIndex >= tabs.length;
+  const wrappedIndex = isBackward ? tabs.length - 1 : 0;
+  const candidate =
+    tabs[isOutsideTabs && loopFocus ? wrappedIndex : candidateIndex];
+
+  if (!isDefined(candidate) || !isUnavailableTab(candidate)) {
     return;
   }
 
-  const isBackward = event.key === backwardKey;
-  const orderedTabs = isBackward ? [...enabledTabs].reverse() : enabledTabs;
-  const nextTab = orderedTabs.find((tab) =>
-    isBackward
-      ? tabs.indexOf(tab) < currentIndex
-      : tabs.indexOf(tab) > currentIndex,
-  );
+  event.preventBaseUIHandler();
+  event.preventDefault();
 
-  if (isDefined(nextTab)) {
-    nextTab.focus();
+  const enabledTabs = tabs.filter((tab) => !isUnavailableTab(tab));
+  let nextTab: HTMLElement | undefined;
+
+  if (event.key === 'Home') {
+    nextTab = enabledTabs[0];
+  }
+
+  if (event.key === 'End') {
+    nextTab = enabledTabs[enabledTabs.length - 1];
+  }
+
+  if (event.key === forwardKey || event.key === backwardKey) {
+    const orderedTabs = isBackward ? [...enabledTabs].reverse() : enabledTabs;
+    nextTab = orderedTabs.find((tab) =>
+      isBackward
+        ? tabs.indexOf(tab) < currentIndex
+        : tabs.indexOf(tab) > currentIndex,
+    );
+    nextTab ??= loopFocus ? orderedTabs[0] : undefined;
+  }
+
+  if (!isDefined(nextTab) || nextTab === event.target) {
     return;
   }
 
-  if (loopFocus) {
-    orderedTabs[0]?.focus();
-  }
+  event.stopPropagation();
+  const nextEnabledTab = nextTab;
+  queueMicrotask(() => nextEnabledTab.focus());
 };
