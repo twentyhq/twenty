@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { addRoleIdsToFlatAgentChatChannel } from 'src/engine/metadata-modules/agent-chat-channel/utils/add-role-ids-to-flat-agent-chat-channel.util';
+import { buildAgentChatChannelRolesToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-roles-to-create.util';
+import { findAgentChatChannelRoleUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-agent-chat-channel-role-universal-identifiers-or-throw.util';
+import { findFlatAgentChatChannelOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-flat-agent-chat-channel-or-throw.util';
+import { validateAgentChatChannelNameOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/validate-agent-chat-channel-name-or-throw.util';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
 import {
   AiException,
@@ -34,43 +38,6 @@ type ChannelMaps = {
   flatRoleMaps: FlatEntityMaps<FlatRole>;
 };
 
-const withRoleIds = (
-  channel: FlatAgentChatChannel,
-  flatAgentChatChannelRoleMaps: FlatEntityMaps<FlatAgentChatChannelRole>,
-): FlatAgentChatChannelWithRoleIds => ({
-  ...channel,
-  roleIds: channel.channelRoleIds
-    .map(
-      (channelRoleId) =>
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: channelRoleId,
-          flatEntityMaps: flatAgentChatChannelRoleMaps,
-        })?.roleId,
-    )
-    .filter(isDefined),
-});
-
-const buildChannelRolesToCreate = ({
-  channelUniversalIdentifier,
-  roleUniversalIdentifiers,
-  applicationUniversalIdentifier,
-  now,
-}: {
-  channelUniversalIdentifier: string;
-  roleUniversalIdentifiers: string[];
-  applicationUniversalIdentifier: string;
-  now: string;
-}) =>
-  roleUniversalIdentifiers.map((roleUniversalIdentifier) => ({
-    id: v4(),
-    universalIdentifier: v4(),
-    channelUniversalIdentifier,
-    roleUniversalIdentifier,
-    applicationUniversalIdentifier,
-    createdAt: now,
-    updatedAt: now,
-  }));
-
 // Channels are workspace metadata: who reads a channel's chats follows from
 // whether it is open to everyone and from the roles linked to it
 @Injectable()
@@ -89,7 +56,9 @@ export class AgentChatChannelMetadataService {
 
     return Object.values(flatAgentChatChannelMaps.byUniversalIdentifier)
       .filter(isDefined)
-      .map((channel) => withRoleIds(channel, flatAgentChatChannelRoleMaps))
+      .map((channel) =>
+        addRoleIdsToFlatAgentChatChannel(channel, flatAgentChatChannelRoleMaps),
+      )
       .sort(
         (left, right) =>
           left.position - right.position ||
@@ -108,8 +77,8 @@ export class AgentChatChannelMetadataService {
     const { flatAgentChatChannelMaps, flatAgentChatChannelRoleMaps } =
       await this.getChannelMaps(workspaceId);
 
-    return withRoleIds(
-      this.findFlatChannelOrThrow(flatAgentChatChannelMaps, channelId),
+    return addRoleIdsToFlatAgentChatChannel(
+      findFlatAgentChatChannelOrThrow(flatAgentChatChannelMaps, channelId),
       flatAgentChatChannelRoleMaps,
     );
   }
@@ -155,7 +124,7 @@ export class AgentChatChannelMetadataService {
         {
           id: channelId,
           universalIdentifier: channelUniversalIdentifier,
-          name: this.validateName(name),
+          name: validateAgentChatChannelNameOrThrow(name),
           icon,
           color,
           position: lastPosition + 1,
@@ -168,12 +137,13 @@ export class AgentChatChannelMetadataService {
           updatedAt: now,
         },
       ],
-      channelRolesToCreate: buildChannelRolesToCreate({
+      channelRolesToCreate: buildAgentChatChannelRolesToCreate({
         channelUniversalIdentifier,
-        roleUniversalIdentifiers: this.findRoleUniversalIdentifiers(
-          channelMaps.flatRoleMaps,
-          roleIds,
-        ),
+        roleUniversalIdentifiers:
+          findAgentChatChannelRoleUniversalIdentifiersOrThrow(
+            channelMaps.flatRoleMaps,
+            roleIds,
+          ),
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         now,
@@ -201,7 +171,7 @@ export class AgentChatChannelMetadataService {
         { workspaceId },
       );
     const channelMaps = await this.getChannelMaps(workspaceId);
-    const channel = this.findFlatChannelOrThrow(
+    const channel = findFlatAgentChatChannelOrThrow(
       channelMaps.flatAgentChatChannelMaps,
       channelId,
     );
@@ -211,7 +181,7 @@ export class AgentChatChannelMetadataService {
       Object.entries({
         ...changes,
         name: isDefined(changes.name)
-          ? this.validateName(changes.name)
+          ? validateAgentChatChannelNameOrThrow(changes.name)
           : undefined,
       }).filter(([, value]) => value !== undefined),
     );
@@ -226,7 +196,10 @@ export class AgentChatChannelMetadataService {
       .filter(isDefined);
 
     const requestedRoleUniversalIdentifiers = isDefined(roleIds)
-      ? this.findRoleUniversalIdentifiers(channelMaps.flatRoleMaps, roleIds)
+      ? findAgentChatChannelRoleUniversalIdentifiersOrThrow(
+          channelMaps.flatRoleMaps,
+          roleIds,
+        )
       : undefined;
 
     const channelRolesToDelete = isDefined(requestedRoleUniversalIdentifiers)
@@ -238,7 +211,7 @@ export class AgentChatChannelMetadataService {
         )
       : [];
 
-    const channelRolesToCreate = buildChannelRolesToCreate({
+    const channelRolesToCreate = buildAgentChatChannelRolesToCreate({
       channelUniversalIdentifier: channel.universalIdentifier,
       roleUniversalIdentifiers: (
         requestedRoleUniversalIdentifiers ?? []
@@ -261,7 +234,10 @@ export class AgentChatChannelMetadataService {
       channelRolesToCreate.length === 0 &&
       channelRolesToDelete.length === 0
     ) {
-      return withRoleIds(channel, channelMaps.flatAgentChatChannelRoleMaps);
+      return addRoleIdsToFlatAgentChatChannel(
+        channel,
+        channelMaps.flatAgentChatChannelRoleMaps,
+      );
     }
 
     await this.runMigration({
@@ -291,7 +267,7 @@ export class AgentChatChannelMetadataService {
       );
     const { flatAgentChatChannelMaps, flatAgentChatChannelRoleMaps } =
       await this.getChannelMaps(workspaceId);
-    const channel = this.findFlatChannelOrThrow(
+    const channel = findFlatAgentChatChannelOrThrow(
       flatAgentChatChannelMaps,
       channelId,
     );
@@ -319,7 +295,10 @@ export class AgentChatChannelMetadataService {
         .filter(isDefined),
     });
 
-    return withRoleIds(channel, flatAgentChatChannelRoleMaps);
+    return addRoleIdsToFlatAgentChatChannel(
+      channel,
+      flatAgentChatChannelRoleMaps,
+    );
   }
 
   private async getChannelMaps(workspaceId: string): Promise<ChannelMaps> {
@@ -379,56 +358,5 @@ export class AgentChatChannelMetadataService {
         'Multiple validation errors occurred while saving the channel',
       );
     }
-  }
-
-  private findFlatChannelOrThrow(
-    flatAgentChatChannelMaps: FlatEntityMaps<FlatAgentChatChannel>,
-    channelId: string,
-  ): FlatAgentChatChannel {
-    const channel = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: channelId,
-      flatEntityMaps: flatAgentChatChannelMaps,
-    });
-
-    if (!isDefined(channel)) {
-      throw new AiException(
-        'Channel not found',
-        AiExceptionCode.CHAT_CHANNEL_NOT_FOUND,
-      );
-    }
-
-    return channel;
-  }
-
-  private findRoleUniversalIdentifiers(
-    flatRoleMaps: FlatEntityMaps<FlatRole>,
-    roleIds: string[],
-  ): string[] {
-    return [...new Set(roleIds)].map((roleId) => {
-      const roleUniversalIdentifier =
-        flatRoleMaps.universalIdentifierById[roleId];
-
-      if (!isDefined(roleUniversalIdentifier)) {
-        throw new AiException(
-          'A channel can only be open to roles of its workspace',
-          AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE,
-        );
-      }
-
-      return roleUniversalIdentifier;
-    });
-  }
-
-  private validateName(name: string): string {
-    const trimmedName = name.trim();
-
-    if (!isNonEmptyString(trimmedName)) {
-      throw new AiException(
-        'A channel needs a name',
-        AiExceptionCode.INVALID_CHAT_CHANNEL_NAME,
-      );
-    }
-
-    return trimmedName;
   }
 }
