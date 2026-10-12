@@ -8,7 +8,6 @@ import {
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
-import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { t } from '@lingui/core/macro';
@@ -123,11 +122,9 @@ export const RecordCreationFormProvider = ({
         draftRecord: Partial<ObjectRecord>,
       ) => Promise<ObjectRecord>;
     }) => {
-      const topSidePanelPage =
-        store.get(isSidePanelOpenedState.atom) &&
-        !store.get(isSidePanelClosingState.atom)
-          ? store.get(sidePanelNavigationStackState.atom).at(-1)
-          : undefined;
+      const topSidePanelPage = store.get(isSidePanelOpenedState.atom)
+        ? store.get(sidePanelNavigationStackState.atom).at(-1)
+        : undefined;
 
       if (
         topSidePanelPage?.page === SidePanelPages.RecordCreationForm &&
