@@ -1,12 +1,11 @@
-import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { INPUT_VALUE_SEQUENCE_BRIDGE_PROPERTY } from '@/constants/InputValueSequenceBridgeProperty';
-import { workerInputValueSequenceStore } from '@/remote/elements/states/workerInputValueSequenceStore';
 import { SERIALIZED_EVENT_TARGET_PROPERTY_KEYS } from '@/remote/elements/constants/SerializedEventTargetPropertyKeys';
+import { acknowledgeNativeEdit } from '@/remote/elements/utils/acknowledgeNativeEdit';
 import { applySelectedOptionIndexes } from '@/remote/elements/utils/applySelectedOptionIndexes';
 import { installFilesResetOnValueClear } from '@/remote/elements/utils/installFilesResetOnValueClear';
+import { isNativeEditAcknowledged } from '@/remote/elements/utils/isNativeEditAcknowledged';
 import { uncheckOtherRadioButtons } from '@/remote/elements/utils/uncheckOtherRadioButtons';
 import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
 import { readInputSelectionState } from '@/utils/readInputSelectionState';
@@ -19,31 +18,21 @@ export const applySerializedEventTargetProperties = ({
   element: object;
   eventData: SerializedEventData;
 }): void => {
-  const { inputValueSequence } = eventData;
-  const hasInputValueSequence =
-    isNumber(inputValueSequence) &&
-    Number.isSafeInteger(inputValueSequence) &&
-    inputValueSequence > 0;
-  const shouldApplyValue =
-    !hasInputValueSequence ||
-    inputValueSequence > workerInputValueSequenceStore.read(element);
+  const { nativeEditSequence } = eventData;
+  const hasNativeEditSequence = isNumber(nativeEditSequence);
+  const isValueFromAcknowledgedNativeEdit =
+    hasNativeEditSequence &&
+    isNativeEditAcknowledged({ remoteElement: element, nativeEditSequence });
 
-  if (hasInputValueSequence && shouldApplyValue) {
-    workerInputValueSequenceStore.record({
-      element,
-      sequence: inputValueSequence,
-    });
-    queueMicrotask(() => {
-      updateRemoteElementProperty(
-        element as Element,
-        INPUT_VALUE_SEQUENCE_BRIDGE_PROPERTY,
-        workerInputValueSequenceStore.read(element),
-      );
-    });
+  if (hasNativeEditSequence && !isValueFromAcknowledgedNativeEdit) {
+    acknowledgeNativeEdit({ remoteElement: element, nativeEditSequence });
   }
 
   for (const key of SERIALIZED_EVENT_TARGET_PROPERTY_KEYS) {
-    if (key === 'value' && !shouldApplyValue) {
+    const shouldKeepCurrentValue =
+      key === 'value' && isValueFromAcknowledgedNativeEdit;
+
+    if (shouldKeepCurrentValue) {
       continue;
     }
 

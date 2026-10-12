@@ -1,13 +1,10 @@
-import { isNumber } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 import { useLayoutEffect, useRef, useState } from 'react';
 
-import { hostInputValueSequenceStore } from '@/host/caret/states/hostInputValueSequenceStore';
-import { createInputValueListenerRef } from '@/host/caret/utils/createInputValueListenerRef';
 import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 import { applyNewInputSelectionCommands } from '@/host/caret/utils/applyNewInputSelectionCommands';
 import { createInputSelectionListenerRef } from '@/host/caret/utils/createInputSelectionListenerRef';
 import { createInputSelectionPublisher } from '@/host/caret/utils/createInputSelectionPublisher';
+import { isOlderThanLatestNativeEdit } from '@/host/caret/utils/isOlderThanLatestNativeEdit';
 import { syncValuePreservingCaret } from '@/host/caret/utils/syncValuePreservingCaret';
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
 
@@ -16,15 +13,13 @@ export const useCaretPreservingElementRef = ({
   value,
   selectionCommands,
   onSelectionUpdate,
-  inputValueSequence,
-  shouldPreserveNativeEdits = true,
+  acknowledgedNativeEditSequence,
 }: {
   composedElementRef: ElementRefCallback;
   value: unknown;
   selectionCommands?: unknown;
   onSelectionUpdate?: unknown;
-  inputValueSequence?: unknown;
-  shouldPreserveNativeEdits?: boolean;
+  acknowledgedNativeEditSequence?: unknown;
 }): ElementRefCallback => {
   const latestComposedElementRefRef = useRef(composedElementRef);
   latestComposedElementRefRef.current = composedElementRef;
@@ -42,7 +37,6 @@ export const useCaretPreservingElementRef = ({
   );
 
   const [caretPreservingElementRef] = useState(() => {
-    const inputValueListenerRef = createInputValueListenerRef();
     const inputSelectionListenerRef = createInputSelectionListenerRef({
       onSelectionChange: () =>
         publishInputSelection({ shouldSkipUnchanged: false }),
@@ -50,7 +44,6 @@ export const useCaretPreservingElementRef = ({
 
     return (element: Element | null) => {
       attachedElementRef.current = element as CaretPreservingElement | null;
-      inputValueListenerRef(element);
       inputSelectionListenerRef(element);
       latestComposedElementRefRef.current(element);
     };
@@ -59,18 +52,13 @@ export const useCaretPreservingElementRef = ({
   useLayoutEffect(() => {
     const attachedElement = attachedElementRef.current;
 
-    const latestInputValueSequence = isDefined(attachedElement)
-      ? hostInputValueSequenceStore.read(attachedElement)
-      : 0;
-    const acknowledgedInputValueSequence = isNumber(inputValueSequence)
-      ? inputValueSequence
-      : 0;
-    const hasPendingNativeEdit =
-      shouldPreserveNativeEdits &&
-      latestInputValueSequence > 0 &&
-      acknowledgedInputValueSequence !== latestInputValueSequence;
+    const isRemoteValueOlderThanLatestNativeEdit = isOlderThanLatestNativeEdit({
+      hostElement: attachedElement,
+      nativeEditSequence: acknowledgedNativeEditSequence,
+    });
+
     const didWriteValue =
-      !hasPendingNativeEdit &&
+      !isRemoteValueOlderThanLatestNativeEdit &&
       syncValuePreservingCaret({
         element: attachedElement,
         remoteValue: value,
@@ -80,7 +68,6 @@ export const useCaretPreservingElementRef = ({
       element: attachedElement,
       selectionCommands,
       appliedSelectionSequenceRef,
-      latestInputValueSequence,
     });
 
     publishInputSelection({ shouldSkipUnchanged: !didWriteValue });

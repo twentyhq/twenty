@@ -4,17 +4,16 @@ import { isPlainObject } from 'twenty-shared/utils';
 
 import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 import { applyInputSelectionRequest } from '@/host/caret/utils/applyInputSelectionRequest';
+import { isOlderThanLatestNativeEdit } from '@/host/caret/utils/isOlderThanLatestNativeEdit';
 
 export const applyNewInputSelectionCommands = ({
   element,
   selectionCommands,
   appliedSelectionSequenceRef,
-  latestInputValueSequence = 0,
 }: {
   element: CaretPreservingElement | null;
   selectionCommands: unknown;
   appliedSelectionSequenceRef: RefObject<number>;
-  latestInputValueSequence?: number;
 }): void => {
   if (!isArray(selectionCommands)) {
     return;
@@ -25,7 +24,8 @@ export const applyNewInputSelectionCommands = ({
       continue;
     }
 
-    const { sequence, request, inputValueSequence = 0 } = selectionCommand;
+    const { sequence, request, acknowledgedNativeEditSequence } =
+      selectionCommand;
 
     if (
       !isNumber(sequence) ||
@@ -35,11 +35,13 @@ export const applyNewInputSelectionCommands = ({
     }
 
     appliedSelectionSequenceRef.current = sequence;
-    const isStaleInputSelection =
-      isNumber(inputValueSequence) &&
-      inputValueSequence < latestInputValueSequence;
 
-    if (isStaleInputSelection) {
+    const isCommandOlderThanLatestNativeEdit = isOlderThanLatestNativeEdit({
+      hostElement: element,
+      nativeEditSequence: acknowledgedNativeEditSequence,
+    });
+
+    if (isCommandOlderThanLatestNativeEdit) {
       continue;
     }
 

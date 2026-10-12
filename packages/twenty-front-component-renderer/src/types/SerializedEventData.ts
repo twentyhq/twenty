@@ -45,7 +45,7 @@ export type SerializedEventData = {
   data?: string;
   clipboardText?: string;
   value?: string;
-  inputValueSequence?: number;
+  nativeEditSequence?: number;
   selectionStart?: number;
   selectionEnd?: number;
   selectionDirection?: InputSelectionDirection;

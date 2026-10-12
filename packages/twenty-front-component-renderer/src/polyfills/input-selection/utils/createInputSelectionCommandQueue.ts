@@ -1,8 +1,8 @@
 import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
-import { workerInputValueSequenceStore } from '@/remote/elements/states/workerInputValueSequenceStore';
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
+import { acknowledgedNativeEditSequenceByRemoteElement } from '@/remote/elements/states/acknowledgedNativeEditSequenceByRemoteElement';
 import { type InputSelectionCommand } from '@/types/InputSelectionCommand';
 import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
 
@@ -50,7 +50,6 @@ export const createInputSelectionCommandQueue = () => {
     request: InputSelectionRequest;
   }): void => {
     lastCommandSequence += 1;
-    const inputValueSequence = workerInputValueSequenceStore.read(element);
 
     updatePendingCommands({
       element,
@@ -59,7 +58,8 @@ export const createInputSelectionCommandQueue = () => {
         {
           sequence: lastCommandSequence,
           request,
-          ...(inputValueSequence > 0 && { inputValueSequence }),
+          acknowledgedNativeEditSequence:
+            acknowledgedNativeEditSequenceByRemoteElement.get(element),
         },
       ],
     });
