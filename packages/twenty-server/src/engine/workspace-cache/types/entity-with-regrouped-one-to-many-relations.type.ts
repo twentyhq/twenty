@@ -8,8 +8,7 @@ export type EntityWithRegroupedOneToManyRelations<
   TEntity,
   ExtractEntityOneToManyEntityRelationProperties<TEntity, SyncableEntity>
 > & {
-  [P in ExtractEntityOneToManyEntityRelationProperties<
-    TEntity,
-    SyncableEntity
-  >]: RegroupedEntity[];
+  [
+    P in ExtractEntityOneToManyEntityRelationProperties<TEntity, SyncableEntity>
+  ]: RegroupedEntity[];
 };

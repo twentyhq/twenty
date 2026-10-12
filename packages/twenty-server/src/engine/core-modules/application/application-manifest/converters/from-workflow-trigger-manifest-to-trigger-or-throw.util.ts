@@ -1,13 +1,21 @@
+import { msg } from '@lingui/core/macro';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util';
 import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import {
+  type WorkflowCronTrigger,
   type WorkflowManualTrigger,
   type WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
+import { assertNever } from 'src/utils/assert';
 
 type WorkflowManifestReferenceResolvers = ReturnType<
   typeof buildWorkflowManifestReferenceResolvers
@@ -17,6 +25,8 @@ type ManualTriggerManifest = Extract<
   WorkflowTriggerManifest,
   { type: 'MANUAL' }
 >;
+
+type CronTriggerManifest = Extract<WorkflowTriggerManifest, { type: 'CRON' }>;
 
 const fromManualTriggerManifest = ({
   trigger,
@@ -56,6 +66,33 @@ const fromManualTriggerManifest = ({
   } satisfies WorkflowManualTrigger;
 };
 
+const fromCronTriggerManifestOrThrow = (
+  trigger: CronTriggerManifest,
+): WorkflowCronTrigger => {
+  const { settings, ...identity } = trigger;
+  const cronTrigger = {
+    ...identity,
+    name: 'On a schedule',
+    type: WorkflowTriggerType.CRON,
+    position: { x: 0, y: 0 },
+    settings: { ...settings, outputSchema: {} },
+  } satisfies WorkflowCronTrigger;
+
+  try {
+    computeCronPatternFromSchedule(cronTrigger);
+  } catch (error) {
+    throw new ApplicationException(
+      `Workflow trigger: ${error instanceof Error ? error.message : String(error)}`,
+      ApplicationExceptionCode.INVALID_INPUT,
+      {
+        userFriendlyMessage: msg`The workflow schedule is invalid.`,
+      },
+    );
+  }
+
+  return cronTrigger;
+};
+
 export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
   trigger,
   references,
@@ -68,5 +105,12 @@ export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
     subject: 'Workflow trigger',
   });
 
-  return fromManualTriggerManifest({ trigger, resolvers });
+  switch (trigger.type) {
+    case 'MANUAL':
+      return fromManualTriggerManifest({ trigger, resolvers });
+    case 'CRON':
+      return fromCronTriggerManifestOrThrow(trigger);
+    default:
+      return assertNever(trigger);
+  }
 };

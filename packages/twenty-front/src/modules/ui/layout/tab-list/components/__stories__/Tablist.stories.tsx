@@ -120,6 +120,8 @@ export const Overflow: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const moreButton = await canvas.findByRole('button', { name: /More/ });
+    expect(moreButton.closest('[role="tablist"]')).toBeNull();
+    expect(moreButton).not.toHaveAttribute('aria-selected');
     await userEvent.click(moreButton);
     const popup = await body.findByRole('dialog', { name: /More/ });
     const sales = await body.findByRole('button', { name: 'Sales' });

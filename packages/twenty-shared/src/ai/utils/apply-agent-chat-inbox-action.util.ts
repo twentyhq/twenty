@@ -2,12 +2,13 @@ import { type AgentChatInboxAction } from '@/ai/types/AgentChatInboxAction';
 import { type AgentChatInboxState } from '@/ai/types/AgentChatInboxState';
 import { isDefined } from '@/utils/validation/isDefined';
 
-// What a chat without the member's row reads as
+// What a chat without the member's row reads as: one they can open but do
+// not follow, since only taking part in it or filing it follows a chat
 const DEFAULT_AGENT_CHAT_INBOX_STATE: AgentChatInboxState = {
   lastReadAt: null,
   archivedAt: null,
   snoozedUntil: null,
-  isSubscribed: true,
+  isSubscribed: false,
 };
 
 // The server writes each action as one SQL upsert stamped by the database
@@ -42,8 +43,14 @@ export const applyAgentChatInboxAction = ({
       };
     case 'UNREAD':
       return { ...state, lastReadAt: null };
+    // Filing a chat follows it, so new activity brings it back
     case 'ARCHIVE':
-      return { ...state, archivedAt: now.toISOString(), snoozedUntil: null };
+      return {
+        ...state,
+        archivedAt: now.toISOString(),
+        snoozedUntil: null,
+        isSubscribed: true,
+      };
     // A snooze already due is saved as ended, and a snoozed chat is followed
     // again since it is meant to come back
     case 'SNOOZE':

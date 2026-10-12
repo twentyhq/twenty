@@ -70,6 +70,24 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
     });
   });
 
+  it('starts tracking a thread the member opens without participating in it', () => {
+    jotaiStore.set(agentChatThreadParticipantsState.atom, {});
+
+    renderChatView();
+
+    expect(updateAgentChatThreadInboxState).toHaveBeenCalledTimes(1);
+    expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
+      threadIds: [THREAD_ID],
+      action: 'READ',
+    });
+    expect(jotaiStore.get(agentChatThreadVisitState.atom)).toEqual({
+      threadId: THREAD_ID,
+      isUnread: false,
+      lastReadAt: null,
+      isKeptUnread: false,
+    });
+  });
+
   it('keeps the visit while another view still shows the thread', () => {
     const sidePanelView = renderChatView();
     const recordPageView = renderChatView();
