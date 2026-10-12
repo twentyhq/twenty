@@ -56,7 +56,6 @@ export class AppConnectionAccessService {
     visibility: ConnectedAccountVisibility;
   }> {
     const isTransactionActive = entityManager.queryRunner?.isTransactionActive;
-    // The provider lock also serializes callbacks when no account exists yet.
     const currentProvider = await this.connectionProviderRepository
       .withManager(entityManager)
       .findOne(workspaceId, {
@@ -64,7 +63,6 @@ export class AppConnectionAccessService {
           id: provider.id,
           applicationId: provider.applicationId,
         },
-        lock: isTransactionActive ? { mode: 'pessimistic_write' } : undefined,
       });
 
     if (!isDefined(currentProvider)) {
