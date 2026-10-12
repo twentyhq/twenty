@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
+import { FrontComponentPointerCaptureControllerContext } from '@/host/events/contexts/FrontComponentPointerCaptureControllerContext';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 import { useComposedElementRef } from '@/host/elements/hooks/useComposedElementRef';
@@ -33,6 +34,9 @@ export const useHtmlHostElementProps = ({
 }): HtmlHostElementProps => {
   const setEditableFocused = useContext(FrontComponentInputFocusContext);
   const geometryTracker = useContext(FrontComponentGeometryTrackerContext);
+  const pointerCaptureController = useContext(
+    FrontComponentPointerCaptureControllerContext,
+  );
 
   const remoteElementId = getRemoteElementIdFromProps(props);
 
@@ -62,7 +66,10 @@ export const useHtmlHostElementProps = ({
   const hostEnforcedProps: Record<string, unknown> = {
     ...createDropTargetGuardProps(reactBindableProps),
     ...createResizableSeparatorProps(reactBindableProps),
-    ...createSliderPointerCaptureProps(reactBindableProps),
+    ...createSliderPointerCaptureProps({
+      reactBindableProps,
+      pointerCaptureController,
+    }),
     ...(htmlTag === 'iframe' && {
       sandbox: sanitizeIframeSandbox(reactBindableProps.sandbox),
     }),

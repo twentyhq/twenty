@@ -1,97 +1,37 @@
 import { type RemoteConnection } from '@remote-dom/core/elements';
-import { isFunction, isInteger } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isInteger } from '@sniptt/guards';
 
-import { createCapturedPointerEventForwarder } from '@/host/events/utils/createCapturedPointerEventForwarder';
-import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
-import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
-
-type PointerCaptureSubscription = { pointerId: number; dispose: () => void };
+import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
 
 export const createPointerCaptureAwareRemoteConnection = ({
   connection,
-  geometryTracker,
+  pointerCaptureController,
 }: {
   connection: RemoteConnection;
-  geometryTracker: GeometryTracker;
-}): { connection: RemoteConnection; dispose: () => void } => {
-  const subscriptions = new Map<string, PointerCaptureSubscription>();
+  pointerCaptureController: HostPointerCaptureController;
+}): RemoteConnection => ({
+  mutate: connection.mutate,
+  call: (remoteElementId, methodName, ...methodArguments) => {
+    if (
+      methodName !== 'setPointerCapture' &&
+      methodName !== 'releasePointerCapture'
+    ) {
+      return connection.call(remoteElementId, methodName, ...methodArguments);
+    }
 
-  return {
-    connection: {
-      mutate: connection.mutate,
-      call: (remoteElementId, methodName, ...methodArguments) => {
-        const isPointerCaptureMethod =
-          methodName === 'setPointerCapture' ||
-          methodName === 'releasePointerCapture';
+    const [pointerId, captureToken] = methodArguments;
 
-        if (!isPointerCaptureMethod) {
-          return connection.call(
-            remoteElementId,
-            methodName,
-            ...methodArguments,
-          );
-        }
+    if (!isInteger(pointerId) || !isInteger(captureToken)) {
+      return;
+    }
 
-        const pointerId = methodArguments[0];
+    const request = { remoteElementId, pointerId, captureToken };
 
-        if (!isInteger(pointerId)) {
-          return;
-        }
+    if (methodName === 'setPointerCapture') {
+      pointerCaptureController.acceptWorkerPointerCapture(request);
+      return;
+    }
 
-        const element = geometryTracker.getRegisteredNode(remoteElementId);
-        const subscription = subscriptions.get(remoteElementId);
-
-        if (methodName === 'releasePointerCapture') {
-          if (subscription?.pointerId === pointerId) {
-            subscription.dispose();
-          }
-
-          if (
-            isDefined(element) &&
-            element.isConnected &&
-            element.hasPointerCapture(pointerId)
-          ) {
-            element.releasePointerCapture(pointerId);
-          }
-          return;
-        }
-
-        if (
-          !isDefined(element) ||
-          !element.isConnected ||
-          !element.hasPointerCapture(pointerId)
-        ) {
-          return;
-        }
-
-        const forwardEvent = methodArguments[1];
-
-        if (!isFunction<RemoteSerializedEventListener, unknown>(forwardEvent)) {
-          return;
-        }
-
-        subscription?.dispose();
-        const dispose = createCapturedPointerEventForwarder({
-          element,
-          pointerId,
-          forwardEvent,
-          eventOwner: geometryTracker.findRemoteElementIdContainingNode,
-          onDispose: () => {
-            if (subscriptions.get(remoteElementId)?.dispose === dispose) {
-              subscriptions.delete(remoteElementId);
-            }
-          },
-        });
-
-        subscriptions.set(remoteElementId, { pointerId, dispose });
-      },
-    },
-    dispose: () => {
-      for (const subscription of subscriptions.values()) {
-        subscription.dispose();
-      }
-      subscriptions.clear();
-    },
-  };
-};
+    pointerCaptureController.releaseWorkerPointerCapture(request);
+  },
+});

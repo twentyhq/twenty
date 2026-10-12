@@ -1,191 +1,212 @@
 import { connectRemoteNode, remoteId } from '@remote-dom/core/elements';
 import { Window } from '@remote-dom/polyfill';
 
-import { createWorkerGeometryStore } from '@/polyfills/geometry/utils/createWorkerGeometryStore';
-
 import { installPointerCapturePolyfill } from '../installPointerCapturePolyfill';
 
 const createCaptureFixture = () => {
   const polyfillWindow = new Window();
   const documentTarget = polyfillWindow.document as unknown as Document;
-  const geometryStore = createWorkerGeometryStore();
   const connection = { mutate: jest.fn(), call: jest.fn() };
-
-  installPointerCapturePolyfill({
+  const workerPointerCapture = installPointerCapturePolyfill({
     elementPrototype: polyfillWindow.Element.prototype,
     documentTarget,
-    geometryStore,
   });
-  connectRemoteNode(documentTarget.body, connection);
+  const element = documentTarget.createElement('div');
 
-  return { documentTarget, geometryStore, connection, polyfillWindow };
+  connectRemoteNode(documentTarget.body, connection);
+  documentTarget.body.append(element);
+  connectRemoteNode(element, connection);
+
+  return {
+    documentTarget,
+    connection,
+    polyfillWindow,
+    element,
+    remoteElementId: remoteId(element),
+    workerPointerCapture,
+  };
+};
+
+const createPointerEvent = ({
+  polyfillWindow,
+  type,
+  pointerId,
+}: {
+  polyfillWindow: Window;
+  type: string;
+  pointerId: number;
+}) => {
+  const event = new polyfillWindow.Event(type, {
+    bubbles: true,
+  }) as unknown as Event;
+
+  Object.defineProperty(event, 'pointerId', { value: pointerId });
+
+  return event;
 };
 
 describe('installPointerCapturePolyfill', () => {
-  it('should capture only owned elements and release the matching pointer', () => {
-    const { documentTarget, connection } = createCaptureFixture();
-    const ownedElement = documentTarget.createElement('div');
+  it('should capture only connected elements and send a capture token with each host request', () => {
+    const { documentTarget, connection, element, remoteElementId } =
+      createCaptureFixture();
     const detachedElement = documentTarget.createElement('div');
 
-    documentTarget.body.append(ownedElement);
-    connectRemoteNode(ownedElement, connection);
-    remoteId(ownedElement);
     detachedElement.setPointerCapture(1);
     expect(connection.call).not.toHaveBeenCalled();
-    ownedElement.setPointerCapture(2);
+
+    element.setPointerCapture(2);
+    element.setPointerCapture(2);
+    expect(connection.call).toHaveBeenCalledTimes(1);
     expect(connection.call).toHaveBeenCalledWith(
-      remoteId(ownedElement),
+      remoteElementId,
       'setPointerCapture',
       2,
-      expect.any(Function),
+      1,
     );
-    expect(ownedElement.hasPointerCapture(2)).toBe(true);
-    ownedElement.releasePointerCapture(1);
-    expect(ownedElement.hasPointerCapture(2)).toBe(true);
-    ownedElement.releasePointerCapture(2);
-    expect(ownedElement.hasPointerCapture(2)).toBe(false);
+    expect(element.hasPointerCapture(2)).toBe(true);
+
+    element.releasePointerCapture(1);
+    expect(element.hasPointerCapture(2)).toBe(true);
+    element.releasePointerCapture(2);
+    expect(element.hasPointerCapture(2)).toBe(false);
     expect(connection.call).toHaveBeenLastCalledWith(
-      remoteId(ownedElement),
+      remoteElementId,
       'releasePointerCapture',
       2,
+      1,
     );
   });
 
-  it('should clear completed capture after document listeners finish receiving pointerup', async () => {
-    const { documentTarget, connection, polyfillWindow } =
+  it('should not sync captured pointer listeners to the host element', () => {
+    const { connection, element } = createCaptureFixture();
+
+    connection.mutate.mockClear();
+    element.setPointerCapture(1);
+    element.releasePointerCapture(1);
+
+    expect(connection.mutate).not.toHaveBeenCalled();
+  });
+
+  it('should dispatch host-forwarded gesture events to document listeners without a worker capture', () => {
+    const { documentTarget, remoteElementId, workerPointerCapture } =
       createCaptureFixture();
-    const element = documentTarget.createElement('div');
+    const deliveredMoves: number[] = [];
+
+    documentTarget.addEventListener('pointermove', (event) =>
+      deliveredMoves.push(event.clientX),
+    );
+    workerPointerCapture.dispatchCapturedPointerEvent({
+      remoteElementId,
+      eventData: {
+        type: 'pointermove',
+        bubbles: true,
+        pointerId: 0,
+        clientX: 80,
+      },
+    });
+    workerPointerCapture.dispatchCapturedPointerEvent({
+      remoteElementId,
+      eventData: { type: 'click', bubbles: true, clientX: 90 },
+    });
+    workerPointerCapture.dispatchCapturedPointerEvent({
+      remoteElementId: 'unknown',
+      eventData: { type: 'pointermove', bubbles: true, clientX: 100 },
+    });
+
+    expect(deliveredMoves).toEqual([80]);
+  });
+
+  it('should clear capture after document listeners finish receiving the gesture end', async () => {
+    const { documentTarget, element, polyfillWindow } = createCaptureFixture();
     const capturedDuringPointerUp: boolean[] = [];
 
-    documentTarget.body.append(element);
-    connectRemoteNode(element, connection);
-    remoteId(element);
     element.setPointerCapture(1);
     documentTarget.addEventListener('pointerup', () =>
       capturedDuringPointerUp.push(element.hasPointerCapture(1)),
     );
-    const event = new polyfillWindow.Event('pointerup', {
-      bubbles: true,
-    }) as unknown as Event;
+    element.dispatchEvent(
+      createPointerEvent({ polyfillWindow, type: 'pointerup', pointerId: 1 }),
+    );
 
-    Object.defineProperty(event, 'pointerId', { value: 1 });
-    element.dispatchEvent(event);
     expect(capturedDuringPointerUp).toEqual([true]);
     await Promise.resolve();
     expect(element.hasPointerCapture(1)).toBe(false);
   });
 
-  it('should keep the started gesture connected through release after capture loss', async () => {
-    const { documentTarget, connection, polyfillWindow } =
+  it('should clear capture when the host reports a capture loss and keep delivering the gesture', () => {
+    const { documentTarget, element, remoteElementId, workerPointerCapture } =
       createCaptureFixture();
-    const element = documentTarget.createElement('div');
     const deliveredMoves: number[] = [];
 
-    documentTarget.body.append(element);
-    connectRemoteNode(element, connection);
-    remoteId(element);
     element.setPointerCapture(1);
-    const forwardCapturedEvent = connection.call.mock
-      .calls[0][3] as (eventData: {
-      type: string;
-      bubbles: boolean;
-      pointerId: number;
-      clientX?: number;
-    }) => void;
-    const captureLoss = new polyfillWindow.Event('lostpointercapture', {
-      bubbles: true,
-    }) as unknown as Event;
-
-    Object.defineProperty(captureLoss, 'pointerId', { value: 1 });
-    element.dispatchEvent(captureLoss);
-    expect(element.hasPointerCapture(1)).toBe(false);
     documentTarget.addEventListener('pointermove', (event) =>
       deliveredMoves.push(event.clientX),
     );
-    forwardCapturedEvent({
-      type: 'pointermove',
-      bubbles: true,
-      pointerId: 1,
-      clientX: 80,
+    workerPointerCapture.dispatchCapturedPointerEvent({
+      remoteElementId,
+      eventData: { type: 'lostpointercapture', bubbles: true, pointerId: 1 },
     });
-    expect(deliveredMoves).toEqual([80]);
-    forwardCapturedEvent({ type: 'pointerup', bubbles: true, pointerId: 1 });
-    await Promise.resolve();
-    forwardCapturedEvent({
-      type: 'pointermove',
-      bubbles: true,
-      pointerId: 1,
-      clientX: 90,
+
+    expect(element.hasPointerCapture(1)).toBe(false);
+
+    workerPointerCapture.dispatchCapturedPointerEvent({
+      remoteElementId,
+      eventData: {
+        type: 'pointermove',
+        bubbles: true,
+        pointerId: 1,
+        clientX: 60,
+      },
     });
-    expect(deliveredMoves).toEqual([80]);
+
+    expect(deliveredMoves).toEqual([60]);
   });
 
-  it('should clear capture loss after release from another owned element', async () => {
-    const { documentTarget, connection, polyfillWindow } =
+  it('should silently drop a refused capture only when its token matches', () => {
+    const { element, remoteElementId, workerPointerCapture } =
       createCaptureFixture();
-    const element = documentTarget.createElement('div');
-    const releaseTarget = documentTarget.createElement('button');
+    const lostPointerCapture = jest.fn();
 
-    documentTarget.body.append(element, releaseTarget);
-    connectRemoteNode(element, connection);
-    remoteId(element);
-    const removeElementListener = jest.spyOn(element, 'removeEventListener');
-    const removeDocumentListener = jest.spyOn(
-      documentTarget,
-      'removeEventListener',
-    );
+    element.addEventListener('lostpointercapture', lostPointerCapture);
     element.setPointerCapture(1);
-    const captureLoss = new polyfillWindow.Event('lostpointercapture', {
-      bubbles: true,
-    }) as unknown as Event;
+    workerPointerCapture.refusePointerCapture({
+      remoteElementId,
+      pointerId: 1,
+      captureToken: 2,
+    });
+    expect(element.hasPointerCapture(1)).toBe(true);
 
-    Object.defineProperty(captureLoss, 'pointerId', { value: 1 });
-    element.dispatchEvent(captureLoss);
+    workerPointerCapture.refusePointerCapture({
+      remoteElementId,
+      pointerId: 1,
+      captureToken: 1,
+    });
+
     expect(element.hasPointerCapture(1)).toBe(false);
-    const pointerUp = new polyfillWindow.Event('pointerup', {
-      bubbles: true,
-    }) as unknown as Event;
-
-    Object.defineProperty(pointerUp, 'pointerId', { value: 1 });
-    releaseTarget.dispatchEvent(pointerUp);
-    await Promise.resolve();
-    expect(removeElementListener).toHaveBeenCalledTimes(4);
-    expect(removeDocumentListener).toHaveBeenCalledTimes(2);
+    expect(lostPointerCapture).not.toHaveBeenCalled();
   });
 
   it('should preserve a new capture when the previous release cleanup is queued', async () => {
-    const { documentTarget, connection, polyfillWindow } =
-      createCaptureFixture();
-    const element = documentTarget.createElement('div');
+    const { element, polyfillWindow } = createCaptureFixture();
 
-    documentTarget.body.append(element);
-    connectRemoteNode(element, connection);
-    remoteId(element);
     element.setPointerCapture(1);
-    const pointerUp = new polyfillWindow.Event('pointerup', {
-      bubbles: true,
-    }) as unknown as Event;
-
-    Object.defineProperty(pointerUp, 'pointerId', { value: 1 });
-    element.dispatchEvent(pointerUp);
+    element.dispatchEvent(
+      createPointerEvent({ polyfillWindow, type: 'pointerup', pointerId: 1 }),
+    );
     element.setPointerCapture(2);
     await Promise.resolve();
+
     expect(element.hasPointerCapture(2)).toBe(true);
   });
 
-  it('should clear detached capture when host geometry removes its element', () => {
-    const { documentTarget, geometryStore, connection } =
-      createCaptureFixture();
-    const element = documentTarget.createElement('div');
+  it('should sweep the capture of an element removed from the remote root', async () => {
+    const { element, workerPointerCapture } = createCaptureFixture();
 
-    documentTarget.body.append(element);
-    connectRemoteNode(element, connection);
-    remoteId(element);
     element.setPointerCapture(1);
     element.remove();
-    geometryStore.applyGeometryBatch({
-      removedRemoteElementIds: [remoteId(element)],
-    });
+    workerPointerCapture.scheduleDetachedCaptureSweep();
+    await Promise.resolve();
+
     expect(element.hasPointerCapture(1)).toBe(false);
   });
 });

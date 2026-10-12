@@ -2,67 +2,112 @@ import { type Hooks } from '@remote-dom/polyfill';
 import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { EMPTY_ELEMENT_GEOMETRY_SNAPSHOT } from '@/polyfills/geometry/constants/EmptyElementGeometrySnapshot';
 import { type ElementGeometryReader } from '@/polyfills/geometry/types/ElementGeometryReader';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
+import { createDocumentScopedElementGeometrySnapshot } from '@/polyfills/geometry/utils/createDocumentScopedElementGeometrySnapshot';
 import { createResizeObserverEntry } from '@/polyfills/geometry/utils/createResizeObserverEntry';
+import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 
 const DEFAULT_DEVICE_PIXEL_RATIO = 1;
 const DEFAULT_OBSERVATION_BOX = 'content-box';
 
 type Observation = {
-  targetRef: WeakRef<Element>;
   box: ResizeObserverBoxOptions;
   lastSize: ResizeObserverSize | null;
-  hasBeenConnected: boolean;
-  geometryReader: ElementGeometryReader;
+  geometryReader: ElementGeometryReader | null;
 };
 
 type CreateResizeObserverClassInput = {
   geometryStore: WorkerGeometryStore;
+  documentTarget: { body?: unknown; documentElement?: unknown };
   hooks: Partial<Hooks> | null;
   reportCallbackError: (error: unknown) => void;
 };
 
+const isVisibleSize = (size: ResizeObserverSize | null): boolean =>
+  isDefined(size) && (size.inlineSize !== 0 || size.blockSize !== 0);
+
 export const createResizeObserverClass = ({
   geometryStore,
+  documentTarget,
   hooks,
   reportCallbackError,
 }: CreateResizeObserverClassInput) => {
-  const activeObserverSweeps = new Set<() => void>();
   const activeObserverSchedules = new Set<() => void>();
-  let hasScheduledDetachedElementSweep = false;
 
-  const sweepDetachedElements = () => {
-    hasScheduledDetachedElementSweep = false;
-
-    for (const sweepObserver of activeObserverSweeps) {
-      sweepObserver();
+  const scheduleActiveObserverDeliveries = () => {
+    for (const scheduleObserverDelivery of activeObserverSchedules) {
+      scheduleObserverDelivery();
     }
   };
 
   if (isDefined(hooks)) {
-    const previousRemoveChildHook = hooks.removeChild;
     const previousInsertChildHook = hooks.insertChild;
+    const previousRemoveChildHook = hooks.removeChild;
 
     hooks.insertChild = (parent, node, index) => {
       previousInsertChildHook?.(parent, node, index);
-
-      for (const scheduleObserverDelivery of activeObserverSchedules) {
-        scheduleObserverDelivery();
-      }
+      scheduleActiveObserverDeliveries();
     };
 
     hooks.removeChild = (parent, node, index) => {
       previousRemoveChildHook?.(parent, node, index);
-
-      if (hasScheduledDetachedElementSweep || activeObserverSweeps.size === 0) {
-        return;
-      }
-
-      hasScheduledDetachedElementSweep = true;
-      queueMicrotask(sweepDetachedElements);
+      scheduleActiveObserverDeliveries();
     };
   }
+
+  const createDocumentScopedGeometryReader = (
+    isDocumentElement: boolean,
+  ): ElementGeometryReader => ({
+    read: () => {
+      const viewport = geometryStore.getViewportSnapshot();
+
+      return isDefined(viewport)
+        ? createDocumentScopedElementGeometrySnapshot({
+            viewport,
+            isDocumentElement,
+          })
+        : null;
+    },
+    release: () => {},
+  });
+
+  const createObservationGeometryReader = (
+    target: Element,
+  ): ElementGeometryReader => {
+    if (
+      target === documentTarget.body ||
+      target === documentTarget.documentElement
+    ) {
+      return createDocumentScopedGeometryReader(
+        target === documentTarget.documentElement,
+      );
+    }
+
+    return geometryStore.createElementGeometryReader(target);
+  };
+
+  const readObservationSnapshot = ({
+    target,
+    observation,
+  }: {
+    target: Element;
+    observation: Observation;
+  }): ElementGeometrySnapshot | null => {
+    if (!target.isConnected) {
+      observation.geometryReader?.release();
+      observation.geometryReader = null;
+
+      return isVisibleSize(observation.lastSize)
+        ? EMPTY_ELEMENT_GEOMETRY_SNAPSHOT
+        : null;
+    }
+
+    observation.geometryReader ??= createObservationGeometryReader(target);
+
+    return observation.geometryReader.read();
+  };
 
   class ResizeObserverImplementation implements ResizeObserver {
     #callback: ResizeObserverCallback;
@@ -86,48 +131,27 @@ export const createResizeObserverClass = ({
 
       this.#unsubscribe?.();
       this.#unsubscribe = null;
-      activeObserverSweeps.delete(this.#pruneDetachedTargets);
       activeObserverSchedules.delete(this.#scheduleDelivery);
-    };
-
-    #pruneDetachedTargets = () => {
-      for (const [targetRef, observation] of this.#observations) {
-        const target = targetRef.deref();
-
-        if (!isDefined(target)) {
-          observation.geometryReader.release();
-          this.#observations.delete(targetRef);
-          continue;
-        }
-
-        if (target.isConnected) {
-          observation.hasBeenConnected = true;
-          continue;
-        }
-
-        if (observation.hasBeenConnected) {
-          observation.geometryReader.release();
-          this.#observations.delete(targetRef);
-        }
-      }
-
-      this.#stopWhenEmpty();
     };
 
     #deliver = () => {
       this.#hasScheduledDelivery = false;
-      this.#pruneDetachedTargets();
 
+      const devicePixelRatio =
+        geometryStore.getViewportSnapshot()?.devicePixelRatio ??
+        DEFAULT_DEVICE_PIXEL_RATIO;
       const entries: ResizeObserverEntry[] = [];
 
-      for (const observation of this.#observations.values()) {
-        const target = observation.targetRef.deref();
+      for (const [targetRef, observation] of this.#observations) {
+        const target = targetRef.deref();
 
-        if (!isDefined(target) || !target.isConnected) {
+        if (!isDefined(target)) {
+          observation.geometryReader?.release();
+          this.#observations.delete(targetRef);
           continue;
         }
 
-        const snapshot = observation.geometryReader.read();
+        const snapshot = readObservationSnapshot({ target, observation });
 
         if (!isDefined(snapshot)) {
           continue;
@@ -136,9 +160,7 @@ export const createResizeObserverClass = ({
         const entry = createResizeObserverEntry({
           target,
           snapshot,
-          devicePixelRatio:
-            geometryStore.getViewportSnapshot()?.devicePixelRatio ??
-            DEFAULT_DEVICE_PIXEL_RATIO,
+          devicePixelRatio,
         });
         const boxSizes = {
           'border-box': entry.borderBoxSize,
@@ -157,6 +179,8 @@ export const createResizeObserverClass = ({
         observation.lastSize = size;
         entries.push(entry);
       }
+
+      this.#stopWhenEmpty();
 
       if (entries.length === 0) {
         return;
@@ -205,18 +229,15 @@ export const createResizeObserverClass = ({
 
       const geometryReader =
         existingObservation?.geometryReader ??
-        geometryStore.createElementGeometryReader(target);
+        (target.isConnected ? createObservationGeometryReader(target) : null);
 
       this.#targetRefs.set(target, targetRef);
       this.#observations.set(targetRef, {
-        targetRef,
         box,
         lastSize: null,
-        hasBeenConnected: target.isConnected,
         geometryReader,
       });
-      geometryReader.read();
-      activeObserverSweeps.add(this.#pruneDetachedTargets);
+      geometryReader?.read();
       activeObserverSchedules.add(this.#scheduleDelivery);
       this.#unsubscribe ??= geometryStore.subscribeToGeometryUpdates(
         this.#scheduleDelivery,
@@ -228,7 +249,7 @@ export const createResizeObserverClass = ({
       const targetRef = this.#targetRefs.get(target);
 
       if (isDefined(targetRef)) {
-        this.#observations.get(targetRef)?.geometryReader.release();
+        this.#observations.get(targetRef)?.geometryReader?.release();
         this.#observations.delete(targetRef);
       }
 
@@ -237,7 +258,7 @@ export const createResizeObserverClass = ({
 
     disconnect(): void {
       for (const observation of this.#observations.values()) {
-        observation.geometryReader.release();
+        observation.geometryReader?.release();
       }
 
       this.#observations.clear();

@@ -59,7 +59,11 @@ const createSandbox = () => {
       };
     });
   const globalScope: Record<string, unknown> = { window: polyfillWindow };
-  installResizeObserverPolyfill({ globalScope, geometryStore });
+  installResizeObserverPolyfill({
+    globalScope,
+    geometryStore,
+    documentTarget: document,
+  });
 
   const applySnapshot = (overrides: Partial<ElementGeometrySnapshot> = {}) => {
     const remoteElementId = remoteElementIds.get(target);
@@ -534,13 +538,14 @@ describe('installResizeObserverPolyfill', () => {
     expect(unsubscribeGeometry).toHaveBeenCalledTimes(1);
   });
 
-  it('prunes removed subtrees and cancels their queued delivery', async () => {
+  it('should report a zero size when a measured target is removed and resume after reinsertion', async () => {
     const {
       ResizeObserver,
       target,
       root,
       document,
       applySnapshot,
+      observeElementGeometry,
       unobserveElementGeometry,
     } = createSandbox();
     const callback = jest.fn();
@@ -549,27 +554,63 @@ describe('installResizeObserverPolyfill', () => {
     applySnapshot();
     await flushMicrotasks();
     callback.mockClear();
+
     applySnapshot({ contentWidth: 120 });
     document.body.removeChild(root);
     await flushMicrotasks();
-    expect(callback).not.toHaveBeenCalled();
 
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback.mock.calls[0][0][0].contentRect.width).toBe(0);
+    expect(callback.mock.calls[0][0][0].contentBoxSize).toEqual([
+      { inlineSize: 0, blockSize: 0 },
+    ]);
     expect(unobserveElementGeometry).toHaveBeenCalledWith([
       remoteElementIds.get(target),
     ]);
 
     document.body.appendChild(root);
-    applySnapshot({ contentWidth: 120 });
     await flushMicrotasks();
-    expect(callback).not.toHaveBeenCalled();
+    expect(observeElementGeometry).toHaveBeenCalledTimes(2);
 
-    observer.observe(target);
+    applySnapshot({ contentWidth: 140 });
     await flushMicrotasks();
-    expect(callback).not.toHaveBeenCalled();
 
-    applySnapshot();
+    expect(callback).toHaveBeenCalledTimes(2);
+    expect(callback.mock.calls[1][0][0].contentRect.width).toBe(140);
+  });
+
+  it('should observe the document body through the renderer root size without enrolling host-less elements', async () => {
+    const {
+      ResizeObserver,
+      document,
+      root,
+      geometryStore,
+      observeElementGeometry,
+    } = createSandbox();
+    const renderContainer = document.createElement('remote-fragment');
+    root.appendChild(renderContainer);
+    const bodyCallback = jest.fn();
+    const renderContainerCallback = jest.fn();
+    new ResizeObserver(bodyCallback).observe(document.body);
+    new ResizeObserver(renderContainerCallback).observe(renderContainer);
+
+    geometryStore.applyGeometryBatch({
+      viewport: createViewportGeometrySnapshotFixture({
+        rootContainerWidth: 320,
+        rootContainerHeight: 200,
+        rootContainerClientWidth: 300,
+        rootContainerClientHeight: 180,
+      }),
+    });
     await flushMicrotasks();
-    expect(callback).toHaveBeenCalledTimes(1);
+
+    expect(bodyCallback).toHaveBeenCalledTimes(1);
+    expect(bodyCallback.mock.calls[0][0][0].target).toBe(document.body);
+    expect(bodyCallback.mock.calls[0][0][0].contentBoxSize).toEqual([
+      { inlineSize: 300, blockSize: 180 },
+    ]);
+    expect(renderContainerCallback).not.toHaveBeenCalled();
+    expect(observeElementGeometry).not.toHaveBeenCalled();
   });
 
   it('keeps observation when a target moves between connected parents in one update', async () => {
@@ -619,8 +660,10 @@ describe('installResizeObserverPolyfill', () => {
     first.document.body.removeChild(first.root);
     second.applySnapshot();
     await flushMicrotasks();
-    expect(firstCallback).toHaveBeenCalledTimes(1);
+    expect(firstCallback).toHaveBeenCalledTimes(2);
+    expect(firstCallback.mock.calls[1][0][0].contentRect.width).toBe(0);
     expect(secondCallback).toHaveBeenCalledTimes(1);
+    expect(secondCallback.mock.calls[0][0][0].target).toBe(second.target);
   });
 
   it('rejects invalid callbacks and targets', () => {

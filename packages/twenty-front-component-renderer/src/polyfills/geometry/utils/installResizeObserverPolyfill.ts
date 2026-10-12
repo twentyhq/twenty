@@ -8,16 +8,19 @@ import { resolvePolyfillWindow } from '@/polyfills/utils/resolvePolyfillWindow';
 type InstallResizeObserverPolyfillInput = {
   globalScope: Record<string, unknown>;
   geometryStore: WorkerGeometryStore;
+  documentTarget: { body?: unknown; documentElement?: unknown };
 };
 
 export const installResizeObserverPolyfill = ({
   globalScope,
   geometryStore,
+  documentTarget,
 }: InstallResizeObserverPolyfillInput): void => {
   const installTargets = resolveGlobalScopeInstallTargets(globalScope);
   const polyfillWindow = resolvePolyfillWindow(globalScope);
   const ResizeObserverImplementation = createResizeObserverClass({
     geometryStore,
+    documentTarget,
     hooks: resolvePolyfillHooks(installTargets),
     reportCallbackError: (error) =>
       reportErrorToPolyfillWindow({ polyfillWindow, error }),
@@ -27,6 +30,7 @@ export const installResizeObserverPolyfill = ({
     Object.defineProperty(installTarget, 'ResizeObserver', {
       value: ResizeObserverImplementation,
       configurable: true,
+      writable: true,
     });
   }
 };

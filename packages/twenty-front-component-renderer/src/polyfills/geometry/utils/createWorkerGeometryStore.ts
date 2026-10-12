@@ -8,6 +8,7 @@ import { type ElementGeometryReader } from '@/polyfills/geometry/types/ElementGe
 import { type GeometryObservationTransport } from '@/polyfills/geometry/types/GeometryObservationTransport';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
+import { isHostRenderedElement } from '@/polyfills/geometry/utils/isHostRenderedElement';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { type GeometryUpdateBatch } from '@/types/GeometryUpdateBatch';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
@@ -140,7 +141,10 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
       return elementSnapshots.get(enrolledRemoteElementId) ?? null;
     }
 
-    if (!isElementUnderRemoteRoot(element, rootElement)) {
+    if (
+      !isElementUnderRemoteRoot(element, rootElement) ||
+      !isHostRenderedElement(element)
+    ) {
       return null;
     }
 
@@ -165,6 +169,21 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     }
 
     return snapshot;
+  };
+
+  const readObservedElementSnapshot = (
+    element: object,
+  ): ElementGeometrySnapshot | null => {
+    const remoteElementId = elementOwnerships.get(element)?.remoteElementId;
+
+    if (
+      !isDefined(remoteElementId) ||
+      !observedRemoteElementIds.has(remoteElementId)
+    ) {
+      return null;
+    }
+
+    return elementSnapshots.get(remoteElementId) ?? null;
   };
 
   const releaseElementGeometryWhenUnused = (
@@ -302,6 +321,7 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
       };
     },
     resolveElementSnapshot,
+    readObservedElementSnapshot,
     createElementGeometryReader,
   };
 };

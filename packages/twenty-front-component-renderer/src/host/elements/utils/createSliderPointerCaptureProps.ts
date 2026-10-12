@@ -2,15 +2,22 @@ import { isFunction } from '@sniptt/guards';
 import { type PointerEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
+
 const SLIDER_CONTROL_ATTRIBUTE = 'data-twenty-ui-slider-control';
 
-export const createSliderPointerCaptureProps = (
-  reactBindableProps: Record<string, unknown>,
-): Record<string, unknown> | undefined => {
+export const createSliderPointerCaptureProps = ({
+  reactBindableProps,
+  pointerCaptureController,
+}: {
+  reactBindableProps: Record<string, unknown>;
+  pointerCaptureController: HostPointerCaptureController | null;
+}): Record<string, unknown> | undefined => {
   const remotePointerDown = reactBindableProps.onPointerDown;
 
   if (
     !isFunction(remotePointerDown) ||
+    !isDefined(pointerCaptureController) ||
     reactBindableProps[SLIDER_CONTROL_ATTRIBUTE] !== '' ||
     reactBindableProps.role === 'separator'
   ) {
@@ -29,6 +36,10 @@ export const createSliderPointerCaptureProps = (
 
       if (isPrimaryPress && isDefined(enabledSlider)) {
         event.currentTarget.setPointerCapture(event.pointerId);
+        pointerCaptureController.startPointerCapture({
+          element: event.currentTarget,
+          pointerId: event.pointerId,
+        });
       }
 
       remotePointerDown(event);

@@ -34,16 +34,16 @@ describe('measureViewportGeometry', () => {
     expect(viewport.rootContainerClientHeight).toBe(0);
   });
 
-  it('reads the renderer root computed style for scoped document queries', () => {
+  it('should read the renderer root layout style without its custom properties', () => {
     const rootContainer = document.createElement('div');
     rootContainer.style.direction = 'rtl';
     rootContainer.style.setProperty('--t-background-primary', 'scoped-color');
     document.body.append(rootContainer);
+
     const snapshot = measureViewportGeometry(rootContainer);
-    expect(snapshot.computedStyle).toMatchObject({
-      direction: 'rtl',
-      '--t-background-primary': 'scoped-color',
-    });
+
+    expect(snapshot.computedStyle).toMatchObject({ direction: 'rtl' });
+    expect(snapshot.computedStyle).not.toHaveProperty('--t-background-primary');
     rootContainer.remove();
   });
 

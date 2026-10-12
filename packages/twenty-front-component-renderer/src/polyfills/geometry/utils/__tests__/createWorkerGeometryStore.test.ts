@@ -36,11 +36,16 @@ const flushMicrotasks = async () => {
 
 const createRootedStore = () => {
   const store = createWorkerGeometryStore();
-  const rootElement = { parentNode: null };
+  const rootElement = { localName: 'body', parentNode: null };
   store.setRootElement(rootElement);
 
   return { store, rootElement };
 };
+
+const createHostElement = (parentNode: object) => ({
+  localName: 'html-div',
+  parentNode,
+});
 
 describe('createWorkerGeometryStore', () => {
   beforeEach(() => {
@@ -76,7 +81,7 @@ describe('createWorkerGeometryStore', () => {
       unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
     });
 
-    const element = { parentNode: rootElement };
+    const element = createHostElement(rootElement);
 
     store.resolveElementSnapshot(element);
     store.resolveElementSnapshot(element);
@@ -84,6 +89,47 @@ describe('createWorkerGeometryStore', () => {
 
     expect(observeElementGeometry).toHaveBeenCalledTimes(1);
     expect(observeElementGeometry).toHaveBeenCalledWith(['0']);
+  });
+
+  it('should not enroll the remote root or elements the host renders without a node', async () => {
+    const { store, rootElement } = createRootedStore();
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
+    });
+    const renderContainer = {
+      localName: 'remote-fragment',
+      parentNode: rootElement,
+    };
+    const plainElement = { localName: 'div', parentNode: renderContainer };
+
+    expect(store.resolveElementSnapshot(rootElement)).toBeNull();
+    expect(store.resolveElementSnapshot(renderContainer)).toBeNull();
+    store.resolveElementSnapshot(plainElement);
+    await flushMicrotasks();
+
+    expect(observeElementGeometry).toHaveBeenCalledTimes(1);
+    expect(observeElementGeometry).toHaveBeenCalledWith(['0']);
+  });
+
+  it('should read an observed snapshot without enrolling unobserved elements', async () => {
+    const { store, rootElement } = createRootedStore();
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
+    });
+    const element = createHostElement(rootElement);
+
+    expect(store.readObservedElementSnapshot(element)).toBeNull();
+    await flushMicrotasks();
+    expect(observeElementGeometry).not.toHaveBeenCalled();
+
+    store.resolveElementSnapshot(element);
+    store.applyGeometryBatch({ elements: { '0': createSnapshot(42) } });
+
+    expect(store.readObservedElementSnapshot(element)?.width).toBe(42);
   });
 
   it('should coalesce a synchronous burst of enrollments into one call', async () => {
@@ -94,9 +140,9 @@ describe('createWorkerGeometryStore', () => {
       unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
     });
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
-    store.resolveElementSnapshot({ parentNode: rootElement });
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveElementSnapshot(createHostElement(rootElement));
+    store.resolveElementSnapshot(createHostElement(rootElement));
+    store.resolveElementSnapshot(createHostElement(rootElement));
     await flushMicrotasks();
 
     expect(observeElementGeometry).toHaveBeenCalledTimes(1);
@@ -106,7 +152,7 @@ describe('createWorkerGeometryStore', () => {
   it('should retain enrollments and flush them when the transport connects later', async () => {
     const { store, rootElement } = createRootedStore();
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveElementSnapshot(createHostElement(rootElement));
     await flushMicrotasks();
 
     const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
@@ -120,7 +166,7 @@ describe('createWorkerGeometryStore', () => {
 
   it('should return the snapshot after a batch writes it', () => {
     const { store, rootElement } = createRootedStore();
-    const element = { parentNode: rootElement };
+    const element = createHostElement(rootElement);
 
     store.resolveElementSnapshot(element);
     store.applyGeometryBatch({ elements: { '0': createSnapshot(42) } });
@@ -130,8 +176,8 @@ describe('createWorkerGeometryStore', () => {
 
   it('should merge successive batches rather than replacing the element map', () => {
     const { store, rootElement } = createRootedStore();
-    const first = { parentNode: rootElement };
-    const second = { parentNode: rootElement };
+    const first = createHostElement(rootElement);
+    const second = createHostElement(rootElement);
 
     store.resolveElementSnapshot(first);
     store.resolveElementSnapshot(second);
@@ -145,7 +191,7 @@ describe('createWorkerGeometryStore', () => {
 
   it('should delete entries listed in removedRemoteElementIds', () => {
     const { store, rootElement } = createRootedStore();
-    const element = { parentNode: rootElement };
+    const element = createHostElement(rootElement);
 
     store.resolveElementSnapshot(element);
     store.applyGeometryBatch({ elements: { '0': createSnapshot(5) } });
@@ -205,7 +251,7 @@ describe('createWorkerGeometryStore', () => {
     jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     for (let index = 0; index < 600; index += 1) {
-      store.resolveElementSnapshot({ parentNode: rootElement });
+      store.resolveElementSnapshot(createHostElement(rootElement));
     }
     await flushMicrotasks();
 
@@ -217,7 +263,7 @@ describe('createWorkerGeometryStore', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     for (let index = 0; index < 600; index += 1) {
-      store.resolveElementSnapshot({ parentNode: rootElement });
+      store.resolveElementSnapshot(createHostElement(rootElement));
     }
 
     expect(warn).toHaveBeenCalledTimes(1);
@@ -234,17 +280,17 @@ describe('createWorkerGeometryStore', () => {
     jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     for (let index = 0; index < 500; index += 1) {
-      store.resolveElementSnapshot({ parentNode: rootElement });
+      store.resolveElementSnapshot(createHostElement(rootElement));
     }
     await flushMicrotasks();
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveElementSnapshot(createHostElement(rootElement));
     await flushMicrotasks();
     expect(observeElementGeometry).toHaveBeenCalledTimes(1);
 
     store.applyGeometryBatch({ removedRemoteElementIds: ['0', '1'] });
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveElementSnapshot(createHostElement(rootElement));
     await flushMicrotasks();
 
     expect(observeElementGeometry).toHaveBeenCalledTimes(2);
@@ -258,7 +304,7 @@ describe('createWorkerGeometryStore', () => {
       unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
     });
 
-    const element = { parentNode: rootElement };
+    const element = createHostElement(rootElement);
 
     store.resolveElementSnapshot(element);
     await flushMicrotasks();
@@ -281,8 +327,8 @@ describe('createWorkerGeometryStore', () => {
       unobserveElementGeometry,
     });
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveElementSnapshot(createHostElement(rootElement));
+    store.resolveElementSnapshot(createHostElement(rootElement));
     await flushMicrotasks();
 
     store.applyGeometryBatch({ removedRemoteElementIds: ['0', 'unknown'] });
@@ -314,10 +360,10 @@ describe('createWorkerGeometryStore', () => {
       unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
     });
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveElementSnapshot(createHostElement(rootElement));
     await flushMicrotasks();
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveElementSnapshot(createHostElement(rootElement));
     await flushMicrotasks();
 
     expect(warn).toHaveBeenCalledTimes(1);

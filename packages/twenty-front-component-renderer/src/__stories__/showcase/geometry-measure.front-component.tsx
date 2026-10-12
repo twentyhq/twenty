@@ -17,7 +17,7 @@ const GeometryMeasureComponent = () => {
     offsetLeft: 0,
     offsetTop: 0,
     hasOwnedOffsetParent: false,
-    themeBackground: '',
+    inlineAccent: '',
   });
 
   useEffect(() => {
@@ -42,9 +42,8 @@ const GeometryMeasureComponent = () => {
         offsetTop: measuredBox.offsetTop,
         hasOwnedOffsetParent:
           measuredBox.offsetParent === measuredBox.parentElement,
-        themeBackground: getComputedStyle(measuredBox).getPropertyValue(
-          '--t-background-primary',
-        ),
+        inlineAccent:
+          getComputedStyle(measuredBox).getPropertyValue('--measured-accent'),
       });
     };
 
@@ -61,29 +60,23 @@ const GeometryMeasureComponent = () => {
       <style>
         {'.c05-measured-layout { display: flex; column-gap: 14px; }'}
       </style>
-      <div
-        style={
-          {
-            position: 'relative',
-            height: 120,
-            direction: 'rtl',
-            '--t-background-primary': 'rgb(1, 2, 3)',
-          } as CSSProperties
-        }
-      >
+      <div style={{ position: 'relative', height: 120, direction: 'rtl' }}>
         <div
           className="c05-measured-layout"
           ref={measuredBoxRef}
           data-testid="geometry-measure-box"
-          style={{
-            position: 'absolute',
-            left: 12,
-            top: 14,
-            width: MEASURED_BOX_WIDTH,
-            height: MEASURED_BOX_HEIGHT,
-            backgroundColor: '#dbeafe',
-            borderRadius: 8,
-          }}
+          style={
+            {
+              position: 'absolute',
+              left: 12,
+              top: 14,
+              width: MEASURED_BOX_WIDTH,
+              height: MEASURED_BOX_HEIGHT,
+              backgroundColor: '#dbeafe',
+              borderRadius: 8,
+              '--measured-accent': 'rgb(1, 2, 3)',
+            } as CSSProperties
+          }
         />
       </div>
       <output data-testid="geometry-layout-facts">
@@ -94,7 +87,7 @@ const GeometryMeasureComponent = () => {
           offsetLeft: measuredGeometry.offsetLeft,
           offsetTop: measuredGeometry.offsetTop,
           hasOwnedOffsetParent: measuredGeometry.hasOwnedOffsetParent,
-          themeBackground: measuredGeometry.themeBackground,
+          inlineAccent: measuredGeometry.inlineAccent,
         })}
       </output>
       <p data-testid="geometry-measure-width">

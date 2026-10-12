@@ -11,5 +11,8 @@ export type WorkerGeometryStore = {
   getViewportSnapshot: () => ViewportGeometrySnapshot | null;
   subscribeToGeometryUpdates: (listener: () => void) => () => void;
   resolveElementSnapshot: (element: object) => ElementGeometrySnapshot | null;
+  readObservedElementSnapshot: (
+    element: object,
+  ) => ElementGeometrySnapshot | null;
   createElementGeometryReader: (element: object) => ElementGeometryReader;
 };

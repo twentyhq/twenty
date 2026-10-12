@@ -6,7 +6,7 @@ component stories. Each fixture has React and Preact stories built with
 Preact stories need Preact 11, which passes `ref` to function components as a
 regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
-The layout fixtures mirror a bounded set of stylesheet and inherited layout properties, scoped theme variables, native positioned ancestors and size observations. Worker `ResizeObserver` entries report content, border and device-pixel content boxes from owned host snapshots. They deliver the first valid measurement and later size changes, and stop after unobserve, disconnect or connected-target removal. Position-only updates still use the existing geometry update path rather than resize notifications.
+The layout fixtures mirror a bounded set of stylesheet and inherited layout properties, including logical paddings, borders and margins and individual transforms, for elements the worker already measures, plus native positioned ancestors and size observations. Reading a computed style never enrolls an element for measurement. Theme custom properties are not mirrored, so they keep resolving through `var()` on the host, while inline custom properties still read back from the element's own style. Worker `ResizeObserver` entries report content, border and device-pixel content boxes from owned host snapshots, and `document.body` and `document.documentElement` report the renderer root box. They deliver the first valid measurement and later size changes, report a zero size when a measured target leaves the document, resume after it is reinserted, and stop after unobserve or disconnect. Position-only updates still use the existing geometry update path rather than resize notifications.
 
 Native Slider range inputs receive their minimum, maximum and step, so browser keyboard defaults and worker callbacks agree. A Slider's own capture remains in place when its parent has a pointer handler. Slider registers size observations after its Control ref attaches and continues updating when layout changes.
 
@@ -278,7 +278,7 @@ controlled fixture pairs its explicit panel IDs with matching native
 `aria-controls` on each tab. Its TabButton controls retain route links with
 `aria-current` and adjacent button actions without tab-panel semantics.
 
-An already-started trusted Slider drag retains a finite pointer subscription until release or cancellation, including movement after capture loss. It forwards pointer coordinates and modifiers without another host target's control values, and renderer or node teardown removes the subscription. General outside presses and overlay dismissal remain separate compatibility work.
+A trusted primary press on a Slider control starts a host capture session that forwards every move, release and cancellation of that pointer to the worker until the gesture ends, including a release that arrives before the worker answers, a zero pointer id and movement after capture loss. It forwards pointer coordinates and modifiers without another host target's control values, and renderer or node teardown ends the session. The worker's `setPointerCapture` is acknowledged only during that session and its release only applies to the same capture, so other elements report no pointer capture once the host refuses it. General outside presses and overlay dismissal remain separate compatibility work.
 
 Once the remaining gaps are fixed, extend the stories to verify keyboard
 navigation, dismissal, and focus restoration across overlay components. The fixtures
@@ -296,7 +296,7 @@ Then, from `packages/twenty-front-component-renderer`, run:
 npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
 ```
 
-For real mouse gestures, collision and anchor motion, and independent OverflowingList renderer cleanup, serve the fresh static Storybook on port 6008 and run:
+For real mouse gestures, collision and anchor motion, and independent OverflowingList renderer cleanup, serve the fresh static Storybook on port 6008 and run the suite that CI runs as `storybook:test:layout`:
 
 ```sh
 npx playwright test --config playwright.layout.config.ts

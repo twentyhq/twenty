@@ -4,12 +4,13 @@ import {
   isObject,
   isString,
 } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 
 import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
+import { isObjectPrototypeMember } from '@/polyfills/dom/utils/isObjectPrototypeMember';
 import { resolveCssPropertyNameFromJsPropertyName } from '@/polyfills/dom/utils/resolveCssPropertyNameFromJsPropertyName';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
+import { normalizeCssPropertyName } from '@/utils/css/normalizeCssPropertyName';
 
 export const installGetComputedStyle = ({
   globalScope,
@@ -28,17 +29,11 @@ export const installGetComputedStyle = ({
     }
 
     const declaredStyle = 'style' in element ? element.style : undefined;
-    const readProperty = (propertyName: string): string => {
-      const isDocumentElement =
-        element === documentTarget.body ||
-        element === documentTarget.documentElement;
-      const snapshot = isDocumentElement
-        ? geometryStore.getViewportSnapshot()
-        : geometryStore.resolveElementSnapshot(element);
-      const measuredValue = snapshot?.computedStyle?.[propertyName];
-      if (isDefined(measuredValue)) {
-        return measuredValue;
-      }
+    const isDocumentScopedElement =
+      element === documentTarget.body ||
+      element === documentTarget.documentElement;
+
+    const readDeclaredProperty = (cssPropertyName: string): string => {
       if (!isObject(declaredStyle)) {
         return '';
       }
@@ -51,15 +46,30 @@ export const installGetComputedStyle = ({
       }
       const declaredValue: unknown = getDeclaredPropertyValue.call(
         declaredStyle,
-        propertyName,
+        cssPropertyName,
       );
       return isString(declaredValue) ? declaredValue : '';
+    };
+
+    const readProperty = (propertyName: string): string => {
+      const cssPropertyName = normalizeCssPropertyName(propertyName);
+      const snapshot = isDocumentScopedElement
+        ? geometryStore.getViewportSnapshot()
+        : geometryStore.readObservedElementSnapshot(element);
+      const measuredValue: unknown = snapshot?.computedStyle?.[cssPropertyName];
+
+      return isString(measuredValue)
+        ? measuredValue
+        : readDeclaredProperty(cssPropertyName);
     };
 
     return new Proxy(createEmptyStyleDeclaration(), {
       get(target, property) {
         if (property === 'getPropertyValue') {
           return readProperty;
+        }
+        if (isObjectPrototypeMember(property)) {
+          return Reflect.get(Object.prototype, property);
         }
         if (isString(property)) {
           return readProperty(

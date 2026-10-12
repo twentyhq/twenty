@@ -6,6 +6,9 @@ const COMPUTED_LAYOUT_PROPERTIES = [
   'direction',
   'position',
   'transform',
+  'translate',
+  'scale',
+  'rotate',
   'perspective',
   'filter',
   'backdrop-filter',
@@ -30,10 +33,22 @@ const COMPUTED_LAYOUT_PROPERTIES = [
   'padding-right',
   'padding-bottom',
   'padding-left',
+  'padding-inline-start',
+  'padding-inline-end',
+  'padding-block-start',
+  'padding-block-end',
   'border-top-width',
   'border-right-width',
   'border-bottom-width',
   'border-left-width',
+  'border-inline-start-width',
+  'border-inline-end-width',
+  'border-block-start-width',
+  'border-block-end-width',
+  'margin-inline-start',
+  'margin-inline-end',
+  'margin-block-start',
+  'margin-block-end',
   'scroll-padding-top',
   'scroll-padding-right',
   'scroll-padding-bottom',
@@ -43,8 +58,6 @@ const COMPUTED_LAYOUT_PROPERTIES = [
   'scroll-margin-bottom',
   'scroll-margin-left',
 ] as const;
-
-const THEME_VARIABLE_PREFIX = '--t-';
 
 export const measureComputedLayoutStyle = (
   node: Element,
@@ -58,12 +71,6 @@ export const measureComputedLayoutStyle = (
   const values: Record<string, string> = {};
   for (const propertyName of COMPUTED_LAYOUT_PROPERTIES) {
     values[propertyName] = computedStyle.getPropertyValue(propertyName);
-  }
-  for (let index = 0; index < computedStyle.length; index += 1) {
-    const propertyName = computedStyle.item(index);
-    if (propertyName.startsWith(THEME_VARIABLE_PREFIX)) {
-      values[propertyName] = computedStyle.getPropertyValue(propertyName);
-    }
   }
   return values;
 };

@@ -100,11 +100,11 @@ describe('installGetComputedStyle', () => {
     expect(declaration.getPropertyValue('font-size')).toBe('');
     expect(declaration.fontSize).toBe('');
   });
-  it('reads measured stylesheet values and observes later geometry updates through the same declaration', () => {
+  it('should read measured values of an observed element through the same declaration without enrolling it', () => {
     const globalScope: Record<string, unknown> = {};
     let columnGap = '12px';
     const geometryStore = createWorkerGeometryStoreStub({
-      resolveElementSnapshot: () =>
+      readObservedElementSnapshot: () =>
         createElementGeometrySnapshotFixture({
           computedStyle: { 'column-gap': columnGap, display: 'flex' },
         }),
@@ -113,21 +113,53 @@ describe('installGetComputedStyle', () => {
     const style = (globalScope.getComputedStyle as GetComputedStyleLike)({
       style: { getPropertyValue: () => '99px' },
     });
-    expect(style.getPropertyValue('column-gap')).toBe('12px');
+
+    expect(style.getPropertyValue('Column-Gap')).toBe('12px');
     columnGap = '24px';
     expect(style.getPropertyValue('column-gap')).toBe('24px');
+    expect(style.getPropertyValue('transition-duration')).toBe('99px');
+    expect(geometryStore.resolveElementSnapshot).not.toHaveBeenCalled();
   });
 
-  it('uses only the renderer root theme for its virtual document', () => {
+  it('should fall back to the declared style for an element that is not measured', () => {
+    const globalScope: Record<string, unknown> = {};
+    const geometryStore = createWorkerGeometryStoreStub();
+    installGetComputedStyle({ globalScope, geometryStore, documentTarget: {} });
+    const declaredStyle = createStyleProxy(() => {});
+    declaredStyle.setProperty('display', 'grid');
+
+    const style = (globalScope.getComputedStyle as GetComputedStyleLike)({
+      style: declaredStyle,
+    });
+
+    expect(style.getPropertyValue('display')).toBe('grid');
+    expect(geometryStore.resolveElementSnapshot).not.toHaveBeenCalled();
+  });
+
+  it('should keep Object.prototype members callable on the declaration', () => {
+    const globalScope: Record<string, unknown> = {};
+    installGetComputedStyle({
+      globalScope,
+      geometryStore: createWorkerGeometryStoreStub(),
+      documentTarget: {},
+    });
+
+    const style = (globalScope.getComputedStyle as GetComputedStyleLike)({
+      style: createStyleProxy(() => {}),
+    });
+
+    expect(() => `${style}`).not.toThrow();
+    expect(style.hasOwnProperty('display')).toBe(false);
+    expect(style.getPropertyValue('constructor')).toBe('');
+  });
+
+  it('should read the renderer root layout for its virtual document', () => {
     const globalScope: Record<string, unknown> = {};
     const documentElement = {};
     const geometryStore = createWorkerGeometryStoreStub({
       getViewportSnapshot: () =>
         createViewportGeometrySnapshotFixture({
-          computedStyle: {
-            '--t-background-primary': 'scoped-color',
-            direction: 'rtl',
-          },
+          computedStyle: { direction: 'rtl' },
         }),
     });
     installGetComputedStyle({
@@ -138,9 +170,7 @@ describe('installGetComputedStyle', () => {
     const style = (globalScope.getComputedStyle as GetComputedStyleLike)(
       documentElement,
     );
-    expect(style.getPropertyValue('--t-background-primary')).toBe(
-      'scoped-color',
-    );
+
     expect(style.getPropertyValue('direction')).toBe('rtl');
   });
 });

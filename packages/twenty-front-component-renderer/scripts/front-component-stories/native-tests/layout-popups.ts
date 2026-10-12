@@ -51,7 +51,7 @@ const isPopupAttachedToAnchor = ({
 };
 
 for (const runtime of ['react', 'preact']) {
-  test(`${runtime} mirrors stylesheet layout, offset ancestry and scoped theme values`, async ({
+  test(`${runtime} mirrors stylesheet layout, offset ancestry and inline custom properties`, async ({
     page,
   }) => {
     await page.goto(
@@ -76,7 +76,7 @@ for (const runtime of ['react', 'preact']) {
       '"hasOwnedOffsetParent":true',
     );
     await expect(page.getByTestId('geometry-layout-facts')).toContainText(
-      '"themeBackground":"rgb(1, 2, 3)"',
+      '"inlineAccent":"rgb(1, 2, 3)"',
     );
   });
 

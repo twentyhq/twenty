@@ -157,6 +157,30 @@ for (const runtime of ['react', 'preact']) {
       ).toBeDisabled();
     });
 
+    test('Slider commits a quick track press released before the worker answers', async ({
+      page,
+    }) => {
+      await openFixture({ page, story: `slider-gestures-${runtime}` });
+      const slider = page.getByRole('slider', { name: 'Volume', exact: true });
+      const control = page.getByTestId('volume-control');
+
+      await expect(slider).toBeVisible();
+      const bounds = await control.boundingBox();
+
+      expect(bounds).not.toBeNull();
+      await page.mouse.move(
+        bounds!.x + bounds!.width * 0.8,
+        bounds!.y + bounds!.height / 2,
+      );
+      await page.mouse.down();
+      await page.mouse.up();
+      const volumeStatus = page.getByText(/^Volume: \d+; Committed: \d+$/);
+
+      await expect(volumeStatus).not.toHaveText('Volume: 40; Committed: 40');
+      await expect(volumeStatus).toHaveText(/^Volume: (\d+); Committed: \1$/);
+      await expect(control).not.toHaveAttribute('data-dragging');
+    });
+
     test('Slider follows native pointer moves beyond the widget and commits the bounded final value', async ({
       page,
     }) => {

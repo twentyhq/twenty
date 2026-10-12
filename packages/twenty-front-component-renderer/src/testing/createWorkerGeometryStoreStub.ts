@@ -9,6 +9,7 @@ export const createWorkerGeometryStoreStub = (
   getViewportSnapshot: jest.fn(() => null),
   subscribeToGeometryUpdates: jest.fn(() => () => {}),
   resolveElementSnapshot: jest.fn(() => null),
+  readObservedElementSnapshot: jest.fn(() => null),
   createElementGeometryReader: jest.fn(() => ({
     read: () => null,
     release: () => {},

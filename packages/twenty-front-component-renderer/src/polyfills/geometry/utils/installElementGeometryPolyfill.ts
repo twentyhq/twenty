@@ -2,29 +2,12 @@ import { remoteId } from '@remote-dom/core/elements';
 import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { EMPTY_ELEMENT_GEOMETRY_SNAPSHOT } from '@/polyfills/geometry/constants/EmptyElementGeometrySnapshot';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
+import { createDocumentScopedElementGeometrySnapshot } from '@/polyfills/geometry/utils/createDocumentScopedElementGeometrySnapshot';
 import { createDomRectFromSnapshot } from '@/polyfills/geometry/utils/createDomRectFromSnapshot';
 import { createTextareaIntrinsicSizeReader } from '@/polyfills/geometry/utils/createTextareaIntrinsicSizeReader';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
-
-const EMPTY_ELEMENT_GEOMETRY_SNAPSHOT: ElementGeometrySnapshot = {
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0,
-  offsetWidth: 0,
-  offsetHeight: 0,
-  offsetTop: 0,
-  offsetLeft: 0,
-  clientWidth: 0,
-  clientHeight: 0,
-  clientTop: 0,
-  clientLeft: 0,
-  scrollWidth: 0,
-  scrollHeight: 0,
-  scrollTop: 0,
-  scrollLeft: 0,
-};
 
 type InstallElementGeometryPolyfillInput = {
   elementPrototype: object;
@@ -52,23 +35,10 @@ export const installElementGeometryPolyfill = ({
       return EMPTY_ELEMENT_GEOMETRY_SNAPSHOT;
     }
 
-    const isDocumentElement = element === documentTarget.documentElement;
-
-    return {
-      ...EMPTY_ELEMENT_GEOMETRY_SNAPSHOT,
-      x: viewport.rootContainerX,
-      y: viewport.rootContainerY,
-      width: viewport.rootContainerWidth,
-      height: viewport.rootContainerHeight,
-      offsetWidth: viewport.rootContainerWidth,
-      offsetHeight: viewport.rootContainerHeight,
-      clientWidth: viewport.rootContainerClientWidth,
-      clientHeight: viewport.rootContainerClientHeight,
-      scrollWidth: viewport.rootContainerClientWidth,
-      scrollHeight: viewport.rootContainerClientHeight,
-      scrollTop: isDocumentElement ? viewport.scrollY : 0,
-      scrollLeft: isDocumentElement ? viewport.scrollX : 0,
-    };
+    return createDocumentScopedElementGeometrySnapshot({
+      viewport,
+      isDocumentElement: element === documentTarget.documentElement,
+    });
   };
 
   const resolveSnapshot = (element: object): ElementGeometrySnapshot | null => {
@@ -138,8 +108,10 @@ export const installElementGeometryPolyfill = ({
         return null;
       }
 
-      const snapshot = resolveSnapshot(this);
-      const offsetParentRemoteElementId = snapshot?.offsetParentRemoteElementId;
+      const offsetParentRemoteElementId =
+        geometryStore.readObservedElementSnapshot(
+          this,
+        )?.offsetParentRemoteElementId;
       if (!isDefined(offsetParentRemoteElementId)) {
         return documentTarget.body ?? null;
       }

@@ -125,6 +125,10 @@ installDocumentActiveElementPolyfill({
   documentTarget: document,
   activeElementStore: workerActiveElementStore,
 });
+const workerPointerCapture = installPointerCapturePolyfill({
+  elementPrototype: HTMLElement.prototype,
+  documentTarget: document,
+});
 installActiveElementDetachmentHook({
   hooks: resolvePolyfillHooks(
     resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
@@ -133,15 +137,11 @@ installActiveElementDetachmentHook({
   onRemoveSubtree: (node) => {
     workerFocusTransport.blurFocusedElementWithinSubtree(node);
     workerInputSelectionStore.scheduleDetachedElementSweep();
+    workerPointerCapture.scheduleDetachedCaptureSweep();
   },
 });
 installHostEventRetargetingPolyfill(HTMLElement.prototype);
 installElementClickMethodPolyfill(HTMLElement.prototype);
-installPointerCapturePolyfill({
-  elementPrototype: HTMLElement.prototype,
-  documentTarget: document,
-  geometryStore: workerGeometryStore,
-});
 installInputClickActivationPolyfill(HtmlInputElement.prototype);
 
 installGetComputedStyle({
@@ -173,6 +173,7 @@ installVisualViewportPolyfill({
 installResizeObserverPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
+  documentTarget: document,
 });
 
 installWindowAliasesPolyfill({
@@ -277,6 +278,12 @@ const workerExports: WorkerExports = {
         : null,
       isFocusVisible,
     });
+  },
+  pushCapturedPointerEvent: async (update) => {
+    workerPointerCapture.dispatchCapturedPointerEvent(update);
+  },
+  pushPointerCaptureRefusal: async (request) => {
+    workerPointerCapture.refusePointerCapture(request);
   },
   pushMediaSessionEvents: async (batch) => {
     workerMediaBridge.dispatchEvents(batch);

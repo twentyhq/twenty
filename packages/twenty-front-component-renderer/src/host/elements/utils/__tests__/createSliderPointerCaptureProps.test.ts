@@ -1,13 +1,26 @@
 import { type PointerEvent } from 'react';
 
+import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
+
 import { createSliderPointerCaptureProps } from '../createSliderPointerCaptureProps';
+
+const createPointerCaptureControllerStub =
+  (): HostPointerCaptureController => ({
+    startPointerCapture: jest.fn(),
+    acceptWorkerPointerCapture: jest.fn(),
+    releaseWorkerPointerCapture: jest.fn(),
+    setTransport: jest.fn(),
+    reset: jest.fn(),
+  });
 
 const createPointerPress = ({
   isTrusted,
   isDisabled = false,
+  pointerId = 1,
 }: {
   isTrusted: boolean;
   isDisabled?: boolean;
+  pointerId?: number;
 }) => {
   const element = Object.assign(document.createElement('div'), {
     setPointerCapture: jest.fn(),
@@ -22,7 +35,7 @@ const createPointerPress = ({
     element,
     event: {
       currentTarget: element,
-      pointerId: 1,
+      pointerId,
       button: 0,
       defaultPrevented: false,
       nativeEvent: { isTrusted },
@@ -31,11 +44,15 @@ const createPointerPress = ({
 };
 
 describe('createSliderPointerCaptureProps', () => {
-  it('should capture only trusted presses on an enabled slider control', () => {
+  it('should capture and start a host capture session only for trusted presses on an enabled slider control', () => {
     const remotePointerDown = jest.fn();
+    const pointerCaptureController = createPointerCaptureControllerStub();
     const handler = createSliderPointerCaptureProps({
-      'data-twenty-ui-slider-control': '',
-      onPointerDown: remotePointerDown,
+      reactBindableProps: {
+        'data-twenty-ui-slider-control': '',
+        onPointerDown: remotePointerDown,
+      },
+      pointerCaptureController,
     })!.onPointerDown as (event: PointerEvent<HTMLElement>) => void;
     const untrustedPress = createPointerPress({ isTrusted: false });
 
@@ -48,25 +65,44 @@ describe('createSliderPointerCaptureProps', () => {
 
     handler(disabledPress.event);
     expect(disabledPress.element.setPointerCapture).not.toHaveBeenCalled();
-    const trustedPress = createPointerPress({ isTrusted: true });
+    expect(pointerCaptureController.startPointerCapture).not.toHaveBeenCalled();
+    const trustedPress = createPointerPress({ isTrusted: true, pointerId: 0 });
 
     handler(trustedPress.event);
-    expect(trustedPress.element.setPointerCapture).toHaveBeenCalledWith(1);
+    expect(trustedPress.element.setPointerCapture).toHaveBeenCalledWith(0);
+    expect(pointerCaptureController.startPointerCapture).toHaveBeenCalledWith({
+      element: trustedPress.element,
+      pointerId: 0,
+    });
     expect(remotePointerDown).toHaveBeenCalledTimes(3);
   });
 
-  it('should leave caller ancestors and slider thumbs on their ordinary pointer path', () => {
+  it('should leave caller ancestors, slider thumbs and renderers without a capture controller on their ordinary pointer path', () => {
     const remotePointerDown = jest.fn();
+    const pointerCaptureController = createPointerCaptureControllerStub();
 
     expect(
       createSliderPointerCaptureProps({
-        onPointerDown: remotePointerDown,
+        reactBindableProps: { onPointerDown: remotePointerDown },
+        pointerCaptureController,
       }),
     ).toBeUndefined();
     expect(
       createSliderPointerCaptureProps({
-        'data-index': '0',
-        onPointerDown: remotePointerDown,
+        reactBindableProps: {
+          'data-index': '0',
+          onPointerDown: remotePointerDown,
+        },
+        pointerCaptureController,
+      }),
+    ).toBeUndefined();
+    expect(
+      createSliderPointerCaptureProps({
+        reactBindableProps: {
+          'data-twenty-ui-slider-control': '',
+          onPointerDown: remotePointerDown,
+        },
+        pointerCaptureController: null,
       }),
     ).toBeUndefined();
   });
@@ -74,8 +110,12 @@ describe('createSliderPointerCaptureProps', () => {
   it('should preserve the existing separator capture path', () => {
     expect(
       createSliderPointerCaptureProps({
-        role: 'separator',
-        onPointerDown: jest.fn(),
+        reactBindableProps: {
+          'data-twenty-ui-slider-control': '',
+          role: 'separator',
+          onPointerDown: jest.fn(),
+        },
+        pointerCaptureController: createPointerCaptureControllerStub(),
       }),
     ).toBeUndefined();
   });
