@@ -141,7 +141,7 @@ export class MarketplaceCatalogSyncService {
         },
       );
 
-    if (isDefined(recordedVersion)) {
+    if (isDefined(recordedVersion?.artifactUrl)) {
       return;
     }
 
@@ -155,6 +155,16 @@ export class MarketplaceCatalogSyncService {
       this.logger.warn(
         `Version ${registryPackage.version} of ${registryPackage.name} not recorded: registry gave no artifact location, retrying on the next sync`,
       );
+
+      return;
+    }
+
+    if (isDefined(recordedVersion)) {
+      await this.applicationRegistrationVersionService.fillMissingArtifact({
+        id: recordedVersion.id,
+        artifactUrl: dist.tarballUrl,
+        checksum: dist.integrity,
+      });
 
       return;
     }

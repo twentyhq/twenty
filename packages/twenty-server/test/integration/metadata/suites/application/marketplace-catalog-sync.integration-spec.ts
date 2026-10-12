@@ -684,6 +684,54 @@ describe('Marketplace Catalog Sync (integration)', () => {
       ]);
     });
 
+    it('fills the registry details of a version recorded without them', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+
+      // A row the upgrade backfill wrote from the registration snapshot
+      await ds.query(
+        `INSERT INTO core."applicationRegistrationVersion"
+          ("applicationRegistrationId", version, "sourceType", "sourcePackage")
+         VALUES ($1, '1.0.0', 'npm', $2)`,
+        [registrationId, SOURCE_PACKAGE],
+      );
+
+      const dist = {
+        tarballUrl: `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-1.0.0.tgz`,
+        integrity: 'sha512-YmFja2ZpbGxlZA==',
+      };
+
+      await syncMarketplaceCatalogFromRegistryPackage({
+        packageName: SOURCE_PACKAGE,
+        version: '1.0.0',
+        manifest: buildBaseManifest({
+          appId: universalIdentifier,
+          roleId: crypto.randomUUID(),
+        }),
+        dist,
+      });
+
+      expect(
+        await ds.query(
+          `SELECT version, "artifactUrl", checksum
+           FROM core."applicationRegistrationVersion"
+           WHERE "applicationRegistrationId" = $1`,
+          [registrationId],
+        ),
+      ).toEqual([
+        {
+          version: '1.0.0',
+          artifactUrl: dist.tarballUrl,
+          checksum: dist.integrity,
+        },
+      ]);
+    });
+
     it('leaves a version unrecorded until the registry provides its artifact', async () => {
       const universalIdentifier = crypto.randomUUID();
       const registrationId = await insertCatalogRegistration({

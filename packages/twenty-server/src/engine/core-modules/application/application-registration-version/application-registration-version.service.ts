@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -76,6 +76,24 @@ export class ApplicationRegistrationVersionService {
         version: params.version,
       },
     });
+  }
+
+  // Rows backfilled from a registration snapshot know their version but not
+  // where the registry serves it; filling that in completes the record, it
+  // never replaces an artifact already recorded.
+  async fillMissingArtifact({
+    id,
+    artifactUrl,
+    checksum,
+  }: {
+    id: string;
+    artifactUrl: string;
+    checksum: string | null;
+  }): Promise<void> {
+    await this.applicationRegistrationVersionRepository.update(
+      { id, artifactUrl: IsNull() },
+      { artifactUrl, checksum },
+    );
   }
 
   async findManyByApplicationRegistrationId(

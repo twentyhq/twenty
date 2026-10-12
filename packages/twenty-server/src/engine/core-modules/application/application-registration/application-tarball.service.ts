@@ -34,6 +34,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { getTarballUploadCompletionLockName } from 'src/engine/core-modules/application/application-registration/utils/get-tarball-upload-completion-lock-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
@@ -48,6 +49,12 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import type { ApplicationManifest, Manifest } from 'twenty-shared/application';
 
 const TARBALL_FILE_NAME = 'app.tar.gz';
+
+const APPLICATION_TARBALL_PUBLISH_LOCK_OPTIONS = {
+  ttl: 60_000,
+  ms: 500,
+  maxRetries: 120,
+};
 
 type ExtractedTarball = {
   contentDir: string;
@@ -77,6 +84,7 @@ export class ApplicationTarballService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async uploadTarball(params: {
@@ -104,7 +112,6 @@ export class ApplicationTarballService {
         storeTarballFile: (appRegistration) =>
           this.storeTarballFile({
             appRegistration,
-            version: extractedTarball.packageJson?.version ?? null,
             tarballBuffer: params.tarballBuffer,
             ownerWorkspaceId: params.ownerWorkspaceId,
           }),
@@ -287,7 +294,27 @@ export class ApplicationTarballService {
     });
   }
 
-  private async registerExtractedTarball({
+  // Publications of one app run one at a time: two overlapping uploads of the
+  // same version would otherwise both pass the progression check.
+  private async registerExtractedTarball(params: {
+    extractedTarball: ExtractedTarball;
+    ownerWorkspaceId: string;
+    publisher: TarballPublisher;
+    storeTarballFile: (
+      appRegistration: ApplicationRegistrationEntity,
+    ) => Promise<Pick<FileEntity, 'id'>>;
+  }): Promise<ApplicationRegistrationEntity> {
+    const { universalIdentifier } =
+      params.extractedTarball.manifest.application;
+
+    return this.cacheLockService.withLock(
+      () => this.registerExtractedTarballExclusively(params),
+      `application-tarball-publish:${params.ownerWorkspaceId}:${universalIdentifier}`,
+      APPLICATION_TARBALL_PUBLISH_LOCK_OPTIONS,
+    );
+  }
+
+  private async registerExtractedTarballExclusively({
     extractedTarball: { contentDir, manifest, packageJson },
     ownerWorkspaceId,
     publisher,
@@ -600,16 +627,15 @@ export class ApplicationTarballService {
     return workspaceCustomFlatApplication.universalIdentifier;
   }
 
-  // Each version keeps its own file so an earlier version's artifact is never
-  // overwritten by the next upload; unversioned tarballs keep the legacy path.
+  // Every upload gets its own file, keyed by a fresh id rather than the raw
+  // version: an earlier version's artifact is never overwritten by a later
+  // upload, and semver build metadata cannot break the storage path.
   private async storeTarballFile({
     appRegistration,
-    version,
     tarballBuffer,
     ownerWorkspaceId,
   }: {
     appRegistration: ApplicationRegistrationEntity;
-    version: string | null;
     tarballBuffer: Buffer;
     ownerWorkspaceId: string;
   }): Promise<FileEntity> {
@@ -617,18 +643,15 @@ export class ApplicationTarballService {
       await this.findOwnerCustomApplicationUniversalIdentifier(
         ownerWorkspaceId,
       );
+    const fileId = v4();
 
     return this.fileStorageService.writeFile({
       sourceFile: tarballBuffer,
-      resourcePath: isDefined(version)
-        ? `${appRegistration.id}/${version}/${TARBALL_FILE_NAME}`
-        : `${appRegistration.id}/${TARBALL_FILE_NAME}`,
+      resourcePath: `${appRegistration.id}/${fileId}/${TARBALL_FILE_NAME}`,
       fileFolder: FileFolder.AppTarball,
       applicationUniversalIdentifier,
       workspaceId: ownerWorkspaceId,
-      fileId: isDefined(version)
-        ? v4()
-        : (appRegistration.tarballFileId ?? v4()),
+      fileId,
       settings: {
         isTemporaryFile: false,
         toDelete: false,
@@ -648,7 +671,14 @@ export class ApplicationTarballService {
       ownerWorkspaceId,
     });
 
-    if (isDefined(attachedRegistration)) {
+    // A replayed completion of an already published upload fails the version
+    // progression check; the file it carries is that version's artifact
+    if (
+      isDefined(attachedRegistration) ||
+      (await this.applicationRegistrationVersionService.isTarballFileReferenced(
+        fileId,
+      ))
+    ) {
       return;
     }
 

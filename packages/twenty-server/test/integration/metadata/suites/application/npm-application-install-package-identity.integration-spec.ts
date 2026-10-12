@@ -16,6 +16,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const PACKAGE_NAME = '@twenty-test/install-identity-app';
 const APP_UNIVERSAL_IDENTIFIER = 'b4a1a0e2-1b6a-4b2f-9c58-0d2a5d5b6f10';
@@ -165,7 +166,8 @@ describe('npm application install package identity (integration)', () => {
   });
 
   it('installs a package whose identity and digest match the registration', async () => {
-    const stub = stubNpmRegistry(await buildRegistryPackage());
+    const registryPackage = await buildRegistryPackage();
+    const stub = stubNpmRegistry(registryPackage);
 
     activeStub = stub;
 
@@ -180,5 +182,28 @@ describe('npm application install package identity (integration)', () => {
     expect(errors).toBeUndefined();
     expect(data.installApplication.id).toBeDefined();
     expect(stub.requestedUrls[0]).toBe(expectedMetadataUrl());
+
+    // The catalog sync has not recorded this version, so the install records
+    // it from the registry response it was resolved from and links to it
+    const [application] = await globalThis.testDataSource.query(
+      `SELECT "applicationRegistrationVersionId" FROM core."application"
+       WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+      [APP_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
+    );
+    const [installedVersion] = await globalThis.testDataSource.query(
+      `SELECT id, version, "sourceType", "sourcePackage", "artifactUrl", checksum
+       FROM core."applicationRegistrationVersion"
+       WHERE id = $1`,
+      [application.applicationRegistrationVersionId],
+    );
+
+    expect(installedVersion).toEqual({
+      id: application.applicationRegistrationVersionId,
+      version: VALID_VERSION,
+      sourceType: 'npm',
+      sourcePackage: PACKAGE_NAME,
+      artifactUrl: registryPackage.tarballUrl,
+      checksum: null,
+    });
   });
 });

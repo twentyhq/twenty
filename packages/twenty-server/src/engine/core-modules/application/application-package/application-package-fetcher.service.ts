@@ -40,16 +40,28 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 const APP_FETCHER_TMPDIR = join(tmpdir(), 'twenty-app-fetcher');
 const RESOLUTION_TIMEOUT_MS = 30_000;
 
+export type ResolvedRegistryArtifact = {
+  tarballUrl: string;
+  integrity: string | null;
+};
+
 export type ResolvedPackage = {
   extractedDir: string;
   cleanupDir: string;
   manifest: Manifest;
   packageJson: PackageJson;
+  // Where the registry served the package from, for npm resolutions only
+  registryArtifact?: ResolvedRegistryArtifact;
 };
 
 const registryVersionMetadataSchema = z.object({
   name: z.string(),
-  dist: z.object({ tarball: z.string().optional() }).optional(),
+  dist: z
+    .object({
+      tarball: z.string().optional(),
+      integrity: z.string().optional(),
+    })
+    .optional(),
 });
 
 @Injectable()
@@ -155,7 +167,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
       assertValidNpmVersionSpec(versionSpec);
 
-      const tarballUrl = await this.fetchTarballUrl(
+      const registryArtifact = await this.fetchRegistryArtifact(
         registryUrl,
         sourcePackage,
         versionSpec,
@@ -163,7 +175,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       );
 
       const tarballBuffer = await this.downloadTarball(
-        tarballUrl,
+        registryArtifact.tarballUrl,
         registryUrl,
         authToken,
       );
@@ -196,6 +208,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         cleanupDir: workDir,
         manifest,
         packageJson,
+        registryArtifact,
       };
     } catch (error) {
       await this.cleanupExtractedDir(workDir);
@@ -289,12 +302,12 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     }
   }
 
-  private async fetchTarballUrl(
+  private async fetchRegistryArtifact(
     registryUrl: string,
     sourcePackage: string,
     versionSpec: string,
     authToken?: string,
-  ): Promise<string> {
+  ): Promise<ResolvedRegistryArtifact> {
     const encodedName = encodeURIComponent(sourcePackage);
     const encodedVersionSpec = encodeURIComponent(versionSpec);
     const baseUrl = registryUrl.replace(/\/$/, '');
@@ -355,7 +368,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       );
     }
 
-    return tarballUrl;
+    return { tarballUrl, integrity: metadata.dist?.integrity ?? null };
   }
 
   private async downloadTarball(

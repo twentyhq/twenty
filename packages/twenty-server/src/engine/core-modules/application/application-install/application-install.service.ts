@@ -361,14 +361,11 @@ export class ApplicationInstallService {
     const incomingVersion = resolvedPackage.packageJson.version;
 
     const applicationRegistrationVersionId =
-      (
-        await this.applicationRegistrationVersionService.findOneByApplicationRegistrationIdAndVersion(
-          {
-            applicationRegistrationId: appRegistration.id,
-            version: newVersion,
-          },
-        )
-      )?.id ?? null;
+      await this.resolveApplicationRegistrationVersionId({
+        appRegistration,
+        resolvedPackage,
+        version: newVersion,
+      });
 
     // Rollback is scoped to the work after the application row exists: reaching
     // this catch means creation succeeded, so only an application that never
@@ -633,6 +630,48 @@ export class ApplicationInstallService {
         error instanceof Error ? error.stack : undefined,
       );
     }
+  }
+
+  // Tarball versions are recorded at publish time. An npm version may reach
+  // an install before the catalog sync records it (auto-upgrade workers, or an
+  // explicit version the catalog never served), so the install records it
+  // from the registry response it was resolved from.
+  private async resolveApplicationRegistrationVersionId({
+    appRegistration,
+    resolvedPackage,
+    version,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    resolvedPackage: ResolvedPackage;
+    version: string;
+  }): Promise<string | null> {
+    const recordedVersion =
+      await this.applicationRegistrationVersionService.findOneByApplicationRegistrationIdAndVersion(
+        { applicationRegistrationId: appRegistration.id, version },
+      );
+
+    if (isDefined(recordedVersion)) {
+      return recordedVersion.id;
+    }
+
+    if (
+      appRegistration.sourceType !== ApplicationRegistrationSourceType.NPM ||
+      !isDefined(resolvedPackage.registryArtifact)
+    ) {
+      return null;
+    }
+
+    const installedVersion =
+      await this.applicationRegistrationVersionService.recordPublishedVersion({
+        applicationRegistrationId: appRegistration.id,
+        version,
+        sourceType: ApplicationRegistrationSourceType.NPM,
+        sourcePackage: appRegistration.sourcePackage,
+        artifactUrl: resolvedPackage.registryArtifact.tarballUrl,
+        checksum: resolvedPackage.registryArtifact.integrity,
+      });
+
+    return installedVersion.id;
   }
 
   private async markInstallCompleted({

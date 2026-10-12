@@ -270,6 +270,43 @@ describe('Direct app tarball upload', () => {
     ]);
   });
 
+  it('keeps an earlier version artifact when its completion is replayed after a newer version', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const first = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+    );
+    const second = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.1.0' }),
+    );
+
+    expect(first.completion.errors).toBeUndefined();
+    expect(second.completion.errors).toBeUndefined();
+
+    const { errors } = await completeAppTarballUpload({
+      fileId: first.uploadTarget.fileId,
+      expectToFail: true,
+    });
+
+    expect(
+      errors?.some((error: { message: string }) =>
+        error.message.includes(
+          'version must be higher than the currently deployed version',
+        ),
+      ),
+    ).toBe(true);
+
+    expect((await findFileRow(first.uploadTarget.fileId)).status).toBe(
+      'UPLOADED',
+    );
+    expect(
+      await findVersionRows(first.completion.data!.completeAppTarballUpload.id),
+    ).toMatchObject([
+      { version: '1.0.0', tarballFileId: first.uploadTarget.fileId },
+      { version: '1.1.0', tarballFileId: second.uploadTarget.fileId },
+    ]);
+  });
+
   it('refuses a version that does not progress and drops the promoted file', async () => {
     const universalIdentifier = crypto.randomUUID();
 

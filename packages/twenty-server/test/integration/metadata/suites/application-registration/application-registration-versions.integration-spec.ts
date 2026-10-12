@@ -25,7 +25,11 @@ import {
 // would hang it.
 jest.setTimeout(120000);
 
-const PUBLISHED_VERSIONS = ['1.0.0', '1.1.0'] as const;
+// Build metadata is valid semver and must not break artifact storage
+const PUBLISHED_VERSIONS = ['1.0.0', '1.1.0+build.7'] as const;
+const LATEST_PUBLISHED_VERSION =
+  PUBLISHED_VERSIONS[PUBLISHED_VERSIONS.length - 1];
+const PUBLISHED_VERSIONS_NEWEST_FIRST = [...PUBLISHED_VERSIONS].reverse();
 
 describe('Application registration versions', () => {
   const universalIdentifier = crypto.randomUUID();
@@ -100,7 +104,9 @@ describe('Application registration versions', () => {
   it('records one version per publish with its artifact, fingerprint and publisher', async () => {
     const versions = await findVersions();
 
-    expect(versions.map(({ version }) => version)).toEqual(['1.1.0', '1.0.0']);
+    expect(versions.map(({ version }) => version)).toEqual(
+      PUBLISHED_VERSIONS_NEWEST_FIRST,
+    );
 
     for (const version of versions) {
       expect(version).toMatchObject({
@@ -144,7 +150,7 @@ describe('Application registration versions', () => {
     expect(errors).toBeUndefined();
 
     const latestVersion = (await findVersions()).find(
-      ({ version }) => version === '1.1.0',
+      ({ version }) => version === LATEST_PUBLISHED_VERSION,
     );
 
     const [application] = await ds.query(
@@ -155,7 +161,7 @@ describe('Application registration versions', () => {
     );
 
     expect(application).toEqual({
-      version: '1.1.0',
+      version: LATEST_PUBLISHED_VERSION,
       applicationRegistrationVersionId: latestVersion?.id,
     });
   });
@@ -187,7 +193,7 @@ describe('Application registration versions', () => {
       response.body.data.findAdminApplicationRegistrationVersions;
 
     expect(versions.map(({ version }: { version: string }) => version)).toEqual(
-      ['1.1.0', '1.0.0'],
+      PUBLISHED_VERSIONS_NEWEST_FIRST,
     );
 
     for (const version of versions) {
