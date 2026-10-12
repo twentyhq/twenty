@@ -2539,7 +2539,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }
   });
 
-  it('provisions a fresh workspace with synchronous parent and version mappings', async () => {
+  it('provisions a fresh workspace with core-only workflows and nullable run relations', async () => {
     const services = global.workflowTestServices;
     const freshWorkspaceId = randomUUID();
     const applicationId = randomUUID();
@@ -2589,22 +2589,26 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         },
         workspace,
       );
-      const versions = await global.testDataSource.query(
-        `SELECT wv.id, wv."coreWorkflowVersionId", cv."workspaceWorkflowVersionId", cv."coreWorkflowId", cw."workspaceWorkflowId", cw."lastPublishedCoreWorkflowVersionId", wv."workflowId"
-         FROM "${freshSchema}"."workflowVersion" wv
-         LEFT JOIN core."workflowVersion" cv ON cv.id = wv."coreWorkflowVersionId" AND cv."workspaceId" = $1
-         LEFT JOIN core.workflow cw ON cw.id = cv."coreWorkflowId" AND cw."workspaceId" = $1`,
+      const coreVersions = await global.testDataSource.query(
+        `SELECT cv.id, cv."workspaceWorkflowVersionId", cv."workflowId", cw."workspaceWorkflowId", cw."lastPublishedCoreWorkflowVersionId"
+         FROM core."workflowVersion" cv
+         JOIN core.workflow cw ON cw.id = cv."coreWorkflowId" AND cw."workspaceId" = $1
+         WHERE cv."workspaceId" = $1`,
         [freshWorkspaceId],
       );
-      expect(versions).toHaveLength(2);
-      for (const version of versions) {
-        expect(version.workspaceWorkflowVersionId).toBe(version.id);
-        expect(version.workspaceWorkflowId).toBe(version.workflowId);
-        expect(version.lastPublishedCoreWorkflowVersionId).toBe(
-          version.coreWorkflowVersionId,
-        );
-        expect(version.coreWorkflowId).toBeTruthy();
+      expect(coreVersions).toHaveLength(2);
+      for (const coreVersion of coreVersions) {
+        expect(coreVersion).toMatchObject({
+          workspaceWorkflowVersionId: null,
+          workflowId: null,
+          workspaceWorkflowId: null,
+          lastPublishedCoreWorkflowVersionId: coreVersion.id,
+        });
       }
+      const [{ workspaceWorkflowCount }] = await global.testDataSource.query(
+        `SELECT (SELECT count(*) FROM "${freshSchema}"."workflow")::int + (SELECT count(*) FROM "${freshSchema}"."workflowVersion")::int AS "workspaceWorkflowCount"`,
+      );
+      expect(workspaceWorkflowCount).toBe(0);
       const relationFields = await global.testDataSource.query(
         `SELECT f.name, f."isNullable" FROM core."fieldMetadata" f JOIN core."objectMetadata" o ON o.id = f."objectMetadataId" WHERE o."workspaceId" = $1 AND o."nameSingular" = 'workflowRun' AND f.name IN ('workflow', 'workflowVersion')`,
         [freshWorkspaceId],
