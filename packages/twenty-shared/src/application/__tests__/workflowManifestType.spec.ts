@@ -349,4 +349,38 @@ describe('workflow manifest database event trigger', () => {
       'Filter group missing-group is not declared in stepFilterGroups',
     ]);
   });
+
+  it('refuses a filter group that is its own parent, since only groups under a root are evaluated', () => {
+    const result = workflowManifestSchema.safeParse(
+      withDatabaseEvent({
+        objectUniversalIdentifier: OBJECT_ID,
+        action: 'updated',
+        filter: {
+          stepFilterGroups: [
+            { id: 'root', logicalOperator: 'AND' },
+            {
+              id: 'looping',
+              logicalOperator: 'AND',
+              parentStepFilterGroupId: 'looping',
+            },
+          ],
+          stepFilters: [
+            {
+              id: 'filter',
+              type: 'TEXT',
+              stepOutputKey: '{{trigger.properties.after.status}}',
+              operand: 'IS',
+              value: 'open',
+              stepFilterGroupId: 'looping',
+              fieldMetadataUniversalIdentifier: FIELD_ID,
+            },
+          ],
+        },
+      }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues.map((issue) => issue.message)).toEqual([
+      'Filter group looping is not reachable from a root group',
+    ]);
+  });
 });

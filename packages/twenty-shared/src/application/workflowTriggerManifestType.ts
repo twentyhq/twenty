@@ -112,32 +112,59 @@ const workflowTriggerManifestOptions = [
           return;
         }
 
-        const stepFilterGroupIds = new Set(
-          settings.filter.stepFilterGroups.map(
-            (stepFilterGroup) => stepFilterGroup.id,
-          ),
+        const parentIdByStepFilterGroupId = new Map(
+          settings.filter.stepFilterGroups.map((stepFilterGroup) => [
+            stepFilterGroup.id,
+            stepFilterGroup.parentStepFilterGroupId,
+          ]),
         );
 
         settings.filter.stepFilterGroups.forEach((stepFilterGroup, index) => {
-          if (
-            isDefined(stepFilterGroup.parentStepFilterGroupId) &&
-            !stepFilterGroupIds.has(stepFilterGroup.parentStepFilterGroupId)
-          ) {
+          const parentId = stepFilterGroup.parentStepFilterGroupId;
+          const path = [
+            'filter',
+            'stepFilterGroups',
+            index,
+            'parentStepFilterGroupId',
+          ];
+
+          if (!isDefined(parentId)) {
+            return;
+          }
+
+          if (!parentIdByStepFilterGroupId.has(parentId)) {
             context.addIssue({
               code: 'custom',
-              path: [
-                'filter',
-                'stepFilterGroups',
-                index,
-                'parentStepFilterGroupId',
-              ],
-              message: `Filter group ${stepFilterGroup.parentStepFilterGroupId} is not declared in stepFilterGroups`,
+              path,
+              message: `Filter group ${parentId} is not declared in stepFilterGroups`,
             });
+
+            return;
+          }
+
+          const visitedIds = new Set([stepFilterGroup.id]);
+
+          for (
+            let ancestorId: string | undefined = parentId;
+            isDefined(ancestorId);
+            ancestorId = parentIdByStepFilterGroupId.get(ancestorId)
+          ) {
+            if (visitedIds.has(ancestorId)) {
+              context.addIssue({
+                code: 'custom',
+                path,
+                message: `Filter group ${stepFilterGroup.id} is not reachable from a root group`,
+              });
+
+              return;
+            }
+
+            visitedIds.add(ancestorId);
           }
         });
 
         settings.filter.stepFilters.forEach((stepFilter, index) => {
-          if (!stepFilterGroupIds.has(stepFilter.stepFilterGroupId)) {
+          if (!parentIdByStepFilterGroupId.has(stepFilter.stepFilterGroupId)) {
             context.addIssue({
               code: 'custom',
               path: ['filter', 'stepFilters', index, 'stepFilterGroupId'],
