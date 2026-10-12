@@ -29,6 +29,12 @@ type BreakdownRow = {
 
 type BreakdownGroupByField = 'dimension' | 'context';
 
+type AnalyticsPeriodQueryParams = {
+  applicationRegistrationId: string;
+  periodStart: string;
+  periodEnd: string;
+};
+
 const PERIOD_WHERE_CLAUSE = `
   applicationRegistrationId = {applicationRegistrationId:String}
   AND timestamp >= {periodStart:DateTime64(3)}
@@ -109,7 +115,7 @@ export class ApplicationRegistrationAnalyticsService {
     applicationRegistrationId,
     periodStart,
     periodEnd,
-  }: AnalyticsPeriodParams): Record<string, unknown> {
+  }: AnalyticsPeriodParams): AnalyticsPeriodQueryParams {
     return {
       applicationRegistrationId,
       periodStart: formatDateTimeForClickHouse(periodStart),

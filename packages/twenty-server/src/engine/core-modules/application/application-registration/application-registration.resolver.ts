@@ -252,13 +252,7 @@ export class ApplicationRegistrationResolver {
       requireApplicationRegistrationOwnership: true,
     })
     input: ApplicationRegistrationAnalyticsInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationAnalyticsDTO> {
-    await this.applicationRegistrationLookupService.findOneByIdOrThrow({
-      applicationRegistrationId: input.id,
-      ownerWorkspaceId: workspaceId,
-    });
-
     return this.applicationRegistrationAnalyticsService.getAnalytics({
       applicationRegistrationId: input.id,
       ...resolveApplicationRegistrationAnalyticsPeriod(input),
