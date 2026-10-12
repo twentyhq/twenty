@@ -1,4 +1,4 @@
-import { type Locator, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export class LoginPage {
   private readonly loginWithGoogleButton: Locator;
@@ -100,11 +100,17 @@ export class LoginPage {
   }
 
   async clickLoginWithEmailIfVisible() {
-    try {
-      await this.loginWithEmailButton.click({ timeout: 3000 });
-    } catch {
-      // Button not found - email field might already be visible (SSO-only or different auth flow)
-    }
+    // Off the default domain the sign-in page renders, then redirects to the
+    // default domain, which discards a click that landed before the redirect.
+    await expect(async () => {
+      if (!(await this.emailField.isVisible())) {
+        await this.loginWithEmailButton.click({ timeout: 5000 });
+      }
+
+      await expect(this.emailField).toBeVisible({ timeout: 5000 });
+      await this.page.waitForLoadState('networkidle');
+      await expect(this.emailField).toBeVisible({ timeout: 1000 });
+    }).toPass({ timeout: 60000 });
   }
 
   async clickContinueButton() {
