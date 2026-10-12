@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
@@ -24,8 +23,8 @@ import { SettingsTranslationsCard } from '@/settings/translations/components/Set
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -37,10 +36,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import {
-  BillingEntitlementKey,
-  FeatureFlagKey,
-} from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
@@ -109,12 +105,7 @@ export const ObjectSettings = ({
   const isValidationRulesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
   );
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const hasValidationRulesEntitlement =
-    checkIfBillingEntitlementIsEnabledOnWorkspace(
-      BillingEntitlementKey.VALIDATION_RULES,
-      currentWorkspace,
-    );
+  const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
   );
