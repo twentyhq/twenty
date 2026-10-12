@@ -8,6 +8,7 @@ class FakeElement {}
 
 class FakeTextarea extends FakeElement {
   tagName = 'HTML-TEXTAREA';
+  isConnected = true;
   style = { blockSize: '' };
 }
 
@@ -146,7 +147,7 @@ describe('installElementGeometryPolyfill', () => {
       clientHeight: 48,
       scrollHeight: 48,
       textareaIntrinsicScrollHeight: 48,
-    }) as ReturnType<typeof createElementGeometrySnapshotFixture> | null;
+    });
     let notifyGeometryUpdate = () => {};
 
     installOn(
@@ -165,7 +166,7 @@ describe('installElementGeometryPolyfill', () => {
     textarea.style.blockSize = 'auto';
     const borderBlockSize = textarea.offsetHeight - textarea.clientHeight;
     textarea.style.blockSize = `${textarea.scrollHeight + borderBlockSize}px`;
-    snapshot = null;
+    textarea.isConnected = false;
     notifyGeometryUpdate();
     snapshot = createElementGeometrySnapshotFixture({
       textareaIntrinsicScrollHeight: 80,

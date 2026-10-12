@@ -31,7 +31,7 @@ export const createTextareaIntrinsicSizeReader = (
       }
 
       const snapshot = geometryStore.resolveElementSnapshot(textarea);
-      const isDetached = textarea.isConnected === false;
+      const isDetached = !textarea.isConnected;
       const hasLostSnapshot =
         !isDefined(snapshot) && measurement.hasReceivedSnapshot;
 
