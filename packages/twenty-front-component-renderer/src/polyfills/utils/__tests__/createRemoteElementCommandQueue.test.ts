@@ -1,6 +1,7 @@
 import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 
-import { createInputSelectionCommandQueue } from '../createInputSelectionCommandQueue';
+import { createRemoteElementCommandQueue } from '@/polyfills/utils/createRemoteElementCommandQueue';
+import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
 
 jest.mock('@remote-dom/core/elements', () => ({
   updateRemoteElementProperty: jest.fn(),
@@ -10,13 +11,17 @@ const updateRemoteElementPropertyMock = jest.mocked(
   updateRemoteElementProperty,
 );
 
-describe('createInputSelectionCommandQueue', () => {
+describe('createRemoteElementCommandQueue', () => {
   beforeEach(() => {
     updateRemoteElementPropertyMock.mockClear();
   });
 
   it('should number commands in request order across elements', () => {
-    const commandQueue = createInputSelectionCommandQueue();
+    const commandQueue = createRemoteElementCommandQueue<InputSelectionRequest>(
+      {
+        bridgeProperty: 'request',
+      },
+    );
     const firstElement = {};
     const secondElement = {};
 
@@ -43,7 +48,11 @@ describe('createInputSelectionCommandQueue', () => {
   });
 
   it('should not resend the queue when the host acknowledges no new command', () => {
-    const commandQueue = createInputSelectionCommandQueue();
+    const commandQueue = createRemoteElementCommandQueue<InputSelectionRequest>(
+      {
+        bridgeProperty: 'request',
+      },
+    );
     const element = {};
 
     commandQueue.enqueueCommand({ element, request: { method: 'select' } });
@@ -58,7 +67,11 @@ describe('createInputSelectionCommandQueue', () => {
   });
 
   it('should send nothing when discarding an element without pending commands', () => {
-    const commandQueue = createInputSelectionCommandQueue();
+    const commandQueue = createRemoteElementCommandQueue<InputSelectionRequest>(
+      {
+        bridgeProperty: 'request',
+      },
+    );
 
     commandQueue.discardPendingCommands({});
 

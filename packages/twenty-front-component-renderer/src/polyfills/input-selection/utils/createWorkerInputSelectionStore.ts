@@ -3,15 +3,17 @@ import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
 import { type WorkerInputSelectionStore } from '@/polyfills/input-selection/types/WorkerInputSelectionStore';
-import { createInputSelectionCommandQueue } from '@/polyfills/input-selection/utils/createInputSelectionCommandQueue';
 import { resolveOptimisticInputSelectionState } from '@/polyfills/input-selection/utils/resolveOptimisticInputSelectionState';
+import { createRemoteElementCommandQueue } from '@/polyfills/utils/createRemoteElementCommandQueue';
 import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
 import { type InputSelectionSnapshot } from '@/types/InputSelectionSnapshot';
 import { type InputSelectionState } from '@/types/InputSelectionState';
 
 export const createWorkerInputSelectionStore =
   (): WorkerInputSelectionStore => {
-    const commandQueue = createInputSelectionCommandQueue();
+    const commandQueue = createRemoteElementCommandQueue<InputSelectionRequest>(
+      { bridgeProperty: INPUT_SELECTION_BRIDGE_PROPERTIES.request },
+    );
     const hostSelectionStates = new WeakMap<object, InputSelectionState>();
     const hostSelectionSubscriptions = new WeakMap<
       object,
