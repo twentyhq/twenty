@@ -38,6 +38,7 @@ import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parse
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
+import { AutocompleteInput } from '@/ui/input/components/AutocompleteInput';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -47,6 +48,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const SUGGESTIONS_SEARCH_DEBOUNCE_MS = 300;
@@ -421,7 +423,11 @@ export const EmailRecipientsFieldInput = ({
   });
 
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.ctrlKey || event.metaKey) {
+    if (
+      isKeyboardEventComposing(event.nativeEvent) ||
+      event.ctrlKey ||
+      event.metaKey
+    ) {
       return;
     }
 
@@ -561,7 +567,7 @@ export const EmailRecipientsFieldInput = ({
   };
 
   const recipientsInput = (
-    <Autocomplete.Input
+    <AutocompleteInput
       key="email-recipients-input"
       render={(inputProps) => (
         // oxlint-disable-next-line react/jsx-props-no-spreading

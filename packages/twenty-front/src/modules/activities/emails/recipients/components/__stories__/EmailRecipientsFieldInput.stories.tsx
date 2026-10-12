@@ -1,6 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fireEvent,
+  fn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { StatefulEmailRecipientsFieldInput } from '@/activities/emails/recipients/components/__stories__/StatefulEmailRecipientsFieldInput';
@@ -124,6 +131,38 @@ export const CommitsBufferWhileSearchIsPending: Story = {
 
     expect(canvas.getByText('jeff@example.net')).toBeVisible();
     expect(canvas.queryByText('Jeffery Griffin')).not.toBeInTheDocument();
+    expect(input).toHaveValue('');
+  },
+};
+
+export const KeepsCompositionConfirmationInTheInput: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const input = await canvas.findByRole('combobox', { name: 'To' });
+
+    await userEvent.type(input, 'jeff');
+    await screen.findByRole('option', { name: /Jeffery Griffin/ });
+    fireEvent.compositionStart(input);
+    fireEvent.keyDown(input, {
+      key: 'Enter',
+      code: 'Enter',
+      isComposing: true,
+      which: 0,
+    });
+
+    expect(input).toHaveValue('jeff');
+    expect(
+      within(canvas.getByRole('group', { name: 'to recipients' })).queryByText(
+        'Jeffery Griffin',
+      ),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('listbox')).toBeVisible();
+
+    fireEvent.compositionEnd(input);
+    await userEvent.keyboard('{Enter}');
+
+    expect(canvas.getByText('Jeffery Griffin')).toBeVisible();
     expect(input).toHaveValue('');
   },
 };

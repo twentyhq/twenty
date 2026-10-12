@@ -46,6 +46,8 @@ Some primitives package supporting overlay elements inside their `Popup` part:
 
 Place content directly inside these popup parts. Their portal may move the rendered DOM to another container while preserving the component hierarchy and context. See [theming](/ui/theming#scope-an-override) for scoped portal containers.
 
+[Autocomplete](/ui/primitives/input/autocomplete) exposes separate `Portal`, `Positioner`, and `Popup` parts. Configure the destination and mounting on Portal, placement and collision handling on Positioner, and content width and native props on Popup. Their refs and render composition target their own elements. Autocomplete also preserves the installed upstream collection, grouping, grid, filtering, and status parts.
+
 [Dialog](/ui/primitives/surfaces/dialog) and [AlertDialog](/ui/primitives/surfaces/alert-dialog) expose separate `Portal`, `Backdrop`, `Viewport` and `Popup` parts. Configure mounting and the destination on Portal, overlay appearance on Backdrop and Viewport, and content size and focus on Popup. Each part preserves its own native attributes, ref target and render composition. These dialog APIs are for standalone UI and the Twenty host. Front components use the [SDK host dialog API](/developers/extend/apps/layout/front-components#host-communication-api).
 
 ### Custom components
