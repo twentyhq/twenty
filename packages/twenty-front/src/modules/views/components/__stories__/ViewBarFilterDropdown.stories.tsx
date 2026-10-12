@@ -285,8 +285,13 @@ export const AdvancedFilterCountBadge: Story = {
 
     expect(advancedFilterButton).toBeVisible();
 
-    const pillBadge = await canvas.findByText('3');
+    const badge = await canvas.findByText('3');
+    const badgeStyle = getComputedStyle(badge);
 
-    expect(pillBadge).toBeVisible();
+    await expect(badge).toBeVisible();
+    await expect(badge).toHaveStyle({
+      backgroundColor: badgeStyle.getPropertyValue('--t-color-blue3'),
+      color: badgeStyle.getPropertyValue('--t-color-blue'),
+    });
   },
 };

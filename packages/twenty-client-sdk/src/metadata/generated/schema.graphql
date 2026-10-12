@@ -149,6 +149,7 @@ type AgentMessage {
   processedAt: DateTime
   role: String!
   senderUserWorkspaceId: UUID
+  senderWorkspaceMemberId: UUID
   status: String!
   threadId: UUID!
   turnId: UUID

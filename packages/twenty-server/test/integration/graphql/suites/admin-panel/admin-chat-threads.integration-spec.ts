@@ -138,8 +138,8 @@ describe('Admin panel global chat threads (integration)', () => {
   }): Promise<string> => {
     await insertHistory(
       'agentChatThread',
-      ['id', 'workspaceMemberId', 'userWorkspaceId', 'title'],
-      [id, workspaceMemberId, userWorkspaceId, title],
+      ['id', 'workspaceMemberId', 'title'],
+      [id, workspaceMemberId, title],
       'ON CONFLICT (id) DO NOTHING',
     );
 
@@ -523,8 +523,8 @@ describe('Admin panel global chat threads (integration)', () => {
 
       await insertHistory(
         'agentChatThread',
-        ['id', 'userWorkspaceId', 'title'],
-        [ownerlessThreadId, null, 'Workflow run conversation'],
+        ['id', 'title'],
+        [ownerlessThreadId, 'Workflow run conversation'],
         'ON CONFLICT (id) DO NOTHING',
       );
       seededThreadIds.push(ownerlessThreadId);

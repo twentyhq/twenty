@@ -81,7 +81,7 @@ describe('Sending an inbox message as an application', () => {
 
   const readMessages = (id: string) =>
     global.testDataSource.query(
-      `SELECT id, role, "isHidden", "senderUserWorkspaceId", "senderApplicationId"
+      `SELECT id, role, "senderWorkspaceMemberId", "senderApplicationId"
        FROM "${schema}"."agentMessage" WHERE "threadId" = $1
        ORDER BY "processedAt" ASC, "createdAt" ASC`,
       [id],
@@ -190,13 +190,11 @@ describe('Sending an inbox message as an application', () => {
     expect(messages).toEqual([
       expect.objectContaining({
         role: 'system',
-        isHidden: false,
-        senderUserWorkspaceId: null,
+        senderWorkspaceMemberId: null,
         senderApplicationId: null,
       }),
       expect.objectContaining({
         role: 'assistant',
-        isHidden: false,
         senderApplicationId: application.id,
       }),
     ]);

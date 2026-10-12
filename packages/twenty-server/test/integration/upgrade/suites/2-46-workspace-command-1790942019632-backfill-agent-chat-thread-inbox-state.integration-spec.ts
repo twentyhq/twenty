@@ -169,6 +169,11 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
       'WorkspaceOrmManager',
     );
 
+    // 2.47 dropped the column the 2.46 commands still read
+    await global.testDataSource.query(
+      `ALTER TABLE ${SCHEMA}."agentMessage" ADD COLUMN IF NOT EXISTS "isHidden" boolean NOT NULL DEFAULT false`,
+    );
+
     // What a workspace that has not run the 2.46 commands yet looks like
     await runCommand(backfillCommand, 'down');
     await runCommand(objectCommand, 'down');
@@ -274,6 +279,9 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
     await global.testDataSource.query(
       `DELETE FROM ${SCHEMA}."recordShare" WHERE "recordId" = ANY($1)`,
       [threadIds],
+    );
+    await global.testDataSource.query(
+      `ALTER TABLE ${SCHEMA}."agentMessage" DROP COLUMN IF EXISTS "isHidden"`,
     );
   });
 
