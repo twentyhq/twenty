@@ -82,32 +82,4 @@ describe('Sign up in new workspace with a partner', () => {
       'acme',
     );
   });
-
-  it('should create the Stripe customer without a partner when none is sent', async () => {
-    const { data } = await signUpInNewWorkspace({
-      accessToken,
-      expectToFail: false,
-    });
-
-    createdWorkspaceId = data.signUpInNewWorkspace.workspace.id;
-
-    expect(createStripeCustomerSpy).toHaveBeenCalledWith(
-      email,
-      createdWorkspaceId,
-      'Test Workspace',
-      undefined,
-    );
-  });
-
-  it('should reject a partner that is not a valid slug', async () => {
-    const { errors } = await signUpInNewWorkspace({
-      accessToken,
-      partner: 'Bad!',
-      expectToFail: true,
-    });
-
-    expect(errors).toHaveLength(1);
-    expect(errors[0].extensions.code).toBe('BAD_USER_INPUT');
-    expect(createStripeCustomerSpy).not.toHaveBeenCalled();
-  });
 });

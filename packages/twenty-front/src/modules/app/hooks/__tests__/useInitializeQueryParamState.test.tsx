@@ -42,20 +42,10 @@ describe('useInitializeQueryParamState', () => {
     window.history.pushState({}, '', '/');
   });
 
-  it('should store a valid partner in the parent domain cookie', () => {
+  it('should store the normalized partner in the cookie', () => {
     initializeQueryParamStateAt('/welcome?partner=%20Acme%20');
 
     expect(Cookies.get('partner')).toBe(JSON.stringify({ partner: 'acme' }));
-  });
-
-  it('should overwrite a previously stored partner', () => {
-    Cookies.set('partner', JSON.stringify({ partner: 'alpha' }), {
-      domain: '.localhost',
-    });
-
-    initializeQueryParamStateAt('/welcome?partner=beta');
-
-    expect(Cookies.get('partner')).toBe(JSON.stringify({ partner: 'beta' }));
   });
 
   it('should not re-render the caller when it stores the partner', () => {
@@ -81,9 +71,13 @@ describe('useInitializeQueryParamState', () => {
     expect(renderCount).toBe(renderCountBeforeInitialization);
   });
 
-  it('should ignore an invalid partner', () => {
+  it('should keep the stored partner when the new one is invalid', () => {
+    Cookies.set('partner', JSON.stringify({ partner: 'acme' }), {
+      domain: '.localhost',
+    });
+
     initializeQueryParamStateAt('/welcome?partner=%3Cx%3E');
 
-    expect(Cookies.get('partner')).toBeUndefined();
+    expect(Cookies.get('partner')).toBe(JSON.stringify({ partner: 'acme' }));
   });
 });

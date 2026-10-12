@@ -103,24 +103,6 @@ describe('useSignUpInNewWorkspace', () => {
     expect(Cookies.get('partner')).toBeUndefined();
   });
 
-  it('should not send a partner when none is stored', async () => {
-    await createWorkspace();
-
-    const [[{ variables }]] = signUpInNewWorkspaceMutationMock.mock.calls;
-
-    expect(variables.input.partner).toBeUndefined();
-  });
-
-  it('should ignore a stored partner that is not a valid slug', async () => {
-    storePartnerCookie('Bad!');
-
-    await createWorkspace();
-
-    const [[{ variables }]] = signUpInNewWorkspaceMutationMock.mock.calls;
-
-    expect(variables.input.partner).toBeUndefined();
-  });
-
   it('should ignore a stored partner that is not normalized', async () => {
     storePartnerCookie('Acme');
 

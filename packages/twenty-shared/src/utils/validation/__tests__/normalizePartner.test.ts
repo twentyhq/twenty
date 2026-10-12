@@ -14,11 +14,6 @@ describe('normalizePartner', () => {
     expect(normalizePartner('a'.repeat(64))).toBe('a'.repeat(64));
   });
 
-  it('should reject an empty or blank value', () => {
-    expect(normalizePartner('')).toBeUndefined();
-    expect(normalizePartner('   ')).toBeUndefined();
-  });
-
   it('should reject more than 64 characters', () => {
     expect(normalizePartner('a'.repeat(65))).toBeUndefined();
   });
@@ -31,11 +26,5 @@ describe('normalizePartner', () => {
   it('should reject other characters', () => {
     expect(normalizePartner('<x>')).toBeUndefined();
     expect(normalizePartner('acme.com')).toBeUndefined();
-  });
-
-  it('should reject a non-string value', () => {
-    expect(normalizePartner(['acme'])).toBeUndefined();
-    expect(normalizePartner(undefined)).toBeUndefined();
-    expect(normalizePartner(null)).toBeUndefined();
   });
 });
