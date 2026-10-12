@@ -291,7 +291,6 @@ export const EmailComposerFields = ({
         <FormAdvancedTextFieldInput
           defaultValue={composerState.initialBody}
           onChange={composerState.setBody}
-          placeholder={t`Type something or press "/" to see commands`}
           profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
           onImageUpload={uploadEmailImage}
         />

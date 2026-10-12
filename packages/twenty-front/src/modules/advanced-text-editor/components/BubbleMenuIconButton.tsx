@@ -26,7 +26,7 @@ export const BubbleMenuIconButton = ({
       disabled={disabled}
       aria-pressed={isActive}
       onClick={onClick}
-      emphasis={isActive === true ? 'standard' : 'subtle'}
+      variant={isActive === true ? 'soft' : 'ghost'}
       size="sm"
       aria-label={label}
     >

@@ -8,6 +8,7 @@
 
   [data-dropdown-item]:focus-visible {
     background: var(--t-background-transparent-light);
+    outline: none;
   }
 }
 

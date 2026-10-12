@@ -6,6 +6,7 @@ import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
 import { SidePanelPages } from 'twenty-shared/types';
+import { useTheme } from 'twenty-ui/theme';
 
 import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
 
@@ -14,6 +15,8 @@ type SidePanelPageInfoProps = {
 };
 
 export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
+  const theme = useTheme();
+
   if (!isDefined(pageChip)) {
     return null;
   }
@@ -60,6 +63,29 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
 
   if (isAskAiPage) {
     return <SidePanelAskAiInfo />;
+  }
+
+  const shouldShowPageIcon = pageChip.page?.page
+    ? [
+        SidePanelPages.EmailBlockSettings,
+        SidePanelPages.EmailPageStyle,
+        SidePanelPages.EmailBlockStyle,
+        SidePanelPages.AddToMessageList,
+      ].includes(pageChip.page.page)
+    : false;
+
+  if (shouldShowPageIcon && isDefined(pageChip.page)) {
+    const PageIcon = pageChip.page.pageIcon;
+
+    return (
+      <HeaderIdentifier
+        icon={
+          <PageIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        }
+        iconColor={theme.font.color.tertiary}
+        title={pageChip.text ?? ''}
+      />
+    );
   }
 
   return <HeaderIdentifier title={pageChip.text ?? ''} />;

@@ -4,6 +4,7 @@ import { type useCalendarEventComposer } from '@/activities/calendar/hooks/useCa
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
+import { COMPOSER_LABEL_MIN_WIDTH } from '@/activities/constants/ComposerLabelMinWidth';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
 import { useEmailRecipientsDragAndDrop } from '@/activities/emails/recipients/hooks/useEmailRecipientsDragAndDrop';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
@@ -25,8 +26,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-const COMPOSER_LABEL_MIN_WIDTH = '80px';
 
 const StyledFieldsContainer = styled.div`
   display: flex;

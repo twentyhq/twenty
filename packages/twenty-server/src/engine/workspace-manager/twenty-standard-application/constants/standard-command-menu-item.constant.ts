@@ -1306,13 +1306,13 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   emailBlockSettings: {
     universalIdentifier: '5c8a2f41-97be-4f3d-9a46-2f18d17f30a2',
     label: i18nLabel(
-      msg({ message: `Block Settings`, context: 'commandMenuItem.label' }),
+      msg({ message: `Add Block`, context: 'commandMenuItem.label' }),
     ),
-    icon: 'IconAdjustments',
+    icon: 'IconPlus',
     isPinned: true,
     position: 70,
     shortLabel: i18nLabel(
-      msg({ message: `Design`, context: 'commandMenuItem.shortLabel' }),
+      msg({ message: `Add Block`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
@@ -1321,6 +1321,26 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.messageCampaign.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EMAIL_BLOCK_SETTINGS,
+    hotKeys: null,
+  },
+  emailPageStyle: {
+    universalIdentifier: 'c1c2d63f-7ec3-46aa-8a79-414cefb42705',
+    label: i18nLabel(
+      msg({ message: `Email Style`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconPaint',
+    isPinned: false,
+    position: 70.5,
+    shortLabel: i18nLabel(
+      msg({ message: `Email Style`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'pageType == "RECORD_PAGE" and numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EMAIL_PAGE_STYLE,
     hotKeys: null,
   },
   goToSettings: {
@@ -1767,6 +1787,26 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.messageList.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.DUPLICATE_MESSAGE_LIST,
+    hotKeys: null,
+  },
+  addToMessageList: {
+    universalIdentifier: '8574ad1f-2575-4ba2-8f26-c29bdff8de71',
+    label: i18nLabel(
+      msg({ message: `Add to List`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconUsersGroup',
+    isPinned: false,
+    position: 64.5,
+    shortLabel: i18nLabel(
+      msg({ message: `Add to List`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and (isSelectAll or noneDefined(selectedRecords, "deletedAt"))',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.person.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ADD_TO_MESSAGE_LIST,
     hotKeys: null,
   },
 } as const;

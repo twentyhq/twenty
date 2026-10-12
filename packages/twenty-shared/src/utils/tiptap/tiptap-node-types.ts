@@ -10,6 +10,7 @@ export const TIPTAP_NODE_TYPES = {
   BULLET_LIST: 'bulletList',
   ORDERED_LIST: 'orderedList',
   LIST_ITEM: 'listItem',
+  BLOCKQUOTE: 'blockquote',
   TASK_LIST: 'taskList',
   TASK_ITEM: 'taskItem',
   HARD_BREAK: 'hardBreak',

@@ -1,4 +1,4 @@
-import { buildCampaignDeliveryHint } from '@/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint';
+import { buildCampaignDeliveryHint } from '@/activities/emails/utils/buildCampaignDeliveryHint';
 
 describe('buildCampaignDeliveryHint', () => {
   it('warns that an immediate send cannot be undone', () => {

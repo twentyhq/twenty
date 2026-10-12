@@ -9,6 +9,7 @@ import { CancelMessageCampaignSingleRecordCommand } from '@/command-menu-item/en
 import { DuplicateMessageCampaignSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/DuplicateMessageCampaignSingleRecordCommand';
 import { SendMessageCampaignTestSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/SendMessageCampaignTestSingleRecordCommand';
 import { OpenEmailBlockSettingsSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailBlockSettingsSingleRecordCommand';
+import { OpenEmailPageStyleSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailPageStyleSingleRecordCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
 import { EditLayoutCommand } from '@/command-menu-item/engine-command/global/components/EditLayoutCommand';
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
@@ -31,6 +32,7 @@ import { RemoveFromFavoritesCommand } from '@/command-menu-item/engine-command/r
 import { CancelDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/CancelDashboardSingleRecordCommand';
 import { DuplicateDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand';
 import { DuplicateMessageListSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand';
+import { AddToMessageListRecordsCommand } from '@/command-menu-item/engine-command/record/components/AddToMessageListRecordsCommand';
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
@@ -82,6 +84,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.DUPLICATE_MESSAGE_LIST]: (
     <DuplicateMessageListSingleRecordCommand />
   ),
+  [EngineComponentKey.ADD_TO_MESSAGE_LIST]: <AddToMessageListRecordsCommand />,
   [EngineComponentKey.DUPLICATE_WORKFLOW]: (
     <DuplicateWorkflowSingleRecordCommand />
   ),
@@ -303,6 +306,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.EMAIL_BLOCK_SETTINGS]: (
     <OpenEmailBlockSettingsSingleRecordCommand />
+  ),
+  [EngineComponentKey.EMAIL_PAGE_STYLE]: (
+    <OpenEmailPageStyleSingleRecordCommand />
   ),
 
   // Deprecated keys kept for backward compatibility until migration runs

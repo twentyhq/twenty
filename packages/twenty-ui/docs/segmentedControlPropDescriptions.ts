@@ -7,6 +7,7 @@ export const SEGMENTED_CONTROL_PROP_DESCRIPTIONS = {
   itemWidth: 'Use equal-width options or size each option to its content.',
   options:
     'Options with a unique string `value`, a `label` or `startIcon`, and optional `disabled`. Icon-only options require an `aria-label`.',
+  size: 'Control height: `sm` (24px) or `md` (32px).',
   'aria-label': 'Accessible group name. Supply this or `aria-labelledby`.',
   'aria-labelledby':
     'ID of an element that labels the group. Supply this or `aria-label`.',

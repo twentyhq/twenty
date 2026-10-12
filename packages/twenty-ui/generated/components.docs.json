@@ -1108,6 +1108,13 @@
         "description": "Whether the user must choose a value before submitting a form."
       },
       {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Control height: `sm` (24px) or `md` (32px)."
+      },
+      {
         "name": "style",
         "type": "CSSProperties | ((state: RadioGroupState) => CSSProperties | undefined)",
         "required": false,

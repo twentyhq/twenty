@@ -32,7 +32,6 @@ export enum SidePanelPages {
   ComposeEmail = 'compose-email',
   ComposeCalendarEvent = 'compose-calendar-event',
   CreateRelatedRecord = 'create-related-record',
-  SendCampaign = 'send-campaign',
   RecordCreationForm = 'record-creation-form',
   RecordCreationFormSettings = 'record-creation-form-settings',
   SendCampaignTest = 'send-campaign-test',
@@ -47,4 +46,5 @@ export enum SidePanelPages {
   ShareRecord = 'share-record',
   SnoozeAiChat = 'snooze-ai-chat',
   AssignAiChat = 'assign-ai-chat',
+  AddToMessageList = 'add-to-message-list',
 }

@@ -1,9 +1,25 @@
 import { styled } from '@linaria/react';
-import { type MouseEventHandler, type ReactNode } from 'react';
+import { type MouseEvent, type MouseEventHandler, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { type IconComponent } from 'twenty-ui/icon';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const ROW_MIN_HEIGHT = '40px';
+
+const NESTED_CONTROL_SELECTOR =
+  'input, textarea, button, a[href], [role="button"]';
+
+const StyledContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  padding: 0 ${themeCssVariables.spacing[2]};
+
+  & :focus-visible {
+    outline: none;
+  }
+`;
 
 const StyledRow = styled.div<{ $clickable: boolean }>`
   align-items: center;
@@ -11,15 +27,33 @@ const StyledRow = styled.div<{ $clickable: boolean }>`
   box-sizing: border-box;
   cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[3]};
   min-height: ${ROW_MIN_HEIGHT};
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]}
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]}
     ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[3]};
   width: 100%;
+
+  &:hover {
+    background-color: ${({ $clickable }) =>
+      $clickable
+        ? themeCssVariables.background.transparent.lighter
+        : 'transparent'};
+  }
+
+  &:has(${StyledContent} :focus-visible) {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+  }
 
   &:last-of-type {
     border-bottom: none;
   }
+`;
+
+const StyledLeading = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledLabel = styled.span<{ $minWidth: string | undefined }>`
@@ -30,13 +64,6 @@ const StyledLabel = styled.span<{ $minWidth: string | undefined }>`
   min-width: ${({ $minWidth }) => $minWidth ?? 'auto'};
 `;
 
-const StyledContent = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  min-width: 0;
-`;
-
 const StyledTrailing = styled.div`
   align-items: center;
   display: flex;
@@ -44,6 +71,7 @@ const StyledTrailing = styled.div`
 
 type ComposerFieldRowProps = {
   label: string;
+  Icon?: IconComponent;
   children: ReactNode;
   trailing?: ReactNode;
   onClick?: MouseEventHandler<HTMLDivElement>;
@@ -54,25 +82,51 @@ type ComposerFieldRowProps = {
 // The label is a plain span, so the row is named as a group to give assistive technology the field name.
 export const ComposerFieldRow = ({
   label,
+  Icon,
   children,
   trailing,
   onClick,
   labelMinWidth,
-}: ComposerFieldRowProps) => (
-  <StyledRow
-    role="group"
-    aria-label={label}
-    $clickable={isDefined(onClick)}
-    onClick={onClick}
-  >
-    <StyledLabel aria-hidden="true" $minWidth={labelMinWidth}>
-      {label}
-    </StyledLabel>
-    <StyledContent>{children}</StyledContent>
-    {isDefined(trailing) && (
-      <StyledTrailing onClick={(event) => event.stopPropagation()}>
-        {trailing}
-      </StyledTrailing>
-    )}
-  </StyledRow>
-);
+}: ComposerFieldRowProps) => {
+  const theme = useTheme();
+
+  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (!(event.target instanceof Element)) {
+      return;
+    }
+
+    const row = event.currentTarget;
+    const nestedControl = event.target.closest(NESTED_CONTROL_SELECTOR);
+    const isFromPortaledContent = !row.contains(event.target);
+    const isOnNestedControl =
+      isDefined(nestedControl) && row.contains(nestedControl);
+
+    if (isFromPortaledContent || isOnNestedControl) {
+      return;
+    }
+
+    onClick?.(event);
+  };
+
+  return (
+    <StyledRow
+      role="group"
+      aria-label={label}
+      $clickable={isDefined(onClick)}
+      onClick={isDefined(onClick) ? handleClick : undefined}
+    >
+      <StyledLeading aria-hidden="true">
+        {isDefined(Icon) && (
+          <Icon size={theme.icon.size.md} color={theme.font.color.light} />
+        )}
+        <StyledLabel $minWidth={labelMinWidth}>{label}</StyledLabel>
+      </StyledLeading>
+      <StyledContent>{children}</StyledContent>
+      {isDefined(trailing) && (
+        <StyledTrailing onClick={(event) => event.stopPropagation()}>
+          {trailing}
+        </StyledTrailing>
+      )}
+    </StyledRow>
+  );
+};

@@ -1,0 +1,48 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index 5bb89346860e3c334731755df48cfb72a6a9d3b7..a18965a2884c31eab1dcf639f72b472ec31e107d 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -210,7 +210,9 @@ function findBestDragTarget(view, coords, options) {
+ 	});
+ 	if (!posInfo) return null;
+ 	const { doc } = view.state;
+-	const $pos = doc.resolve(posInfo.pos);
++	const insideNode = posInfo.inside >= 0 ? doc.nodeAt(posInfo.inside) : null;
++	const hoveredPos = insideNode && insideNode.isAtom && !insideNode.isInline ? posInfo.inside : posInfo.pos;
++	const $pos = doc.resolve(hoveredPos);
+ 	const rules = [];
+ 	if (options.defaultRules) rules.push(...defaultRules);
+ 	rules.push(...options.rules);
+@@ -245,7 +247,7 @@ function findBestDragTarget(view, coords, options) {
+ 	}).filter((candidate) => candidate !== null);
+ 	const nodeAfter = $pos.nodeAfter;
+ 	if (nodeAfter && nodeAfter.isAtom && !nodeAfter.isInline) {
+-		const nodePos = posInfo.pos;
++		const nodePos = hoveredPos;
+ 		const depth = $pos.depth + 1;
+ 		const parent = $pos.parent;
+ 		const index = $pos.index();
+diff --git a/dist/index.js b/dist/index.js
+index 48ce5bafcbf764d8bfe8dde7c0d8c679317e7e1a..446185b5016b59d01b420721875f38ec6cadabd6 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -206,7 +206,9 @@ function findBestDragTarget(view, coords, options) {
+ 	});
+ 	if (!posInfo) return null;
+ 	const { doc } = view.state;
+-	const $pos = doc.resolve(posInfo.pos);
++	const insideNode = posInfo.inside >= 0 ? doc.nodeAt(posInfo.inside) : null;
++	const hoveredPos = insideNode && insideNode.isAtom && !insideNode.isInline ? posInfo.inside : posInfo.pos;
++	const $pos = doc.resolve(hoveredPos);
+ 	const rules = [];
+ 	if (options.defaultRules) rules.push(...defaultRules);
+ 	rules.push(...options.rules);
+@@ -241,7 +243,7 @@ function findBestDragTarget(view, coords, options) {
+ 	}).filter((candidate) => candidate !== null);
+ 	const nodeAfter = $pos.nodeAfter;
+ 	if (nodeAfter && nodeAfter.isAtom && !nodeAfter.isInline) {
+-		const nodePos = posInfo.pos;
++		const nodePos = hoveredPos;
+ 		const depth = $pos.depth + 1;
+ 		const parent = $pos.parent;
+ 		const index = $pos.index();

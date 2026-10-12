@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CampaignDeliveryTiming } from '@/side-panel/pages/send-campaign/types/CampaignDeliveryTiming';
+import { type CampaignDeliveryTiming } from '@/activities/emails/types/CampaignDeliveryTiming';
 
 export const buildCampaignDeliveryHint = ({
   deliveryTiming,

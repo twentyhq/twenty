@@ -1,9 +1,8 @@
-import { t } from '@lingui/core/macro';
+import { DropCursor } from '@/advanced-text-editor/extensions/drop-cursor/DropCursor';
 import { Document } from '@tiptap/extension-document';
 import { HardBreak } from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
-import { Dropcursor } from '@tiptap/extensions/drop-cursor';
 import { Placeholder } from '@tiptap/extensions/placeholder';
 import { UndoRedo } from '@tiptap/extensions/undo-redo';
 import { type AnyExtension } from '@tiptap/core';
@@ -17,11 +16,11 @@ export const buildAdvancedTextEditorCoreExtensions = ({
   Paragraph,
   Text,
   Placeholder.configure({
-    placeholder: placeholder ?? t`Enter text or Type '/' for commands`,
+    placeholder: placeholder ?? '',
   }),
   HardBreak.configure({
     keepMarks: false,
   }),
   UndoRedo,
-  Dropcursor.configure({ color: false, width: 2, class: 'drop-cursor' }),
+  DropCursor,
 ];

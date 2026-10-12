@@ -259,6 +259,7 @@ export { EMAIL_DOCUMENT_SCHEMA_VERSION } from './tiptap/email-document-schema-ve
 export type { EmailDocument } from './tiptap/email-document-schema';
 export { emailDocumentSchema } from './tiptap/email-document-schema';
 export type { EmailDocumentStringContext } from './tiptap/email-document-string-context';
+export { EMAIL_TYPOGRAPHY } from './tiptap/email-typography';
 export { isCanvasTheme } from './tiptap/is-canvas-theme';
 export { isEmailDocumentShape } from './tiptap/is-email-document-shape';
 export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';

@@ -36,13 +36,11 @@ const StyledEmptyValue = styled.span`
 
 type CampaignSentEnvelopeProps = {
   campaign: MessageCampaign;
-  width: string;
 };
 
 // Doesn't reuse CampaignDetailsFields, which owns draft persistence state a sent campaign has no use for.
 export const CampaignSentEnvelope = ({
   campaign,
-  width,
 }: CampaignSentEnvelopeProps) => {
   const { unsubscribeTopics, loading: areTopicsLoading } =
     useUnsubscribeTopics();
@@ -90,7 +88,7 @@ export const CampaignSentEnvelope = ({
       : '';
 
   return (
-    <CampaignEnvelopeBox width={width}>
+    <CampaignEnvelopeBox>
       <CampaignEnvelopeRow label={t`From`}>
         {isNonEmptyString(fromAddress) ? (
           <StyledValue>{fromAddress}</StyledValue>
@@ -113,7 +111,7 @@ export const CampaignSentEnvelope = ({
         )}
       </CampaignEnvelopeRow>
       {hasUnsubscribeTopic && (
-        <CampaignEnvelopeRow label={t`Unsubscribe topic`}>
+        <CampaignEnvelopeRow label={t`Topic`}>
           {isDefined(unsubscribeTopic) ? (
             <StyledValue>
               {unsubscribeTopic.name ?? t`Untitled topic`}
@@ -133,7 +131,7 @@ export const CampaignSentEnvelope = ({
         )}
       </CampaignEnvelopeRow>
       {isNonEmptyString(scheduledSendTime) && (
-        <CampaignEnvelopeRow label={t`Scheduled at`}>
+        <CampaignEnvelopeRow label={t`Send at`}>
           <StyledValue>{scheduledSendTime}</StyledValue>
         </CampaignEnvelopeRow>
       )}

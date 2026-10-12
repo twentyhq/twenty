@@ -52,6 +52,7 @@ export type { RadioGroupProps } from './RadioGroup/types/RadioGroupProps';
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export type { SegmentedControlOption } from './SegmentedControl/types/SegmentedControlOption';
 export type { SegmentedControlProps } from './SegmentedControl/types/SegmentedControlProps';
+export type { SegmentedControlSize } from './SegmentedControl/types/SegmentedControlSize';
 export { Select } from './Select/Select';
 export type { SelectGroupLabelProps } from './Select/types/SelectGroupLabelProps';
 export type { SelectGroupProps } from './Select/types/SelectGroupProps';
