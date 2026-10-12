@@ -12518,6 +12518,11 @@ msgstr "El selector de registres del flux de treball ha de fer referència a un 
 msgid "The workflow references metadata that is not available to this application."
 msgstr "El flux de treball fa referència a metadades que no estan disponibles per a aquesta aplicació."
 
+#. js-lingui-id: W+A2pa
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
+msgid "The workflow schedule is invalid."
+msgstr "El calendari del flux de treball no és vàlid."
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"

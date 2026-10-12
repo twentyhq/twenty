@@ -558,15 +558,18 @@ export const UsageOpen: Story = {
 
 export const TimeRangeMenu: Story = {
   beforeEach: () => {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...WORKSPACE_WITH_LOGS_CONSOLE,
+      eventLogRetentionDays: 30,
+    });
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      await canvas.findByRole('tab', { name: 'App logs' }, { timeout: 5000 }),
+      await canvas.findByText('Last 24 hours', {}, { timeout: 5000 }),
     );
-    await userEvent.click(await canvas.findByText('Last 24 hours'));
 
     expect(
       await screen.findByRole('option', { name: 'Last 90 days' }),

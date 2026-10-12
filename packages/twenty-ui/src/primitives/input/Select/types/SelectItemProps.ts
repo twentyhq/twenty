@@ -1,9 +1,6 @@
 import { type Select as SelectPrimitive } from '@base-ui/react/select';
+import { type ComponentPropsWithRef } from 'react';
 
-import { type ListItemProps } from '@ui/primitives/navigation/ListItem/types/ListItemProps';
-
-export type SelectItemProps = SelectPrimitive.Item.Props &
-  Pick<
-    ListItemProps,
-    'startIcon' | 'endIcon' | 'description' | 'descriptionPlacement'
-  >;
+export type SelectItemProps = ComponentPropsWithRef<
+  typeof SelectPrimitive.Item
+>;
