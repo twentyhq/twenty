@@ -105,10 +105,6 @@ export const useTriggerEventStreamCreation = () => {
             onEventSubscription: EventSubscription;
           }>,
         ) => {
-          if (!isCurrentEventStream()) {
-            return;
-          }
-
           store.set(lastSseEventReceivedTimestampState.atom, Date.now());
 
           if (isDefined(value?.errors) && Array.isArray(value.errors)) {
@@ -171,10 +167,6 @@ export const useTriggerEventStreamCreation = () => {
           }
         },
         error: (error) => {
-          if (!isCurrentEventStream()) {
-            return;
-          }
-
           captureException(error);
           store.set(shouldDestroyEventStreamState.atom, true);
         },
