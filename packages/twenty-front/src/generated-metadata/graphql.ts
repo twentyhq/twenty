@@ -804,6 +804,26 @@ export type Billing = {
   trialPeriods: Array<BillingTrialPeriod>;
 };
 
+export type BillingCreditOneTimeTopUp = {
+  __typename?: 'BillingCreditOneTimeTopUp';
+  /** All billing subscriptions */
+  billingSubscriptions: Array<BillingSubscription>;
+  /** Current billing subscription */
+  currentBillingSubscription: BillingSubscription;
+  /** Stripe page where the customer completes a payment that needs their action */
+  hostedInvoiceUrl?: Maybe<Scalars['String']['output']>;
+  status: BillingInvoicePaymentStatus;
+};
+
+export type BillingCreditOneTimeTopUpPrice = {
+  __typename?: 'BillingCreditOneTimeTopUpPrice';
+  currency: Scalars['String']['output'];
+  maximumCreditAmount: Scalars['Int']['output'];
+  minimumCreditAmount: Scalars['Int']['output'];
+  /** Price of one credit before tax, in cents, rounded up */
+  unitPriceCents: Scalars['Int']['output'];
+};
+
 export type BillingCustomer = {
   __typename?: 'BillingCustomer';
   hasPaymentMethod?: Maybe<Scalars['Boolean']['output']>;
@@ -838,6 +858,13 @@ export enum BillingEntitlementKey {
   SSO = 'SSO',
   USAGE_LIMIT = 'USAGE_LIMIT',
   VALIDATION_RULES = 'VALIDATION_RULES'
+}
+
+/** Where the payment of a one-off invoice stands */
+export enum BillingInvoicePaymentStatus {
+  PAID = 'PAID',
+  PROCESSING = 'PROCESSING',
+  REQUIRES_ACTION = 'REQUIRES_ACTION'
 }
 
 export type BillingLicensedProduct = BillingProductDto & {
@@ -3263,6 +3290,7 @@ export type Mutation = {
   installApplication: Application;
   /** @deprecated Use installApplication instead */
   installMarketplaceApp: Scalars['Boolean']['output'];
+  purchaseCreditOneTimeTopUp: BillingCreditOneTimeTopUp;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeQueryFromEventStream: Scalars['Boolean']['output'];
@@ -4111,6 +4139,12 @@ export type MutationInstallApplicationArgs = {
 export type MutationInstallMarketplaceAppArgs = {
   universalIdentifier: Scalars['String']['input'];
   version?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationPurchaseCreditOneTimeTopUpArgs = {
+  creditAmount: Scalars['Int']['input'];
+  idempotencyKey: Scalars['UUID']['input'];
 };
 
 
@@ -5366,6 +5400,7 @@ export type Query = {
   getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
+  getCreditOneTimeTopUpPrice?: Maybe<BillingCreditOneTimeTopUpPrice>;
   getEmailingDomains: Array<EmailingDomain>;
   getInviteSuggestions: Array<InviteSuggestion>;
   getJobs: Array<JobStatus>;

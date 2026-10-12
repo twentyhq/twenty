@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { addMonths, startOfMonth } from 'date-fns';
+import { gql } from 'graphql-tag';
 import request from 'supertest';
 import {
   getSeededBillingWorkspaceId,
@@ -13,8 +14,10 @@ import {
   warmAllowanceCounter,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
 import { createMockStripeCreditTopUpInvoicePaidData } from 'test/integration/billing/utils/create-mock-stripe-credit-top-up-invoice-paid-data.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -50,6 +53,47 @@ const postCreditTopUpInvoicePaid = ({
         }),
       }),
     );
+
+const PRICE_QUERY = gql`
+  query GetCreditOneTimeTopUpPrice {
+    getCreditOneTimeTopUpPrice {
+      unitPriceCents
+      currency
+      minimumCreditAmount
+      maximumCreditAmount
+    }
+  }
+`;
+
+const PURCHASE_MUTATION = gql`
+  mutation PurchaseCreditOneTimeTopUp(
+    $creditAmount: Int!
+    $idempotencyKey: UUID!
+  ) {
+    purchaseCreditOneTimeTopUp(
+      creditAmount: $creditAmount
+      idempotencyKey: $idempotencyKey
+    ) {
+      status
+      hostedInvoiceUrl
+    }
+  }
+`;
+
+const purchaseCreditOneTimeTopUp = ({
+  creditAmount,
+  accessToken,
+}: {
+  creditAmount: number;
+  accessToken?: string;
+}) =>
+  makeMetadataApiRequest(
+    {
+      query: PURCHASE_MUTATION,
+      variables: { creditAmount, idempotencyKey: randomUUID() },
+    },
+    accessToken,
+  );
 
 describe('Billing credit top-up webhook (integration)', () => {
   let workspaceId: string;
@@ -152,6 +196,101 @@ describe('Billing credit top-up webhook (integration)', () => {
     });
 
     expect(response.status).toBe(200);
+    expect(await listCreditGrants(workspaceId)).toHaveLength(0);
+  });
+});
+
+describe('Billing one-time credit top-up price and purchase (integration)', () => {
+  let workspaceId: string;
+
+  beforeAll(async () => {
+    workspaceId = await getSeededBillingWorkspaceId();
+
+    expect(workspaceId).toBe(SEED_APPLE_WORKSPACE_ID);
+  });
+
+  beforeEach(async () => {
+    await resetBillingCreditState(workspaceId);
+    await setupResourceCreditSubscription({
+      workspaceId,
+      periodStart: PERIOD_START,
+      periodEnd: PERIOD_END,
+      creditAmountMicro: ALLOWANCE_MICRO,
+    });
+  });
+
+  afterEach(async () => {
+    await resetBillingCreditState(workspaceId);
+  });
+
+  afterAll(async () => {
+    await quitBillingFixtureRedis();
+  });
+
+  it('prices one credit at the plan rate, with the allowed range', async () => {
+    const response = await makeMetadataApiRequest({ query: PRICE_QUERY });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.getCreditOneTimeTopUpPrice).toEqual({
+      unitPriceCents: 1_000,
+      currency: 'USD',
+      minimumCreditAmount: 1,
+      maximumCreditAmount: 1_000,
+    });
+  });
+
+  it('has no price while the subscription is trialing', async () => {
+    await setupResourceCreditSubscription({
+      workspaceId,
+      periodStart: PERIOD_START,
+      periodEnd: PERIOD_END,
+      creditAmountMicro: ALLOWANCE_MICRO,
+      status: 'trialing',
+    });
+
+    const response = await makeMetadataApiRequest({ query: PRICE_QUERY });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.getCreditOneTimeTopUpPrice).toBeNull();
+  });
+
+  it.each([0, 1_001])(
+    'refuses %s credits, outside the allowed range',
+    async (creditAmount) => {
+      const response = await purchaseCreditOneTimeTopUp({ creditAmount });
+
+      expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+        'BILLING_CREDIT_AMOUNT_INVALID',
+      );
+      expect(await listCreditGrants(workspaceId)).toHaveLength(0);
+    },
+  );
+
+  it('refuses a trialing subscription before charging anything', async () => {
+    await setupResourceCreditSubscription({
+      workspaceId,
+      periodStart: PERIOD_START,
+      periodEnd: PERIOD_END,
+      creditAmountMicro: ALLOWANCE_MICRO,
+      status: 'trialing',
+    });
+
+    const response = await purchaseCreditOneTimeTopUp({ creditAmount: 10 });
+
+    expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+      'BILLING_CREDIT_ONE_TIME_TOP_UP_NOT_ALLOWED',
+    );
+    expect(await listCreditGrants(workspaceId)).toHaveLength(0);
+  });
+
+  it('refuses an API key', async () => {
+    const response = await purchaseCreditOneTimeTopUp({
+      creditAmount: 10,
+      accessToken: API_KEY_ACCESS_TOKEN,
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.data?.purchaseCreditOneTimeTopUp ?? null).toBeNull();
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 });
