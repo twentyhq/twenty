@@ -214,9 +214,6 @@ export default {
             "isCustom": [
                 4
             ],
-            "isOpenToEveryone": [
-                4
-            ],
             "name": [
                 1
             ],
@@ -233,6 +230,9 @@ export default {
         "Float": {},
         "AgentChatChannelAssignmentFilter": {},
         "AgentChatChannelRole": {
+            "canAccessAllAgentChatChannels": [
+                4
+            ],
             "icon": [
                 1
             ],
@@ -2796,9 +2796,6 @@ export default {
             "icon": [
                 1
             ],
-            "isOpenToEveryone": [
-                4
-            ],
             "name": [
                 1
             ],
@@ -3427,6 +3424,9 @@ export default {
             ]
         },
         "CreateRoleInput": {
+            "canAccessAllAgentChatChannels": [
+                4
+            ],
             "canAccessAllTools": [
                 4
             ],
@@ -11167,6 +11167,9 @@ export default {
             "apiKeys": [
                 35
             ],
+            "canAccessAllAgentChatChannels": [
+                4
+            ],
             "canAccessAllTools": [
                 4
             ],
@@ -12372,9 +12375,6 @@ export default {
             "icon": [
                 1
             ],
-            "isOpenToEveryone": [
-                4
-            ],
             "name": [
                 1
             ],
@@ -13074,6 +13074,9 @@ export default {
             ]
         },
         "UpdateRolePayload": {
+            "canAccessAllAgentChatChannels": [
+                4
+            ],
             "canAccessAllTools": [
                 4
             ],

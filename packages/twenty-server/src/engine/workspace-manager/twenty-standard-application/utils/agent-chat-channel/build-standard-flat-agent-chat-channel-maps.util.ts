@@ -27,7 +27,6 @@ export const buildStandardFlatAgentChatChannelMaps = ({
         icon: channel.icon,
         color: channel.color,
         position: channel.position,
-        isOpenToEveryone: channel.isOpenToEveryone,
         isCustom: false,
         channelRoleIds: [],
         channelRoleUniversalIdentifiers: [],

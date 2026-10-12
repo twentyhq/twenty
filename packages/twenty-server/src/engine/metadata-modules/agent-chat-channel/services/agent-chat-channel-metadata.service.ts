@@ -25,7 +25,6 @@ type ChannelChanges = {
   icon?: string | null;
   color?: string | null;
   position?: number;
-  isOpenToEveryone?: boolean;
 };
 
 type ChannelMaps = {
@@ -88,14 +87,12 @@ export class AgentChatChannelMetadataService {
     name,
     icon,
     color,
-    isOpenToEveryone,
     roleIds,
   }: {
     workspaceId: string;
     name: string;
     icon: string | null;
     color: string | null;
-    isOpenToEveryone: boolean;
     roleIds: string[];
   }): Promise<FlatAgentChatChannelWithRoleIds> {
     const { workspaceCustomFlatApplication } =
@@ -128,7 +125,6 @@ export class AgentChatChannelMetadataService {
           icon,
           color,
           position: lastPosition + 1,
-          isOpenToEveryone,
           isCustom: true,
           channelRoleUniversalIdentifiers: [],
           applicationUniversalIdentifier:

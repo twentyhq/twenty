@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
@@ -18,10 +17,10 @@ type GrantScope =
   | { threadIds: string[]; channelIds?: never }
   | { channelIds: string[]; threadIds?: never };
 
-// A chat in a channel is read and replied to by everyone the channel is open
-// to, through grants written on the chat itself. They are rewritten whenever
-// the chat changes channel or the channel changes who it is open to, and are
-// the only RULE grants a chat carries
+// A chat in a channel is read and replied to by the channel's roles and the
+// roles with access to all channels, through grants written on the chat
+// itself. They are rewritten whenever the chat changes channel or either set
+// of roles changes, and are the only RULE grants a chat carries
 @Injectable()
 export class AgentChatChannelGrantService {
   constructor(
@@ -56,9 +55,10 @@ export class AgentChatChannelGrantService {
     }
 
     const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
+        'flatRoleMaps',
       ]);
     const threadObjectMetadataId = (
       findAgentChatFlatObjectMetadata(
@@ -69,12 +69,17 @@ export class AgentChatChannelGrantService {
     const channels =
       await this.channelMetadataService.findChannels(workspaceId);
 
-    const roleGrants = channels.flatMap(({ id, roleIds }) =>
-      roleIds.map((roleId) => ({ channelId: id, roleId })),
-    );
-    const openChannelIds = channels
-      .filter(({ isOpenToEveryone }) => isOpenToEveryone)
+    const allChannelsRoleIds = Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((role) => role.canAccessAllAgentChatChannels)
       .map(({ id }) => id);
+
+    const roleGrants = channels.flatMap(({ id, roleIds }) =>
+      [...new Set([...roleIds, ...allChannelsRoleIds])].map((roleId) => ({
+        channelId: id,
+        roleId,
+      })),
+    );
 
     const scopeCondition = isNonEmptyArray(threadIds)
       ? `thread.id = ANY($2::uuid[])`
@@ -102,16 +107,6 @@ export class AgentChatChannelGrantService {
         roleGrants.map(({ channelId }) => channelId),
         roleGrants.map(({ roleId }) => roleId),
       ],
-    );
-
-    await manager.query(
-      `INSERT INTO ${schema}."recordShare"
-         ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
-       SELECT $1, thread.id, $4, 'EVERYONE', 'READ_WRITE', 'RULE', thread."channelId"
-       FROM ${schema}."agentChatThread" thread
-       WHERE ${scopeCondition} AND thread."channelId" = ANY($3::uuid[])
-       ON CONFLICT DO NOTHING`,
-      [threadObjectMetadataId, scopeIds, openChannelIds, EVERYONE_PRINCIPAL_ID],
     );
   }
 }

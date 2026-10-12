@@ -13,9 +13,6 @@ export class CreateAgentChatChannelInput {
   @Field(() => String, { nullable: true })
   color?: string | null;
 
-  @Field(() => Boolean, { defaultValue: true })
-  isOpenToEveryone: boolean;
-
   // Everyone holding one of these roles reads and replies in the channel
   @Field(() => [UUIDScalarType], { defaultValue: [] })
   roleIds: string[];

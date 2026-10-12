@@ -12,4 +12,7 @@ export class AgentChatChannelRoleDTO {
 
   @Field(() => String, { nullable: true })
   icon: string | null;
+
+  @Field(() => Boolean)
+  canAccessAllAgentChatChannels: boolean;
 }

@@ -36,7 +36,6 @@ type AgentChatChannel {
   id: UUID!
   isAccessible: Boolean
   isCustom: Boolean!
-  isOpenToEveryone: Boolean!
   name: String!
   position: Float!
   roleIds: [UUID!]!
@@ -49,6 +48,7 @@ enum AgentChatChannelAssignmentFilter {
 }
 
 type AgentChatChannelRole {
+  canAccessAllAgentChatChannels: Boolean!
   icon: String
   id: UUID!
   label: String!
@@ -1292,7 +1292,6 @@ input ConnectionParametersInput {
 input CreateAgentChatChannelInput {
   color: String
   icon: String
-  isOpenToEveryone: Boolean! = true
   name: String!
   roleIds: [UUID!]! = []
 }
@@ -1544,6 +1543,7 @@ input CreateRecordExportInput {
 }
 
 input CreateRoleInput {
+  canAccessAllAgentChatChannels: Boolean
   canAccessAllTools: Boolean
   canBeAssignedToAgents: Boolean
   canBeAssignedToApiKeys: Boolean
@@ -4105,6 +4105,7 @@ type RichTextBody {
 type Role {
   agents: [Agent!]!
   apiKeys: [ApiKeyForRole!]!
+  canAccessAllAgentChatChannels: Boolean!
   canAccessAllTools: Boolean!
   canBeAssignedToAgents: Boolean!
   canBeAssignedToApiKeys: Boolean!
@@ -4658,7 +4659,6 @@ enum UnsubscribeTopicVisibility {
 input UpdateAgentChatChannelInput {
   color: String
   icon: String
-  isOpenToEveryone: Boolean
   name: String
   position: Float
   roleIds: [UUID!]
@@ -4954,6 +4954,7 @@ input UpdateRoleInput {
 }
 
 input UpdateRolePayload {
+  canAccessAllAgentChatChannels: Boolean
   canAccessAllTools: Boolean
   canBeAssignedToAgents: Boolean
   canBeAssignedToApiKeys: Boolean

@@ -44,7 +44,9 @@ export class DropUsageLimitMeterFastInstanceCommand implements FastInstanceComma
     await queryRunner.query(
       `DROP FUNCTION "core"."syncUsageLimitMeterAndUnit"()`,
     );
-    await queryRunner.query(`ALTER TABLE "core"."usageLimit" DROP COLUMN "meter"`);
+    await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" DROP COLUMN "meter"`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" ALTER COLUMN "unit" SET NOT NULL`,
     );
