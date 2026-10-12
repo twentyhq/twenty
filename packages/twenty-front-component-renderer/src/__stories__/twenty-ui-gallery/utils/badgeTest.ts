@@ -38,7 +38,10 @@ export const badgeTest: TwentyUiGalleryPlayFunction = async ({
     expect(getComputedStyle(small).color).not.toBe(
       getComputedStyle(secondaryCircle).color,
     );
-    expect(getComputedStyle(primaryCircle).color).toBe('rgb(255, 255, 255)');
+    const primaryCircleStyle = getComputedStyle(primaryCircle);
+    expect(primaryCircleStyle.color).toBe(
+      primaryCircleStyle.getPropertyValue('--t-font-color-on-accent').trim(),
+    );
     expect(getComputedStyle(inherited).color).toBe('rgb(20, 80, 120)');
     expect(getComputedStyle(inherited).fontWeight).toBe('600');
   });
