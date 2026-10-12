@@ -765,6 +765,9 @@ export default {
             "commandMenuItems": [
                 136
             ],
+            "createdAt": [
+                187
+            ],
             "defaultLogicFunctionRole": [
                 418
             ],

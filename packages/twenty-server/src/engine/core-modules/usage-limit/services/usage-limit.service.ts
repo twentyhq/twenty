@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
+import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -170,9 +171,14 @@ export class UsageLimitService {
       { where: { id: usageLimit.id } },
     );
 
-    // counters are keyed by scope and value, so an edit leaves two of them behind
-    await this.dropCounter(usageLimit);
-    await this.dropCounter(updatedUsageLimit);
+    if (
+      isStockLimit(usageLimit) ||
+      usageLimit.isInstanceOverride !== isOperator ||
+      !isEqual(authorizedScope, scope)
+    ) {
+      await this.dropCounter(usageLimit);
+      await this.dropCounter(updatedUsageLimit);
+    }
 
     return updatedUsageLimit;
   }
@@ -305,7 +311,10 @@ export class UsageLimitService {
       });
     }
 
-    return this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+    return this.usageLimitQuotaService.dropLimitCounter({
+      workspaceId: usageLimit.workspaceId,
+      usageLimit,
+    });
   }
 
   private async validateSpenderBelongsToWorkspace({
