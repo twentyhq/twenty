@@ -68,6 +68,7 @@ const renderAboutTab = ({
         version="2.0"
         installCount={installCount}
         category="Finance"
+        pricingDescription="$0.02 per minute recorded"
         billsCredits={billsCredits}
         developerLinks={developerLinks}
         onShare={onShare ?? undefined}
@@ -95,22 +96,18 @@ describe('SettingsApplicationDetailAboutTab', () => {
     expect(await screen.findByText('1,098 installs')).toBeVisible();
   });
 
-  it('explains on the price icon that the application bills credits', async () => {
+  it('shows that the application bills credits, with its pricing on hover', async () => {
     renderAboutTab({ billsCredits: true });
 
-    await userEvent
-      .setup()
-      .hover(screen.getByLabelText('This app bills credits'));
+    await userEvent.setup().hover(screen.getByText('Bills credits'));
 
-    expect(await screen.findByText('This app bills credits')).toBeVisible();
+    expect(await screen.findByText('$0.02 per minute recorded')).toBeVisible();
   });
 
   it('does not claim credit billing for an application that bills none', () => {
     renderAboutTab();
 
-    expect(
-      screen.queryByLabelText('This app bills credits'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Bills credits')).not.toBeInTheDocument();
   });
 
   it('renders the application identity, metadata and resources', () => {

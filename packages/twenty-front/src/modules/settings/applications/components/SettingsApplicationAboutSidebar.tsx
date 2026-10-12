@@ -21,7 +21,6 @@ import {
   IconWorld,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type DeveloperLinks = {
@@ -42,6 +41,7 @@ type SettingsApplicationAboutSidebarProps = {
   version?: string;
   installCount?: number;
   category?: string;
+  pricingDescription?: string;
   billsCredits?: boolean;
   developerLinks?: DeveloperLinks;
 };
@@ -151,6 +151,7 @@ export const SettingsApplicationAboutSidebar = ({
   version,
   installCount,
   category,
+  pricingDescription,
   billsCredits = false,
   developerLinks,
 }: SettingsApplicationAboutSidebarProps) => {
@@ -192,6 +193,17 @@ export const SettingsApplicationAboutSidebar = ({
       : []),
     ...getInstallCountRows(),
     ...(isNonEmptyString(category) ? [{ Icon: IconTag, label: category }] : []),
+    ...(billsCredits
+      ? [
+          {
+            Icon: IconCurrencyDollar,
+            label: t`Bills credits`,
+            tooltip: isNonEmptyString(pricingDescription)
+              ? pricingDescription
+              : undefined,
+          },
+        ]
+      : []),
   ];
 
   const {
@@ -260,7 +272,7 @@ export const SettingsApplicationAboutSidebar = ({
         )}
       </StyledHeader>
 
-      {(aboutRows.length > 0 || billsCredits) && (
+      {aboutRows.length > 0 && (
         <StyledSection>
           <StyledSectionLabel>{t`About`}</StyledSectionLabel>
           {aboutRows.map(({ Icon, label, tooltip }) => (
@@ -275,15 +287,6 @@ export const SettingsApplicationAboutSidebar = ({
               />
             </StyledRow>
           ))}
-          {billsCredits && (
-            <StyledRow>
-              <Tooltip content={t`This app bills credits`}>
-                <StyledRowIcon aria-label={t`This app bills credits`}>
-                  <IconCurrencyDollar size={theme.icon.size.sm} />
-                </StyledRowIcon>
-              </Tooltip>
-            </StyledRow>
-          )}
         </StyledSection>
       )}
 
