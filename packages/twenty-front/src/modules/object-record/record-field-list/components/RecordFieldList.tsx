@@ -6,7 +6,7 @@ import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecord
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
 import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
-import { useRecordFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useRecordFieldListFieldMetadataItems';
+import { useRecordFieldListNonRelationFieldMetadataItems } from '@/object-record/record-field-list/hooks/useRecordFieldListNonRelationFieldMetadataItems';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -58,7 +58,7 @@ export const RecordFieldList = ({
   };
 
   const fieldMetadataItems =
-    useRecordFieldListFieldMetadataItems(objectNameSingular);
+    useRecordFieldListNonRelationFieldMetadataItems(objectNameSingular);
 
   return (
     <FieldDescriptionTooltipProvider>
