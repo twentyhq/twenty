@@ -5,7 +5,12 @@ export const createApplicationFileUploadsQueryFactory = ({
   files,
 }: {
   applicationUniversalIdentifier: string;
-  files: { fileFolder: string; filePath: string; size: number }[];
+  files: {
+    fileFolder: string;
+    filePath: string;
+    size: number;
+    sha256?: string;
+  }[];
 }) => ({
   query: gql`
     mutation CreateApplicationFileUploads(
@@ -23,6 +28,10 @@ export const createApplicationFileUploadsQueryFactory = ({
           uploadUrl
           contentType
           expiresAt
+        }
+        unchangedFiles {
+          fileFolder
+          filePath
         }
         errors {
           fileFolder

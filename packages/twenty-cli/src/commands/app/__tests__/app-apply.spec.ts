@@ -18,6 +18,7 @@ import { readGraphqlRequest } from '@/__tests__/utils/read-graphql-request';
 import { isArray, isString } from '@sniptt/guards';
 import { type ServerResponse } from 'node:http';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from 'twenty-shared/application';
 import {
   afterAll,
   beforeAll,
@@ -118,6 +119,8 @@ type ServerState = {
   registrationError?: string;
   installError?: string;
   uploadTargetsStatus?: number;
+  unchangedPaths?: string[];
+  unchangedFilesOverride?: unknown;
   completeError?: string;
   syncError?: string;
   syncResponseOverride?: unknown;
@@ -294,15 +297,31 @@ const server = await startTestServer((request, response) => {
     return sendJson(response, 200, {
       data: {
         createApplicationFileUploads: {
-          targets: files.filter(isPlainObject).map((file, index) => ({
-            fileId: `file-${index}`,
-            filePath: file.filePath,
-            uploadUrl:
-              state.hasInvalidFirstUploadUrl && index === 0
-                ? 'ftp://storage.example.com/upload'
-                : `${server.url}/upload/file-${index}`,
-            contentType: 'application/octet-stream',
-          })),
+          targets: files
+            .filter(isPlainObject)
+            .filter(
+              (file) => !state.unchangedPaths?.includes(String(file.filePath)),
+            )
+            .map((file, index) => ({
+              fileId: `file-${index}`,
+              filePath: file.filePath,
+              uploadUrl:
+                state.hasInvalidFirstUploadUrl && index === 0
+                  ? 'ftp://storage.example.com/upload'
+                  : `${server.url}/upload/file-${index}`,
+              contentType: 'application/octet-stream',
+            })),
+          unchangedFiles:
+            state.unchangedFilesOverride ??
+            files
+              .filter(isPlainObject)
+              .filter((file) =>
+                state.unchangedPaths?.includes(String(file.filePath)),
+              )
+              .map((file) => ({
+                filePath: file.filePath,
+                fileFolder: file.fileFolder,
+              })),
           errors: [],
         },
       },
@@ -414,8 +433,12 @@ describe('app apply', () => {
     application = APPLICATION,
     generateClientBody,
     editDuringBuild,
+    recordRelease = true,
+    files = FILES,
   }: {
     corruptPath?: string;
+    recordRelease?: boolean;
+    files?: typeof FILES;
     application?: typeof APPLICATION;
     generateClientBody?: string;
     editDuringBuild?: { relativePath: string; content: string };
@@ -426,7 +449,7 @@ describe('app apply', () => {
       const fs = require('node:fs');
       const path = require('node:path');
       const { createHash } = require('node:crypto');
-      const FILES = ${JSON.stringify(FILES)};
+      const FILES = ${JSON.stringify(files)};
       const CORRUPT_PATH = ${JSON.stringify(corruptPath ?? null)};
       const EDIT_DURING_BUILD = ${JSON.stringify(editDuringBuild ?? null)};
       const sha256 = (content) => createHash('sha256').update(content).digest('hex');
@@ -465,7 +488,7 @@ describe('app apply', () => {
       };
       exports.releaseSourceSnapshot = async ({ buildId }) => {
         fs.rmSync(snapshotDirectory, { recursive: true, force: true });
-        fs.writeFileSync(path.join(__dirname, 'released.txt'), buildId);
+        ${recordRelease ? "fs.writeFileSync(path.join(__dirname, 'released.txt'), buildId);" : ''}
         return { success: true, data: null, diagnostics: [] };
       };
       ${isDefined(generateClientBody) ? `exports.generateApplicationClient = async ({ appPath, schema, signal }) => { ${generateClientBody} };` : ''}
@@ -505,6 +528,8 @@ describe('app apply', () => {
       registrationError: undefined,
       installError: undefined,
       uploadTargetsStatus: undefined,
+      unchangedPaths: undefined,
+      unchangedFilesOverride: undefined,
       completeError: undefined,
       syncError: undefined,
       syncResponseOverride: undefined,
@@ -538,6 +563,136 @@ describe('app apply', () => {
   });
 
   afterAll(() => server.close());
+
+  it('reuses server-confirmed files on the next apply while still syncing metadata', async () => {
+    expect((await runJson()).exitCode).toBe(0);
+    server.requests.length = 0;
+    state.unchangedPaths = FILES.map((file) => file.path);
+
+    const { envelope, exitCode } = await runJson();
+
+    expect(exitCode).toBe(0);
+    expect(envelope.data).toMatchObject({
+      upload: { fileCount: 0, byteCount: 0 },
+    });
+    expect(operations()).toContain('preview');
+    expect(operations()).toContain('sync');
+    expect(operations()).not.toContain('put');
+    expect(operations()).not.toContain('upload-complete');
+    const request = server.requests.find(
+      (request) => getOperation(request) === 'upload-targets',
+    )!;
+    expect(readGraphqlRequest(request).arguments.files).toEqual(
+      FILES.map((file) =>
+        expect.objectContaining({
+          filePath: file.path,
+          sha256: createHash('sha256').update(file.content).digest('hex'),
+        }),
+      ),
+    );
+  });
+
+  it('does not upload unchanged files when dev starts after apply', async () => {
+    expect((await runJson()).exitCode).toBe(0);
+    await writeTooling({ recordRelease: false });
+    state.unchangedPaths = FILES.map((file) => file.path);
+    server.requests.length = 0;
+    const session = runCliForTest(['app', 'dev', '--path', appPath]);
+
+    try {
+      await vi.waitFor(() => expect(operations()).toContain('export'), {
+        timeout: 10000,
+      });
+    } finally {
+      process.emit('SIGINT');
+    }
+
+    const result = await session;
+    expect(result.exitCode).toBe(130);
+    expect(result.stderr).toContain('Files already up to date.');
+    expect(result.stderr).not.toContain('Uploading');
+    expect(operations()).toContain('preview');
+    expect(operations()).toContain('sync');
+    expect(operations()).not.toContain('put');
+  }, 15000);
+
+  it('uploads only changed files and reports the actual upload count', async () => {
+    state.unchangedPaths = [FILES[0].path];
+    const { exitCode, stderr } = await runCliForTest([
+      'app',
+      'apply',
+      '--path',
+      appPath,
+    ]);
+
+    expect(exitCode).toBe(0);
+    expect(
+      server.requests
+        .filter((request) => request.method === 'PUT')
+        .map((request) => request.body),
+    ).toEqual([FILES[1].content]);
+    expect(stderr).toContain('Uploading 1 file…');
+    expect(stderr).not.toContain('Uploading 2 files…');
+  });
+
+  it('finishes each upload batch before reserving URLs for the next batch', async () => {
+    const files = Array.from(
+      { length: APPLICATION_FILE_UPLOAD_BATCH_SIZE + 1 },
+      (_, index) => ({ ...FILES[0], path: `built/file-${index}.mjs` }),
+    );
+    await writeTooling({ files });
+    state.heldUploadFileId = 'file-0';
+
+    const { envelope, exitCode } = await runJson();
+
+    expect(exitCode).toBe(0);
+    expect(envelope.data.upload.fileCount).toBe(files.length);
+    const uploads = operations().filter((operation) =>
+      ['upload-targets', 'put', 'upload-complete'].includes(operation),
+    );
+    expect(uploads).toEqual([
+      'upload-targets',
+      ...Array.from(
+        { length: APPLICATION_FILE_UPLOAD_BATCH_SIZE },
+        () => 'put',
+      ),
+      'upload-complete',
+      'upload-targets',
+      'put',
+      'upload-complete',
+    ]);
+  });
+
+  it('reports up-to-date files without claiming another upload', async () => {
+    state.unchangedPaths = FILES.map((file) => file.path);
+    const { exitCode, stderr } = await runCliForTest([
+      'app',
+      'apply',
+      '--path',
+      appPath,
+    ]);
+
+    expect(exitCode).toBe(0);
+    expect(stderr).toContain('Files already up to date.');
+    expect(stderr).not.toContain('Uploading');
+  });
+
+  it.each([
+    [{ filePath: 'not-requested', fileFolder: 'Source' }],
+    [{ filePath: FILES[0].path, fileFolder: 'Source' }],
+    [{ filePath: FILES[0].path, fileFolder: 'BuiltLogicFunction' }],
+  ])(
+    'rejects unrequested, wrong-folder or overlapping reuse responses: %j',
+    async (unchangedFile) => {
+      state.unchangedFilesOverride = [unchangedFile];
+      const { envelope, exitCode } = await runJson();
+
+      expect(exitCode).toBe(1);
+      expect(envelope.error).toMatchObject({ code: 'INVALID_RESPONSE' });
+      expect(operations()).not.toContain('put');
+      expect(operations()).not.toContain('sync');
+    },
+  );
 
   it.each([true, false])(
     'previews, installs, uploads without credentials, then syncs with deletion inference %s',

@@ -516,6 +516,7 @@ export type ApplicationFileUploadError = {
 export type ApplicationFileUploadRequestInput = {
   fileFolder: FileFolder;
   filePath: Scalars['String']['input'];
+  sha256?: InputMaybe<Scalars['String']['input']>;
   size: Scalars['Int']['input'];
 };
 
@@ -1373,6 +1374,7 @@ export type CreateApplicationFileUploadsResult = {
   __typename?: 'CreateApplicationFileUploadsResult';
   errors: Array<ApplicationFileUploadError>;
   targets: Array<ApplicationFileUploadTarget>;
+  unchangedFiles: Array<UnchangedApplicationFile>;
 };
 
 export type CreateApplicationRegistration = {
@@ -6683,6 +6685,12 @@ export type UuidFilterComparison = {
   notILike?: InputMaybe<Scalars['UUID']['input']>;
   notIn?: InputMaybe<Array<Scalars['UUID']['input']>>;
   notLike?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type UnchangedApplicationFile = {
+  __typename?: 'UnchangedApplicationFile';
+  fileFolder: FileFolder;
+  filePath: Scalars['String']['output'];
 };
 
 export enum UnsubscribeHostnameStatus {

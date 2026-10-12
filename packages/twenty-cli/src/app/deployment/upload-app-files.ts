@@ -86,7 +86,12 @@ const toUploadRequest = (artifact: ToolingArtifact) => {
     });
   }
 
-  return { fileFolder, filePath: artifact.path, size: artifact.size };
+  return {
+    fileFolder,
+    filePath: artifact.path,
+    size: artifact.size,
+    sha256: artifact.sha256,
+  };
 };
 
 const runConcurrently = async <TItem>({
@@ -152,6 +157,7 @@ const requestUploadTargets = async ({
         uploadUrl: true,
         contentType: true,
       },
+      unchangedFiles: { fileFolder: true, filePath: true },
       errors: { filePath: true, message: true },
     },
   });
@@ -165,14 +171,45 @@ const requestUploadTargets = async ({
     throw createInvalidUploadResponseError();
   }
 
-  context.progress.hasCreatedTargets = true;
+  context.progress.hasCreatedTargets ||= created.targets.length > 0;
+
+  const unchangedFiles = created.unchangedFiles;
+
+  if (
+    !isArray(unchangedFiles) ||
+    !unchangedFiles.every(
+      (file) =>
+        isPlainObject(file) &&
+        artifacts.some(
+          (artifact) =>
+            file.filePath === artifact.path &&
+            file.fileFolder === toUploadRequest(artifact).fileFolder,
+        ),
+    )
+  ) {
+    throw createInvalidUploadResponseError();
+  }
+
+  const answeredFilePaths = [
+    ...created.targets.map((file) => file.filePath),
+    ...unchangedFiles.map((file) => file.filePath),
+  ];
+
+  if (
+    new Set(answeredFilePaths).size !== answeredFilePaths.length ||
+    !answeredFilePaths.every((path) =>
+      artifacts.some((artifact) => artifact.path === path),
+    )
+  ) {
+    throw createInvalidUploadResponseError();
+  }
 
   const refusals = readUploadErrors({
     value: created.errors,
     idKey: 'filePath',
   });
   const answeredPaths = new Set([
-    ...created.targets.map((uploadTarget) => uploadTarget.filePath),
+    ...answeredFilePaths,
     ...refusals.map(({ id }) => id),
   ]);
 
@@ -324,12 +361,14 @@ export const uploadAppFiles = async ({
   target,
   signal,
   progress,
+  onFilesToUpload,
 }: {
   build: ToolingBuild;
   snapshotDirectory: string;
   target: ResolvedTarget;
   signal: AbortSignal;
   progress: AppUploadProgress;
+  onFilesToUpload?: (count: number) => void;
 }) => {
   build.files.forEach(toUploadRequest);
 
@@ -348,6 +387,7 @@ export const uploadAppFiles = async ({
     build.files.map((artifact) => [artifact.path, artifact]),
   );
   const failures: UploadFailure[] = [];
+  let filesToUploadCount = 0;
 
   for (
     let batchStart = 0;
@@ -363,6 +403,11 @@ export const uploadAppFiles = async ({
     });
 
     failures.push(...refusals);
+    filesToUploadCount += uploadTargets.length;
+
+    if (uploadTargets.length > 0) {
+      onFilesToUpload?.(uploadTargets.length);
+    }
 
     const sentTargets = await sendUploadedBytes({
       uploadTargets,
@@ -372,6 +417,10 @@ export const uploadAppFiles = async ({
     });
 
     await completeUploads({ sentTargets, artifactByPath, context, failures });
+  }
+
+  if (filesToUploadCount === 0 && failures.length === 0) {
+    onFilesToUpload?.(0);
   }
 
   if (isNonEmptyArray(failures)) {

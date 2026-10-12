@@ -16,10 +16,22 @@ export class ApplicationFileUploadErrorDTO {
   message: string;
 }
 
+@ObjectType('UnchangedApplicationFile')
+export class UnchangedApplicationFileDTO {
+  @Field(() => FileFolder)
+  fileFolder: FileFolder;
+
+  @Field()
+  filePath: string;
+}
+
 @ObjectType('CreateApplicationFileUploadsResult')
 export class CreateApplicationFileUploadsResultDTO {
   @Field(() => [ApplicationFileUploadTargetDTO])
   targets: ApplicationFileUploadTargetDTO[];
+
+  @Field(() => [UnchangedApplicationFileDTO])
+  unchangedFiles: UnchangedApplicationFileDTO[];
 
   @Field(() => [ApplicationFileUploadErrorDTO])
   errors: ApplicationFileUploadErrorDTO[];
