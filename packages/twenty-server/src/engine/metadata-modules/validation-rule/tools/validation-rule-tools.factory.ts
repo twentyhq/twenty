@@ -52,24 +52,6 @@ const UpdateValidationRuleInputSchema = z.object({
     .describe('Set false to turn the rule off without deleting it.'),
 });
 
-const FillValidationRuleFormInputSchema = z.object({
-  objectMetadataId: z.uuid().describe('Object ID'),
-  validationRuleId: z
-    .uuid()
-    .optional()
-    .describe('ID of the rule being edited. Omit on the new rule page.'),
-  name: z.string().describe('Short rule name'),
-  expression: z.string().describe(EXPRESSION_DESCRIPTION),
-  message: z.string().describe(MESSAGE_DESCRIPTION),
-  errorFieldMetadataId: z
-    .uuid()
-    .nullable()
-    .optional()
-    .describe(
-      'ID of the field the message is shown on, or null to show it on the whole record.',
-    ),
-});
-
 @Injectable()
 export class ValidationRuleToolsFactory {
   constructor(private readonly validationRuleService: ValidationRuleService) {}
@@ -88,7 +70,7 @@ export class ValidationRuleToolsFactory {
       },
       create_validation_rule: {
         description:
-          'Create a validation rule on an object. An invalid expression is rejected with the reason. Do not use it when the user is on a validation rule page: fill their form with fill_validation_rule_form instead.',
+          'Create a validation rule on an object. An invalid expression is rejected with the reason.',
         inputSchema: CreateValidationRuleInputSchema,
         execute: async (parameters: {
           objectMetadataId: string;
@@ -104,7 +86,7 @@ export class ValidationRuleToolsFactory {
       },
       update_validation_rule: {
         description:
-          'Update a validation rule. Only the provided properties change. An invalid expression is rejected with the reason. Do not use it when the user is on a validation rule page: fill their form with fill_validation_rule_form instead.',
+          'Update a validation rule. Only the provided properties change. An invalid expression is rejected with the reason.',
         inputSchema: UpdateValidationRuleInputSchema,
         execute: async ({
           id,
@@ -121,32 +103,6 @@ export class ValidationRuleToolsFactory {
             input: { id, update },
             workspaceId,
           }),
-      },
-      fill_validation_rule_form: {
-        description:
-          'Fill the validation rule form the user has open in settings, without saving it. When the user is on a validation rule page, use this instead of create_validation_rule or update_validation_rule: the user reviews the form and saves it. An invalid expression is rejected with the reason.',
-        inputSchema: FillValidationRuleFormInputSchema,
-        execute: async (parameters: {
-          objectMetadataId: string;
-          validationRuleId?: string;
-          name: string;
-          expression: string;
-          message: string;
-          errorFieldMetadataId?: string | null;
-        }) => {
-          await this.validationRuleService.validateExpressionOrThrow({
-            expression: parameters.expression,
-            objectMetadataId: parameters.objectMetadataId,
-            workspaceId,
-          });
-
-          return {
-            success: true,
-            message:
-              'The form is filled. Nothing is saved until the user clicks Save.',
-            result: parameters,
-          };
-        },
       },
     };
   }

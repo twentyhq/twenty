@@ -14,8 +14,6 @@ export type BrowsingContext =
       filterDescriptions: string[];
     }
   | {
-      type: 'validationRule';
-      objectMetadataId: string;
-      objectNameSingular: string;
-      validationRuleId?: string;
+      type: 'settingsPage';
+      path: string;
     };

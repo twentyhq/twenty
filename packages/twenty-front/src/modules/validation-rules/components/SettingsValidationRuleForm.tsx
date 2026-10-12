@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/components/layout';
 import { IconAddressBook, useIcons } from 'twenty-ui/icon';
@@ -11,11 +10,9 @@ import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/componen
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsValidationRuleExpressionEditor } from '@/validation-rules/components/SettingsValidationRuleExpressionEditor';
-import { SettingsValidationRuleFormFillEffect } from '@/validation-rules/components/SettingsValidationRuleFormFillEffect';
 import { SettingsValidationRuleNameForm } from '@/validation-rules/components/SettingsValidationRuleNameForm';
 import { SettingsValidationRulePreview } from '@/validation-rules/components/SettingsValidationRulePreview';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
-import { type ValidationRuleFormFill } from '@/validation-rules/types/ValidationRuleFormFill';
 import { type ValidationRuleFormValues } from '@/validation-rules/types/ValidationRuleFormValues';
 
 const RECORD_LEVEL_OPTION_VALUE = 'record-level';
@@ -44,17 +41,6 @@ export const SettingsValidationRuleForm = ({
 }: SettingsValidationRuleFormProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const [expressionEditorKey, setExpressionEditorKey] = useState(0);
-
-  const handleFill = ({
-    name,
-    expression,
-    message,
-    errorFieldMetadataId,
-  }: ValidationRuleFormFill) => {
-    onChange({ ...values, name, expression, message, errorFieldMetadataId });
-    setExpressionEditorKey((previousKey) => previousKey + 1);
-  };
 
   const errorFieldOptions = [
     {
@@ -78,7 +64,6 @@ export const SettingsValidationRuleForm = ({
 
   return (
     <>
-      <SettingsValidationRuleFormFillEffect onFill={handleFill} />
       <Section.Root>
         <Section.Header
           title={t`Name and description`}
@@ -104,7 +89,6 @@ export const SettingsValidationRuleForm = ({
           }
           form={
             <SettingsValidationRuleExpressionEditor
-              key={expressionEditorKey}
               value={values.expression}
               fields={fields}
               editorFields={editorFields}

@@ -6,10 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
 import { getAiChatBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
 import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
-import { getValidationRuleBrowsingContext } from '@/validation-rules/utils/getValidationRuleBrowsingContext';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { isSettingsPath } from '~/utils/isSettingsPath';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
@@ -27,15 +27,10 @@ export const useGetBrowsingContext = () => {
   const store = useStore();
 
   const getBrowsingContext = useCallback((): BrowsingContext | null => {
-    const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
+    const { pathname } = window.location;
 
-    const validationRuleBrowsingContext = getValidationRuleBrowsingContext({
-      pathname: window.location.pathname,
-      objectMetadataItems,
-    });
-
-    if (isDefined(validationRuleBrowsingContext)) {
-      return validationRuleBrowsingContext;
+    if (isSettingsPath(pathname)) {
+      return { type: 'settingsPage', path: pathname };
     }
 
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
@@ -66,6 +61,8 @@ export const useGetBrowsingContext = () => {
         instanceId,
       }),
     );
+
+    const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
     const objectMetadataItem = objectMetadataItems.find(
       (item) => item.id === objectMetadataItemId,

@@ -794,8 +794,8 @@ export class ChatExecutionService {
         );
       case 'listView':
         return this.buildListViewContext(browsingContext);
-      case 'validationRule':
-        return this.buildValidationRuleContext(browsingContext);
+      case 'settingsPage':
+        return this.buildSettingsPageContext(workspace, browsingContext.path);
       default:
         // browsing context comes from unvalidated client JSON
         return '';
@@ -851,22 +851,15 @@ export class ChatExecutionService {
     return context;
   }
 
-  private buildValidationRuleContext({
-    objectMetadataId,
-    objectNameSingular,
-    validationRuleId,
-  }: {
-    type: 'validationRule';
-    objectMetadataId: string;
-    objectNameSingular: string;
-    validationRuleId?: string;
-  }): string {
-    const objectDescription = `the ${objectNameSingular} object (objectMetadataId: ${objectMetadataId})`;
+  private buildSettingsPageContext(
+    workspace: WorkspaceEntity,
+    path: string,
+  ): string {
+    const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
+      workspace,
+      pathname: path,
+    });
 
-    const pageDescription = isDefined(validationRuleId)
-      ? `editing the validation rule ${validationRuleId} of ${objectDescription}`
-      : `creating a validation rule on ${objectDescription}`;
-
-    return `The user is ${pageDescription} in settings. When they describe or change a rule, fill their form with fill_validation_rule_form instead of creating or updating the rule: they review it and save it.`;
+    return `The user is on the settings page ${resourceUrl}.`;
   }
 }

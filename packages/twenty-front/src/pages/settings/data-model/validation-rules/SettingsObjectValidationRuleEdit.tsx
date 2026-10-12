@@ -37,7 +37,7 @@ export const SettingsObjectValidationRuleEdit = () => {
 
   return (
     <SettingsValidationRuleEditForm
-      key={validationRule.id}
+      key={JSON.stringify(validationRule)}
       objectMetadataItem={objectMetadataItem}
       validationRule={validationRule}
     />
