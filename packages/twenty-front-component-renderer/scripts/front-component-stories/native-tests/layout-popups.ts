@@ -1,6 +1,54 @@
-import { expect, test } from 'playwright/test';
+import { expect, test, type Locator } from 'playwright/test';
+import { isDefined } from 'twenty-shared/utils';
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '../../../src/host/geometry/constants/GeometryIdleFrameThreshold';
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '../../../src/constants/FrontComponentPortalMargin';
+
+const MAXIMUM_DROPDOWN_TRIGGER_GAP = 16;
+const POPUP_POSITION_ROUNDING_TOLERANCE = 1;
+
+type ElementBounds = NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>;
+
+const isPopupAttachedToAnchor = ({
+  anchor,
+  popup,
+  side,
+}: {
+  anchor: ElementBounds;
+  popup: ElementBounds;
+  side: string | null;
+}) => {
+  const isHorizontallyPositioned = side === 'left' || side === 'right';
+  const isVerticallyPositioned = side === 'top' || side === 'bottom';
+
+  if (!isHorizontallyPositioned && !isVerticallyPositioned) {
+    return false;
+  }
+
+  const popupAnchorGap = isHorizontallyPositioned
+    ? Math.max(
+        popup.x - anchor.x - anchor.width,
+        anchor.x - popup.x - popup.width,
+      )
+    : Math.max(
+        popup.y - anchor.y - anchor.height,
+        anchor.y - popup.y - popup.height,
+      );
+  const popupOverlapStart = isHorizontallyPositioned ? popup.y : popup.x;
+  const popupOverlapEnd = isHorizontallyPositioned
+    ? popup.y + popup.height
+    : popup.x + popup.width;
+  const anchorOverlapStart = isHorizontallyPositioned ? anchor.y : anchor.x;
+  const anchorOverlapEnd = isHorizontallyPositioned
+    ? anchor.y + anchor.height
+    : anchor.x + anchor.width;
+
+  return (
+    popupAnchorGap >= -POPUP_POSITION_ROUNDING_TOLERANCE &&
+    popupAnchorGap <= MAXIMUM_DROPDOWN_TRIGGER_GAP &&
+    popupOverlapStart < anchorOverlapEnd &&
+    popupOverlapEnd > anchorOverlapStart
+  );
+};
 
 for (const runtime of ['react', 'preact']) {
   test(`${runtime} mirrors stylesheet layout, offset ancestry and scoped theme values`, async ({
@@ -57,11 +105,13 @@ for (const runtime of ['react', 'preact']) {
         const anchor = await trigger.boundingBox();
         const popup = await menu.boundingBox();
         const owner = await widget.boundingBox();
-        if (!anchor || !popup || !owner) return false;
+        if (!isDefined(anchor) || !isDefined(popup) || !isDefined(owner)) {
+          return false;
+        }
         const viewport = page.viewportSize()!;
+        const side = await menu.getAttribute('data-side');
         return (
-          popup.x < anchor.x + anchor.width &&
-          popup.x + popup.width > anchor.x &&
+          isPopupAttachedToAnchor({ anchor, popup, side }) &&
           popup.x >= Math.max(0, owner.x - FRONT_COMPONENT_PORTAL_MARGIN) - 1 &&
           popup.y >= Math.max(0, owner.y - FRONT_COMPONENT_PORTAL_MARGIN) - 1 &&
           popup.x + popup.width <=
@@ -121,7 +171,13 @@ for (const runtime of ['react', 'preact']) {
         );
       }
     }, GEOMETRY_IDLE_FRAME_THRESHOLD * 3);
-    const before = await trigger.boundingBox();
+    const anchorBeforeMove = await trigger.boundingBox();
+    const popupBeforeMove = await menu.boundingBox();
+
+    if (!isDefined(anchorBeforeMove) || !isDefined(popupBeforeMove)) {
+      throw new Error('Popup or anchor bounds are unavailable before movement');
+    }
+
     await trigger.evaluate((node) => {
       node.style.transform = 'translateX(65px)';
     });
@@ -129,21 +185,25 @@ for (const runtime of ['react', 'preact']) {
       .poll(async () => {
         const anchor = await trigger.boundingBox();
         const popup = await menu.boundingBox();
-        if (!anchor || !popup) return false;
+        if (!isDefined(anchor) || !isDefined(popup)) {
+          return false;
+        }
+        const side = await menu.getAttribute('data-side');
         return (
-          popup.x < anchor.x + anchor.width &&
-          popup.x + popup.width > anchor.x &&
-          Math.abs(anchor.x - before!.x - 65) < 1
+          isPopupAttachedToAnchor({ anchor, popup, side }) &&
+          Math.abs(anchor.x - anchorBeforeMove.x - 65) < 1
         );
       })
       .toBe(true);
     const anchor = await trigger.boundingBox();
-    expect(anchor!.width).toBeCloseTo(before!.width);
+    expect(anchor!.width).toBeCloseTo(anchorBeforeMove.width);
     await expect
       .poll(async () => {
         const popup = await menu.boundingBox();
-        return popup!.x;
+        return (
+          isDefined(popup) && Math.abs(popup.x - popupBeforeMove.x - 65) < 1
+        );
       })
-      .toBeGreaterThan(before!.x + 25);
+      .toBe(true);
   });
 }
