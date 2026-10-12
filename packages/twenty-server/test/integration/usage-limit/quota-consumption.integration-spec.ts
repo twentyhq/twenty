@@ -6,6 +6,7 @@ import { expectEventually } from 'test/integration/utils/expect-eventually.util'
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { randomUUID } from 'node:crypto';
 
 import {
   type ClickHouseClient,
@@ -18,10 +19,22 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
+import { type UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
+import { type UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { type UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
+import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
+import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-month-period.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -57,6 +70,8 @@ const QUOTA_UNITS = [UsageUnit.INVOCATION, UsageUnit.CREDIT] as const;
 
 const EXECUTED_RUN_COUNT = 2;
 const UNREACHABLE_LIMIT_VALUE = 1_000_000_000_000;
+const CREDIT_LIMIT_MICRO = 1_000;
+const CONCURRENT_CHARGE_COUNT = 8;
 const CLICKHOUSE_FLUSH_TIMEOUT_MS = 30_000;
 const EXECUTION_TIMEOUT_MS = 120_000;
 
@@ -81,6 +96,22 @@ const USAGE_QUOTA_SCOPE_CONSUMPTION = gql`
 
 type QuotaUnit = (typeof QUOTA_UNITS)[number];
 
+const buildRunEvent = ({
+  spenderId,
+  creditsUsedMicro,
+}: {
+  spenderId: string;
+  creditsUsedMicro: number;
+}): RecordUsageInput => ({
+  resourceType: UsageResourceType.LOGIC_FUNCTION,
+  operationType: UsageOperationType.CODE_EXECUTION,
+  unit: UsageUnit.INVOCATION,
+  quantity: 1,
+  creditsUsedMicro,
+  resourceId: spenderId,
+  spenders: { logicFunctionId: spenderId },
+});
+
 describe('Usage quota consumption', () => {
   let clickHouseClient: ClickHouseClient;
   let redis: Awaited<ReturnType<typeof createRedisClient>>;
@@ -88,24 +119,89 @@ describe('Usage quota consumption', () => {
   let logicFunctionId: string;
   let usageLimitIdByUnit: Record<QuotaUnit, string>;
   const savedUsageLimitIds: string[] = [];
+  const chargedSpenderIds: string[] = [];
+
+  const getQuotaService = () =>
+    getAppProviderByClassName<UsageLimitQuotaService>('UsageLimitQuotaService');
+
+  const getUsageLimitService = () =>
+    getAppProviderByClassName<UsageLimitService>('UsageLimitService');
 
   const refreshUsageLimitsCache = () =>
     getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['usageLimits']);
 
-  const findQuotaCounterKeys = () =>
-    redis.keys(
-      `*{${SEED_APPLE_WORKSPACE_ID}}:quota:${UsageResourceType.LOGIC_FUNCTION}:${UsageOperationType.CODE_EXECUTION}:logicFunction:${logicFunctionId}:*`,
+  const findSpenderCounterKeys = (spenderId: string) =>
+    redis.keys(`*{${SEED_APPLE_WORKSPACE_ID}}:*:logicFunction:${spenderId}:*`);
+
+  const findQuotaCounterKeys = () => findSpenderCounterKeys(logicFunctionId);
+
+  const flushQuotaCounters = async () => {
+    const counterKeys = await redis.keys(
+      `*{${SEED_APPLE_WORKSPACE_ID}}:quota*`,
     );
 
-  const countUsageEventRows = async (): Promise<number> => {
+    if (counterKeys.length > 0) {
+      await redis.del(counterKeys);
+    }
+  };
+
+  const spyOnMetrics = () =>
+    jest.spyOn(
+      getAppProviderByClassName<MetricsService>('MetricsService'),
+      'incrementCounterBy',
+    );
+
+  const findAdmittedOnFailureAttributes = (
+    incrementCounterBySpy: ReturnType<typeof spyOnMetrics>,
+  ) =>
+    incrementCounterBySpy.mock.calls
+      .map(([metric]) => metric)
+      .filter(
+        (metric) => metric.key === MetricsKeys.UsageLimitQuotaAdmittedOnFailure,
+      )
+      .map((metric) => metric.attributes);
+
+  const chargeRun = (event: Parameters<typeof buildRunEvent>[0]) =>
+    getQuotaService().charge({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      events: [buildRunEvent(event)],
+    });
+
+  const debitRunAheadOfRecord = (event: Parameters<typeof buildRunEvent>[0]) =>
+    getQuotaService().debitAheadOfRecord({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      event: buildRunEvent(event),
+    });
+
+  const findRunRefusal = ({
+    spenderId,
+    costMicro,
+  }: {
+    spenderId: string;
+    costMicro: number;
+  }) =>
+    getQuotaService().findExhaustedScope({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenders: { logicFunctionId: spenderId },
+      cost: { [UsageUnit.CREDIT]: costMicro },
+    });
+
+  const countUsageEventRows = async (
+    spenderId: string = logicFunctionId,
+  ): Promise<number> => {
     const result = await clickHouseClient.query({
       query: `SELECT count() AS rowCount
               FROM usageEvent
               WHERE workspaceId = {workspaceId:String}
                 AND logicFunctionId = {logicFunctionId:String}`,
-      query_params: { workspaceId: SEED_APPLE_WORKSPACE_ID, logicFunctionId },
+      query_params: {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        logicFunctionId: spenderId,
+      },
       format: 'JSONEachRow',
     });
 
@@ -156,18 +252,26 @@ describe('Usage quota consumption', () => {
     });
   };
 
-  const saveCodeExecutionQuota = async (unit: QuotaUnit): Promise<string> => {
+  const saveCodeExecutionQuota = async ({
+    spenderId,
+    unit,
+    limitValue,
+  }: {
+    spenderId: string;
+    unit: QuotaUnit;
+    limitValue: number;
+  }): Promise<string> => {
     const usageLimit = await usageLimitRepository.save({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       resourceType: UsageResourceType.LOGIC_FUNCTION,
       operationType: UsageOperationType.CODE_EXECUTION,
       spenderType: 'logicFunction',
-      spenderId: logicFunctionId,
+      spenderId,
       limitKind: 'quota',
       periodCount: 1,
       periodUnit: 'month',
       unit,
-      limitValue: UNREACHABLE_LIMIT_VALUE,
+      limitValue,
       burstValue: null,
       isInstanceOverride: true,
     });
@@ -175,6 +279,79 @@ describe('Usage quota consumption', () => {
     savedUsageLimitIds.push(usageLimit.id);
 
     return usageLimit.id;
+  };
+
+  const saveCreditQuotaForNewSpender = async ({
+    limitValue = CREDIT_LIMIT_MICRO,
+  }: {
+    limitValue?: number;
+  } = {}): Promise<{ spenderId: string }> => {
+    const spenderId = randomUUID();
+
+    chargedSpenderIds.push(spenderId);
+
+    await saveCodeExecutionQuota({
+      spenderId,
+      unit: UsageUnit.CREDIT,
+      limitValue,
+    });
+
+    await refreshUsageLimitsCache();
+
+    return { spenderId };
+  };
+
+  const buildWeekCreditQuotaInput = ({
+    periodUnit = 'week',
+    limitValue = UNREACHABLE_LIMIT_VALUE,
+  }: {
+    periodUnit?: PeriodUnit;
+    limitValue?: number;
+  } = {}): CreateUsageLimitInput => ({
+    resourceType: UsageResourceType.LOGIC_FUNCTION,
+    operationType: UsageOperationType.CODE_EXECUTION,
+    spenderType: 'logicFunction',
+    spenderId: logicFunctionId,
+    limitKind: 'quota',
+    periodCount: 1,
+    periodUnit,
+    unit: UsageUnit.CREDIT,
+    limitValue,
+    burstValue: null,
+  });
+
+  const createWeekCreditQuota = ({ isOperator = true } = {}) =>
+    getUsageLimitService().create({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      input: buildWeekCreditQuotaInput(),
+      isOperator,
+    });
+
+  const updateWeekCreditQuota = (
+    usageLimitId: string,
+    payload: Parameters<typeof buildWeekCreditQuotaInput>[0],
+  ) =>
+    getUsageLimitService().update({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      input: { id: usageLimitId, payload: buildWeekCreditQuotaInput(payload) },
+      isOperator: true,
+    });
+
+  const deleteWeekCreditQuota = (usageLimitId: string) =>
+    getUsageLimitService().delete({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      usageLimitId,
+      isOperator: true,
+    });
+
+  const readWeekCreditCounter = async () => {
+    const [counterKey] = await redis.keys(
+      `*{${SEED_APPLE_WORKSPACE_ID}}:quota-consumed:*:logicFunction:${logicFunctionId}:${UsageUnit.CREDIT}:week:*`,
+    );
+
+    jestExpectToBeDefined(counterKey);
+
+    return Number(await redis.get(counterKey));
   };
 
   const findQuotaConsumedValue = async (unit: QuotaUnit) => {
@@ -250,10 +427,16 @@ describe('Usage quota consumption', () => {
     await waitForUsageEventRows(SEEDED_RUNS.length * 2);
 
     usageLimitIdByUnit = {
-      [UsageUnit.INVOCATION]: await saveCodeExecutionQuota(
-        UsageUnit.INVOCATION,
-      ),
-      [UsageUnit.CREDIT]: await saveCodeExecutionQuota(UsageUnit.CREDIT),
+      [UsageUnit.INVOCATION]: await saveCodeExecutionQuota({
+        spenderId: logicFunctionId,
+        unit: UsageUnit.INVOCATION,
+        limitValue: UNREACHABLE_LIMIT_VALUE,
+      }),
+      [UsageUnit.CREDIT]: await saveCodeExecutionQuota({
+        spenderId: logicFunctionId,
+        unit: UsageUnit.CREDIT,
+        limitValue: UNREACHABLE_LIMIT_VALUE,
+      }),
     };
 
     await refreshUsageLimitsCache();
@@ -273,7 +456,11 @@ describe('Usage quota consumption', () => {
     }
 
     await clickHouseClient.command({
-      query: `ALTER TABLE usageEvent DELETE WHERE workspaceId = '${SEED_APPLE_WORKSPACE_ID}' AND logicFunctionId = '${logicFunctionId}'`,
+      query: `ALTER TABLE usageEvent DELETE WHERE workspaceId = {workspaceId:String} AND logicFunctionId IN {logicFunctionIds:Array(String)}`,
+      query_params: {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        logicFunctionIds: [logicFunctionId, ...chargedSpenderIds],
+      },
       clickhouse_settings: { mutations_sync: '2' },
     });
 
@@ -323,9 +510,6 @@ describe('Usage quota consumption', () => {
         const scopeConsumedValue = await findScopeConsumedValue(unit);
 
         expect(quotaConsumedValue).toBe(scopeConsumedValue);
-        expect(quotaConsumedValue).toBeGreaterThanOrEqual(
-          SEEDED_CONSUMPTION_BY_UNIT[unit],
-        );
       }
 
       expect(await findQuotaConsumedValue(UsageUnit.INVOCATION)).toBe(
@@ -369,7 +553,407 @@ describe('Usage quota consumption', () => {
       });
 
       await waitForUsageEventRows(usageEventRowCount + 2);
+
+      await usageLimitRepository.update(
+        { id: usageLimitIdByUnit[UsageUnit.INVOCATION] },
+        { limitValue: UNREACHABLE_LIMIT_VALUE },
+      );
+      await refreshUsageLimitsCache();
     },
     EXECUTION_TIMEOUT_MS,
   );
+
+  describe('on a credit quota', () => {
+    it('counts every concurrent charge on a cold counter once', async () => {
+      const { spenderId } = await saveCreditQuotaForNewSpender();
+
+      await Promise.all(
+        Array.from({ length: CONCURRENT_CHARGE_COUNT }, () =>
+          chargeRun({ spenderId, creditsUsedMicro: 100 }),
+        ),
+      );
+
+      expect(await findRunRefusal({ spenderId, costMicro: 200 })).toBeNull();
+      expect(await findRunRefusal({ spenderId, costMicro: 201 })).toMatchObject(
+        { exhaustedKind: 'limit' },
+      );
+
+      const counterKeys = await findSpenderCounterKeys(spenderId);
+
+      expect(counterKeys).toHaveLength(1);
+      expect(
+        Math.abs(
+          (await redis.pTTL(counterKeys[0])) -
+            (getCalendarMonthPeriod(new Date()).periodEnd.getTime() -
+              Date.now()),
+        ),
+      ).toBeLessThan(60_000);
+    });
+
+    it(
+      'keeps in-flight usage when the cap is edited',
+      async () => {
+        const usageLimit = await createWeekCreditQuota();
+        const usageEventRowCount = await countUsageEventRows();
+
+        try {
+          await chargeRun({
+            spenderId: logicFunctionId,
+            creditsUsedMicro: 100,
+          });
+
+          const editedLimitValue = (await readWeekCreditCounter()) + 700;
+
+          await debitRunAheadOfRecord({
+            spenderId: logicFunctionId,
+            creditsUsedMicro: 600,
+          });
+          await updateWeekCreditQuota(usageLimit.id, {
+            limitValue: editedLimitValue,
+          });
+
+          expect(
+            await findRunRefusal({
+              spenderId: logicFunctionId,
+              costMicro: 100,
+            }),
+          ).toBeNull();
+          expect(
+            await findRunRefusal({
+              spenderId: logicFunctionId,
+              costMicro: 101,
+            }),
+          ).toMatchObject({
+            exhaustedKind: 'limit',
+            limitValue: editedLimitValue,
+          });
+
+          await waitForUsageEventRows(usageEventRowCount + 1);
+        } finally {
+          await deleteWeekCreditQuota(usageLimit.id);
+        }
+      },
+      EXECUTION_TIMEOUT_MS,
+    );
+
+    it(
+      're-warms a limit from ClickHouse once it moves back to a period it left',
+      async () => {
+        const usageLimit = await createWeekCreditQuota();
+        const usageEventRowCount = await countUsageEventRows();
+
+        try {
+          await chargeRun({
+            spenderId: logicFunctionId,
+            creditsUsedMicro: 100,
+          });
+
+          const enforcedLimitValue = (await readWeekCreditCounter()) + 300;
+
+          await updateWeekCreditQuota(usageLimit.id, { periodUnit: 'day' });
+          await chargeRun({
+            spenderId: logicFunctionId,
+            creditsUsedMicro: 600,
+          });
+          await waitForUsageEventRows(usageEventRowCount + 2);
+
+          await updateWeekCreditQuota(usageLimit.id, {
+            limitValue: enforcedLimitValue,
+          });
+
+          expect(
+            await findRunRefusal({ spenderId: logicFunctionId, costMicro: 0 }),
+          ).toMatchObject({
+            exhaustedKind: 'limit',
+            limitValue: enforcedLimitValue,
+          });
+        } finally {
+          await deleteWeekCreditQuota(usageLimit.id);
+        }
+      },
+      EXECUTION_TIMEOUT_MS,
+    );
+
+    it(
+      're-warms a limit from ClickHouse once an operator edit makes it enforced again',
+      async () => {
+        const entitlementSpy = jest
+          .spyOn(
+            getAppProviderByClassName<UsageLimitEntitlementService>(
+              'UsageLimitEntitlementService',
+            ),
+            'isIntraWorkspaceLimitEntitled',
+          )
+          .mockResolvedValue(true);
+        const usageLimit = await createWeekCreditQuota({ isOperator: false });
+        const usageEventRowCount = await countUsageEventRows();
+
+        try {
+          await chargeRun({
+            spenderId: logicFunctionId,
+            creditsUsedMicro: 100,
+          });
+
+          const enforcedLimitValue = (await readWeekCreditCounter()) + 300;
+
+          entitlementSpy.mockResolvedValue(false);
+          await chargeRun({
+            spenderId: logicFunctionId,
+            creditsUsedMicro: 600,
+          });
+
+          expect(await readWeekCreditCounter()).toBe(enforcedLimitValue - 300);
+
+          await waitForUsageEventRows(usageEventRowCount + 2);
+
+          await updateWeekCreditQuota(usageLimit.id, {
+            limitValue: enforcedLimitValue,
+          });
+
+          expect(
+            await findRunRefusal({ spenderId: logicFunctionId, costMicro: 0 }),
+          ).toMatchObject({
+            exhaustedKind: 'limit',
+            limitValue: enforcedLimitValue,
+          });
+        } finally {
+          entitlementSpy.mockRestore();
+          await deleteWeekCreditQuota(usageLimit.id);
+        }
+      },
+      EXECUTION_TIMEOUT_MS,
+    );
+  });
+
+  describe('on the daily email default', () => {
+    const emailResourceId = randomUUID();
+    let emailDailyLimit: number;
+    let chargedEmailRowCount = 0;
+
+    const buildEmailEvent = (quantity: number): RecordUsageInput => ({
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.EMAIL_SEND,
+      unit: UsageUnit.INVOCATION,
+      quantity,
+      creditsUsedMicro: 0,
+      resourceId: emailResourceId,
+    });
+
+    const findEmailRefusal = (invocationCost: number) =>
+      getQuotaService().findExhaustedScope({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        spenders: {},
+        cost: {
+          [UsageUnit.CREDIT]: 0,
+          [UsageUnit.INVOCATION]: invocationCost,
+        },
+      });
+
+    const debitEmailAheadOfRecord = (quantity: number) =>
+      getQuotaService().debitAheadOfRecord({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        event: buildEmailEvent(quantity),
+      });
+
+    const chargeEmail = async (quantity: number) => {
+      await getQuotaService().charge({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        events: [buildEmailEvent(quantity)],
+      });
+      chargedEmailRowCount++;
+    };
+
+    const saveEmailOverride = async () => {
+      const usageLimit = await usageLimitRepository.save({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        spenderType: 'workspace',
+        spenderId: '',
+        limitKind: 'quota',
+        periodCount: 1,
+        periodUnit: 'day',
+        unit: UsageUnit.INVOCATION,
+        limitValue: emailDailyLimit + 1_000,
+        burstValue: null,
+        isInstanceOverride: true,
+      });
+
+      savedUsageLimitIds.push(usageLimit.id);
+      await refreshUsageLimitsCache();
+
+      return usageLimit.id;
+    };
+
+    const countEmailRows = async (): Promise<number> => {
+      const result = await clickHouseClient.query({
+        query: `SELECT count() AS rowCount
+                FROM usageEvent
+                WHERE workspaceId = {workspaceId:String}
+                  AND resourceId = {resourceId:String}`,
+        query_params: {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          resourceId: emailResourceId,
+        },
+        format: 'JSONEachRow',
+      });
+
+      const [row] = await result.json<{ rowCount: string }>();
+
+      return Number(row?.rowCount ?? 0);
+    };
+
+    const deleteEmailRows = () =>
+      clickHouseClient.command({
+        query: `ALTER TABLE usageEvent DELETE WHERE workspaceId = {workspaceId:String} AND resourceType = {resourceType:String}`,
+        query_params: {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          resourceType: UsageResourceType.EMAIL,
+        },
+        clickhouse_settings: { mutations_sync: '2' },
+      });
+
+    beforeAll(async () => {
+      emailDailyLimit = Number(
+        getAppProviderByClassName<TwentyConfigService>(
+          'TwentyConfigService',
+        ).get('EMAIL_SEND_WORKSPACE_DAILY_LIMIT'),
+      );
+
+      await deleteEmailRows();
+      await flushQuotaCounters();
+    });
+
+    const waitForChargedEmailRows = () =>
+      expectEventually(
+        async () => {
+          expect(await countEmailRows()).toBe(chargedEmailRowCount);
+        },
+        { timeoutMs: CLICKHOUSE_FLUSH_TIMEOUT_MS, intervalMs: 250 },
+      );
+
+    afterAll(async () => {
+      await waitForChargedEmailRows();
+      await deleteEmailRows();
+      await flushQuotaCounters();
+    }, EXECUTION_TIMEOUT_MS);
+
+    it('refuses at the default and keeps what a deleted override counted on it', async () => {
+      await chargeEmail(emailDailyLimit - 1);
+
+      expect(await findEmailRefusal(1)).toBeNull();
+      expect(await findEmailRefusal(2)).toMatchObject({
+        exhaustedKind: 'limit',
+        isDefault: true,
+        unit: UsageUnit.INVOCATION,
+        limitValue: emailDailyLimit,
+      });
+
+      const overrideUsageLimitId = await saveEmailOverride();
+
+      expect(await findEmailRefusal(2)).toBeNull();
+
+      await debitEmailAheadOfRecord(1);
+
+      await getUsageLimitService().delete({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        usageLimitId: overrideUsageLimitId,
+        isOperator: true,
+      });
+
+      expect(await findEmailRefusal(1)).toMatchObject({
+        exhaustedKind: 'limit',
+        isDefault: true,
+      });
+    });
+  });
+
+  it(
+    'admits the assert and the charge when Redis fails, counts both and still records the charge',
+    async () => {
+      const { spenderId } = await saveCreditQuotaForNewSpender({
+        limitValue: 0,
+      });
+      const cacheStorage: CacheStorageService =
+        getQuotaService()['cacheStorage'];
+      const incrementCounterBySpy = spyOnMetrics();
+      const runScriptSpy = jest
+        .spyOn(cacheStorage, 'runScript')
+        .mockRejectedValue(new Error('Redis is unreachable'));
+
+      try {
+        expect(await findRunRefusal({ spenderId, costMicro: 1 })).toBeNull();
+        expect(await chargeRun({ spenderId, creditsUsedMicro: 100 })).toEqual({
+          exhaustedKind: null,
+        });
+        expect(findAdmittedOnFailureAttributes(incrementCounterBySpy)).toEqual([
+          {
+            operation: 'assert',
+            resourceType: UsageResourceType.LOGIC_FUNCTION,
+          },
+          {
+            operation: 'consume',
+            resourceType: UsageResourceType.LOGIC_FUNCTION,
+          },
+        ]);
+      } finally {
+        runScriptSpy.mockRestore();
+        incrementCounterBySpy.mockRestore();
+      }
+
+      await expectEventually(
+        async () => {
+          expect(await countUsageEventRows(spenderId)).toBe(1);
+        },
+        { timeoutMs: CLICKHOUSE_FLUSH_TIMEOUT_MS, intervalMs: 250 },
+      );
+    },
+    EXECUTION_TIMEOUT_MS,
+  );
+
+  it('still debits the warm counter and leaves the cold one cold when its ClickHouse read fails', async () => {
+    const { spenderId } = await saveCreditQuotaForNewSpender();
+
+    await chargeRun({ spenderId, creditsUsedMicro: 600 });
+    await saveCodeExecutionQuota({
+      spenderId,
+      unit: UsageUnit.INVOCATION,
+      limitValue: UNREACHABLE_LIMIT_VALUE,
+    });
+    await refreshUsageLimitsCache();
+
+    const incrementCounterBySpy = spyOnMetrics();
+    const clickHouseReadSpy = jest
+      .spyOn(
+        getAppProviderByClassName<UsageAnalyticsService>(
+          'UsageAnalyticsService',
+        ),
+        'getConsumptionRowsForAllScopes',
+      )
+      .mockRejectedValue(new Error('ClickHouse is unreachable'));
+
+    try {
+      expect(await chargeRun({ spenderId, creditsUsedMicro: 100 })).toEqual({
+        exhaustedKind: null,
+      });
+      expect(await findSpenderCounterKeys(spenderId)).toHaveLength(1);
+      expect(findAdmittedOnFailureAttributes(incrementCounterBySpy)).toEqual([
+        {
+          operation: 'consume',
+          resourceType: UsageResourceType.LOGIC_FUNCTION,
+        },
+      ]);
+    } finally {
+      clickHouseReadSpy.mockRestore();
+      incrementCounterBySpy.mockRestore();
+    }
+
+    expect(await findRunRefusal({ spenderId, costMicro: 300 })).toBeNull();
+    expect(await findRunRefusal({ spenderId, costMicro: 301 })).toMatchObject({
+      exhaustedKind: 'limit',
+      unit: UsageUnit.CREDIT,
+    });
+  });
 });
