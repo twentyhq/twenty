@@ -71,6 +71,13 @@ const readConnectionAuthFailure: StateReader = ({ application }) =>
     [application.connectedAccountId],
   );
 
+const readConnectionExternalAccountId: StateReader = ({ application }) =>
+  globalThis.testDataSource.query(
+    `SELECT "externalAccountId", "accessToken" FROM core."connectedAccount"
+      WHERE id = $1`,
+    [application.connectedAccountId],
+  );
+
 const readKeyValuePairs: StateReader = ({ target }) =>
   globalThis.testDataSource.query(
     `SELECT "applicationId", value FROM core."keyValuePair"
@@ -109,6 +116,7 @@ const GRAPHQL_STATE_READERS: Partial<
   Record<GraphqlOperationName, StateReader>
 > = {
   reportAppConnectionAuthFailure: readConnectionAuthFailure,
+  deduplicateConnectedAccount: readConnectionExternalAccountId,
   setAppKeyValue: readKeyValuePairs,
   deleteAppKeyValue: readKeyValuePairs,
   enqueueJob: readJobs,
