@@ -26,6 +26,7 @@ import { type ValidationRuleViolation } from '@/validation-rules/types/Validatio
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { getValidationRuleViolationsFromError } from '@/validation-rules/utils/getValidationRuleViolationsFromError';
+import { groupValidationRuleViolationsByField } from '@/validation-rules/utils/groupValidationRuleViolationsByField';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
@@ -165,10 +166,19 @@ const SidePanelRecordCreationForm = ({
 
   const hiddenFieldsCount = hiddenFieldMetadataItems.length;
 
-  const validationRuleViolations = [
-    ...draftValidationRuleViolations,
-    ...serverValidationRuleViolations,
-  ];
+  const { violationsByFieldMetadataId, recordViolations } =
+    groupValidationRuleViolationsByField({
+      violations: [
+        ...draftValidationRuleViolations,
+        ...serverValidationRuleViolations,
+      ],
+      displayedFieldMetadataIds: [
+        ...visibleFieldMetadataItems,
+        ...(recordCreationFormAreHiddenFieldsShown
+          ? hiddenFieldMetadataItems
+          : []),
+      ].map((fieldMetadataItem) => fieldMetadataItem.id),
+    });
 
   const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
     computeDraftValidationRuleViolations({
@@ -297,6 +307,9 @@ const SidePanelRecordCreationForm = ({
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={visibleFieldMetadataItems}
           draftRecord={draftRecord}
+          validationRuleViolationsByFieldMetadataId={
+            violationsByFieldMetadataId
+          }
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
         />
@@ -327,14 +340,17 @@ const SidePanelRecordCreationForm = ({
             objectMetadataItem={objectMetadataItem}
             fieldMetadataItems={hiddenFieldMetadataItems}
             draftRecord={draftRecord}
+            validationRuleViolationsByFieldMetadataId={
+              violationsByFieldMetadataId
+            }
             onFieldValueChange={handleFieldValueChange}
             onFieldValueClear={handleFieldValueClear}
           />
         )}
       </StyledContent>
-      {validationRuleViolations.length > 0 && (
+      {recordViolations.length > 0 && (
         <StyledValidationRuleErrors>
-          {validationRuleViolations.map((violation) => (
+          {recordViolations.map((violation) => (
             <StyledValidationRuleError key={violation.ruleId} role="alert">
               {violation.message}
             </StyledValidationRuleError>

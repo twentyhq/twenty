@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import {
   UseFilters,
   UseGuards,

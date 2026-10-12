@@ -43,7 +43,7 @@ export const runWorkflowActionStep = async ({
   input: Record<string, unknown>;
   payload?: object;
   runToken?: string;
-  beforeRun?: () => Promise<unknown>;
+  beforeRun?: (coreWorkflowVersionId: string) => Promise<unknown>;
   // for a step that waits on a person, who answers here before the run is awaited
   whileRunning?: (run: {
     workflowRunId: string;
@@ -84,7 +84,7 @@ export const runWorkflowActionStep = async ({
       },
     });
 
-    await beforeRun?.();
+    await beforeRun?.(coreWorkflowVersionId);
 
     workflowRunId = await runCoreWorkflowVersion({
       coreWorkflowVersionId,

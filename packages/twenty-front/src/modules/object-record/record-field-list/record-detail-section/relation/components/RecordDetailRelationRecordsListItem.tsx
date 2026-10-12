@@ -266,10 +266,6 @@ export const RecordDetailRelationRecordsListItem = ({
             instanceId={`${scopeInstanceId}-relation-${relationRecord.id}`}
             objectNameSingular={relationObjectMetadataNameSingular}
             objectRecordId={relationRecord.id}
-            showDuplicatesSection={false}
-            showRelationSections={false}
-            excludeCreatedAtAndUpdatedAt={true}
-            excludeFieldMetadataIds={[relationFieldMetadataId]}
           />
         </Collapsible.Panel>
       </Collapsible.Root>

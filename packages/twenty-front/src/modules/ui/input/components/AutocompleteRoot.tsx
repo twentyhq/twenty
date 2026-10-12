@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
+import { preventDismissingClickActivation } from 'twenty-ui/utilities';
 import {
   type AutocompleteRootProps as AutocompletePrimitiveRootProps,
   Autocomplete,
@@ -76,16 +77,23 @@ export const AutocompleteRoot = <TItem,>({
         return;
       }
 
-      if (!open) {
-        closeDropdown(dropdownId);
-        onClose?.();
+      if (open) {
+        openDropdown({
+          dropdownComponentInstanceIdFromProps: dropdownId,
+          globalHotkeysConfig,
+        });
         return;
       }
 
-      openDropdown({
-        dropdownComponentInstanceIdFromProps: dropdownId,
-        globalHotkeysConfig,
-      });
+      closeDropdown(dropdownId);
+      onClose?.();
+
+      const shouldPreventOutsideClickActivation =
+        details.reason === 'outside-press' && !details.isCanceled;
+
+      if (shouldPreventOutsideClickActivation) {
+        preventDismissingClickActivation(details.event);
+      }
     };
 
   const handleItemHighlighted: AutocompletePrimitiveRootProps<TItem>['onItemHighlighted'] =

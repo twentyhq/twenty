@@ -6,8 +6,9 @@ import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contex
 
 type AutocompleteContentProps = Pick<
   ComponentProps<typeof Autocomplete.Popup>,
-  'children' | 'align' | 'sideOffset' | 'width'
->;
+  'children' | 'width'
+> &
+  Pick<ComponentProps<typeof Autocomplete.Positioner>, 'align' | 'sideOffset'>;
 
 export const AutocompleteContent = ({
   children,
@@ -22,16 +23,18 @@ export const AutocompleteContent = ({
   };
 
   return (
-    <Autocomplete.Popup
-      data-click-outside-id={parentClickOutsideId}
-      align={align}
-      sideOffset={sideOffset}
-      width={width}
-      onMouseDown={keepFocusInInput}
-    >
-      <DropdownClickOutsideListenerExclusion>
-        {children}
-      </DropdownClickOutsideListenerExclusion>
-    </Autocomplete.Popup>
+    <Autocomplete.Portal>
+      <Autocomplete.Positioner align={align} sideOffset={sideOffset}>
+        <Autocomplete.Popup
+          data-click-outside-id={parentClickOutsideId}
+          width={width}
+          onMouseDown={keepFocusInInput}
+        >
+          <DropdownClickOutsideListenerExclusion>
+            {children}
+          </DropdownClickOutsideListenerExclusion>
+        </Autocomplete.Popup>
+      </Autocomplete.Positioner>
+    </Autocomplete.Portal>
   );
 };

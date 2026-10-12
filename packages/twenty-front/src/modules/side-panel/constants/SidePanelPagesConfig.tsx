@@ -15,6 +15,7 @@ import { SidePanelSendCampaignPage } from '@/side-panel/pages/send-campaign/comp
 import { SidePanelRecordCreationFormPage } from '@/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage';
 import { SidePanelRecordCreationFormSettingsPage } from '@/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage';
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
+import { SidePanelAddToMessageListPage } from '@/side-panel/pages/add-to-message-list/components/SidePanelAddToMessageListPage';
 import { SidePanelShareRecordPage } from '@/side-panel/pages/share-record/components/SidePanelShareRecordPage';
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
@@ -104,6 +105,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
     <SidePanelRecordCreationFormSettingsPage />,
   ],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
+  [SidePanelPages.AddToMessageList, <SidePanelAddToMessageListPage />],
   [SidePanelPages.EmailBlockSettings, <SidePanelEmailDesignPage />],
   [SidePanelPages.EmailBlockStyle, <SidePanelEmailBlockSettingsPage />],
   [SidePanelPages.EmailPageStyle, <SidePanelEmailPageStylePage />],
