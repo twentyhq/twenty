@@ -13,6 +13,7 @@ import { findTeamsCalendarEventIdsOrThrow } from 'src/features/transcripts/logic
 import { findTeamsTranscriptCalendarReference } from 'src/features/transcripts/logic-functions/utils/find-teams-transcript-calendar-reference';
 import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page';
 import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
+import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
 
 const listOccurrencePagesOrThrow = async ({
   accessToken,
@@ -66,14 +67,15 @@ const listOccurrencesAroundTranscriptStartOrThrow = async ({
       pageIndex: 0,
     });
   } catch (error) {
-    if (
-      error instanceof GraphRequestError &&
-      (error.status === 403 || error.status === 404)
-    ) {
-      return [];
+    if (!(error instanceof GraphRequestError)) {
+      throw error;
     }
 
-    throw error;
+    console.error(
+      `[teams] could not list the calendar to link a transcript to its event: ${toErrorMessage(error)}`,
+    );
+
+    return [];
   }
 };
 
