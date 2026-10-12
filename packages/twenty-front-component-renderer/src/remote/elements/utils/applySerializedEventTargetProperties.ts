@@ -19,21 +19,17 @@ export const applySerializedEventTargetProperties = ({
   eventData: SerializedEventData;
 }): void => {
   const { inputValueSequence } = eventData;
-  const hasInputValueSequence = isNumber(inputValueSequence);
-  const isNewInputValue =
-    hasInputValueSequence &&
-    inputValueSequence > (workerInputValueSequenceByElement.get(element) ?? 0);
-  const isStaleInputValue = hasInputValueSequence && !isNewInputValue;
+  const isStaleInputValue =
+    isNumber(inputValueSequence) &&
+    inputValueSequence <= (workerInputValueSequenceByElement.get(element) ?? 0);
 
-  if (isNewInputValue) {
+  if (isNumber(inputValueSequence) && !isStaleInputValue) {
     workerInputValueSequenceByElement.set(element, inputValueSequence);
-    queueMicrotask(() => {
-      updateRemoteElementProperty(
-        element as Element,
-        INPUT_VALUE_SEQUENCE_BRIDGE_PROPERTY,
-        workerInputValueSequenceByElement.get(element),
-      );
-    });
+    updateRemoteElementProperty(
+      element as Element,
+      INPUT_VALUE_SEQUENCE_BRIDGE_PROPERTY,
+      inputValueSequence,
+    );
   }
 
   for (const key of SERIALIZED_EVENT_TARGET_PROPERTY_KEYS) {

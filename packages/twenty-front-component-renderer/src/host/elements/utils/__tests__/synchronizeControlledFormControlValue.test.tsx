@@ -228,6 +228,32 @@ describe('controlled form control value synchronization with pending edits', () 
     expect(hostControl.selectionDirection).toBe('backward');
   });
 
+  it('should apply remote values after a native change commits a transformed value', async () => {
+    const { connection, hostControl, remoteControl, dispatchAllHostEvents } =
+      renderRemoteControlWithDeferredHostEvents('input');
+
+    remoteControl.addEventListener('input', () => {
+      remoteControl.value = remoteControl.value.toUpperCase();
+    });
+    act(() => connection.flush());
+    hostControl.focus();
+    act(() => editNativeValue({ hostControl, value: 'a', selectionStart: 1 }));
+    await dispatchAllHostEvents();
+
+    expect(hostControl.value).toBe('A');
+
+    act(() => {
+      hostControl.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await dispatchAllHostEvents();
+    act(() => {
+      remoteControl.value = 'reset';
+      connection.flush();
+    });
+
+    expect(hostControl.value).toBe('reset');
+  });
+
   it('should forward both input and change callbacks without replaying the native value over a transform', async () => {
     const { connection, hostControl, remoteControl, dispatchAllHostEvents } =
       renderRemoteControlWithDeferredHostEvents('input');
