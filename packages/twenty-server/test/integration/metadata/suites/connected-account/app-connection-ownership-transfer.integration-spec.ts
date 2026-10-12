@@ -1,3 +1,5 @@
+import { http, HttpResponse } from 'msw';
+import { GOOGLE_TOKEN_URLS } from 'test/integration/google/mocks/google-token-handlers.util';
 import { insertApplicationRegistrationVariable } from 'test/integration/metadata/suites/application-registration-variable/utils/insert-application-registration-variable.util';
 import {
   type ApplicationWithAppConnection,
@@ -6,6 +8,7 @@ import {
 } from 'test/integration/metadata/suites/connection-provider/utils/setup-application-with-app-connection.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 import {
   ConnectedAccountProvider,
   MessageChannelPendingGroupEmailsAction,
@@ -41,6 +44,7 @@ const REVOKE_ENDPOINT = 'https://slack.com/api/auth.revoke';
 const TOKEN_ENDPOINT = 'https://slack.com/api/oauth.v2.access';
 
 describe('app connection ownership transfer', () => {
+  const httpMock = setupHttpMock();
   let application: ApplicationWithAppConnection;
   let providerId: string;
   let service: ConnectedAccountMetadataService;
@@ -598,5 +602,60 @@ describe('app connection ownership transfer', () => {
       accessToken: null,
       refreshToken: null,
     });
+  });
+
+  it('refreshes an expired Google token to stop its push subscription before archiving the account', async () => {
+    const account = await createGoogleAccount(DEPARTING_MEMBER_ID);
+
+    try {
+      await accounts().update(account.id, {
+        lastCredentialsRefreshedAt: new Date(0),
+      });
+
+      const channel = await createChannel(
+        account.id,
+        WebhookSubscriptionStatus.ACTIVE,
+      );
+      const stopRequestAuthorizations: (string | null)[] = [];
+
+      httpMock.use(
+        ...GOOGLE_TOKEN_URLS.map((url) =>
+          http.post(url, () =>
+            HttpResponse.json({
+              access_token: 'google-refreshed-by-transfer',
+              expires_in: 3600,
+              token_type: 'Bearer',
+            }),
+          ),
+        ),
+        http.post('*/gmail/v1/users/me/stop', ({ request }) => {
+          stopRequestAuthorizations.push(request.headers.get('authorization'));
+
+          return new HttpResponse(null, { status: 204 });
+        }),
+      );
+
+      await transfer();
+
+      expect(stopRequestAuthorizations).toEqual([
+        'Bearer google-refreshed-by-transfer',
+      ]);
+      expect(
+        await channels().findOneByOrFail({ id: channel.id }),
+      ).toMatchObject({
+        isSyncEnabled: false,
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED,
+      });
+      expect(
+        await accounts().findOneByOrFail({ id: account.id }),
+      ).toMatchObject({
+        userWorkspaceId: CUSTODIAN_MEMBER_ID,
+        archivedAt: expect.anything(),
+        accessToken: null,
+        refreshToken: null,
+      });
+    } finally {
+      await accounts().delete({ id: account.id });
+    }
   });
 });

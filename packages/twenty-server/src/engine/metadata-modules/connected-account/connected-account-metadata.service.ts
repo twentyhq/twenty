@@ -375,7 +375,9 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<void> {
     // Decided under the lock so an account reassigned or reconnected while
-    // this waited is left alone; network side effects run after commit.
+    // this waited is left alone. Network side effects run after commit, and
+    // the accounts stay active until then so a webhook stop can still refresh
+    // an expired token.
     const transferredAccounts = await this.repository.manager.transaction(
       async (entityManager) => {
         const accountsToTransfer = await entityManager.find(
@@ -392,12 +394,6 @@ export class ConnectedAccountMetadataService {
 
         const transferredAccountIds = accountsToTransfer.map(
           (account) => account.id,
-        );
-
-        await entityManager.update(
-          ConnectedAccountEntity,
-          { id: In(transferredAccountIds), workspaceId, archivedAt: IsNull() },
-          { archivedAt: new Date() },
         );
 
         await entityManager.update(
@@ -473,11 +469,13 @@ export class ConnectedAccountMetadataService {
     );
 
     for (const transferredAccount of transferredAccounts) {
-      // An account archived before the transfer ran its hook when disconnected.
-      if (
-        isDefined(transferredAccount.connectionProviderId) &&
-        !isDefined(transferredAccount.archivedAt)
-      ) {
+      // An account archived before the transfer was already released and
+      // cleared when it was disconnected.
+      if (isDefined(transferredAccount.archivedAt)) {
+        continue;
+      }
+
+      if (isDefined(transferredAccount.connectionProviderId)) {
         await this.connectionProviderLifecycleHookService.runOnDisconnect({
           connectionProviderId: transferredAccount.connectionProviderId,
           workspaceId,
@@ -487,31 +485,77 @@ export class ConnectedAccountMetadataService {
 
       await this.appOAuthRevokeService.revokeIfApp(transferredAccount);
 
-      // A reconnect that revived the account after the lock was released
-      // stamped new credentials, which must survive.
-      const clearResult = await this.repository.update(
-        {
-          id: transferredAccount.id,
-          workspaceId,
-          lastCredentialsRefreshedAt: isDefined(
-            transferredAccount.lastCredentialsRefreshedAt,
-          )
-            ? transferredAccount.lastCredentialsRefreshedAt
-            : IsNull(),
-        },
-        {
-          accessToken: null,
-          refreshToken: null,
-          connectionParameters: null,
-        },
+      const isArchived = await this.archiveTransferredAccount({
+        account: transferredAccount,
+        workspaceId,
+      });
+
+      if (isArchived) {
+        continue;
+      }
+
+      // The webhook stop or the hook above may have refreshed the tokens; a
+      // reconnect by another member moves the account to them and must win.
+      const latestAccount = await this.repository.findOneBy({
+        id: transferredAccount.id,
+        workspaceId,
+        archivedAt: IsNull(),
+      });
+
+      if (
+        !isDefined(latestAccount) ||
+        latestAccount.userWorkspaceId !== toUserWorkspaceId
+      ) {
+        this.logger.log(
+          `Transfer left connected account ${transferredAccount.id} in workspace ${workspaceId} as changed concurrently`,
+        );
+        continue;
+      }
+
+      await this.appOAuthRevokeService.revokeIfApp(latestAccount);
+
+      await this.archiveTransferredAccount({
+        account: latestAccount,
+        workspaceId,
+      });
+    }
+  }
+
+  private async archiveTransferredAccount({
+    account,
+    workspaceId,
+  }: {
+    account: ConnectedAccountEntity;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const updateResult = await this.repository.update(
+      {
+        id: account.id,
+        workspaceId,
+        archivedAt: IsNull(),
+        lastCredentialsRefreshedAt: isDefined(
+          account.lastCredentialsRefreshedAt,
+        )
+          ? account.lastCredentialsRefreshedAt
+          : IsNull(),
+      },
+      {
+        archivedAt: new Date(),
+        accessToken: null,
+        refreshToken: null,
+        connectionParameters: null,
+      },
+    );
+
+    if (updateResult.affected === 0) {
+      this.logger.log(
+        `Transfer lost a concurrent credential change on connected account ${account.id} in workspace ${workspaceId}`,
       );
 
-      if (clearResult.affected === 0) {
-        this.logger.log(
-          `Transfer kept credentials changed concurrently on connected account ${transferredAccount.id} in workspace ${workspaceId}`,
-        );
-      }
+      return false;
     }
+
+    return true;
   }
 
   async disconnect({
