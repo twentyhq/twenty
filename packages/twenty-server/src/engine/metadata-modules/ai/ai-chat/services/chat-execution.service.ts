@@ -860,6 +860,6 @@ export class ChatExecutionService {
       pathname: path,
     });
 
-    return `The user is on the settings page ${resourceUrl}.`;
+    return `The user is on the settings page ${resourceUrl}. When they talk about what this page shows (for example "this rule" or "my rule"), they mean the item at this path.`;
   }
 }

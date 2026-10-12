@@ -152,7 +152,7 @@ export class ValidationRuleToolsFactory {
       },
       create_validation_rule: {
         description:
-          'Create a validation rule on an object. An invalid expression is rejected with the reason.',
+          'Create a validation rule on an object. An invalid expression is rejected with the reason. When the user is on a validation rule page (a settings path ending in /validation-rules/<id>), they mean that rule: update it with update_validation_rule instead of creating another one.',
         inputSchema: CreateValidationRuleInputSchema,
         execute: async ({
           objectName,
@@ -184,7 +184,7 @@ export class ValidationRuleToolsFactory {
       },
       update_validation_rule: {
         description:
-          'Update a validation rule. Only the provided properties change. An active rule rejects an invalid expression with the reason; an inactive rule only checks it when activated, so check it first with validate_validation_rule_expression.',
+          'Update a validation rule. Only the provided properties change. When the user is on a validation rule page (a settings path ending in /validation-rules/<id>), requests about a rule are about that one. An active rule rejects an invalid expression with the reason; an inactive rule only checks it when activated, so check it first with validate_validation_rule_expression. Keep the rule inactive unless the user asks to activate it.',
         inputSchema: UpdateValidationRuleInputSchema,
         execute: async ({
           id,
