@@ -42,6 +42,10 @@ describe('Workflow version malformed validation (e2e)', () => {
     id: string;
     settings: { input: Record<string, unknown> };
   };
+  let sendEmailStep: {
+    id: string;
+    settings: { input: Record<string, unknown> };
+  };
 
   beforeAll(async () => {
     const createData = await graphql(`
@@ -102,6 +106,26 @@ describe('Workflow version malformed validation (e2e)', () => {
       },
     );
 
+    await graphql(
+      `
+        mutation CreateWorkflowVersionStep(
+          $input: CreateWorkflowVersionStepInput!
+        ) {
+          createWorkflowVersionStep(input: $input) {
+            stepsDiff
+          }
+        }
+      `,
+      {
+        input: {
+          workflowVersionId,
+          stepType: 'SEND_EMAIL',
+          parentStepId: 'trigger',
+          position: { x: 400, y: 0 },
+        },
+      },
+    );
+
     const stepsData = await graphql(
       `
         query GetWorkflowVersion($id: UUID!) {
@@ -116,6 +140,51 @@ describe('Workflow version malformed validation (e2e)', () => {
     createRecordStep = stepsData.workflowVersion.steps.find(
       (step: { type: string }) => step.type === 'CREATE_RECORD',
     );
+    sendEmailStep = stepsData.workflowVersion.steps.find(
+      (step: { type: string }) => step.type === 'SEND_EMAIL',
+    );
+  });
+
+  const sendEmailStepWithBody = (body: string) => ({
+    ...sendEmailStep,
+    settings: {
+      ...sendEmailStep.settings,
+      input: { ...sendEmailStep.settings.input, body },
+    },
+  });
+
+  it('rejects an email body saved as HTML or plain text', async () => {
+    for (const body of ['<p>Hello</p>', 'Hello {{trigger.name}},\n\nBye']) {
+      const response = await updateStepResponse(
+        workflowVersionId,
+        sendEmailStepWithBody(body),
+      );
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].extensions.subCode).toBe(
+        'MALFORMED_WORKFLOW_VERSION',
+      );
+      expect(response.body.errors[0].message).toContain(
+        'must be a serialized email document',
+      );
+    }
+  });
+
+  it('accepts an email body saved as an email document', async () => {
+    const response = await updateStepResponse(
+      workflowVersionId,
+      sendEmailStepWithBody(
+        JSON.stringify({
+          type: 'doc',
+          attrs: { schemaVersion: 1 },
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] },
+          ],
+        }),
+      ),
+    );
+
+    expect(response.body.errors).toBeUndefined();
   });
 
   const stepWithInput = (input: Record<string, unknown>) => ({
