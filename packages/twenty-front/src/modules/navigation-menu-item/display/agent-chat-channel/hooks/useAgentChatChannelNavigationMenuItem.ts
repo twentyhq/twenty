@@ -10,7 +10,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
-// Undefined for other items, and for a channel no longer open to the member
 export const useAgentChatChannelNavigationMenuItem = (
   navigationMenuItem: Pick<NavigationMenuItem, 'type' | 'agentChatChannelId'>,
 ) => {
