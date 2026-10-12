@@ -30,7 +30,9 @@ export class AiWorkspaceStatsService {
       }),
       // the full role-scoped catalog, to match the Tools tab
       this.toolRegistryService.buildToolIndex(workspaceId, userRoleId, {
-        rolePermissionConfig: { intersectionOf: { userWorkspace: userRoleId } },
+        rolePermissionConfig: {
+          intersectionOf: { userWorkspaceRoleId: userRoleId },
+        },
       }),
     ]);
 

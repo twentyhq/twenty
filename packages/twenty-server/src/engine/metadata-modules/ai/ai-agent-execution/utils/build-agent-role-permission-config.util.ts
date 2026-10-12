@@ -8,5 +8,5 @@ export const buildAgentRolePermissionConfig = ({
   agentRoleId: string | undefined;
   roleRestrictions?: AgentRoleRestrictions;
 }): RolePermissionConfig => ({
-  intersectionOf: { ...roleRestrictions, agent: agentRoleId ?? null },
+  intersectionOf: { ...roleRestrictions, agentRoleId: agentRoleId ?? null },
 });

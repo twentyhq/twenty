@@ -8,7 +8,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import {
   type RolePermissionConfig,
-  type RoleRestrictionsBySource,
+  type RoleIdsBySource,
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { buildUserRoleRestrictions } from 'src/engine/twenty-orm/utils/build-user-role-restrictions.util';
 import { resolveApplicationRoleRestriction } from 'src/engine/twenty-orm/utils/resolve-application-role-restriction.util';
@@ -22,7 +22,7 @@ const resolveRoleRestrictionsFromAuthContext = ({
   authContext: WorkspaceAuthContext;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
-}): RoleRestrictionsBySource => {
+}): RoleIdsBySource => {
   if (isUserAuthContext(authContext)) {
     return buildUserRoleRestrictions({
       userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
@@ -31,7 +31,7 @@ const resolveRoleRestrictionsFromAuthContext = ({
   }
 
   if (isApiKeyAuthContext(authContext)) {
-    return { apiKey: apiKeyRoleMap[authContext.apiKey.id] ?? null };
+    return { apiKeyRoleId: apiKeyRoleMap[authContext.apiKey.id] ?? null };
   }
 
   if (isApplicationAuthContext(authContext)) {

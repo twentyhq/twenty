@@ -373,7 +373,7 @@ describe('agent runs that wait (integration)', () => {
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       },
       roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      callerRoleSource: 'userWorkspace',
+      callerRoleSource: 'userWorkspaceRoleId',
     },
     {
       title: 'the API key that made it',
@@ -383,7 +383,7 @@ describe('agent runs that wait (integration)', () => {
         apiKey: expect.objectContaining({ id: API_KEY_DATA_SEED_IDS.ID_1 }),
       },
       roleTargetId: API_KEY_DATA_SEED_IDS.ID_1,
-      callerRoleSource: 'apiKey',
+      callerRoleSource: 'apiKeyRoleId',
     },
   ])(
     'goes on with a waiting runAgent call as $title',

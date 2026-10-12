@@ -4,7 +4,7 @@ describe('buildAgentRolePermissionConfig', () => {
   it('keeps the agent role alone without restrictions', () => {
     expect(
       buildAgentRolePermissionConfig({ agentRoleId: 'agent-role-id' }),
-    ).toEqual({ intersectionOf: { agent: 'agent-role-id' } });
+    ).toEqual({ intersectionOf: { agentRoleId: 'agent-role-id' } });
   });
 
   it('bounds the agent role by the roles of the run that executes it', () => {
@@ -12,15 +12,15 @@ describe('buildAgentRolePermissionConfig', () => {
       buildAgentRolePermissionConfig({
         agentRoleId: 'agent-role-id',
         roleRestrictions: {
-          userWorkspace: 'member-role-id',
-          application: 'application-role-id',
+          userWorkspaceRoleId: 'member-role-id',
+          applicationRoleId: 'application-role-id',
         },
       }),
     ).toEqual({
       intersectionOf: {
-        agent: 'agent-role-id',
-        userWorkspace: 'member-role-id',
-        application: 'application-role-id',
+        agentRoleId: 'agent-role-id',
+        userWorkspaceRoleId: 'member-role-id',
+        applicationRoleId: 'application-role-id',
       },
     });
   });
@@ -29,10 +29,13 @@ describe('buildAgentRolePermissionConfig', () => {
     expect(
       buildAgentRolePermissionConfig({
         agentRoleId: undefined,
-        roleRestrictions: { userWorkspace: 'member-role-id' },
+        roleRestrictions: { userWorkspaceRoleId: 'member-role-id' },
       }),
     ).toEqual({
-      intersectionOf: { agent: null, userWorkspace: 'member-role-id' },
+      intersectionOf: {
+        agentRoleId: null,
+        userWorkspaceRoleId: 'member-role-id',
+      },
     });
   });
 });

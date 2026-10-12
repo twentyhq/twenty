@@ -345,7 +345,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       ? {
           authContext: runAsContext.authContext,
           actorContext: runAsContext.actorContext,
-          roleRestrictions: { userWorkspace: runAsContext.roleId },
+          roleRestrictions: { userWorkspaceRoleId: runAsContext.roleId },
         }
       : await this.resolveCallerContext({
           workspaceId,
@@ -491,7 +491,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       return {
         authContext,
         actorContext,
-        roleRestrictions: { userWorkspace: roleId },
+        roleRestrictions: { userWorkspaceRoleId: roleId },
       };
     }
 
@@ -507,7 +507,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
           apiKey: fromApiKeyEntityToFlat(apiKey),
         }),
         roleRestrictions: {
-          apiKey: await this.apiKeyRoleService.getRoleIdForApiKeyId(
+          apiKeyRoleId: await this.apiKeyRoleService.getRoleIdForApiKeyId(
             apiKey.id,
             workspaceId,
           ),

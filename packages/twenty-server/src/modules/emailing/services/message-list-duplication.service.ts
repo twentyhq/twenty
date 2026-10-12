@@ -126,12 +126,12 @@ export class MessageListDuplicationService {
     const messageListRepository =
       transactionScope.getRepository<MessageListWorkspaceEntity>(
         'messageList',
-        { intersectionOf: { userWorkspace: roleId } },
+        { intersectionOf: { userWorkspaceRoleId: roleId } },
       );
     const messageListMemberRepository =
       transactionScope.getRepository<MessageListMemberWorkspaceEntity>(
         'messageListMember',
-        { intersectionOf: { userWorkspace: roleId } },
+        { intersectionOf: { userWorkspaceRoleId: roleId } },
       );
 
     const originalMessageList = await messageListRepository.findOne({

@@ -9,7 +9,7 @@ describe('resolveApplicationRoleRestriction', () => {
           application: { defaultRoleId: 'application-role-id' },
           isActingAlone,
         }),
-      ).toEqual({ application: 'application-role-id' });
+      ).toEqual({ applicationRoleId: 'application-role-id' });
     },
   );
 
@@ -19,7 +19,7 @@ describe('resolveApplicationRoleRestriction', () => {
         application: { defaultRoleId: null },
         isActingAlone: true,
       }),
-    ).toEqual({ application: null });
+    ).toEqual({ applicationRoleId: null });
   });
 
   it('adds no restriction for an application without a role acting with another actor', () => {

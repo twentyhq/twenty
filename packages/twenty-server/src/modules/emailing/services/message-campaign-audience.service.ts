@@ -147,7 +147,7 @@ export class MessageCampaignAudienceService {
   }> {
     const listMemberRepository = this.workspaceOrmManager.getRepository(
       MessageListMemberWorkspaceEntity,
-      { intersectionOf: { userWorkspace: roleId } },
+      { intersectionOf: { userWorkspaceRoleId: roleId } },
     );
 
     const members = await listMemberRepository.find({ where: { listId } });
@@ -159,7 +159,7 @@ export class MessageCampaignAudienceService {
 
     const personRepository = this.workspaceOrmManager.getRepository(
       PersonWorkspaceEntity,
-      { intersectionOf: { userWorkspace: roleId } },
+      { intersectionOf: { userWorkspaceRoleId: roleId } },
     );
 
     const people = await personRepository.find({

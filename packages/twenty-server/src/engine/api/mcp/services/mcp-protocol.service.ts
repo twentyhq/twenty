@@ -160,7 +160,7 @@ export class McpProtocolService {
 
       return {
         roleId: apiKeyRoleId,
-        rolePermissionConfig: { intersectionOf: { apiKey: apiKeyRoleId } },
+        rolePermissionConfig: { intersectionOf: { apiKeyRoleId } },
       };
     }
 

@@ -337,7 +337,7 @@ export class MessageCampaignService {
   }): Promise<SendableCampaign> {
     const campaignRepository = this.workspaceOrmManager.getRepository(
       MessageCampaignWorkspaceEntity,
-      { intersectionOf: { userWorkspace: roleId } },
+      { intersectionOf: { userWorkspaceRoleId: roleId } },
     );
 
     const campaign = await campaignRepository.findOne({

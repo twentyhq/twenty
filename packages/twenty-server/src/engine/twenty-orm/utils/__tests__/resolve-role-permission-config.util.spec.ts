@@ -59,7 +59,7 @@ describe('resolveRolePermissionConfig', () => {
 
   it('restricts a user request to the user role', () => {
     expect(resolve(buildUserContext())).toEqual({
-      intersectionOf: { userWorkspace: USER_ROLE_ID },
+      intersectionOf: { userWorkspaceRoleId: USER_ROLE_ID },
     });
   });
 
@@ -72,8 +72,8 @@ describe('resolveRolePermissionConfig', () => {
       ),
     ).toEqual({
       intersectionOf: {
-        userWorkspace: USER_ROLE_ID,
-        application: APPLICATION_ROLE_ID,
+        userWorkspaceRoleId: USER_ROLE_ID,
+        applicationRoleId: APPLICATION_ROLE_ID,
       },
     });
   });
@@ -81,7 +81,7 @@ describe('resolveRolePermissionConfig', () => {
   it('adds no application restriction when the application has no role', () => {
     expect(
       resolve(buildUserContext({ application: { defaultRoleId: null } })),
-    ).toEqual({ intersectionOf: { userWorkspace: USER_ROLE_ID } });
+    ).toEqual({ intersectionOf: { userWorkspaceRoleId: USER_ROLE_ID } });
   });
 
   it('allows nothing for a user without a role, even with an application', () => {
@@ -114,7 +114,7 @@ describe('resolveRolePermissionConfig', () => {
 
   it('restricts an api key request to the api key role', () => {
     expect(resolve(buildApiKeyContext(API_KEY_ID))).toEqual({
-      intersectionOf: { apiKey: API_KEY_ROLE_ID },
+      intersectionOf: { apiKeyRoleId: API_KEY_ROLE_ID },
     });
   });
 
@@ -124,7 +124,7 @@ describe('resolveRolePermissionConfig', () => {
 
   it('restricts an application request to the application role', () => {
     expect(resolve(buildApplicationContext(APPLICATION_ROLE_ID))).toEqual({
-      intersectionOf: { application: APPLICATION_ROLE_ID },
+      intersectionOf: { applicationRoleId: APPLICATION_ROLE_ID },
     });
   });
 

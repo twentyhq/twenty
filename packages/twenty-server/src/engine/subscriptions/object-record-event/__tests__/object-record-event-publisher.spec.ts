@@ -1830,7 +1830,7 @@ describe('ObjectRecordEventPublisher', () => {
               userId: 'test-user-id',
             }),
             rolePermissionConfig: {
-              intersectionOf: { userWorkspace: roleId },
+              intersectionOf: { userWorkspaceRoleId: roleId },
             },
           }),
         );
@@ -2036,7 +2036,7 @@ describe('ObjectRecordEventPublisher', () => {
         ).toHaveBeenCalledWith(
           expect.objectContaining({
             rolePermissionConfig: {
-              intersectionOf: { userWorkspace: customRoleId },
+              intersectionOf: { userWorkspaceRoleId: customRoleId },
             },
           }),
         );

@@ -68,7 +68,7 @@ export class MessageCampaignLifecycleService {
         const campaignRepository = this.workspaceOrmManager.getRepository(
           MessageCampaignWorkspaceEntity,
           isDefined(roleId)
-            ? { intersectionOf: { userWorkspace: roleId } }
+            ? { intersectionOf: { userWorkspaceRoleId: roleId } }
             : { shouldBypassPermissionChecks: true },
         );
 

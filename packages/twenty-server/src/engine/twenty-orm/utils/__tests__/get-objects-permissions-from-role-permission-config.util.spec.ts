@@ -38,7 +38,9 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
-        rolePermissionConfig: { intersectionOf: { agent: 'agent-role-id' } },
+        rolePermissionConfig: {
+          intersectionOf: { agentRoleId: 'agent-role-id' },
+        },
       }),
     ).toBe(agentRolePermissions);
   });
@@ -49,8 +51,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         rolePermissionConfig: {
           intersectionOf: {
-            userWorkspace: 'default-role-id',
-            application: 'default-role-id',
+            userWorkspaceRoleId: 'default-role-id',
+            applicationRoleId: 'default-role-id',
           },
         },
       }),
@@ -63,8 +65,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         rolePermissionConfig: {
           intersectionOf: {
-            agent: 'agent-role-id',
-            userWorkspace: 'default-role-id',
+            agentRoleId: 'agent-role-id',
+            userWorkspaceRoleId: 'default-role-id',
           },
         },
       }),
@@ -77,8 +79,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         rolePermissionConfig: {
           intersectionOf: {
-            userWorkspace: 'default-role-id',
-            application: 'agent-role-id',
+            userWorkspaceRoleId: 'default-role-id',
+            applicationRoleId: 'agent-role-id',
           },
         },
       })[OBJECT_ID].canReadObjectRecords,
@@ -91,8 +93,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         rolePermissionConfig: {
           intersectionOf: {
-            agent: 'agent-role-id',
-            application: 'missing-role-id',
+            agentRoleId: 'agent-role-id',
+            applicationRoleId: 'missing-role-id',
           },
         },
       }),
@@ -112,7 +114,9 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
-        rolePermissionConfig: { intersectionOf: { apiKey: 'missing-role-id' } },
+        rolePermissionConfig: {
+          intersectionOf: { apiKeyRoleId: 'missing-role-id' },
+        },
       }),
     ).toEqual({});
   });
@@ -122,7 +126,10 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         rolePermissionConfig: {
-          intersectionOf: { agent: null, userWorkspace: 'agent-role-id' },
+          intersectionOf: {
+            agentRoleId: null,
+            userWorkspaceRoleId: 'agent-role-id',
+          },
         },
       }),
     ).toEqual({});

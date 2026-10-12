@@ -15,7 +15,7 @@ const buildAgentRoleRestrictionsFromRunConfig = (
     return {};
   }
 
-  const { agent: _agentRoleRestriction, ...roleRestrictions } =
+  const { agentRoleId: _agentRoleRestriction, ...roleRestrictions } =
     rolePermissionConfig.intersectionOf;
 
   return roleRestrictions;

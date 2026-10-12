@@ -45,7 +45,7 @@ import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-st
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
 import {
   RolePermissionConfig,
-  RoleRestrictionsBySource,
+  RoleIdsBySource,
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
@@ -395,7 +395,7 @@ export class ObjectRecordEventPublisher {
       StreamPermissionsContext,
       'userWorkspaceRoleMap' | 'flatApplicationMaps'
     >,
-  ): { intersectionOf: RoleRestrictionsBySource } | undefined {
+  ): { intersectionOf: RoleIdsBySource } | undefined {
     const { userWorkspaceId, applicationId } = subscriberAuthContext;
 
     if (!isDefined(userWorkspaceId)) {

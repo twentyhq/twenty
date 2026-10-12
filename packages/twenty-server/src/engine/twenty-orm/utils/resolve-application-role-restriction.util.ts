@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RoleRestrictionsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 // An application without a role restricts nothing when it acts with a member or an agent
 export const resolveApplicationRoleRestriction = ({
@@ -9,12 +9,12 @@ export const resolveApplicationRoleRestriction = ({
 }: {
   application: { defaultRoleId: string | null } | undefined;
   isActingAlone: boolean;
-}): Pick<RoleRestrictionsBySource, 'application'> => {
+}): Pick<RoleIdsBySource, 'applicationRoleId'> => {
   const applicationRoleId = application?.defaultRoleId;
 
   if (isDefined(applicationRoleId)) {
-    return { application: applicationRoleId };
+    return { applicationRoleId };
   }
 
-  return isActingAlone ? { application: null } : {};
+  return isActingAlone ? { applicationRoleId: null } : {};
 };

@@ -2,7 +2,7 @@ import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-
 
 describe('getRoleIdsToIntersect', () => {
   it('returns the role of a single source', () => {
-    expect(getRoleIdsToIntersect({ apiKey: 'api-key-role-id' })).toEqual([
+    expect(getRoleIdsToIntersect({ apiKeyRoleId: 'api-key-role-id' })).toEqual([
       'api-key-role-id',
     ]);
   });
@@ -10,9 +10,9 @@ describe('getRoleIdsToIntersect', () => {
   it('returns every restricting role once, the agent role first', () => {
     expect(
       getRoleIdsToIntersect({
-        application: 'application-role-id',
-        userWorkspace: 'member-role-id',
-        agent: 'agent-role-id',
+        applicationRoleId: 'application-role-id',
+        userWorkspaceRoleId: 'member-role-id',
+        agentRoleId: 'agent-role-id',
       }),
     ).toEqual(['agent-role-id', 'member-role-id', 'application-role-id']);
   });
@@ -20,8 +20,8 @@ describe('getRoleIdsToIntersect', () => {
   it('returns a role shared by several sources once', () => {
     expect(
       getRoleIdsToIntersect({
-        userWorkspace: 'shared-role-id',
-        application: 'shared-role-id',
+        userWorkspaceRoleId: 'shared-role-id',
+        applicationRoleId: 'shared-role-id',
       }),
     ).toEqual(['shared-role-id']);
   });
@@ -29,8 +29,8 @@ describe('getRoleIdsToIntersect', () => {
   it('ignores a source without a key', () => {
     expect(
       getRoleIdsToIntersect({
-        userWorkspace: 'member-role-id',
-        application: undefined,
+        userWorkspaceRoleId: 'member-role-id',
+        applicationRoleId: undefined,
       }),
     ).toEqual(['member-role-id']);
   });
@@ -38,18 +38,18 @@ describe('getRoleIdsToIntersect', () => {
   it('denies when an actor takes part without a role, whatever the others hold', () => {
     expect(
       getRoleIdsToIntersect({
-        agent: null,
-        userWorkspace: 'member-role-id',
-        application: 'application-role-id',
+        agentRoleId: null,
+        userWorkspaceRoleId: 'member-role-id',
+        applicationRoleId: 'application-role-id',
       }),
     ).toBeNull();
   });
 
   const OTHER_SOURCES_WITH_ROLES = {
-    agent: 'agent-role-id',
-    userWorkspace: 'member-role-id',
-    apiKey: 'api-key-role-id',
-    application: 'application-role-id',
+    agentRoleId: 'agent-role-id',
+    userWorkspaceRoleId: 'member-role-id',
+    apiKeyRoleId: 'api-key-role-id',
+    applicationRoleId: 'application-role-id',
   } as const;
 
   const buildCombinations = (
@@ -66,7 +66,7 @@ describe('getRoleIdsToIntersect', () => {
       [{}],
     );
 
-  it.each(['userWorkspace', 'apiKey', 'agent'] as const)(
+  it.each(['userWorkspaceRoleId', 'apiKeyRoleId', 'agentRoleId'] as const)(
     'denies a %s without a role in every combination',
     (sourceWithoutRole) => {
       const otherSources = (

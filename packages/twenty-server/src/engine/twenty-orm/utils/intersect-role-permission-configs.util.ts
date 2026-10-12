@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type RolePermissionConfig,
   type RoleRestriction,
-  type RoleRestrictionsBySource,
+  type RoleIdsBySource,
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 const intersectRoleRestrictions = (
@@ -36,9 +36,9 @@ export const intersectRolePermissionConfigs = (
   const sources = new Set([
     ...Object.keys(left.intersectionOf),
     ...Object.keys(right.intersectionOf),
-  ]) as Set<keyof RoleRestrictionsBySource>;
+  ]) as Set<keyof RoleIdsBySource>;
 
-  const intersectionOf: RoleRestrictionsBySource = {};
+  const intersectionOf: RoleIdsBySource = {};
 
   for (const source of sources) {
     const roleRestriction = intersectRoleRestrictions(
