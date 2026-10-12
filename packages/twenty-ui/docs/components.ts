@@ -582,31 +582,6 @@ export const DOCUMENTED_COMPONENTS = [
     partPropDefaults: { Popup: { size: 'md' } },
   },
   {
-    name: 'Menu',
-    source: 'primitives/surfaces/Menu/Menu.tsx',
-    entryPoint: 'twenty-ui/primitives/surfaces',
-    slug: 'surfaces/menu',
-    partPropDescriptions: {
-      Item: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-      },
-      CheckboxItem: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-      },
-      RadioItem: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-      },
-      SubmenuTrigger: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-        onClick: 'The click handler for the submenu trigger.',
-      },
-    },
-  },
-  {
     name: 'Popover',
     source: 'primitives/surfaces/Popover/Popover.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
