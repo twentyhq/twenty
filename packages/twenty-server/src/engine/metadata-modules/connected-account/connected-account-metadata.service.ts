@@ -407,9 +407,6 @@ export class ConnectedAccountMetadataService {
     );
 
     await this.repository.manager.transaction(async (entityManager) => {
-      // Archived first so the reassignment stays out of the active-connection
-      // unique index, which the custodian may already occupy for the same
-      // external account.
       await entityManager.update(
         ConnectedAccountEntity,
         { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
@@ -645,8 +642,6 @@ export class ConnectedAccountMetadataService {
     return connectedAccount;
   }
 
-  // Connections to the same external account can hold the same provider
-  // grant, so revoking it would also cut off the connections that remain.
   private async revokeUnlessGrantIsStillUsed(
     connectedAccount: ConnectedAccountEntity,
   ): Promise<void> {

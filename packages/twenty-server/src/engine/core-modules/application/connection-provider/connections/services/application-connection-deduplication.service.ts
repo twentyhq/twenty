@@ -55,7 +55,6 @@ export class ApplicationConnectionDeduplicationService {
         throw error;
       }
 
-      // A concurrent call stored the same id first and has committed; the retry finds that row and merges into it.
       return this.deduplicateInTransaction(args);
     }
   }
@@ -154,7 +153,6 @@ export class ApplicationConnectionDeduplicationService {
     );
   }
 
-  // The target's tokens now belong to externalAccountId, not to the account the row was identified as.
   private async moveCredentialsToReconnectedAccount({
     entityManager,
     target,

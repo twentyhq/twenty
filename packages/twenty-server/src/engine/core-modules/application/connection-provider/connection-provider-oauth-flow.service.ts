@@ -330,9 +330,6 @@ export class ConnectionProviderOAuthFlowService {
           workspaceId,
         });
 
-      // A visibility change moves the row between the two unique indexes,
-      // where another connection may already hold its external account id.
-      // Dropping the id lets onConnect identify the row again and merge it.
       const externalAccountId =
         reconnectTarget.visibility === visibility
           ? reconnectTarget.externalAccountId

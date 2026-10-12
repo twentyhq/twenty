@@ -31,8 +31,6 @@ export const useApplicationConnectedAccounts = (applicationId: string) => {
         APP_CONNECTION_ON_CONNECT_REFETCH.recentCredentialsChangeWindowInMs,
   );
 
-  // Picks up a merge or a split done by the app's onConnect after the OAuth
-  // callback redirected here.
   useEffect(() => {
     if (!hasRecentCredentialsChange) {
       return;
