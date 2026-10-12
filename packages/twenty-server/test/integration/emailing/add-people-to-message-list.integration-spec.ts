@@ -16,8 +16,6 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type AddPeopleToMessageListService } from 'src/modules/emailing/services/add-people-to-message-list.service';
 
-// The seeded "Create company when adding a new person" workflow skips people
-// synced from email, otherwise each of these people would queue a workflow run
 const people = Array.from({ length: 1005 }, (_, index) => ({
   id: v4(),
   name: { firstName: `List ${index}`, lastName: v4() },
