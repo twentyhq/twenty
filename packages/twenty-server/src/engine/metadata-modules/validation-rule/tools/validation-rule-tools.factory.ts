@@ -75,10 +75,13 @@ export class ValidationRuleToolsFactory {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  private async getObjectMetadataIdOrThrow(
-    workspaceId: string,
-    objectName: string,
-  ): Promise<string> {
+  private async getObjectMetadataIdOrThrow({
+    workspaceId,
+    objectName,
+  }: {
+    workspaceId: string;
+    objectName: string;
+  }): Promise<string> {
     const { flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -113,10 +116,10 @@ export class ValidationRuleToolsFactory {
         }): Promise<ToolOutput<ValidationRuleDTO[]>> => {
           const validationRules =
             await this.validationRuleService.findByObjectMetadataId({
-              objectMetadataId: await this.getObjectMetadataIdOrThrow(
+              objectMetadataId: await this.getObjectMetadataIdOrThrow({
                 workspaceId,
-                parameters.objectName,
-              ),
+                objectName: parameters.objectName,
+              }),
               workspaceId,
             });
 
@@ -139,10 +142,10 @@ export class ValidationRuleToolsFactory {
           expression: string;
         }): Promise<ToolOutput> => {
           await this.validationRuleService.validateExpressionOrThrow({
-            objectMetadataId: await this.getObjectMetadataIdOrThrow(
+            objectMetadataId: await this.getObjectMetadataIdOrThrow({
               workspaceId,
               objectName,
-            ),
+            }),
             expression,
             workspaceId,
           });
@@ -167,10 +170,10 @@ export class ValidationRuleToolsFactory {
           const validationRule = await this.validationRuleService.create({
             input: {
               ...input,
-              objectMetadataId: await this.getObjectMetadataIdOrThrow(
+              objectMetadataId: await this.getObjectMetadataIdOrThrow({
                 workspaceId,
                 objectName,
-              ),
+              }),
             },
             workspaceId,
           });

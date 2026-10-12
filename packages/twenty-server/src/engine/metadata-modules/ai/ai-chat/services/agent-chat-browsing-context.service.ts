@@ -1,14 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 
 const BROWSING_CONTEXT_TTL_SECONDS = 86_400;
 
 @Injectable()
 export class AgentChatBrowsingContextService {
+  private readonly logger = new Logger(AgentChatBrowsingContextService.name);
+
   constructor(private readonly redisClientService: RedisClientService) {}
 
   private getThreadKey(threadId: string): string {
@@ -46,7 +49,11 @@ export class AgentChatBrowsingContextService {
         BROWSING_CONTEXT_TTL_SECONDS,
       )
       .exec()
-      .catch(() => {});
+      .catch((error) => {
+        this.logger.warn(
+          `Could not store the browsing context of thread ${threadId}: ${formatErrorWithCause(error)}`,
+        );
+      });
   }
 
   async recall({
@@ -66,7 +73,11 @@ export class AgentChatBrowsingContextService {
       return isDefined(serializedBrowsingContext)
         ? (JSON.parse(serializedBrowsingContext) as BrowsingContextType)
         : null;
-    } catch {
+    } catch (error) {
+      this.logger.warn(
+        `Could not read the browsing context of thread ${threadId}: ${formatErrorWithCause(error)}`,
+      );
+
       return null;
     }
   }
