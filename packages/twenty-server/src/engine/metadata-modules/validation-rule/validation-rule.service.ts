@@ -144,6 +144,26 @@ export class ValidationRuleService {
       .map(fromFlatValidationRuleToValidationRuleDto);
   }
 
+  async validateExpressionOrThrow({
+    expression,
+    objectMetadataId,
+    workspaceId,
+  }: {
+    expression: string;
+    objectMetadataId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.getFlatMaps(workspaceId);
+
+    compileValidationRuleExpressionOrThrow({
+      expression,
+      objectMetadataId,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
+  }
+
   async create({
     input,
     workspaceId,

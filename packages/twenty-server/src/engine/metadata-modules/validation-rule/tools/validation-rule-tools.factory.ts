@@ -1,18 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
+import { VALIDATION_RULE_EXPRESSION_SYNTAX_DESCRIPTION } from 'twenty-shared/constants';
 import { z } from 'zod';
 
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type ValidationRuleDTO } from 'src/engine/metadata-modules/validation-rule/dtos/validation-rule.dto';
 import { ValidationRuleService } from 'src/engine/metadata-modules/validation-rule/validation-rule.service';
-
-const EXPRESSION_DESCRIPTION = [
-  'Condition that must be true for a record to be saved. When it is false, the write is rejected and the message is shown.',
-  'Reference fields by name, as returned by get_field_metadata. Use dot access for a composite field part (amount.amountMicros, name.firstName) and for a field of a many-to-one related record (company.name), never brackets.',
-  "Compare select and multi-select fields with option values, e.g. stage == 'CUSTOMER'. Currency amounts are in micros: amount.amountMicros > 1000000000 means more than 1000.",
-  'Write text in single quotes. Operators: == != < <= > >= + - * / and or not, and value in [a, b]. now is the date and time of the write; true and false are booleans.',
-  'Functions: isDefined(value) is true when the value is set, even to an empty text; isEmpty(value) is true when the value is not set, an empty text, an empty list, or a composite field with every part empty; isNonEmptyString(value); includes(listOrText, value) is true when a multi-select or array contains the value, or a text contains a text, case-sensitive; arrayLength(list).',
-  'To require a field, use not isEmpty(field).',
-].join(' ');
 
 const MESSAGE_DESCRIPTION =
   'Message shown to the person saving the record when the expression is false.';
@@ -21,10 +15,19 @@ const GetValidationRulesInputSchema = z.object({
   objectMetadataId: z.uuid().describe('Object ID'),
 });
 
+const ValidateValidationRuleExpressionInputSchema = z.object({
+  objectMetadataId: z.uuid().describe('Object ID'),
+  expression: z
+    .string()
+    .describe(VALIDATION_RULE_EXPRESSION_SYNTAX_DESCRIPTION),
+});
+
 const CreateValidationRuleInputSchema = z.object({
   objectMetadataId: z.uuid().describe('Object ID'),
   name: z.string().describe('Short rule name'),
-  expression: z.string().describe(EXPRESSION_DESCRIPTION),
+  expression: z
+    .string()
+    .describe(VALIDATION_RULE_EXPRESSION_SYNTAX_DESCRIPTION),
   message: z.string().describe(MESSAGE_DESCRIPTION),
   errorFieldMetadataId: z
     .uuid()
@@ -37,7 +40,10 @@ const CreateValidationRuleInputSchema = z.object({
 const UpdateValidationRuleInputSchema = z.object({
   id: z.uuid().describe('Validation rule ID'),
   name: z.string().optional().describe('Short rule name'),
-  expression: z.string().optional().describe(EXPRESSION_DESCRIPTION),
+  expression: z
+    .string()
+    .optional()
+    .describe(VALIDATION_RULE_EXPRESSION_SYNTAX_DESCRIPTION),
   message: z.string().optional().describe(MESSAGE_DESCRIPTION),
   errorFieldMetadataId: z
     .uuid()
@@ -62,11 +68,37 @@ export class ValidationRuleToolsFactory {
         description:
           'List the validation rules of an object: conditions a record must meet to be saved.',
         inputSchema: GetValidationRulesInputSchema,
-        execute: async (parameters: { objectMetadataId: string }) =>
-          this.validationRuleService.findByObjectMetadataId({
-            objectMetadataId: parameters.objectMetadataId,
+        execute: async (parameters: {
+          objectMetadataId: string;
+        }): Promise<ToolOutput<ValidationRuleDTO[]>> => {
+          const validationRules =
+            await this.validationRuleService.findByObjectMetadataId({
+              objectMetadataId: parameters.objectMetadataId,
+              workspaceId,
+            });
+
+          return {
+            success: true,
+            message: `Found ${validationRules.length} validation rule(s).`,
+            result: validationRules,
+          };
+        },
+      },
+      validate_validation_rule_expression: {
+        description:
+          'Check a validation rule expression against an object without saving anything. An invalid expression is rejected with the reason.',
+        inputSchema: ValidateValidationRuleExpressionInputSchema,
+        execute: async (parameters: {
+          objectMetadataId: string;
+          expression: string;
+        }): Promise<ToolOutput> => {
+          await this.validationRuleService.validateExpressionOrThrow({
+            ...parameters,
             workspaceId,
-          }),
+          });
+
+          return { success: true, message: 'The expression is valid.' };
+        },
       },
       create_validation_rule: {
         description:
@@ -78,11 +110,18 @@ export class ValidationRuleToolsFactory {
           expression: string;
           message: string;
           errorFieldMetadataId?: string;
-        }) =>
-          this.validationRuleService.create({
+        }): Promise<ToolOutput<ValidationRuleDTO>> => {
+          const validationRule = await this.validationRuleService.create({
             input: parameters,
             workspaceId,
-          }),
+          });
+
+          return {
+            success: true,
+            message: `Created the validation rule "${validationRule.name}".`,
+            result: validationRule,
+          };
+        },
       },
       update_validation_rule: {
         description:
@@ -98,11 +137,18 @@ export class ValidationRuleToolsFactory {
           message?: string;
           errorFieldMetadataId?: string | null;
           isActive?: boolean;
-        }) =>
-          this.validationRuleService.update({
+        }): Promise<ToolOutput<ValidationRuleDTO>> => {
+          const validationRule = await this.validationRuleService.update({
             input: { id, update },
             workspaceId,
-          }),
+          });
+
+          return {
+            success: true,
+            message: `Updated the validation rule "${validationRule.name}".`,
+            result: validationRule,
+          };
+        },
       },
     };
   }

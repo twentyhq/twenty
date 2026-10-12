@@ -1,10 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/components/layout';
 import { IconAddressBook, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { v4 } from 'uuid';
 
+import { useRegisterAiChatOpenForm } from '@/ai/hooks/useRegisterAiChatOpenForm';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { Select } from '@/ui/input/components/Select';
@@ -12,8 +15,10 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsValidationRuleExpressionEditor } from '@/validation-rules/components/SettingsValidationRuleExpressionEditor';
 import { SettingsValidationRuleNameForm } from '@/validation-rules/components/SettingsValidationRuleNameForm';
 import { SettingsValidationRulePreview } from '@/validation-rules/components/SettingsValidationRulePreview';
+import { VALIDATION_RULE_AI_CHAT_FORM_FIELDS } from '@/validation-rules/constants/ValidationRuleAiChatFormFields';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { type ValidationRuleFormValues } from '@/validation-rules/types/ValidationRuleFormValues';
+import { getValidationRuleFormValuesFromAiChatFill } from '@/validation-rules/utils/getValidationRuleFormValuesFromAiChatFill';
 
 const RECORD_LEVEL_OPTION_VALUE = 'record-level';
 
@@ -41,6 +46,24 @@ export const SettingsValidationRuleForm = ({
 }: SettingsValidationRuleFormProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const [aiChatOpenFormId] = useState(() => v4());
+  const [expressionEditorKey, setExpressionEditorKey] = useState(0);
+
+  useRegisterAiChatOpenForm({
+    formId: aiChatOpenFormId,
+    description: `Validation rule on the ${objectMetadataItem.labelSingular} object (objectMetadataId: ${objectMetadataItem.id}). Before filling it, get the field names with get_field_metadata and check the expression with validate_validation_rule_expression.`,
+    fields: VALIDATION_RULE_AI_CHAT_FORM_FIELDS,
+    onFill: (filledValues) => {
+      onChange(
+        getValidationRuleFormValuesFromAiChatFill({
+          values,
+          filledValues,
+          fieldMetadataItems: objectMetadataItem.fields,
+        }),
+      );
+      setExpressionEditorKey((previousKey) => previousKey + 1);
+    },
+  });
 
   const errorFieldOptions = [
     {
@@ -89,6 +112,7 @@ export const SettingsValidationRuleForm = ({
           }
           form={
             <SettingsValidationRuleExpressionEditor
+              key={expressionEditorKey}
               value={values.expression}
               fields={fields}
               editorFields={editorFields}

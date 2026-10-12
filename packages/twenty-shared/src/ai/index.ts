@@ -30,6 +30,7 @@ export type { DatabaseCrudOperation } from './constants/database-crud-operation.
 export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.const';
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
+export { FILL_OPEN_FORM_TOOL_NAME } from './constants/fill-open-form-tool-name.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
 export { PROPOSE_TOOL_CALL_TOOL_NAME } from './constants/propose-tool-call-tool-name.const';
 export { PROPOSE_TOOL_CALL_TOOL_STATUSES } from './constants/propose-tool-call-tool-statuses.const';
@@ -37,6 +38,7 @@ export { PROPOSED_TOOL_CALL_TEMPLATES } from './constants/proposed-tool-call-tem
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
 export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
+export { aiChatOpenFormSchema } from './schemas/ai-chat-open-form-schema';
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
@@ -52,6 +54,7 @@ export type {
 } from './types/AgentResponseSchema';
 export type { AgentRunSummary } from './types/AgentRunSummary';
 export type { AgentRunToolCallLog } from './types/AgentRunToolCallLog';
+export type { AiChatOpenForm } from './types/AiChatOpenForm';
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
@@ -102,6 +105,7 @@ export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-t
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
+export { getFillOpenFormToolResult } from './utils/get-fill-open-form-tool-result.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';

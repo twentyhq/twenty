@@ -1,3 +1,4 @@
+import { useApplyAiChatOpenFormFills } from '@/ai/hooks/useApplyAiChatOpenFormFills';
 import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -14,6 +15,8 @@ export const useUpdateStreamingPartsWithDiff = () => {
 
   const { processWorkspaceSetupCompletion } =
     useProcessWorkspaceSetupCompletion();
+
+  const { applyAiChatOpenFormFills } = useApplyAiChatOpenFormFills();
 
   // messages are replaced, never mutated, so the last one seen can be kept by reference
   const [lastSeenMessageById] = useState(
@@ -64,6 +67,13 @@ export const useUpdateStreamingPartsWithDiff = () => {
       }
 
       processWorkspaceSetupCompletion(incomingMessage);
+      applyAiChatOpenFormFills({
+        message: incomingMessage,
+        turnSenderUserWorkspaceId: incomingMessages
+          .slice(0, index)
+          .findLast((message) => message.role === 'user')?.metadata
+          ?.senderUserWorkspaceId,
+      });
     }
   };
 

@@ -15,10 +15,13 @@ import {
   type ToolSet,
 } from 'ai';
 import {
+  type AiChatOpenForm,
+  aiChatOpenFormSchema,
   ASK_QUESTION_TOOL_NAME,
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
+  FILL_OPEN_FORM_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
@@ -79,11 +82,13 @@ import { createAttachConversationToRecordTool } from 'src/engine/metadata-module
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
+import { createFillOpenFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/fill-open-form.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
+import { buildOpenFormContext } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-open-form-context.util';
 import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-no-assistant-message.util';
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
 import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-referenced-skill-ids.util';
@@ -291,6 +296,11 @@ export class ChatExecutionService {
     const isToolAllowed = (toolName: string) =>
       !AI_CHAT_EXCLUDED_TOOL_NAMES.has(toolName);
 
+    const parsedOpenForm = aiChatOpenFormSchema.safeParse(
+      browsingContext?.openForm,
+    );
+    const openForm = parsedOpenForm.success ? parsedOpenForm.data : undefined;
+
     const preloadedToolSet: ToolSet = {
       ...preloadedTools,
       ...nativeTools,
@@ -315,6 +325,9 @@ export class ChatExecutionService {
             [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
               createCompleteWorkspaceSetupTool(),
           }
+        : {}),
+      ...(isDefined(openForm)
+        ? { [FILL_OPEN_FORM_TOOL_NAME]: createFillOpenFormTool(openForm) }
         : {}),
       ...(canAttachConversationToRecords
         ? {
@@ -395,6 +408,7 @@ export class ChatExecutionService {
       processedMessages = this.injectBrowsingContextIntoLastUserMessage(
         processedMessages,
         contextString,
+        openForm,
       );
     }
 
@@ -754,6 +768,7 @@ export class ChatExecutionService {
   private injectBrowsingContextIntoLastUserMessage(
     messages: ExtendedUIMessage[],
     contextString: string,
+    openForm: AiChatOpenForm | undefined,
   ): ExtendedUIMessage[] {
     const lastUserIndex = messages
       .map((message) => message.role)
@@ -773,7 +788,13 @@ export class ChatExecutionService {
       ...messages.slice(0, lastUserIndex),
       {
         ...lastUserMessage,
-        parts: [...lastUserMessage.parts, browsingContextPart],
+        parts: [
+          ...lastUserMessage.parts,
+          browsingContextPart,
+          ...(isDefined(openForm)
+            ? [{ type: 'text' as const, text: buildOpenFormContext(openForm) }]
+            : []),
+        ],
       },
       ...messages.slice(lastUserIndex + 1),
     ];

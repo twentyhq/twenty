@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { aiChatOpenFormState } from '@/ai/states/aiChatOpenFormState';
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
 import { getAiChatBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
 import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
@@ -26,7 +27,7 @@ import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromV
 export const useGetBrowsingContext = () => {
   const store = useStore();
 
-  const getBrowsingContext = useCallback((): BrowsingContext | null => {
+  const getPageBrowsingContext = useCallback((): BrowsingContext | null => {
     const { pathname } = window.location;
 
     if (isSettingsPath(pathname)) {
@@ -176,6 +177,22 @@ export const useGetBrowsingContext = () => {
 
     return null;
   }, [store]);
+
+  const getBrowsingContext = useCallback((): BrowsingContext | null => {
+    const pageBrowsingContext = getPageBrowsingContext();
+    const aiChatOpenForm = store.get(aiChatOpenFormState.atom);
+
+    if (!isDefined(pageBrowsingContext) || !isDefined(aiChatOpenForm)) {
+      return pageBrowsingContext;
+    }
+
+    const { formId, description, fields } = aiChatOpenForm;
+
+    return {
+      ...pageBrowsingContext,
+      openForm: { formId, description, fields },
+    };
+  }, [getPageBrowsingContext, store]);
 
   return { getBrowsingContext };
 };

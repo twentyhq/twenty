@@ -1,4 +1,6 @@
-export type BrowsingContext =
+import { type AiChatOpenForm } from 'twenty-shared/ai';
+
+export type BrowsingContext = (
   | {
       type: 'recordPage';
       objectNameSingular: string;
@@ -16,4 +18,7 @@ export type BrowsingContext =
   | {
       type: 'settingsPage';
       path: string;
-    };
+    }
+) & {
+  openForm?: AiChatOpenForm;
+};
