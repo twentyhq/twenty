@@ -1,4 +1,3 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection';
 import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection';
 import { SettingsRolePermissionsSettingsSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection';
@@ -24,14 +23,12 @@ type SettingsRolePermissionsProps = {
   roleId: string;
   isEditable: boolean;
   fromAgentId?: string;
-  objectMetadataItemsFromMarketplaceApp?: EnrichedObjectMetadataItem[];
 };
 
 export const SettingsRolePermissions = ({
   roleId,
   isEditable,
   fromAgentId,
-  objectMetadataItemsFromMarketplaceApp,
 }: SettingsRolePermissionsProps) => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -59,9 +56,6 @@ export const SettingsRolePermissions = ({
         roleId={roleId}
         fromAgentId={fromAgentId}
         isEditable={isEditable}
-        objectMetadataItemsFromMarketplaceApp={
-          objectMetadataItemsFromMarketplaceApp
-        }
       />
       <SettingsRolePermissionsSettingsSection
         roleId={roleId}

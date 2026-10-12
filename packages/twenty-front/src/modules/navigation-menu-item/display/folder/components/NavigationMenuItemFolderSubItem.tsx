@@ -53,9 +53,6 @@ export const NavigationMenuItemFolderSubItem = ({
   const { t } = useLingui();
   const isEditHighlightedInNavigationMenu =
     useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-  );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const isInitialObjectViewEnabled = useIsFeatureEnabled(
@@ -125,7 +122,6 @@ export const NavigationMenuItemFolderSubItem = ({
   const isCoreWorkflowsIndexItem = isCoreWorkflowsObjectNavigationMenuItem({
     navigationMenuItemType: navigationMenuItem.type,
     objectNameSingular,
-    isWorkflowCoreIndexPageEnabled,
   });
 
   const viewSecondaryLabel =
