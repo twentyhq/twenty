@@ -9,9 +9,9 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { StyledWidgetContentFrame } from '@/page-layout/widgets/components/WidgetContentFrame';
+import { isSoloStandaloneFrontComponent } from '@/page-layout/widgets/utils/isSoloStandaloneFrontComponent';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled(StyledWidgetContentFrame)<{
   isInEditMode: boolean;
@@ -59,9 +59,11 @@ export const FrontComponentWidgetRenderer = ({
   return (
     <StyledContainer
       isBorderless={
-        layoutType === PageLayoutType.STANDALONE_PAGE &&
-        presentation === 'solo' &&
-        !isPageLayoutInEditMode
+        isSoloStandaloneFrontComponent({
+          pageLayoutType: layoutType,
+          presentation,
+          widgetType: widget.type,
+        }) && !isPageLayoutInEditMode
       }
       isInEditMode={isPageLayoutInEditMode}
       isSoloLayout={presentation === 'solo'}

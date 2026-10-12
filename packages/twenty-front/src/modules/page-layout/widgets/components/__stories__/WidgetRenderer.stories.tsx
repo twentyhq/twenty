@@ -266,11 +266,15 @@ const meta: Meta<typeof WidgetRenderer> = {
 export default meta;
 type Story = StoryObj<typeof WidgetRenderer>;
 
-const renderLoadingFrontComponent = (
-  pageLayoutType: PageLayoutType,
-  presentation: TabPresentation,
+const renderLoadingFrontComponent = ({
+  pageLayoutType,
+  presentation,
   isInEditMode = false,
-): Story['render'] => {
+}: {
+  pageLayoutType: PageLayoutType;
+  presentation: TabPresentation;
+  isInEditMode?: boolean;
+}): Story['render'] => {
   return () => {
     const widget: PageLayoutWidget = {
       ...makeWidget(WIDGET_ID_FRONT_COMPONENT, 0, TAB_ID_OVERVIEW),
@@ -359,7 +363,10 @@ const expectLoadingFrontComponentFrame = async (
 };
 
 export const StandaloneFrontComponentLoading: Story = {
-  render: renderLoadingFrontComponent(PageLayoutType.STANDALONE_PAGE, 'solo'),
+  render: renderLoadingFrontComponent({
+    pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+    presentation: 'solo',
+  }),
   play: async ({ canvasElement }) => {
     await expectLoadingFrontComponentFrame(canvasElement, {
       outerFrame: false,
@@ -369,7 +376,10 @@ export const StandaloneFrontComponentLoading: Story = {
 };
 
 export const StackedFrontComponentLoading: Story = {
-  render: renderLoadingFrontComponent(PageLayoutType.STANDALONE_PAGE, 'stack'),
+  render: renderLoadingFrontComponent({
+    pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+    presentation: 'stack',
+  }),
   play: async ({ canvasElement }) => {
     await expectLoadingFrontComponentFrame(canvasElement, {
       outerFrame: true,
@@ -379,17 +389,27 @@ export const StackedFrontComponentLoading: Story = {
 };
 
 export const DashboardFrontComponentLoading: Story = {
-  render: renderLoadingFrontComponent(PageLayoutType.DASHBOARD, 'solo'),
+  render: renderLoadingFrontComponent({
+    pageLayoutType: PageLayoutType.DASHBOARD,
+    presentation: 'solo',
+  }),
   play: StackedFrontComponentLoading.play,
 };
 
 export const EditingFrontComponentLoading: Story = {
-  render: renderLoadingFrontComponent(PageLayoutType.DASHBOARD, 'solo', true),
+  render: renderLoadingFrontComponent({
+    pageLayoutType: PageLayoutType.DASHBOARD,
+    presentation: 'solo',
+    isInEditMode: true,
+  }),
   play: StackedFrontComponentLoading.play,
 };
 
 export const RecordFrontComponentLoading: Story = {
-  render: renderLoadingFrontComponent(PageLayoutType.RECORD_PAGE, 'solo'),
+  render: renderLoadingFrontComponent({
+    pageLayoutType: PageLayoutType.RECORD_PAGE,
+    presentation: 'solo',
+  }),
   play: async ({ canvasElement }) => {
     await expectLoadingFrontComponentFrame(canvasElement, {
       outerFrame: false,
