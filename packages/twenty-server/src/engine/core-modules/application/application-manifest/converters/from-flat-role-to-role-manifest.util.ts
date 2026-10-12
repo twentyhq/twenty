@@ -47,6 +47,7 @@ export const fromFlatRoleToRoleManifest = ({
   ...(isDefined(flatRole.icon) ? { icon: flatRole.icon } : {}),
   canUpdateAllSettings: flatRole.canUpdateAllSettings,
   canAccessAllTools: flatRole.canAccessAllTools,
+  canAccessAllAgentChatChannels: flatRole.canAccessAllAgentChatChannels,
   canReadAllObjectRecords: flatRole.canReadAllObjectRecords,
   canUpdateAllObjectRecords: flatRole.canUpdateAllObjectRecords,
   canSoftDeleteAllObjectRecords: flatRole.canSoftDeleteAllObjectRecords,

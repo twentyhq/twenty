@@ -96,6 +96,7 @@ const PERSISTED_ROLE: RoleWithPartialMembers = {
   icon: 'IconUser',
   canUpdateAllSettings: false,
   canAccessAllTools: false,
+  canAccessAllAgentChatChannels: false,
   canReadAllObjectRecords: true,
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
