@@ -47,6 +47,9 @@ import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/insta
 import { installVisualViewportPolyfill } from '@/polyfills/geometry/utils/installVisualViewportPolyfill';
 import { installResizeObserverPolyfill } from '@/polyfills/geometry/utils/installResizeObserverPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { workerScrollStore } from '@/polyfills/scroll/states/workerScrollStore';
+import { installElementScrollPolyfill } from '@/polyfills/scroll/utils/installElementScrollPolyfill';
+import { installWindowScrollPolyfill } from '@/polyfills/scroll/utils/installWindowScrollPolyfill';
 import { mediaQueryEnvironmentSource } from '@/polyfills/media-query/states/mediaQueryEnvironmentSource';
 import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
 import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMediaCapturePolyfills';
@@ -138,6 +141,7 @@ installActiveElementDetachmentHook({
     workerFocusTransport.blurFocusedElementWithinSubtree(node);
     workerInputSelectionStore.scheduleDetachedElementSweep();
     workerPointerCapture.scheduleDetachedCaptureSweep();
+    workerScrollStore.scheduleDetachedElementSweep();
   },
 });
 installHostEventRetargetingPolyfill(HTMLElement.prototype);
@@ -159,9 +163,18 @@ installElementGeometryPolyfill({
   geometryStore: workerGeometryStore,
 });
 
+installElementScrollPolyfill({
+  elementPrototype: Element.prototype,
+  scrollStore: workerScrollStore,
+});
+
 installWindowGeometryPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
+});
+
+installWindowScrollPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
 });
 
 installVisualViewportPolyfill({
