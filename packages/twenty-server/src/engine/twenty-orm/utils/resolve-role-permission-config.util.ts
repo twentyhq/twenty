@@ -10,11 +10,11 @@ import {
   type RolePermissionConfig,
   type RoleIdsBySource,
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { buildUserRoleRestrictions } from 'src/engine/twenty-orm/utils/build-user-role-restrictions.util';
-import { resolveApplicationRoleRestriction } from 'src/engine/twenty-orm/utils/resolve-application-role-restriction.util';
+import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
+import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
 import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 
-const resolveRoleRestrictionsFromAuthContext = ({
+const resolveRoleIdsBySourceFromAuthContext = ({
   authContext,
   userWorkspaceRoleMap,
   apiKeyRoleMap,
@@ -24,7 +24,7 @@ const resolveRoleRestrictionsFromAuthContext = ({
   apiKeyRoleMap: Record<string, string>;
 }): RoleIdsBySource => {
   if (isUserAuthContext(authContext)) {
-    return buildUserRoleRestrictions({
+    return buildUserRoleIdsBySource({
       userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
       application: authContext.application,
     });
@@ -35,7 +35,7 @@ const resolveRoleRestrictionsFromAuthContext = ({
   }
 
   if (isApplicationAuthContext(authContext)) {
-    return resolveApplicationRoleRestriction({
+    return resolveApplicationRoleId({
       application: authContext.application,
       isMissingApplicationRoleTolerated: false,
     });
@@ -58,13 +58,13 @@ export const resolveRolePermissionConfig = ({
     return { shouldBypassPermissionChecks: true };
   }
 
-  const roleRestrictions = resolveRoleRestrictionsFromAuthContext({
+  const runRoleIds = resolveRoleIdsBySourceFromAuthContext({
     authContext,
     userWorkspaceRoleMap,
     apiKeyRoleMap,
   });
 
-  return isDefined(getRoleIdsToIntersect(roleRestrictions))
-    ? { intersectionOf: roleRestrictions }
+  return isDefined(getRoleIdsToIntersect(runRoleIds))
+    ? { intersectionOf: runRoleIds }
     : null;
 };

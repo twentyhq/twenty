@@ -35,8 +35,8 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
-import { resolveApplicationRoleRestriction } from 'src/engine/twenty-orm/utils/resolve-application-role-restriction.util';
-import { type AgentRoleRestrictions } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-role-restrictions.type';
+import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
+import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { type AgentRunCallerContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-context.type';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
@@ -340,12 +340,12 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     const {
       authContext,
       actorContext,
-      roleRestrictions: callerRoleRestrictions,
+      runRoleIds: callerRoleIds,
     }: AgentRunCallerContext = isDefined(runAsContext)
       ? {
           authContext: runAsContext.authContext,
           actorContext: runAsContext.actorContext,
-          roleRestrictions: { userWorkspaceRoleId: runAsContext.roleId },
+          runRoleIds: { userWorkspaceRoleId: runAsContext.roleId },
         }
       : await this.resolveCallerContext({
           workspaceId,
@@ -358,9 +358,9 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       : null;
 
     // a run never exceeds the agent's application, whoever calls it
-    const roleRestrictions: AgentRoleRestrictions = {
-      ...callerRoleRestrictions,
-      ...resolveApplicationRoleRestriction({
+    const runRoleIds: AgentRunRoleIds = {
+      ...callerRoleIds,
+      ...resolveApplicationRoleId({
         application: agentContext.application,
         isMissingApplicationRoleTolerated: true,
       }),
@@ -373,9 +373,9 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         runAsContext?.authContext.userWorkspaceId ?? ref.requestUserWorkspaceId,
       rolePermissionConfig: buildAgentRolePermissionConfig({
         agentRoleId: agentContext.agentRoleId,
-        roleRestrictions,
+        runRoleIds,
       }),
-      roleRestrictions,
+      runRoleIds,
       conversationActor: isDefined(memberWorkspaceMemberId)
         ? { type: 'user', workspaceMemberId: memberWorkspaceMemberId }
         : { type: 'application', applicationId: agentContext.application.id },
@@ -491,7 +491,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       return {
         authContext,
         actorContext,
-        roleRestrictions: { userWorkspaceRoleId: roleId },
+        runRoleIds: { userWorkspaceRoleId: roleId },
       };
     }
 
@@ -506,7 +506,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
           workspace: agentAuthContext.workspace,
           apiKey: fromApiKeyEntityToFlat(apiKey),
         }),
-        roleRestrictions: {
+        runRoleIds: {
           apiKeyRoleId: await this.apiKeyRoleService.getRoleIdForApiKeyId(
             apiKey.id,
             workspaceId,

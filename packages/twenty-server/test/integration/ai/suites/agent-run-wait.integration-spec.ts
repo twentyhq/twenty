@@ -431,15 +431,15 @@ describe('agent runs that wait (integration)', () => {
         expect.objectContaining(authContext),
       ]);
 
-      const roleRestrictions = {
+      const runRoleIds = {
         [callerRoleSource]: await findCallerRoleId(roleTargetId),
       };
 
       expect(
         executeAgent.mock.calls.map(
-          ([execution]) => execution.executionContext.roleRestrictions,
+          ([execution]) => execution.executionContext.runRoleIds,
         ),
-      ).toEqual([roleRestrictions, roleRestrictions]);
+      ).toEqual([runRoleIds, runRoleIds]);
     },
   );
 

@@ -136,7 +136,7 @@ describe('Agent run tools should be limited to the caller role', () => {
         runAsWorkspaceMemberId: context.runAsWorkspaceMemberId,
       });
 
-      expect(executionContext.roleRestrictions).toEqual({
+      expect(executionContext.runRoleIds).toEqual({
         [context.callerRoleSource]: await findCallerRoleId(
           context.roleTargetId,
         ),
@@ -151,7 +151,7 @@ describe('Agent run tools should be limited to the caller role', () => {
       token: globalTestContext.applicationToken,
     });
 
-    expect(executionContext.roleRestrictions).toEqual({
+    expect(executionContext.runRoleIds).toEqual({
       applicationRoleId: globalTestContext.applicationRoleId,
     });
   });

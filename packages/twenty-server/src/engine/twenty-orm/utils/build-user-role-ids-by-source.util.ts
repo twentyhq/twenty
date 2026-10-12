@@ -1,8 +1,8 @@
 import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { resolveApplicationRoleRestriction } from 'src/engine/twenty-orm/utils/resolve-application-role-restriction.util';
+import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
 
 // An application acting for a user is bounded by both the user's role and its own
-export const buildUserRoleRestrictions = ({
+export const buildUserRoleIdsBySource = ({
   userRoleId,
   application,
 }: {
@@ -10,7 +10,7 @@ export const buildUserRoleRestrictions = ({
   application: { defaultRoleId: string | null } | undefined;
 }): RoleIdsBySource => ({
   userWorkspaceRoleId: userRoleId ?? null,
-  ...resolveApplicationRoleRestriction({
+  ...resolveApplicationRoleId({
     application,
     isMissingApplicationRoleTolerated: true,
   }),

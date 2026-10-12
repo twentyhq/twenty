@@ -2,14 +2,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   type RolePermissionConfig,
-  type RoleRestriction,
   type RoleIdsBySource,
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
-const intersectRoleRestrictions = (
-  left: RoleRestriction | undefined,
-  right: RoleRestriction | undefined,
-): RoleRestriction | undefined => {
+const intersectRoleIds = (
+  left: string | null | undefined,
+  right: string | null | undefined,
+): string | null | undefined => {
   if (left === undefined) {
     return right;
   }
@@ -41,13 +40,13 @@ export const intersectRolePermissionConfigs = (
   const intersectionOf: RoleIdsBySource = {};
 
   for (const source of sources) {
-    const roleRestriction = intersectRoleRestrictions(
+    const roleId = intersectRoleIds(
       left.intersectionOf[source],
       right.intersectionOf[source],
     );
 
-    if (roleRestriction !== undefined) {
-      intersectionOf[source] = roleRestriction;
+    if (roleId !== undefined) {
+      intersectionOf[source] = roleId;
     }
   }
 

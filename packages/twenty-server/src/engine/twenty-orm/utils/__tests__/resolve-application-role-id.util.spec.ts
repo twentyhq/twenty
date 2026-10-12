@@ -1,11 +1,11 @@
-import { resolveApplicationRoleRestriction } from 'src/engine/twenty-orm/utils/resolve-application-role-restriction.util';
+import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
 
-describe('resolveApplicationRoleRestriction', () => {
+describe('resolveApplicationRoleId', () => {
   it.each([true, false])(
     'restricts to the application role (missing role tolerated: %s)',
     (isMissingApplicationRoleTolerated) => {
       expect(
-        resolveApplicationRoleRestriction({
+        resolveApplicationRoleId({
           application: { defaultRoleId: 'application-role-id' },
           isMissingApplicationRoleTolerated,
         }),
@@ -15,7 +15,7 @@ describe('resolveApplicationRoleRestriction', () => {
 
   it('denies an application without a role when a missing role is not tolerated', () => {
     expect(
-      resolveApplicationRoleRestriction({
+      resolveApplicationRoleId({
         application: { defaultRoleId: null },
         isMissingApplicationRoleTolerated: false,
       }),
@@ -24,7 +24,7 @@ describe('resolveApplicationRoleRestriction', () => {
 
   it('adds no restriction for an application without a role when a missing role is tolerated', () => {
     expect(
-      resolveApplicationRoleRestriction({
+      resolveApplicationRoleId({
         application: { defaultRoleId: null },
         isMissingApplicationRoleTolerated: true,
       }),
@@ -33,7 +33,7 @@ describe('resolveApplicationRoleRestriction', () => {
 
   it('adds no restriction without an application', () => {
     expect(
-      resolveApplicationRoleRestriction({
+      resolveApplicationRoleId({
         application: undefined,
         isMissingApplicationRoleTolerated: true,
       }),

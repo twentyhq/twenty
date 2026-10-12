@@ -4,7 +4,7 @@ import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permissio
 
 // Temporary: the workspace custom and Twenty standard applications have no role yet,
 // so acting with a member or an agent they must not restrict. Drop once they get one.
-export const resolveApplicationRoleRestriction = ({
+export const resolveApplicationRoleId = ({
   application,
   isMissingApplicationRoleTolerated,
 }: {

@@ -11,7 +11,7 @@ describe('buildAgentRolePermissionConfig', () => {
     expect(
       buildAgentRolePermissionConfig({
         agentRoleId: 'agent-role-id',
-        roleRestrictions: {
+        runRoleIds: {
           userWorkspaceRoleId: 'member-role-id',
           applicationRoleId: 'application-role-id',
         },
@@ -29,7 +29,7 @@ describe('buildAgentRolePermissionConfig', () => {
     expect(
       buildAgentRolePermissionConfig({
         agentRoleId: undefined,
-        roleRestrictions: { userWorkspaceRoleId: 'member-role-id' },
+        runRoleIds: { userWorkspaceRoleId: 'member-role-id' },
       }),
     ).toEqual({
       intersectionOf: {
