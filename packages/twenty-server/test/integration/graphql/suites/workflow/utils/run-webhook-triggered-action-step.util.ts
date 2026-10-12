@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { isDefined } from 'twenty-shared/utils';
 import {
   activateCoreWorkflowVersion,
   createCoreWorkflow,
@@ -89,7 +90,7 @@ export const runWebhookTriggeredActionStep = async ({
       stepError: stepInfo?.error,
     };
   } finally {
-    if (workflowRunId !== undefined) {
+    if (isDefined(workflowRunId)) {
       await destroyWorkflowRun(workflowRunId);
     }
 

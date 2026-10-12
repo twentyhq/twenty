@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { isDefined } from 'twenty-shared/utils';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -215,12 +216,12 @@ export const createCoreWorkflowVersionStep = async ({
   });
 
   const createdStep = (steps ?? []).find((step) =>
-    rest.id !== undefined
+    isDefined(rest.id)
       ? step.id === rest.id
       : step.type === stepType && !previousStepIds.has(step.id),
   );
 
-  if (createdStep === undefined) {
+  if (!isDefined(createdStep)) {
     throw new Error(`Step of type ${stepType} was not created`);
   }
 

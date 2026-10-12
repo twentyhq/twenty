@@ -3,6 +3,7 @@ import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
+  findCoreWorkflowVersion,
   findCoreWorkflowVersions,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -94,7 +95,9 @@ describe('duplicateCoreWorkflow (e2e)', () => {
 
     expect(duplicatedVersions).toHaveLength(1);
 
-    const [duplicatedVersion] = duplicatedVersions;
+    const duplicatedVersion = await findCoreWorkflowVersion({
+      coreWorkflowVersionId: duplicatedVersions[0].id,
+    });
 
     expect(duplicatedVersion.id).not.toBe(sourceCoreVersionId);
     expect(duplicatedVersion.status).toBe('DRAFT');
