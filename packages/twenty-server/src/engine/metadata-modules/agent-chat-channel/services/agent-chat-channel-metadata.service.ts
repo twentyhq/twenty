@@ -38,8 +38,6 @@ type ChannelMaps = {
   flatRoleMaps: FlatEntityMaps<FlatRole>;
 };
 
-// Channels are workspace metadata: who reads a channel's chats follows from
-// whether it is open to everyone and from the roles linked to it
 @Injectable()
 export class AgentChatChannelMetadataService {
   constructor(

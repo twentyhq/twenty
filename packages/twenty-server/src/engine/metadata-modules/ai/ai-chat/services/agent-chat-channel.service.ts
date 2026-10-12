@@ -26,8 +26,6 @@ type ChannelChanges = {
   roleIds?: string[];
 };
 
-// Setting channels up is left to who manages AI settings. A change to who a
-// channel is open to is carried onto the grants of its chats
 @Injectable()
 export class AgentChatChannelService {
   constructor(
