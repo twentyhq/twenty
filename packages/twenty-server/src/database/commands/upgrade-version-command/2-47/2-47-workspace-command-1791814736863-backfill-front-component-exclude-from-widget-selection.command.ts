@@ -9,18 +9,22 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 // Mirrors the default applied on manifest sync, so components installed before
-// the column existed leave the widget picker without waiting for their next sync
+// the column existed leave the widget picker without waiting for their next sync.
+// Sync only sees the owning application's manifest, so a reference from another
+// application must not count here, or that application's next sync would undo it.
 const IS_SETTINGS_PAGE_FRONT_COMPONENT_PREDICATE = `(
   "frontComponent".id IN (
     SELECT application."settingsCustomTabFrontComponentId"
     FROM core."application" application
     WHERE application."workspaceId" = $1
+      AND application.id = "frontComponent"."applicationId"
       AND application."settingsCustomTabFrontComponentId" IS NOT NULL
   )
   OR "frontComponent".id IN (
     SELECT "settingsMenuItem"."frontComponentId"
     FROM core."settingsMenuItem" "settingsMenuItem"
     WHERE "settingsMenuItem"."workspaceId" = $1
+      AND "settingsMenuItem"."applicationId" = "frontComponent"."applicationId"
   )
 )`;
 
