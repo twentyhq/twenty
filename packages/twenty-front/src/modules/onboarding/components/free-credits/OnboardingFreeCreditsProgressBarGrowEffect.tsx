@@ -50,7 +50,7 @@ export const OnboardingFreeCreditsProgressBarGrowEffect = ({
       ? window.matchMedia(REDUCED_MOTION_QUERY)
       : undefined;
 
-    if (reducedMotionMedia?.matches === true) {
+    if (reducedMotionMedia?.matches) {
       completeTrackGrowth();
       return;
     }
