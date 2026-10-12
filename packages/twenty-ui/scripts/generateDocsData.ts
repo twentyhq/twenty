@@ -222,7 +222,7 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
         .getExportsOfModule(moduleSymbol)
         .find((candidate) => candidate.name === component.name);
 
-    if (isDefined(symbol) && symbol.flags & ts.SymbolFlags.Alias) {
+    if (isDefined(symbol) && (symbol.flags & ts.SymbolFlags.Alias) !== 0) {
       symbol = checker.getAliasedSymbol(symbol);
     }
 
@@ -286,7 +286,7 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
         throw new Error(`Could not find ${component.name}.${part.name}`);
       }
 
-      if (partSymbol.flags & ts.SymbolFlags.Alias) {
+      if ((partSymbol.flags & ts.SymbolFlags.Alias) !== 0) {
         partSymbol = checker.getAliasedSymbol(partSymbol);
       }
 
