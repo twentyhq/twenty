@@ -54,7 +54,6 @@ import {
   displayHelpersTest,
   galleryRenderTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
-import { menuTest } from '@/__stories__/twenty-ui-gallery/utils/menuTest';
 import { popoverTest } from '@/__stories__/twenty-ui-gallery/utils/popoverTest';
 import { selectTest } from '@/__stories__/twenty-ui-gallery/utils/selectTest';
 import { switchTest } from '@/__stories__/twenty-ui-gallery/utils/switchTest';
@@ -403,17 +402,6 @@ export const TooltipPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tooltip',
   runtime: 'preact',
   play: tooltipEscapeDismissalTest,
-});
-
-export const MenuReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-menu',
-  runtime: 'react',
-  play: menuTest,
-});
-export const MenuPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-menu',
-  runtime: 'preact',
-  play: menuTest,
 });
 
 export const PortalBoundsReact: Story = createGalleryStory({

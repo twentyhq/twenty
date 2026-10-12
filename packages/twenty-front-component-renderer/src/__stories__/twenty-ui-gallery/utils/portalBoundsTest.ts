@@ -8,7 +8,7 @@ import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-galler
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/geometry/constants/GeometryIdleFrameThreshold';
 
-const MAXIMUM_MENU_TRIGGER_GAP = 16;
+const MAXIMUM_DROPDOWN_TRIGGER_GAP = 16;
 const WIDGET_SCROLL_OFFSET = 40;
 
 const waitForGeometryTrackerToIdle = () =>
@@ -53,7 +53,7 @@ const expectPortalActionHiddenWhileScrollFrameStyleIsNone = async ({
   );
 };
 
-const expectMenuAttachedToTriggerWithinPortalArea = ({
+const expectDropdownAttachedToTriggerWithinPortalArea = ({
   menu,
   menuTrigger,
   ownerRoot,
@@ -65,15 +65,40 @@ const expectMenuAttachedToTriggerWithinPortalArea = ({
   const menuRectangle = menu.getBoundingClientRect();
   const menuTriggerRectangle = menuTrigger.getBoundingClientRect();
   const ownerRectangle = ownerRoot.getBoundingClientRect();
-  const menuTriggerGap = Math.max(
-    menuRectangle.top - menuTriggerRectangle.bottom,
-    menuTriggerRectangle.top - menuRectangle.bottom,
-  );
+  const side = menu.getAttribute('data-side');
+  const isHorizontallyPositioned = side === 'left' || side === 'right';
+  const menuTriggerGap = isHorizontallyPositioned
+    ? Math.max(
+        menuRectangle.left - menuTriggerRectangle.right,
+        menuTriggerRectangle.left - menuRectangle.right,
+      )
+    : Math.max(
+        menuRectangle.top - menuTriggerRectangle.bottom,
+        menuTriggerRectangle.top - menuRectangle.bottom,
+      );
+  const menuOverlapStart = isHorizontallyPositioned
+    ? menuRectangle.top
+    : menuRectangle.left;
+  const menuOverlapEnd = isHorizontallyPositioned
+    ? menuRectangle.bottom
+    : menuRectangle.right;
+  const triggerOverlapStart = isHorizontallyPositioned
+    ? menuTriggerRectangle.top
+    : menuTriggerRectangle.left;
+  const triggerOverlapEnd = isHorizontallyPositioned
+    ? menuTriggerRectangle.bottom
+    : menuTriggerRectangle.right;
 
   expect(menuTriggerGap).toBeGreaterThanOrEqual(0);
-  expect(menuTriggerGap).toBeLessThanOrEqual(MAXIMUM_MENU_TRIGGER_GAP);
-  expect(menuRectangle.left).toBeLessThan(menuTriggerRectangle.right);
-  expect(menuRectangle.right).toBeGreaterThan(menuTriggerRectangle.left);
+  expect(menuTriggerGap).toBeLessThanOrEqual(MAXIMUM_DROPDOWN_TRIGGER_GAP);
+  expect(menuOverlapStart).toBeLessThan(triggerOverlapEnd);
+  expect(menuOverlapEnd).toBeGreaterThan(triggerOverlapStart);
+  expect(menuRectangle.left).toBeGreaterThanOrEqual(
+    ownerRectangle.left - FRONT_COMPONENT_PORTAL_MARGIN,
+  );
+  expect(menuRectangle.right).toBeLessThanOrEqual(
+    ownerRectangle.right + FRONT_COMPONENT_PORTAL_MARGIN,
+  );
   expect(menuRectangle.top).toBeGreaterThanOrEqual(
     ownerRectangle.top - FRONT_COMPONENT_PORTAL_MARGIN,
   );
@@ -166,7 +191,7 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
   });
   await waitFor(() => {
     expectElementToReceivePointer(firstMenuItem);
-    expectMenuAttachedToTriggerWithinPortalArea({
+    expectDropdownAttachedToTriggerWithinPortalArea({
       menu: page.getByRole('menu'),
       menuTrigger,
       ownerRoot,

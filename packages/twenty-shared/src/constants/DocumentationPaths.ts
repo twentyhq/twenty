@@ -213,7 +213,6 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_SURFACES_ALERT_DIALOG: '/ui/primitives/surfaces/alert-dialog',
   UI_PRIMITIVES_SURFACES_CARD: '/ui/primitives/surfaces/card',
   UI_PRIMITIVES_SURFACES_DIALOG: '/ui/primitives/surfaces/dialog',
-  UI_PRIMITIVES_SURFACES_MENU: '/ui/primitives/surfaces/menu',
   UI_PRIMITIVES_SURFACES_POPOVER: '/ui/primitives/surfaces/popover',
   UI_PRIMITIVES_SURFACES_TOOLTIP: '/ui/primitives/surfaces/tooltip',
   UI_PRIMITIVES_TYPOGRAPHY_HEADING: '/ui/primitives/typography/heading',
