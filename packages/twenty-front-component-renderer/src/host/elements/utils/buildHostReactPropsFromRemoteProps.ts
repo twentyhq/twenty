@@ -9,6 +9,7 @@ import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
+const FORM_OWNER_ATTRIBUTE = 'form';
 
 export const buildHostReactPropsFromRemoteProps = ({
   remoteProps,
@@ -23,6 +24,10 @@ export const buildHostReactPropsFromRemoteProps = ({
 
   for (const [remotePropName, remotePropValue] of Object.entries(remoteProps)) {
     if (INTERNAL_PROPS.has(remotePropName) || isUndefined(remotePropValue)) {
+      continue;
+    }
+
+    if (remotePropName.toLowerCase() === FORM_OWNER_ATTRIBUTE) {
       continue;
     }
 

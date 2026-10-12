@@ -291,12 +291,14 @@ export const seedAccountGroupsStory = async () => {
         universalIdentifier: FATHOM_APPLICATION_ID,
         name: 'Fathom',
         logoUrl: null,
+        createdAt: '2024-01-01T00:00:00.000Z',
       },
       {
         id: GRANOLA_APPLICATION_ID,
         universalIdentifier: GRANOLA_APPLICATION_ID,
         name: 'Granola',
         logoUrl: null,
+        createdAt: '2024-01-01T00:00:00.000Z',
       },
     ],
     featureFlags: [

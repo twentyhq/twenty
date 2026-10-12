@@ -1,9 +1,9 @@
-import request from 'supertest';
 import {
   activateCoreWorkflowVersion,
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
+  findCoreWorkflowVersion,
   updateCoreWorkflowVersionStep,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -17,15 +17,8 @@ import { v4 } from 'uuid';
 import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import {
-  type WorkflowAction,
-  type WorkflowDelayAction,
-  type WorkflowFormAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-
-const client = request(`http://localhost:${APP_PORT}`);
 
 const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const DELAY_DURATION_SECONDS = 20;
@@ -38,34 +31,6 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
   let delayStepId: string | null = null;
   let sendEmailStepId: string | null = null;
   let createdWorkflowRunId: string | null = null;
-
-  const getCoreWorkflowVersion = async (): Promise<{
-    trigger: unknown;
-    steps: WorkflowAction[];
-    workspaceWorkflowVersionId: string | null;
-  }> => {
-    const response = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          query CoreWorkflowVersionById($coreWorkflowVersionId: UUID!) {
-            coreWorkflowVersionById(
-              coreWorkflowVersionId: $coreWorkflowVersionId
-            ) {
-              trigger
-              steps
-              workspaceWorkflowVersionId
-            }
-          }
-        `,
-        variables: { coreWorkflowVersionId },
-      });
-
-    expect(response.body.errors).toBeUndefined();
-
-    return response.body.data.coreWorkflowVersionById;
-  };
 
   beforeAll(async () => {
     const coreWorkflow = await createCoreWorkflow({
@@ -109,11 +74,9 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
       })
     ).id;
 
-    const { steps } = await getCoreWorkflowVersion();
+    const { steps } = await findCoreWorkflowVersion({ coreWorkflowVersionId });
 
-    const formStep = steps.find(
-      (step): step is WorkflowFormAction => step.id === formStepId,
-    );
+    const formStep = steps?.find((step) => step.id === formStepId);
 
     expect(formStep).toBeDefined();
 
@@ -135,9 +98,7 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
       },
     });
 
-    const delayStep = steps.find(
-      (step): step is WorkflowDelayAction => step.id === delayStepId,
-    );
+    const delayStep = steps?.find((step) => step.id === delayStepId);
 
     expect(delayStep).toBeDefined();
 
@@ -170,7 +131,9 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
 
   it('keeps the run alive and the delay branch pending when the parallel form leaf is submitted', async () => {
     const { trigger, steps, workspaceWorkflowVersionId } =
-      await getCoreWorkflowVersion();
+      await findCoreWorkflowVersion({
+        coreWorkflowVersionId: coreWorkflowVersionId!,
+      });
 
     createdWorkflowRunId = v4();
 
@@ -179,7 +142,7 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
       stepInfos: {
         trigger: { status: 'NOT_STARTED', result: {} },
         ...Object.fromEntries(
-          steps.map((step) => [step.id, { status: 'NOT_STARTED' }]),
+          (steps ?? []).map((step) => [step.id, { status: 'NOT_STARTED' }]),
         ),
       },
     };

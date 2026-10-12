@@ -50,7 +50,7 @@ export class SystemPromptBuilderService {
         }),
         this.skillService.findAllFlatSkills(workspaceId),
         this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
+          FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
           workspaceId,
         ),
       ]);

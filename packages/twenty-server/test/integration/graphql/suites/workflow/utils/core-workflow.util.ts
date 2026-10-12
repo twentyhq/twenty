@@ -11,12 +11,14 @@ type CoreWorkflowStep = {
   nextStepIds?: string[] | null;
 } & Record<string, unknown>;
 
-export type CoreWorkflowVersion = {
+export type CoreWorkflowVersion<
+  TStep extends CoreWorkflowStep = CoreWorkflowStep,
+> = {
   id: string;
   coreWorkflowId: string;
   status: string;
   trigger: Record<string, unknown> | null;
-  steps: CoreWorkflowStep[] | null;
+  steps: TStep[] | null;
   workspaceWorkflowVersionId: string | null;
 };
 
@@ -116,15 +118,17 @@ export const findCoreWorkflowVersions = async ({
   return coreWorkflowVersionsByCoreWorkflowId;
 };
 
-export const findCoreWorkflowVersion = async ({
+export const findCoreWorkflowVersion = async <
+  TStep extends CoreWorkflowStep = CoreWorkflowStep,
+>({
   coreWorkflowVersionId,
   token,
 }: {
   coreWorkflowVersionId: string;
   token?: string;
-}): Promise<CoreWorkflowVersion> => {
+}): Promise<CoreWorkflowVersion<TStep>> => {
   const { coreWorkflowVersionById } = await coreWorkflowGraphqlRequest<{
-    coreWorkflowVersionById: CoreWorkflowVersion;
+    coreWorkflowVersionById: CoreWorkflowVersion<TStep>;
   }>({
     query: `
       query CoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
@@ -164,7 +168,9 @@ export const updateCoreWorkflowVersionTrigger = async ({
   });
 };
 
-export const createCoreWorkflowVersionStep = async ({
+export const createCoreWorkflowVersionStep = async <
+  TStep extends CoreWorkflowStep = CoreWorkflowStep,
+>({
   coreWorkflowVersionId,
   stepType,
   parentStepId = 'trigger',
@@ -181,7 +187,7 @@ export const createCoreWorkflowVersionStep = async ({
   nextStepId?: string;
   parentStepConnectionOptions?: object;
   defaultSettings?: object;
-}): Promise<CoreWorkflowStep> => {
+}): Promise<TStep> => {
   const { steps: previousSteps } = await findCoreWorkflowVersion({
     coreWorkflowVersionId,
     token,
@@ -210,7 +216,7 @@ export const createCoreWorkflowVersionStep = async ({
     token,
   });
 
-  const { steps } = await findCoreWorkflowVersion({
+  const { steps } = await findCoreWorkflowVersion<TStep>({
     coreWorkflowVersionId,
     token,
   });

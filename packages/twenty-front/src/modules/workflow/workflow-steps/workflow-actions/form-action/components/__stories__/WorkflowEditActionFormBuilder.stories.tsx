@@ -123,7 +123,7 @@ export const NonManualTriggerWithSendToInbox: Story = {
       ...mockCurrentWorkspace,
       featureFlags: [
         {
-          key: FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+          key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
           value: true,
         },
       ],
