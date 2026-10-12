@@ -1,3 +1,6 @@
+import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
+import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
+import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
 import { installGetComputedStyle } from '../installGetComputedStyle';
 
 type StyleDeclarationLike = {
@@ -15,7 +18,11 @@ describe('installGetComputedStyle', () => {
     const polyfillWindow: Record<string, unknown> = {};
     const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
-    installGetComputedStyle(globalScope);
+    installGetComputedStyle({
+      globalScope,
+      geometryStore: createWorkerGeometryStoreStub(),
+      documentTarget: {},
+    });
 
     expect(typeof globalScope.getComputedStyle).toBe('function');
     expect(typeof polyfillWindow.getComputedStyle).toBe('function');
@@ -23,7 +30,11 @@ describe('installGetComputedStyle', () => {
 
   it('should return the declared style of the element', () => {
     const globalScope: Record<string, unknown> = {};
-    installGetComputedStyle(globalScope);
+    installGetComputedStyle({
+      globalScope,
+      geometryStore: createWorkerGeometryStoreStub(),
+      documentTarget: {},
+    });
 
     const style = { getPropertyValue: () => '14px', fontSize: '14px' };
 
@@ -35,7 +46,11 @@ describe('installGetComputedStyle', () => {
 
   it('should return an empty declaration for an element without a style', () => {
     const globalScope: Record<string, unknown> = {};
-    installGetComputedStyle(globalScope);
+    installGetComputedStyle({
+      globalScope,
+      geometryStore: createWorkerGeometryStoreStub(),
+      documentTarget: {},
+    });
 
     const declaration = (globalScope.getComputedStyle as GetComputedStyleLike)(
       {},
@@ -47,7 +62,11 @@ describe('installGetComputedStyle', () => {
 
   it('should return an empty declaration for a pseudo-element argument', () => {
     const globalScope: Record<string, unknown> = {};
-    installGetComputedStyle(globalScope);
+    installGetComputedStyle({
+      globalScope,
+      geometryStore: createWorkerGeometryStoreStub(),
+      documentTarget: {},
+    });
 
     const style = { getPropertyValue: () => '14px', fontSize: '14px' };
 
@@ -58,5 +77,48 @@ describe('installGetComputedStyle', () => {
 
     expect(declaration.getPropertyValue('font-size')).toBe('');
     expect(declaration.fontSize).toBe('');
+  });
+  it('reads measured stylesheet values and observes later geometry updates through the same declaration', () => {
+    const globalScope: Record<string, unknown> = {};
+    let columnGap = '12px';
+    const geometryStore = createWorkerGeometryStoreStub({
+      resolveElementSnapshot: () =>
+        createElementGeometrySnapshotFixture({
+          computedStyle: { 'column-gap': columnGap, display: 'flex' },
+        }),
+    });
+    installGetComputedStyle({ globalScope, geometryStore, documentTarget: {} });
+    const style = (globalScope.getComputedStyle as GetComputedStyleLike)({
+      style: { getPropertyValue: () => '99px' },
+    });
+    expect(style.getPropertyValue('column-gap')).toBe('12px');
+    columnGap = '24px';
+    expect(style.getPropertyValue('column-gap')).toBe('24px');
+  });
+
+  it('uses only the renderer root theme for its virtual document', () => {
+    const globalScope: Record<string, unknown> = {};
+    const documentElement = {};
+    const geometryStore = createWorkerGeometryStoreStub({
+      getViewportSnapshot: () =>
+        createViewportGeometrySnapshotFixture({
+          computedStyle: {
+            '--t-background-primary': 'scoped-color',
+            direction: 'rtl',
+          },
+        }),
+    });
+    installGetComputedStyle({
+      globalScope,
+      geometryStore,
+      documentTarget: { documentElement },
+    });
+    const style = (globalScope.getComputedStyle as GetComputedStyleLike)(
+      documentElement,
+    );
+    expect(style.getPropertyValue('--t-background-primary')).toBe(
+      'scoped-color',
+    );
+    expect(style.getPropertyValue('direction')).toBe('rtl');
   });
 });

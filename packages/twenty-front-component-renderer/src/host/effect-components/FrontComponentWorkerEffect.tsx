@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { createFileInputAwareRemoteConnection } from '@/host/file-input/utils/createFileInputAwareRemoteConnection';
 import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
 import { type HostFocusController } from '@/host/focus/types/HostFocusController';
+import { createPointerCaptureAwareRemoteConnection } from '@/host/events/utils/createPointerCaptureAwareRemoteConnection';
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
@@ -70,6 +71,10 @@ export const FrontComponentWorkerEffect = ({
     }
 
     const newReceiver = new RemoteReceiver({ retain, release });
+    const pointerCaptureTransport = createPointerCaptureAwareRemoteConnection({
+      connection: newReceiver.connection,
+      geometryTracker,
+    });
 
     const sandboxIframe = createFrontComponentSandboxIframe(
       FRONT_COMPONENT_SANDBOX_DOCUMENT,
@@ -154,7 +159,7 @@ export const FrontComponentWorkerEffect = ({
           createFileInputAwareRemoteConnection({
             fileInputHost,
             connection: createFocusAwareRemoteConnection({
-              connection: newReceiver.connection,
+              connection: pointerCaptureTransport.connection,
               hostFocusController,
             }),
           }),
@@ -191,6 +196,7 @@ export const FrontComponentWorkerEffect = ({
       isCancelled = true;
       imageLoadingHost.dispose();
       fileInputHost.dispose();
+      pointerCaptureTransport.dispose();
       hostFocusController.reset();
       window.removeEventListener('message', handleSandboxMessage);
       setThread(null);

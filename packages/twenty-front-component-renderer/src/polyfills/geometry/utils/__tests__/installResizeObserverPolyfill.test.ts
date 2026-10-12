@@ -1,0 +1,435 @@
+import { Window } from '@remote-dom/polyfill';
+import { isDefined } from 'twenty-shared/utils';
+
+import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
+import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
+import { createWorkerGeometryStore } from '@/polyfills/geometry/utils/createWorkerGeometryStore';
+import { installResizeObserverPolyfill } from '@/polyfills/geometry/utils/installResizeObserverPolyfill';
+import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
+
+const remoteElementIds = new WeakMap<object, string>();
+let nextRemoteElementId = 0;
+
+jest.mock('@remote-dom/core/elements', () => ({
+  remoteId: (element: object) => {
+    const existingRemoteElementId = remoteElementIds.get(element);
+
+    if (isDefined(existingRemoteElementId)) {
+      return existingRemoteElementId;
+    }
+
+    const remoteElementId = String(nextRemoteElementId);
+    nextRemoteElementId += 1;
+    remoteElementIds.set(element, remoteElementId);
+
+    return remoteElementId;
+  },
+}));
+
+const flushMicrotasks = async () => {
+  await Promise.resolve();
+  await Promise.resolve();
+};
+
+const createSandbox = () => {
+  const polyfillWindow = new Window();
+  const document = polyfillWindow.document as unknown as Document;
+  const root = document.createElement('div');
+  const target = document.createElement('div');
+  document.body.appendChild(root);
+  root.appendChild(target);
+  const geometryStore = createWorkerGeometryStore();
+  geometryStore.setRootElement(root);
+  const unsubscribeGeometry = jest.fn();
+  const subscribeToGeometryUpdates = geometryStore.subscribeToGeometryUpdates;
+  const subscribe = jest
+    .spyOn(geometryStore, 'subscribeToGeometryUpdates')
+    .mockImplementation((listener) => {
+      const unsubscribe = subscribeToGeometryUpdates(listener);
+
+      return () => {
+        unsubscribe();
+        unsubscribeGeometry();
+      };
+    });
+  const globalScope: Record<string, unknown> = { window: polyfillWindow };
+  installResizeObserverPolyfill({ globalScope, geometryStore });
+
+  const applySnapshot = (overrides: Partial<ElementGeometrySnapshot> = {}) => {
+    const remoteElementId = remoteElementIds.get(target);
+
+    if (!isDefined(remoteElementId)) {
+      throw new Error('The target must be observed before applying geometry.');
+    }
+
+    geometryStore.applyGeometryBatch({
+      elements: {
+        [remoteElementId]: createElementGeometrySnapshotFixture({
+          width: 100,
+          height: 50,
+          offsetWidth: 100,
+          offsetHeight: 50,
+          clientWidth: 90,
+          clientHeight: 40,
+          contentWidth: 80,
+          contentHeight: 30,
+          ...overrides,
+        }),
+      },
+    });
+  };
+
+  return {
+    polyfillWindow,
+    globalScope,
+    document,
+    root,
+    target,
+    geometryStore,
+    subscribe,
+    unsubscribeGeometry,
+    applySnapshot,
+    ResizeObserver: globalScope.ResizeObserver as typeof ResizeObserver,
+  };
+};
+
+describe('installResizeObserverPolyfill', () => {
+  beforeEach(() => {
+    nextRemoteElementId = 0;
+    jest.restoreAllMocks();
+  });
+
+  it('installs the same constructor in the worker and its owning window', () => {
+    const { globalScope, polyfillWindow, ResizeObserver } = createSandbox();
+
+    expect(globalScope.ResizeObserver).toBe(ResizeObserver);
+    expect(
+      (polyfillWindow as unknown as { ResizeObserver: unknown }).ResizeObserver,
+    ).toBe(ResizeObserver);
+  });
+
+  it('waits for initial host geometry and delivers the owned target and box shapes', async () => {
+    const { ResizeObserver, target, applySnapshot } = createSandbox();
+    const callback = jest.fn();
+    const observer = new ResizeObserver(callback);
+    observer.observe(target);
+    await flushMicrotasks();
+    expect(callback).not.toHaveBeenCalled();
+
+    applySnapshot({
+      computedStyle: { 'padding-left': '5px', 'padding-top': '7px' },
+    });
+    await flushMicrotasks();
+
+    expect(callback).toHaveBeenCalledTimes(1);
+    const [[entry], deliveredObserver] = callback.mock.calls[0];
+    expect(deliveredObserver).toBe(observer);
+    expect(entry.target).toBe(target);
+    expect(entry.contentRect).toMatchObject({
+      x: 5,
+      y: 7,
+      width: 80,
+      height: 30,
+    });
+    expect(entry.contentBoxSize).toEqual([{ inlineSize: 80, blockSize: 30 }]);
+    expect(entry.borderBoxSize).toEqual([{ inlineSize: 100, blockSize: 50 }]);
+    expect(entry.devicePixelContentBoxSize).toEqual([
+      { inlineSize: 80, blockSize: 30 },
+    ]);
+  });
+
+  it('delivers an already measured target asynchronously', async () => {
+    const { ResizeObserver, target, geometryStore, applySnapshot } =
+      createSandbox();
+    geometryStore.resolveElementSnapshot(target);
+    applySnapshot();
+    const callback = jest.fn();
+    new ResizeObserver(callback).observe(target);
+
+    expect(callback).not.toHaveBeenCalled();
+    await flushMicrotasks();
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not report position, scroll or viewport changes as content resizing', async () => {
+    const { ResizeObserver, target, applySnapshot, geometryStore } =
+      createSandbox();
+    const callback = jest.fn();
+    new ResizeObserver(callback).observe(target);
+    applySnapshot();
+    await flushMicrotasks();
+
+    applySnapshot({ x: 300, y: 400, scrollTop: 200, scrollHeight: 700 });
+    geometryStore.applyGeometryBatch({
+      viewport: createViewportGeometrySnapshotFixture({ innerWidth: 600 }),
+    });
+    await flushMicrotasks();
+
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  it('coalesces geometry updates and delivers only targets whose selected size changed', async () => {
+    const { ResizeObserver, target, applySnapshot } = createSandbox();
+    const callback = jest.fn();
+    const observer = new ResizeObserver(callback);
+    observer.observe(target);
+    observer.observe(target);
+    applySnapshot();
+    applySnapshot({ contentWidth: 110 });
+    applySnapshot({ contentWidth: 120 });
+    await flushMicrotasks();
+
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback.mock.calls[0][0]).toHaveLength(1);
+    expect(callback.mock.calls[0][0][0].contentRect.width).toBe(120);
+
+    applySnapshot({ contentWidth: 120, contentHeight: 60 });
+    await flushMicrotasks();
+    expect(callback).toHaveBeenCalledTimes(2);
+  });
+
+  it('uses content or border size according to each observation option', async () => {
+    const { ResizeObserver, target, applySnapshot } = createSandbox();
+    const contentCallback = jest.fn();
+    const borderCallback = jest.fn();
+    new ResizeObserver(contentCallback).observe(target);
+    new ResizeObserver(borderCallback).observe(target, { box: 'border-box' });
+    applySnapshot();
+    await flushMicrotasks();
+
+    applySnapshot({ offsetWidth: 130 });
+    await flushMicrotasks();
+    expect(contentCallback).toHaveBeenCalledTimes(1);
+    expect(borderCallback).toHaveBeenCalledTimes(2);
+
+    applySnapshot({ offsetWidth: 130, contentWidth: 60 });
+    await flushMicrotasks();
+    expect(contentCallback).toHaveBeenCalledTimes(2);
+    expect(borderCallback).toHaveBeenCalledTimes(2);
+  });
+
+  it('unobserves one target while keeping other measured targets subscribed', async () => {
+    const {
+      ResizeObserver,
+      target,
+      document,
+      root,
+      geometryStore,
+      applySnapshot,
+      unsubscribeGeometry,
+    } = createSandbox();
+    const secondTarget = document.createElement('div');
+    root.appendChild(secondTarget);
+    const callback = jest.fn();
+    const observer = new ResizeObserver(callback);
+    observer.observe(target);
+    observer.observe(secondTarget);
+    applySnapshot();
+    const secondRemoteElementId = remoteElementIds.get(secondTarget);
+
+    if (!isDefined(secondRemoteElementId)) {
+      throw new Error(
+        'The second target must be observed before applying geometry.',
+      );
+    }
+    geometryStore.applyGeometryBatch({
+      elements: {
+        [secondRemoteElementId]: createElementGeometrySnapshotFixture({
+          contentWidth: 70,
+          contentHeight: 20,
+        }),
+      },
+    });
+    await flushMicrotasks();
+    expect(
+      callback.mock.calls[0][0].map(
+        (entry: ResizeObserverEntry) => entry.target,
+      ),
+    ).toEqual([target, secondTarget]);
+
+    observer.unobserve(target);
+    applySnapshot({ contentWidth: 200 });
+    geometryStore.applyGeometryBatch({
+      elements: {
+        [secondRemoteElementId]: createElementGeometrySnapshotFixture({
+          contentWidth: 90,
+          contentHeight: 20,
+        }),
+      },
+    });
+    await flushMicrotasks();
+    expect(
+      callback.mock.calls[1][0].map(
+        (entry: ResizeObserverEntry) => entry.target,
+      ),
+    ).toEqual([secondTarget]);
+    expect(unsubscribeGeometry).not.toHaveBeenCalled();
+
+    observer.unobserve(secondTarget);
+    expect(unsubscribeGeometry).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports logical block and inline sizes for vertical writing mode', async () => {
+    const { ResizeObserver, target, applySnapshot } = createSandbox();
+    const callback = jest.fn();
+    new ResizeObserver(callback).observe(target);
+    applySnapshot({ computedStyle: { 'writing-mode': 'vertical-rl' } });
+    await flushMicrotasks();
+
+    expect(callback.mock.calls[0][0][0].contentBoxSize).toEqual([
+      { inlineSize: 30, blockSize: 80 },
+    ]);
+    expect(callback.mock.calls[0][0][0].borderBoxSize).toEqual([
+      { inlineSize: 50, blockSize: 100 },
+    ]);
+  });
+
+  it('uses the scoped viewport scale for device pixel sizes', async () => {
+    const { ResizeObserver, target, geometryStore, applySnapshot } =
+      createSandbox();
+    geometryStore.applyGeometryBatch({
+      viewport: createViewportGeometrySnapshotFixture({ devicePixelRatio: 2 }),
+    });
+    const callback = jest.fn();
+    new ResizeObserver(callback).observe(target, {
+      box: 'device-pixel-content-box',
+    });
+    applySnapshot();
+    await flushMicrotasks();
+
+    expect(callback.mock.calls[0][0][0].devicePixelContentBoxSize).toEqual([
+      { inlineSize: 160, blockSize: 60 },
+    ]);
+  });
+
+  it('supports zero-sized measured elements without inventing an unmeasured delivery', async () => {
+    const { ResizeObserver, target, applySnapshot } = createSandbox();
+    const callback = jest.fn();
+    new ResizeObserver(callback).observe(target);
+    applySnapshot({ contentWidth: 0, contentHeight: 0 });
+    await flushMicrotasks();
+
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback.mock.calls[0][0][0].contentRect.width).toBe(0);
+  });
+
+  it('stops queued delivery on unobserve and can observe the target again', async () => {
+    const { ResizeObserver, target, applySnapshot } = createSandbox();
+    const callback = jest.fn();
+    const observer = new ResizeObserver(callback);
+    observer.observe(target);
+    applySnapshot();
+    observer.unobserve(target);
+    await flushMicrotasks();
+    expect(callback).not.toHaveBeenCalled();
+
+    observer.observe(target);
+    await flushMicrotasks();
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  it('disconnects its geometry subscription and leaves other observers working', async () => {
+    const {
+      ResizeObserver,
+      target,
+      applySnapshot,
+      subscribe,
+      unsubscribeGeometry,
+    } = createSandbox();
+    const disconnectedCallback = jest.fn();
+    const liveCallback = jest.fn();
+    const disconnectedObserver = new ResizeObserver(disconnectedCallback);
+    disconnectedObserver.observe(target);
+    new ResizeObserver(liveCallback).observe(target);
+    disconnectedObserver.disconnect();
+    applySnapshot();
+    await flushMicrotasks();
+
+    expect(disconnectedCallback).not.toHaveBeenCalled();
+    expect(liveCallback).toHaveBeenCalledTimes(1);
+    expect(subscribe).toHaveBeenCalledTimes(2);
+    expect(unsubscribeGeometry).toHaveBeenCalledTimes(1);
+  });
+
+  it('prunes removed subtrees and cancels their queued delivery', async () => {
+    const { ResizeObserver, target, root, document, applySnapshot } =
+      createSandbox();
+    const callback = jest.fn();
+    const observer = new ResizeObserver(callback);
+    observer.observe(target);
+    applySnapshot();
+    document.body.removeChild(root);
+    await flushMicrotasks();
+    expect(callback).not.toHaveBeenCalled();
+
+    document.body.appendChild(root);
+    applySnapshot({ contentWidth: 120 });
+    await flushMicrotasks();
+    expect(callback).not.toHaveBeenCalled();
+
+    observer.observe(target);
+    await flushMicrotasks();
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps observation when a target moves between connected parents in one update', async () => {
+    const { ResizeObserver, target, root, document, applySnapshot } =
+      createSandbox();
+    const callback = jest.fn();
+    new ResizeObserver(callback).observe(target);
+    const nextParent = document.createElement('div');
+    root.appendChild(nextParent);
+    root.removeChild(target);
+    nextParent.appendChild(target);
+    applySnapshot();
+    await flushMicrotasks();
+
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  it('waits for an initially detached target to connect before requesting its first measured delivery', async () => {
+    const { ResizeObserver, target, root, applySnapshot } = createSandbox();
+    root.removeChild(target);
+    const callback = jest.fn();
+    new ResizeObserver(callback).observe(target);
+    await flushMicrotasks();
+    expect(callback).not.toHaveBeenCalled();
+
+    root.appendChild(target);
+    await flushMicrotasks();
+    applySnapshot();
+    await flushMicrotasks();
+
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback.mock.calls[0][0][0].target).toBe(target);
+  });
+
+  it('isolates observer delivery and teardown between renderer instances', async () => {
+    const first = createSandbox();
+    const second = createSandbox();
+    const firstCallback = jest.fn();
+    const secondCallback = jest.fn();
+    new first.ResizeObserver(firstCallback).observe(first.target);
+    new second.ResizeObserver(secondCallback).observe(second.target);
+    first.applySnapshot();
+    await flushMicrotasks();
+    expect(firstCallback).toHaveBeenCalledTimes(1);
+    expect(secondCallback).not.toHaveBeenCalled();
+
+    first.document.body.removeChild(first.root);
+    second.applySnapshot();
+    await flushMicrotasks();
+    expect(firstCallback).toHaveBeenCalledTimes(1);
+    expect(secondCallback).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects invalid callbacks and targets', () => {
+    const { ResizeObserver } = createSandbox();
+    expect(
+      () => new ResizeObserver(null as unknown as ResizeObserverCallback),
+    ).toThrow(TypeError);
+    expect(() => new ResizeObserver(jest.fn()).observe({} as Element)).toThrow(
+      TypeError,
+    );
+  });
+});

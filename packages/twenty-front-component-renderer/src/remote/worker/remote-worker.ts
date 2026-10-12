@@ -38,12 +38,14 @@ import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLo
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
 import { installNodeContainsPolyfill } from '@/polyfills/dom/utils/installNodeContainsPolyfill';
 import { resolvePolyfillHooks } from '@/polyfills/dom/utils/resolvePolyfillHooks';
+import { installPointerCapturePolyfill } from '@/polyfills/events/utils/installPointerCapturePolyfill';
 import { installEventConstructorPolyfills } from '@/polyfills/events/utils/installEventConstructorPolyfills';
 import { installHostEventRetargetingPolyfill } from '@/polyfills/events/utils/installHostEventRetargetingPolyfill';
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installVisualViewportPolyfill } from '@/polyfills/geometry/utils/installVisualViewportPolyfill';
+import { installResizeObserverPolyfill } from '@/polyfills/geometry/utils/installResizeObserverPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { mediaQueryEnvironmentSource } from '@/polyfills/media-query/states/mediaQueryEnvironmentSource';
 import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
@@ -135,9 +137,18 @@ installActiveElementDetachmentHook({
 });
 installHostEventRetargetingPolyfill(HTMLElement.prototype);
 installElementClickMethodPolyfill(HTMLElement.prototype);
+installPointerCapturePolyfill({
+  elementPrototype: HTMLElement.prototype,
+  documentTarget: document,
+  geometryStore: workerGeometryStore,
+});
 installInputClickActivationPolyfill(HtmlInputElement.prototype);
 
-installGetComputedStyle(toGlobalScopeRecord(globalThis));
+installGetComputedStyle({
+  globalScope: toGlobalScopeRecord(globalThis),
+  geometryStore: workerGeometryStore,
+  documentTarget: document,
+});
 
 installMutationObserver({
   globalScope: toGlobalScopeRecord(globalThis),
@@ -155,6 +166,11 @@ installWindowGeometryPolyfill({
 });
 
 installVisualViewportPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  geometryStore: workerGeometryStore,
+});
+
+installResizeObserverPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
 });

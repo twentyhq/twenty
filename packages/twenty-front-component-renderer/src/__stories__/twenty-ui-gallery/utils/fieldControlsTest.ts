@@ -62,9 +62,44 @@ export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
   );
   expect(notes.tagName).toBe('TEXTAREA');
   expect(notes).toHaveAttribute('data-filled');
+  const shortNotesHeight = notes.getBoundingClientRect().height;
   await userEvent.click(canvas.getByRole('button', { name: 'Apply notes' }));
   await waitFor(() => expect(notes).toHaveValue('First\nSecond\nThird'));
+  await waitFor(() =>
+    expect(notes.getBoundingClientRect().height).toBeGreaterThan(
+      shortNotesHeight,
+    ),
+  );
+  const longNotesHeight = notes.getBoundingClientRect().height;
   await userEvent.click(canvas.getByRole('button', { name: 'Clear notes' }));
   await waitFor(() => expect(notes).toHaveValue(''));
+  await waitFor(() =>
+    expect(notes.getBoundingClientRect().height).toBeLessThan(longNotesHeight),
+  );
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Apply wrapping notes' }),
+  );
+  await waitFor(() =>
+    expect(notes).toHaveValue(
+      'Keep the team informed about the next meeting and share all follow up actions before the end of the week.',
+    ),
+  );
+  await waitFor(() => expect(notes.scrollHeight).toBe(notes.clientHeight));
+  const wideNotesHeight = notes.getBoundingClientRect().height;
+  await userEvent.click(canvas.getByRole('button', { name: 'Narrow notes' }));
+  await waitFor(() => expect(getComputedStyle(notes).width).toBe('140px'));
+  await waitFor(() => expect(notes.scrollHeight).toBe(notes.clientHeight));
+  await waitFor(() =>
+    expect(notes.getBoundingClientRect().height).toBeGreaterThan(
+      wideNotesHeight,
+    ),
+  );
+  const narrowNotesHeight = notes.getBoundingClientRect().height;
+  await userEvent.click(canvas.getByRole('button', { name: 'Widen notes' }));
+  await waitFor(() =>
+    expect(notes.getBoundingClientRect().height).toBeLessThan(
+      narrowNotesHeight,
+    ),
+  );
   expect(errorHandler).not.toHaveBeenCalled();
 };

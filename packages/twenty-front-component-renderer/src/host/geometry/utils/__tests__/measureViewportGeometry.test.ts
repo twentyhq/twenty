@@ -34,14 +34,17 @@ describe('measureViewportGeometry', () => {
     expect(viewport.rootContainerClientHeight).toBe(0);
   });
 
-  it('should not read computed styles', () => {
-    const getComputedStyle = jest.spyOn(window, 'getComputedStyle');
+  it('reads the renderer root computed style for scoped document queries', () => {
     const rootContainer = document.createElement('div');
-
-    measureViewportGeometry(rootContainer);
-
-    expect(getComputedStyle).not.toHaveBeenCalled();
-    getComputedStyle.mockRestore();
+    rootContainer.style.direction = 'rtl';
+    rootContainer.style.setProperty('--t-background-primary', 'scoped-color');
+    document.body.append(rootContainer);
+    const snapshot = measureViewportGeometry(rootContainer);
+    expect(snapshot.computedStyle).toMatchObject({
+      direction: 'rtl',
+      '--t-background-primary': 'scoped-color',
+    });
+    rootContainer.remove();
   });
 
   it('should read the root container rect and client sizes', () => {

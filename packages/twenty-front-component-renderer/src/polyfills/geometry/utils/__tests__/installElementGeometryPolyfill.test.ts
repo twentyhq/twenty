@@ -6,6 +6,11 @@ import { installElementGeometryPolyfill } from '../installElementGeometryPolyfil
 
 class FakeElement {}
 
+class FakeTextarea extends FakeElement {
+  tagName = 'HTML-TEXTAREA';
+  style = { blockSize: '' };
+}
+
 type GeometryPolyfilledElement = FakeElement & {
   getBoundingClientRect: () => DOMRect;
   offsetWidth: number;
@@ -76,6 +81,129 @@ describe('installElementGeometryPolyfill', () => {
     expect(element.clientHeight).toBe(10);
     expect(element.scrollWidth).toBe(13);
     expect(element.scrollTop).toBe(15);
+  });
+
+  it('should measure content when a textarea resets its block size', () => {
+    installOn(
+      createWorkerGeometryStoreStub({
+        resolveElementSnapshot: () =>
+          createElementGeometrySnapshotFixture({
+            scrollHeight: 130,
+            textareaIntrinsicScrollHeight: 48,
+          }),
+      }),
+    );
+
+    const textarea = asPolyfilled(
+      new FakeTextarea(),
+    ) as GeometryPolyfilledElement & FakeTextarea;
+    textarea.style.blockSize = 'auto';
+
+    expect(textarea.scrollHeight).toBe(48);
+    textarea.style.blockSize = '100px';
+    expect(textarea.scrollHeight).toBe(130);
+  });
+
+  it('should resize a textarea after its controlled content reaches the host', () => {
+    let snapshot = createElementGeometrySnapshotFixture({
+      offsetHeight: 50,
+      clientHeight: 48,
+      scrollHeight: 48,
+      textareaIntrinsicScrollHeight: 48,
+    });
+    let notifyGeometryUpdate = () => {};
+
+    installOn(
+      createWorkerGeometryStoreStub({
+        resolveElementSnapshot: () => snapshot,
+        subscribeToGeometryUpdates: (listener) => {
+          notifyGeometryUpdate = listener;
+          return () => {};
+        },
+      }),
+    );
+
+    const textarea = asPolyfilled(
+      new FakeTextarea(),
+    ) as GeometryPolyfilledElement & FakeTextarea;
+    textarea.style.blockSize = 'auto';
+    const borderBlockSize = textarea.offsetHeight - textarea.clientHeight;
+    textarea.style.blockSize = `${textarea.scrollHeight + borderBlockSize}px`;
+    snapshot = { ...snapshot, textareaIntrinsicScrollHeight: 80 };
+    notifyGeometryUpdate();
+
+    expect(textarea.style.blockSize).toBe('82px');
+
+    snapshot = { ...snapshot, textareaIntrinsicScrollHeight: 32 };
+    notifyGeometryUpdate();
+
+    expect(textarea.style.blockSize).toBe('34px');
+  });
+
+  it('should stop resizing a detached textarea', () => {
+    let snapshot = createElementGeometrySnapshotFixture({
+      offsetHeight: 50,
+      clientHeight: 48,
+      scrollHeight: 48,
+      textareaIntrinsicScrollHeight: 48,
+    }) as ReturnType<typeof createElementGeometrySnapshotFixture> | null;
+    let notifyGeometryUpdate = () => {};
+
+    installOn(
+      createWorkerGeometryStoreStub({
+        resolveElementSnapshot: () => snapshot,
+        subscribeToGeometryUpdates: (listener) => {
+          notifyGeometryUpdate = listener;
+          return () => {};
+        },
+      }),
+    );
+
+    const textarea = asPolyfilled(
+      new FakeTextarea(),
+    ) as GeometryPolyfilledElement & FakeTextarea;
+    textarea.style.blockSize = 'auto';
+    const borderBlockSize = textarea.offsetHeight - textarea.clientHeight;
+    textarea.style.blockSize = `${textarea.scrollHeight + borderBlockSize}px`;
+    snapshot = null;
+    notifyGeometryUpdate();
+    snapshot = createElementGeometrySnapshotFixture({
+      textareaIntrinsicScrollHeight: 80,
+    });
+    notifyGeometryUpdate();
+
+    expect(textarea.style.blockSize).toBe('50px');
+  });
+
+  it('should preserve caller sizing after a pending textarea content measurement', () => {
+    let snapshot = createElementGeometrySnapshotFixture({
+      offsetHeight: 50,
+      clientHeight: 48,
+      scrollHeight: 48,
+      textareaIntrinsicScrollHeight: 48,
+    });
+    let notifyGeometryUpdate = () => {};
+
+    installOn(
+      createWorkerGeometryStoreStub({
+        resolveElementSnapshot: () => snapshot,
+        subscribeToGeometryUpdates: (listener) => {
+          notifyGeometryUpdate = listener;
+          return () => {};
+        },
+      }),
+    );
+
+    const textarea = asPolyfilled(
+      new FakeTextarea(),
+    ) as GeometryPolyfilledElement & FakeTextarea;
+    textarea.style.blockSize = 'auto';
+    expect(textarea.scrollHeight).toBe(48);
+    textarea.style.blockSize = '140px';
+    snapshot = { ...snapshot, textareaIntrinsicScrollHeight: 80 };
+    notifyGeometryUpdate();
+
+    expect(textarea.style.blockSize).toBe('140px');
   });
 
   it('should return 0 from every numeric getter when no snapshot exists', () => {

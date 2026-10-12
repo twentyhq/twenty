@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { type CSSProperties, useEffect, useRef, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 
 const MEASURED_BOX_WIDTH = 240;
@@ -11,6 +11,13 @@ const GeometryMeasureComponent = () => {
     height: 0,
     offsetWidth: 0,
     innerWidth: 0,
+    columnGap: '',
+    direction: '',
+    display: '',
+    offsetLeft: 0,
+    offsetTop: 0,
+    hasOwnedOffsetParent: false,
+    themeBackground: '',
   });
 
   useEffect(() => {
@@ -28,6 +35,16 @@ const GeometryMeasureComponent = () => {
         height: Math.round(rect.height),
         offsetWidth: measuredBox.offsetWidth,
         innerWidth: window.innerWidth,
+        columnGap: getComputedStyle(measuredBox).columnGap,
+        direction: getComputedStyle(measuredBox).direction,
+        display: getComputedStyle(measuredBox).display,
+        offsetLeft: measuredBox.offsetLeft,
+        offsetTop: measuredBox.offsetTop,
+        hasOwnedOffsetParent:
+          measuredBox.offsetParent === measuredBox.parentElement,
+        themeBackground: getComputedStyle(measuredBox).getPropertyValue(
+          '--t-background-primary',
+        ),
       });
     };
 
@@ -41,16 +58,45 @@ const GeometryMeasureComponent = () => {
       data-testid="geometry-measure-component"
       style={{ fontFamily: 'system-ui, sans-serif', padding: 16 }}
     >
+      <style>
+        {'.c05-measured-layout { display: flex; column-gap: 14px; }'}
+      </style>
       <div
-        ref={measuredBoxRef}
-        data-testid="geometry-measure-box"
-        style={{
-          width: MEASURED_BOX_WIDTH,
-          height: MEASURED_BOX_HEIGHT,
-          backgroundColor: '#dbeafe',
-          borderRadius: 8,
-        }}
-      />
+        style={
+          {
+            position: 'relative',
+            height: 120,
+            direction: 'rtl',
+            '--t-background-primary': 'rgb(1, 2, 3)',
+          } as CSSProperties
+        }
+      >
+        <div
+          className="c05-measured-layout"
+          ref={measuredBoxRef}
+          data-testid="geometry-measure-box"
+          style={{
+            position: 'absolute',
+            left: 12,
+            top: 14,
+            width: MEASURED_BOX_WIDTH,
+            height: MEASURED_BOX_HEIGHT,
+            backgroundColor: '#dbeafe',
+            borderRadius: 8,
+          }}
+        />
+      </div>
+      <output data-testid="geometry-layout-facts">
+        {JSON.stringify({
+          columnGap: measuredGeometry.columnGap,
+          direction: measuredGeometry.direction,
+          display: measuredGeometry.display,
+          offsetLeft: measuredGeometry.offsetLeft,
+          offsetTop: measuredGeometry.offsetTop,
+          hasOwnedOffsetParent: measuredGeometry.hasOwnedOffsetParent,
+          themeBackground: measuredGeometry.themeBackground,
+        })}
+      </output>
       <p data-testid="geometry-measure-width">
         width: {measuredGeometry.width}
       </p>

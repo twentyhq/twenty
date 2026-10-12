@@ -65,6 +65,7 @@ const OverflowingListExample = () => {
         </OverflowingList>
       )}
       <Button onClick={() => setListWidth(500)}>Widen measured list</Button>
+      <Button onClick={() => setListWidth(220)}>Narrow measured list</Button>
       <Button onClick={() => setIsMeasuredListMounted(false)}>
         Remove measured list
       </Button>

@@ -99,13 +99,18 @@ export const createGeometryTracker = (): GeometryTracker => {
 
       unregisteredObservedFrameCounts.delete(remoteElementId);
 
-      const snapshot = measureNodeGeometry({ node, rootContainerOrigin });
+      const snapshot = measureNodeGeometry({
+        node,
+        rootContainerOrigin,
+        resolveRemoteElementId: (element) =>
+          remoteElementIdByRegisteredNode.get(element) ?? null,
+      });
 
       if (
-        !isGeometrySnapshotEqualWithinEpsilon(
-          lastElementSnapshots.get(remoteElementId),
-          snapshot,
-        )
+        !isGeometrySnapshotEqualWithinEpsilon({
+          previousSnapshot: lastElementSnapshots.get(remoteElementId),
+          nextSnapshot: snapshot,
+        })
       ) {
         lastElementSnapshots.set(remoteElementId, snapshot);
         changedElements[remoteElementId] = snapshot;
@@ -124,10 +129,10 @@ export const createGeometryTracker = (): GeometryTracker => {
       wakeSources.detachElementSources();
     }
 
-    const hasViewportChanged = !isGeometrySnapshotEqualWithinEpsilon(
-      lastViewportSnapshot,
-      viewport,
-    );
+    const hasViewportChanged = !isGeometrySnapshotEqualWithinEpsilon({
+      previousSnapshot: lastViewportSnapshot,
+      nextSnapshot: viewport,
+    });
 
     lastViewportSnapshot = viewport;
 

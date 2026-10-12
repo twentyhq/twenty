@@ -34,6 +34,21 @@ export const overflowingListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   ).toBeVisible();
 
   await userEvent.click(
+    canvas.getByRole('button', { name: 'Narrow measured list' }),
+  );
+  await waitFor(() =>
+    expect(
+      canvas.getByRole('button', { name: /Show all measured items$/ }),
+    ).toHaveTextContent('+2'),
+  );
+  await expect(
+    canvas.getByRole('button', { name: 'Measured Bravo' }),
+  ).toBeVisible();
+  await expect(
+    canvas.queryByRole('button', { name: 'Measured Charlie' }),
+  ).toBeNull();
+
+  await userEvent.click(
     canvas.getByRole('button', { name: 'Remove measured list' }),
   );
   await waitFor(() =>

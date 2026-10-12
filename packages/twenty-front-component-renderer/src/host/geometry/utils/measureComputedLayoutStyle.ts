@@ -1,0 +1,69 @@
+import { isDefined } from 'twenty-shared/utils';
+
+const COMPUTED_LAYOUT_PROPERTIES = [
+  'display',
+  'visibility',
+  'direction',
+  'position',
+  'transform',
+  'perspective',
+  'filter',
+  'backdrop-filter',
+  'contain',
+  'container-type',
+  'will-change',
+  'content-visibility',
+  'overflow',
+  'overflow-x',
+  'overflow-y',
+  'width',
+  'height',
+  'min-width',
+  'min-height',
+  'max-width',
+  'max-height',
+  'box-sizing',
+  'column-gap',
+  'row-gap',
+  'writing-mode',
+  'padding-top',
+  'padding-right',
+  'padding-bottom',
+  'padding-left',
+  'border-top-width',
+  'border-right-width',
+  'border-bottom-width',
+  'border-left-width',
+  'scroll-padding-top',
+  'scroll-padding-right',
+  'scroll-padding-bottom',
+  'scroll-padding-left',
+  'scroll-margin-top',
+  'scroll-margin-right',
+  'scroll-margin-bottom',
+  'scroll-margin-left',
+] as const;
+
+const THEME_VARIABLE_PREFIX = '--t-';
+
+export const measureComputedLayoutStyle = (
+  node: Element,
+): Record<string, string> => {
+  const computedStyle = node.ownerDocument.defaultView?.getComputedStyle(node);
+
+  if (!isDefined(computedStyle)) {
+    return {};
+  }
+
+  const values: Record<string, string> = {};
+  for (const propertyName of COMPUTED_LAYOUT_PROPERTIES) {
+    values[propertyName] = computedStyle.getPropertyValue(propertyName);
+  }
+  for (let index = 0; index < computedStyle.length; index += 1) {
+    const propertyName = computedStyle.item(index);
+    if (propertyName.startsWith(THEME_VARIABLE_PREFIX)) {
+      values[propertyName] = computedStyle.getPropertyValue(propertyName);
+    }
+  }
+  return values;
+};

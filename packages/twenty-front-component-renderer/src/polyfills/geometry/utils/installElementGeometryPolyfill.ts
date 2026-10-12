@@ -1,7 +1,10 @@
+import { remoteId } from '@remote-dom/core/elements';
+import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { createDomRectFromSnapshot } from '@/polyfills/geometry/utils/createDomRectFromSnapshot';
+import { createTextareaIntrinsicSizeReader } from '@/polyfills/geometry/utils/createTextareaIntrinsicSizeReader';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 
 const EMPTY_ELEMENT_GEOMETRY_SNAPSHOT: ElementGeometrySnapshot = {
@@ -34,6 +37,8 @@ export const installElementGeometryPolyfill = ({
   documentTarget,
   geometryStore,
 }: InstallElementGeometryPolyfillInput): void => {
+  const readTextareaIntrinsicSize =
+    createTextareaIntrinsicSizeReader(geometryStore);
   const isDocumentScopedElement = (element: object): boolean =>
     element === documentTarget.body ||
     element === documentTarget.documentElement;
@@ -86,13 +91,22 @@ export const installElementGeometryPolyfill = ({
     writable: true,
   });
 
-  const defineGeometryGetter = (
-    propertyName: keyof ElementGeometrySnapshot,
-    { hasNoOpSetter = false }: { hasNoOpSetter?: boolean } = {},
-  ): void => {
+  const defineGeometryGetter = ({
+    propertyName,
+    hasNoOpSetter = false,
+  }: {
+    propertyName: keyof ElementGeometrySnapshot;
+    hasNoOpSetter?: boolean;
+  }): void => {
     Object.defineProperty(elementPrototype, propertyName, {
       get(this: object) {
-        return resolveSnapshot(this)?.[propertyName] ?? 0;
+        const snapshot = resolveSnapshot(this);
+
+        if (propertyName === 'scrollHeight') {
+          return readTextareaIntrinsicSize({ element: this, snapshot });
+        }
+
+        return snapshot?.[propertyName] ?? 0;
       },
       ...(hasNoOpSetter && { set() {} }),
       configurable: true,
@@ -111,11 +125,11 @@ export const installElementGeometryPolyfill = ({
     'scrollWidth',
     'scrollHeight',
   ] as const) {
-    defineGeometryGetter(propertyName);
+    defineGeometryGetter({ propertyName });
   }
 
   for (const propertyName of ['scrollTop', 'scrollLeft'] as const) {
-    defineGeometryGetter(propertyName, { hasNoOpSetter: true });
+    defineGeometryGetter({ propertyName, hasNoOpSetter: true });
   }
 
   Object.defineProperty(elementPrototype, 'offsetParent', {
@@ -124,7 +138,19 @@ export const installElementGeometryPolyfill = ({
         return null;
       }
 
-      return documentTarget.body ?? null;
+      const snapshot = resolveSnapshot(this);
+      const offsetParentRemoteElementId = snapshot?.offsetParentRemoteElementId;
+      if (!isDefined(offsetParentRemoteElementId)) {
+        return documentTarget.body ?? null;
+      }
+      let ancestor = (this as { parentNode?: unknown }).parentNode;
+      while (isObject(ancestor)) {
+        if (remoteId(ancestor as Node) === offsetParentRemoteElementId) {
+          return ancestor;
+        }
+        ancestor = (ancestor as { parentNode?: unknown }).parentNode;
+      }
+      return null;
     },
     configurable: true,
   });

@@ -1,27 +1,63 @@
-import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { isNonEmptyString, isObject, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ElementWithStyle } from '@/polyfills/dom/types/ElementWithStyle';
 import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
+import { resolveCssPropertyNameFromJsPropertyName } from '@/polyfills/dom/utils/resolveCssPropertyNameFromJsPropertyName';
+import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
 
-export const installGetComputedStyle = (
-  globalScope: Record<string, unknown>,
-): void => {
+export const installGetComputedStyle = ({
+  globalScope,
+  geometryStore,
+  documentTarget,
+}: {
+  globalScope: Record<string, unknown>;
+  geometryStore: WorkerGeometryStore;
+  documentTarget: { body?: unknown; documentElement?: unknown };
+}): void => {
   const createEmptyStyleDeclaration = () => createStyleProxy(() => {});
 
   const getComputedStyle = (element: unknown, pseudoElement?: unknown) => {
-    if (isNonEmptyString(pseudoElement)) {
+    if (isNonEmptyString(pseudoElement) || !isObject(element)) {
       return createEmptyStyleDeclaration();
     }
 
-    const declaredStyle = isObject(element)
-      ? (element as ElementWithStyle).style
-      : undefined;
+    const declaredStyle = (element as ElementWithStyle).style;
+    const readProperty = (propertyName: string): string => {
+      const isDocumentElement =
+        element === documentTarget.body ||
+        element === documentTarget.documentElement;
+      const snapshot = isDocumentElement
+        ? geometryStore.getViewportSnapshot()
+        : geometryStore.resolveElementSnapshot(element);
+      const measuredValue = snapshot?.computedStyle?.[propertyName];
+      if (isDefined(measuredValue)) {
+        return measuredValue;
+      }
+      if (!isObject(declaredStyle)) {
+        return '';
+      }
+      const getPropertyValue = (
+        declaredStyle as { getPropertyValue?: (name: string) => string }
+      ).getPropertyValue;
+      return getPropertyValue?.call(declaredStyle, propertyName) ?? '';
+    };
 
-    return isDefined(declaredStyle)
-      ? declaredStyle
-      : createEmptyStyleDeclaration();
+    return new Proxy(createEmptyStyleDeclaration(), {
+      get(target, property) {
+        if (property === 'getPropertyValue') {
+          return readProperty;
+        }
+        if (isString(property)) {
+          return readProperty(
+            resolveCssPropertyNameFromJsPropertyName(property),
+          );
+        }
+        return Reflect.get(target, property);
+      },
+      set: () => false,
+    });
   };
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {

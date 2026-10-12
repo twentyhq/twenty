@@ -17,11 +17,9 @@ export const sliderTest: TwentyUiGalleryPlayFunction = async ({
     canvas.getByRole('group', { name: 'Disabled volume' }),
   );
   expect(disabledVolume.getByRole('slider', { hidden: true })).toBeDisabled();
-  await expect(
-    waitFor(() => expect(slider).toBeVisible(), {
-      timeout: INTERACTION_TIMEOUT,
-    }),
-  ).rejects.toThrow();
+  await waitFor(() => expect(slider).toBeVisible(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
   expect(canvas.getByText('Volume: 40; Committed: 40')).toBeVisible();
   expect(errorHandler).not.toHaveBeenCalled();
 };
