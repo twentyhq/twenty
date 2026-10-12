@@ -5,13 +5,15 @@ import { IconSparkles } from 'twenty-ui/icon';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 
 export const SettingsValidationRuleAskAiButton = () => {
   const { t } = useLingui();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
+  const workspaceSurface = useWorkspaceSurface();
 
-  if (!hasAiPermission) {
+  if (!hasAiPermission || workspaceSurface.type === 'side-panel') {
     return null;
   }
 
