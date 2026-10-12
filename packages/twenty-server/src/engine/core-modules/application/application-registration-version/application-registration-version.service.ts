@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
 import { ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -137,20 +137,26 @@ export class ApplicationRegistrationVersionService {
       where: { applicationRegistrationId },
     });
 
-    const tarballFileIds = new Set(
-      [
-        ...versions.map(({ tarballFileId }) => tarballFileId),
-        currentTarballFileId,
-      ].filter(isDefined),
-    );
+    const tarballFileIds = [
+      ...new Set(
+        [
+          ...versions.map(({ tarballFileId }) => tarballFileId),
+          currentTarballFileId,
+        ].filter(isDefined),
+      ),
+    ];
 
-    for (const tarballFileId of tarballFileIds) {
-      const tarballFile = await this.fileRepository.findOne({
-        select: { id: true, workspaceId: true },
-        where: { id: tarballFileId },
-      });
+    if (tarballFileIds.length === 0) {
+      return;
+    }
 
-      if (!isDefined(tarballFile) || !isDefined(tarballFile.workspaceId)) {
+    const tarballFiles = await this.fileRepository.find({
+      select: { id: true, workspaceId: true },
+      where: { id: In(tarballFileIds) },
+    });
+
+    for (const tarballFile of tarballFiles) {
+      if (!isDefined(tarballFile.workspaceId)) {
         continue;
       }
 
