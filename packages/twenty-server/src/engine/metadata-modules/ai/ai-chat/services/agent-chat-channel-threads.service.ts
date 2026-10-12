@@ -135,7 +135,6 @@ export class AgentChatChannelThreadsService {
     };
   }
 
-  // One per channel the member can reach, in the channels' order
   async findSummaries(args: MemberArgs): Promise<AgentChatChannelSummaryDTO[]> {
     if (!(await this.sharingService.hasChannels(args.workspaceId))) {
       return [];

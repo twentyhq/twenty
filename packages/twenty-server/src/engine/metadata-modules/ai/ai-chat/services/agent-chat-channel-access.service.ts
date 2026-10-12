@@ -14,8 +14,6 @@ type MemberArgs = {
   workspaceMemberId: string;
 };
 
-// A member reaches the channels open to everyone and the ones open to their
-// role, the same way the grants on the channels' chats let them in
 @Injectable()
 export class AgentChatChannelAccessService {
   constructor(
