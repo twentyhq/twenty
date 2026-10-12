@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
 import { type TeamsCalendarEvent } from 'src/features/transcripts/logic-functions/types/teams-calendar-event.type';
 import { fetchGraphJson } from 'src/features/transcripts/logic-functions/utils/fetch-graph-json';
+import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
 
 export const getTeamsCalendarEventICalUIdOrThrow = async ({
   accessToken,
@@ -19,13 +20,14 @@ export const getTeamsCalendarEventICalUIdOrThrow = async ({
 
     return isNonEmptyString(event.iCalUId) ? event.iCalUId : undefined;
   } catch (error) {
-    if (
-      error instanceof GraphRequestError &&
-      (error.status === 403 || error.status === 404)
-    ) {
-      return undefined;
+    if (!(error instanceof GraphRequestError)) {
+      throw error;
     }
 
-    throw error;
+    console.error(
+      `[teams] could not read the iCalUId of calendar event ${eventId}: ${toErrorMessage(error)}`,
+    );
+
+    return undefined;
   }
 };
