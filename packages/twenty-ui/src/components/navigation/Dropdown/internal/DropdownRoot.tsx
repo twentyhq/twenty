@@ -1,7 +1,7 @@
 import { useCallback, useContext, useRef, useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
-import { preventDismissingClickActivation } from '@ui/utilities/internal/preventDismissingClickActivation';
+import { preventDismissingClickActivation } from '@ui/utilities/utils/preventDismissingClickActivation';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownRootProps } from '../types/DropdownRootProps';

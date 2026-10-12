@@ -415,10 +415,37 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Autocomplete/Autocomplete.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/autocomplete',
+    partPropOverrides: {
+      Root: {
+        items: {
+          type: 'readonly TItem[] | readonly { items: readonly TItem[] }[]',
+          required: false,
+        },
+        filteredItems: {
+          type: 'readonly TItem[] | readonly { items: readonly TItem[] }[]',
+        },
+        filter: {
+          type: 'AutocompleteRootProps<TItem>["filter"]',
+        },
+        itemToStringValue: {
+          type: '(itemValue: TItem) => string',
+        },
+        onItemHighlighted: {
+          type: '(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void',
+        },
+      },
+    },
     partPropDescriptions: {
       Root: {
         items:
-          'Items to display in the list. Nullish entries are not supported.',
+          'Flat items or groups with an items array. Preserves the upstream item type; nullish entries are not supported.',
+      },
+      Value: {
+        children:
+          'Content or render function receiving the current input text.',
+      },
+      Collection: {
+        children: 'Render function receiving each filtered item and its index.',
       },
       Input: {
         size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
@@ -426,8 +453,16 @@ export const DOCUMENTED_COMPONENTS = [
       Popup: {
         width:
           'Width of the popup. Overrides its default minimum anchor width.',
+      },
+      Portal: {
         container:
-          'Element the popup is portaled into. Defaults to the theme portal container.',
+          'Portal destination. Omitted uses the scoped theme container; explicit null waits without rendering. Element, ShadowRoot and ref targets pass through to Base UI.',
+      },
+      Positioner: {
+        ref: 'Ref to the positioning div, separate from Popup and Portal.',
+        sideOffset:
+          'Distance from the anchor. Defaults to 8; supports functional offsets.',
+        align: 'Alignment relative to the anchor. Defaults to start.',
       },
     },
   },
@@ -580,31 +615,6 @@ export const DOCUMENTED_COMPONENTS = [
     ],
     partPropDescriptions: ALERT_DIALOG_PART_PROP_DESCRIPTIONS,
     partPropDefaults: { Popup: { size: 'md' } },
-  },
-  {
-    name: 'Menu',
-    source: 'primitives/surfaces/Menu/Menu.tsx',
-    entryPoint: 'twenty-ui/primitives/surfaces',
-    slug: 'surfaces/menu',
-    partPropDescriptions: {
-      Item: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-      },
-      CheckboxItem: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-      },
-      RadioItem: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-      },
-      SubmenuTrigger: {
-        shortcutJoinLabel:
-          'Text between sequential shortcut steps. Defaults to `then`.',
-        onClick: 'The click handler for the submenu trigger.',
-      },
-    },
   },
   {
     name: 'Popover',

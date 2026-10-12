@@ -13,9 +13,11 @@ NumberField checks locale formatting and localized paste, controlled empty value
 
 Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused React/Preact cases check controlled trigger requests, native attributes, Button render composition, DOM refs and callback reasons. These checks do not establish popup visibility, geometry or dismissal support. The omitted-container popup still requires C04/C05/C07 renderer acceptance.
 
+Dropdown checks controlled opening, native action refs and Button render composition, disabled callback suppression, action callbacks, page navigation, option selection and click-to-close in both runtimes. The portal fixture preserves all 16 rows and checks attachment along the physical collision side, overlap with the trigger and confinement to the owner portal area. A temporary constrained long-menu probe passed End-key focus and scrolling in both runtimes: a 128px popup scrolled to 386px and kept the last item visible. Outside-host dismissal remains a C07 renderer limitation. Clicking the host action invokes that action, while Dropdown remains expanded with its popup mounted. Search, broader keyboard navigation and focus restoration are not established by these checks.
+
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
 
-ListItemButton checks native action activation, selected state, refs and events, disabled and focusable disabled behavior, ordinary bubbling, caller-owned propagation boundaries, and independent sibling controls in React and Preact. ListItem keeps its default div presentational, including visual disabled, selected and focused state and caller-owned content. Its React/Preact cases check native button/link owners, actual root refs, pointer and keyboard activation, focus handlers, disabled native buttons, event bubbling and explicit propagation boundaries. URL text stays plain unless the caller supplies a link. Menu.Item checks visible pointer activation, disabled behavior and click-to-close. Popup keyboard navigation, outside dismissal and focus restoration remain outside this fixture. The retained overflow-tooltip check re-enters after renderer measurements arrive, so it does not establish first-hover geometry acceptance.
+ListItemButton checks native action activation, selected state, refs and events, disabled and focusable disabled behavior, ordinary bubbling, caller-owned propagation boundaries, and independent sibling controls in React and Preact. ListItem keeps its default div presentational, including visual disabled, selected and focused state and caller-owned content. Its React/Preact cases check native button/link owners, actual root refs, pointer and keyboard activation, focus handlers, disabled native buttons, event bubbling and explicit propagation boundaries. URL text stays plain unless the caller supplies a link. Dropdown.ActionItem checks visible pointer activation, disabled behavior and click-to-close. Popup keyboard navigation, outside dismissal and focus restoration remain outside this fixture. The retained overflow-tooltip check re-enters after renderer measurements arrive, so it does not establish first-hover geometry acceptance.
 
 Tag and Status retain their presentational span when a native click handler is supplied. Their focused React/Preact fixtures check explicit native button/link composition, keyboard activation, disabled owners, refs, caller-owned links and native handlers. Tag checks positive truncation and native padding styles; Status checks controlled loading, caller-owned busy state and a decorative loader without an implicit live region.
 
@@ -45,6 +47,7 @@ effect within the interaction timeout.
 | `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)          |
 | `twenty-ui-number-field`         | NumberField (locale formatting and paste, controlled/uncontrolled values, callback details, native forms and refs, bounds and render composition) |
 | `twenty-ui-autocomplete`         | Autocomplete (caret keys, controlled editing, composition, filtering, disabled state, Empty; `TwentyUiAutocomplete.stories.tsx`)        |
+| `twenty-ui-autocomplete-parts`   | Autocomplete grouped objects, popup parts, native refs/render, controlled updates, Clear, selection and cancelable Escape              |
 | `twenty-ui-display-helpers`      | Text                                                                                                                                    |
 | `twenty-ui-avatar-controls`      | Avatar (stable presentational root, compound fallback, refs, explicit button/link composition and native keyboard/disabled behavior)    |
 | `twenty-ui-avatar-group`         | AvatarGroup (derived and partial totals, custom overflow, keyed child state, native refs and explicit button/link composition)          |
@@ -53,7 +56,7 @@ effect within the interaction timeout.
 | `twenty-ui-status-controls`      | Status (stable presentational root, loading/busy state, node content, refs and explicit button/link composition)                        |
 | `twenty-ui-avatar-image`         | Avatar Root/Image/Fallback (image labels/attributes/refs, loading callbacks, decoded images, fallback, replacement and unmount/remount) |
 | `twenty-ui-image-input`          | ImageInput (native chooser, readable files, preview URLs, reset and ownership cleanup) |
-| `twenty-ui-list-item`            | ListItemButton and ListItem (native action composition, visual rows, explicit button/link/Menu.Item owners, refs/events/focus/keyboard, disabled behavior and sibling controls)            |
+| `twenty-ui-list-item`            | ListItemButton and ListItem (native action composition, visual rows, explicit button/link/Dropdown.ActionItem owners, refs/events/focus/keyboard, disabled behavior and sibling controls)            |
 | `twenty-ui-settings-row`         | SettingsRow                                                                                                                             |
 | `twenty-ui-tabs`                 | Tabs and TabButton                                                                                                                      |
 | `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                         |
@@ -62,10 +65,9 @@ effect within the interaction timeout.
 | `twenty-ui-popover`              | Popover                                                                                                                                 |
 | `twenty-ui-card-composition`     | Card (native parts and refs, render composition, display semantics, button/link ownership and nested controls)                          |
 | `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                                 |
-| `twenty-ui-menu`                 | Menu                                                                                                                                    |
 | `twenty-ui-select`               | Select                                                                                                                                  |
 | `twenty-ui-portals`              | Body portal callbacks, removal, nearby overflow, menu placement and confinement                                                         |
-| `twenty-ui-dropdown`             | Dropdown                                                                                                                                |
+| `twenty-ui-dropdown`             | Dropdown (controlled opening, action refs and callbacks, disabled actions, page navigation and selection)                                                                                                                                |
 | `twenty-ui-toast`                | Toast                                                                                                                                   |
 | `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                                 |
 | `twenty-ui-checkbox`             | Checkbox                                                                                                                                |
@@ -124,11 +126,36 @@ that area so Floating UI popups flip and size themselves to fit it. The portal
 fixture covers callbacks, removal, menu placement, interface zoom, and an
 oversized portal that stays clipped while a host control remains usable.
 
-The Autocomplete fixture uses the public inline list interface to isolate input
-behavior from popup support. Its Empty section runs Base UI's live-region marker
-through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
-currentNode without callback filters; document Selection and DOM Range are
-outside this scope.
+The string Autocomplete fixture uses the public inline list interface for caret
+editing, controlled updates, IME confirmation, filtering and Empty. Its Empty
+section runs Base UI's live-region marker through a narrow worker TreeWalker
+that supports SHOW_TEXT, nextNode and currentNode without callback filters;
+document Selection and DOM Range are outside this scope.
+
+The grouped object fixture composes Portal, Positioner and Popup separately.
+Its React/Preact cases require visible popup content and check native input refs
+and element render composition, group filtering and empty results, item labels
+and selection callbacks, controlled external updates, Clear, keyboard highlight
+reasons, and cancelable Escape dismissal. The fixed Positioner configuration is
+forwarded. Separate React/Preact probes pass basic bottom/start placement with
+an 8px offset and nonzero visible host geometry. They do not establish collision
+handling or placement under scrolling and zoom.
+
+Three renderer gaps remain outside that positive coverage. A strict outside-press
+success probe fails in both runtimes: the host button activates once, but the
+popup remains open because events outside the owned component do not reach the
+worker. C07 owns that dismissal transport. A separate strict native-input
+semantics probe also fails in both runtimes after a controlled update while
+closed. Base UI compares the registered element's tag name with `INPUT`, while
+the worker retains `HTML-INPUT` for remote DOM transport. It consequently treats
+the input as a custom control and removes its combobox role and expanded state
+while closed. The role returns while the popup is open, and the Trigger retains
+its controlled expanded state. A strict scrolling probe highlights the final
+option in a 40-item list after keyboard navigation, but the option stays below
+the host list's visible bounds in both runtimes. This leaves the C06 scroll
+transport incomplete. No tag-name override or known-failure acceptance pin is
+introduced. These gaps and the remaining C05/C06/C07 work prevent these stories
+from establishing integrated V1 acceptance.
 
 ## ImageInput file selection
 
@@ -221,7 +248,7 @@ expected-to-fail by the runner.
 
 | Component                                                                                             | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Popover, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                                            |
+| Popover, Select, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                                            |
 | Slider                                                                                                | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch.                                                                                                                                                                                                                                                                                                                                                |
 | Responsive hooks                                                                                      | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 

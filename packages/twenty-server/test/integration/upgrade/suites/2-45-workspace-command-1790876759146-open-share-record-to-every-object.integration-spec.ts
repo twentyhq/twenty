@@ -3,7 +3,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 
 import { type OpenShareRecordToEveryObjectCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876759146-open-share-record-to-every-object.command';
 import { CHAT_OR_RECORD_SHARING_FLAG_EXPRESSION } from 'src/database/commands/upgrade-version-command/2-45/utils/build-chat-share-record-availability-updates.util';
-import { type UnpinChatShareCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791809291683-unpin-chat-share.command';
+import { type UnpinChatShareCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791822919338-unpin-chat-share.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
