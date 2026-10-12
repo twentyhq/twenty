@@ -207,6 +207,7 @@ export type ThemeType = {
       light: string;
       extraLight: string;
       inverted: string;
+      onAccent: string;
       danger: string;
     };
     size: {

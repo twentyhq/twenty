@@ -9,6 +9,8 @@ so Dropdown-based popups never open there.
 The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels and controlled multiline value updates in React and Preact.
 Textarea auto-resize remains a renderer limitation. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. These stale reads can also produce cumulative height growth instead of fitting the current content. The field fixture verifies values, refs, events and accessibility without treating incidental height changes as resize acceptance. Standalone Textarea browser checks pass.
 
+NumberField checks locale formatting and localized paste, controlled empty values, uncontrolled typing, bounds, keyboard commits, pointer value changes, callback event details, accessible labels, native forms, refs and render composition in both runtimes. Sequential typing after clearing a formatted value can reset the caret and insert subsequent digits before earlier input. Formatted pointer edits can also restore stale display values when host blur races the worker update. Pointer button release does not emit its commit callback, although host blur can emit an input-blur commit. ScrubArea can enter its scrubbing state, but drag movement and release do not reach the worker window listeners; pointer lock and the custom scrub cursor are also unavailable. These renderer limits apply independently of the standalone React NumberField browser checks.
+
 Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused React/Preact cases check controlled trigger requests, native attributes, Button render composition, DOM refs and callback reasons. These checks do not establish popup visibility, geometry or dismissal support. The omitted-container popup still requires C04/C05/C07 renderer acceptance.
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
@@ -20,6 +22,8 @@ Tag and Status retain their presentational span when a native click handler is s
 Card composition checks native part props and DOM refs, customized anatomy, ordinary display semantics, independent nested controls, button keyboard activation and disabled state, and explicit link ownership in both runtimes.
 
 AvatarGroup checks derived counts, partially loaded totals, custom overflow and surviving keyed child state. Its native button and link (`target="_blank"`) verify refs, focus and pointer/keyboard activation in React and Preact.
+
+Badge checks ordinary node content, compact sizes, colors and circle shape. Its React and Preact fixtures keep count clamping and zero visibility in the caller, and verify native span attributes, refs and pointer handlers plus explicit button and link render composition with keyboard activation.
 
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
@@ -39,10 +43,12 @@ effect within the interaction timeout.
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `twenty-ui-field-controls`       | Field, Input, InputGroup, Textarea                                                                                                      |
 | `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)          |
+| `twenty-ui-number-field`         | NumberField (locale formatting and paste, controlled/uncontrolled values, callback details, native forms and refs, bounds and render composition) |
 | `twenty-ui-autocomplete`         | Autocomplete (caret keys, controlled editing, composition, filtering, disabled state, Empty; `TwentyUiAutocomplete.stories.tsx`)        |
 | `twenty-ui-display-helpers`      | Text                                                                                                                                    |
 | `twenty-ui-avatar-controls`      | Avatar (stable presentational root, compound fallback, refs, explicit button/link composition and native keyboard/disabled behavior)    |
 | `twenty-ui-avatar-group`         | AvatarGroup (derived and partial totals, custom overflow, keyed child state, native refs and explicit button/link composition)          |
+| `twenty-ui-badge`                | Badge (node content, appearance, caller-owned counts, native span refs and explicit button/link composition)                             |
 | `twenty-ui-tag-controls`         | Tag (stable presentational root, positive truncation, native spacing, node content, refs and explicit button/link composition)          |
 | `twenty-ui-status-controls`      | Status (stable presentational root, loading/busy state, node content, refs and explicit button/link composition)                        |
 | `twenty-ui-avatar-image`         | Avatar Root/Image/Fallback (image labels/attributes/refs, loading callbacks, decoded images, fallback, replacement and unmount/remount) |

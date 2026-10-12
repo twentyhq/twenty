@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 

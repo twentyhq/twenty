@@ -769,6 +769,7 @@ enum BillingEntitlementKey {
   RLS
   SSO
   USAGE_LIMIT
+  VALIDATION_RULES
 }
 
 type BillingLicensedProduct implements BillingProductDTO {

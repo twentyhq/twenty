@@ -9,7 +9,7 @@ import {
   IconUser,
 } from '@ui/icon';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
-import { Pill } from '@ui/primitives/data-display/Pill/Pill';
+import { Badge } from '@ui/primitives/data-display/Badge/Badge';
 import { Tabs } from '@ui/primitives/navigation/Tabs/Tabs';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -103,11 +103,11 @@ export const WithLogo: Story = {
   ),
 };
 
-export const WithStringPill: Story = {
+export const WithBadge: Story = {
   args: {
     children: 'Messages',
     startIcon: <IconMail />,
-    badge: <Pill label="12" />,
+    badge: <Badge>12</Badge>,
   },
   render: (args) => (
     <TabContainer>
@@ -212,7 +212,7 @@ export const Catalog: CatalogStory<Story, typeof TabButton> = {
         },
         {
           name: 'Content',
-          values: ['icon', 'logo', 'pill'],
+          values: ['icon', 'logo', 'badge'],
           props: (content: string) => {
             switch (content) {
               case 'icon':
@@ -228,8 +228,8 @@ export const Catalog: CatalogStory<Story, typeof TabButton> = {
                     />
                   ),
                 };
-              case 'pill':
-                return { startIcon: <IconMail />, badge: <Pill label="5" /> };
+              case 'badge':
+                return { startIcon: <IconMail />, badge: <Badge>5</Badge> };
               default:
                 return {};
             }
@@ -249,7 +249,7 @@ export const MatchingTabContent: Story = {
   args: {
     children: 'Messages',
     startIcon: <IconMail />,
-    badge: <Pill label="12" />,
+    badge: <Badge>12</Badge>,
   },
   render: (args) => (
     <>
