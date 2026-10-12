@@ -34,6 +34,7 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
     componentName: createFrontComponentInput.componentName,
     builtComponentChecksum: createFrontComponentInput.builtComponentChecksum,
     isHeadless: createFrontComponentInput.isHeadless ?? false,
+    excludeFromWidgetSelection: false,
     usesSdkClient: false,
     workspaceId,
     createdAt: now,

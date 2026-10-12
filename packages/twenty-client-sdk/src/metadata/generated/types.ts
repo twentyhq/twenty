@@ -4740,6 +4740,9 @@ export default {
             "description": [
                 1
             ],
+            "excludeFromWidgetSelection": [
+                4
+            ],
             "frontComponentSharedDependenciesChecksum": [
                 1
             ],

@@ -2309,6 +2309,7 @@ type FrontComponent {
   componentName: String!
   createdAt: DateTime!
   description: String
+  excludeFromWidgetSelection: Boolean!
   frontComponentSharedDependenciesChecksum: String
   id: UUID!
   isHeadless: Boolean!

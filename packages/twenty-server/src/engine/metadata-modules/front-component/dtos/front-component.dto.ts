@@ -71,6 +71,10 @@ export class FrontComponentDTO {
 
   @IsBoolean()
   @Field()
+  excludeFromWidgetSelection: boolean;
+
+  @IsBoolean()
+  @Field()
   usesSdkClient: boolean;
 
   @Field(() => ApplicationTokenPairDTO, {

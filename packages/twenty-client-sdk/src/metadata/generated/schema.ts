@@ -1484,6 +1484,7 @@ export interface FrontComponent {
     componentName: Scalars['String']
     createdAt: Scalars['DateTime']
     description?: Scalars['String']
+    excludeFromWidgetSelection: Scalars['Boolean']
     frontComponentSharedDependenciesChecksum?: Scalars['String']
     id: Scalars['UUID']
     isHeadless: Scalars['Boolean']
@@ -5662,6 +5663,7 @@ export interface FrontComponentGenqlSelection{
     componentName?: boolean | number
     createdAt?: boolean | number
     description?: boolean | number
+    excludeFromWidgetSelection?: boolean | number
     frontComponentSharedDependenciesChecksum?: boolean | number
     id?: boolean | number
     isHeadless?: boolean | number

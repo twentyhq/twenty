@@ -6,11 +6,13 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
   frontComponentManifest,
   applicationUniversalIdentifier,
   isSettingsFrontComponent,
+  isReferencedBySettingsMenuItem,
   now,
 }: {
   frontComponentManifest: FrontComponentManifest;
   applicationUniversalIdentifier: string;
   isSettingsFrontComponent: boolean;
+  isReferencedBySettingsMenuItem: boolean;
   now: string;
 }): UniversalFlatFrontComponent => {
   return {
@@ -26,6 +28,9 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
     isHeadless: isSettingsFrontComponent
       ? false
       : (frontComponentManifest.isHeadless ?? false),
+    excludeFromWidgetSelection:
+      frontComponentManifest.excludeFromWidgetSelection ??
+      (isSettingsFrontComponent || isReferencedBySettingsMenuItem),
     usesSdkClient: frontComponentManifest.usesSdkClient ?? false,
     createdAt: now,
     updatedAt: now,

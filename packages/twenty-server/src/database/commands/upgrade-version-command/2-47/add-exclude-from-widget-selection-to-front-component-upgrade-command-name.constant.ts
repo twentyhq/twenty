@@ -1,0 +1,2 @@
+export const ADD_EXCLUDE_FROM_WIDGET_SELECTION_TO_FRONT_COMPONENT_UPGRADE_COMMAND_NAME =
+  '2.47.0_AddExcludeFromWidgetSelectionToFrontComponentFastInstanceCommand_1791814700861';

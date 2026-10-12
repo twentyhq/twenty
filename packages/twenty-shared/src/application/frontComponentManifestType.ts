@@ -23,5 +23,6 @@ export type FrontComponentManifest = {
   builtComponentChecksum: string;
   componentName: string;
   isHeadless?: boolean;
+  excludeFromWidgetSelection?: boolean;
   usesSdkClient?: boolean;
 };
