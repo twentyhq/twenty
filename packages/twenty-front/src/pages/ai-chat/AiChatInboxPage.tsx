@@ -23,12 +23,11 @@ import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
-import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
 import { agentChatChannelVisibleThreadsSelector } from '@/ai/states/selectors/agentChatChannelVisibleThreadsSelector';
+import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
@@ -94,8 +93,8 @@ const AiChatInboxPageContent = () => {
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
-  const agentChatChannelThreadList = useAtomStateValue(
-    agentChatChannelThreadListState,
+  const agentChatShownChannelThreadList = useAtomStateValue(
+    agentChatShownChannelThreadListSelector,
   );
   const { threads, loading: isThreadListLoading } = useChatThreads(
     isDefined(agentChatShownChannelView)
@@ -105,8 +104,7 @@ const AiChatInboxPageContent = () => {
   const loading =
     isThreadListLoading ||
     (isDefined(agentChatShownChannelView) &&
-      agentChatChannelThreadList?.viewKey !==
-        getAgentChatChannelViewKey(agentChatShownChannelView));
+      !isDefined(agentChatShownChannelThreadList));
 
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,

@@ -1,14 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
+import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { isAgentChatThreadInChannelView } from '@/ai/utils/isAgentChatThreadInChannelView';
-import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
@@ -26,13 +24,11 @@ export const agentChatChannelVisibleThreadsSelector = createAtomSelector<
     }
 
     const currentWorkspaceMemberId = get(currentWorkspaceMemberState)?.id;
-    const channelThreadList = get(agentChatChannelThreadListState);
-    const isChannelThreadListCurrent =
-      channelThreadList?.viewKey === getAgentChatChannelViewKey(channelView);
+    const channelThreadList = get(agentChatShownChannelThreadListSelector);
 
     // The channel's loaded pages are read on their own, as a refresh of the
     // main list replaces it with its first page
-    const channelThreads = isChannelThreadListCurrent
+    const channelThreads = isDefined(channelThreadList)
       ? channelThreadList.threadIds
           .map((threadId) => get(agentChatThreadRecordFamilySelector, threadId))
           .filter(isDefined)
@@ -44,17 +40,15 @@ export const agentChatChannelVisibleThreadsSelector = createAtomSelector<
       ]),
     );
 
-    const threads = sortChatThreadsByLastActivityDesc(
-      [...threadsById.values()].filter((thread) =>
-        isAgentChatThreadInChannelView({
-          thread,
-          channelView,
-          currentWorkspaceMemberId,
-        }),
-      ),
+    const threads = [...threadsById.values()].filter((thread) =>
+      isAgentChatThreadInChannelView({
+        thread,
+        channelView,
+        currentWorkspaceMemberId,
+      }),
     );
 
-    if (!isChannelThreadListCurrent || !channelThreadList.hasNextPage) {
+    if (!isDefined(channelThreadList) || !channelThreadList.hasNextPage) {
       return threads;
     }
 

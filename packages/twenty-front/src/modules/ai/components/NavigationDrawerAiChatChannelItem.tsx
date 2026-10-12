@@ -45,9 +45,7 @@ export const NavigationDrawerAiChatChannelItem = ({
   );
   const { openAgentChatChannel } = useOpenAgentChatChannel();
   const {
-    renameAgentChatChannel,
-    setAgentChatChannelVisibility,
-    setAgentChatChannelRoles,
+    updateAgentChatChannel,
     leaveAgentChatChannel,
     deleteAgentChatChannel,
   } = useAgentChatChannelActions();
@@ -63,9 +61,9 @@ export const NavigationDrawerAiChatChannelItem = ({
     const trimmedName = name.trim();
 
     if (trimmedName.length > 0 && trimmedName !== channel.name) {
-      void renameAgentChatChannel({
+      void updateAgentChatChannel({
         channelId: channel.id,
-        name: trimmedName,
+        input: { name: trimmedName },
       });
     }
   };
@@ -110,14 +108,8 @@ export const NavigationDrawerAiChatChannelItem = ({
             destinationChannels={destinationChannels}
             dropdownId={dropdownId}
             onRename={() => setDraftName(channel.name)}
-            onSetVisibility={(visibility) =>
-              void setAgentChatChannelVisibility({
-                channelId: channel.id,
-                visibility,
-              })
-            }
-            onSetRoles={(roleIds) =>
-              void setAgentChatChannelRoles({ channelId: channel.id, roleIds })
+            onUpdate={(input) =>
+              void updateAgentChatChannel({ channelId: channel.id, input })
             }
             onLeave={() => void leaveAgentChatChannel(channel.id)}
             onDelete={(destinationChannelId) => {

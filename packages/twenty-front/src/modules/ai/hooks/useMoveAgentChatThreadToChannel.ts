@@ -17,7 +17,7 @@ export const useMoveAgentChatThreadToChannel = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
-  const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
+  const { refreshAgentChatChannelSummaries } = useRefreshAgentChatChannels();
 
   const moveAgentChatThreadToChannel = useCallback(
     async ({
@@ -42,7 +42,7 @@ export const useMoveAgentChatThreadToChannel = () => {
           mutation: MoveAgentChatThreadToChannelDocument,
           variables: { threadId, channelId },
         });
-        await refreshAgentChatChannels();
+        await refreshAgentChatChannelSummaries();
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
 
@@ -62,7 +62,7 @@ export const useMoveAgentChatThreadToChannel = () => {
       applyAgentChatThreadUpdate,
       client,
       enqueueToast,
-      refreshAgentChatChannels,
+      refreshAgentChatChannelSummaries,
       store,
     ],
   );
