@@ -10,34 +10,22 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import {
-  IconBox,
-  IconEyeOff,
-  IconInfoSquareRounded,
-  IconLock,
-} from 'twenty-ui/icon';
+import { IconEyeOff, IconInfoSquareRounded } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
-  FindMarketplaceAppManifestDocument,
   FindOneApplicationByUniversalIdentifierDocument,
-  FindOneApplicationDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
-import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
-import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
 
 const AVAILABLE_APPLICATION_DETAIL_ID = 'available-application-detail';
 
@@ -84,27 +72,9 @@ export const SettingsAvailableApplicationDetails = () => {
     skip: !availableApplicationId,
   });
 
-  const { data: manifestData } = useQuery(FindMarketplaceAppManifestDocument, {
-    variables: { universalIdentifier: availableApplicationId },
-    skip: !availableApplicationId,
-  });
-
   const application = applicationData?.findOneApplication;
 
-  const { data: installedApplicationData } = useQuery(
-    FindOneApplicationDocument,
-    {
-      variables: { id: application?.id ?? '' },
-      skip: !application?.id,
-    },
-  );
-
-  const installedApplication = installedApplicationData?.findOneApplication;
-
   const detail = detailData?.findMarketplaceAppDetail;
-  const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
-    | Manifest
-    | undefined;
 
   const displayName = detail?.name ?? t`Application details`;
 
@@ -121,75 +91,7 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    AVAILABLE_APPLICATION_DETAIL_ID,
-  );
-
-  const tabs = [
-    { id: 'about', title: t`About`, Icon: IconInfoSquareRounded },
-    { id: 'content', title: t`Content`, Icon: IconBox },
-    { id: 'permissions', title: t`Permissions`, Icon: IconLock },
-  ];
-
-  const renderActiveTabContent = () => {
-    if (!isDefined(detail)) {
-      return <SettingsSectionSkeletonLoader />;
-    }
-
-    switch (activeTabId) {
-      case 'about':
-        return (
-          <SettingsApplicationDetailAboutTab
-            applicationId={application?.id}
-            logoUrl={detail.logoUrl}
-            displayName={displayName}
-            description={detail.description ?? undefined}
-            aboutDescription={detail.aboutDescription ?? undefined}
-            pricingDescription={detail.pricingDescription ?? undefined}
-            screenshots={detail.galleryImages}
-            author={detail.author ?? undefined}
-            version={currentVersion ?? latestAvailableVersion ?? undefined}
-            installCount={detail.installCount}
-            category={detail.category ?? undefined}
-            developerLinks={{
-              websiteUrl: detail.websiteUrl ?? undefined,
-              termsUrl: detail.termsUrl ?? undefined,
-              emailSupport: detail.emailSupport ?? undefined,
-              issueReportUrl: detail.issueReportUrl ?? undefined,
-              sourcePackageUrl,
-            }}
-            onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
-          />
-        );
-      case 'content':
-        return (
-          <SettingsApplicationDetailContentTab
-            applicationId={
-              installedApplication?.id ?? detail.universalIdentifier
-            }
-            installedApplication={installedApplication ?? undefined}
-            manifestContent={manifest}
-            applicationInfo={{
-              id: installedApplication?.id,
-              name: displayName,
-              logoUrl: detail.logoUrl,
-              universalIdentifier: detail.universalIdentifier,
-            }}
-          />
-        );
-      case 'permissions':
-        return (
-          <SettingsApplicationPermissionsTab
-            marketplaceAppDefaultRole={defaultRole}
-            marketplaceAppObjects={manifest?.objects}
-          />
-        );
-
-      default:
-        return null;
-    }
-  };
+  const tabs = [{ id: 'about', title: t`About`, Icon: IconInfoSquareRounded }];
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
@@ -244,7 +146,31 @@ export const SettingsAvailableApplicationDetails = () => {
               icon={<IconEyeOff aria-hidden="true" />}
             >{t`Application not listed on the marketplace. It was shared via a direct link`}</InlineBanner>
           )}
-          {renderActiveTabContent()}
+          {isDefined(detail) ? (
+            <SettingsApplicationDetailAboutTab
+              applicationId={application?.id}
+              logoUrl={detail.logoUrl}
+              displayName={displayName}
+              description={detail.description ?? undefined}
+              aboutDescription={detail.aboutDescription ?? undefined}
+              pricingDescription={detail.pricingDescription ?? undefined}
+              screenshots={detail.galleryImages}
+              author={detail.author ?? undefined}
+              version={currentVersion ?? latestAvailableVersion ?? undefined}
+              installCount={detail.installCount}
+              category={detail.category ?? undefined}
+              developerLinks={{
+                websiteUrl: detail.websiteUrl ?? undefined,
+                termsUrl: detail.termsUrl ?? undefined,
+                emailSupport: detail.emailSupport ?? undefined,
+                issueReportUrl: detail.issueReportUrl ?? undefined,
+                sourcePackageUrl,
+              }}
+              onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
+            />
+          ) : (
+            <SettingsSectionSkeletonLoader />
+          )}
         </SettingsPageContainer>
       </SettingsPageLayout>
       <SettingsApplicationInstallPermissionValidationModal
