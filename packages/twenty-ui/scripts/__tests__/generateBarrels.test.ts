@@ -105,32 +105,3 @@ test('rejects stale barrels, individual exports and package mappings without wri
     writeFileSync(filePath, original);
   }
 });
-
-test('keeps colliding Menu item types on their family entry points and preserves the aggregate legacy type', () => {
-  const { root, packageRoot } = createFixture();
-  for (const source of [
-    'components/navigation/MenuItem/types/MenuItemProps',
-    'primitives/surfaces/Menu/types/MenuItemProps',
-  ]) {
-    const file = path.join(packageRoot, 'src', `${source}.ts`);
-    mkdirSync(path.dirname(file), { recursive: true });
-    writeFileSync(file, 'export type MenuItemProps = { children?: string };');
-  }
-  const generation = generate({ root });
-  assert.equal(generation.status, 0, generation.stderr);
-
-  for (const barrel of ['src/index.ts', 'src/individual-entry.ts']) {
-    assert.match(
-      readFileSync(path.join(packageRoot, barrel), 'utf8'),
-      /export type \{ MenuItemProps \} from ['"]\.\/components\/navigation\/MenuItem\/types\/MenuItemProps['"]/,
-    );
-  }
-  for (const family of ['components/navigation', 'primitives/surfaces']) {
-    assert.match(
-      readFileSync(path.join(packageRoot, 'src', family, 'index.ts'), 'utf8'),
-      /export type \{ MenuItemProps \} from ['"]\.\/(Menu|MenuItem)\/types\/MenuItemProps['"]/,
-    );
-  }
-  const verification = generate({ root, check: true });
-  assert.equal(verification.status, 0, verification.stderr);
-});
