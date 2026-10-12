@@ -64,11 +64,9 @@ export const createCapturedPointerEventForwarder = ({
         type: event.type,
         bubbles: true,
       };
-      const domEvent = event as unknown as Record<string, unknown>;
-
-      applyEventModifierKeys({ serializedEvent, domEvent });
-      applyMouseEventProperties({ serializedEvent, domEvent });
-      applyPointerEventProperties({ serializedEvent, domEvent });
+      applyEventModifierKeys({ serializedEvent, domEvent: event });
+      applyMouseEventProperties({ serializedEvent, domEvent: event });
+      applyPointerEventProperties({ serializedEvent, domEvent: event });
       forwardCapturedPointerEventOnce({
         nativeHostEvent: event,
         eventOwner,
