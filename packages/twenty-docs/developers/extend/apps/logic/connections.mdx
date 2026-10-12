@@ -216,6 +216,8 @@ type OnDisconnectPayload = {
 
 The `ConnectedAccount` and its token are still present when the hook runs, so `getConnection(connectedAccountId)` resolves with a fresh access token and the handler can delete whatever it registered remotely. State the provider cannot give back (a `team_id`, an external subscription id) still belongs in the [key-value store](/developers/extend/apps/logic/key-value-store), written at connect time and keyed by `connectedAccountId`. Keep the handler short: it runs inside the disconnect request, so its `timeoutSeconds` is the upper bound on how long that request can take.
 
+After the hook, Twenty revokes the connection's token at the provider when the provider declares a revoke endpoint. It skips that revoke while another active connection of the same provider carries the same [`externalAccountId`](#deduplicate-connections), since a personal and a shared connection to one account can hold the same grant.
+
 The hook fires when a connection is removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
 
 </Accordion>

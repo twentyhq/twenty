@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, IsNull, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 
 import {
   ConnectedAccountProvider,
@@ -481,7 +481,7 @@ export class ConnectedAccountMetadataService {
       });
     }
 
-    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+    await this.revokeUnlessGrantIsStillUsed(connectedAccount);
 
     const [messageChannels, calendarChannels] = await Promise.all([
       this.messageChannelRepository.find({
@@ -607,7 +607,7 @@ export class ConnectedAccountMetadataService {
     });
 
     if (isDefined(latestConnectedAccount)) {
-      await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
+      await this.revokeUnlessGrantIsStillUsed(latestConnectedAccount);
     }
 
     await this.repository.delete({ id, workspaceId });
@@ -640,6 +640,31 @@ export class ConnectedAccountMetadataService {
     );
 
     return connectedAccount;
+  }
+
+  // Connections to the same external account can hold the same provider
+  // grant, so revoking it would also cut off the connections that remain.
+  private async revokeUnlessGrantIsStillUsed(
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<void> {
+    if (
+      isDefined(connectedAccount.connectionProviderId) &&
+      isDefined(connectedAccount.externalAccountId)
+    ) {
+      const isGrantStillUsed = await this.repository.existsBy({
+        id: Not(connectedAccount.id),
+        workspaceId: connectedAccount.workspaceId,
+        connectionProviderId: connectedAccount.connectionProviderId,
+        externalAccountId: connectedAccount.externalAccountId,
+        archivedAt: IsNull(),
+      });
+
+      if (isGrantStillUsed) {
+        return;
+      }
+    }
+
+    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
   }
 
   private async stopWebhookSubscriptions({
