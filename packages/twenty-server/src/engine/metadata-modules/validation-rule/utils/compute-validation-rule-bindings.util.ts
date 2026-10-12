@@ -31,7 +31,7 @@ export const computeValidationRuleBindings = ({
 
   if (
     isActive &&
-    (isExpressionChanged || existingFlatValidationRule?.isActive !== true)
+    (isExpressionChanged || !existingFlatValidationRule?.isActive)
   ) {
     return compileValidationRuleExpressionOrThrow({
       expression,

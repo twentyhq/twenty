@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
@@ -20,6 +20,7 @@ import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { type ValidationRuleFormValues } from '@/validation-rules/types/ValidationRuleFormValues';
 import { buildValidationRuleEditorFields } from '@/validation-rules/utils/buildValidationRuleEditorFields';
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
+import { getValidationRuleFormEdits } from '@/validation-rules/utils/getValidationRuleFormEdits';
 import { getValidationRuleFormValues } from '@/validation-rules/utils/getValidationRuleFormValues';
 import { getValidationRuleSaveErrorMessage } from '@/validation-rules/utils/getValidationRuleSaveErrorMessage';
 import { isValidationRuleFormSubmittable } from '@/validation-rules/utils/isValidationRuleFormSubmittable';
@@ -55,8 +56,9 @@ export const SettingsValidationRuleEditForm = ({
   >({});
   const [formKey, setFormKey] = useState(validationRule.expression);
 
+  const serverFormValues = getValidationRuleFormValues(validationRule);
   const values: ValidationRuleFormValues = {
-    ...getValidationRuleFormValues(validationRule),
+    ...serverFormValues,
     ...editedValues,
   };
 
@@ -68,14 +70,11 @@ export const SettingsValidationRuleEditForm = ({
   }
 
   const handleChange = (nextValues: ValidationRuleFormValues) =>
-    setEditedValues((previousEditedValues) =>
-      typedObjectEntries(nextValues).reduce<Partial<ValidationRuleFormValues>>(
-        (nextEditedValues, [fieldName, value]) =>
-          value === values[fieldName]
-            ? nextEditedValues
-            : { ...nextEditedValues, [fieldName]: value },
-        previousEditedValues,
-      ),
+    setEditedValues(
+      getValidationRuleFormEdits({
+        formValues: nextValues,
+        serverFormValues,
+      }),
     );
 
   const fields = buildValidationRuleFieldDescriptors({

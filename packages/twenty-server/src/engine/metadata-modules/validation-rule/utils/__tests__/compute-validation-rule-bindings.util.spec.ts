@@ -36,6 +36,11 @@ describe('computeValidationRuleBindings', () => {
         isActive: true,
       }),
     ).toEqual(COMPILED_BINDINGS);
+    expect(compileValidationRuleExpressionOrThrow).toHaveBeenCalledTimes(1);
+    expect(compileValidationRuleExpressionOrThrow).toHaveBeenCalledWith({
+      ...COMPILE_INPUT,
+      expression: 'amount > 0',
+    });
   });
 
   it('should leave a new inactive rule without bindings', () => {
@@ -62,6 +67,11 @@ describe('computeValidationRuleBindings', () => {
         },
       }),
     ).toEqual(COMPILED_BINDINGS);
+    expect(compileValidationRuleExpressionOrThrow).toHaveBeenCalledTimes(1);
+    expect(compileValidationRuleExpressionOrThrow).toHaveBeenCalledWith({
+      ...COMPILE_INPUT,
+      expression: 'amount > 10',
+    });
   });
 
   it('should compile when an inactive rule is activated', () => {
@@ -77,6 +87,11 @@ describe('computeValidationRuleBindings', () => {
         },
       }),
     ).toEqual(COMPILED_BINDINGS);
+    expect(compileValidationRuleExpressionOrThrow).toHaveBeenCalledTimes(1);
+    expect(compileValidationRuleExpressionOrThrow).toHaveBeenCalledWith({
+      ...COMPILE_INPUT,
+      expression: 'amount > 0',
+    });
   });
 
   it('should keep the bindings when the expression does not change', () => {
