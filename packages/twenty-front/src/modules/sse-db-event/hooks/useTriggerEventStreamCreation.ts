@@ -76,6 +76,9 @@ export const useTriggerEventStreamCreation = () => {
 
     let hasReceivedFirstEvent = false;
 
+    const isCurrentEventStream = () =>
+      store.get(sseEventStreamIdState.atom) === newSseEventStreamId;
+
     const handleFirstEventReceived = () => {
       if (hasReceivedFirstEvent) {
         return;
@@ -102,6 +105,10 @@ export const useTriggerEventStreamCreation = () => {
             onEventSubscription: EventSubscription;
           }>,
         ) => {
+          if (!isCurrentEventStream()) {
+            return;
+          }
+
           store.set(lastSseEventReceivedTimestampState.atom, Date.now());
 
           if (isDefined(value?.errors) && Array.isArray(value.errors)) {
@@ -164,10 +171,18 @@ export const useTriggerEventStreamCreation = () => {
           }
         },
         error: (error) => {
+          if (!isCurrentEventStream()) {
+            return;
+          }
+
           captureException(error);
           store.set(shouldDestroyEventStreamState.atom, true);
         },
         complete: () => {
+          if (!isCurrentEventStream()) {
+            return;
+          }
+
           store.set(shouldDestroyEventStreamState.atom, true);
         },
       },

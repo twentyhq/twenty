@@ -67,6 +67,12 @@ export const SSEQuerySubscribeEffect = () => {
     [store],
   );
 
+  const isCurrentEventStream = useCallback(
+    (eventStreamId: string) =>
+      store.get(sseEventStreamIdState.atom) === eventStreamId,
+    [store],
+  );
+
   const syncAdditions = useCallback(async () => {
     if (!isDefined(sseEventStreamId)) {
       return;
@@ -98,6 +104,10 @@ export const SSEQuerySubscribeEffect = () => {
           },
         });
 
+        if (!isCurrentEventStream(sseEventStreamId)) {
+          return;
+        }
+
         if (result.data?.addQueryToEventStream === false) {
           store.set(activeQueryListenersState.atom, []);
           store.set(shouldDestroyEventStreamState.atom, true);
@@ -106,7 +116,9 @@ export const SSEQuerySubscribeEffect = () => {
         }
       }
     } catch (error) {
-      handleError(error);
+      if (isCurrentEventStream(sseEventStreamId)) {
+        handleError(error);
+      }
 
       return;
     }
@@ -117,7 +129,13 @@ export const SSEQuerySubscribeEffect = () => {
       ...currentActive,
       ...queryListenersToAdd,
     ]);
-  }, [addQueryToEventStream, handleError, sseEventStreamId, store]);
+  }, [
+    addQueryToEventStream,
+    handleError,
+    isCurrentEventStream,
+    sseEventStreamId,
+    store,
+  ]);
 
   const syncRemovals = useCallback(async () => {
     if (!isDefined(sseEventStreamId)) {
@@ -155,6 +173,10 @@ export const SSEQuerySubscribeEffect = () => {
           },
         });
 
+        if (!isCurrentEventStream(sseEventStreamId)) {
+          return;
+        }
+
         if (result.data?.removeQueryFromEventStream === false) {
           store.set(activeQueryListenersState.atom, []);
           store.set(shouldDestroyEventStreamState.atom, true);
@@ -163,7 +185,9 @@ export const SSEQuerySubscribeEffect = () => {
         }
       }
     } catch (error) {
-      handleError(error);
+      if (isCurrentEventStream(sseEventStreamId)) {
+        handleError(error);
+      }
 
       return;
     }
@@ -176,7 +200,13 @@ export const SSEQuerySubscribeEffect = () => {
         (listener) => !removedQueryIds.has(listener.queryId),
       ),
     );
-  }, [handleError, removeQueryFromEventStream, sseEventStreamId, store]);
+  }, [
+    handleError,
+    isCurrentEventStream,
+    removeQueryFromEventStream,
+    sseEventStreamId,
+    store,
+  ]);
 
   const debouncedSyncAdditions = useDebouncedCallback(syncAdditions, 1000, {
     leading: true,
