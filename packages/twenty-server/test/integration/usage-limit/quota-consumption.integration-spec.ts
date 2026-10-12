@@ -590,35 +590,51 @@ describe('Usage quota consumption', () => {
       ).toBeLessThan(60_000);
     });
 
-    it('keeps in-flight usage when the cap is edited', async () => {
-      const usageLimit = await createWeekCreditQuota();
+    it(
+      'keeps in-flight usage when the cap is edited',
+      async () => {
+        const usageLimit = await createWeekCreditQuota();
+        const usageEventRowCount = await countUsageEventRows();
 
-      try {
-        await chargeRun({ spenderId: logicFunctionId, creditsUsedMicro: 100 });
+        try {
+          await chargeRun({
+            spenderId: logicFunctionId,
+            creditsUsedMicro: 100,
+          });
 
-        const editedLimitValue = (await readWeekCreditCounter()) + 700;
+          const editedLimitValue = (await readWeekCreditCounter()) + 700;
 
-        await debitRunAheadOfRecord({
-          spenderId: logicFunctionId,
-          creditsUsedMicro: 600,
-        });
-        await updateWeekCreditQuota(usageLimit.id, {
-          limitValue: editedLimitValue,
-        });
+          await debitRunAheadOfRecord({
+            spenderId: logicFunctionId,
+            creditsUsedMicro: 600,
+          });
+          await updateWeekCreditQuota(usageLimit.id, {
+            limitValue: editedLimitValue,
+          });
 
-        expect(
-          await findRunRefusal({ spenderId: logicFunctionId, costMicro: 100 }),
-        ).toBeNull();
-        expect(
-          await findRunRefusal({ spenderId: logicFunctionId, costMicro: 101 }),
-        ).toMatchObject({
-          exhaustedKind: 'limit',
-          limitValue: editedLimitValue,
-        });
-      } finally {
-        await deleteWeekCreditQuota(usageLimit.id);
-      }
-    });
+          expect(
+            await findRunRefusal({
+              spenderId: logicFunctionId,
+              costMicro: 100,
+            }),
+          ).toBeNull();
+          expect(
+            await findRunRefusal({
+              spenderId: logicFunctionId,
+              costMicro: 101,
+            }),
+          ).toMatchObject({
+            exhaustedKind: 'limit',
+            limitValue: editedLimitValue,
+          });
+
+          await waitForUsageEventRows(usageEventRowCount + 1);
+        } finally {
+          await deleteWeekCreditQuota(usageLimit.id);
+        }
+      },
+      EXECUTION_TIMEOUT_MS,
+    );
 
     it(
       're-warms a limit from ClickHouse once it moves back to a period it left',
