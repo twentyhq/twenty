@@ -95,10 +95,6 @@ export const buildWorkflowManifestObjectMetadataMaps = ({
       toAllUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
     ),
     ...applicationFieldsByObjectUniversalIdentifier.keys(),
-    ...Object.values(existingFieldMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter(isReplacedByApplicationFields)
-      .map((field) => field.objectMetadataUniversalIdentifier),
   ]);
 
   for (const objectUniversalIdentifier of objectUniversalIdentifiersToRebuild) {
