@@ -66,7 +66,7 @@ const computeUnflaggedExpression = (
 
   return (
     favoritesReplacement?.unflaggedExpression ??
-    expression.replaceAll(WORKFLOW_CORE_INDEX_FLAG_EXPRESSION, 'true')
+    expression.split(WORKFLOW_CORE_INDEX_FLAG_EXPRESSION).join('true')
   );
 };
 

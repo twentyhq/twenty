@@ -97,8 +97,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     steps?: WorkflowAction[];
     triggerNextStepIds?: string[];
   } = {}): Promise<Fixture> => {
-    let coreWorkflowId = randomUUID();
-    let coreWorkflowVersionId = randomUUID();
+    let coreWorkflowId: string = randomUUID();
+    let coreWorkflowVersionId: string = randomUUID();
     let workflowId: string | null = null;
     let workflowVersionId: string | null = null;
     const trigger = {
