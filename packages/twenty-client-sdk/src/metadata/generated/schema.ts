@@ -1778,6 +1778,7 @@ export interface MarketplaceApp {
 export interface MarketplaceAppDetail {
     aboutDescription?: Scalars['String']
     author?: Scalars['String']
+    billsCredits: Scalars['Boolean']
     category?: Scalars['String']
     defaultRoleUniversalIdentifier?: Scalars['String']
     description?: Scalars['String']
@@ -5988,6 +5989,7 @@ export interface MarketplaceAppGenqlSelection{
 export interface MarketplaceAppDetailGenqlSelection{
     aboutDescription?: boolean | number
     author?: boolean | number
+    billsCredits?: boolean | number
     category?: boolean | number
     defaultRoleUniversalIdentifier?: boolean | number
     description?: boolean | number

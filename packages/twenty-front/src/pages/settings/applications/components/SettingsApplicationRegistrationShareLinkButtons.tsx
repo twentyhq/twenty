@@ -89,6 +89,8 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
             appLogoUrl={detail?.logoUrl ?? undefined}
             defaultRole={defaultRole}
             requestedCapabilities={detail?.requestedCapabilities}
+            billsCredits={detail?.billsCredits}
+            pricingDescription={detail?.pricingDescription ?? undefined}
             onAuthorize={install}
             isInstalling={isInstalling}
           />
