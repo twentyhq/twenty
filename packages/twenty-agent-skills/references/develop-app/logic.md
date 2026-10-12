@@ -103,7 +103,7 @@ For third-party connections:
 Every Add creates a new connection, even for an account that is already connected. To merge duplicates, call `deduplicateConnectedAccount({ connectedAccountId, externalAccountId, handle? })` from `twenty-sdk/logic-function` in the provider's `onConnectLogicFunction`, with a stable id from the provider's authenticated account lookup (include the organization or team when user ids are only unique inside it; never an email):
 
 - Call it as the first statement of your onConnect handler, before any side effect.
-- If `wasMerged` is true, the connection you were called for no longer exists; return immediately. Any state you keep must be keyed by the returned `connectedAccountId`.
+- If `wasMerged` is true, the credentials now live on the returned `connectedAccountId`, which is another connection; return immediately. Any state you keep must be keyed by that id. The connection you were called for is deleted, except after a reconnect as a different account, where it stays with its tokens cleared and flagged as needing reconnect.
 - Reconnect also runs onConnect, so call it there too. If the member reconnected a different account, the returned `connectedAccountId` is a new connection for that account and the original stays flagged as needing reconnect.
 - Available from Twenty 2.47.0 (`engines`).
 

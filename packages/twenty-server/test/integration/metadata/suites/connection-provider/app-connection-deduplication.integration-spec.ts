@@ -340,6 +340,15 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
     expect(
       await deduplicateOrThrow({ connectedAccountId: connectionId }),
     ).toEqual({ connectedAccountId: connectionId, wasMerged: false });
+    expect(
+      await deduplicateOrThrow({
+        connectedAccountId: connectionId,
+        handle: 'jane.doe@slack.example',
+      }),
+    ).toEqual({ connectedAccountId: connectionId, wasMerged: false });
+    expect(await readConnection(connectionId)).toMatchObject({
+      handle: 'jane.doe@slack.example',
+    });
   });
 
   it('merges a second connection to the same account into the existing one', async () => {
@@ -692,6 +701,27 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
         });
 
         expect(revokeIfApp).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each(['disconnect', 'delete'] as const)(
+      'revokes on %s when the other connection to the account has no token',
+      async (operation) => {
+        const sharedId = await insertConnection({ externalAccountId: ACCOUNT });
+
+        await insertConnection({
+          visibility: 'user',
+          externalAccountId: ACCOUNT,
+          accessToken: null,
+          refreshToken: null,
+        });
+
+        await connectedAccountMetadataService[operation]({
+          id: sharedId,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        });
+
+        expect(revokeIfApp).toHaveBeenCalledTimes(1);
       },
     );
 

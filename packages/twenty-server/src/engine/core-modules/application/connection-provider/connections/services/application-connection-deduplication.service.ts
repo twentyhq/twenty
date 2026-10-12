@@ -101,6 +101,14 @@ export class ApplicationConnectionDeduplicationService {
         };
 
         if (target.externalAccountId === externalAccountId) {
+          if (isDefined(handle) && handle !== target.handle) {
+            await entityManager.update(
+              ConnectedAccountEntity,
+              { id: target.id, workspaceId },
+              { handle },
+            );
+          }
+
           return { connectedAccountId: target.id, wasMerged: false };
         }
 

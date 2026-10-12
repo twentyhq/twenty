@@ -324,9 +324,23 @@ export class ConnectionProviderOAuthFlowService {
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {
+      const reconnectTarget =
+        await this.connectedAccountRepository.findOneByOrFail({
+          id: reconnectingConnectedAccountId,
+          workspaceId,
+        });
+
+      // A visibility change moves the row between the two unique indexes,
+      // where another connection may already hold its external account id.
+      // Dropping the id lets onConnect identify the row again and merge it.
+      const externalAccountId =
+        reconnectTarget.visibility === visibility
+          ? reconnectTarget.externalAccountId
+          : null;
+
       await this.connectedAccountRepository.update(
         { id: reconnectingConnectedAccountId, workspaceId },
-        { ...sharedFields, userWorkspaceId },
+        { ...sharedFields, userWorkspaceId, externalAccountId },
       );
 
       return this.connectedAccountRepository.findOneByOrFail({

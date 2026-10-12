@@ -659,6 +659,7 @@ export class ConnectedAccountMetadataService {
         workspaceId: connectedAccount.workspaceId,
         connectionProviderId: connectedAccount.connectionProviderId,
         externalAccountId: connectedAccount.externalAccountId,
+        accessToken: Not(IsNull()),
         archivedAt: IsNull(),
       });
 
