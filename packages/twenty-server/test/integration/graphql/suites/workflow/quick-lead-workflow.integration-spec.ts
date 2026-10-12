@@ -1,9 +1,9 @@
 import request from 'supertest';
+import { runCoreWorkflowVersion } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import {
   destroyWorkflowRun,
   getWorkflowRun,
-  runWorkflowVersion,
   waitForWorkflowCompletion,
   waitForWorkflowRunStatus,
   waitForWorkflowRunStepStatus,
@@ -18,6 +18,7 @@ const client = request(`http://localhost:${APP_PORT}`);
 const {
   quickLeadWorkflowId: QUICK_LEAD_WORKFLOW_ID,
   quickLeadWorkflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+  coreQuickLeadWorkflowVersionId: QUICK_LEAD_CORE_WORKFLOW_VERSION_ID,
 } = getWorkflowPrefillIds(SEED_APPLE_WORKSPACE_ID);
 const FORM_STEP_ID = '6e089bc9-aabd-435f-865f-f31c01c8f4a7';
 
@@ -122,8 +123,8 @@ describe('Quick Lead Workflow (e2e)', () => {
     });
 
     it('should trigger Quick Lead workflow and create workflow run', async () => {
-      const workflowRunId = await runWorkflowVersion({
-        workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+      const workflowRunId = await runCoreWorkflowVersion({
+        coreWorkflowVersionId: QUICK_LEAD_CORE_WORKFLOW_VERSION_ID,
       });
 
       createdWorkflowRunId = workflowRunId;
@@ -167,8 +168,8 @@ describe('Quick Lead Workflow (e2e)', () => {
     });
 
     it('should be able to stop a running workflow run', async () => {
-      const workflowRunId = await runWorkflowVersion({
-        workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+      const workflowRunId = await runCoreWorkflowVersion({
+        coreWorkflowVersionId: QUICK_LEAD_CORE_WORKFLOW_VERSION_ID,
       });
 
       const stopResponse = await client
@@ -240,8 +241,8 @@ describe('Quick Lead Workflow (e2e)', () => {
     });
 
     it('should complete full workflow: trigger → submit form → create Company and Person', async () => {
-      testWorkflowRunId = await runWorkflowVersion({
-        workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+      testWorkflowRunId = await runCoreWorkflowVersion({
+        coreWorkflowVersionId: QUICK_LEAD_CORE_WORKFLOW_VERSION_ID,
       });
 
       expect(testWorkflowRunId).toBeDefined();
