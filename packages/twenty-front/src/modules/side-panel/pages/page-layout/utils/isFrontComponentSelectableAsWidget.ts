@@ -5,5 +5,8 @@ export const isFrontComponentSelectableAsWidget = (
     FrontComponent,
     'isHeadless' | 'excludeFromWidgetSelection'
   >,
-): boolean =>
-  !frontComponent.isHeadless && !frontComponent.excludeFromWidgetSelection;
+): boolean => {
+  return (
+    !frontComponent.isHeadless && !frontComponent.excludeFromWidgetSelection
+  );
+};

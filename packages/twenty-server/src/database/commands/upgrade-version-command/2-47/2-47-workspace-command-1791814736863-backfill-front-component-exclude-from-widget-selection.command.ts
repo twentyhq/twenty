@@ -91,11 +91,11 @@ export class BackfillFrontComponentExcludeFromWidgetSelectionCommand extends Pro
       [workspaceId, excludeFromWidgetSelection],
     );
 
-    if (updatedCount > 0) {
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'flatFrontComponentMaps',
-      ]);
-    }
+    // Recomputed even when nothing changed: front components cached before the
+    // column existed lack the field, which the GraphQL type requires
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatFrontComponentMaps',
+    ]);
 
     this.logger.log(
       `Set excludeFromWidgetSelection to ${excludeFromWidgetSelection} on ${updatedCount} front component(s) in workspace ${workspaceId}`,
