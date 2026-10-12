@@ -72,9 +72,8 @@ describe('buildQuotaCounters', () => {
     expect(counters).toEqual([
       {
         kind: 'limit',
-        usageLimitId: 'limit-1',
         isDefault: false,
-        key: `{workspace-1}:quota-consumed:limit-1:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
+        key: `{workspace-1}:quota-consumed:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
         limitValue: 1_000_000,
         unit: UsageUnit.CREDIT,
         resourceType: UsageResourceType.AI,
@@ -168,9 +167,8 @@ describe('buildQuotaCounters', () => {
     expect(counters).toEqual([
       {
         kind: 'limit',
-        usageLimitId: null,
         isDefault: true,
-        key: `{workspace-1}:quota-consumed:default:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
+        key: `{workspace-1}:quota-consumed:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
         limitValue: 5_000,
         unit: UsageUnit.CREDIT,
         resourceType: UsageResourceType.AI,
@@ -185,15 +183,23 @@ describe('buildQuotaCounters', () => {
   });
 
   it.each([500, 50_000])(
-    'overrides the default with a workspace limit of %i',
+    'overrides the default with a workspace limit of %i on the same counter',
     (limitValue) => {
+      const [defaultCounter] = buildCounters({
+        quotaLimitDefaults: [buildDefault()],
+      });
+
       const counters = buildCounters({
         limits: [buildLimit({ limitValue })],
         quotaLimitDefaults: [buildDefault()],
       });
 
       expect(counters).toEqual([
-        expect.objectContaining({ isDefault: false, limitValue }),
+        expect.objectContaining({
+          isDefault: false,
+          limitValue,
+          key: defaultCounter.key,
+        }),
       ]);
     },
   );

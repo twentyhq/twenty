@@ -47,8 +47,8 @@ describe('buildIntraWorkspaceLimitCounterKeys', () => {
         periodByUnit: { month: MONTH_PERIOD, week: WEEK_PERIOD },
       }),
     ).toEqual([
-      `{workspace-1}:quota-consumed:limit-1:AI:ALL:userWorkspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
-      `{workspace-1}:quota-consumed:limit-2:AI:ALL:agent:agent-1:CREDIT:week:${WEEK_PERIOD.periodStart.getTime()}`,
+      `{workspace-1}:quota-consumed:AI:ALL:userWorkspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
+      `{workspace-1}:quota-consumed:AI:ALL:agent:agent-1:CREDIT:week:${WEEK_PERIOD.periodStart.getTime()}`,
     ]);
   });
 

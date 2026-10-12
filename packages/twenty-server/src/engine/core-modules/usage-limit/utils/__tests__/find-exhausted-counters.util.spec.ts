@@ -22,7 +22,6 @@ const buildLimitCounter = (
   overrides: Partial<LimitQuotaCounter> = {},
 ): LimitQuotaCounter => ({
   kind: 'limit',
-  usageLimitId: 'limit-1',
   isDefault: false,
   key,
   limitValue: 1_000,

@@ -14,7 +14,6 @@ export const buildQuotaDefaultCounter = ({
 }): LimitQuotaCounter => {
   const counter = {
     kind: 'limit' as const,
-    usageLimitId: null,
     isDefault: true,
     limitValue: quotaLimitDefault.limitValue,
     unit: quotaLimitDefault.unit,

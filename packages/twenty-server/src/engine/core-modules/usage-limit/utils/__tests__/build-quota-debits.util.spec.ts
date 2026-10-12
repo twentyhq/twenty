@@ -20,7 +20,6 @@ const allowanceCounter: AllowanceQuotaCounter = {
 
 const buildLimitCounter = (unit: UsageUnit): LimitQuotaCounter => ({
   kind: 'limit',
-  usageLimitId: null,
   isDefault: false,
   key: unit,
   limitValue: 1_000_000,

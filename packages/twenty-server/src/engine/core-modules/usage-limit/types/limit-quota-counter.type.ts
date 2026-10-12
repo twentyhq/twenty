@@ -6,7 +6,6 @@ import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.e
 
 export type LimitQuotaCounter = {
   kind: 'limit';
-  usageLimitId: string | null;
   isDefault: boolean;
   key: string;
   limitValue: number;

@@ -12,7 +12,6 @@ const buildKey = (overrides: Partial<CounterIdentity> = {}) =>
   buildQuotaCounterKey({
     workspaceId: WORKSPACE_ID,
     counter: {
-      usageLimitId: 'limit-1',
       resourceType: UsageResourceType.AI,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenderType: 'workspace',
@@ -25,20 +24,13 @@ const buildKey = (overrides: Partial<CounterIdentity> = {}) =>
   });
 
 describe('buildQuotaCounterKey', () => {
-  it('hashes on the workspace and keys a row by its id and scope', () => {
+  it('hashes on the workspace and keys a counter by its scope and period', () => {
     expect(buildKey()).toBe(
-      `{${WORKSPACE_ID}}:quota-consumed:limit-1:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${PERIOD_START.getTime()}`,
-    );
-  });
-
-  it('keys a default by its identity', () => {
-    expect(buildKey({ usageLimitId: null })).toBe(
-      `{${WORKSPACE_ID}}:quota-consumed:default:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${PERIOD_START.getTime()}`,
+      `{${WORKSPACE_ID}}:quota-consumed:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${PERIOD_START.getTime()}`,
     );
   });
 
   it.each([
-    ['usageLimitId', { usageLimitId: 'limit-2' }],
     ['operationType', { operationType: UsageOperationType.WEB_SEARCH }],
     ['unit', { unit: UsageUnit.TOKEN }],
     ['spenderId', { spenderId: 'user-1' }],

@@ -2,7 +2,7 @@ import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
 import uniqBy from 'lodash.uniqby';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -25,13 +25,10 @@ import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/type
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
-import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 import { buildCounterScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-counter-script-arguments.util';
 import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
-import { buildOverriddenQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-overridden-quota-default-counter-keys.util';
-import { buildStaleUpdatedLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-stale-updated-limit-counter-keys.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/build-quota-debits.util';
@@ -41,6 +38,7 @@ import { computeCreditAllowanceMicro } from 'src/engine/core-modules/usage-limit
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
+import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
@@ -178,67 +176,36 @@ export class UsageLimitQuotaService implements OnModuleInit {
     await this.cacheStorage.mdel(keys);
   }
 
-  async dropOverriddenQuotaDefaultCounters(
-    usageLimit: UsageLimitCounterScope,
-  ): Promise<void> {
-    const quotaLimitDefaults = this.buildQuotaLimitDefaults(
-      usageLimit.resourceType,
-    );
-
-    const keys = buildOverriddenQuotaDefaultCounterKeys({
-      usageLimit,
-      quotaLimitDefaults,
-      periodByUnit: await this.usagePeriodService.findCurrentPeriodsByUnit({
-        workspaceId: usageLimit.workspaceId,
-        periodUnits: quotaLimitDefaults.map(
-          (quotaLimitDefault) => quotaLimitDefault.periodUnit,
-        ),
-      }),
-    });
-
-    if (keys.length === 0) {
-      return;
-    }
-
-    await this.cacheStorage.mdel(keys);
-  }
-
-  async dropStaleUpdatedLimitCounter({
+  async dropLimitCounter({
     workspaceId,
-    previousUsageLimit,
-    updatedUsageLimit,
+    usageLimit,
   }: {
     workspaceId: string;
-    previousUsageLimit: FlatUsageLimit;
-    updatedUsageLimit: FlatUsageLimit;
+    usageLimit: FlatUsageLimit;
   }): Promise<void> {
-    const [periodByUnit, enforceablePreviousUsageLimits] = await Promise.all([
-      this.usagePeriodService.findCurrentPeriodsByUnit({
-        workspaceId,
-        periodUnits: [
-          previousUsageLimit.periodUnit,
-          updatedUsageLimit.periodUnit,
-        ],
-      }),
-      this.usageLimitEntitlementService.findEnforceableLimits({
-        workspaceId,
-        limits: [previousUsageLimit],
-      }),
-    ]);
-
-    const keys = buildStaleUpdatedLimitCounterKeys({
-      workspaceId,
-      previousUsageLimit,
-      updatedUsageLimit,
-      isPreviousUsageLimitEnforced: enforceablePreviousUsageLimits.length > 0,
-      periodByUnit,
-    });
-
-    if (keys.length === 0) {
+    if (
+      !isQuotaLimit(usageLimit) ||
+      isNonEmptyArray(findSuppressedUsageLimitDefaults(usageLimit))
+    ) {
       return;
     }
 
-    await this.cacheStorage.mdel(keys);
+    const periodByUnit = await this.usagePeriodService.findCurrentPeriodsByUnit(
+      {
+        workspaceId,
+        periodUnits: [usageLimit.periodUnit],
+      },
+    );
+
+    const period = periodByUnit[usageLimit.periodUnit];
+
+    if (!isDefined(period)) {
+      return;
+    }
+
+    await this.cacheStorage.del(
+      buildLimitQuotaCounter({ workspaceId, limit: usageLimit, period }).key,
+    );
   }
 
   async getAllowanceUsage(workspaceId: string): Promise<{
