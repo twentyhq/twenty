@@ -83,6 +83,7 @@ export const USER_QUERY_FRAGMENT = gql`
         name
         universalIdentifier
         logoUrl
+        createdAt
       }
       isCustomDomainEnabled
       workspaceUrls {
