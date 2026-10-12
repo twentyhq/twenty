@@ -27,8 +27,6 @@
   "name": "twenty-monorepo",
   "packageManager": "yarn@4.13.0",
   "resolutions": {
-    "@base-ui/react@npm:^1.5.0": "patch:@base-ui/react@npm%3A1.8.0#~/.yarn/patches/@base-ui-react-npm-1.8.0-a75824a550.patch",
-    "@base-ui/react@npm:^1.8.0": "patch:@base-ui/react@npm%3A1.8.0#~/.yarn/patches/@base-ui-react-npm-1.8.0-a75824a550.patch",
     "zapier-platform-core/form-data": "4.0.6",
     "@remote-dom/react/@types/react": "^19.2.0",
     "graphql": "16.8.1",

@@ -8,9 +8,7 @@ regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
 The layout fixtures mirror a bounded set of stylesheet and inherited layout properties, scoped theme variables, native positioned ancestors and size observations. Worker `ResizeObserver` entries report content, border and device-pixel content boxes from owned host snapshots. They deliver the first valid measurement and later size changes, and stop after unobserve, disconnect or connected-target removal. Position-only updates still use the existing geometry update path rather than resize notifications.
 
-Native Slider range inputs receive their minimum, maximum and step, so browser keyboard defaults and worker callbacks agree. A Slider's own capture remains in place when its parent has a pointer handler.
-
-The repository patches Base UI 1.8 Slider Thumb observer setup to run after its parent control ref attaches. React otherwise misses observer registration and stays hidden when its initial geometry is asynchronous. Fresh external SDK app builds do not inherit this repository resolution; they need the upstream fix or the equivalent Base UI dependency patch before claiming the same Slider acceptance.
+Native Slider range inputs receive their minimum, maximum and step, so browser keyboard defaults and worker callbacks agree. A Slider's own capture remains in place when its parent has a pointer handler. Slider registers size observations after its Control ref attaches and continues updating when layout changes.
 
 The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels, controlled multiline value updates, positive Textarea height growth and shrink, and reflow after width changes in React and Preact. Auto-resize reads the host's intrinsic content measurement after a local block-size reset and reconciles delayed content measurements through the geometry update listener. Caller sizing overrides and detached controls end that reconciliation.
 
