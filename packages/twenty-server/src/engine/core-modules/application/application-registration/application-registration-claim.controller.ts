@@ -22,15 +22,6 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-type ClaimRedirectParams = {
-  code: string | undefined;
-  state: string | undefined;
-  oauthError: string | undefined;
-  req: Request;
-  res: Response;
-  canHandOverToCookieHost: boolean;
-};
-
 // GitHub OAuth callback of the trusted-publishers claim flow. Auth context
 // travels in the signed state token, not in a session, hence the public
 // endpoint.
@@ -53,42 +44,6 @@ export class ApplicationRegistrationClaimController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    return this.completeClaimFromRedirect({
-      code,
-      state,
-      oauthError,
-      req,
-      res,
-      canHandOverToCookieHost: true,
-    });
-  }
-
-  @Get('github/complete')
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async githubComplete(
-    @Query('code') code: string | undefined,
-    @Query('state') state: string | undefined,
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
-    return this.completeClaimFromRedirect({
-      code,
-      state,
-      oauthError: undefined,
-      req,
-      res,
-      canHandOverToCookieHost: false,
-    });
-  }
-
-  private async completeClaimFromRedirect({
-    code,
-    state,
-    oauthError,
-    req,
-    res,
-    canHandOverToCookieHost,
-  }: ClaimRedirectParams) {
     let workspace: WorkspaceEntity | null = null;
     const stateToken = state ?? '';
 
@@ -108,14 +63,15 @@ export class ApplicationRegistrationClaimController {
         statePayload.applicationRegistrationId,
       );
 
-      if (
+      const nonceMatches =
         isNonEmptyString(stateNonce) &&
         isNonEmptyString(statePayload.nonceHash) &&
         claimStateNonceMatches({
           nonce: stateNonce,
           expectedNonceHash: statePayload.nonceHash,
-        })
-      ) {
+        });
+
+      if (nonceMatches) {
         this.claimStateCookieService.clearNonceCookie(
           res,
           statePayload.applicationRegistrationId,
@@ -129,8 +85,8 @@ export class ApplicationRegistrationClaimController {
         );
       }
 
-      if (canHandOverToCookieHost && !isNonEmptyString(stateNonce)) {
-        const completionUrl = resolveClaimCompletionRedirectUrl({
+      if (!nonceMatches) {
+        const handOverUrl = resolveClaimCompletionRedirectUrl({
           cookieOrigin: statePayload.cookieOrigin,
           requestOrigin: getRequestBaseUrl(req),
           allowedOrigins: this.resolveClaimOrigins(workspace),
@@ -138,8 +94,8 @@ export class ApplicationRegistrationClaimController {
           state: stateToken,
         });
 
-        if (isDefined(completionUrl)) {
-          return res.redirect(completionUrl);
+        if (isDefined(handOverUrl)) {
+          return res.redirect(handOverUrl);
         }
       }
 

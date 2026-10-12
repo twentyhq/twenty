@@ -19,7 +19,7 @@ describe('resolveClaimCompletionRedirectUrl', () => {
         cookieOrigin: 'https://acme.twenty.com',
       }),
     ).toBe(
-      'https://acme.twenty.com/application-registration-claim/github/complete?code=github-code&state=signed-state',
+      'https://acme.twenty.com/application-registration-claim/github/callback?code=github-code&state=signed-state',
     );
   });
 
@@ -30,7 +30,7 @@ describe('resolveClaimCompletionRedirectUrl', () => {
         cookieOrigin: 'https://crm.acme.com',
       }),
     ).toBe(
-      'https://crm.acme.com/application-registration-claim/github/complete?code=github-code&state=signed-state',
+      'https://crm.acme.com/application-registration-claim/github/callback?code=github-code&state=signed-state',
     );
   });
 
@@ -43,7 +43,16 @@ describe('resolveClaimCompletionRedirectUrl', () => {
     ).toBeUndefined();
   });
 
-  it('refuses an origin the instance does not own', () => {
+  it('stays put when only the scheme differs from the host receiving the callback', () => {
+    expect(
+      resolveClaimCompletionRedirectUrl({
+        ...baseParams,
+        cookieOrigin: 'http://api.twenty.com',
+      }),
+    ).toBeUndefined();
+  });
+
+  it('refuses a host the instance does not own', () => {
     expect(
       resolveClaimCompletionRedirectUrl({
         ...baseParams,

@@ -13,7 +13,6 @@ import { updateConfigVariable } from 'test/integration/twenty-config/utils/updat
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 
 const CALLBACK_PATH = '/application-registration-claim/github/callback';
-const COMPLETE_PATH = '/application-registration-claim/github/complete';
 const WORKSPACE_HOST = 'apple.localhost:3001';
 const PUBLISHER_ORG = 'publisher-org';
 const PACKAGE_VERSION = '1.0.0';
@@ -181,26 +180,25 @@ describe('Application registration claim state binding (integration)', () => {
     };
   };
 
-  const hitClaimRoute = (
-    path: string,
-    params: { state: string; cookie?: string },
-  ) => {
+  const callback = (params: {
+    state: string;
+    cookie?: string;
+    host?: string;
+  }) => {
     const pending = request(baseUrl)
-      .get(path)
+      .get(CALLBACK_PATH)
       .query({ code: 'github-code', state: params.state });
 
     if (params.cookie !== undefined) {
       pending.set('Cookie', params.cookie);
     }
 
+    if (params.host !== undefined) {
+      pending.set('Host', params.host);
+    }
+
     return pending;
   };
-
-  const callback = (params: { state: string; cookie?: string }) =>
-    hitClaimRoute(CALLBACK_PATH, params);
-
-  const completion = (params: { state: string; cookie?: string }) =>
-    hitClaimRoute(COMPLETE_PATH, params);
 
   // A strict cookie is withheld on GitHub's cross-site redirect back to the
   // callback, which would fail every claim on instances configured that way.
@@ -357,14 +355,18 @@ describe('Application registration claim state binding (integration)', () => {
     const handover = new URL(callbackResponse.headers.location);
 
     expect(handover.host).toBe(WORKSPACE_HOST);
-    expect(handover.pathname).toBe(COMPLETE_PATH);
+    expect(handover.pathname).toBe(CALLBACK_PATH);
     expect(handover.searchParams.get('code')).toBe('github-code');
     expect(handover.searchParams.get('state')).toBe(state);
     await expect(
       readOwnerWorkspaceId(dataSource, registrationId),
     ).resolves.toBeNull();
 
-    const completionResponse = await completion({ state, cookie });
+    const completionResponse = await callback({
+      state,
+      cookie,
+      host: WORKSPACE_HOST,
+    });
 
     expect(completionResponse.status).toBe(302);
     expect(completionResponse.headers.location).not.toContain('claimErrorCode');
@@ -387,10 +389,10 @@ describe('Application registration claim state binding (integration)', () => {
     const callbackResponse = await callback({ state });
 
     expect(new URL(callbackResponse.headers.location).pathname).toBe(
-      COMPLETE_PATH,
+      CALLBACK_PATH,
     );
 
-    const completionResponse = await completion({ state });
+    const completionResponse = await callback({ state, host: WORKSPACE_HOST });
 
     expect(completionResponse.status).toBe(302);
     expect(completionResponse.headers.location).toContain(
@@ -422,5 +424,39 @@ describe('Application registration claim state binding (integration)', () => {
     await expect(
       readOwnerWorkspaceId(dataSource, registrationId),
     ).resolves.toBeNull();
+  });
+
+  it('hands over when the callback host only holds a stale nonce for the registration', async () => {
+    const sourcePackage = `@${PUBLISHER_ORG}/stale-nonce`;
+    const registrationId = await insertClaimableRegistration(
+      dataSource,
+      sourcePackage,
+    );
+
+    stubPublisherIsOrgAdmin(sourcePackage);
+
+    const { cookie: staleCookie } = await startClaim(registrationId);
+    const { state, cookie } = await startClaimFromHost(
+      registrationId,
+      WORKSPACE_HOST,
+    );
+
+    const callbackResponse = await callback({ state, cookie: staleCookie });
+
+    expect(callbackResponse.status).toBe(302);
+    expect(new URL(callbackResponse.headers.location).host).toBe(
+      WORKSPACE_HOST,
+    );
+
+    const completionResponse = await callback({
+      state,
+      cookie,
+      host: WORKSPACE_HOST,
+    });
+
+    expect(completionResponse.headers.location).not.toContain('claimErrorCode');
+    await expect(
+      readOwnerWorkspaceId(dataSource, registrationId),
+    ).resolves.toBe(SEED_APPLE_WORKSPACE_ID);
   });
 });
