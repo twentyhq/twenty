@@ -1,3 +1,4 @@
-import { type QuotaMeter } from 'src/engine/core-modules/usage-limit/types/quota-meter.type';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
-export type QuotaCost = Record<QuotaMeter, number>;
+export type QuotaCost = Record<UsageUnit.CREDIT, number> &
+  Partial<Record<UsageUnit, number>>;

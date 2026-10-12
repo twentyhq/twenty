@@ -9,7 +9,6 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useAddRecordGroup = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -37,10 +36,7 @@ export const useAddRecordGroup = () => {
 
     const view = getViewFromState(currentViewId);
 
-    if (
-      isUndefinedOrNull(view) ||
-      !isDefined(view.mainGroupByFieldMetadataId)
-    ) {
+    if (!isDefined(view) || !isDefined(view.mainGroupByFieldMetadataId)) {
       return;
     }
 

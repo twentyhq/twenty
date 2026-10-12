@@ -1,13 +1,9 @@
 import { useMovePageLayoutTab } from '@/page-layout/hooks/useMovePageLayoutTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import {
   makeDraft,
-  makeFlagGatedWidget,
   makeTab,
-  makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
-import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
@@ -18,10 +14,7 @@ import {
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
-const renderUseMovePageLayoutTab = (
-  tabs: ReturnType<typeof makeTab>[],
-  persistedTabs: ReturnType<typeof makeTab>[] = tabs,
-) => {
+const renderUseMovePageLayoutTab = (tabs: ReturnType<typeof makeTab>[]) => {
   const store = createStore();
 
   store.set(
@@ -29,12 +22,6 @@ const renderUseMovePageLayoutTab = (
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
     }),
     makeDraft(tabs),
-  );
-  store.set(
-    pageLayoutPersistedComponentState.atomFamily({
-      instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-    }),
-    makeDraft(persistedTabs) as PageLayout,
   );
 
   const { result } = renderHook(() => useMovePageLayoutTab(), {
@@ -90,51 +77,6 @@ describe('useMovePageLayoutTab', () => {
     act(() => result.current.moveLeft('tab-3'));
 
     expect(getActiveTabIds()).toEqual(['tab-3', 'tab-1']);
-  });
-
-  it('should skip a tab feature flags hide standing between two rendered tabs', () => {
-    const { result, getActiveTabIds } = renderUseMovePageLayoutTab([
-      makeTab('tab-1', [], 0),
-      makeTab(
-        'flag-gated-tab',
-        [makeFlagGatedWidget('flag-gated-widget', 0, 'flag-gated-tab')],
-        1,
-      ),
-      makeTab('tab-3', [], 2),
-    ]);
-
-    act(() => result.current.moveLeft('tab-3'));
-
-    expect(getActiveTabIds()).toEqual(['tab-3', 'flag-gated-tab', 'tab-1']);
-  });
-
-  it('should still swap with a tab the edit left with only flag-gated widgets', () => {
-    const flagGatedWidget = makeFlagGatedWidget(
-      'flag-gated-widget',
-      0,
-      'tab-2',
-    );
-
-    const { result, getActiveTabIds } = renderUseMovePageLayoutTab(
-      [
-        makeTab('tab-1', [], 0),
-        makeTab('tab-2', [flagGatedWidget], 1),
-        makeTab('tab-3', [], 2),
-      ],
-      [
-        makeTab('tab-1', [], 0),
-        makeTab(
-          'tab-2',
-          [flagGatedWidget, makeWidget('widget', 1, 'tab-2')],
-          1,
-        ),
-        makeTab('tab-3', [], 2),
-      ],
-    );
-
-    act(() => result.current.moveLeft('tab-3'));
-
-    expect(getActiveTabIds()).toEqual(['tab-1', 'tab-3', 'tab-2']);
   });
 
   it('should leave the first and last rendered tabs where they are', () => {

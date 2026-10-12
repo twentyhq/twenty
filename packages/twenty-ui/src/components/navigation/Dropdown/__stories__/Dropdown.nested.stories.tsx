@@ -89,7 +89,8 @@ const playDismissesOneLayerAtATime =
   };
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Nested',
+  id: 'ui-components-dropdown-interactions-nested',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Nested',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },

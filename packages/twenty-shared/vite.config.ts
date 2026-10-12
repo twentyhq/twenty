@@ -49,9 +49,7 @@ export default defineConfig(() => {
         external: [
           ...Object.keys((packageJson as any).dependencies || {}),
           'typescript',
-          // `twenty-shared/i18n` hashes message ids with node:crypto. Keep the
-          // builtin external so rollup emits a plain import instead of trying
-          // to bundle or polyfill it.
+          // TODO: i18n now hashes with @noble/hashes, so this node:crypto external looks removable.
           'node:crypto',
         ],
         output: [

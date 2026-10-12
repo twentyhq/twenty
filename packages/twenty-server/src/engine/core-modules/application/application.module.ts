@@ -6,12 +6,11 @@ import { ApplicationGaugeService } from 'src/engine/core-modules/application/app
 import { ApplicationStopModule } from 'src/engine/core-modules/application/application-stop/application-stop.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
+import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/workspace-flat-application-map-cache.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -22,9 +21,11 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 
 @Module({
   imports: [
+    ApplicationRegistrationLookupModule,
     TypeOrmModule.forFeature([
       ApplicationEntity,
       ApplicationRegistrationEntity,
@@ -37,18 +38,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       ObjectMetadataEntity,
       ApplicationVariableEntity,
     ]),
+    ApplicationLookupModule,
     ApplicationStopModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,
-    TwentyConfigModule,
-    FeatureFlagModule,
     MetricsModule,
   ],
-  exports: [
-    ApplicationService,
-    ApplicationStopModule,
-    WorkspaceFlatApplicationMapCacheService,
-  ],
+  exports: [ApplicationService, ApplicationStopModule],
   providers: [
     ApplicationResolver,
     ApplicationService,

@@ -49,22 +49,17 @@ const StyledItemsContainer = styled.div<{ shouldReverse: boolean }>`
 export const PinnedCommandMenuItemButtons = ({
   containerWidth,
 }: {
-  // Provided when an ancestor already knows the width available to the
-  // buttons; the row then shrinks to fit instead of stretching over the free
-  // space to measure it, so sibling actions stay adjacent to the buttons.
+  // When set, the row shrinks to fit instead of stretching to measure free space, keeping sibling actions adjacent.
   containerWidth?: number;
 }) => {
   const theme = useTheme();
   const { commandMenuItems, containerType } = useContext(CommandMenuContext);
   const isMobile = useIsMobile();
 
-  // The footer keeps its label rightmost. Headers reverse the row so labels sit
-  // left of the icons.
   const isSidePanelFooter =
     containerType === CommandMenuItemContainerType.SidePanelFooter;
 
-  // Every header keeps its title on mobile, so its actions stay icon-only and
-  // leave the title room. The side panel footer has a full row to itself.
+  // Headers keep their title even on mobile, so their actions stay icon-only; only the footer has a full row for a label.
   const shouldLabelSingleCommandMenuItem = isSidePanelFooter;
 
   const pinnedCommandMenuItems = useMemo(
@@ -84,6 +79,7 @@ export const PinnedCommandMenuItemButtons = ({
   const {
     pinnedInlineCommandMenuItems,
     pinnedOverflowCommandMenuItems,
+    shouldShowHotKeys,
     onContainerDimensionChange,
     onCommandMenuItemDimensionChange,
   } = usePinnedCommandMenuItemsInlineLayout({
@@ -98,8 +94,7 @@ export const PinnedCommandMenuItemButtons = ({
     isDefined(commandMenuItem.shortLabel) &&
     !shouldHideCommandMenuItemLabel(commandMenuItem.id);
 
-  // Labels last so they land rightmost in the footer, and leftmost in the
-  // header once the row is reversed.
+  // Labelled items last: rightmost in the footer, leftmost in the reversed header row.
   const displayedInlineCommandMenuItems = [
     ...pinnedInlineCommandMenuItems.filter(
       (item) => !isCommandMenuItemLabelled(item),
@@ -123,6 +118,7 @@ export const PinnedCommandMenuItemButtons = ({
           <CommandMenuItemRenderer
             item={item}
             shouldHideLabel={shouldHideCommandMenuItemLabel(item.id)}
+            shouldShowHotKey={shouldShowHotKeys}
             isPrimaryAction={
               item.engineComponentKey ===
                 EngineComponentKey.CREATE_NEW_RECORD ||

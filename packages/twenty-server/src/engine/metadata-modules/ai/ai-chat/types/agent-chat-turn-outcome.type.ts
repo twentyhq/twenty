@@ -1,5 +1,4 @@
-// Every started turn resolves to exactly one of these so that
-// started = completed + cancelled + failed holds on the dashboards.
+// exactly one per started turn so started = completed + cancelled + failed on dashboards
 export type AgentChatTurnOutcome =
   | { kind: 'completed'; outcome: 'answered' | 'awaiting_user' }
   | { kind: 'cancelled'; reason: 'user_cancelled' | 'superseded' }

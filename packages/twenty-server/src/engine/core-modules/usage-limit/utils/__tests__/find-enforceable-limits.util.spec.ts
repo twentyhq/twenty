@@ -3,6 +3,7 @@ import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spen
 import { findEnforceableLimits } from 'src/engine/core-modules/usage-limit/utils/find-enforceable-limits.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const buildLimit = (
   spenderType: SpenderType,
@@ -17,7 +18,7 @@ const buildLimit = (
   limitKind: 'quota',
   periodCount: 1,
   periodUnit: 'month',
-  meter: 'quantity',
+  unit: UsageUnit.REQUEST,
   limitValue: 100,
   burstValue: null,
   isInstanceOverride,

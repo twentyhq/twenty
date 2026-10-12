@@ -5,8 +5,7 @@ import {
 } from 'twenty-shared/i18n';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 
-// objectLabel is the one only the client can supply: it follows the selection,
-// singular or plural.
+// objectLabel is the only placeholder the client supplies: singular or plural per selection.
 export const getCommandMenuItemPlaceholderValues = (
   commandMenuContextApi: CommandMenuContextApi,
 ): MetadataLabelPlaceholderValues => {

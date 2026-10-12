@@ -5,7 +5,10 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
-import { type ObjectWhereLike } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
+import {
+  isObjectWhereLike,
+  type ObjectWhereLike,
+} from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 
 export type MutationCriteria =
   | string
@@ -13,10 +16,15 @@ export type MutationCriteria =
   | ObjectWhereLike
   | ObjectWhereLike[];
 
-const isPlainObject = (value: unknown): value is ObjectWhereLike =>
-  typeof value === 'object' &&
-  value !== null &&
-  Object.getPrototypeOf(value) === Object.prototype;
+// An empty where object would make the mutation reach every row
+const assertWhereObjectFilters = (whereObject: ObjectWhereLike): void => {
+  if (Object.keys(whereObject).length === 0) {
+    throw new TwentyOrmException(
+      'A mutation criteria where object cannot be empty',
+      TwentyOrmExceptionCode.INVALID_PARAMETER,
+    );
+  }
+};
 
 export const applyMutationCriteriaToQueryBuilder = (
   queryBuilder: WorkspaceSelectQueryBuilder,
@@ -49,12 +57,14 @@ export const applyMutationCriteriaToQueryBuilder = (
       return queryBuilder;
     }
 
-    if (!criteria.every(isPlainObject)) {
+    if (!criteria.every(isObjectWhereLike)) {
       throw new TwentyOrmException(
         'A mutation criteria array must be all ids or all where objects',
         TwentyOrmExceptionCode.INVALID_PARAMETER,
       );
     }
+
+    criteria.forEach(assertWhereObjectFilters);
 
     queryBuilder.where({
       whereFactory: (nestedQueryBuilder) => {
@@ -70,6 +80,8 @@ export const applyMutationCriteriaToQueryBuilder = (
 
     return queryBuilder;
   }
+
+  assertWhereObjectFilters(criteria);
 
   queryBuilder.where(criteria);
 

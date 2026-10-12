@@ -25,4 +25,14 @@ describe('mapDBPartToUIMessagePart', () => {
       providerMetadata,
     });
   });
+
+  it('maps reasoning stored without content to empty text', () => {
+    expect(
+      mapDBPartToUIMessagePart({
+        type: 'reasoning',
+        reasoningContent: null,
+        state: 'done',
+      } as AgentMessagePart),
+    ).toMatchObject({ type: 'reasoning', text: '' });
+  });
 });

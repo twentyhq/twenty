@@ -12,8 +12,6 @@ type ObjectPermissionsByObjectMetadataId = Record<
   ObjectPermissions & { objectMetadataId: string }
 >;
 
-// Returns true if a junction field's intermediate or final target object
-// is not readable by the current user.
 export const isJunctionRelationForbidden = ({
   fieldMetadataItem,
   sourceObjectMetadataId,

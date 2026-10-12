@@ -41,13 +41,22 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
           },
         );
 
-      return this.formatRestResponse(record, flatObjectMetadata.nameSingular);
+      return this.formatRestResponse({
+        record,
+        objectNameSingular: flatObjectMetadata.nameSingular,
+      });
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(record: ObjectRecord, objectNameSingular: string) {
+  private formatRestResponse({
+    record,
+    objectNameSingular,
+  }: {
+    record: ObjectRecord;
+    objectNameSingular: string;
+  }) {
     return { data: { [`delete${capitalize(objectNameSingular)}`]: record } };
   }
 

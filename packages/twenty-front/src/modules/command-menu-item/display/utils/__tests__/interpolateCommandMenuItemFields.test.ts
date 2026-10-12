@@ -58,8 +58,7 @@ describe('interpolateCommandMenuItemFields', () => {
     ).toBe('Add to Favorites');
   });
 
-  // Navigation items are filled server-side against their target object, so
-  // the client must not blank out what it cannot resolve.
+  // Navigation items are filled server-side, so unresolved placeholders must survive.
   it('leaves placeholders it cannot fill intact', () => {
     expect(
       interpolateCommandMenuItemFields(

@@ -16,8 +16,7 @@ type SystemViewObjectMetadata = Pick<
   'universalIdentifier' | 'labelSingular'
 >;
 
-// The INDEX view name is a template resolved at display time; the record-page
-// view name is materialized at creation.
+// the INDEX name is a display-time template; the record-page name is materialized at creation
 const SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY = {
   [SYSTEM_VIEW_KEYS.INDEX]: {
     type: ViewType.TABLE,
@@ -61,8 +60,7 @@ export const computeSystemViewToCreate = ({
       viewKey,
     }),
     name: computeName(objectMetadata),
-    // Only INDEX is a persisted key; FIELDS_WIDGET exists solely in the
-    // universal identifier derivation.
+    // FIELDS_WIDGET exists only in the universal identifier derivation
     key: viewKey === SYSTEM_VIEW_KEYS.INDEX ? ViewKey.INDEX : null,
     icon,
     type,

@@ -17,8 +17,6 @@ import { type workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql
 // oxlint-disable-next-line typescript/no-explicit-any
 export type Resolver<Args = any> = GraphQLFieldResolver<any, any, Args>;
 
-// Use RESOLVER_METHOD_NAMES as the single source of truth for operation names
-// This avoids duplication and ensures consistency across the codebase
 export const ResolverArgsType = RESOLVER_METHOD_NAMES;
 
 export interface FindManyResolverArgs<

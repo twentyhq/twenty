@@ -11,8 +11,6 @@ import { ConnectionProviderEntity } from 'src/engine/core-modules/application/co
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { type AppConnectionDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/app-connection.dto';
 import { isConnectionHiddenFromRequestUser } from 'src/engine/core-modules/application/connection-provider/connections/utils/is-connection-hidden-from-request-user.util';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { resolveWorkspaceMemberId } from 'src/engine/core-modules/user-workspace/utils/resolve-workspace-member-id.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -53,8 +51,6 @@ export class ApplicationConnectionsListService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectWorkspaceScopedRepository(ConnectionProviderEntity)
     private readonly oauthProviderRepository: WorkspaceScopedRepository<ConnectionProviderEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async list({
@@ -100,18 +96,20 @@ export class ApplicationConnectionsListService {
       ),
     });
 
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
     const refreshed = await Promise.all(
-      accounts.map(async (account) =>
+      accounts.map((account) =>
         this.refreshAndMap(
           account,
           workspaceId,
           providerById,
-          await resolveWorkspaceMemberId({
-            userWorkspaceId: account.userWorkspaceId,
-            workspaceId,
-            userWorkspaceRepository: this.userWorkspaceRepository,
-            workspaceCacheService: this.workspaceCacheService,
-          }),
+          flatWorkspaceMemberMaps.idByUserWorkspaceId[
+            account.userWorkspaceId
+          ] ?? null,
         ),
       ),
     );
@@ -156,16 +154,17 @@ export class ApplicationConnectionsListService {
       { where: { id: account.connectionProviderId } },
     );
 
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
     const dto = await this.refreshAndMap(
       account,
       workspaceId,
       new Map([[provider.id, provider]]),
-      await resolveWorkspaceMemberId({
-        userWorkspaceId: account.userWorkspaceId,
-        workspaceId,
-        userWorkspaceRepository: this.userWorkspaceRepository,
-        workspaceCacheService: this.workspaceCacheService,
-      }),
+      flatWorkspaceMemberMaps.idByUserWorkspaceId[account.userWorkspaceId] ??
+        null,
     );
 
     if (!isDefined(dto)) {

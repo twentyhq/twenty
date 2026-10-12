@@ -109,6 +109,36 @@ describe('Core REST API Find Duplicates endpoint', () => {
     expect(personDuplicated.id).toBe(TEST_PERSON_2_ID);
   });
 
+  it('should find duplicates by ids without returning the matching fields', async () => {
+    const response = await makeRestApiRequest({
+      method: 'post',
+      path: '/people/duplicates?fields=id',
+      body: { ids: [TEST_PERSON_1_ID] },
+    }).expect(200);
+
+    expect(response.body.data[0].totalCount).toBe(1);
+    expect(response.body.data[0].personDuplicates).toEqual([
+      { id: TEST_PERSON_2_ID },
+    ]);
+  });
+
+  it('should find duplicates by data without returning the matching fields', async () => {
+    const response = await makeRestApiRequest({
+      method: 'post',
+      path: '/people/duplicates?fields=id',
+      body: { data: [{ name: { firstName: 'John', lastName: 'Doe' } }] },
+    }).expect(200);
+
+    expect(response.body.data[0].totalCount).toBe(2);
+    expect(response.body.data[0].personDuplicates).toEqual(
+      expect.arrayContaining([
+        { id: TEST_PERSON_1_ID },
+        { id: TEST_PERSON_2_ID },
+      ]),
+    );
+    expect(response.body.data[0].personDuplicates).toHaveLength(2);
+  });
+
   it('should not provide wrong duplicates', async () => {
     const response = await makeRestApiRequest({
       method: 'post',

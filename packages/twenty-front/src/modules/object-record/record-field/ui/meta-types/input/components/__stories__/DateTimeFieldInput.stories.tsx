@@ -1,11 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useDateTimeField } from '@/object-record/record-field/ui/meta-types/hooks/useDateTimeField';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
@@ -14,7 +14,6 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 
 const {
   FieldInputEventContextProviderWithJestMocks,
@@ -91,17 +90,12 @@ const DateFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <RecordFieldsScopeContextProvider
-          value={{ scopeInstanceId: instanceId }}
-        >
-          <FieldInputEventContextProviderWithJestMocks>
-            <StorybookFieldInputDropdownFocusIdSetterEffect />
-            <DateFieldValueSetterEffect value={value} />
-            <DateFieldValueGater />
-          </FieldInputEventContextProviderWithJestMocks>
-        </RecordFieldsScopeContextProvider>
+        <FieldInputEventContextProviderWithJestMocks>
+          <DateFieldValueSetterEffect value={value} />
+          <DateFieldValueGater />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
-      <div data-testid="data-field-input-click-outside-div"></div>
+      <Button>Outside date field</Button>
     </RecordFieldComponentInstanceContext.Provider>
   );
 };
@@ -168,9 +162,17 @@ export const ClickOutside: Story = {
     // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
     await body.findByText('January', {}, { timeout: 10000 });
 
-    const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
-    await userEvent.click(emptyDiv);
-    await userEvent.click(emptyDiv);
+    const outsideButton = canvas.getByRole('button', {
+      name: 'Outside date field',
+    });
+    await userEvent.click(outsideButton);
+    await waitFor(() => {
+      expect(
+        body.queryByRole('dialog', { name: 'Select month and year' }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(handleClickoutsideMocked).not.toHaveBeenCalled();
+    await userEvent.click(outsideButton);
 
     await expect(handleClickoutsideMocked).toHaveBeenCalledTimes(1);
   },
@@ -193,6 +195,12 @@ export const Escape: Story = {
     await body.findByText('January', {}, { timeout: 10000 });
 
     await userEvent.keyboard('{escape}');
+    await waitFor(() => {
+      expect(
+        body.queryByRole('dialog', { name: 'Select month and year' }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(handleEscapeMocked).not.toHaveBeenCalled();
     await userEvent.keyboard('{escape}');
 
     await expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
@@ -216,6 +224,13 @@ export const Enter: Story = {
     await body.findByText('January', {}, { timeout: 10000 });
 
     await userEvent.keyboard('{enter}');
+    await waitFor(() => {
+      expect(
+        body.queryByRole('dialog', { name: 'Select month and year' }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(handleEnterMocked).not.toHaveBeenCalled();
+    await userEvent.click(await canvas.findByPlaceholderText(/HH:mm/));
     await userEvent.keyboard('{enter}');
 
     await expect(handleEnterMocked).toHaveBeenCalledTimes(1);

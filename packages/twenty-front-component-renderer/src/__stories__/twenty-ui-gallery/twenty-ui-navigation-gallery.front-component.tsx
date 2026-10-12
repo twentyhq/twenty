@@ -6,13 +6,11 @@ import {
   MenuItemDraggable,
   MenuItemSuggestion,
   MenuPicker,
-  NavigationBar,
-  RoundedLink,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconHome, IconUser } from 'twenty-ui/icon';
 import { ColorSample, Tag } from 'twenty-ui/primitives/data-display';
-import { ClickToActionLink, ListItem } from 'twenty-ui/primitives/navigation';
+import { Breadcrumb, ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme';
 import {
   ComponentGallery,
@@ -21,8 +19,16 @@ import {
 
 const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
-    name: 'ClickToActionLink',
-    node: <ClickToActionLink href="#">Click me</ClickToActionLink>,
+    name: 'Breadcrumb',
+    node: (
+      <Breadcrumb
+        aria-label="Workspace breadcrumb"
+        links={[
+          { children: 'Workspace', href: '/workspace' },
+          { children: 'Settings' },
+        ]}
+      />
+    ),
   },
   {
     name: 'MenuItem',
@@ -45,14 +51,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem multiple selection',
     node: (
-      <ListItem
-        className=""
-        role="option"
-        aria-selected={false}
-        selected={false}
-        indicator="checkbox"
-        onClick={() => {}}
-      >
+      <ListItem className="" selected={false} indicator="checkbox">
         <OverflowingTextWithTooltip text={'Multi select'} />
       </ListItem>
     ),
@@ -60,13 +59,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem multiple avatar selection',
     node: (
-      <ListItem
-        role="option"
-        aria-selected={true}
-        selected={true}
-        indicator="checkbox"
-        onClick={() => {}}
-      >
+      <ListItem selected={true} indicator="checkbox">
         <OverflowingTextWithTooltip text={'Multi avatar'} />
       </ListItem>
     ),
@@ -74,13 +67,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem multiple tag selection',
     node: (
-      <ListItem
-        onClick={() => {}}
-        role="option"
-        aria-selected={false}
-        selected={false}
-        indicator="checkbox"
-      >
+      <ListItem selected={false} indicator="checkbox">
         <Tag color={'blue'}>{'Tag'}</Tag>
       </ListItem>
     ),
@@ -90,7 +77,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     node: (
       <ListItem
         startIcon={<IconUser />}
-        onClick={() => {}}
         render={<button type="button" />}
         hasSubmenu
       >
@@ -101,13 +87,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem selection',
     node: (
-      <ListItem
-        onClick={() => {}}
-        role="option"
-        aria-selected={true}
-        selected={true}
-        indicator="check"
-      >
+      <ListItem selected={true} indicator="check">
         <OverflowingTextWithTooltip text={'Select'} />
       </ListItem>
     ),
@@ -115,13 +95,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem avatar selection',
     node: (
-      <ListItem
-        onClick={() => {}}
-        role="option"
-        aria-selected={true}
-        selected={true}
-        indicator="check"
-      >
+      <ListItem selected={true} indicator="check">
         <OverflowingTextWithTooltip text={'Select avatar'} />
       </ListItem>
     ),
@@ -130,9 +104,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     name: 'ListItem color selection',
     node: (
       <ListItem
-        onClick={() => {}}
-        role="option"
-        aria-selected={true}
         selected={true}
         indicator="check"
         startIcon={<ColorSample colorName={'blue'} />}
@@ -144,13 +115,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ListItem tag selection',
     node: (
-      <ListItem
-        onClick={() => {}}
-        role="option"
-        aria-selected={true}
-        selected={true}
-        indicator="check"
-      >
+      <ListItem selected={true} indicator="check">
         <Tag color={'blue'} borderStyle="dashed" variant={'soft'}>
           {'Select tag'}
         </Tag>
@@ -164,21 +129,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'MenuPicker',
     node: <MenuPicker id="picker-1" icon={IconHome} label="Picker" />,
-  },
-  {
-    name: 'NavigationBar',
-    node: (
-      <NavigationBar
-        activeItemName="home"
-        items={[
-          { name: 'home', label: 'Home', Icon: IconHome, onClick: () => {} },
-        ]}
-      />
-    ),
-  },
-  {
-    name: 'RoundedLink',
-    node: <RoundedLink href="https://twenty.com" label="Rounded link" />,
   },
 ];
 

@@ -1,0 +1,1 @@
+export const REST_API_DEFAULT_MAX_FIELDS = 200;

@@ -18,7 +18,7 @@ export const Notice = ({ state, command }: ActionProps) =>
     </div>
   ) : state.error || state.notice ? (
     <div className="notice" role={state.error ? 'alert' : 'status'}>
-      <Banner color={state.error ? 'danger' : 'blue'}>
+      <Banner status={state.error ? 'error' : 'info'}>
         <span className="notice-text">
           {state.error?.message ??
             (state.notice && noticeMessage(state.notice))}

@@ -590,19 +590,14 @@ export class MessageCampaignBatchDeliveryService {
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({
-        id: In(deliveryIds),
-        state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
-      })
-      .update()
-      .set({
-        state: CAMPAIGN_DELIVERY_STATE.SENDING,
-        claimToken,
-        claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
-      })
-      .returning(['id'])
-      .execute();
+      .update(
+        { id: In(deliveryIds), state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES) },
+        {
+          state: CAMPAIGN_DELIVERY_STATE.SENDING,
+          claimToken,
+          claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
+        },
+      );
 
     return claimedDeliveries.map((delivery) => delivery.id);
   }
@@ -630,20 +625,19 @@ export class MessageCampaignBatchDeliveryService {
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({
-        id: In(recipients.map((recipient) => recipient.messageId)),
-        claimToken,
-      })
-      .update()
-      .set({
-        state,
-        skipReason,
-        failureReason,
-        claimToken: null,
-        claimExpiresAt: null,
-      })
-      .execute();
+      .update(
+        {
+          id: In(recipients.map((recipient) => recipient.messageId)),
+          claimToken,
+        },
+        {
+          state,
+          skipReason,
+          failureReason,
+          claimToken: null,
+          claimExpiresAt: null,
+        },
+      );
   }
 
   private async settleClaimedBatch({
@@ -687,15 +681,14 @@ export class MessageCampaignBatchDeliveryService {
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({ claimToken })
-      .update()
-      .set({
-        state: CAMPAIGN_DELIVERY_STATE.QUEUED,
-        claimToken: null,
-        claimExpiresAt: null,
-      })
-      .execute();
+      .update(
+        { claimToken },
+        {
+          state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+          claimToken: null,
+          claimExpiresAt: null,
+        },
+      );
   }
 
   // Settling threw after the provider had already taken the batch, so the rows

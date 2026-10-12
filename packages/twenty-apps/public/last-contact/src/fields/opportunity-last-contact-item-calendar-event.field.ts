@@ -35,4 +35,5 @@ export default defineField({
     joinColumnName: 'lastContactItemCalendarEventId',
   },
   isUIEditable: false,
+  isAuditLogged: false,
 });

@@ -11,6 +11,7 @@ import { type AdminChatMessageDTO } from 'src/engine/core-modules/admin-panel/dt
 import { type AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
@@ -90,7 +91,7 @@ export class AdminPanelChatService {
       ({ manager, table }) =>
         manager.query<{ threadId: string; messageCount: number }[]>(
           `SELECT "threadId", COUNT(*)::int AS "messageCount" FROM ${table('agentMessage')}
-       WHERE "threadId" = ANY($1::uuid[]) AND "isHidden" = false
+       WHERE "threadId" = ANY($1::uuid[]) AND role <> 'system'
        GROUP BY "threadId"`,
           [threadIds],
         ),
@@ -158,14 +159,15 @@ export class AdminPanelChatService {
         totalInputTokens: thread.totalInputTokens,
         totalOutputTokens: thread.totalOutputTokens,
         conversationSize: thread.conversationSize,
-        messageCount: messages.filter((message) => !message.isHidden).length,
+        messageCount: messages.filter(
+          (message) => message.role !== AgentMessageRole.SYSTEM,
+        ).length,
         createdAt: new Date(thread.createdAt),
         updatedAt: new Date(thread.updatedAt),
       },
       messages: messages.map((message) => ({
         id: message.id,
         role: message.role,
-        isHidden: message.isHidden,
         parts: (message.parts ?? [])
           .sort((a, b) => a.orderIndex - b.orderIndex)
           .map((part) => ({

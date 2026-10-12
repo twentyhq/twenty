@@ -13,11 +13,7 @@ export type LinkedTimelineActivityHappensAtSyncUpdate = {
   linkedRecordIds: string[];
 };
 
-// A linked activity is anchored at its source record's own moment (an email's
-// receivedAt, a calendar event's startsAt), so when that moment moves, e.g. a
-// meeting gets rescheduled, the already written activities must follow. Only
-// the changed record ids are collected here: the new value is read from the
-// source row at write time, not from the event snapshot.
+// Linked activities follow their source moment (e.g. a rescheduled meeting); the value is read at write time
 export const buildLinkedTimelineActivityHappensAtSyncUpdates = ({
   rules,
   events,

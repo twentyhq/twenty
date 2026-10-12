@@ -67,20 +67,15 @@ export const RecordTableWidgetRendererContent = ({
 
   const isCalendarLayout = widgetViewLayout === ViewType.CALENDAR;
 
-  // Widget calendars are read-only month projections, except live (non
-  // edit-mode) day/week calendars, which allow drag-to-reschedule and
-  // record creation under the usual object permissions.
+  // Live day/week widget calendars allow rescheduling and creation; month and edit mode are read-only.
   const isCalendarDayOrWeek =
     widgetView?.calendarLayout === ViewCalendarLayout.DAY ||
     widgetView?.calendarLayout === ViewCalendarLayout.WEEK;
   const canEditCalendar =
     isCalendarLayout && !isPageLayoutInEditMode && isCalendarDayOrWeek;
-  // Read-only unless this is the explicitly allowed live day/week calendar.
-  // Object permissions still gate the drag.
   const calendarIsReadOnly = !canEditCalendar;
 
-  // Keyed rather than chained so a layout added to RECORD_TABLE_WIDGET_LAYOUTS
-  // fails to compile here instead of silently rendering as a table.
+  // Keyed so a new RECORD_TABLE_WIDGET_LAYOUTS entry fails to compile instead of rendering as a table.
   const renderWidgetForLayout = {
     [ViewType.TABLE]: () => (
       <RecordTableWidget

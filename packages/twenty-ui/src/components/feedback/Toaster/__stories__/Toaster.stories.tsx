@@ -12,7 +12,8 @@ import { ToasterExample } from './ToasterExample';
 import { type ToasterExampleProps } from './ToasterExampleProps';
 
 const meta: Meta<typeof ToasterExample> = {
-  title: 'UI/Feedback/Toaster',
+  id: 'ui-feedback-toaster',
+  title: 'UI/Components/Feedback/Toaster',
   component: ToasterExample,
   args: { onClose: fn() },
 };

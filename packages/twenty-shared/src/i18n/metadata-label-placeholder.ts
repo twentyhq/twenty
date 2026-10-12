@@ -1,8 +1,6 @@
 import { capitalize } from '../utils/strings/capitalize';
 import { isDefined } from '../utils/validation/isDefined';
 
-// The closed vocabulary metadata-label placeholders draw from -- adding a name
-// here is what makes it fillable, on the server and the client.
 export const METADATA_LABEL_PLACEHOLDER_NAMES = [
   'objectLabel',
   'objectLabelSingular',
@@ -13,8 +11,7 @@ export const METADATA_LABEL_PLACEHOLDER_NAMES = [
 export type MetadataLabelPlaceholderName =
   (typeof METADATA_LABEL_PLACEHOLDER_NAMES)[number];
 
-// The subset an object metadata can fill. objectLabel is deliberately absent:
-// it follows the record selection, which only the client knows.
+// The subset an object metadata can fill; objectLabel is left out as it follows the record selection, which only the client knows.
 export const OBJECT_METADATA_LABEL_PLACEHOLDER_NAMES = [
   'objectLabelSingular',
   'objectLabelPlural',
@@ -29,9 +26,7 @@ export const getMetadataLabelPlaceholder = (
   name: MetadataLabelPlaceholderName,
 ): string => `{${name}}`;
 
-// Lingui drops ICU arguments it is not given, so translating with the
-// placeholders as their own values keeps them in the output for the side that
-// can actually resolve them.
+// Lingui drops ICU arguments it is not given, so pass placeholders through as their own values.
 export const METADATA_LABEL_PLACEHOLDER_PASS_THROUGH: Record<
   MetadataLabelPlaceholderName,
   string

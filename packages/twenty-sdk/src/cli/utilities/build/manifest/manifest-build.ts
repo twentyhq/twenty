@@ -14,7 +14,8 @@ import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/mani
 import { validateAgentRolesWithinApplicationRole } from '@/cli/utilities/build/manifest/utils/validate-agent-roles-within-application-role';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
-import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
+import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type IndexConfig } from '@/sdk/define/indexes/index-config';

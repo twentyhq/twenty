@@ -48,6 +48,7 @@ export const buildUsageLimitHttpException = (
         operationType: exhaustedScope.operationType,
       },
       limit: exhaustedScope.limitValue,
+      unit: exhaustedScope.unit,
       remaining: exhaustedScope.remaining,
       periodCount: exhaustedScope.periodCount,
       periodUnit: exhaustedScope.periodUnit,

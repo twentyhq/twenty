@@ -9,7 +9,7 @@ export const createZipFile = async (
 ): Promise<void> => {
   const output = fs.createWriteStream(outPath);
   const archive = archiver('zip', {
-    zlib: { level: 9 }, // Compression level
+    zlib: { level: 9 },
   });
 
   const p = pipeline(archive, output);

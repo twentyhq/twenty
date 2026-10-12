@@ -23,18 +23,38 @@ import { Text } from 'twenty-ui/primitives/typography';
 type SaveFeedbackProps = { isSaving: boolean };
 
 export const SaveFeedback = ({ isSaving }: SaveFeedbackProps) => (
-  <div role="status">
-    {isSaving && (
-      <div aria-hidden="true">
-        <Loader color="blue" />
-      </div>
-    )}
-    <Text>{isSaving ? 'Saving changes' : 'Changes saved'}</Text>
-  </div>
+  <Text render={<div />} role="status" style={{ display: 'flex', gap: 8 }}>
+    {isSaving && <Loader color="blue" aria-hidden="true" render={<span />} />}
+    {isSaving ? 'Saving changes' : 'Changes saved'}
+  </Text>
 );
 ```
 
-The application owns loading state. Keep the status wrapper mounted so text updates can be announced. The loader itself supplies no label or live region and accepts only `color`.
+Place visible status text beside the loader in a wrapper. The loader is a fixed-size visual indicator and does not accept children.
+
+The application owns loading state. Keep the status wrapper mounted so text updates can be announced. The loader assigns no label or live-region role by default. Use `aria-hidden="true"` when surrounding text or a button already supplies loading feedback.
+
+## Native composition and labeling
+
+Native props, `className`, `style`, and `ref` target the container div. `render` accepts an element or callback through Base UI composition. Styles override color defaults. `LoaderProps` is exported from the feedback family.
+
+For a standalone indicator, provide an explicit status role and accessible name. The animated dot remains decorative.
+
+```tsx
+import { Loader, type LoaderProps } from 'twenty-ui/primitives/feedback';
+
+const loadingProps: LoaderProps = {
+  role: 'status',
+  'aria-label': 'Loading results',
+  color: 'blue',
+};
+
+export const LoadingResults = () => (
+  <Loader {...loadingProps} render={<span />} />
+);
+```
+
+Use `aria-labelledby` instead when visible text names the status. Keep a live-region owner mounted when it needs to announce changing text. The application owns when feedback appears and what it says.
 
 ## Color
 

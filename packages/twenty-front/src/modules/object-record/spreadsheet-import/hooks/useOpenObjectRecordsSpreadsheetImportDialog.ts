@@ -6,13 +6,14 @@ import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateM
 import { useBuildSpreadsheetImportFields } from '@/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems';
+import { spreadsheetImportFilterImportableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterImportableFieldMetadataItems';
 import { spreadsheetImportGetUnicityTableHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityTableHook';
 import { SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE } from '@/spreadsheet-import/constants/SpreadsheetImportCreateRecordsBatchSize';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -91,7 +92,11 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
         }
       },
       spreadsheetImportFields,
-      availableFieldMetadataItems: availableFieldMetadataItemsToImport,
+      availableFieldMetadataItems:
+        spreadsheetImportFilterImportableFieldMetadataItems({
+          fieldMetadataItems: availableFieldMetadataItemsToImport,
+          spreadsheetImportFields,
+        }),
       onAbortSubmit: () => {
         abortController.abort();
       },

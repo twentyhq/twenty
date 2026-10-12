@@ -78,7 +78,6 @@ describe('detectNumberFormat', () => {
   });
 
   it('should detect SPACES_AND_COMMA format for locales using non-breaking space separator', () => {
-    // Mock formatToParts to return non-breaking space
     const originalNumberFormat = Intl.NumberFormat;
     (global.Intl as any).NumberFormat = Object.assign(
       jest.fn().mockImplementation(() => ({
@@ -100,7 +99,6 @@ describe('detectNumberFormat', () => {
   });
 
   it('should detect SPACES_AND_COMMA format for locales using narrow no-break space separator', () => {
-    // Mock formatToParts to return narrow no-break space
     const originalNumberFormat = Intl.NumberFormat;
     (global.Intl as any).NumberFormat = Object.assign(
       jest.fn().mockImplementation(() => ({
@@ -141,7 +139,6 @@ describe('detectNumberFormat', () => {
   });
 
   it('should detect APOSTROPHE_AND_DOT format for locales using right single quotation mark separator', () => {
-    // Mock formatToParts to return right single quotation mark
     const originalNumberFormat = Intl.NumberFormat;
     // @ts-expect-error - Mocking for test
     global.Intl.NumberFormat = jest.fn().mockImplementation(() => ({
@@ -199,7 +196,6 @@ describe('detectNumberFormat', () => {
   });
 
   it('should handle unknown pattern combinations', () => {
-    // Mock formatToParts to return an unknown pattern
     const originalNumberFormat = Intl.NumberFormat;
     // @ts-expect-error - Mocking for test
     global.Intl.NumberFormat = jest.fn().mockImplementation(() => ({

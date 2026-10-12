@@ -1,6 +1,6 @@
 import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
@@ -14,14 +14,14 @@ export const usePaymentMethodFlow = (modalInstanceId: string) => {
     billingHasPaymentMethodSelector,
   );
 
-  const { [PermissionFlagType.BILLING]: hasPermissionToManageBilling } =
-    usePermissionFlagMap();
+  const hasPermissionToManageBilling = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
 
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.Billing));
 
-  // Adding the first payment method is the only flow the in-product form can
-  // handle, everything else needs the billing portal
+  // The in-product form only handles adding the first payment method; the rest needs the billing portal
   const shouldAddPaymentMethodInProduct =
     hasPermissionToManageBilling && billingHasPaymentMethod === false;
 

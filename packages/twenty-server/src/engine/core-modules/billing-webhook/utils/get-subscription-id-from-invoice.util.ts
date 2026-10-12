@@ -2,15 +2,9 @@
 
 import type Stripe from 'stripe';
 
-/**
- * Extracts the subscription ID from a Stripe invoice.
- *
- * In Stripe SDK v19+, the subscription field moved from `Invoice.subscription`
- * to `Invoice.parent.subscription_details.subscription`.
- *
- * This utility handles both structures for backward compatibility with invoices
- * created before the SDK migration.
- */
+// Stripe SDK v19 moved the subscription from `Invoice.subscription` to
+// `Invoice.parent.subscription_details.subscription`; invoices created before
+// the migration still carry the old field.
 export const getSubscriptionIdFromInvoice = (
   invoice: Stripe.Invoice,
 ): string | undefined => {

@@ -99,7 +99,6 @@ export const useRecordCalendarGroupByRecords = (
       }),
     );
 
-    // Deduplicate records by ID to prevent duplicate keys in React
     const uniqueRecordsMap = new Map<string, ObjectRecord>();
     allRecords.forEach((record: ObjectRecord) => {
       if (!uniqueRecordsMap.has(record.id)) {

@@ -69,12 +69,13 @@ function evaluateFilter(
     case 'LINKS':
     case 'ARRAY':
     case 'array':
-    case 'RAW_JSON':
       return evaluateTextAndArrayFilter(
         filterWithConvertedOperand,
         filter.type,
         filter.compositeFieldSubFieldName,
       );
+    case 'RAW_JSON':
+      return evaluateRawJsonFilter(filterWithConvertedOperand);
     case 'SELECT':
       return evaluateSelectFilter(filterWithConvertedOperand);
     case 'BOOLEAN':
@@ -198,6 +199,44 @@ function evaluateTextAndArrayFilter(
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for this filter type`,
+      );
+  }
+}
+
+function parseRawJsonOperand(leftOperand: unknown): unknown {
+  if (!isString(leftOperand)) {
+    return leftOperand;
+  }
+
+  if (leftOperand.trim() === 'null') {
+    return null;
+  }
+
+  return parseJson<unknown>(leftOperand) ?? leftOperand;
+}
+
+function evaluateRawJsonFilter(filter: ResolvedFilter): boolean {
+  const jsonValue = parseRawJsonOperand(filter.leftOperand);
+  const isEmpty = !isDefined(jsonValue) || jsonValue === '';
+
+  const containsSearchValue = () =>
+    !isEmpty &&
+    JSON.stringify(jsonValue)
+      .toLowerCase()
+      .includes(String(filter.rightOperand ?? '').toLowerCase());
+
+  switch (filter.operand) {
+    case ViewFilterOperand.CONTAINS:
+      return containsSearchValue();
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
+      return !containsSearchValue();
+    case ViewFilterOperand.IS_EMPTY:
+      return isEmpty;
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return !isEmpty;
+    default:
+      throw new Error(
+        `Operand ${filter.operand} not supported for raw JSON filter`,
       );
   }
 }

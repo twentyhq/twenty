@@ -3,7 +3,7 @@ import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -147,10 +147,17 @@ export const SelectControl = ({
           {isDefined(selectedOption?.Icon) ? (
             isDefined(selectedOption.iconThemeColor) ? (
               <TintedIconTile
-                Icon={selectedOption.Icon}
+                icon={
+                  <selectedOption.Icon
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                }
                 color={selectedOption.iconThemeColor}
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
+                style={{
+                  width: theme.icon.size.md,
+                  height: theme.icon.size.md,
+                }}
               />
             ) : (
               <selectedOption.Icon

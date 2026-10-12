@@ -17,9 +17,7 @@ type SellableBaseProductPrice = {
   } | null;
 };
 
-// Callers pass prices already narrowed to a single plan and interval, so more than
-// one match means two sellable packagings are live at once and the price we would
-// charge depends on row order. Refuse rather than pick.
+// More than one match means two sellable packagings are live; refuse rather than charge by row order.
 export const findSellableBaseProductPriceOrThrow = <
   TPrice extends SellableBaseProductPrice,
 >(

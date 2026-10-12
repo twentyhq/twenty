@@ -28,7 +28,8 @@ const TabContainer = ({ children }: { children?: ReactNode }) => {
 };
 
 const meta: Meta<typeof TabButton> = {
-  title: 'UI/Components/TabButton',
+  id: 'ui-components-tabbutton',
+  title: 'UI/Components/Navigation/TabButton',
   component: TabButton,
   decorators: [ComponentDecorator],
   args: {

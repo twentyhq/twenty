@@ -12,6 +12,7 @@ import { SecretEncryptionRotationRunnerService } from 'src/database/commands/sec
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 const ROTATION_ENTITIES = [
   ...Object.values(SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES).map(
@@ -35,13 +36,10 @@ const DEDICATED_ROTATION_HANDLERS = [
     SecretEncryptionModule,
     TwentyConfigModule,
     TypeOrmModule.forFeature(ROTATION_ENTITIES),
+    WorkspaceCacheModule,
   ],
   providers: [
     ...DEDICATED_ROTATION_HANDLERS,
-    SecretEncryptionRotationRunnerService,
-    RotateSecretEncryptionCommand,
-  ],
-  exports: [
     SecretEncryptionRotationRunnerService,
     RotateSecretEncryptionCommand,
   ],

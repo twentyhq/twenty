@@ -8,8 +8,7 @@ import {
   projectCatalog,
 } from '../utils/project-catalog.util';
 
-// The shipped catalog is generated, and a hand edit to it is the drift this
-// pipeline exists to remove, so it has to stay what its spec produces.
+// The shipped catalog is generated, so a hand edit is the drift this pipeline exists to remove
 describe('the shipped catalog', () => {
   it('is what the self-host spec projects from the model catalog', () => {
     const projected = projectCatalog({

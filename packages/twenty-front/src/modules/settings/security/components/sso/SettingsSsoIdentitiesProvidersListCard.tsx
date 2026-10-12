@@ -5,12 +5,10 @@ import { Link } from 'react-router-dom';
 
 import { SettingsPath } from 'twenty-shared/types';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSsoIdentitiesProvidersListCardWrapper } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -19,17 +17,13 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconKey } from 'twenty-ui/icon';
 import { GetSsoIdentityProvidersDocument } from '~/generated-metadata/graphql';
 
-const StyledLinkContainer = styled.div<{ isDisabled: boolean }>`
-  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
-
+const StyledLinkContainer = styled.div`
   > a {
     text-decoration: none;
   }
 `;
 
 export const SettingsSsoIdentitiesProvidersListCard = () => {
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
   const { t } = useLingui();
 
   const [ssoIdentitiesProviders, setSsoIdentitiesProviders] = useAtomState(
@@ -42,7 +36,6 @@ export const SettingsSsoIdentitiesProvidersListCard = () => {
     error: ssoError,
   } = useQuery(GetSsoIdentityProvidersDocument, {
     fetchPolicy: 'network-only',
-    skip: currentWorkspace?.hasValidEnterpriseValidityToken !== true,
   });
 
   useEffect(() => {
@@ -55,17 +48,10 @@ export const SettingsSsoIdentitiesProvidersListCard = () => {
     <>
       <ToastOnQueryErrorEffect error={ssoError} />
       {loading || !ssoIdentitiesProviders.length ? (
-        <StyledLinkContainer
-          isDisabled={
-            currentWorkspace?.hasValidEnterpriseValidityToken !== true
-          }
-        >
+        <StyledLinkContainer>
           <Link to={getSettingsPath(SettingsPath.NewSsoIdentityProvider)}>
             <SettingsCard
               title={t`Add SSO Identity Provider`}
-              disabled={
-                currentWorkspace?.hasValidEnterpriseValidityToken !== true
-              }
               Icon={<IconKey />}
             />
           </Link>

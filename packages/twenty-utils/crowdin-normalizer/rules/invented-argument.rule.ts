@@ -2,9 +2,7 @@ import { type NormalizationRule } from '../types/normalization-rule.type';
 
 const ARGUMENT_NAME_REGEX = /^\{\s*([A-Za-z0-9_]+)\s*[,}]/;
 
-// Arguments the message itself takes, ignoring plural and select case bodies:
-// a translation may add cases its locale needs, but never a new argument, which
-// the caller has no value for.
+// Ignores plural and select case bodies: a locale may add cases but never an argument the caller has no value for.
 function topLevelArgumentNames(text: string): Set<string> {
   const names = new Set<string>();
   let depth = 0;
@@ -54,8 +52,7 @@ function repairInventedArgument(text: string, sourceText?: string): string {
 
   const repairedText = inventedArgumentNames(text, source).reduce(
     (accumulator, inventedName) => {
-      // Only a difference in spelling can be repaired: the argument is the same
-      // one, so restoring the source's casing makes it resolve again.
+      // Only a casing difference is repairable: it is the same argument.
       const intendedName = sourceNames.find(
         (name) =>
           name.toLowerCase() === inventedName.toLowerCase() &&
@@ -69,8 +66,7 @@ function repairInventedArgument(text: string, sourceText?: string): string {
     text,
   );
 
-  // An argument the source never had has no value to render, so an unrepaired
-  // translation is dropped rather than shipped with a dangling placeholder.
+  // Dropped rather than shipped with a placeholder nothing can fill.
   return inventedArgumentNames(repairedText, source).length > 0
     ? ''
     : repairedText;

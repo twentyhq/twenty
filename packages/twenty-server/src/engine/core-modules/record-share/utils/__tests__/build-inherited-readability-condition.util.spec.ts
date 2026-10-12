@@ -18,7 +18,10 @@ const OWN_RECORD_SHARE_EXISTS =
 const countOccurrences = (haystack: string, needle: string): number =>
   haystack.split(needle).length - 1;
 
-const build = (parents: InheritedReadabilityParentCondition[]) =>
+const build = (
+  parents: InheritedReadabilityParentCondition[],
+  { isOpenWhenDetached = false }: { isOpenWhenDetached?: boolean } = {},
+) =>
   buildInheritedReadabilityCondition({
     tableAlias: 'attachment',
     objectMetadataId: ATTACHMENT_OBJECT_METADATA_ID,
@@ -26,6 +29,7 @@ const build = (parents: InheritedReadabilityParentCondition[]) =>
     recordShareTableExpression: RECORD_SHARE_TABLE_EXPRESSION,
     principalIds: PRINCIPAL_IDS,
     accessLevels: ACCESS_LEVELS,
+    isOpenWhenDetached,
   });
 
 const noteParent = (
@@ -146,5 +150,31 @@ describe('buildInheritedReadabilityCondition', () => {
     );
     expect(sql).not.toContain('secret');
     expect(parameters.nested).toBe('value');
+  });
+
+  it('should not accept a detached record unless its object is open when detached', () => {
+    const { sql } = build([personParent({ kind: 'denied' })]);
+
+    expect(sql).not.toContain('"attachment"."targetPersonId" IS NULL');
+  });
+
+  it('should accept a record attached through no link at all, a denied parent included, when its object is open when detached', () => {
+    const { sql } = build(
+      [
+        personParent({ kind: 'denied' }),
+        {
+          kind: 'children',
+          childTableAlias: 'attachment_noteTarget',
+          childTableExpression: '"workspace_abc"."noteTarget"',
+          childJoinColumnName: 'noteId',
+          policy: { kind: 'denied' },
+        },
+      ],
+      { isOpenWhenDetached: true },
+    );
+
+    expect(sql).toContain(
+      ' OR ("attachment"."targetPersonId" IS NULL AND NOT EXISTS (SELECT 1 FROM "workspace_abc"."noteTarget" AS "attachment_noteTarget" WHERE "attachment_noteTarget"."noteId" = "attachment"."id" AND ("attachment_noteTarget"."deletedAt" IS NULL OR ("attachment"."deletedAt" IS NOT NULL AND "attachment_noteTarget"."deletedAt" >= "attachment"."deletedAt")))))',
+    );
   });
 });

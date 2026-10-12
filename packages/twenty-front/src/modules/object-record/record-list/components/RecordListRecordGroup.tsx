@@ -1,13 +1,14 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
-import { RecordListEmptyRecordGroupEffect } from '@/object-record/record-list/components/RecordListEmptyRecordGroupEffect';
 import { RecordListRecordGroupSection } from '@/object-record/record-list/components/RecordListRecordGroupSection';
 import { RecordListRecords } from '@/object-record/record-list/components/RecordListRecords';
-import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
+import { RecordListRecordsEffect } from '@/object-record/record-list/components/RecordListRecordsEffect';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { isRecordListGroupSectionToggledComponentState } from '@/object-record/record-list/states/isRecordListGroupSectionToggledComponentState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledSection = styled.div`
   display: flex;
@@ -16,7 +17,7 @@ const StyledSection = styled.div`
 `;
 
 export const RecordListRecordGroup = () => {
-  const { objectNameSingular } = useRecordListContextOrThrow();
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
@@ -30,26 +31,26 @@ export const RecordListRecordGroup = () => {
     currentRecordGroupId,
   );
 
-  if (shouldHideRecordGroup) {
-    return null;
-  }
-
   return (
-    <StyledSection>
-      <RecordListEmptyRecordGroupEffect
-        loading={loading}
-        error={error}
-        records={records}
-      />
-      <RecordListRecordGroupSection />
-      <RecordListRecords
+    <>
+      <RecordListRecordsEffect
         records={records}
         loading={loading}
         error={error}
-        hasNextPage={hasNextPage}
-        fetchMoreRecords={fetchMoreRecords}
-        isVisible={isRecordListGroupSectionToggled}
       />
-    </StyledSection>
+      {!shouldHideRecordGroup && (
+        <StyledSection>
+          <RecordListRecordGroupSection />
+          {isRecordListGroupSectionToggled && !isDefined(error) && (
+            <RecordListRecords
+              records={records}
+              loading={loading}
+              hasNextPage={hasNextPage}
+              fetchMoreRecords={fetchMoreRecords}
+            />
+          )}
+        </StyledSection>
+      )}
+    </>
   );
 };

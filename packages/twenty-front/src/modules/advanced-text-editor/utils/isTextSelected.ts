@@ -1,4 +1,4 @@
-import { type Editor, isTextSelection } from '@tiptap/core';
+import { type Editor, isNodeSelection, isTextSelection } from '@tiptap/core';
 
 type IsTextSelectedProps = {
   editor: Editor;
@@ -19,7 +19,12 @@ export const isTextSelected = ({ editor }: IsTextSelectedProps) => {
   const isEmptyTextBlock =
     !doc.textBetween(from, to).length && isTextSelection(selection);
 
-  if (empty || isEmptyTextBlock || !editor.isEditable) {
+  if (
+    empty ||
+    isEmptyTextBlock ||
+    isNodeSelection(selection) ||
+    !editor.isEditable
+  ) {
     return false;
   }
 

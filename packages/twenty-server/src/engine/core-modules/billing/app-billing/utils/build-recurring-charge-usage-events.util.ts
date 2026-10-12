@@ -22,14 +22,8 @@ export type BuildRecurringChargeUsageEventsResult = {
   rejectedCharges: RejectedRecurringCharge[];
 };
 
-// A per-member charge multiplies by the member count at the moment the period is
-// raised, so a workspace with no members raises nothing rather than a zero-credit
-// row that would still count as charged and suppress the next attempt.
-//
-// The declared rate is already bounded per unit, but the member count is not, so
-// the multiplied total is bounded again here. Over-cap charges are dropped
-// rather than clamped: raising a different amount than the app declared would be
-// a silent mispricing, where dropping leaves the period unraised and reportable.
+// No members raises nothing: a zero-credit row would count as charged and suppress the next attempt
+// Over-cap totals are dropped, not clamped: raising another amount than declared is silent mispricing
 export const buildRecurringChargeUsageEvents = ({
   dueCharges,
   workspaceMemberCount,

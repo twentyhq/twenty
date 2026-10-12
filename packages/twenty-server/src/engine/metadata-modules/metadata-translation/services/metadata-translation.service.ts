@@ -32,8 +32,6 @@ type TranslatableEntity = {
   entity: TranslatableFlatEntity;
 };
 
-// The registry decides which property to read, so this is where a dynamic
-// name meets the concrete entity type.
 const readStringProperty = (
   entity: TranslatableFlatEntity,
   property: string,

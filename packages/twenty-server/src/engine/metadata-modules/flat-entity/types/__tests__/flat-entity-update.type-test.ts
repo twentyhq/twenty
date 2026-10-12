@@ -63,6 +63,7 @@ type Assertions = [
       | 'writability'
       | 'readability'
       | 'readabilityParentFieldUniversalIdentifiers'
+      | 'sharingReach'
     >
   >,
 

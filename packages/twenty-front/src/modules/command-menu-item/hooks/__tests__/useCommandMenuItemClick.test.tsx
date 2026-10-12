@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { IconApps } from 'twenty-ui/icon';
 
@@ -7,6 +8,7 @@ import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/Em
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMenuItemClick';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 
 const mockOpenFrontComponentInSidePanel = jest.fn();
@@ -57,21 +59,34 @@ const FRONT_COMPONENT_COMMAND_MENU_ITEM = {
   },
 } as CommandMenuItemDefinition;
 
-const getWrapper =
-  (commandMenuContextApi: CommandMenuContextApi) =>
-  ({ children }: { children: ReactNode }) => (
-    <CommandMenuContext.Provider
-      value={{
-        containerType: CommandMenuItemContainerType.CommandMenuList,
-        displayType: 'listItem',
-        commandMenuItems: [],
-        commandMenuContextApi,
-        isInPreviewMode: false,
-      }}
-    >
-      {children}
-    </CommandMenuContext.Provider>
+const getWrapper = (
+  commandMenuContextApi: CommandMenuContextApi,
+  selectedRecordIds: string[],
+) => {
+  const store = createStore();
+  store.set(
+    contextStoreTargetedRecordsRuleComponentState.atomFamily({
+      instanceId: 'context-store-instance-id',
+    }),
+    { mode: 'selection', selectedRecordIds },
   );
+
+  return ({ children }: { children: ReactNode }) => (
+    <JotaiProvider store={store}>
+      <CommandMenuContext.Provider
+        value={{
+          containerType: CommandMenuItemContainerType.CommandMenuList,
+          displayType: 'listItem',
+          commandMenuItems: [],
+          commandMenuContextApi,
+          isInPreviewMode: false,
+        }}
+      >
+        {children}
+      </CommandMenuContext.Provider>
+    </JotaiProvider>
+  );
+};
 
 describe('useCommandMenuItemClick', () => {
   beforeEach(() => {
@@ -83,33 +98,47 @@ describe('useCommandMenuItemClick', () => {
       description: 'the object and the record when one record is selected',
       objectMetadataItem: { nameSingular: 'company' },
       selectedRecordIds: ['record-1'],
+      storedRecordIds: ['record-1'],
       expectedRecordContext: {
         objectNameSingular: 'company',
-        recordId: 'record-1',
+        selectedRecordIds: ['record-1'],
       },
     },
     {
       description: 'the object when several records are selected',
       objectMetadataItem: { nameSingular: 'company' },
       selectedRecordIds: ['record-1', 'record-2'],
+      storedRecordIds: ['record-1', 'record-2'],
       expectedRecordContext: {
         objectNameSingular: 'company',
-        recordId: undefined,
+        selectedRecordIds: ['record-1', 'record-2'],
+      },
+    },
+    {
+      description: 'selected records missing from the record store',
+      objectMetadataItem: { nameSingular: 'company' },
+      selectedRecordIds: ['record-1', 'record-2'],
+      storedRecordIds: ['record-1'],
+      expectedRecordContext: {
+        objectNameSingular: 'company',
+        selectedRecordIds: ['record-1', 'record-2'],
       },
     },
     {
       description: 'the object when no record is selected',
       objectMetadataItem: { nameSingular: 'company' },
       selectedRecordIds: [],
+      storedRecordIds: [],
       expectedRecordContext: {
         objectNameSingular: 'company',
-        recordId: undefined,
+        selectedRecordIds: [],
       },
     },
     {
       description: 'no record context outside an object',
       objectMetadataItem: {},
       selectedRecordIds: ['record-1'],
+      storedRecordIds: ['record-1'],
       expectedRecordContext: undefined,
     },
   ])(
@@ -117,6 +146,7 @@ describe('useCommandMenuItemClick', () => {
     async ({
       objectMetadataItem,
       selectedRecordIds,
+      storedRecordIds,
       expectedRecordContext,
     }) => {
       const { result } = renderHook(
@@ -127,14 +157,17 @@ describe('useCommandMenuItemClick', () => {
             label: 'Open front component',
           }),
         {
-          wrapper: getWrapper({
-            ...EMPTY_COMMAND_MENU_CONTEXT_API,
-            objectMetadataItem,
-            selectedRecords: selectedRecordIds.map((id) => ({
-              id,
-              __typename: 'Company',
-            })),
-          }),
+          wrapper: getWrapper(
+            {
+              ...EMPTY_COMMAND_MENU_CONTEXT_API,
+              objectMetadataItem,
+              selectedRecords: storedRecordIds.map((id) => ({
+                id,
+                __typename: 'Company',
+              })),
+            },
+            selectedRecordIds,
+          ),
         },
       );
 

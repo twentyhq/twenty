@@ -261,8 +261,7 @@ describe('resolveDpa', () => {
     expect(text).toContain('ANNEX C – List of Sub-Processors');
     expect(text).toContain('set out in Annex C');
 
-    // Derive the expected entries from the synced data rather than hardcoding
-    // vendor locations, which the trust-center sync action overwrites.
+    // Derived from synced data because the trust-center sync overwrites vendor locations.
     for (const subprocessor of subprocessors) {
       const vendorSuffix = subprocessor.vendorUrl
         ? ` (${subprocessor.vendorUrl})`

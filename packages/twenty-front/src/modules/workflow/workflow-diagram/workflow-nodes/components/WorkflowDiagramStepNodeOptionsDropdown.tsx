@@ -8,7 +8,8 @@ import { WorkflowStepOptionsMenuItems } from '@/workflow/workflow-steps/componen
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
-import { Dropdown, IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 

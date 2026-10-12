@@ -26,20 +26,26 @@ import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
-/**
- * rest/apiKeys is deprecated, use rest/metadata/apiKeys instead
- * rest/apiKeys will be removed in the future
- */
+// rest/apiKeys is deprecated in favor of rest/metadata/apiKeys and will be removed
 @Controller([`${ApiPath.Rest}/apiKeys`, `${ApiPath.Rest}/metadata/apiKeys`])
 @UseGuards(
   JwtAuthGuard,
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
 @UseFilters(
@@ -75,7 +81,17 @@ export class ApiKeyController {
   // Creating a key assigns it a role, so it also requires ROLES to prevent
   // binding a role above the caller's own.
   @UseGuards(
-    RequireAccessTokenGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.ROLES),
   )
   @Post()
@@ -94,7 +110,19 @@ export class ApiKeyController {
     });
   }
 
-  @UseGuards(RequireAccessTokenGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+  )
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -116,7 +144,19 @@ export class ApiKeyController {
     return this.apiKeyService.update(id, workspace.id, updateData);
   }
 
-  @UseGuards(RequireAccessTokenGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+  )
   @Delete(':id')
   async remove(
     @Param('id') id: string,

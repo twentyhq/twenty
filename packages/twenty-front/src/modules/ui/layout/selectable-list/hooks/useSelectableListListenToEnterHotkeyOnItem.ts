@@ -1,6 +1,7 @@
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { isKeyboardEventTargetActivatedByEnter } from '@/ui/utilities/hotkey/utils/isKeyboardEventTargetActivatedByEnter';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
@@ -39,5 +40,8 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
     callback: handleEnterKey,
     focusId,
     dependencies: [handleEnterKey],
+    options: {
+      ignoreEventWhen: isKeyboardEventTargetActivatedByEnter,
+    },
   });
 };

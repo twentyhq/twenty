@@ -1,11 +1,12 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { MetadataWritability } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildAgentChatThreadArchivedAtWritabilityUpdate } from 'src/database/commands/upgrade-version-command/2-44/utils/build-agent-chat-thread-archived-at-writability-update.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -31,36 +32,35 @@ export class OpenAgentChatThreadArchivedAtWritabilityCommand extends Provisioned
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.syncWritability(args, 'up');
+    await this.setWritability(args, MetadataWritability.OPEN);
   }
 
   async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.syncWritability(args, 'down');
+    await this.setWritability(args, MetadataWritability.SYSTEM);
   }
 
-  private async syncWritability(
+  private async setWritability(
     { workspaceId, options }: RunOnWorkspaceArgs,
-    direction: 'up' | 'down',
+    writability: MetadataWritability,
   ): Promise<void> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
       ]);
+    const archivedAtField =
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.fields.archivedAt.universalIdentifier
+      ];
 
-    const flatFieldMetadatasToUpdate =
-      buildAgentChatThreadArchivedAtWritabilityUpdate({
-        flatFieldMetadatasByUniversalIdentifier:
-          flatFieldMetadataMaps.byUniversalIdentifier,
-        now: new Date().toISOString(),
-        direction,
-      });
-
-    if (!isNonEmptyArray(flatFieldMetadatasToUpdate)) {
+    if (
+      !isDefined(archivedAtField) ||
+      archivedAtField.writability === writability
+    ) {
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: setting agentChatThread.archivedAt writability to ${flatFieldMetadatasToUpdate[0].writability}`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: setting agentChatThread.archivedAt writability to ${writability}`,
     );
 
     if (options.dryRun) {
@@ -78,7 +78,13 @@ export class OpenAgentChatThreadArchivedAtWritabilityCommand extends Provisioned
             fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: flatFieldMetadatasToUpdate,
+              flatEntityToUpdate: [
+                {
+                  ...archivedAtField,
+                  writability,
+                  updatedAt: new Date().toISOString(),
+                },
+              ],
             },
           },
         },

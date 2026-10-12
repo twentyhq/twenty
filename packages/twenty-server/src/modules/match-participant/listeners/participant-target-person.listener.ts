@@ -40,8 +40,7 @@ export class ParticipantTargetPersonListener {
       return;
     }
 
-    // Enrichment can attach a company long after participants were matched,
-    // without changing an email address or causing another provider sync.
+    // Enrichment can attach a company long after matching, with no email change or provider sync
     await this.messageQueueService.add<ReconcilePersonCompanyTargetsJobData>(
       ReconcilePersonCompanyTargetsJob.name,
       { workspaceId: payload.workspaceId, personIds },

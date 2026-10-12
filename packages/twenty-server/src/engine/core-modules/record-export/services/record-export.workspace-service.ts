@@ -46,7 +46,7 @@ import {
   RECORD_EXPORT_PROGRESS_INTERVAL_MS,
   RECORD_EXPORT_PAGE_SIZE,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
-import { UPDATE_RECORD_EXPORT_LEASE_SCRIPT } from 'src/engine/core-modules/record-export/constants/update-record-export-lease-script.constant';
+import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
@@ -68,7 +68,7 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 
 export type RecordExportQueryContext = {
@@ -77,16 +77,17 @@ export type RecordExportQueryContext = {
   selectedFields: CommonSelectedFields;
 };
 
-const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheKeyName[] = [
-  'rolesPermissions',
-  'userWorkspaceRoleMap',
-  'flatRoleMaps',
-  'flatRowLevelPermissionPredicateMaps',
-  'flatRowLevelPermissionPredicateGroupMaps',
-  'flatWorkspaceMemberMaps',
-  'flatObjectMetadataMaps',
-  'flatFieldMetadataMaps',
-];
+const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[] =
+  [
+    'rolesPermissions',
+    'userWorkspaceRoleMap',
+    'flatRoleMaps',
+    'flatRowLevelPermissionPredicateMaps',
+    'flatRowLevelPermissionPredicateGroupMaps',
+    'flatWorkspaceMemberMaps',
+    'flatObjectMetadataMaps',
+    'flatFieldMetadataMaps',
+  ];
 
 const recordExportProgressSchema = z.object({
   processedRecordCount: z.number().int().nonnegative(),
@@ -454,7 +455,7 @@ export class RecordExportWorkspaceService {
   ): Promise<boolean> {
     return (
       (await this.cacheStorageService.runScript<number>({
-        script: UPDATE_RECORD_EXPORT_LEASE_SCRIPT,
+        script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
         keys: [`{${workspaceId}}:active`],
         args: [JSON.stringify(id), String(ttl)],
       })) === 1

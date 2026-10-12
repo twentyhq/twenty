@@ -12,7 +12,6 @@ const issue = (message: string): WorkflowValidationIssue => ({
   message,
 });
 
-// The toast renders the descriptor, so what it will say is what i18n._ returns.
 const userMessageOf = (exception: WorkflowVersionValidationException): string =>
   i18n._(exception.userFriendlyMessage);
 
@@ -45,8 +44,6 @@ describe('WorkflowVersionValidationException', () => {
     expect(userMessageOf(exception)).toContain('has nothing to classify');
   });
 
-  // A step with a dozen broken fields would otherwise push the first thing to
-  // fix off the end of the toast.
   it('should show the first few reasons and count the rest', () => {
     const exception = new WorkflowVersionValidationException(
       WorkflowVersionValidationExceptionCode.MALFORMED_WORKFLOW_VERSION,

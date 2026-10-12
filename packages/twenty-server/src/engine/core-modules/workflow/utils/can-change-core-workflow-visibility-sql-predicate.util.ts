@@ -1,6 +1,4 @@
-// The caller binds its own parameter for the reader, which is null for an API
-// key — hence the explicit IS NULL rather than a coalesce, which would read a
-// null reader as matching a null owner.
+// explicit IS NULL: a coalesce would match an API key's null reader against a null owner
 export const canChangeCoreWorkflowVisibilitySqlPredicate = ({
   tableAlias,
   userWorkspaceIdParameter,

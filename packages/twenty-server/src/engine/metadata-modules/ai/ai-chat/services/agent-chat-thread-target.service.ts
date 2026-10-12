@@ -30,10 +30,7 @@ export class AgentChatThreadTargetService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // The link is written as the member, as the record API would write it. It
-  // inherits its readability from the conversation, so the ORM refuses it
-  // unless the member can edit that conversation. A chat turn runs in a queue
-  // worker, outside the request that sent it, so it passes its sender's context.
+  // chat turns run in a queue worker, so the sender's context is passed to write the link as them
   async attachThreadToRecord({
     workspaceId,
     threadId,
@@ -63,8 +60,7 @@ export class AgentChatThreadTargetService {
           AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
         );
 
-      // As on noteTarget, only the standard legs carry a unique index, so a
-      // link to a custom object is deduplicated by looking for it first.
+      // only standard legs have a unique index, so custom-object links are deduplicated by lookup
       if (await repository.existsBy(link)) {
         return;
       }
@@ -91,8 +87,7 @@ export class AgentChatThreadTargetService {
         throw error;
       });
 
-    // Not-found rather than forbidden, so a member cannot probe for records
-    // outside their grants.
+    // not-found rather than forbidden so members cannot probe for records outside their grants
     if (!isDefined(record)) {
       throw new AiException(
         'Record not found',

@@ -1,6 +1,9 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import { type AgentChatConversationTarget } from '@/ai/types/AgentChatConversationTarget';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -13,7 +16,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 
-const EXISTING_LINK_GQL_FIELDS = { id: true };
+const EXISTING_LINK_GQL_FIELDS = { id: true } satisfies RecordGqlFields;
 
 export const useAttachChatThreadToRecord = () => {
   const { enqueueToast } = useToast();
@@ -34,8 +37,7 @@ export const useAttachChatThreadToRecord = () => {
   });
   const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
-  // The chat model may file the conversation under the same record through
-  // its own tool during the same turn, so an existing link counts as success.
+  // The chat model may link the same record through its own tool, so an existing link counts as success.
   const attachChatThreadToRecord = async ({
     threadId,
     objectNameSingular,
@@ -58,8 +60,7 @@ export const useAttachChatThreadToRecord = () => {
     }
 
     try {
-      // Links to custom objects have no unique index for the upsert to
-      // resolve, so an existing link is looked up first.
+      // Custom object links have no unique index to upsert on.
       const { data: existingLinks, error: existingLinksError } =
         await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
           query: findExistingLinksQuery,
@@ -101,8 +102,7 @@ export const useAttachChatThreadToRecord = () => {
       return;
     }
 
-    // The link exists by now, so a failed refresh of the counts is not
-    // reported as a failed attach.
+    // The link exists by now, so a failed count refresh isn't a failed attach.
     refetchAggregateQueries({
       objectMetadataNamePlural:
         junctionConfig.junctionObjectMetadata.namePlural,

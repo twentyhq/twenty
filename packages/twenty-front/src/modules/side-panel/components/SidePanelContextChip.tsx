@@ -23,7 +23,6 @@ const StyledChip = styled.button<{
   cursor: ${({ onClick }) => (isDefined(onClick) ? 'pointer' : 'default')};
   display: flex;
   font-family: inherit;
-  /* If the chip has text, we add extra padding to have a more balanced design */
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};

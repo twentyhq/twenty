@@ -18,12 +18,10 @@ const resolveExecutionMode = ({
   logicFunctionManifest,
   applicationSourceType,
   existingFlatLogicFunctionMaps,
-  isPrebuiltModeEnabled,
 }: {
   logicFunctionManifest: LogicFunctionManifest;
   applicationSourceType: ApplicationRegistrationSourceType;
   existingFlatLogicFunctionMaps: AllFlatEntityMaps['flatLogicFunctionMaps'];
-  isPrebuiltModeEnabled: boolean;
 }): LogicFunctionExecutionMode => {
   const existingFlatLogicFunction = findFlatEntityByUniversalIdentifier({
     flatEntityMaps: existingFlatLogicFunctionMaps,
@@ -43,7 +41,6 @@ const resolveExecutionMode = ({
   }
 
   if (
-    isPrebuiltModeEnabled &&
     isPackagedApplicationSource(applicationSourceType) &&
     isNonEmptyString(logicFunctionManifest.builtHandlerChecksum)
   ) {
@@ -58,14 +55,12 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
   applicationUniversalIdentifier,
   applicationSourceType,
   existingFlatLogicFunctionMaps,
-  isPrebuiltModeEnabled,
   now,
 }: {
   logicFunctionManifest: LogicFunctionManifest;
   applicationUniversalIdentifier: string;
   applicationSourceType: ApplicationRegistrationSourceType;
   existingFlatLogicFunctionMaps: AllFlatEntityMaps['flatLogicFunctionMaps'];
-  isPrebuiltModeEnabled: boolean;
   now: string;
 }): UniversalFlatLogicFunction => {
   const name =
@@ -97,7 +92,6 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
       logicFunctionManifest,
       applicationSourceType,
       existingFlatLogicFunctionMaps,
-      isPrebuiltModeEnabled,
     }),
     createdAt: now,
     updatedAt: now,

@@ -103,7 +103,6 @@ const GENERATE_MESSAGE_SEEDS = (): MessageDataSeed[] => {
     const TEMPLATE_INDEX = (INDEX - 1) % EMAIL_TEMPLATES.length;
     const TEMPLATE = EMAIL_TEMPLATES[TEMPLATE_INDEX];
 
-    // Assign messages to threads (some threads will have multiple messages)
     const THREAD_INDEX = Math.floor((INDEX - 1) / 2); // 2 messages per thread on average
     const THREAD_ID = THREAD_IDS[THREAD_INDEX % THREAD_IDS.length];
 

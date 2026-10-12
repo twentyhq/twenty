@@ -32,6 +32,21 @@ export const Default: Story = {
   },
 };
 
+export const WithEmptySeats: Story = {
+  args: {
+    avatars: [{ id: 'Alice', name: 'Alice', shape: 'circle' }],
+    emptySeatsCount: 2,
+  },
+  play: async ({ canvasElement }) => {
+    const aliceAvatar = await within(canvasElement).findByText('A');
+
+    await waitFor(() => expect(aliceAvatar).toBeVisible());
+    await expect(
+      canvasElement.querySelectorAll('.tabler-icon-plus'),
+    ).toHaveLength(2);
+  },
+};
+
 export const CapsVisibleAvatars: Story = {
   args: {
     avatars: ['Alice', 'Bruno', 'Chloe', 'David', 'Emma', 'Farid'].map(

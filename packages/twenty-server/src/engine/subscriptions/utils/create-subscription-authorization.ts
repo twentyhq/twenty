@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-// Share in-flight checks and short-lived successes per subscription. A failed
-// check remains terminal so a buffered event cannot outlive a revoked grant.
+// A failed check stays terminal so a buffered event cannot outlive a revoked grant
 export const createSubscriptionAuthorization = ({
   check,
   maxAgeMs,

@@ -1,5 +1,6 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
+import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 
 export const settingsDraftRoleFamilyState = createAtomFamilyState<
   RoleWithPartialMembers,
@@ -7,29 +8,5 @@ export const settingsDraftRoleFamilyState = createAtomFamilyState<
 >({
   key: 'settingsDraftRoleFamilyState',
   scope: 'routed-flow',
-  defaultValue: {
-    __typename: 'Role',
-    id: '',
-    label: '',
-    description: '',
-    icon: '',
-    canDestroyAllObjectRecords: false,
-    canReadAllObjectRecords: false,
-    canSoftDeleteAllObjectRecords: false,
-    canUpdateAllObjectRecords: false,
-    canUpdateAllSettings: false,
-    canAccessAllTools: false,
-    isEditable: false,
-    workspaceMembers: [],
-    permissionFlags: [],
-    objectPermissions: [],
-    fieldPermissions: [],
-    rowLevelPermissionPredicates: [],
-    rowLevelPermissionPredicateGroups: [],
-    canBeAssignedToAgents: false,
-    canBeAssignedToApiKeys: false,
-    canBeAssignedToUsers: false,
-    agents: [],
-    apiKeys: [],
-  },
+  defaultValue: DEFAULT_SETTINGS_DRAFT_ROLE,
 });

@@ -11,7 +11,6 @@ declare const classNames: {
   readonly success: 'success';
   readonly warning: 'warning';
   readonly hoverable: 'hoverable';
-  readonly box: 'box';
   readonly indicator: 'indicator';
   readonly check: 'check';
   readonly minus: 'minus';

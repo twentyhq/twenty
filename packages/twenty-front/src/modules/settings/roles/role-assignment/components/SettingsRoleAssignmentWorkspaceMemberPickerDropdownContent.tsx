@@ -3,7 +3,7 @@ import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPart
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { type SearchRecord } from '~/generated/graphql';
 

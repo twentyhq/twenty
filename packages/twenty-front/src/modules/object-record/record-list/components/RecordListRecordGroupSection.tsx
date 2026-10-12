@@ -5,7 +5,7 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { isRecordListGroupSectionToggledComponentState } from '@/object-record/record-list/states/isRecordListGroupSectionToggledComponentState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -24,7 +24,7 @@ const StyledSectionHeader = styled.div`
 `;
 
 export const RecordListRecordGroupSection = () => {
-  const { objectMetadataItem } = useRecordListContextOrThrow();
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 

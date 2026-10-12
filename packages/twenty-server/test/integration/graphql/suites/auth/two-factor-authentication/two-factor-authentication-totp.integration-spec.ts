@@ -10,8 +10,7 @@ const MINIMUM_STEP_REMAINING_MS = 5_000;
 const generateTokenAtEpoch = (secret: string, epochMs: number): string =>
   authenticator.clone({ epoch: epochMs }).generate(secret);
 
-// A previous-step token generated right before a step boundary would already be
-// two steps old once the server validates it, so wait out the boundary first
+// A previous-step token minted right before a boundary would be two steps old when validated.
 const waitUntilSafelyInsideTotpStep = async (): Promise<void> => {
   const millisecondsRemainingInStep =
     TOTP_STEP_DURATION_MS - (Date.now() % TOTP_STEP_DURATION_MS);

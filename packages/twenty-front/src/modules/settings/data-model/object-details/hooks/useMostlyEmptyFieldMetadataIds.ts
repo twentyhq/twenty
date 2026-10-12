@@ -7,8 +7,7 @@ type MostlyEmptyFieldMetadataIdsResult = {
   mostlyEmptyFieldMetadataIds: string[];
 };
 
-// Approximate, computed server-side from Postgres planner statistics; on any
-// error the hint simply doesn't show
+// Approximate (Postgres planner statistics); on error the hint just does not show
 export const useMostlyEmptyFieldMetadataIds = ({
   objectMetadataItemId,
   skip,

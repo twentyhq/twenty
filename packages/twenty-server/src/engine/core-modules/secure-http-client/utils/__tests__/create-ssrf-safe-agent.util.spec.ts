@@ -10,7 +10,6 @@ const createMockSocket = (): Socket & { destroy: jest.Mock } => {
 
   return Object.assign(emitter, {
     destroy: jest.fn(),
-    // Minimal Socket stubs to avoid type errors
     connecting: false,
     writable: true,
   }) as unknown as Socket & { destroy: jest.Mock };

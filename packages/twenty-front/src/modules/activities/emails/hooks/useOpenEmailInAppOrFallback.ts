@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
 import { isDefined } from 'twenty-shared/utils';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 type UseOpenEmailInAppOrFallbackOptions = {
   skip?: boolean;
@@ -29,7 +30,7 @@ export const useOpenEmailInAppOrFallback = (
         return;
       }
 
-      window.open(`mailto:${email}`, '_blank');
+      openUrlInNewTab(`mailto:${email}`);
     },
     [connectedAccountId, openComposeEmailInSidePanel],
   );

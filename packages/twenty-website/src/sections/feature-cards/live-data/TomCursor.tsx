@@ -11,7 +11,6 @@ const TomCursorGlyph = styled.svg`
   width: 41px;
 `;
 
-// Tom's wider cursor arrow (authored glyph, verbatim).
 export function TomCursor() {
   return (
     <TomCursorGlyph

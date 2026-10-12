@@ -1,7 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
+
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
 import { ProgressBar } from '@ui/primitives/feedback/ProgressBar/ProgressBar';
+import { Button } from '@ui/primitives/input/Button/Button';
 
 const meta: Meta<typeof ProgressBar> = {
   title: 'UI/Feedback/ProgressBar/ProgressBar',
@@ -74,17 +77,34 @@ export const SpringFill: Story = {
   },
 };
 
-export const Countdown: Story = {
-  tags: ['!test'],
-  argTypes: {
-    value: { control: false },
-  },
-  args: {
-    value: 100,
-    ariaLabel: 'Progress',
-    countdownDurationInMs: 10000,
-  },
-  parameters: {
-    chromatic: { disableSnapshot: true },
+const ControlledProgressBar = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <>
+      <ProgressBar value={value} ariaLabel="Import progress" />
+      <Button onClick={() => setValue(50)}>Report progress</Button>
+      <Button onClick={() => setValue(100)}>Complete import</Button>
+    </>
+  );
+};
+
+export const Controlled: Story = {
+  render: () => <ControlledProgressBar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const progress = canvas.getByRole('progressbar', {
+      name: 'Import progress',
+    });
+
+    expect(progress).toHaveAttribute('aria-valuenow', '0');
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Report progress' }),
+    );
+    expect(progress).toHaveAttribute('aria-valuenow', '50');
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Complete import' }),
+    );
+    expect(progress).toHaveAttribute('aria-valuenow', '100');
   },
 };

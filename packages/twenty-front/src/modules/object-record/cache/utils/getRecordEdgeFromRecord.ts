@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getEdgeTypename } from 'twenty-shared/utils';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
@@ -17,7 +18,7 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
     EnrichedObjectMetadataItem,
     'fields' | 'namePlural' | 'nameSingular'
   >;
-  recordGqlFields?: Record<string, any>;
+  recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   isRootLevel?: boolean;
   record: T;

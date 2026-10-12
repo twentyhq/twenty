@@ -7,6 +7,7 @@ import { type FindRecordsOutputSchema } from '@/workflow/workflow-variables/type
 import { type FormOutputSchema } from '@/workflow/workflow-variables/types/FormOutputSchema';
 import { type IteratorOutputSchema } from '@/workflow/workflow-variables/types/IteratorOutputSchema';
 import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
+import { type WaitForEventOutputSchema } from '@/workflow/workflow-variables/types/WaitForEventOutputSchema';
 import {
   type BaseOutputSchemaV2,
   type ManualTriggerOutputSchema,
@@ -19,7 +20,8 @@ export type OutputSchemaV2 =
   | FormOutputSchema
   | RecordOutputSchemaV2
   | ManualTriggerOutputSchema
-  | IteratorOutputSchema;
+  | IteratorOutputSchema
+  | WaitForEventOutputSchema;
 
 export type StepOutputSchemaV2 = {
   id: string;

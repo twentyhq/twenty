@@ -87,3 +87,32 @@ export const CatalogDark: typeof Catalog = {
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };
+
+export const CardsDocumentation: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <RadioGroup
+      aria-label="Default view"
+      defaultValue="table"
+      style={{ width: 280 }}
+    >
+      <Radio variant="card" value="table">
+        Table view
+      </Radio>
+      <Radio variant="card" value="board">
+        Board view
+      </Radio>
+    </RadioGroup>
+  ),
+};
+
+export const CardsCatalog: typeof Catalog = {
+  ...Catalog,
+  args: { variant: 'card' },
+};
+
+export const CardsCatalogDark: typeof Catalog = {
+  ...CardsCatalog,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};

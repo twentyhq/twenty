@@ -25,6 +25,49 @@ const mockCompanyObjectMetadataItem: EnrichedObjectMetadataItem = {
 } as EnrichedObjectMetadataItem;
 
 describe('computeStepOutputSchema', () => {
+  describe('SEND_CHAT_MESSAGE', () => {
+    it('only outputs the conversation when nothing waits for approval', () => {
+      const result = computeStepOutputSchema({
+        step: {
+          type: 'SEND_CHAT_MESSAGE',
+          settings: {
+            input: { workspaceMemberId: '', title: '', text: 'Hello' },
+          },
+        } as any,
+        objectMetadataItems: [],
+      });
+
+      expect(Object.keys(result ?? {})).toEqual(['threadId']);
+    });
+
+    it('outputs the decision when an action waits for approval', () => {
+      const result = computeStepOutputSchema({
+        step: {
+          type: 'SEND_CHAT_MESSAGE',
+          settings: {
+            input: {
+              workspaceMemberId: '',
+              title: '',
+              text: 'Approve?',
+              toolCall: { toolName: 'update_one_company', arguments: {} },
+            },
+          },
+        } as any,
+        objectMetadataItems: [],
+      });
+
+      expect(Object.keys(result ?? {})).toEqual([
+        'threadId',
+        'outcome',
+        'toolName',
+        'feedback',
+        'error',
+        'arguments',
+        'output',
+      ]);
+    });
+  });
+
   describe('PERSISTED_OUTPUT_SCHEMA_TYPES', () => {
     it('should return undefined for CODE step type', () => {
       const result = computeStepOutputSchema({
@@ -376,6 +419,55 @@ describe('computeStepOutputSchema', () => {
       expect(result).toHaveProperty('first');
       expect(result).toHaveProperty('all');
       expect(result).toHaveProperty('totalCount');
+    });
+  });
+
+  describe('WAIT_FOR_EVENT step', () => {
+    it('should expose the record of the event and whether the wait timed out', () => {
+      const result = computeStepOutputSchema({
+        step: {
+          type: 'WAIT_FOR_EVENT',
+          settings: { input: { eventName: 'company.updated' } },
+        } as any,
+        objectMetadataItems: [mockCompanyObjectMetadataItem],
+      });
+
+      expect(Object.keys(result ?? {})).toEqual([
+        'record',
+        'recordId',
+        'hasTimedOut',
+        'before',
+        'updatedFields',
+      ]);
+      expect((result as any).record.label).toBe('Company');
+    });
+
+    it('should not expose update details for events that are not updates', () => {
+      const result = computeStepOutputSchema({
+        step: {
+          type: 'WAIT_FOR_EVENT',
+          settings: { input: { eventName: 'company.created' } },
+        } as any,
+        objectMetadataItems: [mockCompanyObjectMetadataItem],
+      });
+
+      expect(Object.keys(result ?? {})).toEqual([
+        'record',
+        'recordId',
+        'hasTimedOut',
+      ]);
+    });
+
+    it('should return empty object when the event cannot be parsed', () => {
+      const result = computeStepOutputSchema({
+        step: {
+          type: 'WAIT_FOR_EVENT',
+          settings: { input: { eventName: 'company' } },
+        } as any,
+        objectMetadataItems: [mockCompanyObjectMetadataItem],
+      });
+
+      expect(result).toEqual({});
     });
   });
 

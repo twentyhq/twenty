@@ -1,6 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
 import { FieldInputEventContextProvider } from '@/object-record/record-field/ui/components/FieldInputEventContextProvider';
@@ -50,8 +49,7 @@ export const RecordTargetsInlineCell = ({
     objectMetadataItem,
   });
 
-  // Opening pushes the picker onto the focus stack, so closing has to pop it or
-  // the app keeps treating this dropdown as focused.
+  // Opening pushed the picker onto the focus stack, so closing must pop it.
   const closeEditMode = () => {
     setIsEditing(false);
 
@@ -76,33 +74,28 @@ export const RecordTargetsInlineCell = ({
       onOpenEditMode={openEditMode}
       onCloseEditMode={closeEditMode}
     >
-      <RecordFieldsScopeContextProvider
-        value={{ scopeInstanceId: instanceIdPrefix }}
+      <RecordFieldComponentInstanceContext.Provider
+        value={{ instanceId: fieldInstanceId }}
       >
-        <RecordFieldComponentInstanceContext.Provider
-          value={{ instanceId: fieldInstanceId }}
-        >
-          <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
+        <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
 
-          {/* RecordInlineCell only renders display mode; the field input lives in
-              an anchored portal that each container mounts for itself. */}
-          {isEditing && (
-            <RecordInlineCellAnchoredPortal
-              fieldMetadataItem={junctionField}
-              objectMetadataItem={objectMetadataItem}
-              recordId={recordId}
-              instanceIdPrefix={instanceIdPrefix}
-              onCloseEditMode={closeEditMode}
-            >
-              <FieldInputEventContextProvider onClose={closeEditMode}>
-                <RecordInlineCellEditMode>
-                  <FieldInput />
-                </RecordInlineCellEditMode>
-              </FieldInputEventContextProvider>
-            </RecordInlineCellAnchoredPortal>
-          )}
-        </RecordFieldComponentInstanceContext.Provider>
-      </RecordFieldsScopeContextProvider>
+        {/* RecordInlineCell only renders display mode; each container mounts its own input portal. */}
+        {isEditing && (
+          <RecordInlineCellAnchoredPortal
+            fieldMetadataItem={junctionField}
+            objectMetadataItem={objectMetadataItem}
+            recordId={recordId}
+            instanceIdPrefix={instanceIdPrefix}
+            onCloseEditMode={closeEditMode}
+          >
+            <FieldInputEventContextProvider onClose={closeEditMode}>
+              <RecordInlineCellEditMode>
+                <FieldInput />
+              </RecordInlineCellEditMode>
+            </FieldInputEventContextProvider>
+          </RecordInlineCellAnchoredPortal>
+        )}
+      </RecordFieldComponentInstanceContext.Provider>
     </FieldContextProvider>
   );
 };

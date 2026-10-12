@@ -1,6 +1,6 @@
 import { useJsonTreeContextOrThrow } from '@ui/components/data-display/JsonTree/internal/hooks/useJsonTreeContextOrThrow';
 import { IconChevronDown } from '@ui/icon';
-import { VisibilityHidden } from '@ui/primitives/accessibility/components/VisibilityHidden';
+import { VisuallyHidden } from '@ui/primitives/accessibility/components/VisuallyHidden';
 import { themeCssVariables, useTheme } from '@ui/theme';
 import { clsx } from 'clsx';
 
@@ -31,9 +31,9 @@ export const JsonArrow = ({
       className={clsx(styles.button, variant === 'red' && styles.red)}
       onClick={onClick}
     >
-      <VisibilityHidden>
+      <VisuallyHidden>
         {isOpen ? arrowButtonExpandedLabel : arrowButtonCollapsedLabel}
-      </VisibilityHidden>
+      </VisuallyHidden>
 
       <div className={styles.chevron} data-open={isOpen || undefined}>
         <IconChevronDown size={theme.icon.size.md} color={iconColor} />

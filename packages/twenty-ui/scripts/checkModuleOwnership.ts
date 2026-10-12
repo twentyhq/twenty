@@ -7,6 +7,10 @@ import ts from 'typescript';
 import { isDefined } from '../src/utilities/utils/isDefined';
 
 import ownership from '../docs/module-ownership.json';
+import publicExports from '../docs/public-exports.json';
+import packageJson from '../package.json';
+import { getPublicExportErrors } from './utils/getPublicExportErrors';
+import { getPublicExportInventory } from './utils/getPublicExportInventory';
 
 const PACKAGE_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -22,7 +26,6 @@ const PACKAGE_ENTRY_POINTS = new Set([
     path.join(SOURCE_ROOT, `index${extension}`),
   ),
 ]);
-const IMPLEMENTATION_ONLY_PATTERN = /\/(internal|internals|parts)\//;
 const SUPPORT_DIRECTORY_PATTERN = /\/(contexts|hooks)\//;
 const TEST_DIRECTORY_PATTERN = /\/(testing|__tests__|__stories__|__mocks__)\//;
 const TEST_FILE_PATTERN = /\.(stories|test|spec)\.tsx?$/;
@@ -32,57 +35,43 @@ const actualOwnership: Record<keyof typeof ownership, string[]> = {
   primitives: [],
   components: [],
 };
-const errors: string[] = [];
+const actualPublicExports = getPublicExportInventory({
+  sourceRoot: SOURCE_ROOT,
+  entryPoints: Object.keys(packageJson.exports)
+    .filter((entryPoint) => !entryPoint.endsWith('.css'))
+    .map((entryPoint) => (entryPoint === '.' ? '.' : entryPoint.slice(2))),
+});
+const errors = shouldUpdateSnapshot
+  ? []
+  : getPublicExportErrors({
+      actual: actualPublicExports,
+      expected: publicExports,
+    });
 
 for (const layer of ['primitives', 'components'] as const) {
   const expected = new Set<string>(ownership[layer]);
   const actual = new Set<string>();
 
-  for (const file of globSync(`${layer}/**/index.ts`, { cwd: SOURCE_ROOT })) {
-    const filePath = path.join(SOURCE_ROOT, file);
-    const source = ts.createSourceFile(
-      filePath,
-      readFileSync(filePath, 'utf8'),
-      ts.ScriptTarget.Latest,
-      true,
-    );
+  for (const [entryPoint, { values }] of Object.entries(actualPublicExports)) {
+    if (entryPoint !== layer && !entryPoint.startsWith(`${layer}/`)) {
+      continue;
+    }
 
-    for (const statement of source.statements) {
-      if (
-        !ts.isExportDeclaration(statement) ||
-        statement.isTypeOnly ||
-        !isDefined(statement.moduleSpecifier) ||
-        !ts.isStringLiteral(statement.moduleSpecifier) ||
-        !isDefined(statement.exportClause) ||
-        !ts.isNamedExports(statement.exportClause)
-      ) {
+    for (const [name, source] of Object.entries(values)) {
+      const [sourcePath] = source.split('#');
+      if (!isDefined(sourcePath)) {
         continue;
       }
-
-      const target = path.resolve(
-        path.dirname(filePath),
-        statement.moduleSpecifier.text,
-      );
-      if (IMPLEMENTATION_ONLY_PATTERN.test(target)) {
-        errors.push(
-          `${file} exports an implementation part: ${statement.moduleSpecifier.text}`,
-        );
-      }
-
+      const target = path.join(SOURCE_ROOT, sourcePath);
       const componentSource = SOURCE_EXTENSIONS.map(
         (extension) => `${target}${extension}`,
       ).find((candidate) => ts.sys.fileExists(candidate));
-      if (
-        !componentSource?.endsWith('.tsx') ||
-        SUPPORT_DIRECTORY_PATTERN.test(componentSource)
-      ) {
-        continue;
-      }
 
-      for (const element of statement.exportClause.elements) {
-        if (!element.isTypeOnly) {
-          actual.add(element.name.text);
-        }
+      if (
+        componentSource?.endsWith('.tsx') &&
+        !SUPPORT_DIRECTORY_PATTERN.test(componentSource)
+      ) {
+        actual.add(name);
       }
     }
   }
@@ -153,11 +142,15 @@ if (isNonEmptyArray(errors)) {
 
 if (shouldUpdateSnapshot) {
   writeFileSync(
+    path.join(PACKAGE_ROOT, 'docs/public-exports.json'),
+    `${JSON.stringify(actualPublicExports, null, 2)}\n`,
+  );
+  writeFileSync(
     path.join(PACKAGE_ROOT, 'docs/module-ownership.json'),
     `${JSON.stringify(actualOwnership, null, 2)}\n`,
   );
 }
 
 process.stdout.write(
-  `Module ownership verified: ${actualOwnership.primitives.length} primitives and ${actualOwnership.components.length} shared components.\n`,
+  `Module ownership verified: ${actualOwnership.primitives.length} primitives and ${actualOwnership.components.length} shared components; all public values and types match the export inventory.\n`,
 );

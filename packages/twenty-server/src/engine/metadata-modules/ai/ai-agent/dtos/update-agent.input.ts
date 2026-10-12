@@ -10,6 +10,7 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
+import { type AgentTrigger } from 'twenty-shared/application';
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -82,8 +83,8 @@ export class UpdateAgentInput {
   modelConfiguration?: ModelConfiguration;
 
   @IsArray()
-  @IsString({ each: true })
+  @IsObject({ each: true })
   @IsOptional()
-  @Field(() => [String], { nullable: true })
-  evaluationInputs?: string[];
+  @Field(() => [GraphQLJSON], { nullable: true })
+  triggers?: AgentTrigger[];
 }

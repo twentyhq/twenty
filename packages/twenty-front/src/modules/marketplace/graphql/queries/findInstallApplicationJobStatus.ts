@@ -6,6 +6,7 @@ export const FIND_INSTALL_APPLICATION_JOB_STATUS = gql`
       jobId
       state
       failedReason
+      progress
     }
   }
 `;

@@ -25,6 +25,8 @@ type SuggestionRenderLifecycleConfig<TItem, TMenuProps extends AnyRecord> = {
     range: Range;
     query: string;
   }) => TMenuProps;
+  // Shown at once and kept above the searched items, which arrive later
+  getLocalItems?: (query: string) => TItem[];
 };
 
 export const createSuggestionRenderLifecycle = <
@@ -43,9 +45,17 @@ export const createSuggestionRenderLifecycle = <
     }
   };
 
-  const buildMenuProps = (props: SuggestionCallbackProps<TItem>) =>
+  const getItems = (props: SuggestionCallbackProps<TItem>) => [
+    ...(config.getLocalItems?.(props.query) ?? []),
+    ...props.items,
+  ];
+
+  const buildMenuProps = (
+    props: SuggestionCallbackProps<TItem>,
+    items: TItem[],
+  ) =>
     config.getMenuProps({
-      items: props.items,
+      items,
       onSelect: (item: TItem) => {
         props.command(item);
         closeMenu();
@@ -55,38 +65,49 @@ export const createSuggestionRenderLifecycle = <
       query: props.query,
     });
 
-  const createRenderer = (props: SuggestionCallbackProps<TItem>) => {
+  const createRenderer = (
+    props: SuggestionCallbackProps<TItem>,
+    items: TItem[],
+  ) => {
     renderer = new ReactRenderer(config.component, {
       editor,
-      props: buildMenuProps(props),
+      props: buildMenuProps(props, items),
     });
     document.body.appendChild(renderer.element);
   };
 
   return {
     onStart: (props: SuggestionCallbackProps<TItem>) => {
-      if (!props.clientRect || props.items.length === 0) {
+      if (!props.clientRect) {
         return;
       }
 
-      createRenderer(props);
+      const items = getItems(props);
+
+      if (items.length === 0) {
+        return;
+      }
+
+      createRenderer(props, items);
     },
     onUpdate: (props: SuggestionCallbackProps<TItem>) => {
       if (!props.clientRect) {
         return;
       }
 
-      if (props.items.length === 0) {
+      const items = getItems(props);
+
+      if (items.length === 0) {
         closeMenu();
         return;
       }
 
       if (renderer === null) {
-        createRenderer(props);
+        createRenderer(props, items);
         return;
       }
 
-      renderer.updateProps(buildMenuProps(props));
+      renderer.updateProps(buildMenuProps(props, items));
     },
     onKeyDown: (props: { event: KeyboardEvent }) => {
       if (props.event.key === 'Escape') {

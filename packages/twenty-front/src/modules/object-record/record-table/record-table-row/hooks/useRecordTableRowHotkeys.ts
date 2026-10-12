@@ -1,27 +1,25 @@
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
+import { useRecordTableSelectAllHotkeys } from '@/object-record/record-table/hooks/useRecordTableSelectAllHotkeys';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
-import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
-import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
+import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { Key } from 'ts-key-enum';
 
 export const useRecordTableRowHotkeys = (focusId: string) => {
-  const { isSelected, recordId, objectNameSingular, rowIndex } =
+  const { recordId, objectNameSingular, rowIndex } =
     useRecordTableRowContextOrThrow();
 
-  const { setCurrentRowSelected } = useSetCurrentRowSelected();
+  const { toggleRecordSelection } = useToggleRecordSelection();
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -38,16 +36,11 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
   const handleSelectRow = () => {
-    setCurrentRowSelected({
-      newSelectedState: !isSelected,
-    });
+    toggleRecordSelection({ recordId });
   };
 
   const handleSelectRowWithShift = () => {
-    setCurrentRowSelected({
-      newSelectedState: !isSelected,
-      shouldSelectRange: true,
-    });
+    toggleRecordSelection({ recordId, shouldSelectRange: true });
   };
 
   const handleOpenRecordInSidePanel = () => {
@@ -82,20 +75,13 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     });
   };
 
-  const { resetTableRowSelection } = useResetTableRowSelection(recordTableId);
+  const { resetRecordSelection } = useResetRecordSelection(recordTableId);
 
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
-  const isAtLeastOneRecordSelected = useAtomComponentSelectorValue(
-    isAtLeastOneTableRowSelectedSelector,
-    recordTableId,
-  );
-
   const handleEscape = () => {
     unfocusRecordTableRow();
-    if (isAtLeastOneRecordSelected) {
-      resetTableRowSelection();
-    }
+    resetRecordSelection();
   };
 
   useHotkeysOnFocusedElement({
@@ -133,19 +119,5 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     dependencies: [handleEscape],
   });
 
-  const { selectAllRows } = useSelectAllRows();
-
-  const handleSelectAllRows = () => {
-    selectAllRows();
-  };
-
-  useHotkeysOnFocusedElement({
-    keys: ['ctrl+a,meta+a'],
-    callback: handleSelectAllRows,
-    focusId,
-    dependencies: [handleSelectAllRows],
-    options: {
-      enableOnFormTags: false,
-    },
-  });
+  useRecordTableSelectAllHotkeys({ focusId });
 };

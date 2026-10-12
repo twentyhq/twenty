@@ -50,7 +50,6 @@ export const useUpdateJunctionRelationFromCell = ({
   const junctionObjectMetadata = junctionConfig?.junctionObjectMetadata;
   const sourceFieldOnJunction = junctionConfig?.sourceField;
 
-  // Use relation object name as fallback to prevent hook errors (hooks can't be conditional)
   const junctionObjectNameSingular =
     junctionObjectMetadata?.nameSingular ??
     fieldDefinition.metadata.relationObjectMetadataNameSingular;

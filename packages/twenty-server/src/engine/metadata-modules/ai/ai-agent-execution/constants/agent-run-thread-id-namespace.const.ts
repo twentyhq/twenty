@@ -1,0 +1,2 @@
+export const AGENT_RUN_THREAD_ID_NAMESPACE =
+  'efa281f3-a348-4fde-9485-814fb5d7175a';

@@ -31,6 +31,17 @@ describe('getOnboardingCreditsRewardAriaLabel', () => {
     ).toBe('Continue with Google, earn 2,5 free credits');
   });
 
+  it('should say when the reward is per item', () => {
+    expect(
+      getOnboardingCreditsRewardAriaLabel({
+        label: 'Invite',
+        creditsReward: 0.5,
+        formattedCreditsReward: '0.5',
+        isRewardPerItem: true,
+      }),
+    ).toBe('Invite, earn 0.5 free credits each');
+  });
+
   it('should leave the label alone without a reward', () => {
     expect(
       getOnboardingCreditsRewardAriaLabel({

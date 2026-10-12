@@ -7,7 +7,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { AgentHistorySchemaService } from 'src/database/commands/agent-history/agent-history-schema.service';
 import { isEmptyUnprovisionedAgentHistoryWorkspace } from 'src/database/commands/upgrade-version-command/2-43/utils/is-empty-unprovisioned-agent-history-workspace.util';
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 
 @RegisteredWorkspaceCommand('2.43.0', 1790171503075)
 @Command({
@@ -18,7 +18,7 @@ export class AttributeChatMessageSendersCommand extends ProvisionedWorkspaceComm
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly schema: AgentHistorySchemaService,
-    private readonly storage: AgentHistoryStorageService,
+    private readonly storage: AgentHistoryUpgradeStorageService,
     @InjectDataSource() private readonly dataSource: DataSource,
   ) {
     super(workspaceIteratorService);

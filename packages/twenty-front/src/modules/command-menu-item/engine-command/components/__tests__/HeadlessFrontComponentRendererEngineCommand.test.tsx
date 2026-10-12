@@ -4,6 +4,7 @@ import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { type HeadlessFrontComponentCommandContextApi } from '@/command-menu-item/engine-command/types/HeadlessCommandContextApi';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 let mockHeadlessCommandContextApi: HeadlessFrontComponentCommandContextApi;
 
@@ -19,15 +20,17 @@ jest.mock('@/front-components/components/FrontComponentRenderer', () => ({
     frontComponentId,
     commandMenuItemId,
     selectedRecordIds,
+    selectedRecordsFilter,
     objectNameSingular,
   }: {
     frontComponentId: string;
     commandMenuItemId?: string;
     selectedRecordIds?: string[];
+    selectedRecordsFilter?: RecordGqlOperationFilter | null;
     objectNameSingular?: string;
   }) => (
     <div data-testid="front-component">
-      {`${frontComponentId}:${commandMenuItemId}:${objectNameSingular ?? 'no object'}:${selectedRecordIds?.join(',') || 'no records'}`}
+      {`${frontComponentId}:${commandMenuItemId}:${objectNameSingular ?? 'no object'}:${selectedRecordIds?.join(',') || 'no records'}:${JSON.stringify(selectedRecordsFilter ?? null)}`}
     </div>
   ),
 }));
@@ -35,14 +38,17 @@ jest.mock('@/front-components/components/FrontComponentRenderer', () => ({
 const renderHeadlessFrontComponentCommand = ({
   objectMetadataItem,
   selectedRecordIds,
+  graphqlFilter = null,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem | null;
   selectedRecordIds: string[];
+  graphqlFilter?: RecordGqlOperationFilter | null;
 }) => {
   mockHeadlessCommandContextApi = {
     frontComponentId: 'front-component-id',
     objectMetadataItem,
     selectedRecords: selectedRecordIds.map((id) => ({ id })),
+    graphqlFilter,
   } as HeadlessFrontComponentCommandContextApi;
 
   render(
@@ -64,7 +70,7 @@ describe('HeadlessFrontComponentRendererEngineCommand', () => {
     });
 
     expect(await screen.findByTestId('front-component')).toHaveTextContent(
-      'front-component-id:command-menu-item-id:company:record-1,record-2',
+      'front-component-id:command-menu-item-id:company:record-1,record-2:null',
     );
   });
 
@@ -75,7 +81,28 @@ describe('HeadlessFrontComponentRendererEngineCommand', () => {
     });
 
     expect(await screen.findByTestId('front-component')).toHaveTextContent(
-      'front-component-id:command-menu-item-id:no object:no records',
+      'front-component-id:command-menu-item-id:no object:no records:null',
+    );
+  });
+
+  it('hands the component the filter matching a Select all selection', async () => {
+    const selectAllFilter: RecordGqlOperationFilter = {
+      and: [
+        { name: { ilike: '%acme%' } },
+        { not: { id: { in: ['record-3'] } } },
+      ],
+    };
+
+    renderHeadlessFrontComponentCommand({
+      objectMetadataItem: {
+        nameSingular: 'company',
+      } as EnrichedObjectMetadataItem,
+      selectedRecordIds: [],
+      graphqlFilter: selectAllFilter,
+    });
+
+    expect(await screen.findByTestId('front-component')).toHaveTextContent(
+      `front-component-id:command-menu-item-id:company:no records:${JSON.stringify(selectAllFilter)}`,
     );
   });
 });

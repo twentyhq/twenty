@@ -176,7 +176,6 @@ const FullLayer = styled.div`
     color: ${color('black')};
   }
 
-  /* The dark layer wipes up from the bottom as the morph plays. */
   &[data-face='dark'] {
     ${buildSchemeDeclarations('dark')}
     background-color: ${PRODUCT_HERO_SCENE.darkSurface};
@@ -531,7 +530,6 @@ export function HeroVisualScroll({
     };
   }, [menuWriter]);
 
-  // Returning to the top rewinds the demo to the first scene.
   useEffect(() => {
     if (discrete.heroAtStart) {
       setActiveTab(0);

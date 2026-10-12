@@ -69,13 +69,15 @@ export const getWorkflowRun = async (
 export const runWorkflowVersion = async ({
   workflowVersionId,
   payload,
+  token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 }: {
   workflowVersionId: string;
   payload?: object;
+  token?: string;
 }): Promise<string> => {
   const response = await client
     .post('/graphql')
-    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+    .set('Authorization', `Bearer ${token}`)
     .send({
       query: `
         mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {

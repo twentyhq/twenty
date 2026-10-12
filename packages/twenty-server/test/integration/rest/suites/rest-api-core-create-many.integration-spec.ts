@@ -25,6 +25,24 @@ describe('Core REST API Create Many endpoint', () => {
     });
   });
 
+  it('should return only selected fields while storing all submitted fields', async () => {
+    const person = { id: TEST_PERSON_1_ID, jobTitle: 'Selected fields test' };
+    const response = await makeRestApiRequest({
+      method: 'post',
+      path: '/batch/people?fields=id',
+      body: [person],
+    }).expect(201);
+
+    expect(response.body.data.createPeople).toEqual([{ id: TEST_PERSON_1_ID }]);
+
+    const fetched = await makeRestApiRequest({
+      method: 'get',
+      path: `/people/${TEST_PERSON_1_ID}`,
+    }).expect(200);
+
+    expect(fetched.body.data.person).toMatchObject(person);
+  });
+
   it('should create many person', async () => {
     const requestBody = [
       {

@@ -166,9 +166,7 @@ describe('MCP tool execution (integration)', () => {
         format: 'uuid',
       });
 
-      // Morph relations must be exposed as `${name}Id` UUIDs (the join column),
-      // not as the relation name typed as string — the data-arg-processor only
-      // accepts the join-column form for write operations.
+      // Morph relations must be exposed as `${name}Id` UUIDs: the data-arg-processor only accepts that form for writes
       expect(resolveProperty(properties?.targetCompanyId)).toMatchObject({
         type: 'string',
         format: 'uuid',
@@ -255,8 +253,6 @@ describe('MCP tool execution (integration)', () => {
 
       createdCompanyBId = companyB.id;
 
-      // Two targets on company A, one on company B — the grouped counts
-      // we'll assert against later.
       const targetCompanyIds = [
         createdCompanyAId,
         createdCompanyAId,
@@ -314,8 +310,6 @@ describe('MCP tool execution (integration)', () => {
 
       expect(groupByItems).toBeDefined();
 
-      // Each groupBy variant is { [columnName]: true }. Collect every column
-      // the schema offers so we can assert on the morph-relation columns.
       const groupByColumns = new Set<string>();
 
       if (groupByItems?.anyOf) {
@@ -353,8 +347,6 @@ describe('MCP tool execution (integration)', () => {
         {
           groupBy: [{ targetCompanyId: true }],
           aggregateOperation: 'COUNT',
-          // Scope to the noteTargets we created so other seeded rows don't
-          // leak into the counts.
           noteId: { in: createdNoteIds },
         },
       );

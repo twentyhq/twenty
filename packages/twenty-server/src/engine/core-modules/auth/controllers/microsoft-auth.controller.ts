@@ -32,7 +32,6 @@ export class MicrosoftAuthController {
     NoPermissionGuard,
   )
   async microsoftAuth() {
-    // As this method is protected by Microsoft Auth guard, it will trigger Microsoft SSO flow
     return;
   }
 

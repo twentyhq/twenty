@@ -1,3 +1,4 @@
+import { HTTPMethod } from 'twenty-shared/types';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { seedBuiltFrontComponentSharedDependenciesFile } from 'test/integration/metadata/suites/application/utils/seed-built-front-component-shared-dependencies-file.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -30,7 +31,7 @@ const BUILT_FRONT_COMPONENT_PATH = 'src/front-components/component.mjs';
 const SHARED_DEPENDENCIES_BUILT_PATH =
   'src/front-component-shared-dependencies.mjs';
 
-const DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS = [
+export const DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS = [
   SystemPermissionFlag.APPLICATIONS,
   SystemPermissionFlag.API_KEYS_AND_WEBHOOKS,
   SystemPermissionFlag.WORKFLOWS,
@@ -62,9 +63,11 @@ const findIdByUniversalIdentifier = async ({
 export const setupApplicationWithResources = async ({
   name,
   permissionFlagUniversalIdentifiers = DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
+  canReadAndUpdateAllObjectRecords = false,
 }: {
   name: string;
   permissionFlagUniversalIdentifiers?: string[];
+  canReadAndUpdateAllObjectRecords?: boolean;
 }): Promise<ApplicationWithResources> => {
   const applicationUniversalIdentifier = uuidv4();
   const roleUniversalIdentifier = uuidv4();
@@ -117,6 +120,8 @@ export const setupApplicationWithResources = async ({
             label: `${name} role`,
             description: 'Reaches application resources',
             canUpdateAllSettings: false,
+            canReadAllObjectRecords: canReadAndUpdateAllObjectRecords,
+            canUpdateAllObjectRecords: canReadAndUpdateAllObjectRecords,
             permissionFlagUniversalIdentifiers,
           },
         ],
@@ -131,7 +136,7 @@ export const setupApplicationWithResources = async ({
             builtHandlerChecksum: 'handler-checksum',
             httpRouteTriggerSettings: {
               path: `/${slug}`,
-              httpMethod: 'POST',
+              httpMethod: HTTPMethod.POST,
               isAuthRequired: true,
             },
             toolTriggerSettings: {},

@@ -1,40 +1,32 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Callout, ColorSchemePicker, MenuItem } from 'twenty-ui/components';
-import { type ColorScheme } from 'twenty-ui/primitives/input';
+import { Callout } from 'twenty-ui/components/feedback';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { Text } from 'twenty-ui/primitives/typography';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
 const LabelOverrides = () => {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('Light');
-
+  const [isSuppliedVisible, setIsSuppliedVisible] = useState(true);
   return (
     <TwentyUiGalleryCard title="Label overrides">
-      <Callout variant="info" title="Default notice" isClosable />
-      <Callout
-        variant="info"
-        title="Supplied notice"
-        isClosable
-        closeLabel="Dismiss notice"
-      />
-      <ColorSchemePicker
-        value={colorScheme}
-        onChange={setColorScheme}
-        lightLabel="Day appearance"
-        darkLabel="Night appearance"
-        systemLabel="Device appearance"
-      />
-      <Text role="status">Appearance: {colorScheme}</Text>
-      <ListItem hotkeys={['G', 'D']}>Default shortcut</ListItem>
-      <ListItem hotkeys={['G', 'S']} hotkeysJoinLabel="followed by">
+      <Callout status="info" title="Default notice" onDismiss={() => {}} />
+      {isSuppliedVisible && (
+        <Callout
+          status="info"
+          title="Supplied notice"
+          onDismiss={() => setIsSuppliedVisible(false)}
+          closeLabel="Dismiss notice"
+        />
+      )}
+      <ListItem shortcut={[['G'], ['D']]}>Default shortcut</ListItem>
+      <ListItem shortcut={[['G'], ['S']]} shortcutJoinLabel="followed by">
         Supplied shortcut
       </ListItem>
       <MenuItem
         text="Legacy shortcut"
-        hotKeys={['G', 'L']}
-        hotKeysJoinLabel="next"
+        shortcut={[['G'], ['L']]}
+        shortcutJoinLabel="next"
       />
     </TwentyUiGalleryCard>
   );

@@ -12,6 +12,8 @@ import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-h
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -79,6 +81,8 @@ describe('SdkClientController', () => {
           useValue: sdkClientArchiveService,
         },
         { provide: HttpExceptionHandlerService, useValue: {} },
+        { provide: ApplicationLookupService, useValue: {} },
+        { provide: ApplicationRegistrationLookupService, useValue: {} },
         {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {},

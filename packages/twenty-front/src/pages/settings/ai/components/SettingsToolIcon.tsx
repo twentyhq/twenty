@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isDefined } from 'twenty-shared/utils';
-import { getIconTileColorShades } from 'twenty-ui/components';
+import { getIconTileColorShades } from 'twenty-ui/components/data-display';
 import {
   IconEdit,
   IconPlus,

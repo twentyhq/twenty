@@ -54,10 +54,6 @@ describe('MessageChannelResolver connectedAccount', () => {
     };
   };
 
-  // Before this branch existed the decorator threw for a run with no user —
-  // telling an app that "API keys are not supported", which is not even the
-  // right diagnosis — so a cron, webhook or install hook could not read the
-  // connection behind a channel its own application owns.
   it('resolves an app-owned connection for a run with nobody behind it', async () => {
     const { resolver, applicationMessageChannelsService } = buildResolver({
       reachableConnectedAccount: { id: CONNECTED_ACCOUNT_ID },
@@ -84,9 +80,6 @@ describe('MessageChannelResolver connectedAccount', () => {
     });
   });
 
-  // Reachability is the app-facing predicate's answer, not this resolver's:
-  // it already refuses a connection owned by another application, and one
-  // that is private to a different member than the caller.
   it('returns null when the predicate says the caller cannot reach it', async () => {
     const { resolver } = buildResolver({ reachableConnectedAccount: null });
 
@@ -100,8 +93,6 @@ describe('MessageChannelResolver connectedAccount', () => {
     ).toBeNull();
   });
 
-  // The user behind an APPLICATION_ACCESS token still has to be honoured, so
-  // it is forwarded rather than dropped once an application is present.
   it('forwards the request user when a member triggered the run', async () => {
     const { resolver, applicationMessageChannelsService } = buildResolver({
       reachableConnectedAccount: { id: CONNECTED_ACCOUNT_ID },
@@ -124,10 +115,7 @@ describe('MessageChannelResolver connectedAccount', () => {
     );
   });
 
-  // An APPLICATION_ACCESS token can carry a user, and such a request can be
-  // handed an EMAIL channel. Claiming those here sent the member's own mailbox
-  // through a predicate that only matches APP connections, so a connection
-  // they are entitled to see came back null.
+  // the app predicate only matches APP connections, so email channels must stay on user ownership
   it('leaves an email channel on user ownership even in an application context', async () => {
     const {
       resolver,

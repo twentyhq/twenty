@@ -2,10 +2,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import {
+  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
   type Manifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
+  isValidUniversalIdentifier,
   normalizePageLayoutTabManifest,
 } from 'twenty-shared/application';
 import {
@@ -18,7 +20,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   getDuplicateValues,
   type ManifestField,
-  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
   isRelationFieldManifest,
 } from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
 import { getPageLayoutDeprecationWarnings } from '@/cli/utilities/build/manifest/utils/get-page-layout-deprecation-warnings';
@@ -118,7 +119,10 @@ const validateRelationFields = (fields: ManifestField[]): string[] => {
 };
 
 const collectPageLayoutWidgets = (
-  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs' | 'pageLayoutWidgets'>,
+  manifest: Pick<
+    Manifest,
+    'pageLayouts' | 'pageLayoutTabs' | 'pageLayoutWidgets'
+  >,
 ): PageLayoutWidgetManifest[] => {
   const widgetsFromPageLayouts = manifest.pageLayouts.flatMap(
     (pageLayout) => pageLayout.tabs?.flatMap((tab) => tab.widgets ?? []) ?? [],
@@ -230,9 +234,9 @@ const invalidUniversalIdentifierVersions = (
       continue;
     }
 
-    const version = uuidVersion(identifier);
+    if (!isValidUniversalIdentifier(identifier)) {
+      const version = uuidVersion(identifier);
 
-    if (version < MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION) {
       errors.push(
         `Universal identifier "${identifier}" is UUID version ${version}. ` +
           `Only UUID version ${MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION} or higher is allowed.`,

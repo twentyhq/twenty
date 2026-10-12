@@ -5,7 +5,7 @@ import { z } from 'zod';
 import {
   getCacheProviderOptions,
   injectCacheBreakpoint,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
 import { AI_SDK_BEDROCK } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 
 const BEDROCK_MAX_CACHE_POINTS = 4;

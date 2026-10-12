@@ -13,6 +13,7 @@ import {
 } from 'class-validator';
 
 import { RunAgentMessageInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-message.input';
+import { RunAgentThreadInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-thread.input';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -26,7 +27,7 @@ export class RunAgentInputDTO {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @Field({ nullable: true })
+  @Field({ nullable: true, deprecationReason: 'Use input instead.' })
   prompt?: string;
 
   @IsUUID()
@@ -40,6 +41,30 @@ export class RunAgentInputDTO {
   @ArrayMaxSize(100)
   @ValidateNested({ each: true })
   @Type(() => RunAgentMessageInputDTO)
-  @Field(() => [RunAgentMessageInputDTO], { nullable: true })
+  @Field(() => [RunAgentMessageInputDTO], {
+    nullable: true,
+    deprecationReason: 'Use input instead.',
+  })
   messages?: RunAgentMessageInputDTO[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayMaxSize(100)
+  @ValidateNested({ each: true })
+  @Type(() => RunAgentMessageInputDTO)
+  @Field(() => [RunAgentMessageInputDTO], { nullable: true })
+  input?: RunAgentMessageInputDTO[];
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @Field({ nullable: true })
+  additionalInstructions?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => RunAgentThreadInputDTO)
+  @Field(() => RunAgentThreadInputDTO, { nullable: true })
+  thread?: RunAgentThreadInputDTO;
 }

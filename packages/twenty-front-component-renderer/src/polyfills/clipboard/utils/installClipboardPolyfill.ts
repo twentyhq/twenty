@@ -11,9 +11,7 @@ type InstallClipboardPolyfillInput = {
   copyToClipboard: (text: string) => Promise<void>;
 };
 
-// Libraries call the standard navigator.clipboard.writeText; the worker has
-// no clipboard access, so the write is delegated to the host. Only writeText
-// is polyfilled: reading the clipboard is not a capability the host grants.
+// The worker has no clipboard, so writeText is delegated to the host; reading is not a granted capability.
 export const installClipboardPolyfill = ({
   globalScope,
   copyToClipboard,

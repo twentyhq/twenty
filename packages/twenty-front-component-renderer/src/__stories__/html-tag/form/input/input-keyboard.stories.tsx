@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import {
@@ -8,7 +8,9 @@ import {
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectEventLogged } from '@/__stories__/shared/test-utils/matchers/expectEventLogged';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { expectFrontComponentValue } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentValue';
 import { runFrontComponentStory } from '@/__stories__/shared/test-utils/runFrontComponentStory';
+import { TYPING_DELAY } from '@/__stories__/shared/test-utils/timeouts';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/HtmlTag/Form/Input/Keyboard',
@@ -63,3 +65,36 @@ export const ShiftModifier: Story = runFrontComponentStory({
     });
   },
 });
+
+const playEnterReadsAndClearsUncontrolledValue: NonNullable<
+  Story['play']
+> = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  await expectFrontComponentMounted(canvas);
+
+  const subject = await canvas.findByRole('textbox', {
+    name: 'Uncontrolled input, Enter submits',
+  });
+
+  await userEvent.type(subject, 'hi{Enter}', { delay: TYPING_DELAY });
+  await expectFrontComponentValue({ canvas, expected: 'hi' });
+  await waitFor(() => expect(subject).toHaveValue(''));
+
+  await userEvent.type(subject, 'ab{Enter}', { delay: TYPING_DELAY });
+  await expectFrontComponentValue({ canvas, expected: 'hi,ab' });
+  await waitFor(() => expect(subject).toHaveValue(''));
+};
+
+export const EnterReadsAndClearsUncontrolledValue: Story =
+  runFrontComponentStory({
+    frontComponentBundleName: 'input-keydown-only',
+    play: playEnterReadsAndClearsUncontrolledValue,
+  });
+
+export const EnterReadsAndClearsUncontrolledValuePreact: Story =
+  runFrontComponentStory({
+    frontComponentBundleName: 'input-keydown-only',
+    runtime: 'preact',
+    play: playEnterReadsAndClearsUncontrolledValue,
+  });

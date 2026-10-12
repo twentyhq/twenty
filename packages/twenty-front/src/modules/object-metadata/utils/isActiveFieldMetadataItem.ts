@@ -16,8 +16,7 @@ export const isActiveFieldMetadataItem = ({
     return false;
   }
 
-  // A junction relation is a system field that must stay visible, since it is the only
-  // way to reach the records it links to.
+  // A junction relation is a system field but the only way to reach the records it links.
   if (isConfiguredJunctionRelationField(fieldMetadata)) {
     return true;
   }

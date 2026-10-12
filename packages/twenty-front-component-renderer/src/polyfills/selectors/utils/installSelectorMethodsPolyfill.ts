@@ -12,15 +12,18 @@ type InstallSelectorMethodsPolyfillInput = {
   elementPrototype: object;
   querySelectorTargets: object[];
   resolveActiveElement: () => object | null;
+  resolveFocusVisibleElement: () => object | null;
 };
 
 export const installSelectorMethodsPolyfill = ({
   elementPrototype,
   querySelectorTargets,
   resolveActiveElement,
+  resolveFocusVisibleElement,
 }: InstallSelectorMethodsPolyfillInput): void => {
   const { resolveSelectorMatcher } = createSelectorMatcherResolver({
     resolveActiveElement,
+    resolveFocusVisibleElement,
   });
 
   const createMatcherForScope = ({

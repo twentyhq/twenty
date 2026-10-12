@@ -1,4 +1,4 @@
-import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
@@ -88,7 +88,7 @@ export const WorkflowStepFilterLogicalOperatorCell = ({
             dropdownId={`advanced-filter-logical-operator-${stepFilterGroup.id}`}
             value={stepFilterGroup.logicalOperator}
             options={stepFilterLogicalOperatorOptions}
-            dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
+            dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
             disabled
           />
         ) : (
@@ -98,7 +98,7 @@ export const WorkflowStepFilterLogicalOperatorCell = ({
             value={stepFilterGroup.logicalOperator}
             onChange={handleChange}
             options={stepFilterLogicalOperatorOptions}
-            dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
+            dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
           />
         )
       ) : (

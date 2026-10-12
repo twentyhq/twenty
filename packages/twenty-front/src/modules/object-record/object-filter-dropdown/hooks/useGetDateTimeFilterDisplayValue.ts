@@ -3,8 +3,8 @@ import { useUserTimeFormat } from '@/ui/input/components/internal/date/hooks/use
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
 import { type Temporal } from 'temporal-polyfill';
-import { formatZonedDateTimeDatePart } from '~/utils/dates/formatZonedDateTimeDatePart';
-import { formatZonedDateTimeTimePart } from '~/utils/dates/formatZonedDateTimeTimePart';
+import { formatZonedDateTimeDatePart } from '@/localization/utils/formatZonedDateTimeDatePart';
+import { formatZonedDateTimeTimePart } from '@/localization/utils/formatZonedDateTimeTimePart';
 
 export const useGetDateTimeFilterDisplayValue = () => {
   const { isSystemTimezone } = useUserTimezone();

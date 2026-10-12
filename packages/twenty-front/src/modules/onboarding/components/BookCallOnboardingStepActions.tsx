@@ -4,7 +4,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { BookCallBookingSuccessEffect } from '@/onboarding/effect-components/BookCallBookingSuccessEffect';
 import { useCompleteBookCallOnboardingStep } from '@/onboarding/hooks/useCompleteBookCallOnboardingStep';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const BookCallOnboardingStepActions = () => {
   const { enqueueToast } = useToast();

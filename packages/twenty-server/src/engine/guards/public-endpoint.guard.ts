@@ -4,17 +4,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 
-/**
- * Guard that explicitly marks an endpoint as public/unprotected.
- * This guard always returns true and serves as documentation
- * that the endpoint is intentionally accessible without authentication.
- *
- * Usage: @UseGuards(PublicEndpointGuard)
- */
+// Always passes: an explicit marker that the endpoint is intentionally
+// accessible without authentication.
 @Injectable()
 export class PublicEndpointGuard implements CanActivate {
   canActivate(_context: ExecutionContext): boolean {
-    // Always allow access - this is an explicit marker for public endpoints
     return true;
   }
 }

@@ -2,7 +2,7 @@ import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceSta
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 import {
   type RecordPermissionsDto,
-  type RecordPermissionsTargetInput,
+  type RecordTargetInput,
 } from '~/generated-metadata/graphql';
 
 export const recordPermissionsFamilyState = createAtomFamilyState<
@@ -12,7 +12,7 @@ export const recordPermissionsFamilyState = createAtomFamilyState<
       userWorkspace: CurrentUserWorkspace | null;
     }
   | undefined,
-  RecordPermissionsTargetInput & {
+  RecordTargetInput & {
     workspaceId: string;
     workspaceMemberId: string;
   }

@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { type LinkType } from '@/ui/field/display/components/SocialLink/LinkType';
 import { getDisplayValueByUrlType } from '@/ui/field/display/utils/getDisplayValueByUrlType';
-import { RoundedLink } from 'twenty-ui/components';
+import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
 
 type SocialLinkProps = {
   label?: string | null;

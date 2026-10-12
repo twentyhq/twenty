@@ -40,7 +40,7 @@ export const ViewChildEntityPermissionGuard = (
           )
         : null;
 
-      return this.viewAccessService.canUserModifyViewByChildEntity(
+      return this.viewAccessService.canUserModifyView(
         viewId,
         resolveViewAccessContext(request),
       );

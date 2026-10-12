@@ -4,33 +4,22 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { computeWorkflowDurationInMs } from 'src/modules/workflow/workflow-executor/utils/compute-workflow-duration-in-ms.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import { RESUME_DELAYED_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/contants/resume-delayed-workflow-job-name';
 import { isWorkflowDelayAction } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/guards/is-workflow-delay-action.guard';
-import { ResumeDelayedWorkflowJobData } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/resume-delayed-workflow-job-data.type';
 import { WorkflowDelayActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-input.type';
-import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 
 @Injectable()
 export class DelayWorkflowAction implements WorkflowAction {
-  constructor(
-    @InjectMessageQueue(MessageQueue.delayedJobsQueue)
-    private readonly messageQueueService: MessageQueueService,
-  ) {}
-
   async execute({
     currentStepId,
     steps,
-    runInfo,
     context,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = findStepOrThrow({
@@ -79,18 +68,7 @@ export class DelayWorkflowAction implements WorkflowAction {
         );
       }
 
-      const {
-        days = 0,
-        hours = 0,
-        minutes = 0,
-        seconds = 0,
-      } = workflowActionInput.duration;
-
-      delayInMs =
-        days * 24 * 60 * 60 * 1000 +
-        hours * 60 * 60 * 1000 +
-        minutes * 60 * 1000 +
-        seconds * 1000;
+      delayInMs = computeWorkflowDurationInMs(workflowActionInput.duration);
     } else {
       throw new WorkflowStepExecutorException(
         'Invalid delay type',
@@ -98,21 +76,11 @@ export class DelayWorkflowAction implements WorkflowAction {
       );
     }
 
-    await this.messageQueueService.add<ResumeDelayedWorkflowJobData>(
-      RESUME_DELAYED_WORKFLOW_JOB_NAME,
-      {
-        workspaceId: runInfo.workspaceId,
-        workflowRunId: runInfo.workflowRunId,
-        stepId: currentStepId,
-      },
-      {
-        ...buildRunWorkflowJobOptions(runInfo.workflowRunId),
-        delay: delayInMs,
-      },
-    );
-
     return {
-      pendingEvent: true,
+      wait: {
+        type: 'TIME',
+        resumeAt: new Date(Date.now() + delayInMs).toISOString(),
+      },
     };
   }
 }

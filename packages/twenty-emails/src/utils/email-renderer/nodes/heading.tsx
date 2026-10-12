@@ -2,6 +2,7 @@ import { Heading } from 'react-email';
 import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
 import { mappedNodeContent } from 'src/utils/email-renderer/renderers/render-node';
+import { blockStyle } from 'src/utils/email-renderer/utils/block-style';
 import { type InheritedTypography } from 'src/utils/email-renderer/utils/inherited-typography';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -34,7 +35,14 @@ export const heading = (
   const { fontSize: _inheritedFontSize, ...inheritedWithoutSize } = inherited;
 
   return (
-    <Heading as={element} style={{ fontSize, ...inheritedWithoutSize }}>
+    <Heading
+      as={element}
+      style={{
+        fontSize,
+        ...inheritedWithoutSize,
+        ...blockStyle(node.attrs?.style),
+      }}
+    >
       {content}
     </Heading>
   );

@@ -1,6 +1,6 @@
 import { useRefetchFindManyRecords } from '@/object-record/hooks/useRefetchFindManyRecords';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
-import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordListComponentInstanceContext } from '@/object-record/record-list/states/contexts/RecordListComponentInstanceContext';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -11,7 +11,7 @@ export const RecordListSSESubscribeEffect = () => {
   );
 
   const { objectNameSingular, objectMetadataItem } =
-    useRecordListContextOrThrow();
+    useRecordIndexContextOrThrow();
 
   const { filter, orderBy } =
     useFindManyRecordIndexTableParams(objectNameSingular);

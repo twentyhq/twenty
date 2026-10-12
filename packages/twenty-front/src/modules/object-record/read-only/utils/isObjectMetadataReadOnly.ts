@@ -1,10 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isMetadataWritabilityRestricted } from '@/object-record/read-only/utils/internal/isMetadataWritabilityRestricted';
-import { type ObjectPermission } from '~/generated-metadata/graphql';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type IsObjectMetadataReadOnlyParams = {
-  objectPermissions?: ObjectPermission;
+  objectPermissions?: Pick<ObjectPermissions, 'canUpdateObjectRecords'>;
   objectMetadataItem?: Pick<
     EnrichedObjectMetadataItem,
     'isUIEditable' | 'isRemote' | 'writability'

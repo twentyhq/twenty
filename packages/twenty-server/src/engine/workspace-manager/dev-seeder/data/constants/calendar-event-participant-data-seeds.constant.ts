@@ -186,7 +186,6 @@ const CREATE_EVENT_PARTICIPANT_DATA = (
     if (PERSON_PARTICIPANT) return PERSON_PARTICIPANT;
   }
 
-  // Try workspace member participant (20% chance, 0.4-0.6 range)
   if (PARTICIPANT_TYPE >= 0.4 && PARTICIPANT_TYPE < 0.6) {
     const WORKSPACE_PARTICIPANT = CREATE_WORKSPACE_MEMBER_EVENT_PARTICIPANT(
       workspaceMemberIds,

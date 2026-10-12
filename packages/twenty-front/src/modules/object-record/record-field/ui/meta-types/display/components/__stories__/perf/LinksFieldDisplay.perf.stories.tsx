@@ -45,7 +45,7 @@ type Story = StoryObj<typeof LinksFieldDisplay>;
 
 export const Default: Story = {};
 
-export const ExpandableList: Story = {
+export const OverflowingList: Story = {
   decorators: [
     (Story) => {
       return (

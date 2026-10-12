@@ -1,6 +1,4 @@
-// twenty-shared by source path rather than by package name: the consuming
-// repository runs this from a sparse checkout with no workspace install, so
-// 'twenty-shared/ai' would not resolve there.
+// By source path: the consuming repo runs this from a sparse checkout where 'twenty-shared/ai' does not resolve
 import { isAiSdkPackage } from '../../../../twenty-shared/src/ai/utils/is-ai-sdk-package.util';
 import { isDataResidency } from '../../../../twenty-shared/src/ai/utils/is-data-residency.util';
 
@@ -11,8 +9,7 @@ import {
   type CatalogSpecProvider,
 } from '../types/catalog-spec.type';
 
-// Structural, so the catalog needs no schema here and this file can run from a
-// checkout that has not installed the monorepo.
+// Structural, so this file runs from a checkout that has not installed the monorepo
 type CanonicalModel = { name: string; label?: string } & Record<
   string,
   unknown
@@ -100,8 +97,7 @@ const projectModel = ({
     ...routeFields,
     ...overrides,
     name: specModel.as ?? canonicalModel.name,
-    // The suffix marks the route, so it is appended to whichever name the model
-    // ends up with rather than to the catalog's.
+    // The suffix marks the route, so it applies to whichever name the model ends up with
     label: `${specModel.label ?? canonicalModel.label ?? canonicalModel.name}${provider.labelSuffix ?? ''}`,
   };
 };
@@ -113,8 +109,7 @@ const assertProviderIsUsable = ({
   provider: CatalogSpecProvider;
   seenNames: Set<string>;
 }): void => {
-  // Providers key an object, so a repeat would drop the first one's credentials
-  // and models on the floor, and `__proto__` would drop its own.
+  // Providers key an object, so a repeat would drop the first one's credentials and models, and `__proto__` its own
   if (seenNames.has(provider.name) || provider.name === '__proto__') {
     throw new Error(`Provider "${provider.name}" is repeated or reserved`);
   }
@@ -153,9 +148,7 @@ const assertNumbersAreUsable = ({
   }
 };
 
-// A spec naming a model the catalog does not carry is the failure this whole
-// pipeline exists to prevent: it publishes a route to nothing, and the tier
-// chains then fall through to a neighbouring rung in silence.
+// A route to a model the catalog lacks would make tier chains silently fall through to a neighbouring rung
 const resolveModels = ({
   provider,
   canonicalCatalog,

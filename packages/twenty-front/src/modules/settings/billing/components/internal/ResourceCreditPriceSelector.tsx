@@ -13,7 +13,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   IconAdjustments,
   IconArrowUp,
@@ -79,8 +79,7 @@ export const ResourceCreditPriceSelector = ({
 
   const currentResourceCreditPrice = currentResourceCreditBillingPrice;
 
-  // The catalog price is gone once the workspace's package is archived, so
-  // identity and the amount it pays both come from the subscription first.
+  // An archived package's catalog price is gone, so read from the subscription first.
   const currentResourceCreditStripePriceId =
     currentResourceCreditSubscriptionItem?.stripePriceId ??
     currentResourceCreditPrice?.stripePriceId;
@@ -181,9 +180,7 @@ export const ResourceCreditPriceSelector = ({
     (price) => price.stripePriceId !== currentResourceCreditStripePriceId,
   );
 
-  // Compared against the subscription's own package: the catalog price is gone
-  // once it is archived, which would otherwise confirm every change as a
-  // downgrade.
+  // Against the subscription's package: an archived catalog price would read every change as a downgrade.
   const isUpgrade = () => {
     if (!isChanged || !isDefined(selectedPrice)) {
       return false;

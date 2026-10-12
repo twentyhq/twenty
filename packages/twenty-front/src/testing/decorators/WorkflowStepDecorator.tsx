@@ -12,7 +12,7 @@ import { type Decorator } from '@storybook/react-vite';
 import { useAtomValue, useStore } from 'jotai';
 import { useEffect, useState, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 import { useLoadMockedMetadata } from '~/testing/hooks/useLoadMockedMetadata';
 import {
   mockedWorkflow,

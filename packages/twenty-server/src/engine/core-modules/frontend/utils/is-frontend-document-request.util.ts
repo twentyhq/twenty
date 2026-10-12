@@ -18,7 +18,7 @@ export const isFrontendDocumentRequest = (request: Request): boolean => {
 
   return (
     !isApiPath &&
-    request.accepts().includes('text/html') &&
+    request.accepts('html') !== false &&
     (!isDefined(destination) || NAVIGATION_DESTINATIONS.includes(destination))
   );
 };

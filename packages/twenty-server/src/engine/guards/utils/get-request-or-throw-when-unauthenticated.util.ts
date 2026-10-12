@@ -17,11 +17,7 @@ const hasAuthenticatedPrincipal = (request: {
   isDefined(request.apiKey) ||
   isDefined(request.application);
 
-// Shared by the auth guards so the two cannot drift on how a credential-less
-// request is reported. Returning false reports FORBIDDEN, which clients read as
-// a permission problem and never recover from, so a request nothing
-// authenticated has to say UNAUTHENTICATED instead. GraphQL only, since the
-// catch-all filter turns a GraphQL error thrown on the REST path into a 500.
+// clients never recover from FORBIDDEN, so say UNAUTHENTICATED; GraphQL only, the REST catch-all would turn it into a 500
 export const getRequestOrThrowWhenUnauthenticated = (
   context: ExecutionContext,
 ) => {

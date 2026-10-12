@@ -34,8 +34,7 @@ export const useResizeBoardColumn = () => {
 
   const isResizing = isDefined(initialPointerPositionX);
 
-  // captured once per drag: reading computed style on every move would
-  // force a synchronous style recalc, and the zoom cannot change mid-drag
+  // Captured once per drag: reading computed style on every move forces a style recalc.
   const [dragUiZoom, setDragUiZoom] = useState(1);
 
   const handleResizeStart = useCallback(

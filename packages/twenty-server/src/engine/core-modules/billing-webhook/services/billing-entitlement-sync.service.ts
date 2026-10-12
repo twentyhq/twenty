@@ -22,10 +22,7 @@ type EntitlementTransitionArgs = {
 
 type SyncedEntitlement = { key: BillingEntitlementKey; value: boolean };
 
-// Shared by the Stripe webhook and the reconciliation command so a repaired
-// entitlement carries the same consequences as one that arrived on time.
-// Transitions are read from the stored rows rather than from Stripe's
-// previous_attributes, which the reconciliation path never has.
+// Transitions come from stored rows, not Stripe's previous_attributes, which reconciliation never has
 @Injectable()
 export class BillingEntitlementSyncService {
   constructor(
@@ -42,10 +39,7 @@ export class BillingEntitlementSyncService {
     stripeCustomerId,
     activeLookupKeys,
   }: EntitlementTransitionArgs): Promise<SyncedEntitlement[]> {
-    // The whole transition is one unit. Reading the stored rows, acting on the
-    // difference and committing it are three steps, and this service is the
-    // only writer of those rows, so serializing here is what makes the
-    // difference a transition rather than a guess about one.
+    // Serialized so read-diff-commit forms one transition; this service is the rows' only writer
     return await this.cacheLockService.withLock(
       () =>
         this.applyEntitlementTransition({
@@ -80,11 +74,7 @@ export class BillingEntitlementSyncService {
       billingEntitlements.find((entitlement) => entitlement.key === key)
         ?.value === true;
 
-    // Counters accumulated while the limit was unenforced would otherwise be
-    // charged against the workspace the moment the entitlement turns on. Done
-    // before the rows are committed: a failure here then leaves the transition
-    // unapplied and the next sync retries it, where committing first would make
-    // every retry skip the reset and charge that usage.
+    // Unenforced counters would be charged on enable; reset before committing so a failed reset is retried
     if (
       !wasGranted(BillingEntitlementKey.USAGE_LIMIT) &&
       isGranted(BillingEntitlementKey.USAGE_LIMIT)
@@ -107,14 +97,7 @@ export class BillingEntitlementSyncService {
       'billingEntitlements',
     ]);
 
-    // The opposite order to the reset above, because the unsafe direction is
-    // reversed: predicates deleted while the row still grants RLS would leave
-    // row filtering on with nothing to filter by. Query-time filtering reads
-    // the predicate cache and never the entitlement, so committing the revoke
-    // first is the direction that fails closed: a failure here leaves rows
-    // filtered by predicates that outlived the feature, not unfiltered.
-    // Asked on every pass rather than on the revoke transition, so a cleanup
-    // that failed after the revoke committed is retried by the next sync.
+    // After the commit so a failure fails closed (rows stay filtered); checked every pass so a failed cleanup retries
     if (!isGranted(BillingEntitlementKey.RLS)) {
       await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
         workspaceId,

@@ -29,6 +29,7 @@ export const UNOBSERVABLE_PSEUDO_CLASS_NAMES = [
   'target-within',
   'user-invalid',
   'user-valid',
+  'valid',
   'visited',
   'volume-locked',
 ] as const;

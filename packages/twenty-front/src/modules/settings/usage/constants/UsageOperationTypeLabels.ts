@@ -3,8 +3,6 @@ import { msg } from '@lingui/core/macro';
 
 import { UsageOperationType } from '~/generated-metadata/graphql';
 
-// Exhaustive over the enum, so a new operation type is a compile error here
-// rather than a raw key on screen.
 export const USAGE_OPERATION_TYPE_LABELS: Record<
   UsageOperationType,
   MessageDescriptor

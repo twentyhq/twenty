@@ -1,5 +1,5 @@
 import { buildExcludedRecipientReasons } from '@/activities/emails/utils/buildExcludedRecipientReasons';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const NO_EXCLUSIONS = {
   withoutEmail: 0,

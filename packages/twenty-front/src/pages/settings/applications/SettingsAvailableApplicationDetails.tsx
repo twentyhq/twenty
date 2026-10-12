@@ -19,7 +19,7 @@ import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   IconBox,
   IconEyeOff,
@@ -55,11 +55,16 @@ export const SettingsAvailableApplicationDetails = () => {
     },
     [navigateSettings],
   );
-  const { requestInstall, install, isInstalling, modalInstanceId } =
-    useInstallMarketplaceAppWithPermissionValidation({
-      universalIdentifier: availableApplicationId,
-      onCompleted: handleInstallCompleted,
-    });
+  const {
+    requestInstall,
+    install,
+    isInstalling,
+    installProgress,
+    modalInstanceId,
+  } = useInstallMarketplaceAppWithPermissionValidation({
+    universalIdentifier: availableApplicationId,
+    onCompleted: handleInstallCompleted,
+  });
   const { copyMarketplaceAppLink } = useCopyMarketplaceAppLink();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
@@ -221,6 +226,7 @@ export const SettingsAvailableApplicationDetails = () => {
               canInstallMarketplaceApps={canInstallMarketplaceApps}
               onInstall={requestInstall}
               isInstalling={isInstalling}
+              installProgress={installProgress}
             />
           ) : undefined
         }
@@ -235,9 +241,8 @@ export const SettingsAvailableApplicationDetails = () => {
         <SettingsPageContainer overflow="visible">
           {isUnlisted && (
             <InlineBanner
-              LeftIcon={IconEyeOff}
-              message={t`Application not listed on the marketplace. It was shared via a direct link`}
-            />
+              icon={<IconEyeOff aria-hidden="true" />}
+            >{t`Application not listed on the marketplace. It was shared via a direct link`}</InlineBanner>
           )}
           {renderActiveTabContent()}
         </SettingsPageContainer>

@@ -12,8 +12,6 @@ export const useObjectMorphJunctionConfig = ({
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Record queries are built from this config, so it has to keep its identity
-  // across renders or they would be rebuilt each time.
   return useMemo(
     () =>
       getObjectMorphJunctionConfig({

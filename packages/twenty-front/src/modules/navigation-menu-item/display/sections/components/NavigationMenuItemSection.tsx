@@ -27,13 +27,11 @@ export const NavigationMenuItemSection = ({
   contentWrapper,
 }: NavigationMenuItemSectionProps) => {
   const content = (
-    <Collapsible
-      isExpanded={isOpen || forceExpanded}
-      dimension="height"
-      containAnimation
-    >
-      {children}
-    </Collapsible>
+    <Collapsible.Root open={isOpen || forceExpanded}>
+      <Collapsible.Panel dimension="height" containAnimation>
+        {children}
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 
   return (

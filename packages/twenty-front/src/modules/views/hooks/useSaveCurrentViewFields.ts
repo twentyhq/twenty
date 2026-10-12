@@ -12,7 +12,7 @@ import {
   type UpdateViewFieldMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveCurrentViewFields = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -41,7 +41,7 @@ export const useSaveCurrentViewFields = () => {
 
       const view = getViewFromState(currentViewId);
 
-      if (isUndefinedOrNull(view)) {
+      if (!isDefined(view)) {
         return;
       }
 
@@ -71,7 +71,7 @@ export const useSaveCurrentViewFields = () => {
                 createViewFieldInput.fieldMetadataId,
             );
 
-            if (isUndefinedOrNull(existingField)) {
+            if (!isDefined(existingField)) {
               return {
                 viewFieldsToCreate: [
                   ...viewFieldsToCreate,

@@ -6,8 +6,6 @@ describe('isObjectMetadataReadOnly', () => {
     const result = isObjectMetadataReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: true,
-        objectMetadataId: '123',
-        restrictedFields: {},
       },
       objectMetadataItem: {
         isUIEditable: true,
@@ -23,8 +21,6 @@ describe('isObjectMetadataReadOnly', () => {
     const result = isObjectMetadataReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: false,
-        objectMetadataId: '123',
-        restrictedFields: {},
       },
       objectMetadataItem: {
         isUIEditable: true,
@@ -40,8 +36,6 @@ describe('isObjectMetadataReadOnly', () => {
     const result = isObjectMetadataReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: true,
-        objectMetadataId: '123',
-        restrictedFields: {},
       },
       objectMetadataItem: {
         isUIEditable: false,
@@ -57,8 +51,6 @@ describe('isObjectMetadataReadOnly', () => {
     const result = isObjectMetadataReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: true,
-        objectMetadataId: '123',
-        restrictedFields: {},
       },
       objectMetadataItem: {
         isUIEditable: true,
@@ -86,8 +78,6 @@ describe('isObjectMetadataReadOnly', () => {
     const result = isObjectMetadataReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: true,
-        objectMetadataId: '123',
-        restrictedFields: {},
       },
       objectMetadataItem: {
         isUIEditable: true,

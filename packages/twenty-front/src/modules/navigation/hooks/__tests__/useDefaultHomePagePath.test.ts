@@ -380,9 +380,7 @@ describe('useDefaultHomePagePath', () => {
       );
     });
   });
-  // Regression: during the post-login transition window object metadata may
-  // not yet be loaded. We must not redirect the user to /settings/profile
-  // (the genuine empty-fallback) until metadata has actually loaded.
+  // Metadata may not be loaded yet right after login; don't fall back to /settings/profile.
   it('should defer to AppPath.Index when currentUser is defined but object metadata is not loaded yet', async () => {
     const { result } = renderHooks({
       withCurrentUser: true,

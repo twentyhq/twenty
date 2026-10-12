@@ -1,7 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
-import { isWidgetEnabledByFeatureFlags } from '@/page-layout/utils/isWidgetEnabledByFeatureFlags';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 
 type FilterVisibleWidgetsParams = {
@@ -13,21 +12,11 @@ export const filterVisibleWidgets = ({
   widgets,
   context,
 }: FilterVisibleWidgetsParams): PageLayoutTab['widgets'] => {
-  // Remove with the workspace workflow and workflowVersion objects, once the
-  // core migration owns them.
+  // TODO: remove with the workspace workflow and workflowVersion objects once the core migration owns them.
   const hiddenFieldMetadataIdsOrNames =
     context.hiddenFieldMetadataIdsOrNames ?? [];
 
   return widgets.filter((widget) => {
-    if (
-      !isWidgetEnabledByFeatureFlags({
-        widget,
-        featureFlags: context.featureFlags,
-      })
-    ) {
-      return false;
-    }
-
     if (
       isFieldWidget(widget) &&
       hiddenFieldMetadataIdsOrNames.includes(

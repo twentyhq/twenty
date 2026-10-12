@@ -23,8 +23,7 @@ export class AdminPanelWorkspaceCreditGrantDTO {
   @Field(() => Date, { nullable: true })
   revokedAt: Date | null;
 
-  // Set when this grant carries the unspent part of an earlier one forward, so
-  // the admin panel can show one row per grant instead of one row per period.
+  // Set when this grant carries forward the unspent part of an earlier one
   @Field(() => UUIDScalarType, { nullable: true })
   sourceGrantId: string | null;
 

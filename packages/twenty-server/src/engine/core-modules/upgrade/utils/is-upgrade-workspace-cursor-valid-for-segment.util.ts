@@ -31,8 +31,7 @@ export const isUpgradeWorkspaceCursorValidForSegment = ({
     precedingInstanceSegmentStartCursor--;
   }
 
-  // Later instance commands can already be globally complete without a
-  // workspace-specific cursor when the workspace was provisioned later.
+  // A workspace provisioned later has no cursor for instance commands that were already globally complete.
   return (
     cursorPosition >= precedingInstanceSegmentStartCursor &&
     cursorPosition < startCursor

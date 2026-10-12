@@ -1,6 +1,8 @@
 import { AiChatApiKeyNotConfiguredMessage } from '@/ai/components/AiChatApiKeyNotConfiguredMessage';
 import { AiChatErrorMessage } from '@/ai/components/AiChatErrorMessage';
 import { AiChatQuotaLimitExhaustedMessage } from '@/ai/components/AiChatQuotaLimitExhaustedMessage';
+import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
+import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { getAiChatQuotaExhaustedKind } from '@/ai/utils/getAiChatQuotaExhaustedKind';
@@ -9,15 +11,13 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 type AiChatErrorRendererProps = {
   error: AiChatError;
-  onRetry?: () => void;
 };
 
-export const AiChatErrorRenderer = ({
-  error,
-  onRetry,
-}: AiChatErrorRendererProps) => {
-  // Handled by AIChatNoMoreBillingCreditsBanner, which useHasReachedAiChatCreditsCap
-  // keeps mounted for exactly this error so nothing is swallowed here
+export const AiChatErrorRenderer = ({ error }: AiChatErrorRendererProps) => {
+  const { retryChatMessage } = useRetryChatMessage();
+  const canRetry = useCanRetryCurrentAiChatTurn();
+
+  // Rendered by AiChatNoMoreBillingCreditsBanner, which stays mounted for this error.
   if (isAiChatCreditsExhaustedError(error)) {
     return null;
   }
@@ -26,11 +26,10 @@ export const AiChatErrorRenderer = ({
     return <AiChatApiKeyNotConfiguredMessage />;
   }
 
-  if (isGraphqlErrorOfType(error, AiChatErrorCode.CONTEXT_WINDOW_EXCEEDED)) {
-    return <AiChatErrorMessage error={error} />;
-  }
-
-  if (isGraphqlErrorOfType(error, AiChatErrorCode.CONNECTION_LOST)) {
+  if (
+    isGraphqlErrorOfType(error, AiChatErrorCode.CONTEXT_WINDOW_EXCEEDED) ||
+    isGraphqlErrorOfType(error, AiChatErrorCode.CONNECTION_LOST)
+  ) {
     return <AiChatErrorMessage error={error} />;
   }
 
@@ -39,5 +38,10 @@ export const AiChatErrorRenderer = ({
     return <AiChatQuotaLimitExhaustedMessage error={error} />;
   }
 
-  return <AiChatErrorMessage error={error} onRetry={onRetry} />;
+  return (
+    <AiChatErrorMessage
+      error={error}
+      onRetry={canRetry ? retryChatMessage : undefined}
+    />
+  );
 };

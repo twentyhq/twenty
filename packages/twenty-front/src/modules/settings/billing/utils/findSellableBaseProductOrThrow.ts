@@ -6,8 +6,7 @@ type SellableBaseProductCandidate = {
   metadata: { productKey: BillingProductKey; isLegacy?: string | null };
 };
 
-// Mirrors the server: two live sellable products would make the price we show
-// depend on catalog order, so surface the misconfiguration instead of picking.
+// Mirrors the server: with two live sellable products the shown price would depend on catalog order.
 export const findSellableBaseProductOrThrow = <
   TProduct extends SellableBaseProductCandidate,
 >(

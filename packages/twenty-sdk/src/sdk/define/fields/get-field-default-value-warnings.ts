@@ -1,4 +1,3 @@
-import { type ObjectFieldManifest } from 'twenty-shared/application';
 import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from 'twenty-shared/constants';
 import {
   fieldMetadataDefaultValueFunctionName,
@@ -7,6 +6,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { isString } from '@sniptt/guards';
+
+import { type ObjectFieldManifest } from '@/sdk/define/common/types/loose-shared-types.type';
 
 const isQuotedString = (value: string): boolean =>
   value.length >= 2 && value.startsWith("'") && value.endsWith("'");

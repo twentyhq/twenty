@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useRef } from 'react';
-import { type DropdownDismissEvent } from 'twenty-ui/components';
+import { type DropdownDismissEvent } from 'twenty-ui/components/navigation';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldsConfigurationEmptyGroupDropZone } from '@/page-layout/widgets/fields/components/FieldsConfigurationEmptyGroupDropZone';

@@ -306,7 +306,6 @@ describe('useGetPlaceApiData', () => {
         expect(autocompleteData).toEqual(mockAutocompleteResults);
       });
 
-      // Then get place details for the first result
       const placeDetailsData = await result.current.getPlaceDetailsData(
         'ChIJD7fiBh9u5kcRYJSMaMOCCwQ',
         'test-token',

@@ -1,4 +1,8 @@
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  ObjectOpenRecordIn,
+  ObjectSharingReach,
+} from 'twenty-shared/types';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -62,6 +66,8 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   isUICreatable: true,
   writability: MetadataWritability.OPEN,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
+  sharingReach: ObjectSharingReach.WORKSPACE,
+  readability: MetadataReadability.OPEN,
 };
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({

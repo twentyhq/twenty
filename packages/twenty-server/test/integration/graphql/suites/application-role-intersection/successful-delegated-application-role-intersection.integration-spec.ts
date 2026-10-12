@@ -1,14 +1,14 @@
 import { randomUUID } from 'crypto';
 
 import { checkoutSession } from 'test/integration/graphql/suites/user-session/utils/checkout-session.util';
-import { createWorkspaceBlocklistEntry } from 'test/integration/graphql/suites/application-role-intersection/utils/create-workspace-blocklist-entry.util';
+import {
+  createWorkspaceBlocklistEntry,
+  destroyWorkspaceBlocklistEntry,
+} from 'test/integration/graphql/suites/application-role-intersection/utils/create-workspace-blocklist-entry.util';
 import { deleteBlocklistEntryThroughMcp } from 'test/integration/graphql/suites/application-role-intersection/utils/delete-blocklist-entry-through-mcp.util';
 import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-session/utils/delete-user-from-workspace.util';
 import { findObjectMetadataIdByName } from 'test/integration/graphql/suites/application-role-intersection/utils/find-object-metadata-id-by-name.util';
-import {
-  readWorkspaceDisplayName,
-  workspaceBlocklistEntryExists,
-} from 'test/integration/graphql/suites/application-role-intersection/utils/read-target-state.util';
+import { workspaceBlocklistEntryExists } from 'test/integration/graphql/suites/application-role-intersection/utils/read-target-state.util';
 import {
   cleanupDelegatedApplications,
   type DelegatedApplications,
@@ -19,10 +19,11 @@ import { uploadWorkspaceMemberProfilePicture } from 'test/integration/graphql/su
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
-import { updateWorkspace } from 'test/integration/graphql/utils/update-workspace.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -47,11 +48,9 @@ const findWorkspaceMemberIdByEmail = async (
 describe('A delegated application holding the flag acts like the session', () => {
   let delegatedApplications: DelegatedApplications;
   let viewId: string;
-  let initialWorkspaceDisplayName: string;
 
   beforeAll(async () => {
     delegatedApplications = await setupDelegatedApplications();
-    initialWorkspaceDisplayName = await readWorkspaceDisplayName();
 
     const { data } = await createOneView({
       input: {
@@ -66,10 +65,6 @@ describe('A delegated application holding the flag acts like the session', () =>
   }, 180000);
 
   afterAll(async () => {
-    await updateWorkspace({
-      data: { displayName: initialWorkspaceDisplayName },
-      expectToFail: false,
-    });
     await destroyOneView({ viewId, expectToFail: false });
     await cleanupDelegatedApplications(delegatedApplications);
   }, 120000);
@@ -96,17 +91,22 @@ describe('A delegated application holding the flag acts like the session', () =>
       expect(data.updateWorkspaceMemberSettings).toBe(true);
     });
 
-    it('should update the workspace', async () => {
-      const displayName = `Delegated control workspace ${randomUUID()}`;
-
-      const { data } = await updateWorkspace({
-        data: { displayName },
+    it('should create a workspace-scoped blocklist entry', async () => {
+      const { data, errors } = await createWorkspaceBlocklistEntry({
         token: token(),
-        expectToFail: false,
       });
+      const blocklistEntryId = data?.createBlocklist.id;
 
-      expect(data.updateWorkspace.id).toBeDefined();
-      expect(await readWorkspaceDisplayName()).toBe(displayName);
+      try {
+        expect(errors).toBeUndefined();
+        expect(
+          await workspaceBlocklistEntryExists(blocklistEntryId as string),
+        ).toBe(true);
+      } finally {
+        if (isDefined(blocklistEntryId)) {
+          await destroyWorkspaceBlocklistEntry(blocklistEntryId);
+        }
+      }
     });
 
     it('should update a view', async () => {

@@ -26,7 +26,7 @@ Choose a mode for each state and keep it for the lifetime of the component. Defa
 
 Some components have more than one independent state. For example, [Select](/ui/primitives/input/select#open-state) can have a controlled value and uncontrolled popup visibility. [Menu](/ui/primitives/surfaces/menu#selection-and-submenus) can manage its own visibility while the application controls checkbox and radio selections.
 
-State belongs to the part that manages the interaction. Configure radio selection on [RadioGroup](/ui/primitives/input/radio-group), not on each Radio. Display components such as Text do not have a controlled or uncontrolled mode. [Toast](/ui/components/toast) delegates its visibility and removal to the application.
+State belongs to the part that manages the interaction. Configure radio selection on [RadioGroup](/ui/primitives/input/radio-group), not on each Radio. Display components such as Text do not have a controlled or uncontrolled mode. [Toast](/ui/components/feedback/toast) delegates its visibility and removal to the application.
 
 ## Composition
 
@@ -36,16 +36,17 @@ Slots such as `InputGroup.startElement` and `ListItem.actions` accept React node
 
 ### Popup composition
 
-Twenty UI packages the supporting overlay elements inside each public `Popup` part:
+Some primitives package supporting overlay elements inside their `Popup` part:
 
-| Component     | Included in `Popup`                    | Configure on `Popup`                                     |
-| ------------- | -------------------------------------- | -------------------------------------------------------- |
-| `Select`      | Portal and positioner                  | Placement, anchor, and portal container                  |
-| `Menu`        | Portal and positioner                  | Placement, anchor, portal container, and mounting        |
-| `Popover`     | Portal, positioner, and optional arrow | Placement, anchor, portal container, mounting, and arrow |
-| `AlertDialog` | Portal, backdrop, and viewport         | Size, portal container, mounting, and focus              |
+| Component | Included in `Popup`                    | Configure on `Popup`                                     |
+| --------- | -------------------------------------- | -------------------------------------------------------- |
+| `Select`  | Portal and positioner                  | Placement, anchor, and portal container                  |
+| `Menu`    | Portal and positioner                  | Placement, anchor, portal container, and mounting        |
+| `Popover` | Portal, positioner, and optional arrow | Placement, anchor, portal container, mounting, and arrow |
 
 Place content directly inside these popup parts. Their portal may move the rendered DOM to another container while preserving the component hierarchy and context. See [theming](/ui/theming#scope-an-override) for scoped portal containers.
+
+[Dialog](/ui/primitives/surfaces/dialog) and [AlertDialog](/ui/primitives/surfaces/alert-dialog) expose separate `Portal`, `Backdrop`, `Viewport` and `Popup` parts. Configure mounting and the destination on Portal, overlay appearance on Backdrop and Viewport, and content size and focus on Popup. Each part preserves its own native attributes, ref target and render composition. These dialog APIs are for standalone UI and the Twenty host. Front components use the [SDK host dialog API](/developers/extend/apps/layout/front-components#host-communication-api).
 
 ### Custom components
 
@@ -67,13 +68,17 @@ const HelpButton = ({ ref, ...props }: HelpButtonProps) => (
 export const ImportHelp = () => (
   <Popover.Root>
     <Popover.Trigger render={<HelpButton>Import help</HelpButton>} />
-    <Popover.Popup>
-      <Popover.Title>Import a CSV file</Popover.Title>
-      <Popover.Description>
-        Use a header row to identify your columns.
-      </Popover.Description>
-      <Popover.Close render={<Button>Got it</Button>} />
-    </Popover.Popup>
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close render={<Button>Got it</Button>} />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
   </Popover.Root>
 );
 ```
@@ -88,11 +93,11 @@ Each page includes usage examples, interaction guidance, and a generated API ref
 
 | Family        | Primitives                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Accessibility | [VisibilityHidden](/ui/primitives/accessibility/visibility-hidden)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Accessibility | [VisuallyHidden](/ui/primitives/accessibility/visually-hidden)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | Data display  | [Avatar](/ui/primitives/data-display/avatar), [Chip](/ui/primitives/data-display/chip), [ColorSample](/ui/primitives/data-display/color-sample), [Pill](/ui/primitives/data-display/pill), [Status](/ui/primitives/data-display/status), [Tag](/ui/primitives/data-display/tag)                                                                                                                                                                                                                                                                                               |
-| Feedback      | [Banner](/ui/primitives/feedback/banner), [Loader](/ui/primitives/feedback/loader), [ProgressBar](/ui/primitives/feedback/progress-bar)                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| Feedback      | [Banner](/ui/primitives/feedback/banner), [Loader](/ui/primitives/feedback/loader), [ProgressBar](/ui/primitives/feedback/progress-bar), [ProgressRing](/ui/primitives/feedback/progress-ring)                                                                                                                                                                                                                                                                                                                                                                                |
 | Forms         | [Button](/ui/primitives/input/button), [ButtonGroup](/ui/primitives/input/button-group), [Checkbox](/ui/primitives/input/checkbox), [Field](/ui/primitives/input/field), [Input](/ui/primitives/input/input), [InputGroup](/ui/primitives/input/input-group), [Radio](/ui/primitives/input/radio), [RadioGroup](/ui/primitives/input/radio-group), [SegmentedControl](/ui/primitives/input/segmented-control), [Select](/ui/primitives/input/select), [Slider](/ui/primitives/input/slider), [Switch](/ui/primitives/input/switch), [Textarea](/ui/primitives/input/textarea) |
-| Layout        | [Collapsible](/ui/primitives/layout/collapsible), [HorizontalSeparator](/ui/primitives/layout/horizontal-separator), [ResizeHandle](/ui/primitives/layout/resize-handle), [TextDirectionProvider](/ui/primitives/layout/text-direction-provider)                                                                                                                                                                                                                                                                                                                              |
-| Navigation    | [ClickToActionLink](/ui/primitives/navigation/click-to-action-link), [ListItem](/ui/primitives/navigation/list-item), [Tabs](/ui/primitives/navigation/tabs)                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Layout        | [Collapsible](/ui/primitives/layout/collapsible), [Separator](/ui/primitives/layout/separator), [ResizeHandle](/ui/primitives/layout/resize-handle), [DirectionProvider](/ui/primitives/layout/direction-provider)                                                                                                                                                                                                                                                                                                                                                            |
+| Navigation    | [ListItem](/ui/primitives/navigation/list-item), [Tabs](/ui/primitives/navigation/tabs)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | Surfaces      | [AlertDialog](/ui/primitives/surfaces/alert-dialog), [Card](/ui/primitives/surfaces/card), [Dialog](/ui/primitives/surfaces/dialog), [Menu](/ui/primitives/surfaces/menu), [Popover](/ui/primitives/surfaces/popover), [Tooltip](/ui/primitives/surfaces/tooltip)                                                                                                                                                                                                                                                                                                             |
 | Typography    | [Heading](/ui/primitives/typography/heading), [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip), [Text](/ui/primitives/typography/text)                                                                                                                                                                                                                                                                                                                                                                                                   |

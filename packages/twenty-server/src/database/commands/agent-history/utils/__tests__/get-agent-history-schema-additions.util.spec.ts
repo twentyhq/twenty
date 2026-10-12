@@ -17,7 +17,6 @@ const HISTORY_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.agentTurn.universalIdentifier,
   STANDARD_OBJECTS.agentMessage.universalIdentifier,
   STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
-  STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
 ];
 
 // A workspace about to be migrated: every other standard object is installed.
@@ -165,8 +164,7 @@ describe('getAgentHistorySchemaAdditions', () => {
     const targetIdentifier =
       STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier;
 
-    // The target is provisioned by its own command, later in the upgrade, so
-    // anything emitted here would land on an object that does not exist yet.
+    // The target is provisioned later in the upgrade by its own command, so nothing here may reference it yet
     expect(
       additions.fields
         .filter(

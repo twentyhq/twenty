@@ -7,13 +7,14 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   PageLayoutWidgetVerticalListHeightBehavior,
+  WidgetType,
 } from '../../types';
 import { DEFAULT_WIDGET_SIZE } from '../../constants';
 
 const widget: PageLayoutWidgetManifest = {
   universalIdentifier: 'widget',
   title: 'App',
-  type: 'FRONT_COMPONENT',
+  type: WidgetType.FRONT_COMPONENT,
   configuration: {
     configurationType: 'FRONT_COMPONENT',
     frontComponentUniversalIdentifier: 'component',
@@ -58,11 +59,16 @@ describe('normalizePageLayoutTabManifest', () => {
     const input: PageLayoutTabManifest = {
       ...tab,
       widgets: [
-        { ...widget, heightBehavior: 'FIT_CONTENT' as const },
+        {
+          ...widget,
+          heightBehavior:
+            PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
+        },
         {
           ...widget,
           universalIdentifier: 'second-widget',
-          heightBehavior: 'TAB_VIEWPORT' as const,
+          heightBehavior:
+            PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
           position: {
             layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
             index: 99,
@@ -75,7 +81,7 @@ describe('normalizePageLayoutTabManifest', () => {
     const original = JSON.stringify(input);
     const result = normalizePageLayoutTabManifest({
       pageLayoutTabManifest: input,
-      pageLayoutType: 'RECORD_PAGE',
+      pageLayoutType: PageLayoutType.RECORD_PAGE,
     });
 
     expect(result).toEqual({
@@ -194,7 +200,12 @@ describe('normalizePageLayoutTabManifest', () => {
   });
 
   describe.each<{ name: string; viewport: Partial<PageLayoutWidgetManifest> }>([
-    { name: 'explicit height', viewport: { heightBehavior: 'TAB_VIEWPORT' } },
+    {
+      name: 'explicit height',
+      viewport: {
+        heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+      },
+    },
     {
       name: 'legacy nested height',
       viewport: {
@@ -209,7 +220,7 @@ describe('normalizePageLayoutTabManifest', () => {
     {
       name: 'widget type default',
       viewport: {
-        type: 'TIMELINE',
+        type: WidgetType.TIMELINE,
         configuration: { configurationType: 'TIMELINE' },
       },
     },
@@ -283,14 +294,15 @@ describe('normalizePageLayoutTabManifest', () => {
           widgets: [
             {
               ...widget,
-              type: 'TIMELINE',
+              type: WidgetType.TIMELINE,
               configuration: { configurationType: 'TIMELINE' },
-              heightBehavior: 'FIT_CONTENT',
+              heightBehavior:
+                PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
             },
             {
               ...widget,
               universalIdentifier: 'second-widget',
-              type: 'TIMELINE',
+              type: WidgetType.TIMELINE,
               configuration: { configurationType: 'TIMELINE' },
             },
           ],
@@ -391,7 +403,7 @@ describe('normalizePageLayoutTabManifest', () => {
           ...tab,
           layoutMode: PageLayoutTabLayoutMode.GRID,
         },
-        pageLayoutType: 'STANDALONE_PAGE',
+        pageLayoutType: PageLayoutType.STANDALONE_PAGE,
       }),
     ).toMatchObject({
       status: 'success',
@@ -539,7 +551,13 @@ describe('normalizePageLayoutTabManifest', () => {
           pageLayoutTabManifest: {
             ...tab,
             layoutMode,
-            widgets: [{ ...widget, heightBehavior: 'TAB_VIEWPORT' }],
+            widgets: [
+              {
+                ...widget,
+                heightBehavior:
+                  PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+              },
+            ],
           },
           pageLayoutType: undefined,
         }),

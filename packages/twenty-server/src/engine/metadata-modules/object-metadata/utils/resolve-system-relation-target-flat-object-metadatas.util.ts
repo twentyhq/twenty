@@ -11,9 +11,7 @@ import { type StandardTargetFlatObjectMetadataByNameSingular } from 'src/engine/
 type DefaultRelationStandardObjectNameSingular =
   (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number];
 
-// A default relation object must exist for an object to be created, but an
-// optional one is provisioned by its own upgrade command, which also backfills
-// the objects created before it ran, so its absence must not block creation.
+// An optional target is provisioned and backfilled by its own upgrade command, so its absence must not block creation
 export const resolveSystemRelationTargetFlatObjectMetadatas = ({
   flatObjectMetadataMaps,
 }: Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>): {

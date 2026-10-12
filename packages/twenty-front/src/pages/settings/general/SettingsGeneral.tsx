@@ -13,7 +13,7 @@ import { SettingsSecuritySettings } from '@/settings/security/components/Setting
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconHistory, IconKey, IconSettings2 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 

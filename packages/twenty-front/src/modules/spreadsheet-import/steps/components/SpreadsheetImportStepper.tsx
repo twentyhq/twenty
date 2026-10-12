@@ -3,7 +3,7 @@ import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportData
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { useCallback, useState } from 'react';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';

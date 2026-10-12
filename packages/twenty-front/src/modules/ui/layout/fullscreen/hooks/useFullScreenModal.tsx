@@ -1,5 +1,5 @@
 import { FullScreenModal } from '@/ui/layout/fullscreen/components/FullScreenModal';
-import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 

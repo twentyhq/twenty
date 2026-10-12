@@ -2,8 +2,8 @@
 
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
+import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 
 const OBJECT_METADATA_ID = 'object-metadata-1';
 const PRINCIPAL_IDS = ['principal-1', 'principal-2'];
@@ -82,5 +82,26 @@ describe('buildRecordShareCondition', () => {
 
     expect(sql).toContain('AS "per""son_recordShare"');
     expect(sql).toContain('= "per""son"."id"');
+  });
+
+  it('should match the record id against the grants read once when uncorrelated', () => {
+    const { sql, parameters } = buildRecordShareCondition({
+      tableAlias: 'company',
+      recordShareTableExpression: '"workspace_abc"."recordShare"',
+      objectMetadataId: OBJECT_METADATA_ID,
+      principalIds: ['principal-1'],
+      accessLevels: [RecordShareAccessLevel.READ, RecordShareAccessLevel.FULL],
+      isUncorrelated: true,
+    });
+
+    expect(compileNamedParameters(sql, parameters)).toEqual({
+      text: '"company"."id" = ANY(ARRAY(SELECT "company_recordShare"."recordId" FROM "workspace_abc"."recordShare" AS "company_recordShare" WHERE "company_recordShare"."objectMetadataId" = $1 AND "company_recordShare"."principalId" = ANY($2) AND "company_recordShare"."accessLevel" IN ($3, $4) AND "company_recordShare"."deletedAt" IS NULL))',
+      values: [
+        OBJECT_METADATA_ID,
+        ['principal-1'],
+        RecordShareAccessLevel.READ,
+        RecordShareAccessLevel.FULL,
+      ],
+    });
   });
 });

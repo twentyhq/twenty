@@ -1,9 +1,10 @@
 import { useStore } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { useProcessTableWithoutGroupRecordDrop } from '@/object-record/record-drag/hooks/useProcessTableWithoutGroupRecordDrop';
+import { RecordDragDropContextProvider } from '@/object-record/record-drag/components/RecordDragDropContextProvider';
+import { useProcessRecordWithoutGroupDrop } from '@/object-record/record-drag/hooks/useProcessRecordWithoutGroupDrop';
+import { useTriggerTableWithoutGroupDragAndDropOptimisticUpdate } from '@/object-record/record-drag/hooks/useTriggerTableWithoutGroupDragAndDropOptimisticUpdate';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { RecordTableBodyDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContextProvider';
 import { RecordTableRowDragOverlayContent } from '@/object-record/record-table/record-table-row/components/RecordTableRowDragOverlayContent';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -24,20 +25,24 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
 
   const store = useStore();
 
-  const { processTableWithoutGroupRecordDrop } =
-    useProcessTableWithoutGroupRecordDrop();
+  const { triggerTableWithoutGroupDragAndDropOptimisticUpdate } =
+    useTriggerTableWithoutGroupDragAndDropOptimisticUpdate();
+
+  const { processRecordWithoutGroupDrop } = useProcessRecordWithoutGroupDrop({
+    onBeforeRecordsUpdate: triggerTableWithoutGroupDragAndDropOptimisticUpdate,
+  });
 
   return (
-    <RecordTableBodyDragDropContextProvider
+    <RecordDragDropContextProvider
       getDroppableItemCount={() =>
         store.get(totalNumberOfRecordsToVirtualize) ?? 0
       }
-      onRecordDrop={processTableWithoutGroupRecordDrop}
+      onRecordDrop={processRecordWithoutGroupDrop}
       renderDragOverlay={(source) => (
         <RecordTableRowDragOverlayContent source={source} />
       )}
     >
       {children}
-    </RecordTableBodyDragDropContextProvider>
+    </RecordDragDropContextProvider>
   );
 };

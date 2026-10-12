@@ -23,8 +23,8 @@ export const getMenuListItemProps = <
     endIcon,
     description,
     descriptionPlacement,
-    hotkeys,
-    hotkeysJoinLabel,
+    shortcut,
+    shortcutJoinLabel,
     disabled = false,
     children,
     render,
@@ -53,8 +53,8 @@ export const getMenuListItemProps = <
       endIcon={endIcon}
       description={description}
       descriptionPlacement={descriptionPlacement}
-      hotkeys={hotkeys}
-      hotkeysJoinLabel={hotkeysJoinLabel}
+      shortcut={shortcut}
+      shortcutJoinLabel={shortcutJoinLabel}
       {...getListItemState?.(state)}
     >
       {children}

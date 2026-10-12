@@ -21,16 +21,10 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
+import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/utils/is-update-of-hidden-fields-only.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-
-// An update left with no visible field would only reveal that a hidden one changed
-const isUpdateOfHiddenFieldsOnly = (event: ObjectRecordEvent): boolean => {
-  const { updatedFields } = event.properties as { updatedFields?: string[] };
-
-  return isDefined(updatedFields) && updatedFields.length === 0;
-};
 
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
@@ -50,6 +44,7 @@ export class CallDatabaseEventTriggerJobsJob {
       flatLogicFunctionMaps,
       flatApplicationMaps,
       rolesPermissions,
+      roleIdsWithAllRecordsAccess,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
@@ -59,6 +54,7 @@ export class CallDatabaseEventTriggerJobsJob {
         'flatLogicFunctionMaps',
         'flatApplicationMaps',
         'rolesPermissions',
+        'roleIdsWithAllRecordsAccess',
         'flatRowLevelPermissionPredicateMaps',
         'flatRowLevelPermissionPredicateGroupMaps',
         'flatFieldMetadataMaps',
@@ -129,6 +125,7 @@ export class CallDatabaseEventTriggerJobsJob {
             roleId: applicationRoleId,
             owningApplicationId: application.id,
             rolesPermissions,
+            roleIdsWithAllRecordsAccess,
             flatRowLevelPermissionPredicateMaps,
             flatRowLevelPermissionPredicateGroupMaps,
             flatFieldMetadataMaps,

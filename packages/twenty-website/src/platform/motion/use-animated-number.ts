@@ -6,8 +6,6 @@ import { animatedNumber } from './animated-number';
 import { createAnimationFrameLoop } from './animation-frame-loop';
 import { getReducedMotionSnapshot } from './reduced-motion-snapshot';
 
-// Tweens the displayed integer toward the target on a rAF loop (the
-// pricing cards' price counter). Reduced motion snaps to the target.
 export function useAnimatedNumber(target: number): number {
   const [display, setDisplay] = useState(() => Math.round(target));
   const displayRef = useRef(display);

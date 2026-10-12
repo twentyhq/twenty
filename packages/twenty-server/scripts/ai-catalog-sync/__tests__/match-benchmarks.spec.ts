@@ -65,8 +65,7 @@ describe('buildLookupCandidates', () => {
   });
 
   it('resolves the same way whatever order an undated provider lists twins in', () => {
-    // Nothing in models.dev hits this today, but the resolution must not depend
-    // on the order a third party happens to serialize its models in.
+    // Resolution must not depend on the order a third party serializes its models in
     const undated = {
       'mistral-large-latest': modelsDevModel({ id: 'mistral-large-latest' }),
       'mistral-large-2506': modelsDevModel({ id: 'mistral-large-2506' }),
@@ -94,9 +93,7 @@ describe('buildLookupCandidates', () => {
   });
 
   it('does not offer the undated name once the alias resolves to a release', () => {
-    // The leaderboard's bare `mistral-large` row is the Feb '24 model. Letting
-    // it stand in for the release `-latest` currently points at published a
-    // two-year-old score as the current one.
+    // The bare `mistral-large` row is the Feb '24 model and once published a stale score as current
     const candidates = buildLookupCandidates({
       modelName: 'mistral-large-latest',
       siblingModels: MISTRAL_MODELS,
@@ -107,8 +104,7 @@ describe('buildLookupCandidates', () => {
   });
 
   it('offers no undated spelling of a resolved full-date release either', () => {
-    // The publisher's undated row is whichever snapshot it last measured, which
-    // is the same trap as the bare rolling name in a longer date format.
+    // An undated row is whichever snapshot was last measured, the same trap as a bare rolling name
     const candidates = buildLookupCandidates({
       modelName: 'claude-sonnet-5-latest',
       siblingModels: {
@@ -179,8 +175,7 @@ describe('matchBenchmarks', () => {
   });
 
   it('returns nothing for a matched row carrying no measurement at all', () => {
-    // The publisher lists models it has measured nothing about; matching one
-    // must not produce an entry holding only a timestamp.
+    // Matching an unmeasured model must not produce an entry holding only a timestamp
     expect(
       match(
         'mistral-large-2512',

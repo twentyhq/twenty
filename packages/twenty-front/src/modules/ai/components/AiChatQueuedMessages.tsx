@@ -1,17 +1,17 @@
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 
 import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
-import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
+import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledQueueContainer = styled(StyledAiChatContentContainer)`
   display: flex;
@@ -47,8 +47,8 @@ const StyledQueuedText = styled.span`
 export const AiChatQueuedMessages = () => {
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const agentChatQueuedMessages = useAtomComponentFamilyStateValue(
-    agentChatQueuedMessagesComponentFamilyState,
+  const agentChatQueuedMessages = useAtomFamilyStateValue(
+    agentChatQueuedMessagesFamilyState,
     { threadId: currentAiChatThread },
   );
   const { deleteQueuedMessage } = useDeleteQueuedMessage();
@@ -60,7 +60,10 @@ export const AiChatQueuedMessages = () => {
   return (
     <StyledQueueContainer>
       <StyledQueueLabel>
-        {agentChatQueuedMessages.length} Queued
+        {plural(agentChatQueuedMessages.length, {
+          one: '# Queued',
+          other: '# Queued',
+        })}
       </StyledQueueLabel>
       {agentChatQueuedMessages.map((message) => {
         const textPart = message.parts?.find((part) => part.type === 'text');

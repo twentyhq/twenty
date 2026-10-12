@@ -1,8 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
-
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
@@ -18,7 +15,6 @@ export class WebhookRateLimitService {
 
   constructor(
     private readonly usageLimitSpeedService: UsageLimitSpeedService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -32,16 +28,6 @@ export class WebhookRateLimitService {
     webhookEvents: TWebhookEvent[];
   }): Promise<TWebhookEvent[]> {
     if (webhookEvents.length === 0) {
-      return webhookEvents;
-    }
-
-    const isWebhookRateLimitEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED,
-        workspaceId,
-      );
-
-    if (!isWebhookRateLimitEnabled) {
       return webhookEvents;
     }
 

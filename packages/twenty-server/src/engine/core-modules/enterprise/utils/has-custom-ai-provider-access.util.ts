@@ -8,9 +8,7 @@ type HasCustomAiProviderAccessArgs = {
   seatCount: number;
 };
 
-// Cloud runs a single instance whose seat count spans every customer, so the
-// threshold would always trip; there the plan is enforced per workspace by
-// billing entitlements instead.
+// Cloud's seat count spans every customer, so there billing entitlements enforce the plan per workspace.
 export const hasCustomAiProviderAccess = ({
   isBillingEnabled,
   hasValidEnterprisePlan,

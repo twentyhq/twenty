@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Post,
   Query,
+  Req,
   Res,
   UseFilters,
   UseGuards,
@@ -13,13 +14,15 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { type Response } from 'express';
+import * as Sentry from '@sentry/node';
+import { type Request, type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
+import { getMcpRequestLogFields } from 'src/engine/api/mcp/utils/get-mcp-request-log-fields.util';
 import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
@@ -33,13 +36,23 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
 
 @Controller(ApiPath.Mcp)
 @UseGuards(
   McpAuthGuard,
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   WorkspaceNotSuspendedGuard,
   NoPermissionGuard,
 )
@@ -66,9 +79,21 @@ export class McpCoreController {
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
     @Headers('accept') acceptHeader: string | undefined,
+    @Req() request: Request,
     @Res({ passthrough: true }) res: Response,
     @Query('mode') mode?: string,
   ) {
+    const { method: mcpMethod, toolName: mcpToolName } =
+      getMcpRequestLogFields(body);
+
+    request.mcpMethod = mcpMethod;
+    request.mcpToolName = mcpToolName;
+
+    Sentry.getActiveSpan()?.setAttributes({
+      ...(isDefined(mcpMethod) && { 'mcp.method': mcpMethod }),
+      ...(isDefined(mcpToolName) && { 'mcp.tool_name': mcpToolName }),
+    });
+
     const authContext = {
       workspace,
       userId: user?.id,

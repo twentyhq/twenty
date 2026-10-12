@@ -31,7 +31,7 @@ export const useStripeAppearance = (): Appearance => {
     theme: isDark ? 'night' : 'stripe',
     variables: {
       fontFamily: theme.font.family,
-      fontSizeBase: '14px',
+      fontSizeBase: '13px',
       colorPrimary: toStripeColor(theme.color.blue),
       colorBackground: toStripeColor(theme.background.primary),
       colorText: toStripeColor(theme.font.color.primary),
@@ -40,23 +40,26 @@ export const useStripeAppearance = (): Appearance => {
       colorDanger: toStripeColor(theme.font.color.danger),
       colorIcon: toStripeColor(theme.font.color.tertiary),
       borderRadius: theme.border.radius.md,
-      spacingGridRow: '12px',
+      spacingGridRow: '16px',
+      spacingGridColumn: '8px',
     },
     rules: {
       '.Label': {
-        color: toStripeColor(theme.font.color.secondary),
-        fontWeight: String(theme.font.weight.medium),
-        fontSize: '13px',
-        marginBottom: '6px',
+        color: toStripeColor(theme.font.color.light),
+        fontWeight: String(theme.font.weight.semiBold),
+        fontSize: '11px',
+        marginBottom: '4px',
       },
       '.Input': {
-        backgroundColor: toStripeColor(theme.background.tertiary),
+        backgroundColor: toStripeColor(theme.background.transparent.lighter),
         border: `1px solid ${toStripeColor(theme.border.color.medium)}`,
         boxShadow: 'none',
-        padding: '8px 12px',
+        fontSize: '13px',
+        lineHeight: '16px',
+        padding: '7px 8px',
       },
       '.Input:focus': {
-        border: `1px solid ${toStripeColor(theme.border.color.blue)}`,
+        border: `1px solid ${toStripeColor(theme.color.blue)}`,
         boxShadow: 'none',
       },
       '.Input--invalid': {

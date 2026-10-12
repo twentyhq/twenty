@@ -20,10 +20,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
-import {
-  type AuthContext,
-  type AuthContextUser,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -65,11 +63,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { buildUserSessionRequiredError } from 'src/engine/guards/utils/is-user-session-principal.util';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -135,13 +131,21 @@ export class UserResolver {
   }
 
   @Query(() => UserEntity)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
+    }),
+    NoPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async currentUser(
     @AuthUser() { id: userId }: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace: WorkspaceEntity,
     @AuthImpersonationContext()
-    impersonationContext: AuthContext['impersonationContext'],
+    impersonationContext: RawAuthContext['impersonationContext'],
     @AuthIsUserSession() isUserSession: boolean,
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
@@ -397,14 +401,30 @@ export class UserResolver {
   }
 
   @Mutation(() => UserEntity)
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async deleteUser(@AuthUser() { id: userId }: AuthContextUser) {
     return this.userService.deleteUser(userId);
   }
 
   @Mutation(() => UserWorkspaceEntity)
-  @UseGuards(UserAuthGuard, CustomPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
+    }),
+    CustomPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async deleteUserFromWorkspace(
     @Args('workspaceMemberIdToDelete') workspaceMemberIdToDelete: string,
@@ -450,8 +470,7 @@ export class UserResolver {
     const workspaceMemberToDeleteIsAuthenticatedUser =
       workspaceMemberToDelete.userId === userId;
 
-    // Removing oneself deletes the account when it is the last workspace, so it
-    // is the person's to do rather than an application's.
+    // Removing oneself may delete the account, so only the person can do it, not an application.
     if (workspaceMemberToDeleteIsAuthenticatedUser && !isUserSession) {
       throw buildUserSessionRequiredError();
     }
@@ -484,7 +503,20 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    CustomPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async updateWorkspaceMemberSettings(
     @Args('input') input: UpdateWorkspaceMemberSettingsInput,
@@ -675,8 +707,7 @@ export class UserResolver {
     return user.userWorkspaces;
   }
 
-  // Same rows as workspaces under the entity's own field name, so guarding only
-  // one of the two leaves the other answering.
+  // Same rows as the workspaces field under the entity's own name, so guarding only one leaves the other answering.
   @ResolveField(() => [UserWorkspaceEntity], {
     name: 'userWorkspaces',
     nullable: false,
@@ -724,9 +755,17 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    WorkspaceAuthGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.PROFILE_INFORMATION),
   )
   async updateUserEmail(

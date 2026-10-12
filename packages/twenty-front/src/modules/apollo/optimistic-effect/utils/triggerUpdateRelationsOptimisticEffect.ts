@@ -39,8 +39,7 @@ type TriggerUpdateRelationsOptimisticEffectArgs = {
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 };
 
-// A junction record only exists to link its two sides, so detaching one destroys it.
-// Comments are the one remaining relation that cascades without being a junction.
+// A junction only links its two sides, so detaching destroys it; comments are the one non-junction cascade.
 const shouldCascadeDeleteOnDetach = ({
   targetObjectMetadata,
   junctionObjectMetadataIds,
@@ -422,8 +421,7 @@ const extractTargetRecordsFromRelation = (
   value: RecordGqlConnectionEdgesRequired | RecordGqlNode | null,
   relation: FieldMetadataItemRelation,
 ): RecordGqlNode[] => {
-  // TODO investigate on the root cause of array injection here, should never occurs
-  // Cache might be corrupted somewhere due to ObjectRecord and RecordGqlNode inclusion
+  // TODO: find why arrays get injected here; ObjectRecord/RecordGqlNode mixing may corrupt the cache.
 
   if (!isDefined(value) || isArray(value)) {
     return [];

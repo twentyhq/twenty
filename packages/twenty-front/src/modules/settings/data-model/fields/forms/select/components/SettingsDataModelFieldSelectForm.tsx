@@ -31,7 +31,8 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown, LightButton, LightIconButton } from 'twenty-ui/components';
+import { LightButton, LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconDotsVertical,
   IconPencil,

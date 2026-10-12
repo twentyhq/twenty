@@ -18,7 +18,7 @@ const DEFAULT_AGENT_GQL_FIELDS = `
   isCustom
   applicationId
   modelConfiguration
-  evaluationInputs
+  triggers
   createdAt
   updatedAt
 `;

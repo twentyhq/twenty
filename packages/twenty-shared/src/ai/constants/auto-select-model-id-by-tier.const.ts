@@ -1,8 +1,7 @@
 import { type AiModelTier } from './ai-model-tier.const';
 
-// Stored in agent.modelId and sent by the chat client in place of a concrete
-// `provider/model` id. The fast and smart values predate tiers and live in
-// existing rows, so they keep their original spelling.
+// Stand-ins for a concrete `provider/model` id in agent.modelId and chat requests.
+// The fast and smart values predate tiers and live in stored rows, so they keep their original spelling.
 export const AUTO_SELECT_MODEL_ID_BY_TIER = {
   extraFast: 'default-extra-fast-model',
   fast: 'default-fast-model',

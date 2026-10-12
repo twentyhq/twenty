@@ -132,7 +132,6 @@ describe('DatabaseConfigDriver', () => {
       jest.spyOn(configStorage, 'loadAll').mockRejectedValue(error);
       jest.spyOn(driver['logger'], 'error').mockImplementation();
 
-      // Should not throw because we're handling errors internally now
       await driver.onModuleInit();
 
       expect(driver['logger'].error).toHaveBeenCalled();

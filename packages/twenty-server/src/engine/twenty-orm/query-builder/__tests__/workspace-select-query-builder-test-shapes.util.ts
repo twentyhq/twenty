@@ -83,12 +83,29 @@ export const personTableShape: WorkspaceTableShape = {
   hasDeletedAtColumn: true,
 };
 
+export const ROW_ACCESS_CONDITION =
+  '"person"."companyId" = :rowAccessCompanyId';
+
+export const applyRowAccessCondition = (
+  queryBuilder: WorkspaceSelectQueryBuilder,
+): void => {
+  if (!queryBuilder.markRowLevelPermissionApplied(queryBuilder.alias)) {
+    return;
+  }
+
+  queryBuilder.addRowAccessCondition(ROW_ACCESS_CONDITION, {
+    rowAccessCompanyId: 'company-1',
+  });
+};
+
 export const buildQueryBuilder = ({
   rows = [],
   tableShape = personTableShape,
+  onBeforeExecute = () => undefined,
 }: {
   rows?: Record<string, unknown>[];
   tableShape?: WorkspaceTableShape;
+  onBeforeExecute?: (queryBuilder: WorkspaceSelectQueryBuilder) => void;
 } = {}) => {
   const executedStatements: CompiledStatement[] = [];
 
@@ -103,7 +120,7 @@ export const buildQueryBuilder = ({
     },
     objectRecordsPermissions: {},
     tableShapeByObjectMetadataId: () => companyTableShape,
-    onBeforeExecute: () => undefined,
+    onBeforeExecute,
     formatResult: (records) => records as never,
   });
 

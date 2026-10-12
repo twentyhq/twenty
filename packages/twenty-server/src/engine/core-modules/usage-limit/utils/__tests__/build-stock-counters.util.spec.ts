@@ -3,6 +3,7 @@ import { type StockLimitDefault } from 'src/engine/core-modules/usage-limit/type
 import { buildStockCounters } from 'src/engine/core-modules/usage-limit/utils/build-stock-counters.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const WORKSPACE_ID = 'workspace-1';
 
@@ -17,7 +18,7 @@ const buildLimit = (
   limitKind: 'stock',
   periodCount: 1,
   periodUnit: 'lifetime',
-  meter: 'bytes',
+  unit: UsageUnit.BYTE,
   limitValue: 500,
   burstValue: null,
   isInstanceOverride: false,
@@ -28,7 +29,7 @@ const buildDefault = (
   overrides: Partial<StockLimitDefault> = {},
 ): StockLimitDefault => ({
   spenderType: 'workspace',
-  meter: 'bytes',
+  unit: UsageUnit.BYTE,
   limitValue: 1_000,
   isOverridable: true,
   ...overrides,
@@ -58,7 +59,7 @@ describe('buildStockCounters', () => {
       expect.objectContaining({
         isDefault: true,
         limitValue: 1_000,
-        meter: 'bytes',
+        unit: UsageUnit.BYTE,
         spenderType: 'workspace',
         spenderId: null,
       }),
@@ -89,7 +90,7 @@ describe('buildStockCounters', () => {
 
   it.each([
     { spenderType: 'application' as const, spenderId: 'application-1' },
-    { meter: 'quantity' as const },
+    { unit: UsageUnit.FILE },
   ])(
     'preserves the workspace byte default for a different scope: %j',
     (overrides) => {

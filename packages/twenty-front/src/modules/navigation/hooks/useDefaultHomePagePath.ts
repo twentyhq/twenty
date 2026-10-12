@@ -109,9 +109,7 @@ export const useDefaultHomePagePath = () => {
       return AppPath.Home;
     }
 
-    // Both stores are transiently empty during the post-login window;
-    // deciding the redirect before they are loaded could strand users on a
-    // wrong fallback (/settings/profile or the alphabetically-first object).
+    // Both stores are empty right after login; deciding now would pick a wrong fallback.
     if (!areObjectMetadataItemsLoaded || !areNavigationMenuItemsLoaded) {
       return AppPath.Index;
     }
