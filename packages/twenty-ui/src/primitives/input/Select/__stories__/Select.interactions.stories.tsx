@@ -24,7 +24,7 @@ type Story = StoryObj<typeof SelectExample>;
 
 export const Keyboard: Story = {
   decorators: [ComponentDecorator],
-  args: { defaultValue: 'apple', onValueChange: fn() },
+  args: { defaultValue: 'apple', onValueChange: fn(), onOpenChange: fn() },
   play: async ({ canvasElement, args }) => {
     const trigger = within(canvasElement).getByRole('combobox');
     await userEvent.tab();
@@ -32,6 +32,8 @@ export const Keyboard: Story = {
     await userEvent.keyboard('{ArrowDown}');
     const popup = await waitForSelectPopup(canvasElement);
     const options = within(popup);
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).not.toHaveBeenCalled();
     await waitFor(() =>
       expect(options.getByRole('option', { name: 'Apple' })).toHaveFocus(),
     );
@@ -52,31 +54,39 @@ export const Keyboard: Story = {
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(popup).not.toBeVisible());
     await expect(trigger).toHaveTextContent('Cherry');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(2);
     await expect(trigger).toHaveFocus();
     await userEvent.keyboard(' ');
     await waitForSelectPopup(canvasElement);
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(3);
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(trigger).toHaveAttribute('aria-expanded', 'false'),
     );
     await expect(trigger).toHaveTextContent('Cherry');
     await waitFor(() => expect(trigger).toHaveFocus());
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(4);
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
   },
 };
 
 export const DisabledItem: Story = {
   decorators: [ComponentDecorator],
-  args: { defaultValue: 'apple', onValueChange: fn() },
+  args: { defaultValue: 'apple', onValueChange: fn(), onOpenChange: fn() },
   play: async ({ canvasElement, args }) => {
     const trigger = within(canvasElement).getByRole('combobox');
     await userEvent.click(trigger);
     const popup = await waitForSelectPopup(canvasElement);
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
     const disabled = within(popup).getByRole('option', { name: 'Banana' });
     await expect(disabled).toHaveAttribute('aria-disabled', 'true');
     await userEvent.click(disabled);
     await expect(args.onValueChange).not.toHaveBeenCalled();
     await expect(trigger).toHaveTextContent('Apple');
     await expect(popup).toBeVisible();
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -101,20 +111,29 @@ export const Disabled: Story = {
 
 export const ReadOnly: Story = {
   decorators: [ComponentDecorator],
-  args: { readOnly: true, defaultValue: 'apple', onValueChange: fn() },
+  args: {
+    readOnly: true,
+    defaultValue: 'apple',
+    onValueChange: fn(),
+    onOpenChange: fn(),
+  },
   play: async ({ canvasElement, args }) => {
     const trigger = within(canvasElement).getByRole('combobox');
     await expect(trigger).toHaveAttribute('aria-readonly', 'true');
     await userEvent.click(trigger);
     const popup = await waitForSelectPopup(canvasElement);
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
     await userEvent.click(
       within(popup).getByRole('option', { name: 'Cherry' }),
     );
     await userEvent.keyboard('{End}{Enter}');
     await expect(trigger).toHaveTextContent('Apple');
     await expect(args.onValueChange).not.toHaveBeenCalled();
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeVisible());
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(2);
+    await expect(args.onValueChange).not.toHaveBeenCalled();
   },
 };
 
@@ -142,9 +161,11 @@ export const ControlledValue: Story = {
     const trigger = canvas.getByRole('combobox');
     await userEvent.click(trigger);
     const popup = await waitForSelectPopup(canvasElement);
+    await expect(args.onValueChange).not.toHaveBeenCalled();
     await userEvent.click(
       within(popup).getByRole('option', { name: 'Cherry' }),
     );
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await expect(args.onValueChange).toHaveBeenCalledWith(
       'cherry',
       expect.anything(),
@@ -153,6 +174,7 @@ export const ControlledValue: Story = {
     await expect(trigger).toHaveTextContent('Apple');
     await userEvent.click(canvas.getByRole('button', { name: 'Apply Cherry' }));
     await expect(trigger).toHaveTextContent('Cherry');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -160,17 +182,41 @@ const ControlledOpenExample = (props: SelectRootProps<string, boolean>) => {
   const [open, setOpen] = useState(true);
 
   return (
-    <>
-      <SelectExample
-        {...props}
-        defaultValue="apple"
-        open={open}
-        modal={false}
-      />
-      <Button type="button" onClick={() => setOpen(false)}>
-        Apply closed state
-      </Button>
-    </>
+    <Select.Root
+      {...props}
+      items={SELECT_ITEMS}
+      defaultValue="apple"
+      open={open}
+      modal={false}
+    >
+      <Select.Trigger aria-label="Fruit">
+        <Select.Value placeholder="Choose a fruit" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {SELECT_ITEMS.map(({ value, label }) => (
+              <Select.Item
+                key={value}
+                value={value}
+                disabled={value === 'banana'}
+              >
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+          <Button type="button" onClick={() => setOpen(false)}>
+            Apply closed state
+          </Button>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
   );
 };
 
@@ -180,37 +226,53 @@ export const ControlledOpen: Story = {
   render: (args) => <ControlledOpenExample onOpenChange={args.onOpenChange} />,
   play: async ({ canvasElement, args }) => {
     const popup = await waitForSelectPopup(canvasElement);
+    await expect(args.onOpenChange).not.toHaveBeenCalled();
     await userEvent.click(
       within(popup).getByRole('option', { name: 'Cherry' }),
     );
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
     await expect(args.onOpenChange).toHaveBeenCalledWith(
       false,
       expect.anything(),
     );
     await expect(popup).toBeVisible();
     await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Apply closed state' }),
+      within(canvasElement.ownerDocument.body).getByRole('button', {
+        name: 'Apply closed state',
+      }),
     );
     await waitFor(() => expect(popup).not.toBeVisible());
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
   },
 };
 
 export const MultipleKeyboard: Story = {
   decorators: [ComponentDecorator],
-  args: { multiple: true, defaultValue: ['apple'], onValueChange: fn() },
+  args: {
+    multiple: true,
+    defaultValue: ['apple'],
+    onValueChange: fn(),
+    onOpenChange: fn(),
+  },
   play: async ({ canvasElement, args }) => {
     await userEvent.tab();
     await userEvent.keyboard('{Enter}');
     const popup = await waitForSelectPopup(canvasElement);
+    await expect(args.onValueChange).not.toHaveBeenCalled();
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
     await userEvent.keyboard('{End} ');
     await expect(
       within(popup).getByRole('option', { name: 'Dragon fruit' }),
     ).toHaveAttribute('aria-selected', 'true');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
     await expect(args.onValueChange).toHaveBeenLastCalledWith(
       ['apple', 'dragon-fruit'],
       expect.anything(),
     );
     await userEvent.keyboard(' ');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(2);
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
     await expect(args.onValueChange).toHaveBeenLastCalledWith(
       ['apple'],
       expect.anything(),
@@ -463,7 +525,9 @@ export const ItemCompositionAndTypeahead: Story = {
   },
 };
 
-const ControlledMultipleExample = () => {
+const ControlledMultipleExample = ({
+  onValueChange,
+}: Pick<SelectRootProps<string, true>, 'onValueChange'>) => {
   const [value, setValue] = useState<string[]>(['apple']);
 
   return (
@@ -471,7 +535,10 @@ const ControlledMultipleExample = () => {
       <Select.Root
         multiple
         value={value}
-        onValueChange={setValue}
+        onValueChange={(nextValue, details) => {
+          setValue(nextValue);
+          onValueChange?.(nextValue, details);
+        }}
         items={SELECT_ITEMS}
       >
         <Select.Trigger aria-label="Fruit">
@@ -502,34 +569,42 @@ const ControlledMultipleExample = () => {
 
 export const ControlledMultiple: Story = {
   decorators: [ComponentDecorator],
-  render: () => <ControlledMultipleExample />,
-  play: async ({ canvasElement }) => {
+  args: { onValueChange: fn() },
+  render: (args) => (
+    <ControlledMultipleExample onValueChange={args.onValueChange} />
+  ),
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('combobox'));
     const popup = await waitForSelectPopup(canvasElement);
+    await expect(args.onValueChange).not.toHaveBeenCalled();
     await userEvent.click(
       within(popup).getByRole('option', { name: 'Cherry' }),
     );
     await expect(
       canvas.getByRole('status', { name: 'Selected values', hidden: true }),
     ).toHaveTextContent('apple, cherry');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeVisible());
     await expect(canvas.getByRole('combobox')).toHaveTextContent(
       'Apple, Cherry',
     );
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
   },
 };
 
 export const ClosedTypeahead: Story = {
   decorators: [ComponentDecorator],
-  args: { defaultValue: 'apple' },
-  play: async ({ canvasElement }) => {
+  args: { defaultValue: 'apple', onValueChange: fn(), onOpenChange: fn() },
+  play: async ({ canvasElement, args }) => {
     const trigger = within(canvasElement).getByRole('combobox');
     await userEvent.tab();
     await userEvent.keyboard('c');
     await expect(trigger).toHaveTextContent('Cherry');
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onOpenChange).not.toHaveBeenCalled();
   },
 };
 
@@ -561,10 +636,12 @@ export const EmptyValues: Story = {
     await expect(trigger).toHaveTextContent('Choose a fruit');
     await userEvent.click(trigger);
     const popup = await waitForSelectPopup(canvasElement);
+    await expect(args.onValueChange).not.toHaveBeenCalled();
     await expect(popup.querySelector('[aria-selected="true"]')).toBeNull();
     await userEvent.click(
       within(popup).getByRole('option', { name: 'Cherry' }),
     );
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await expect(args.onValueChange).toHaveBeenLastCalledWith(
       'cherry',
       expect.objectContaining({ reason: 'item-press' }),
@@ -583,13 +660,16 @@ export const EmptyMultiple: Story = {
     await expect(trigger).toHaveTextContent('Choose a fruit');
     await userEvent.click(trigger);
     const popup = await waitForSelectPopup(canvasElement);
+    await expect(args.onValueChange).not.toHaveBeenCalled();
     const cherry = within(popup).getByRole('option', { name: 'Cherry' });
     await userEvent.click(cherry);
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await expect(args.onValueChange).toHaveBeenLastCalledWith(
       ['cherry'],
       expect.objectContaining({ reason: 'item-press' }),
     );
     await userEvent.click(cherry);
+    await expect(args.onValueChange).toHaveBeenCalledTimes(2);
     await expect(args.onValueChange).toHaveBeenLastCalledWith(
       [],
       expect.objectContaining({ reason: 'item-press' }),
@@ -627,6 +707,8 @@ export const CallbackDetails: Story = {
     const trigger = within(canvasElement).getByRole('combobox');
     await userEvent.click(trigger);
     const popup = await waitForSelectPopup(canvasElement);
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).not.toHaveBeenCalled();
     await expect(args.onOpenChange).toHaveBeenLastCalledWith(
       true,
       expect.objectContaining({
@@ -645,6 +727,7 @@ export const CallbackDetails: Story = {
     await expect(
       callbackValueChange.mock.lastCall?.[1].event instanceof MouseEvent,
     ).toBe(true);
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await expect(args.onValueChange).toHaveBeenLastCalledWith(
       'cherry',
       expect.objectContaining({
@@ -655,10 +738,19 @@ export const CallbackDetails: Story = {
       }),
     );
     await waitFor(() => expect(popup).not.toBeVisible());
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(2);
+    await expect(args.onOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'item-press' }),
+    );
     await expect(trigger).toHaveTextContent('Apple');
     await userEvent.click(trigger);
     await waitForSelectPopup(canvasElement);
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(3);
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await userEvent.keyboard('{Escape}');
+    await expect(args.onOpenChange).toHaveBeenCalledTimes(4);
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await expect(args.onOpenChange).toHaveBeenLastCalledWith(
       false,
       expect.objectContaining({

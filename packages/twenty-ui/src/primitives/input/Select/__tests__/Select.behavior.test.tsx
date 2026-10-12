@@ -74,6 +74,7 @@ describe('Select behavior', () => {
 
     expect(trigger).toHaveTextContent('Alpha');
     await user.click(trigger);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(
       true,
       expect.objectContaining({
@@ -86,6 +87,7 @@ describe('Select behavior', () => {
 
     await user.click(await screen.findByRole('option', { name: 'Beta' }));
 
+    expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(onValueChange).toHaveBeenCalledWith(
       'beta',
       expect.objectContaining({
@@ -97,6 +99,11 @@ describe('Select behavior', () => {
     );
     expect(trigger).toHaveTextContent('Beta');
     await waitFor(() => expect(screen.queryByRole('listbox')).toBeNull());
+    expect(onOpenChange).toHaveBeenCalledTimes(2);
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'item-press' }),
+    );
   });
 
   it('keeps a controlled value until the consumer updates it', async () => {
@@ -112,22 +119,24 @@ describe('Select behavior', () => {
     await user.click(trigger);
     await user.click(await screen.findByRole('option', { name: 'Beta' }));
 
+    expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(onValueChange).toHaveBeenCalledWith('beta', expect.any(Object));
     expect(trigger).toHaveTextContent('Alpha');
 
     rerender(<StringSelect value="beta" onValueChange={onValueChange} />);
 
     expect(trigger).toHaveTextContent('Beta');
+    expect(onValueChange).toHaveBeenCalledTimes(1);
   });
 
   it('allows consumers to cancel a value change through event details', async () => {
     const user = userEvent.setup();
+    const onValueChange = vi.fn<
+      NonNullable<SelectRootProps<string>['onValueChange']>
+    >((_value, details) => details.cancel());
 
     render(
-      <StringSelect
-        defaultValue="alpha"
-        onValueChange={(_value, details) => details.cancel()}
-      />,
+      <StringSelect defaultValue="alpha" onValueChange={onValueChange} />,
       { wrapper: ThemedWrapper },
     );
 
@@ -136,6 +145,11 @@ describe('Select behavior', () => {
     await user.click(trigger);
     await user.click(await screen.findByRole('option', { name: 'Beta' }));
 
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange).toHaveBeenCalledWith(
+      'beta',
+      expect.objectContaining({ reason: 'item-press', isCanceled: true }),
+    );
     expect(trigger).toHaveTextContent('Alpha');
   });
 
@@ -178,12 +192,14 @@ describe('Select behavior', () => {
       await screen.findByRole('option', { name: 'Empty string' }),
     );
 
+    expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(onValueChange).toHaveBeenLastCalledWith('', expect.any(Object));
     expect(trigger).toHaveTextContent('Empty string');
 
     await user.click(trigger);
     await user.click(await screen.findByRole('option', { name: 'No value' }));
 
+    expect(onValueChange).toHaveBeenCalledTimes(2);
     expect(onValueChange).toHaveBeenLastCalledWith(null, expect.any(Object));
     expect(trigger).toHaveTextContent('No value');
     expect(trigger).toHaveAttribute('data-placeholder');
@@ -221,12 +237,18 @@ describe('Select behavior', () => {
 
     await user.click(trigger);
     await user.click(await screen.findByRole('option', { name: 'Alpha' }));
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange).toHaveBeenLastCalledWith(
+      ['alpha'],
+      expect.objectContaining({ reason: 'item-press' }),
+    );
     await user.click(await screen.findByRole('option', { name: 'Beta' }));
 
     expect(screen.getByRole('listbox')).toHaveAttribute(
       'aria-multiselectable',
       'true',
     );
+    expect(onValueChange).toHaveBeenCalledTimes(2);
     expect(onValueChange).toHaveBeenLastCalledWith(
       ['alpha', 'beta'],
       expect.objectContaining({ reason: 'item-press' }),
@@ -237,6 +259,7 @@ describe('Select behavior', () => {
 
     await user.click(await screen.findByRole('option', { name: 'Alpha' }));
 
+    expect(onValueChange).toHaveBeenCalledTimes(3);
     expect(onValueChange).toHaveBeenLastCalledWith(
       ['beta'],
       expect.any(Object),
@@ -305,8 +328,10 @@ describe('Select behavior', () => {
         screen.getByRole('option', { name: 'Third letter' }),
       ).toHaveFocus(),
     );
+    expect(onValueChange).not.toHaveBeenCalled();
     await user.keyboard('{Enter}');
 
+    expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(onValueChange).toHaveBeenCalledWith(
       'gamma',
       expect.objectContaining({
