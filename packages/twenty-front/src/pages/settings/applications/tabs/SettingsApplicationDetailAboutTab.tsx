@@ -18,6 +18,7 @@ type SettingsApplicationDetailAboutTabProps = {
   description?: string;
   aboutDescription?: string;
   pricingDescription?: string;
+  billsCredits?: boolean;
   screenshots?: string[];
   author?: string;
   version?: string;
@@ -132,6 +133,7 @@ export const SettingsApplicationDetailAboutTab = ({
   description,
   aboutDescription,
   pricingDescription,
+  billsCredits,
   screenshots,
   author,
   version,
@@ -175,6 +177,7 @@ export const SettingsApplicationDetailAboutTab = ({
           installCount={installCount}
           category={category}
           pricingDescription={pricingDescription}
+          billsCredits={billsCredits}
           developerLinks={developerLinks}
         />
       </StyledSidebarColumn>
