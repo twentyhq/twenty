@@ -8,7 +8,7 @@ export const claimTeamsAssistantRequest = async ({
   client,
   id,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'mutation'>;
   id: string;
 }): Promise<boolean> => {
   const leaseCutoff = new Date(

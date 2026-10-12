@@ -14,6 +14,7 @@ import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-fun
 import { resolveTeamsSenderWorkspaceMemberId } from 'src/features/chat/logic-functions/utils/resolve-teams-sender-workspace-member-id';
 import { runTeamsAssistantAgent } from 'src/features/chat/logic-functions/utils/run-teams-assistant-agent';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
+import { toErrorMessage } from 'src/utils/to-error-message';
 
 export const answerTeamsAssistantRequest = async ({
   request,
@@ -103,8 +104,7 @@ export const answerTeamsAssistantRequest = async ({
 
     return { status: 'answered' };
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unexpected Teams worker error';
+    const errorMessage = toErrorMessage(error);
 
     await sendActivity({
       type: 'message',

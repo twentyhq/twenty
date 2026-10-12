@@ -11,7 +11,7 @@ export const updateTeamsAssistantRequest = async ({
   errorMessage,
   workspaceMemberId,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'mutation'>;
   id: string;
   status?: TeamsAssistantRequestStatus;
   responseText?: string;

@@ -20,8 +20,8 @@ import { importTeamsTranscriptOrScheduleRetry } from 'src/features/transcripts/l
 import { parseTeamsTranscriptResource } from 'src/features/transcripts/logic-functions/utils/parse-teams-transcript-resource';
 import { parseTeamsTranscriptSubscriptionNotifications } from 'src/features/transcripts/logic-functions/utils/parse-teams-transcript-subscription-notifications';
 import { renewTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/renew-teams-transcript-subscription';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
+import { toErrorMessage } from 'src/utils/to-error-message';
 
 type TeamsTranscriptsWebhookResult =
   | {

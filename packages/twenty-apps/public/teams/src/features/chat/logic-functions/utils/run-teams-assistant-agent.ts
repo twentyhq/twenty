@@ -29,6 +29,7 @@ export const runTeamsAssistantAgent = async ({
   });
 
   try {
+    // TODO: send `input` instead of the deprecated `messages` once the app builds against a twenty-sdk that ships it
     const agentResult = await Promise.race([
       runAgent({
         agentUniversalIdentifier: TEAMS_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
