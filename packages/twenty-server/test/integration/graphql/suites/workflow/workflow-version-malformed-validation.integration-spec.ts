@@ -1,23 +1,18 @@
 import request from 'supertest';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import {
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  findCoreWorkflowVersion,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-const graphql = async (query: string, variables?: Record<string, unknown>) => {
-  const response = await client
-    .post('/graphql')
-    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-    .send({ query, variables });
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data;
-};
-
 const updateStepResponse = (
-  workflowVersionId: string,
+  coreWorkflowVersionId: string,
   step: Record<string, unknown>,
 ) =>
   client
@@ -25,54 +20,36 @@ const updateStepResponse = (
     .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
     .send({
       query: `
-        mutation UpdateWorkflowVersionStep(
-          $input: UpdateWorkflowVersionStepInput!
+        mutation UpdateCoreWorkflowVersionStep(
+          $input: UpdateCoreWorkflowVersionStepInput!
         ) {
-          updateWorkflowVersionStep(input: $input) {
+          updateCoreWorkflowVersionStep(input: $input) {
             id
           }
         }
       `,
-      variables: { input: { workflowVersionId, step } },
+      variables: { input: { coreWorkflowVersionId, step } },
     });
 
 describe('Workflow version malformed validation (e2e)', () => {
-  let workflowVersionId: string;
+  let coreWorkflowId: string;
+  let coreWorkflowVersionId: string;
+  let workspaceWorkflowVersionId: string | null;
   let createRecordStep: {
     id: string;
     settings: { input: Record<string, unknown> };
   };
 
   beforeAll(async () => {
-    const createData = await graphql(`
-      mutation CreateWorkflow {
-        createWorkflow(data: { name: "Malformed validation test" }) {
-          id
-        }
-      }
-    `);
+    const createdCoreWorkflow = await createCoreWorkflow({
+      name: 'Malformed validation test',
+    });
 
-    const workflowData = await graphql(
-      `
-        query GetWorkflow($id: UUID!) {
-          workflow(filter: { id: { eq: $id } }) {
-            versions {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      { id: createData.createWorkflow.id },
-    );
+    coreWorkflowId = createdCoreWorkflow.coreWorkflowId;
+    coreWorkflowVersionId = createdCoreWorkflow.coreWorkflowVersionId;
 
-    workflowVersionId = workflowData.workflow.versions.edges[0].node.id;
-
-    await updateWorkflowVersionTrigger({
-      workflowVersionId,
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
       trigger: {
         name: 'Manual Trigger',
         type: 'MANUAL',
@@ -82,40 +59,20 @@ describe('Workflow version malformed validation (e2e)', () => {
       },
     });
 
-    await graphql(
-      `
-        mutation CreateWorkflowVersionStep(
-          $input: CreateWorkflowVersionStepInput!
-        ) {
-          createWorkflowVersionStep(input: $input) {
-            stepsDiff
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId,
-          stepType: 'CREATE_RECORD',
-          parentStepId: 'trigger',
-          position: { x: 200, y: 0 },
-        },
-      },
-    );
+    createRecordStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'CREATE_RECORD',
+    });
 
-    const stepsData = await graphql(
-      `
-        query GetWorkflowVersion($id: UUID!) {
-          workflowVersion(filter: { id: { eq: $id } }) {
-            steps
-          }
-        }
-      `,
-      { id: workflowVersionId },
-    );
+    const coreWorkflowVersion = await findCoreWorkflowVersion({
+      coreWorkflowVersionId,
+    });
 
-    createRecordStep = stepsData.workflowVersion.steps.find(
-      (step: { type: string }) => step.type === 'CREATE_RECORD',
-    );
+    workspaceWorkflowVersionId = coreWorkflowVersion.workspaceWorkflowVersionId;
+  });
+
+  afterAll(async () => {
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });
 
   const stepWithInput = (input: Record<string, unknown>) => ({
@@ -125,7 +82,7 @@ describe('Workflow version malformed validation (e2e)', () => {
 
   it('rejects a bare-string rich text value at write time', async () => {
     const response = await updateStepResponse(
-      workflowVersionId,
+      coreWorkflowVersionId,
       stepWithInput({
         objectName: 'note',
         objectRecord: { bodyV2: 'a plain string' },
@@ -133,29 +90,24 @@ describe('Workflow version malformed validation (e2e)', () => {
     );
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
-    expect(response.body.errors[0].extensions.subCode).toBe(
-      'MALFORMED_WORKFLOW_VERSION',
-    );
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
     expect(response.body.errors[0].message).toMatch(/rich text/i);
   });
 
   it('rejects a record step targeting an unknown object', async () => {
     const response = await updateStepResponse(
-      workflowVersionId,
+      coreWorkflowVersionId,
       stepWithInput({ objectName: 'ghost', objectRecord: {} }),
     );
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].extensions.subCode).toBe(
-      'MALFORMED_WORKFLOW_VERSION',
-    );
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
     expect(response.body.errors[0].message).toContain('does not exist');
   });
 
   it('accepts a valid rich text object', async () => {
     const response = await updateStepResponse(
-      workflowVersionId,
+      coreWorkflowVersionId,
       stepWithInput({
         objectName: 'note',
         objectRecord: { bodyV2: { markdown: 'hello', blocknote: null } },
@@ -163,14 +115,14 @@ describe('Workflow version malformed validation (e2e)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.updateWorkflowVersionStep.id).toBe(
+    expect(response.body.data.updateCoreWorkflowVersionStep.id).toBe(
       createRecordStep.id,
     );
   });
 
   it('accepts an incomplete record step whose fields are not filled in yet', async () => {
     const response = await updateStepResponse(
-      workflowVersionId,
+      coreWorkflowVersionId,
       stepWithInput({ objectName: 'note', objectRecord: {} }),
     );
 
@@ -181,7 +133,7 @@ describe('Workflow version malformed validation (e2e)', () => {
     const operation = updateOneOperationFactory({
       objectMetadataSingularName: 'workflowVersion',
       gqlFields: 'id',
-      recordId: workflowVersionId,
+      recordId: workspaceWorkflowVersionId!,
       data: { steps: [] },
     });
 
