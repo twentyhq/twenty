@@ -10,14 +10,12 @@ import {
 } from 'twenty-shared/types';
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -30,16 +28,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let messageQueueService: jest.Mocked<MessageQueueService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let recordShareStorageService: jest.Mocked<RecordShareStorageService>;
-  const workflowRepository = {
-    find: jest.fn(
-      async (
-        _workspaceId: string,
-        { where }: { where: { id: { value: string[] } } },
-      ) =>
-        where.id.value.map((id) => ({ id, applicationId: 'application-id' })),
-    ),
-  };
-
   const setTriggerMap = (
     listeners: Array<{ workflowId: string; settings: object; type?: unknown }>,
     applicationVersion: string | null = '1.0.1',
@@ -50,6 +38,21 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       flatApplicationMaps: {
         byId: { 'application-id': { version: applicationVersion } },
         idByUniversalIdentifier: {},
+      },
+      flatWorkflowMaps: {
+        byUniversalIdentifier: Object.fromEntries(
+          listeners.map((listener) => [
+            listener.workflowId,
+            { id: listener.workflowId, applicationId: 'application-id' },
+          ]),
+        ),
+        universalIdentifierById: Object.fromEntries(
+          listeners.map((listener) => [
+            listener.workflowId,
+            listener.workflowId,
+          ]),
+        ),
+        universalIdentifiersByApplicationId: {},
       },
       flatRoleMaps: { byUniversalIdentifier: {} },
       workflowAutomatedTriggerMaps: {
@@ -126,10 +129,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowDatabaseEventTriggerListener,
-        {
-          provide: getWorkspaceScopedRepositoryToken(WorkflowEntity),
-          useValue: workflowRepository,
-        },
         {
           provide: WorkspaceOrmManager,
           useValue: workspaceOrmManager,
@@ -470,6 +469,16 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                   },
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
+                flatWorkflowMaps: {
+                  byUniversalIdentifier: {
+                    [workflowId]: {
+                      id: workflowId,
+                      applicationId: 'workflow-application-id',
+                    },
+                  },
+                  universalIdentifierById: { [workflowId]: workflowId },
+                  universalIdentifiersByApplicationId: {},
+                },
                 rolesPermissions: {},
                 roleIdsWithAllRecordsAccess: [],
                 flatRowLevelPermissionPredicateMaps:
@@ -543,6 +552,16 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                   idByUniversalIdentifier: {},
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
+                flatWorkflowMaps: {
+                  byUniversalIdentifier: {
+                    [workflowId]: {
+                      id: workflowId,
+                      applicationId: 'workflow-application-id',
+                    },
+                  },
+                  universalIdentifierById: { [workflowId]: workflowId },
+                  universalIdentifiersByApplicationId: {},
+                },
                 rolesPermissions: {},
                 roleIdsWithAllRecordsAccess: [],
                 flatRowLevelPermissionPredicateMaps:

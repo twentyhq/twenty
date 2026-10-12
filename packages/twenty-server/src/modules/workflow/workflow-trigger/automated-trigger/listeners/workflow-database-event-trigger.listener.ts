@@ -41,9 +41,6 @@ import {
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { resolveAutomationAdmittedRecordIds } from 'src/engine/core-modules/record-share/utils/resolve-automation-admitted-record-ids.util';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
-import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   WorkflowTriggerJob,
   type WorkflowTriggerJobData,
@@ -74,8 +71,6 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
-    @InjectWorkspaceScopedRepository(WorkflowEntity)
-    private readonly workflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -424,24 +419,27 @@ export class WorkflowDatabaseEventTriggerListener {
     workspaceId: string;
     workflowIds: string[];
   }): Promise<Set<string>> {
-    const [workflows, { flatApplicationMaps }] = await Promise.all([
-      this.workflowRepository.find(workspaceId, {
-        where: { id: In(workflowIds) },
-        select: { id: true, applicationId: true },
-      }),
-      this.workspaceCacheService.getOrRecompute(workspaceId, [
+    const { flatWorkflowMaps, flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkflowMaps',
         'flatApplicationMaps',
-      ]),
-    ]);
+      ]);
 
     return new Set(
-      workflows
-        .filter((workflow) => {
-          const application = flatApplicationMaps.byId[workflow.applicationId];
+      workflowIds.filter((workflowId) => {
+        const workflow = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: workflowId,
+          flatEntityMaps: flatWorkflowMaps,
+        });
 
-          return !isDefined(application) || isDefined(application.version);
-        })
-        .map((workflow) => workflow.id),
+        if (!isDefined(workflow)) {
+          return false;
+        }
+
+        const application = flatApplicationMaps.byId[workflow.applicationId];
+
+        return !isDefined(application) || isDefined(application.version);
+      }),
     );
   }
 
