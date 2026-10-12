@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconCoins } from 'twenty-ui/icon';
+import { IconCreditCard } from 'twenty-ui/icon';
 
 import { type PermissionSummaryItem } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
 
@@ -17,7 +17,7 @@ export const buildApplicationBillingSummary = ({
 
   return [
     {
-      Icon: IconCoins,
+      Icon: IconCreditCard,
       label: isNonEmptyString(pricingDescription)
         ? t`Bill credits to your workspace (${pricingDescription})`
         : t`Bill credits to your workspace`,
