@@ -131,6 +131,59 @@ From there use `getConnection(connectedAccountId)` to read the fresh access toke
 
 </Accordion>
 
+<Accordion title="Deduplicate connections" description="Merge a second connection to the same external account">
+
+Every **Add connection** creates a new connection, even when the member authorizes an account that is already connected. Twenty cannot tell two accounts apart on its own, so your app tells it which external account a connection belongs to. Call `deduplicateConnectedAccount` from your on-connect handler with a stable id from the provider's authenticated account lookup:
+
+```ts src/logic-functions/handlers/on-slack-connect-handler.ts
+import {
+  deduplicateConnectedAccount,
+  getConnection,
+} from 'twenty-sdk/logic-function';
+
+export const onSlackConnectHandler = async ({
+  connectedAccountId,
+}: {
+  connectedAccountId: string;
+}) => {
+  const connection = await getConnection(connectedAccountId);
+  const response = await fetch('https://slack.com/api/auth.test', {
+    headers: { Authorization: `Bearer ${connection.accessToken}` },
+  });
+  const { team_id: teamId, user_id: userId } = await response.json();
+
+  const deduplicated = await deduplicateConnectedAccount({
+    connectedAccountId,
+    externalAccountId: `${teamId}:${userId}`,
+  });
+
+  if (deduplicated.wasMerged) {
+    return;
+  }
+
+  // Key any state you keep by deduplicated.connectedAccountId.
+};
+```
+
+The contract:
+
+- Call it as the first statement of your onConnect handler, before any side effect.
+- If `wasMerged` is true, the connection you were called for no longer exists; return immediately. Any state you keep must be keyed by the returned `connectedAccountId`.
+- Reconnect also runs onConnect, so call it there too. If the member reconnected a different account, the returned `connectedAccountId` is a new connection for that account and the original stays flagged as needing reconnect.
+- Available from Twenty 2.47.0 (`engines`).
+
+The lookup in the example runs before the call because the id has to come from the provider; keep it read-only.
+
+When another active connection of the same provider already carries that `externalAccountId`, Twenty copies the new credentials onto it (clearing any **Reconnect needed** flag), keeps its id, name, owner and visibility, and deletes the connection that was just added. Matching is scoped to the workspace and to the visibility: a personal connection only merges into the same member's personal connection, and a personal and a shared connection to the same account stay separate. Since onConnect is queued, the duplicate connection is visible in settings for the few seconds before the handler runs.
+
+Use an id that identifies the account, not a display value: include the organization or team when the provider's user ids are only unique inside it (`${teamId}:${userId}` for Slack), and never use an email address. `externalAccountId` is limited to 512 characters and the optional `handle` to 320; both must be non-empty and free of surrounding whitespace. Pass `handle` to update the label shown in settings.
+
+An app that never calls it keeps the previous behaviour: every Add is a separate connection. Connections created before your app started calling it have no id and are only identified the next time onConnect runs for them, on reconnect. Fathom does not expose a stable account id, so the Fathom app does not deduplicate its connections.
+
+If your app uses it, declare the dependency in your `package.json`: `"engines": { "twenty": ">=2.47.0" }`.
+
+</Accordion>
+
 <Accordion title="Run a logic function on disconnect" description="Clean up when a connection is removed">
 
 Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs right before the `ConnectedAccount` and its token are deleted, so the handler can still call the provider with `getConnection` to release anything the on-connect hook set up remotely.
@@ -278,7 +331,7 @@ const conn =
 const conn = connections.find((c) => c.visibility === 'workspace');
 ```
 
-Multiple connections per (user, provider) are allowed, so the same user can hold "Personal Linear" and "Work Linear" side by side.
+Multiple connections per (user, provider) are allowed for different external accounts, so the same user can hold "Personal Linear" and "Work Linear" side by side. Connecting the same account again is merged into the existing connection when the app [deduplicates](#deduplicate-connections).
 
 </Accordion>
 
