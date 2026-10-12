@@ -76,7 +76,7 @@ export const answerTeamsAssistantRequest = async ({
         id: request.id,
         status: TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
         responseText: TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT,
-      });
+      }).catch(() => undefined);
 
       return { status: 'declined', reason: 'Sender is not a workspace member' };
     }
@@ -99,7 +99,7 @@ export const answerTeamsAssistantRequest = async ({
       id: request.id,
       status: TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
       responseText,
-    });
+    }).catch(() => undefined);
 
     return { status: 'answered' };
   } catch (error) {
@@ -115,7 +115,7 @@ export const answerTeamsAssistantRequest = async ({
       id: request.id,
       status: TEAMS_ASSISTANT_REQUEST_STATUS.FAILED,
       errorMessage,
-    });
+    }).catch(() => undefined);
 
     return { status: 'failed', reason: errorMessage };
   }

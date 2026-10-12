@@ -84,6 +84,7 @@ describe('answerTeamsAssistantRequest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     claimMock.mockResolvedValue(true);
+    updateMock.mockResolvedValue(undefined);
     sendActivityMock.mockResolvedValue({ id: 'activity-1' });
     resolveSenderMock.mockResolvedValue('workspace-member-1');
     runAgentMock.mockResolvedValue('Acme has 3 open deals.');
@@ -106,6 +107,17 @@ describe('answerTeamsAssistantRequest', () => {
         responseText: 'Acme has 3 open deals.',
       }),
     );
+  });
+
+  it('should not send a failure reply when only the status write fails after answering', async () => {
+    updateMock.mockImplementation(async ({ status }) => {
+      if (status === TEAMS_ASSISTANT_REQUEST_STATUS.DONE) {
+        throw new Error('Core API unavailable');
+      }
+    });
+
+    await expect(answer()).resolves.toEqual({ status: 'answered' });
+    expect(sentMessageTexts()).toEqual(['Acme has 3 open deals.']);
   });
 
   it('should not answer a request another execution already claimed', async () => {
