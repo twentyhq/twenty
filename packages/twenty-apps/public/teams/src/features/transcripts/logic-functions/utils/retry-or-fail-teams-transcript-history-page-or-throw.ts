@@ -28,7 +28,10 @@ export const retryOrFailTeamsTranscriptHistoryPageOrThrow = async ({
   }
 
   const stateKvKey = buildTeamsTranscriptHistoryKvKey(job.connectedAccountId);
-  const fatalErrorCode = getTeamsTranscriptHistoryFatalErrorCode(error);
+  const fatalErrorCode = getTeamsTranscriptHistoryFatalErrorCode({
+    error,
+    attempt: job.attempt,
+  });
   const retryDelayMilliseconds =
     TEAMS_TRANSCRIPT_HISTORY_RETRY_DELAYS_MILLISECONDS[job.attempt];
 

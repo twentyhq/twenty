@@ -17,7 +17,7 @@ const listMeetingOccurrenceTranscriptsOrThrow = async ({
   accessToken: string;
   joinWebUrl: string;
   occurrences: TeamsMeetingOccurrence[];
-}): Promise<TeamsOccurrenceTranscript[]> => {
+}): Promise<TeamsOccurrenceTranscript[] | undefined> => {
   try {
     const meeting = await getMeetingByJoinUrl({ accessToken, joinWebUrl });
 
@@ -53,7 +53,7 @@ const listMeetingOccurrenceTranscriptsOrThrow = async ({
       `[teams] skipped a meeting whose transcripts Microsoft Graph could not list: ${toErrorMessage(error)}`,
     );
 
-    return [];
+    return undefined;
   }
 };
 
@@ -63,23 +63,31 @@ export const listTeamsOccurrenceTranscripts = async ({
 }: {
   accessToken: string;
   occurrences: TeamsMeetingOccurrence[];
-}): Promise<TeamsOccurrenceTranscript[]> => {
+}): Promise<{
+  transcripts: TeamsOccurrenceTranscript[];
+  unavailableMeetingCount: number;
+}> => {
   const joinWebUrls = [
     ...new Set(occurrences.map((occurrence) => occurrence.joinWebUrl)),
   ];
   const transcripts: TeamsOccurrenceTranscript[] = [];
+  let unavailableMeetingCount = 0;
 
   for (const joinWebUrl of joinWebUrls) {
-    transcripts.push(
-      ...(await listMeetingOccurrenceTranscriptsOrThrow({
-        accessToken,
-        joinWebUrl,
-        occurrences: occurrences.filter(
-          (occurrence) => occurrence.joinWebUrl === joinWebUrl,
-        ),
-      })),
-    );
+    const meetingTranscripts = await listMeetingOccurrenceTranscriptsOrThrow({
+      accessToken,
+      joinWebUrl,
+      occurrences: occurrences.filter(
+        (occurrence) => occurrence.joinWebUrl === joinWebUrl,
+      ),
+    });
+
+    if (isDefined(meetingTranscripts)) {
+      transcripts.push(...meetingTranscripts);
+    } else {
+      unavailableMeetingCount += 1;
+    }
   }
 
-  return transcripts;
+  return { transcripts, unavailableMeetingCount };
 };
