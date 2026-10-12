@@ -14,6 +14,9 @@ import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { DuplicatedMessageListDTO } from 'src/modules/emailing/dtos/duplicated-message-list.dto';
+import { TriggerAddPeopleToMessageListJobResultDTO } from 'src/modules/emailing/dtos/trigger-add-people-to-message-list-job-result.dto';
+import { TriggerAddPeopleToMessageListJobInput } from 'src/modules/emailing/dtos/trigger-add-people-to-message-list-job.input';
+import { AddPeopleToMessageListJobService } from 'src/modules/emailing/services/add-people-to-message-list-job.service';
 import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
 import { MessageListGraphqlApiExceptionFilter } from 'src/modules/emailing/utils/message-list-graphql-api-exception.filter';
 
@@ -42,6 +45,7 @@ import { MessageListGraphqlApiExceptionFilter } from 'src/modules/emailing/utils
 export class MessageListResolver {
   constructor(
     private readonly messageListDuplicationService: MessageListDuplicationService,
+    private readonly addPeopleToMessageListJobService: AddPeopleToMessageListJobService,
   ) {}
 
   @Mutation(() => DuplicatedMessageListDTO)
@@ -57,5 +61,28 @@ export class MessageListResolver {
       userWorkspaceId,
       authContext,
     });
+  }
+
+  @Mutation(() => TriggerAddPeopleToMessageListJobResultDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
+  async triggerAddPeopleToMessageListJob(
+    @Args('input') input: TriggerAddPeopleToMessageListJobInput,
+  ): Promise<TriggerAddPeopleToMessageListJobResultDTO> {
+    return this.addPeopleToMessageListJobService.triggerAddPeopleToMessageListJob(
+      { ...input, authContext: getWorkspaceAuthContext() },
+    );
   }
 }

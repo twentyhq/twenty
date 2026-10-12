@@ -33,6 +33,7 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
+import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -287,21 +288,24 @@ export class BillingSubscriptionService {
       );
     }
 
-    const hasPaymentMethod = await this.stripeCustomerService.hasPaymentMethod(
-      billingSubscription.stripeCustomerId,
-    );
+    if (!isSendInvoiceSubscription(billingSubscription)) {
+      const hasPaymentMethod =
+        await this.stripeCustomerService.hasPaymentMethod(
+          billingSubscription.stripeCustomerId,
+        );
 
-    if (!hasPaymentMethod) {
-      return {
-        hasPaymentMethod: false,
-        status: undefined,
-        stripeCustomerId: billingSubscription.stripeCustomerId,
-      };
+      if (!hasPaymentMethod) {
+        return {
+          hasPaymentMethod: false,
+          status: undefined,
+          stripeCustomerId: billingSubscription.stripeCustomerId,
+        };
+      }
+
+      await this.stripeCustomerService.ensureDefaultPaymentMethod(
+        billingSubscription.stripeCustomerId,
+      );
     }
-
-    await this.stripeCustomerService.ensureDefaultPaymentMethod(
-      billingSubscription.stripeCustomerId,
-    );
 
     const updatedSubscription =
       await this.stripeSubscriptionService.updateSubscription(

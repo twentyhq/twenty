@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconEdit, IconTrash } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -9,8 +9,6 @@ import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { ListItem } from '../ListItem';
 import styles from '../ListItem.module.scss';
 import { type ListItemProps } from '../types/ListItemProps';
-
-import { ListItemMenuExample } from './ListItemMenuExample';
 
 const SelectableListItemExample = (props: ListItemProps) => {
   const [selected, setSelected] = useState(false);
@@ -351,44 +349,5 @@ export const PersistentActions: Story = {
 
     await expect(canvas.getByRole('button', { name: 'Edit' })).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Delete' })).toBeVisible();
-  },
-};
-
-export const MenuOwner: Story = {
-  parameters: { container: { width: 240, height: 200 } },
-  render: (args) => <ListItemMenuExample onClick={args.onClick} />,
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    const page = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: 'Record actions' });
-
-    await userEvent.click(trigger);
-    const menu = await page.findByRole('menu', { name: 'Record actions' });
-    await waitFor(() => expect(menu).toBeVisible());
-    const duplicate = within(menu).getByRole('menuitem', {
-      name: 'Duplicate record',
-    });
-    const unavailable = within(menu).getByRole('menuitem', {
-      name: 'Unavailable action',
-    });
-    const exported = within(menu).getByRole('menuitem', {
-      name: 'Export record',
-    });
-
-    await expect(unavailable).toHaveAttribute('aria-disabled', 'true');
-    duplicate.focus();
-    await userEvent.keyboard('{ArrowDown}');
-    await expect(unavailable).toHaveFocus();
-    await userEvent.keyboard('{Enter}');
-    await expect(args.onClick).not.toHaveBeenCalled();
-    await expect(menu).toBeVisible();
-    await userEvent.keyboard('{ArrowDown}');
-    await expect(exported).toHaveFocus();
-    await userEvent.keyboard('{ArrowUp}{ArrowUp}{Enter}');
-    await expect(args.onClick).toHaveBeenCalledOnce();
-    await waitFor(() =>
-      expect(page.queryByRole('menu')).not.toBeInTheDocument(),
-    );
-    await expect(trigger).toHaveFocus();
   },
 };

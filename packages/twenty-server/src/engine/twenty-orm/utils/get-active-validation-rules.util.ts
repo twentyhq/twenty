@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
