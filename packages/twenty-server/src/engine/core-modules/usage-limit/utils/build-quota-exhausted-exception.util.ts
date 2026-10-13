@@ -20,6 +20,17 @@ export const buildQuotaExhaustedException = (
     );
   }
 
+  if (exhaustedScope.exhaustedKind === 'memberAllowance') {
+    return new UsageLimitException(
+      'Member credits allowance exhausted for this period',
+      UsageLimitExceptionCode.QUOTA_EXHAUSTED,
+      {
+        userFriendlyMessage: msg`Your AI credits for this period are used up.`,
+        exhaustedScope,
+      },
+    );
+  }
+
   return new UsageLimitException(
     `Usage limit reached for ${exhaustedScope.spenderType}`,
     UsageLimitExceptionCode.QUOTA_EXHAUSTED,

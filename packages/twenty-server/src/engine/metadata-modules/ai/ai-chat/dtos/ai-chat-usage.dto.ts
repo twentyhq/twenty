@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 
 import { type ExhaustedKind } from 'src/engine/core-modules/usage-limit/types/exhausted-kind.type';
+import { AiChatMemberCreditsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-chat-member-credits.dto';
 
 @ObjectType('AiChatUsage')
 export class AiChatUsageDTO {
@@ -15,5 +16,8 @@ export class AiChatUsageDTO {
   periodEnd: Date | null;
 
   @Field(() => String)
-  kind: ExhaustedKind;
+  kind: Exclude<ExhaustedKind, 'memberAllowance'>;
+
+  @Field(() => AiChatMemberCreditsDTO, { nullable: true })
+  memberCredits?: AiChatMemberCreditsDTO | null;
 }

@@ -887,6 +887,7 @@ describe('Usage quota consumption', () => {
         expect(await findRunRefusal({ spenderId, costMicro: 1 })).toBeNull();
         expect(await chargeRun({ spenderId, creditsUsedMicro: 100 })).toEqual({
           exhaustedKind: null,
+          memberCreditsUsedMicro: 0,
         });
         expect(findAdmittedOnFailureAttributes(incrementCounterBySpy)).toEqual([
           {
@@ -937,6 +938,7 @@ describe('Usage quota consumption', () => {
     try {
       expect(await chargeRun({ spenderId, creditsUsedMicro: 100 })).toEqual({
         exhaustedKind: null,
+        memberCreditsUsedMicro: 0,
       });
       expect(await findSpenderCounterKeys(spenderId)).toHaveLength(1);
       expect(findAdmittedOnFailureAttributes(incrementCounterBySpy)).toEqual([

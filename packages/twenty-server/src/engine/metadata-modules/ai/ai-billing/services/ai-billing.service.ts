@@ -1,7 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import { type UsageAdmission } from 'src/engine/core-modules/billing/types/usage-admission.type';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
+import { type MemberCreditsPayer } from 'src/engine/core-modules/usage-limit/types/member-credits-payer.type';
+import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -10,6 +15,7 @@ import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/recor
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/billing-token-usage.type';
+import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { computeAgentTurnUsageFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-agent-turn-usage-from-steps.util';
 import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
@@ -39,16 +45,19 @@ export class AiBillingService {
     workspaceId,
     operationType,
     spenders,
+    memberCreditsPayer,
   }: {
     workspaceId: string;
     operationType: UsageOperationType;
     spenders: UsageSpenders;
-  }): Promise<void> {
-    await this.usageQuotaAdmissionService.assertUsageAllowed({
+    memberCreditsPayer?: MemberCreditsPayer;
+  }): Promise<Pick<UsageAdmission, 'isWorkspaceAllowanceAvailable'>> {
+    return this.usageQuotaAdmissionService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,
       spenders,
+      memberCreditsPayer,
     });
   }
 
@@ -115,7 +124,10 @@ export class AiBillingService {
     operationType: UsageOperationType,
     agentId?: string | null,
     userWorkspaceId?: string | null,
-  ): Promise<void> {
+    memberCreditsPayer?: MemberCreditsPayer,
+  ): Promise<
+    Pick<QuotaDebitResult, 'exhaustedKind' | 'memberCreditsUsedMicro'>
+  > {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
@@ -123,7 +135,7 @@ export class AiBillingService {
       (billingInput.usage.inputTokens ?? 0) +
       (billingInput.usage.outputTokens ?? 0);
 
-    await this.usageLimitQuotaService.charge({
+    return this.usageLimitQuotaService.charge({
       workspaceId,
       events: [
         this.buildAiTokenUsageEvent({
@@ -134,6 +146,7 @@ export class AiBillingService {
           spenders: { userWorkspaceId, agentId },
         }),
       ],
+      memberCreditsPayer,
     });
   }
 
@@ -143,13 +156,15 @@ export class AiBillingService {
     workspaceId,
     operationType,
     spenders,
+    memberCreditsPayer,
   }: {
     modelId: ModelId;
     billingInput: BillingUsageInput;
     workspaceId: string;
     operationType: UsageOperationType;
     spenders: UsageSpenders;
-  }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
+    memberCreditsPayer?: MemberCreditsPayer;
+  }): Promise<StepDebitResult> {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
@@ -157,28 +172,45 @@ export class AiBillingService {
       (billingInput.usage.inputTokens ?? 0) +
       (billingInput.usage.outputTokens ?? 0);
 
-    const { exhaustedKind } =
-      await this.usageLimitQuotaService.debitAheadOfRecord({
-        workspaceId,
-        event: this.buildAiTokenUsageEvent({
-          creditsUsedMicro,
-          totalTokens,
-          modelId,
-          operationType,
-          spenders,
-        }),
-      });
+    const {
+      exhaustedKind,
+      memberCreditsUsedMicro,
+      isMemberAllowanceExhausted,
+      memberAllowancePeriodEnd,
+    } = await this.usageLimitQuotaService.debitAheadOfRecord({
+      workspaceId,
+      event: this.buildAiTokenUsageEvent({
+        creditsUsedMicro,
+        totalTokens,
+        modelId,
+        operationType,
+        spenders,
+      }),
+      memberCreditsPayer,
+    });
 
-    return { hasNoMoreAvailableCredits: exhaustedKind === 'allowance' };
+    // A reached limit is enforced at the next admission, never mid-stream
+    const stopReason = exhaustedKind === 'limit' ? null : exhaustedKind;
+
+    return {
+      hasNoMoreAvailableCredits: isDefined(stopReason),
+      stopReason,
+      memberCreditsUsedMicro,
+      isMemberAllowanceExhausted,
+      memberAllowancePeriodEnd,
+    };
   }
 
   async billNativeWebSearchUsage(
     nativeWebSearchCallCount: number,
     workspaceId: string,
     userWorkspaceId?: string | null,
-  ): Promise<void> {
+    memberCreditsPayer?: MemberCreditsPayer,
+  ): Promise<
+    Pick<QuotaDebitResult, 'exhaustedKind' | 'memberCreditsUsedMicro'>
+  > {
     if (nativeWebSearchCallCount <= 0) {
-      return;
+      return { exhaustedKind: null, memberCreditsUsedMicro: 0 };
     }
 
     const costInDollars =
@@ -189,7 +221,7 @@ export class AiBillingService {
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
     );
 
-    await this.usageLimitQuotaService.charge({
+    return this.usageLimitQuotaService.charge({
       workspaceId,
       events: [
         {
@@ -201,6 +233,7 @@ export class AiBillingService {
           spenders: { userWorkspaceId },
         },
       ],
+      memberCreditsPayer,
     });
   }
 

@@ -45,6 +45,12 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
           response,
           403,
         );
+      case AiExceptionCode.MEMBER_CREDITS_EXHAUSTED:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          429,
+        );
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
       case AiExceptionCode.INVALID_AGENT_INPUT:

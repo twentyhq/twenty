@@ -65,6 +65,7 @@ type StreamAgentChatOptions = {
   modelId?: string;
   messageId?: string;
   fileAttachments?: AiChatFileAttachment[];
+  isSenderImpersonated?: boolean;
 };
 
 type StreamJobThread = Pick<
@@ -142,6 +143,7 @@ export class AgentChatStreamingService {
     modelId,
     messageId,
     fileAttachments,
+    isSenderImpersonated,
   }: StreamAgentChatOptions): Promise<
     | { queued: false; streamId: string; messageId: string; turnId: string }
     | { queued: true; messageId: string }
@@ -225,6 +227,7 @@ export class AgentChatStreamingService {
           lastUserMessageText: text,
           turnId: savedUserMessage.turnId,
           messageId: savedUserMessage.id,
+          isSenderImpersonated,
         });
 
         return {
@@ -316,12 +319,14 @@ export class AgentChatStreamingService {
     workspaceMemberId,
     workspace,
     modelId,
+    isSenderImpersonated,
   }: {
     threadId: string;
     userWorkspaceId: string;
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
     modelId?: string;
+    isSenderImpersonated?: boolean;
   }): Promise<{ streamId: string; messageId: string | null; turnId: string }> {
     const workspaceId = workspace.id;
     const thread = await this.threadService.getWritableThread({
@@ -415,6 +420,7 @@ export class AgentChatStreamingService {
           lastUserMessageText: textPart?.text ?? '',
           turnId,
           messageId: message?.id,
+          isSenderImpersonated,
         });
 
         return { streamId, messageId: message?.id ?? null, turnId };
@@ -431,6 +437,7 @@ export class AgentChatStreamingService {
     streamId,
     modelId,
     messageId,
+    isSenderImpersonated,
   }: {
     messageId: string;
     threadId: string;
@@ -440,6 +447,7 @@ export class AgentChatStreamingService {
     turnId: string;
     streamId: string;
     modelId?: string;
+    isSenderImpersonated?: boolean;
   }): Promise<void> {
     const thread = await this.threadRepository.findOneOrFail(workspace.id, {
       where: { id: threadId },
@@ -460,6 +468,7 @@ export class AgentChatStreamingService {
       lastUserMessageText: '',
       turnId,
       messageId,
+      isSenderImpersonated,
     });
   }
 

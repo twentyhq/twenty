@@ -120,7 +120,12 @@ const buildResolver = () => {
         validateModelAvailability: jest.fn(),
       } as never,
       threadService,
-      { assertAiExecutionAllowed: jest.fn() } as never,
+      {
+        assertAiExecutionAllowed: jest
+          .fn()
+          .mockResolvedValue({ isWorkspaceAllowanceAvailable: null }),
+      } as never,
+      { isWorkspaceCreatorUserWorkspace: jest.fn() } as never,
     ),
     threadLifecycle,
     { findLatestTurnError: jest.fn().mockResolvedValue(null) } as never,

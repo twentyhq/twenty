@@ -20,6 +20,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
+import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -38,6 +40,7 @@ import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
+import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import {
   AiException,
@@ -199,12 +202,25 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthImpersonationContext()
+    impersonationContext?: RawAuthContext['impersonationContext'],
   ): Promise<SendChatMessageResultDTO> {
-    await this.threadService.createThreadIfMissing({
-      threadId,
-      workspaceMemberId,
-      workspaceId: workspace.id,
-    });
+    // A setup thread id is public and its turns are workspace-funded, so only
+    // the workspace setup chat creates it
+    const isCallerWorkspaceSetupThreadId =
+      threadId ===
+      buildWorkspaceSetupChatThreadId({
+        workspaceId: workspace.id,
+        userWorkspaceId,
+      });
+
+    if (!isCallerWorkspaceSetupThreadId) {
+      await this.threadService.createThreadIfMissing({
+        threadId,
+        workspaceMemberId,
+        workspaceId: workspace.id,
+      });
+    }
 
     const sentMessage = await this.sendChatMessageToThread({
       threadId,
@@ -216,6 +232,9 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspaceMemberId,
       workspace,
+      isSenderImpersonated: isNonEmptyString(
+        impersonationContext?.impersonatorUserWorkspaceId,
+      ),
     });
 
     const mentionedParticipantWorkspaceMemberIds =
@@ -239,6 +258,7 @@ export class AgentChatResolver {
     userWorkspaceId,
     workspaceMemberId,
     workspace,
+    isSenderImpersonated,
   }: {
     threadId: string;
     text: string;
@@ -249,14 +269,24 @@ export class AgentChatResolver {
     userWorkspaceId: string;
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
+    isSenderImpersonated: boolean;
   }): Promise<SendChatMessageResultDTO> {
-    const thread = await this.turnPreflightService.assertCanStartChatTurn({
-      threadId,
-      modelId,
-      userWorkspaceId,
-      workspaceMemberId,
-      workspace,
-    });
+    const { thread, isWorkspaceAllowanceAvailable } =
+      await this.turnPreflightService.assertCanStartChatTurn({
+        threadId,
+        modelId,
+        userWorkspaceId,
+        workspaceMemberId,
+        workspace,
+        memberCreditsPayer:
+          await this.turnPreflightService.findRequestMemberCreditsPayer({
+            threadId,
+            workspaceId: workspace.id,
+            userWorkspaceId,
+            workspaceMemberId,
+            isSenderImpersonated,
+          }),
+      });
 
     if (isDefined(thread.deletedAt)) {
       await this.agentChatService.restoreThread({
@@ -285,7 +315,11 @@ export class AgentChatResolver {
         event: { type: 'queue-updated' },
       });
 
-      return { messageId: queuedMessage.id, queued: true };
+      return {
+        messageId: queuedMessage.id,
+        queued: true,
+        isWorkspaceAllowanceAvailable,
+      };
     }
 
     const result = await this.agentChatStreamingService.streamAgentChat({
@@ -298,6 +332,7 @@ export class AgentChatResolver {
       text,
       messageId,
       fileAttachments: fileAttachments ?? undefined,
+      isSenderImpersonated,
     });
 
     if (result.queued) {
@@ -307,7 +342,11 @@ export class AgentChatResolver {
         event: { type: 'queue-updated' },
       });
 
-      return { messageId: result.messageId, queued: true };
+      return {
+        messageId: result.messageId,
+        queued: true,
+        isWorkspaceAllowanceAvailable,
+      };
     }
 
     tagAiChatStreamScope({
@@ -321,6 +360,7 @@ export class AgentChatResolver {
       messageId: result.messageId,
       queued: false,
       streamId: result.streamId,
+      isWorkspaceAllowanceAvailable,
     };
   }
 
@@ -332,14 +372,29 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthImpersonationContext()
+    impersonationContext?: RawAuthContext['impersonationContext'],
   ): Promise<SendChatMessageResultDTO> {
-    await this.turnPreflightService.assertCanStartChatTurn({
-      threadId,
-      modelId,
-      userWorkspaceId,
-      workspaceMemberId,
-      workspace,
-    });
+    const isSenderImpersonated = isNonEmptyString(
+      impersonationContext?.impersonatorUserWorkspaceId,
+    );
+
+    const { isWorkspaceAllowanceAvailable } =
+      await this.turnPreflightService.assertCanStartChatTurn({
+        threadId,
+        modelId,
+        userWorkspaceId,
+        workspaceMemberId,
+        workspace,
+        memberCreditsPayer:
+          await this.turnPreflightService.findRequestMemberCreditsPayer({
+            threadId,
+            workspaceId: workspace.id,
+            userWorkspaceId,
+            workspaceMemberId,
+            isSenderImpersonated,
+          }),
+      });
 
     const result = await this.agentChatStreamingService.retryLastFailedTurn({
       threadId,
@@ -347,6 +402,7 @@ export class AgentChatResolver {
       workspaceMemberId,
       workspace,
       modelId,
+      isSenderImpersonated,
     });
 
     tagAiChatStreamScope({
@@ -360,6 +416,7 @@ export class AgentChatResolver {
       messageId: result.messageId,
       queued: false,
       streamId: result.streamId,
+      isWorkspaceAllowanceAvailable,
     };
   }
 

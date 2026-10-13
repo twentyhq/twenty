@@ -6,6 +6,7 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { BillingSubscriptionItemCapResolver } from 'src/engine/core-modules/usage-limit/billing-subscription-item-cap.resolver';
+import { MemberCreditsCounterCheckService } from 'src/engine/core-modules/usage-limit/services/member-credits-counter-check.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
@@ -49,6 +50,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageModule,
   ],
   providers: [
+    MemberCreditsCounterCheckService,
     UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitStockService,
@@ -71,6 +73,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(LogicFunctionEntity),
   ],
   exports: [
+    MemberCreditsCounterCheckService,
     UsageLimitEntitlementService,
     UsageLimitService,
     UsageLimitQuotaService,

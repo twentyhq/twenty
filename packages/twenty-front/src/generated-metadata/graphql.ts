@@ -217,11 +217,21 @@ export enum AggregateOperations {
   SUM = 'SUM'
 }
 
+export type AiChatMemberCredits = {
+  __typename?: 'AiChatMemberCredits';
+  consumedValue?: Maybe<Scalars['BigInt']['output']>;
+  fallback: MemberCreditsFallback;
+  isUsingWorkspaceCredits: Scalars['Boolean']['output'];
+  limitValue: Scalars['BigInt']['output'];
+  periodEnd: Scalars['DateTime']['output'];
+};
+
 export type AiChatUsage = {
   __typename?: 'AiChatUsage';
   consumedValue?: Maybe<Scalars['BigInt']['output']>;
   kind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];
+  memberCredits?: Maybe<AiChatMemberCredits>;
   periodEnd?: Maybe<Scalars['DateTime']['output']>;
 };
 
@@ -6307,6 +6317,7 @@ export type SearchField = {
 
 export type SendChatMessageResult = {
   __typename?: 'SendChatMessageResult';
+  isWorkspaceAllowanceAvailable?: Maybe<Scalars['Boolean']['output']>;
   mentionedParticipantWorkspaceMemberIds?: Maybe<Array<Scalars['UUID']['output']>>;
   messageId?: Maybe<Scalars['String']['output']>;
   queued: Scalars['Boolean']['output'];

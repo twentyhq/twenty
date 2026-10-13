@@ -34,6 +34,7 @@ export enum AiExceptionCode {
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
   TOOL_CALL_RESOLUTION_FORBIDDEN = 'TOOL_CALL_RESOLUTION_FORBIDDEN',
   THREAD_AWAITING_ANSWER = 'THREAD_AWAITING_ANSWER',
+  MEMBER_CREDITS_EXHAUSTED = 'MEMBER_CREDITS_EXHAUSTED',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -96,6 +97,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`You are not allowed to answer this request.`;
     case AiExceptionCode.THREAD_AWAITING_ANSWER:
       return msg`This conversation is waiting on an earlier request. Send your message once it is answered or done.`;
+    case AiExceptionCode.MEMBER_CREDITS_EXHAUSTED:
+      return msg`Your AI credits for this period are used up.`;
     default:
       assertUnreachable(code);
   }

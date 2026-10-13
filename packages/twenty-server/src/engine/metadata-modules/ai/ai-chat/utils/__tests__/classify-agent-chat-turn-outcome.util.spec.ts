@@ -8,6 +8,7 @@ const baseTurn = {
   isAborted: false,
   isAwaitingUserAnswer: false,
   outOfCredits: false,
+  outOfMemberCredits: false,
 };
 
 describe('classifyAgentChatTurnOutcome', () => {
@@ -62,6 +63,22 @@ describe('classifyAgentChatTurnOutcome', () => {
         outOfCredits: true,
       }),
     ).toEqual({ kind: 'failed', failurePhase: 'credits_exhausted' });
+  });
+
+  it('separates a member running out of their own credits from the workspace running out', () => {
+    expect(
+      classifyAgentChatTurnOutcome({
+        ...baseTurn,
+        hasText: false,
+        outOfMemberCredits: true,
+      }),
+    ).toEqual({ kind: 'failed', failurePhase: 'member_credits_exhausted' });
+  });
+
+  it('still counts a turn that produced text before the member credits ran out as answered', () => {
+    expect(
+      classifyAgentChatTurnOutcome({ ...baseTurn, outOfMemberCredits: true }),
+    ).toEqual({ kind: 'completed', outcome: 'answered' });
   });
 
   it('still counts a turn that produced text before credits ran out as answered', () => {

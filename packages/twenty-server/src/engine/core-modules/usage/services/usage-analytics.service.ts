@@ -271,6 +271,64 @@ export class UsageAnalyticsService {
     return Number(rows[0]?.total ?? 0);
   }
 
+  async getMemberCreditsUsedMicroForSlice({
+    workspaceId,
+    userWorkspaceId,
+    sliceStart,
+    sliceEnd,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    sliceStart: Date;
+    sliceEnd: Date;
+  }): Promise<number> {
+    const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
+      `SELECT sum(memberCreditsUsedMicro) AS total
+       FROM usageEvent
+       WHERE workspaceId = {workspaceId:String}
+         AND timestamp >= {sliceStart:DateTime64(3)}
+         AND timestamp < {sliceEnd:DateTime64(3)}
+         AND userWorkspaceId = {userWorkspaceId:String}`,
+      {
+        workspaceId,
+        userWorkspaceId,
+        sliceStart: formatDateTimeForClickHouse(sliceStart),
+        sliceEnd: formatDateTimeForClickHouse(sliceEnd),
+      },
+    );
+
+    return Number(rows[0]?.total ?? 0);
+  }
+
+  async getMemberCreditsUsedMicroByMemberForSlice({
+    workspaceId,
+    sliceStart,
+    sliceEnd,
+  }: {
+    workspaceId: string;
+    sliceStart: Date;
+    sliceEnd: Date;
+  }): Promise<Map<string, number>> {
+    const rows =
+      await this.clickHouseService.selectOrThrow<MemberCreditsByKeyRowMicro>(
+        `SELECT userWorkspaceId AS key, sum(memberCreditsUsedMicro) AS total
+         FROM usageEvent
+         WHERE workspaceId = {workspaceId:String}
+           AND timestamp >= {sliceStart:DateTime64(3)}
+           AND timestamp < {sliceEnd:DateTime64(3)}
+           AND userWorkspaceId != ''
+         GROUP BY userWorkspaceId
+         HAVING total != 0`,
+        {
+          workspaceId,
+          sliceStart: formatDateTimeForClickHouse(sliceStart),
+          sliceEnd: formatDateTimeForClickHouse(sliceEnd),
+        },
+      );
+
+    return new Map(rows.map((row) => [row.key, Number(row.total)]));
+  }
+
   async getAdminAiUsageByWorkspace(params: {
     periodStart: Date;
     periodEnd: Date;

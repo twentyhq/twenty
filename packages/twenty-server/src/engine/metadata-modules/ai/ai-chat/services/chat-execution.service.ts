@@ -31,7 +31,9 @@ import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-mo
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { type MemberCreditsPayer } from 'src/engine/core-modules/usage-limit/types/member-credits-payer.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { clampMemberCreditsUsedMicro } from 'src/engine/core-modules/usage/utils/clamp-member-credits-used-micro.util';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
@@ -62,6 +64,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import {
@@ -111,6 +114,7 @@ import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/g
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
 import { createTurnUsageRecorder } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-usage-recorder.util';
+import { findMemberCreditsSpillNoticeRenewsAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-member-credits-spill-notice-renews-at.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -127,12 +131,16 @@ export type ChatExecutionOptions = {
   modelId?: string;
   abortSignal: AbortSignal;
   conversationSizeTokens: number;
+  memberCreditsPayer: MemberCreditsPayer | null;
+  isMemberAllowanceAvailableAtAdmission: boolean | null;
+  onMemberCreditsExhausted: (renewsAt: Date) => void;
 };
 
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
-  hasNoMoreAvailableCredits: () => boolean;
+  getStopReason: () => StepDebitResult['stopReason'];
+  getMemberAllowancePeriodEnd: () => Date | null;
   getStreamError: () => unknown;
 };
 
@@ -172,6 +180,9 @@ export class ChatExecutionService {
     modelId,
     abortSignal,
     conversationSizeTokens,
+    memberCreditsPayer,
+    isMemberAllowanceAvailableAtAdmission,
+    onMemberCreditsExhausted,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const getAuthorization = createTurnAuthorizer({
       authorize: () =>
@@ -461,7 +472,9 @@ export class ChatExecutionService {
 
     const modelMessages = pruningResult.messages;
 
-    let hasNoMoreAvailableCredits = false;
+    let stopReason: StepDebitResult['stopReason'] = null;
+    let memberAllowancePeriodEnd: Date | null = null;
+    let hasNotifiedMemberCreditsExhausted = false;
     const streamStartedAt = performance.now();
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
@@ -470,8 +483,10 @@ export class ChatExecutionService {
 
     const emitTurnUsageEvent = async ({
       steps,
+      memberCreditsUsedMicro,
     }: {
       steps: StepResult<ToolSet>[];
+      memberCreditsUsedMicro: number;
     }) => {
       const usage = steps.reduce(
         (totals, step) => ({
@@ -501,12 +516,17 @@ export class ChatExecutionService {
         UsageOperationType.AI_CHAT_TOKEN,
         null,
         userWorkspaceId,
+        clampMemberCreditsUsedMicro({
+          memberCreditsUsedMicro,
+          creditsUsedMicro,
+        }),
       );
 
       void this.aiBillingService.billNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,
         userWorkspaceId,
+        memberCreditsPayer ?? undefined,
       );
 
       const modelAttr = { model: registeredModel.modelId };
@@ -556,7 +576,7 @@ export class ChatExecutionService {
         isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
         endsOnPausingToolCall({ steps: step.steps }) ||
         hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
-        hasNoMoreAvailableCredits,
+        isDefined(stopReason),
       ...buildAiTelemetry({
         functionId: isWorkspaceSetupThread
           ? AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID
@@ -628,25 +648,37 @@ export class ChatExecutionService {
           bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
         });
 
-        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-          await turnUsageRecorder.trackStepDebit(
-            step,
-            this.aiBillingService.decrementAndCheckAvailableCredits({
-              modelId: registeredModel.modelId,
-              billingInput: {
-                usage: step.usage,
-                cacheCreationTokens: extractCacheCreationTokens(
-                  step.providerMetadata,
-                ),
-              },
-              workspaceId: workspace.id,
-              operationType: UsageOperationType.AI_CHAT_TOKEN,
-              spenders: { userWorkspaceId },
-            }),
-          );
+        const stepDebit = await turnUsageRecorder.trackStepDebit(
+          step,
+          this.aiBillingService.decrementAndCheckAvailableCredits({
+            modelId: registeredModel.modelId,
+            billingInput: {
+              usage: step.usage,
+              cacheCreationTokens: extractCacheCreationTokens(
+                step.providerMetadata,
+              ),
+            },
+            workspaceId: workspace.id,
+            operationType: UsageOperationType.AI_CHAT_TOKEN,
+            spenders: { userWorkspaceId },
+            memberCreditsPayer: memberCreditsPayer ?? undefined,
+          }),
+        );
 
-        if (stepHasNoMoreAvailableCredits) {
-          hasNoMoreAvailableCredits = true;
+        stopReason ??= stepDebit.stopReason;
+        memberAllowancePeriodEnd =
+          stepDebit.memberAllowancePeriodEnd ?? memberAllowancePeriodEnd;
+
+        const memberCreditsSpillRenewsAt = findMemberCreditsSpillNoticeRenewsAt(
+          { stepDebit, isMemberAllowanceAvailableAtAdmission },
+        );
+
+        if (
+          isDefined(memberCreditsSpillRenewsAt) &&
+          !hasNotifiedMemberCreditsExhausted
+        ) {
+          hasNotifiedMemberCreditsExhausted = true;
+          onMemberCreditsExhausted(memberCreditsSpillRenewsAt);
         }
 
         this.logger.log(
@@ -717,6 +749,7 @@ export class ChatExecutionService {
             userWorkspaceId,
             agentId: null,
             operationType: UsageOperationType.AI_CHAT_TOKEN,
+            memberCreditsPayer: memberCreditsPayer ?? undefined,
           },
         });
       },
@@ -754,7 +787,8 @@ export class ChatExecutionService {
     return {
       stream,
       modelConfig,
-      hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
+      getStopReason: () => stopReason,
+      getMemberAllowancePeriodEnd: () => memberAllowancePeriodEnd,
       getStreamError: () => lastUnderlyingStreamError,
     };
   }

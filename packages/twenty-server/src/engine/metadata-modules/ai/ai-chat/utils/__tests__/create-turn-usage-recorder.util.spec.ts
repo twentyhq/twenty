@@ -2,7 +2,10 @@ import { createTurnUsageRecorder } from 'src/engine/metadata-modules/ai/ai-chat/
 
 type TestStep = { stepNumber: number };
 
-type TestStepDebitResult = { hasNoMoreAvailableCredits: boolean };
+type TestStepDebitResult = {
+  hasNoMoreAvailableCredits: boolean;
+  memberCreditsUsedMicro: number;
+};
 
 const createDeferredDebit = () => {
   let settleDebit: (result: TestStepDebitResult) => void = () => {};
@@ -13,7 +16,12 @@ const createDeferredDebit = () => {
   return { debitPromise, settleDebit };
 };
 
-const debited = { hasNoMoreAvailableCredits: false };
+const debited = { hasNoMoreAvailableCredits: false, memberCreditsUsedMicro: 0 };
+
+const debitedWithMemberShare = (memberCreditsUsedMicro: number) => ({
+  hasNoMoreAvailableCredits: false,
+  memberCreditsUsedMicro,
+});
 
 describe('createTurnUsageRecorder', () => {
   it('records the debited steps once across success, abort and error exits', async () => {
@@ -30,6 +38,7 @@ describe('createTurnUsageRecorder', () => {
     expect(recordTurn).toHaveBeenCalledTimes(1);
     expect(recordTurn).toHaveBeenCalledWith({
       steps: [{ stepNumber: 0 }, { stepNumber: 1 }],
+      memberCreditsUsedMicro: 0,
     });
   });
 
@@ -47,40 +56,6 @@ describe('createTurnUsageRecorder', () => {
     await Promise.all([abortExit, errorExit]);
 
     expect(recordTurn).toHaveBeenCalledTimes(1);
-  });
-
-  it('waits for pending step debits before recording', async () => {
-    const recordTurn = jest.fn().mockResolvedValue(undefined);
-    const recorder = createTurnUsageRecorder<TestStep>({ recordTurn });
-    const { debitPromise, settleDebit } = createDeferredDebit();
-
-    void recorder.trackStepDebit({ stepNumber: 0 }, debitPromise);
-
-    const recording = recorder.recordOnce();
-
-    await jest.runAllTimersAsync();
-    expect(recordTurn).not.toHaveBeenCalled();
-
-    settleDebit(debited);
-    await recording;
-
-    expect(recordTurn).toHaveBeenCalledWith({ steps: [{ stepNumber: 0 }] });
-  });
-
-  it('records a step whose debit failed', async () => {
-    const recordTurn = jest.fn().mockResolvedValue(undefined);
-    const recorder = createTurnUsageRecorder<TestStep>({ recordTurn });
-
-    await expect(
-      recorder.trackStepDebit(
-        { stepNumber: 0 },
-        Promise.reject(new Error('Redis unavailable')),
-      ),
-    ).rejects.toThrow('Redis unavailable');
-
-    await recorder.recordOnce();
-
-    expect(recordTurn).toHaveBeenCalledWith({ steps: [{ stepNumber: 0 }] });
   });
 
   it('records nothing when no step was debited', async () => {
@@ -105,5 +80,75 @@ describe('createTurnUsageRecorder', () => {
     await recorder.recordOnce();
 
     expect(recordTurn).toHaveBeenCalledTimes(1);
+  });
+
+  it('records the member share of every debited step', async () => {
+    const recordTurn = jest.fn().mockResolvedValue(undefined);
+    const recorder = createTurnUsageRecorder<TestStep>({ recordTurn });
+
+    await recorder.trackStepDebit(
+      { stepNumber: 0 },
+      Promise.resolve(debitedWithMemberShare(300)),
+    );
+    await recorder.trackStepDebit(
+      { stepNumber: 1 },
+      Promise.resolve(debitedWithMemberShare(0)),
+    );
+    await recorder.trackStepDebit(
+      { stepNumber: 2 },
+      Promise.resolve(debitedWithMemberShare(150)),
+    );
+
+    await recorder.recordOnce();
+
+    expect(recordTurn).toHaveBeenCalledWith({
+      steps: [{ stepNumber: 0 }, { stepNumber: 1 }, { stepNumber: 2 }],
+      memberCreditsUsedMicro: 450,
+    });
+  });
+
+  it('includes the member share of a step debit still pending at the exit', async () => {
+    const recordTurn = jest.fn().mockResolvedValue(undefined);
+    const recorder = createTurnUsageRecorder<TestStep>({ recordTurn });
+    const { debitPromise, settleDebit } = createDeferredDebit();
+
+    await recorder.trackStepDebit(
+      { stepNumber: 0 },
+      Promise.resolve(debitedWithMemberShare(100)),
+    );
+    void recorder.trackStepDebit({ stepNumber: 1 }, debitPromise);
+
+    const recording = recorder.recordOnce();
+
+    settleDebit(debitedWithMemberShare(250));
+    await recording;
+
+    expect(recordTurn).toHaveBeenCalledWith({
+      steps: [{ stepNumber: 0 }, { stepNumber: 1 }],
+      memberCreditsUsedMicro: 350,
+    });
+  });
+
+  it('adds no member share for a step whose debit failed', async () => {
+    const recordTurn = jest.fn().mockResolvedValue(undefined);
+    const recorder = createTurnUsageRecorder<TestStep>({ recordTurn });
+
+    await recorder.trackStepDebit(
+      { stepNumber: 0 },
+      Promise.resolve(debitedWithMemberShare(200)),
+    );
+    await expect(
+      recorder.trackStepDebit(
+        { stepNumber: 1 },
+        Promise.reject<TestStepDebitResult>(new Error('Redis unavailable')),
+      ),
+    ).rejects.toThrow('Redis unavailable');
+
+    await recorder.recordOnce();
+
+    expect(recordTurn).toHaveBeenCalledWith({
+      steps: [{ stepNumber: 0 }, { stepNumber: 1 }],
+      memberCreditsUsedMicro: 200,
+    });
   });
 });

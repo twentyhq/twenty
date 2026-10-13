@@ -166,10 +166,20 @@ export interface AggregateChartConfiguration {
 
 export type AggregateOperations = 'AVG' | 'COUNT' | 'COUNT_EMPTY' | 'COUNT_FALSE' | 'COUNT_NOT_EMPTY' | 'COUNT_TRUE' | 'COUNT_UNIQUE_VALUES' | 'MAX' | 'MIN' | 'PERCENTAGE_EMPTY' | 'PERCENTAGE_NOT_EMPTY' | 'SUM'
 
+export interface AiChatMemberCredits {
+    consumedValue?: Scalars['BigInt']
+    fallback: MemberCreditsFallback
+    isUsingWorkspaceCredits: Scalars['Boolean']
+    limitValue: Scalars['BigInt']
+    periodEnd: Scalars['DateTime']
+    __typename: 'AiChatMemberCredits'
+}
+
 export interface AiChatUsage {
     consumedValue?: Scalars['BigInt']
     kind: Scalars['String']
     limitValue: Scalars['BigInt']
+    memberCredits?: AiChatMemberCredits
     periodEnd?: Scalars['DateTime']
     __typename: 'AiChatUsage'
 }
@@ -3074,6 +3084,7 @@ export interface SearchField {
 }
 
 export interface SendChatMessageResult {
+    isWorkspaceAllowanceAvailable?: Scalars['Boolean']
     mentionedParticipantWorkspaceMemberIds?: Scalars['UUID'][]
     messageId?: Scalars['String']
     queued: Scalars['Boolean']
@@ -4107,10 +4118,21 @@ export interface AggregateChartConfigurationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AiChatMemberCreditsGenqlSelection{
+    consumedValue?: boolean | number
+    fallback?: boolean | number
+    isUsingWorkspaceCredits?: boolean | number
+    limitValue?: boolean | number
+    periodEnd?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AiChatUsageGenqlSelection{
     consumedValue?: boolean | number
     kind?: boolean | number
     limitValue?: boolean | number
+    memberCredits?: AiChatMemberCreditsGenqlSelection
     periodEnd?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7345,6 +7367,7 @@ export interface SearchFieldGenqlSelection{
 }
 
 export interface SendChatMessageResultGenqlSelection{
+    isWorkspaceAllowanceAvailable?: boolean | number
     mentionedParticipantWorkspaceMemberIds?: boolean | number
     messageId?: boolean | number
     queued?: boolean | number
@@ -8592,6 +8615,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAggregateChartConfiguration = (obj?: { __typename?: any } | null): obj is AggregateChartConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAggregateChartConfiguration"')
       return AggregateChartConfiguration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AiChatMemberCredits_possibleTypes: string[] = ['AiChatMemberCredits']
+    export const isAiChatMemberCredits = (obj?: { __typename?: any } | null): obj is AiChatMemberCredits => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatMemberCredits"')
+      return AiChatMemberCredits_possibleTypes.includes(obj.__typename)
     }
     
 

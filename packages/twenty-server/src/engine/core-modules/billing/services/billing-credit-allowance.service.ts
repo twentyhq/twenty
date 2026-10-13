@@ -49,6 +49,9 @@ export class BillingCreditAllowanceService {
 
   async getCreditAllowance(
     workspaceId: string,
+    {
+      shouldThrowOnMemberCreditsFailure = false,
+    }: { shouldThrowOnMemberCreditsFailure?: boolean } = {},
   ): Promise<CreditAllowance | null> {
     const subscription = await this.findCurrentBillingSubscription(workspaceId);
 
@@ -67,6 +70,7 @@ export class BillingCreditAllowanceService {
       memberCredits: await this.findMemberCreditsAllowance({
         workspaceId,
         subscription,
+        shouldThrowOnFailure: shouldThrowOnMemberCreditsFailure,
       }),
     };
   }
@@ -77,13 +81,15 @@ export class BillingCreditAllowanceService {
     return subscription?.planKey ?? null;
   }
 
-  // Never throws: a member credits failure must not take the workspace allowance down with it
+  // Never throws unless asked: a member credits failure must not take the workspace allowance down with it
   private async findMemberCreditsAllowance({
     workspaceId,
     subscription,
+    shouldThrowOnFailure,
   }: {
     workspaceId: string;
     subscription: FlatBillingSubscription;
+    shouldThrowOnFailure: boolean;
   }): Promise<MemberCreditsAllowance | null> {
     try {
       const amountMicro =
@@ -128,6 +134,10 @@ export class BillingCreditAllowanceService {
         fallback: workspace?.memberCreditsFallback ?? 'WORKSPACE_CREDITS',
       };
     } catch (error) {
+      if (shouldThrowOnFailure) {
+        throw error;
+      }
+
       this.logger.error(
         `Member credits allowance unavailable for workspace ${workspaceId}`,
         error,

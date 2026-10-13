@@ -42,6 +42,28 @@ describe('buildQuotaExhaustedException', () => {
     );
   });
 
+  it('tells the member their own AI credits are used up when the member allowance is exhausted', () => {
+    const memberAllowanceException = buildQuotaExhaustedException(
+      buildExhaustedScope({
+        resourceType: UsageResourceType.AI,
+        exhaustedKind: 'memberAllowance',
+        operationType: UsageOperationType.ALL,
+        periodCount: null,
+        periodUnit: null,
+      }),
+    );
+
+    expect(memberAllowanceException.message).toBe(
+      'Member credits allowance exhausted for this period',
+    );
+    expect(memberAllowanceException.code).toBe(
+      UsageLimitExceptionCode.QUOTA_EXHAUSTED,
+    );
+    expect(memberAllowanceException.userFriendlyMessage.message).toBe(
+      'Your AI credits for this period are used up.',
+    );
+  });
+
   it('carries the exhausted scope so the api filters can build a response', () => {
     const exhaustedScope = buildExhaustedScope();
 

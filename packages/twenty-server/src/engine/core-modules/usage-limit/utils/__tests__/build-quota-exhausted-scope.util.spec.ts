@@ -1,5 +1,6 @@
 import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
+import { type MemberAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/member-allowance-quota-counter.type';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -34,6 +35,19 @@ const allowanceCounter: AllowanceQuotaCounter = {
   unit: UsageUnit.CREDIT,
   periodStart: PERIOD_START,
   periodEnd: PERIOD_END,
+};
+
+const SLICE_END = new Date('2026-08-25T00:00:00.000Z');
+
+const memberAllowanceCounter: MemberAllowanceQuotaCounter = {
+  kind: 'memberAllowance',
+  key: 'member-allowance-key',
+  limitValue: 3_000_000,
+  unit: UsageUnit.CREDIT,
+  userWorkspaceId: 'user-workspace-1',
+  periodStart: new Date('2026-07-25T00:00:00.000Z'),
+  periodEnd: SLICE_END,
+  fallback: 'STOP',
 };
 
 describe('buildQuotaExhaustedScope', () => {
@@ -96,6 +110,28 @@ describe('buildQuotaExhaustedScope', () => {
       periodCount: null,
       periodUnit: null,
       retryAfterMs: PERIOD_END.getTime() - NOW.getTime(),
+    });
+  });
+
+  it('scopes an exhausted member allowance counter to the member until the slice ends', () => {
+    expect(
+      buildQuotaExhaustedScope({
+        resourceType: UsageResourceType.AI,
+        counter: memberAllowanceCounter,
+      }),
+    ).toEqual({
+      resourceType: UsageResourceType.AI,
+      limitKind: 'quota',
+      exhaustedKind: 'memberAllowance',
+      spenderType: 'userWorkspace',
+      spenderId: 'user-workspace-1',
+      operationType: UsageOperationType.ALL,
+      unit: UsageUnit.CREDIT,
+      limitValue: 3_000_000,
+      remaining: 0,
+      periodCount: null,
+      periodUnit: null,
+      retryAfterMs: SLICE_END.getTime() - NOW.getTime(),
     });
   });
 

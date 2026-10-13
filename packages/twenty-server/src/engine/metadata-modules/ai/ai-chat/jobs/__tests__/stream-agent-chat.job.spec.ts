@@ -257,7 +257,8 @@ describe('StreamAgentChatJob', () => {
         : jest.fn().mockResolvedValue({
             stream: chatStream,
             modelConfig,
-            hasNoMoreAvailableCredits: () => false,
+            getStopReason: () => null,
+            getMemberAllowancePeriodEnd: () => null,
             getStreamError: () => chatStream.streamError,
           }),
     };
@@ -356,6 +357,8 @@ describe('StreamAgentChatJob', () => {
       aiModelRegistryService as never,
       actorService as never,
       turnRecorderService as never,
+      { findUsageAdmission: jest.fn() } as never,
+      { isWorkspaceCreatorUserWorkspace: jest.fn() } as never,
     );
 
     const turnCounts = (key: string) =>

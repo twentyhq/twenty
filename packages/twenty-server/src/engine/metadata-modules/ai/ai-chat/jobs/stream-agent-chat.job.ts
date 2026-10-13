@@ -26,14 +26,22 @@ import { v5 as uuidv5 } from 'uuid';
 
 import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
+import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
+import { type MemberCreditsPayer } from 'src/engine/core-modules/usage-limit/types/member-credits-payer.type';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-agent-turn-usage-from-steps.util';
+import { AGENT_TURN_CREDITS_EXHAUSTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-credits-exhausted-error.constant';
 import {
   AiException,
   AiExceptionCode,
@@ -57,8 +65,11 @@ import {
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
+import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
+import { findChatTurnMemberCreditsPayer } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-chat-turn-member-credits-payer.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -108,6 +119,8 @@ export class StreamAgentChatJob {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
     private readonly turnRecorderService: AgentTurnRecorderService,
+    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -199,6 +212,35 @@ export class StreamAgentChatJob {
         );
       }
 
+      const memberCreditsPayer = await this.findMemberCreditsPayer({
+        data,
+        senderWorkspaceMemberId: message?.senderWorkspaceMemberId ?? null,
+        senderApplicationId: message?.senderApplicationId ?? null,
+      });
+
+      const memberCreditsAdmission = isDefined(memberCreditsPayer)
+        ? await this.usageQuotaAdmissionService.findUsageAdmission({
+            workspaceId: data.workspaceId,
+            resourceType: UsageResourceType.AI,
+            operationType: UsageOperationType.AI_CHAT_TOKEN,
+            spenders: { userWorkspaceId: data.userWorkspaceId },
+            memberCreditsPayer,
+            requireMemberCounter: true,
+          })
+        : null;
+
+      if (
+        memberCreditsAdmission?.hasMemberCounter === true &&
+        (await this.refuseTurnWithoutCredits({
+          data,
+          workspaceMemberId: authorization.authContext.workspaceMemberId,
+          refusal: memberCreditsAdmission.refusal,
+          turnModelId,
+        }))
+      ) {
+        return;
+      }
+
       const isRunning = await this.turnRecorderService.markRunning({
         workspaceId: data.workspaceId,
         turnId,
@@ -220,6 +262,7 @@ export class StreamAgentChatJob {
               threadId: data.threadId,
               messageContent: data.lastUserMessageText,
               workspaceId: data.workspaceId,
+              memberCreditsPayer: memberCreditsPayer ?? undefined,
             })
             .catch(() => null);
 
@@ -232,6 +275,9 @@ export class StreamAgentChatJob {
         titlePromise,
         abortSignal: abortController.signal,
         turnModelId,
+        memberCreditsPayer,
+        isMemberAllowanceAvailableAtAdmission:
+          memberCreditsAdmission?.isMemberAllowanceAvailable ?? null,
       });
     } catch (error) {
       this.logger.error(
@@ -309,6 +355,124 @@ export class StreamAgentChatJob {
     }
   }
 
+  private async findMemberCreditsPayer({
+    data,
+    senderWorkspaceMemberId,
+    senderApplicationId,
+  }: {
+    data: StreamAgentChatJobData;
+    senderWorkspaceMemberId: string | null;
+    senderApplicationId: string | null;
+  }): Promise<MemberCreditsPayer | null> {
+    // The thread id is public, so only the workspace creator's setup thread is
+    // workspace-funded
+    const isWorkspaceSetupThread =
+      data.threadId ===
+        buildWorkspaceSetupChatThreadId({
+          workspaceId: data.workspaceId,
+          userWorkspaceId: data.userWorkspaceId,
+        }) &&
+      !hasSucceededWorkspaceSetupCompletion(data.messages) &&
+      (await this.userWorkspaceService.isWorkspaceCreatorUserWorkspace({
+        workspaceId: data.workspaceId,
+        userWorkspaceId: data.userWorkspaceId,
+      }));
+
+    return findChatTurnMemberCreditsPayer({
+      userWorkspaceId: data.userWorkspaceId,
+      senderWorkspaceMemberId,
+      senderApplicationId,
+      isWorkspaceSetupThread,
+      isSenderImpersonated: data.isSenderImpersonated === true,
+    });
+  }
+
+  // A refused turn returns instead of throwing, so the queue does not retry it
+  private async refuseTurnWithoutCredits({
+    data,
+    workspaceMemberId,
+    refusal,
+    turnModelId,
+  }: {
+    data: StreamAgentChatJobData;
+    workspaceMemberId: string;
+    refusal: UsageRefusal | null;
+    turnModelId: string;
+  }): Promise<boolean> {
+    // limits and an inactive subscription are only gated by the request pre-flight
+    if (refusal?.kind !== 'quotaExhausted') {
+      return false;
+    }
+
+    const { exhaustedScope } = refusal;
+    const streamClaim = {
+      threadId: data.threadId,
+      workspaceId: data.workspaceId,
+      streamId: data.streamId,
+    };
+
+    switch (exhaustedScope.exhaustedKind) {
+      case 'memberAllowance':
+        await this.eventPublisherService.publish({
+          threadId: data.threadId,
+          workspaceId: data.workspaceId,
+          event: {
+            type: 'member-credits-exhausted',
+            workspaceMemberId,
+            isFallingBackToWorkspaceCredits: false,
+            renewsAt: new Date(
+              Date.now() + exhaustedScope.retryAfterMs,
+            ).toISOString(),
+          },
+        });
+
+        await this.streamRecoveryService.failStream({
+          ...streamClaim,
+          error: new AiException(
+            'Your AI credits for this period are used up.',
+            AiExceptionCode.MEMBER_CREDITS_EXHAUSTED,
+          ),
+        });
+
+        this.recordTurnOutcome(
+          { kind: 'failed', failurePhase: 'member_credits_exhausted' },
+          turnModelId,
+        );
+        break;
+      case 'allowance':
+        await this.streamRecoveryService.releaseStreamClaim({
+          ...streamClaim,
+          turnError: AGENT_TURN_CREDITS_EXHAUSTED_ERROR,
+        });
+
+        await this.eventPublisherService.publish({
+          threadId: data.threadId,
+          workspaceId: data.workspaceId,
+          event: { type: 'credits-exhausted' },
+        });
+
+        this.recordTurnOutcome(
+          { kind: 'failed', failurePhase: 'credits_exhausted' },
+          turnModelId,
+        );
+        break;
+      case 'limit':
+        return false;
+      default:
+        return assertUnreachable(exhaustedScope.exhaustedKind);
+    }
+
+    await this.eventPublisherService
+      .publish({
+        threadId: data.threadId,
+        workspaceId: data.workspaceId,
+        event: { type: 'queue-updated' },
+      })
+      .catch(() => {});
+
+    return true;
+  }
+
   private recordTurnOutcome(
     outcome: AgentChatTurnOutcome,
     turnModelId: string,
@@ -364,6 +528,8 @@ export class StreamAgentChatJob {
     titlePromise,
     abortSignal,
     turnModelId,
+    memberCreditsPayer,
+    isMemberAllowanceAvailableAtAdmission,
   }: {
     workspace: WorkspaceEntity;
     data: StreamAgentChatJobData;
@@ -373,6 +539,8 @@ export class StreamAgentChatJob {
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
     turnModelId: string;
+    memberCreditsPayer: MemberCreditsPayer | null;
+    isMemberAllowanceAvailableAtAdmission: boolean | null;
   }): Promise<void> {
     const assistantMessageId = uuidv5(
       data.streamId,
@@ -391,7 +559,8 @@ export class StreamAgentChatJob {
       };
       let streamError: unknown;
       let streamFinishError: unknown;
-      let checkHasNoMoreAvailableCredits: () => boolean = () => false;
+      let getStopReason: () => StepDebitResult['stopReason'] = () => null;
+      let getMemberAllowancePeriodEnd: () => Date | null = () => null;
 
       let persistChain: Promise<void> = Promise.resolve();
       let lastCheckpointAt = 0;
@@ -451,12 +620,27 @@ export class StreamAgentChatJob {
             });
           };
 
-          const {
-            stream,
-            modelConfig,
-            hasNoMoreAvailableCredits,
-            getStreamError,
-          } = await this.chatExecutionService.streamChat({
+          const onMemberCreditsExhausted = (renewsAt: Date) => {
+            void this.eventPublisherService
+              .publish({
+                threadId: data.threadId,
+                workspaceId: data.workspaceId,
+                event: {
+                  type: 'member-credits-exhausted',
+                  workspaceMemberId:
+                    authorization.authContext.workspaceMemberId,
+                  isFallingBackToWorkspaceCredits: true,
+                  renewsAt: renewsAt.toISOString(),
+                },
+              })
+              .catch((error: unknown) =>
+                this.logger.warn(
+                  `Could not publish the member credits notice for stream ${data.streamId}: ${formatErrorWithCause(error)}`,
+                ),
+              );
+          };
+
+          const chatExecution = await this.chatExecutionService.streamChat({
             workspace,
             userWorkspaceId: data.userWorkspaceId,
             sender,
@@ -471,9 +655,15 @@ export class StreamAgentChatJob {
             onCompaction,
             abortSignal,
             conversationSizeTokens: data.conversationSizeTokens,
+            memberCreditsPayer,
+            isMemberAllowanceAvailableAtAdmission,
+            onMemberCreditsExhausted,
           });
+          const { stream, modelConfig, getStreamError } = chatExecution;
 
-          checkHasNoMoreAvailableCredits = hasNoMoreAvailableCredits;
+          getStopReason = chatExecution.getStopReason;
+          getMemberAllowancePeriodEnd =
+            chatExecution.getMemberAllowancePeriodEnd;
 
           const titleWritePromise = titlePromise.then((generatedTitle) => {
             if (generatedTitle) {
@@ -505,7 +695,8 @@ export class StreamAgentChatJob {
                     responseMessage,
                     isAborted,
                     streamError,
-                    outOfCredits: checkHasNoMoreAvailableCredits(),
+                    outOfCredits: getStopReason() === 'allowance',
+                    outOfMemberCredits: getStopReason() === 'memberAllowance',
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
                     workspaceMemberId:
@@ -603,7 +794,22 @@ export class StreamAgentChatJob {
             reject(streamError);
           } else if (streamFinishError) {
             reject(streamFinishError);
-          } else if (checkHasNoMoreAvailableCredits()) {
+          } else if (getStopReason() === 'memberAllowance') {
+            await this.publishMemberCreditsStop({
+              data,
+              workspaceMemberId: authorization.authContext.workspaceMemberId,
+              renewsAt: getMemberAllowancePeriodEnd(),
+            });
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: {
+                type: 'message-persisted',
+                messageId: assistantMessageId,
+              },
+            });
+            resolve();
+          } else if (getStopReason() === 'allowance') {
             await this.eventPublisherService.publish({
               threadId: data.threadId,
               workspaceId: data.workspaceId,
@@ -625,6 +831,37 @@ export class StreamAgentChatJob {
           reject(error);
         }
       })();
+    });
+  }
+
+  private async publishMemberCreditsStop({
+    data,
+    workspaceMemberId,
+    renewsAt,
+  }: {
+    data: StreamAgentChatJobData;
+    workspaceMemberId: string;
+    renewsAt: Date | null;
+  }): Promise<void> {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.UsageLimitQuotaMemberAllowanceRefused,
+      amount: 1,
+      attributes: { fallback: 'STOP', phase: 'stream' },
+    });
+
+    if (!isDefined(renewsAt)) {
+      return;
+    }
+
+    await this.eventPublisherService.publish({
+      threadId: data.threadId,
+      workspaceId: data.workspaceId,
+      event: {
+        type: 'member-credits-exhausted',
+        workspaceMemberId,
+        isFallingBackToWorkspaceCredits: false,
+        renewsAt: renewsAt.toISOString(),
+      },
     });
   }
 
@@ -689,6 +926,7 @@ export class StreamAgentChatJob {
     isAborted,
     streamError,
     outOfCredits,
+    outOfMemberCredits,
     threadId,
     workspaceId,
     workspaceMemberId,
@@ -703,6 +941,7 @@ export class StreamAgentChatJob {
     isAborted: boolean;
     streamError: unknown;
     outOfCredits: boolean;
+    outOfMemberCredits: boolean;
     threadId: string;
     workspaceId: string;
     workspaceMemberId: string;
@@ -731,6 +970,7 @@ export class StreamAgentChatJob {
         isAborted,
         streamError,
         outOfCredits,
+        outOfMemberCredits,
         hasText,
         threadId,
         workspaceId,
@@ -750,6 +990,7 @@ export class StreamAgentChatJob {
       isAborted,
       isAwaitingUserAnswer: awaitingParts.length > 0,
       outOfCredits,
+      outOfMemberCredits,
     });
 
     if (responseMessage.parts.length === 0) {
@@ -897,6 +1138,7 @@ export class StreamAgentChatJob {
     isAborted,
     streamError,
     outOfCredits,
+    outOfMemberCredits,
     hasText,
     threadId,
     workspaceId,
@@ -907,6 +1149,7 @@ export class StreamAgentChatJob {
     isAborted: boolean;
     streamError: unknown;
     outOfCredits: boolean;
+    outOfMemberCredits: boolean;
     hasText: boolean;
     threadId: string;
     workspaceId: string;
@@ -917,9 +1160,11 @@ export class StreamAgentChatJob {
       ? 'user-cancelled'
       : streamError
         ? 'stream-error'
-        : outOfCredits
-          ? 'credits-exhausted'
-          : 'empty-completion';
+        : outOfMemberCredits
+          ? 'member-credits-exhausted'
+          : outOfCredits
+            ? 'credits-exhausted'
+            : 'empty-completion';
 
     const errorDetail = isDefined(streamError)
       ? formatErrorWithCause(streamError)

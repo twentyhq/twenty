@@ -186,10 +186,19 @@ enum AggregateOperations {
   SUM
 }
 
+type AiChatMemberCredits {
+  consumedValue: BigInt
+  fallback: MemberCreditsFallback!
+  isUsingWorkspaceCredits: Boolean!
+  limitValue: BigInt!
+  periodEnd: DateTime!
+}
+
 type AiChatUsage {
   consumedValue: BigInt
   kind: String!
   limitValue: BigInt!
+  memberCredits: AiChatMemberCredits
   periodEnd: DateTime
 }
 
@@ -4227,6 +4236,7 @@ type SearchField {
 }
 
 type SendChatMessageResult {
+  isWorkspaceAllowanceAvailable: Boolean
   mentionedParticipantWorkspaceMemberIds: [UUID!]
   messageId: String
   queued: Boolean!

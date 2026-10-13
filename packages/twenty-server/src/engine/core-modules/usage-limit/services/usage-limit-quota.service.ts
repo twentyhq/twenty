@@ -1,16 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import uniqBy from 'lodash.uniqby';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { MEMBER_ALLOWANCE_STOP_OVERSHOOT_MICRO_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/member-allowance-stop-overshoot-micro-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WARM_AND_CONSUME_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-counters-script.constant';
+import { WARM_AND_CONSUME_MEMBER_FIRST_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-member-first-script.constant';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
@@ -22,24 +28,40 @@ import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/f
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type LimitConsumption } from 'src/engine/core-modules/usage-limit/types/limit-consumption.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
+import { type MemberAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/member-allowance-quota-counter.type';
+import { type MemberCreditsAllowance } from 'src/engine/core-modules/usage-limit/types/member-credits-allowance.type';
+import { type MemberCreditsFallbackMode } from 'src/engine/core-modules/usage-limit/types/member-credits-fallback-mode.type';
+import { type MemberCreditsPayer } from 'src/engine/core-modules/usage-limit/types/member-credits-payer.type';
+import { type MemberFirstConsumeResult } from 'src/engine/core-modules/usage-limit/types/member-first-consume-result.type';
+import { type QuotaAdmission } from 'src/engine/core-modules/usage-limit/types/quota-admission.type';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
+import { type QuotaDebit } from 'src/engine/core-modules/usage-limit/types/quota-debit.type';
+import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
+import { apportionMemberCredits } from 'src/engine/core-modules/usage-limit/utils/apportion-member-credits.util';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 import { buildConsumeScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-consume-script-arguments.util';
 import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
+import { buildMemberAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-member-allowance-counter-key.util';
+import { buildMemberFirstScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-member-first-script-arguments.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/build-quota-debits.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
+import { computeAllowanceDebitAmount } from 'src/engine/core-modules/usage-limit/utils/compute-allowance-debit-amount.util';
 import { computeCreditAllowanceMicro } from 'src/engine/core-modules/usage-limit/utils/compute-credit-allowance-micro.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
+import { findMemberFirstExhaustedKind } from 'src/engine/core-modules/usage-limit/utils/find-member-first-exhausted-kind.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
+import { isMemberCreditsEligibleEvent } from 'src/engine/core-modules/usage-limit/utils/is-member-credits-eligible-event.util';
 import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
+import { parseMemberFirstScriptReply } from 'src/engine/core-modules/usage-limit/utils/parse-member-first-script-reply.util';
+import { selectMemberFirstExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/select-member-first-exhausted-counters.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -56,6 +78,8 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 type QuotaEnforcement = {
   operation: 'assert' | 'consume';
   resourceType: UsageResourceType;
+  // Member path only: workspace-path sites also count limit degradations, so a counter kind there would mislabel them
+  counterKind?: MemberAllowanceQuotaCounter['kind'];
   creditsUsedMicro?: number;
 };
 
@@ -70,6 +94,35 @@ type QuotaConsumeResult = {
   consumedValues: (number | null)[];
   isDegraded: boolean;
 };
+
+type CreditCounters = {
+  allowanceCounter: AllowanceQuotaCounter | null;
+  memberCounter: MemberAllowanceQuotaCounter | null;
+};
+
+type CreditCounterEvent = Pick<
+  RecordUsageInput,
+  'resourceType' | 'operationType' | 'spenders'
+>;
+
+type QuotaAdmissionArgs = QuotaConsumeArgs & {
+  cost?: QuotaCost;
+  memberCreditsPayer?: MemberCreditsPayer;
+};
+
+const QUOTA_ADMISSION_WITHOUT_MEMBER_COUNTER: QuotaAdmission = {
+  exhaustedScope: null,
+  hasMemberCounter: false,
+  isMemberAllowanceAvailable: null,
+  isWorkspaceAllowanceAvailable: null,
+};
+
+type MemberFirstScriptAttempt =
+  | Exclude<MemberFirstConsumeResult, { outcome: 'applied' }>
+  | {
+      outcome: 'ran';
+      reply: ReturnType<typeof parseMemberFirstScriptReply>;
+    };
 
 @Injectable()
 export class UsageLimitQuotaService {
@@ -90,52 +143,84 @@ export class UsageLimitQuotaService {
   ) {}
 
   async findExhaustedScope(
-    args: QuotaConsumeArgs & { cost?: QuotaCost },
+    args: QuotaAdmissionArgs,
   ): Promise<ExhaustedScope | null> {
-    const exhaustedScopes =
-      await this.findExhaustedScopesAdmittingOnFailure(args);
+    const { exhaustedScope } = await this.findAdmission(args);
 
-    return (
-      exhaustedScopes.find((scope) => scope.exhaustedKind === 'allowance') ??
-      exhaustedScopes[0] ??
-      null
-    );
+    return exhaustedScope;
+  }
+
+  async findAdmission({
+    requireMemberCounter = false,
+    ...args
+  }: QuotaAdmissionArgs & {
+    requireMemberCounter?: boolean;
+  }): Promise<QuotaAdmission> {
+    const enforcement: QuotaEnforcement = {
+      operation: 'assert',
+      resourceType: args.resourceType,
+    };
+
+    try {
+      return await this.findAdmissionFromCounters({
+        ...args,
+        requireMemberCounter,
+        enforcement,
+      });
+    } catch (error) {
+      return this.admitOnFailure({
+        error,
+        workspaceId: args.workspaceId,
+        enforcement,
+        admitted: QUOTA_ADMISSION_WITHOUT_MEMBER_COUNTER,
+      });
+    }
   }
 
   async charge({
     workspaceId,
     events,
+    memberCreditsPayer,
   }: {
     workspaceId: string;
     events: RecordUsageInput[];
-  }): Promise<{ exhaustedKind: ExhaustedKind | null }> {
+    memberCreditsPayer?: MemberCreditsPayer;
+  }): Promise<
+    Pick<QuotaDebitResult, 'exhaustedKind' | 'memberCreditsUsedMicro'>
+  > {
     if (events.length === 0) {
-      return { exhaustedKind: null };
+      return { exhaustedKind: null, memberCreditsUsedMicro: 0 };
     }
 
-    const exhaustedKind = await this.debitCountersAdmittingOnFailure({
+    const { exhaustedKind, memberCreditsUsedMicro } =
+      await this.debitCountersAdmittingOnFailure({
+        workspaceId,
+        events,
+        memberCreditsPayer,
+      });
+
+    await this.usageRecorderService.record(
       workspaceId,
-      events,
-    });
+      apportionMemberCredits({ events, memberCreditsUsedMicro }),
+    );
 
-    await this.usageRecorderService.record(workspaceId, events);
-
-    return { exhaustedKind };
+    return { exhaustedKind, memberCreditsUsedMicro };
   }
 
   async debitAheadOfRecord({
     workspaceId,
     event,
+    memberCreditsPayer,
   }: {
     workspaceId: string;
     event: RecordUsageInput;
-  }): Promise<{ exhaustedKind: ExhaustedKind | null }> {
-    return {
-      exhaustedKind: await this.debitCountersAdmittingOnFailure({
-        workspaceId,
-        events: [event],
-      }),
-    };
+    memberCreditsPayer?: MemberCreditsPayer;
+  }): Promise<QuotaDebitResult> {
+    return this.debitCountersAdmittingOnFailure({
+      workspaceId,
+      events: [event],
+      memberCreditsPayer,
+    });
   }
 
   async dropIntraWorkspaceLimitCounters(workspaceId: string): Promise<void> {
@@ -219,6 +304,43 @@ export class UsageLimitQuotaService {
       limitValue: counter.limitValue,
       consumedValue,
       periodEnd: counter.periodEnd,
+    };
+  }
+
+  async getMemberAllowanceUsage({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<{
+    limitValue: number;
+    consumedValue: number | null;
+    periodEnd: Date;
+    fallback: MemberCreditsFallbackMode;
+  } | null> {
+    const { memberCounter } = await this.buildCreditCounters({
+      workspaceId,
+      events: [],
+      memberCreditsPayer: { userWorkspaceId },
+    });
+
+    if (!isDefined(memberCounter)) {
+      return null;
+    }
+
+    const {
+      consumedValues: [consumedValue],
+    } = await this.readCountersAdmittingOnFailure({
+      workspaceId,
+      counters: [memberCounter],
+    });
+
+    return {
+      limitValue: memberCounter.limitValue,
+      consumedValue: consumedValue ?? null,
+      periodEnd: memberCounter.periodEnd,
+      fallback: memberCounter.fallback,
     };
   }
 
@@ -315,50 +437,152 @@ export class UsageLimitQuotaService {
     );
   }
 
-  private async findExhaustedScopesAdmittingOnFailure({
+  private async findAdmissionFromCounters({
     cost,
+    memberCreditsPayer,
+    requireMemberCounter,
+    enforcement,
     ...args
-  }: QuotaConsumeArgs & { cost?: QuotaCost }): Promise<ExhaustedScope[]> {
-    const enforcement: QuotaEnforcement = {
-      operation: 'assert',
-      resourceType: args.resourceType,
-    };
+  }: QuotaAdmissionArgs & {
+    requireMemberCounter: boolean;
+    enforcement: QuotaEnforcement;
+  }): Promise<QuotaAdmission> {
+    const { workspaceId, resourceType, operationType, spenders } = args;
 
+    const creditCountersBuild = this.buildCreditCountersAdmittingOnFailure({
+      workspaceId,
+      events: [{ resourceType, operationType, spenders }],
+      memberCreditsPayer,
+    });
+
+    if (requireMemberCounter) {
+      const { memberCounter } = await creditCountersBuild;
+
+      if (!isDefined(memberCounter)) {
+        return QUOTA_ADMISSION_WITHOUT_MEMBER_COUNTER;
+      }
+    }
+
+    const [
+      limitCounters,
+      { allowanceCounter, memberCounter, isAllowanceSkipped },
+    ] = await Promise.all([this.buildLimitCounters(args), creditCountersBuild]);
+
+    const counters: QuotaCounter[] = [
+      ...limitCounters,
+      ...(isDefined(allowanceCounter) ? [allowanceCounter] : []),
+    ];
+
+    // Separate reads: one shared warm would let a failed member read blind a cold allowance or limit, and the reverse
+    const [{ consumedValues, isDegraded }, memberConsumed] = await Promise.all([
+      this.readCountersAdmittingOnFailure({ workspaceId, counters }),
+      isDefined(memberCounter)
+        ? this.readMemberCounterAdmittingOnFailure({
+            workspaceId,
+            resourceType,
+            memberCounter,
+          })
+        : null,
+    ]);
+
+    if (isDegraded || isAllowanceSkipped) {
+      this.countAdmitOnFailure(enforcement);
+    }
+
+    const { exhaustedCounters, ...memberAdmission } =
+      selectMemberFirstExhaustedCounters({
+        exhaustedCounters: findExhaustedCounters({
+          counters: isDefined(memberCounter)
+            ? [...counters, memberCounter]
+            : counters,
+          consumedValues: [...consumedValues, memberConsumed],
+          cost,
+        }),
+        memberCounter,
+        memberConsumed,
+        allowanceConsumed: isDefined(allowanceCounter)
+          ? (consumedValues[counters.indexOf(allowanceCounter)] ?? null)
+          : null,
+      });
+
+    const exhaustedScopes = exhaustedCounters.map((counter) =>
+      buildQuotaExhaustedScope({ resourceType, counter }),
+    );
+
+    const exhaustedScope =
+      exhaustedScopes.find((scope) => scope.exhaustedKind === 'allowance') ??
+      exhaustedScopes.find(
+        (scope) => scope.exhaustedKind === 'memberAllowance',
+      ) ??
+      exhaustedScopes[0] ??
+      null;
+
+    if (
+      isDefined(memberCounter) &&
+      exhaustedScope?.exhaustedKind === 'memberAllowance'
+    ) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.UsageLimitQuotaMemberAllowanceRefused,
+        amount: 1,
+        attributes: {
+          fallback: memberCounter.fallback,
+          phase: requireMemberCounter ? 'worker' : 'preflight',
+        },
+      });
+    }
+
+    return { exhaustedScope, ...memberAdmission };
+  }
+
+  private async readMemberCounterAdmittingOnFailure({
+    workspaceId,
+    resourceType,
+    memberCounter,
+  }: {
+    workspaceId: string;
+    resourceType: UsageResourceType;
+    memberCounter: MemberAllowanceQuotaCounter;
+  }): Promise<number | null> {
+    const {
+      consumedValues: [memberConsumed],
+      isDegraded,
+    } = await this.readCountersAdmittingOnFailure({
+      workspaceId,
+      counters: [memberCounter],
+    });
+
+    if (isDegraded) {
+      this.countAdmitOnFailure({
+        operation: 'assert',
+        resourceType,
+        counterKind: memberCounter.kind,
+      });
+    }
+
+    return memberConsumed ?? null;
+  }
+
+  private async readCountersAdmittingOnFailure({
+    workspaceId,
+    counters,
+  }: {
+    workspaceId: string;
+    counters: QuotaCounter[];
+  }): Promise<QuotaConsumeResult> {
     try {
-      const [limitCounters, { allowanceCounter, isAllowanceSkipped }] =
-        await Promise.all([
-          this.buildLimitCounters(args),
-          this.buildAllowanceCounterAdmittingOnFailure(args.workspaceId),
-        ]);
-
-      const counters: QuotaCounter[] = [
-        ...limitCounters,
-        ...(isDefined(allowanceCounter) ? [allowanceCounter] : []),
-      ];
-
-      const { consumedValues, isDegraded } = await this.consumeCounters({
-        workspaceId: args.workspaceId,
+      return await this.consumeCounters({
+        workspaceId,
         counters,
         amounts: counters.map(() => 0),
       });
-
-      if (isDegraded || isAllowanceSkipped) {
-        this.countAdmitOnFailure(enforcement);
-      }
-
-      return findExhaustedCounters({ counters, consumedValues, cost }).map(
-        (counter) =>
-          buildQuotaExhaustedScope({
-            resourceType: args.resourceType,
-            counter,
-          }),
-      );
     } catch (error) {
       return this.admitOnFailure({
         error,
-        workspaceId: args.workspaceId,
-        enforcement,
-        admitted: [],
+        workspaceId,
+        admitted: {
+          consumedValues: counters.map(() => null),
+          isDegraded: true,
+        },
       });
     }
   }
@@ -366,57 +590,52 @@ export class UsageLimitQuotaService {
   private async debitCountersAdmittingOnFailure({
     workspaceId,
     events,
+    memberCreditsPayer,
   }: {
     workspaceId: string;
     events: RecordUsageInput[];
-  }): Promise<ExhaustedKind | null> {
+    memberCreditsPayer?: MemberCreditsPayer;
+  }): Promise<QuotaDebitResult> {
     try {
-      const [limitCounters, { allowanceCounter, isAllowanceSkipped }] =
-        await Promise.all([
-          this.buildLimitCountersForEvents({ workspaceId, events }),
-          this.buildAllowanceCounterAdmittingOnFailure(workspaceId),
-        ]);
-
-      const debits = buildQuotaDebits({
-        counters: [
-          ...limitCounters,
-          ...(isDefined(allowanceCounter) ? [allowanceCounter] : []),
-        ],
-        events,
-      });
-
-      const counters = debits.map((debit) => debit.counter);
-
-      const { consumedValues, isDegraded } = await this.consumeCounters({
-        workspaceId,
-        counters,
-        amounts: debits.map((debit) => debit.amount),
-      });
-
-      if (isDegraded || isAllowanceSkipped) {
-        this.countConsumeAdmittedOnFailure({
+      const [
+        limitCounters,
+        { allowanceCounter, memberCounter, isAllowanceSkipped },
+      ] = await Promise.all([
+        this.buildLimitCountersForEvents({ workspaceId, events }),
+        this.buildCreditCountersAdmittingOnFailure({
+          workspaceId,
           events,
-          isAllowanceUnmetered:
-            isAllowanceSkipped ||
-            counters.some(
-              (counter, index) =>
-                counter.kind === 'allowance' &&
-                !isDefined(consumedValues[index]) &&
-                counter.periodEnd.getTime() > Date.now(),
-            ),
+          memberCreditsPayer,
+        }),
+      ]);
+
+      const amount = computeAllowanceDebitAmount({ events });
+
+      if (isDefined(memberCounter) && amount > 0) {
+        return await this.debitMemberFirst({
+          workspaceId,
+          events,
+          limitCounters,
+          allowanceCounter,
+          memberCounter,
+          amount,
         });
       }
 
-      const exhaustedCounters = findExhaustedCounters({
-        counters,
-        consumedValues,
-      });
-
-      if (exhaustedCounters.some((counter) => counter.kind === 'allowance')) {
-        return 'allowance';
-      }
-
-      return exhaustedCounters.length > 0 ? 'limit' : null;
+      return {
+        exhaustedKind: await this.debitWorkspaceFundedCounters({
+          workspaceId,
+          events,
+          counters: [
+            ...limitCounters,
+            ...(isDefined(allowanceCounter) ? [allowanceCounter] : []),
+          ],
+          isAllowanceSkipped,
+        }),
+        memberCreditsUsedMicro: 0,
+        isMemberAllowanceExhausted: false,
+        memberAllowancePeriodEnd: memberCounter?.periodEnd ?? null,
+      };
     } catch (error) {
       this.logger.error(
         `Usage quota debit degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
@@ -426,7 +645,482 @@ export class UsageLimitQuotaService {
         isAllowanceUnmetered: true,
       });
 
+      return {
+        exhaustedKind: null,
+        memberCreditsUsedMicro: 0,
+        isMemberAllowanceExhausted: false,
+        memberAllowancePeriodEnd: null,
+      };
+    }
+  }
+
+  private async debitWorkspaceFundedCounters({
+    workspaceId,
+    events,
+    counters: candidateCounters,
+    isAllowanceSkipped,
+  }: {
+    workspaceId: string;
+    events: RecordUsageInput[];
+    counters: QuotaCounter[];
+    isAllowanceSkipped: boolean;
+  }): Promise<ExhaustedKind | null> {
+    const debits = buildQuotaDebits({ counters: candidateCounters, events });
+
+    const counters = debits.map((debit) => debit.counter);
+
+    const { consumedValues, isDegraded } = await this.consumeCounters({
+      workspaceId,
+      counters,
+      amounts: debits.map((debit) => debit.amount),
+    });
+
+    if (isDegraded || isAllowanceSkipped) {
+      this.countConsumeAdmittedOnFailure({
+        events,
+        isAllowanceUnmetered:
+          isAllowanceSkipped ||
+          counters.some(
+            (counter, index) =>
+              counter.kind === 'allowance' &&
+              !isDefined(consumedValues[index]) &&
+              counter.periodEnd.getTime() > Date.now(),
+          ),
+      });
+    }
+
+    const exhaustedCounters = findExhaustedCounters({
+      counters,
+      consumedValues,
+    });
+
+    if (exhaustedCounters.some((counter) => counter.kind === 'allowance')) {
+      return 'allowance';
+    }
+
+    return exhaustedCounters.length > 0 ? 'limit' : null;
+  }
+
+  private async debitMemberFirst({
+    workspaceId,
+    events,
+    limitCounters,
+    allowanceCounter,
+    memberCounter,
+    amount,
+  }: {
+    workspaceId: string;
+    events: RecordUsageInput[];
+    limitCounters: LimitQuotaCounter[];
+    allowanceCounter: AllowanceQuotaCounter | null;
+    memberCounter: MemberAllowanceQuotaCounter;
+    amount: number;
+  }): Promise<QuotaDebitResult> {
+    const limitDebits = buildQuotaDebits({ counters: limitCounters, events });
+
+    const [limitConsumedValues, memberFirstConsume] = await Promise.all([
+      this.consumeLimitDebitsAdmittingOnFailure({
+        workspaceId,
+        events,
+        debits: limitDebits,
+      }),
+      this.consumeMemberFirst({
+        workspaceId,
+        memberCounter,
+        allowanceCounter,
+        amount,
+      }),
+    ]);
+
+    const { memberConsumed, allowanceConsumed, memberCreditsUsedMicro } =
+      await this.settleMemberFirstConsume({
+        workspaceId,
+        events,
+        allowanceCounter,
+        memberCounter,
+        amount,
+        memberFirstConsume,
+      });
+
+    return {
+      exhaustedKind: findMemberFirstExhaustedKind({
+        outcome: memberFirstConsume.outcome,
+        fallback: memberCounter.fallback,
+        memberConsumed,
+        memberLimitValue: memberCounter.limitValue,
+        allowanceConsumed,
+        allowanceLimitValue: allowanceCounter?.limitValue ?? null,
+        hasExhaustedLimitCounter:
+          findExhaustedCounters({
+            counters: limitDebits.map((debit) => debit.counter),
+            consumedValues: limitConsumedValues,
+          }).length > 0,
+      }),
+      memberCreditsUsedMicro,
+      isMemberAllowanceExhausted:
+        isDefined(memberConsumed) && memberConsumed >= memberCounter.limitValue,
+      memberAllowancePeriodEnd: memberCounter.periodEnd,
+    };
+  }
+
+  private async settleMemberFirstConsume({
+    workspaceId,
+    events,
+    allowanceCounter,
+    memberCounter,
+    amount,
+    memberFirstConsume,
+  }: {
+    workspaceId: string;
+    events: RecordUsageInput[];
+    allowanceCounter: AllowanceQuotaCounter | null;
+    memberCounter: MemberAllowanceQuotaCounter;
+    amount: number;
+    memberFirstConsume: MemberFirstConsumeResult;
+  }): Promise<{
+    memberConsumed: number | null;
+    allowanceConsumed: number | null;
+    memberCreditsUsedMicro: number;
+  }> {
+    const [{ resourceType }] = events;
+
+    switch (memberFirstConsume.outcome) {
+      case 'applied': {
+        const { memberShare, memberConsumed, allowanceConsumed } =
+          memberFirstConsume;
+
+        if (memberFirstConsume.isAllowanceUnmetered) {
+          this.countAdmitOnFailure({
+            operation: 'consume',
+            resourceType,
+            creditsUsedMicro: amount - memberShare,
+          });
+        }
+
+        this.countMemberCreditsApplied({
+          events,
+          memberCounter,
+          memberShare,
+          memberConsumed,
+        });
+
+        return {
+          memberConsumed,
+          allowanceConsumed,
+          memberCreditsUsedMicro: memberShare,
+        };
+      }
+      case 'memberUnavailable': {
+        const allowanceConsumed = await this.consumeAllowanceAdmittingOnFailure(
+          { workspaceId, allowanceCounter, amount },
+        );
+
+        this.countAdmitOnFailure({
+          operation: 'consume',
+          resourceType,
+          counterKind: memberCounter.kind,
+          creditsUsedMicro: isDefined(allowanceConsumed) ? 0 : amount,
+        });
+
+        return {
+          memberConsumed: null,
+          allowanceConsumed,
+          memberCreditsUsedMicro: 0,
+        };
+      }
+      // No re-route to the allowance: the script may have run, so a re-route could debit twice
+      case 'unknown':
+        this.countAdmitOnFailure({
+          operation: 'consume',
+          resourceType,
+          counterKind: memberCounter.kind,
+          creditsUsedMicro: amount,
+        });
+
+        return {
+          memberConsumed: null,
+          allowanceConsumed: null,
+          memberCreditsUsedMicro: 0,
+        };
+      default:
+        return assertUnreachable(memberFirstConsume);
+    }
+  }
+
+  private async consumeLimitDebitsAdmittingOnFailure({
+    workspaceId,
+    events,
+    debits,
+  }: {
+    workspaceId: string;
+    events: RecordUsageInput[];
+    debits: QuotaDebit[];
+  }): Promise<(number | null)[]> {
+    try {
+      const { consumedValues, isDegraded } = await this.consumeCounters({
+        workspaceId,
+        counters: debits.map((debit) => debit.counter),
+        amounts: debits.map((debit) => debit.amount),
+      });
+
+      if (isDegraded) {
+        this.countConsumeAdmittedOnFailure({
+          events,
+          isAllowanceUnmetered: false,
+        });
+      }
+
+      return consumedValues;
+    } catch (error) {
+      this.logger.error(
+        `Usage quota limit debit degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
+      this.countConsumeAdmittedOnFailure({
+        events,
+        isAllowanceUnmetered: false,
+      });
+
+      return debits.map(() => null);
+    }
+  }
+
+  private async consumeAllowanceAdmittingOnFailure({
+    workspaceId,
+    allowanceCounter,
+    amount,
+  }: {
+    workspaceId: string;
+    allowanceCounter: AllowanceQuotaCounter | null;
+    amount: number;
+  }): Promise<number | null> {
+    if (!isDefined(allowanceCounter)) {
       return null;
+    }
+
+    try {
+      const {
+        consumedValues: [allowanceConsumed],
+      } = await this.consumeCounters({
+        workspaceId,
+        counters: [allowanceCounter],
+        amounts: [amount],
+      });
+
+      return allowanceConsumed ?? null;
+    } catch (error) {
+      this.logger.error(
+        `Usage quota allowance debit degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
+
+      return null;
+    }
+  }
+
+  private async consumeMemberFirst({
+    workspaceId,
+    memberCounter,
+    allowanceCounter,
+    amount,
+  }: {
+    workspaceId: string;
+    memberCounter: MemberAllowanceQuotaCounter;
+    allowanceCounter: AllowanceQuotaCounter | null;
+    amount: number;
+  }): Promise<MemberFirstConsumeResult> {
+    const scriptAllowanceCounter =
+      memberCounter.fallback === 'WORKSPACE_CREDITS' ? allowanceCounter : null;
+    const counters = isDefined(scriptAllowanceCounter)
+      ? [memberCounter, scriptAllowanceCounter]
+      : [memberCounter];
+
+    const firstAttempt = await this.attemptMemberFirstScript({
+      workspaceId,
+      counters,
+      memberCounter,
+      amount,
+      warms: counters.map(() => null),
+    });
+
+    if (firstAttempt.outcome !== 'ran') {
+      return firstAttempt;
+    }
+
+    const { reply: firstReply } = firstAttempt;
+
+    if (firstReply.memberShare !== null) {
+      return {
+        outcome: 'applied',
+        memberShare: firstReply.memberShare,
+        memberConsumed: firstReply.memberConsumed,
+        allowanceConsumed: firstReply.allowanceConsumed,
+        isAllowanceUnmetered: false,
+      };
+    }
+
+    const isMemberCold = !isDefined(firstReply.memberConsumed);
+    const isAllowanceCold =
+      isDefined(scriptAllowanceCounter) &&
+      !isDefined(firstReply.allowanceConsumed);
+
+    const [memberWarm, allowanceWarm] = await Promise.allSettled([
+      isMemberCold
+        ? this.fetchWarmValue({ workspaceId, counter: memberCounter })
+        : null,
+      isAllowanceCold
+        ? this.fetchWarmValue({ workspaceId, counter: scriptAllowanceCounter })
+        : null,
+    ]);
+
+    if (memberWarm.status === 'rejected') {
+      this.logger.error(
+        `Member credits warm failed for workspace ${workspaceId}: ${memberWarm.reason instanceof Error ? memberWarm.reason.message : 'unknown error'}`,
+      );
+
+      return { outcome: 'memberUnavailable' };
+    }
+
+    if (allowanceWarm.status === 'rejected') {
+      this.logger.error(
+        `Usage quota allowance warm failed for workspace ${workspaceId}: ${allowanceWarm.reason instanceof Error ? allowanceWarm.reason.message : 'unknown error'}`,
+      );
+    }
+
+    const warmedAt = Date.now();
+
+    if (memberCounter.periodEnd.getTime() <= warmedAt) {
+      return { outcome: 'memberUnavailable' };
+    }
+
+    const isAllowanceUnmetered =
+      isAllowanceCold &&
+      (allowanceWarm.status === 'rejected' ||
+        scriptAllowanceCounter.periodEnd.getTime() <= warmedAt);
+    const warmedCounters = isAllowanceUnmetered ? [memberCounter] : counters;
+
+    const secondAttempt = await this.attemptMemberFirstScript({
+      workspaceId,
+      counters: warmedCounters,
+      memberCounter,
+      amount,
+      warms: warmedCounters.map((counter) => {
+        const warm =
+          counter.kind === 'memberAllowance' ? memberWarm : allowanceWarm;
+
+        return warm.status === 'fulfilled' && isDefined(warm.value)
+          ? {
+              value: warm.value,
+              ttl: counter.periodEnd.getTime() - warmedAt,
+            }
+          : null;
+      }),
+    });
+
+    if (secondAttempt.outcome !== 'ran') {
+      return secondAttempt;
+    }
+
+    const { reply: secondReply } = secondAttempt;
+
+    // Still cold only when a key expired between the two runs, and nothing was applied
+    if (secondReply.memberShare === null) {
+      return { outcome: 'memberUnavailable' };
+    }
+
+    return {
+      outcome: 'applied',
+      memberShare: secondReply.memberShare,
+      memberConsumed: secondReply.memberConsumed,
+      allowanceConsumed: secondReply.allowanceConsumed,
+      isAllowanceUnmetered,
+    };
+  }
+
+  private async attemptMemberFirstScript({
+    workspaceId,
+    counters,
+    memberCounter,
+    amount,
+    warms,
+  }: {
+    workspaceId: string;
+    counters: (MemberAllowanceQuotaCounter | AllowanceQuotaCounter)[];
+    memberCounter: MemberAllowanceQuotaCounter;
+    amount: number;
+    warms: ({ value: number; ttl: number } | null)[];
+  }): Promise<MemberFirstScriptAttempt> {
+    let scriptArguments: string[];
+
+    try {
+      scriptArguments = buildMemberFirstScriptArguments({
+        amount,
+        memberLimit: memberCounter.limitValue,
+        isFallbackEnabled: memberCounter.fallback === 'WORKSPACE_CREDITS',
+        warms,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Member credits debit skipped for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
+
+      return { outcome: 'memberUnavailable' };
+    }
+
+    try {
+      const reply = await this.cacheStorage.runScript<unknown>({
+        script: WARM_AND_CONSUME_MEMBER_FIRST_SCRIPT,
+        keys: counters.map((counter) => counter.key),
+        args: scriptArguments,
+      });
+
+      return { outcome: 'ran', reply: parseMemberFirstScriptReply(reply) };
+    } catch (error) {
+      this.logger.error(
+        `Member credits debit outcome unknown for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
+
+      return { outcome: 'unknown' };
+    }
+  }
+
+  private countMemberCreditsApplied({
+    events,
+    memberCounter,
+    memberShare,
+    memberConsumed,
+  }: {
+    events: RecordUsageInput[];
+    memberCounter: MemberAllowanceQuotaCounter;
+    memberShare: number;
+    memberConsumed: number;
+  }): void {
+    for (const {
+      operationType,
+      memberCreditsUsedMicro,
+    } of apportionMemberCredits({
+      events,
+      memberCreditsUsedMicro: memberShare,
+    })) {
+      if (memberCreditsUsedMicro > 0) {
+        this.metricsService.incrementCounterBy({
+          key: MetricsKeys.UsageLimitQuotaMemberCreditsUsedMicro,
+          amount: memberCreditsUsedMicro,
+          attributes: { operationType, fallback: memberCounter.fallback },
+        });
+      }
+    }
+
+    const isStopModeCrossing =
+      memberCounter.fallback === 'STOP' &&
+      memberConsumed - memberShare < memberCounter.limitValue &&
+      memberConsumed >= memberCounter.limitValue;
+
+    if (isStopModeCrossing) {
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.UsageLimitQuotaMemberAllowanceStopOvershootMicro,
+        value: memberConsumed - memberCounter.limitValue,
+        bucketBoundaries:
+          MEMBER_ALLOWANCE_STOP_OVERSHOOT_MICRO_BUCKET_BOUNDARIES,
+      });
     }
   }
 
@@ -521,9 +1215,14 @@ export class UsageLimitQuotaService {
   private countAdmitOnFailure({
     operation,
     resourceType,
+    counterKind,
     creditsUsedMicro,
   }: QuotaEnforcement): void {
-    const attributes = { operation, resourceType };
+    const attributes = {
+      operation,
+      resourceType,
+      ...(isDefined(counterKind) && { counterKind }),
+    };
 
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.UsageLimitQuotaAdmittedOnFailure,
@@ -625,15 +1324,22 @@ export class UsageLimitQuotaService {
     return quotaLimitDefaults.flat();
   }
 
-  private async buildAllowanceCounterAdmittingOnFailure(
-    workspaceId: string,
-  ): Promise<{
-    allowanceCounter: AllowanceQuotaCounter | null;
-    isAllowanceSkipped: boolean;
-  }> {
+  private async buildCreditCountersAdmittingOnFailure({
+    workspaceId,
+    events,
+    memberCreditsPayer,
+  }: {
+    workspaceId: string;
+    events: CreditCounterEvent[];
+    memberCreditsPayer?: MemberCreditsPayer;
+  }): Promise<CreditCounters & { isAllowanceSkipped: boolean }> {
     try {
       return {
-        allowanceCounter: await this.buildAllowanceCounter(workspaceId),
+        ...(await this.buildCreditCounters({
+          workspaceId,
+          events,
+          memberCreditsPayer,
+        })),
         isAllowanceSkipped: false,
       };
     } catch (error) {
@@ -645,40 +1351,121 @@ export class UsageLimitQuotaService {
         `Usage quota allowance skipped for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
       );
 
-      return { allowanceCounter: null, isAllowanceSkipped: true };
+      return {
+        allowanceCounter: null,
+        memberCounter: null,
+        isAllowanceSkipped: true,
+      };
     }
   }
 
   private async buildAllowanceCounter(
     workspaceId: string,
   ): Promise<AllowanceQuotaCounter | null> {
+    const { allowanceCounter } = await this.buildCreditCounters({
+      workspaceId,
+      events: [],
+    });
+
+    return allowanceCounter;
+  }
+
+  private async buildCreditCounters({
+    workspaceId,
+    events,
+    memberCreditsPayer,
+  }: {
+    workspaceId: string;
+    events: CreditCounterEvent[];
+    memberCreditsPayer?: MemberCreditsPayer;
+  }): Promise<CreditCounters> {
     if (
       !(await this.billingCreditAllowanceService.isCreditAllowanceEnabled())
     ) {
-      return null;
+      return { allowanceCounter: null, memberCounter: null };
     }
 
     const allowance =
       await this.billingCreditAllowanceService.getCreditAllowance(workspaceId);
 
     if (!isDefined(allowance)) {
+      return { allowanceCounter: null, memberCounter: null };
+    }
+
+    return {
+      allowanceCounter: {
+        kind: 'allowance',
+        key: buildAllowanceCounterKey({
+          workspaceId,
+          periodStart: allowance.periodStart,
+        }),
+        limitValue: computeCreditAllowanceMicro({
+          planAllowanceMicro: allowance.planAllowanceMicro,
+          grants: allowance.grants,
+          nowMs: Date.now(),
+        }),
+        unit: UsageUnit.CREDIT,
+        periodStart: allowance.periodStart,
+        periodEnd: allowance.periodEnd,
+      },
+      memberCounter: this.buildMemberAllowanceCounter({
+        workspaceId,
+        memberCredits: allowance.memberCredits,
+        events,
+        memberCreditsPayer,
+      }),
+    };
+  }
+
+  private buildMemberAllowanceCounter({
+    workspaceId,
+    memberCredits,
+    events,
+    memberCreditsPayer,
+  }: {
+    workspaceId: string;
+    memberCredits: MemberCreditsAllowance | null;
+    events: CreditCounterEvent[];
+    memberCreditsPayer?: MemberCreditsPayer;
+  }): MemberAllowanceQuotaCounter | null {
+    if (!isDefined(memberCreditsPayer) || !isDefined(memberCredits)) {
+      return null;
+    }
+
+    const ineligibleEvent = events.find(
+      (event) =>
+        !isMemberCreditsEligibleEvent({ event, payer: memberCreditsPayer }),
+    );
+
+    if (isDefined(ineligibleEvent)) {
+      this.logger.warn(
+        `Member credits payer ignored for workspace ${workspaceId}: a ${ineligibleEvent.resourceType}/${ineligibleEvent.operationType} event is not member-funded`,
+      );
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.UsageLimitQuotaMemberCreditsPayerIgnored,
+        amount: 1,
+        attributes: {
+          resourceType: ineligibleEvent.resourceType,
+          operationType: ineligibleEvent.operationType,
+        },
+      });
+
       return null;
     }
 
     return {
-      kind: 'allowance',
-      key: buildAllowanceCounterKey({
+      kind: 'memberAllowance',
+      key: buildMemberAllowanceCounterKey({
         workspaceId,
-        periodStart: allowance.periodStart,
+        userWorkspaceId: memberCreditsPayer.userWorkspaceId,
+        periodStart: memberCredits.periodStart,
       }),
-      limitValue: computeCreditAllowanceMicro({
-        planAllowanceMicro: allowance.planAllowanceMicro,
-        grants: allowance.grants,
-        nowMs: Date.now(),
-      }),
+      limitValue: memberCredits.amountMicro,
       unit: UsageUnit.CREDIT,
-      periodStart: allowance.periodStart,
-      periodEnd: allowance.periodEnd,
+      userWorkspaceId: memberCreditsPayer.userWorkspaceId,
+      periodStart: memberCredits.periodStart,
+      periodEnd: memberCredits.periodEnd,
+      fallback: memberCredits.fallback,
     };
   }
 
@@ -853,24 +1640,55 @@ export class UsageLimitQuotaService {
 
     return Promise.all(
       counters.map(async (counter) => {
-        if (counter.kind === 'allowance') {
-          return this.getWorkspaceFundedCreditsUsedMicro({
-            workspaceId,
-            counter,
-          });
+        switch (counter.kind) {
+          case 'allowance':
+            return this.getWorkspaceFundedCreditsUsedMicro({
+              workspaceId,
+              counter,
+            });
+          case 'memberAllowance':
+            return this.usageAnalyticsService.getMemberCreditsUsedMicroForSlice(
+              {
+                workspaceId,
+                userWorkspaceId: counter.userWorkspaceId,
+                sliceStart: counter.periodStart,
+                sliceEnd: counter.periodEnd,
+              },
+            );
+          case 'limit': {
+            const periodGroupKey = buildPeriodGroupKey(counter);
+
+            const rowsRead =
+              rowsReadsByPeriodGroup.get(periodGroupKey) ??
+              this.fetchConsumptionRows({ workspaceId, counter });
+
+            rowsReadsByPeriodGroup.set(periodGroupKey, rowsRead);
+
+            return computeQuotaConsumed({
+              rows: await rowsRead,
+              scope: counter,
+            });
+          }
+          default:
+            return assertUnreachable(counter);
         }
-
-        const periodGroupKey = buildPeriodGroupKey(counter);
-
-        const rowsRead =
-          rowsReadsByPeriodGroup.get(periodGroupKey) ??
-          this.fetchConsumptionRows({ workspaceId, counter });
-
-        rowsReadsByPeriodGroup.set(periodGroupKey, rowsRead);
-
-        return computeQuotaConsumed({ rows: await rowsRead, scope: counter });
       }),
     );
+  }
+
+  private async fetchWarmValue({
+    workspaceId,
+    counter,
+  }: {
+    workspaceId: string;
+    counter: QuotaCounter;
+  }): Promise<number> {
+    const [warmValue] = await this.fetchWarmValues({
+      workspaceId,
+      counters: [counter],
+    });
+
+    return warmValue;
   }
 
   private async getWorkspaceFundedCreditsUsedMicro({

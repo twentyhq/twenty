@@ -1,5 +1,6 @@
 import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
+import { type MemberAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/member-allowance-quota-counter.type';
 import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/build-quota-debits.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -16,6 +17,17 @@ const allowanceCounter: AllowanceQuotaCounter = {
   unit: UsageUnit.CREDIT,
   periodStart: PERIOD_START,
   periodEnd: PERIOD_END,
+};
+
+const memberAllowanceCounter: MemberAllowanceQuotaCounter = {
+  kind: 'memberAllowance',
+  key: 'member-allowance',
+  limitValue: 1_000,
+  unit: UsageUnit.CREDIT,
+  userWorkspaceId: 'user-workspace-1',
+  periodStart: PERIOD_START,
+  periodEnd: PERIOD_END,
+  fallback: 'WORKSPACE_CREDITS',
 };
 
 const buildLimitCounter = (unit: UsageUnit): LimitQuotaCounter => ({
@@ -68,6 +80,15 @@ describe('buildQuotaDebits', () => {
         events: [logicFunctionEvent, workflowEvent],
       }),
     ).toEqual([{ counter: allowanceCounter, amount: 400 }]);
+  });
+
+  it('never debits a member allowance counter', () => {
+    expect(
+      buildQuotaDebits({
+        counters: [memberAllowanceCounter, allowanceCounter],
+        events: [logicFunctionEvent],
+      }),
+    ).toEqual([{ counter: allowanceCounter, amount: 100 }]);
   });
 
   it('drops a counter the events consume nothing of', () => {
