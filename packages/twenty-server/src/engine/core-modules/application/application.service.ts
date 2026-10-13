@@ -162,22 +162,6 @@ export class ApplicationService {
     };
   }
 
-  async findWorkspaceOwnedApplicationIdsOrThrow({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<string[]> {
-    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
-      await this.findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
-        workspaceId,
-      });
-
-    return [
-      workspaceCustomFlatApplication.id,
-      twentyStandardFlatApplication.id,
-    ];
-  }
-
   async findManyApplications(
     workspaceId: string,
   ): Promise<ApplicationEntity[]> {

@@ -119,13 +119,17 @@ export class CoreWorkflowRunnerService {
       : isManualTrigger
         ? WorkflowRunStatus.ENQUEUED
         : WorkflowRunStatus.NOT_STARTED;
+    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
     const createdBy = buildWorkflowRunCreatedBy({
       source,
       workflowApplicationId: workflow.applicationId,
-      workspaceOwnedApplicationIds:
-        await this.applicationService.findWorkspaceOwnedApplicationIdsOrThrow({
-          workspaceId,
-        }),
+      workspaceOwnedApplicationIds: [
+        workspaceCustomFlatApplication.id,
+        twentyStandardFlatApplication.id,
+      ],
     });
     const createdWorkflowRunId =
       await this.workflowRunWorkspaceService.createCoreWorkflowRun({
