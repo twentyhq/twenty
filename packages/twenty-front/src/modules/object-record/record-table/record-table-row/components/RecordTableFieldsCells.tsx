@@ -6,8 +6,13 @@ import { RecordTableCell } from '@/object-record/record-table/record-table-cell/
 import { RecordTableCellFirstRowFirstColumn } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFirstRowFirstColumn';
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
+import { RecordTableTextCell } from '@/object-record/record-table/record-table-cell/components/RecordTableTextCell';
+import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const RecordTableFieldsCells = () => {
@@ -20,6 +25,13 @@ export const RecordTableFieldsCells = () => {
   const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
+  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
+    isRecordTableCellsNonEditableComponentState,
+  );
+  const {
+    fieldDefinitionByFieldMetadataItemId,
+    labelIdentifierFieldMetadataItem,
+  } = useRecordIndexContextOrThrow();
 
   if (!isNonEmptyArray(visibleRecordFields)) {
     return null;
@@ -58,23 +70,37 @@ export const RecordTableFieldsCells = () => {
           </RecordTableCellStyleWrapper>
         )}
       </RecordTableCellWrapper>
-      {recordFieldsAfterFirst.map((recordField, recordFieldIndex) => (
-        <RecordTableCellWrapper
-          key={recordField.fieldMetadataItemId}
-          recordField={recordField}
-          recordFieldIndex={recordFieldIndex + 1}
-        >
-          <RecordTableCellStyleWrapper
+      {recordFieldsAfterFirst.map((recordField, recordFieldIndex) =>
+        fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId]
+          ?.type === FieldMetadataType.TEXT &&
+        labelIdentifierFieldMetadataItem?.id !==
+          recordField.fieldMetadataItemId ? (
+          <RecordTableTextCell
+            key={recordField.fieldMetadataItemId}
+            recordField={recordField}
+            recordFieldIndex={recordFieldIndex + 1}
             isSelected={isSelected}
             isDragging={isDragging}
-            widthClassName={getRecordTableColumnFieldWidthClassName(
-              recordFieldIndex + 1,
-            )}
+            isRecordTableCellsNonEditable={isRecordTableCellsNonEditable}
+          />
+        ) : (
+          <RecordTableCellWrapper
+            key={recordField.fieldMetadataItemId}
+            recordField={recordField}
+            recordFieldIndex={recordFieldIndex + 1}
           >
-            <RecordTableCell />
-          </RecordTableCellStyleWrapper>
-        </RecordTableCellWrapper>
-      ))}
+            <RecordTableCellStyleWrapper
+              isSelected={isSelected}
+              isDragging={isDragging}
+              widthClassName={getRecordTableColumnFieldWidthClassName(
+                recordFieldIndex + 1,
+              )}
+            >
+              <RecordTableCell />
+            </RecordTableCellStyleWrapper>
+          </RecordTableCellWrapper>
+        ),
+      )}
     </>
   );
 };
