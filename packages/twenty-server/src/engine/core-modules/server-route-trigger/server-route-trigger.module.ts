@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { ServerRouteReachabilityService } from 'src/engine/core-modules/server-route-trigger/server-route-reachability.service';
 import { ServerRouteTriggerController } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.controller';
@@ -10,7 +11,11 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LogicFunctionEntity]), MetricsModule],
+  imports: [
+    TypeOrmModule.forFeature([LogicFunctionEntity]),
+    MetricsModule,
+    JwtModule,
+  ],
   controllers: [ServerRouteTriggerController],
   providers: [
     provideWorkspaceScopedRepository(LogicFunctionEntity),

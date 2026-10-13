@@ -272,7 +272,11 @@ describe('ServerRouteTrigger authorization (integration)', () => {
 
     it('forwards a third-party JWT to a resolver that asked for it', async () => {
       const thirdPartyToken = jwt.sign(
-        { iss: 'https://api.botframework.com', aud: 'bot-app-id' },
+        {
+          iss: 'https://api.botframework.com',
+          aud: 'bot-app-id',
+          type: 'ACCESS',
+        },
         'third-party-signing-key',
       );
 

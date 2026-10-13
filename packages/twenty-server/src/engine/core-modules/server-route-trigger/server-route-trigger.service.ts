@@ -6,8 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 import {
   LogicFunctionExecutionException,
@@ -45,23 +45,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 const QUEUED_TARGET_RETRY_LIMIT = 3;
 
-const TWENTY_TOKEN_TYPES: unknown[] = Object.values(JwtTokenTypeEnum);
-
-const isTwentyIssuedToken = (authorization: string | undefined): boolean => {
-  if (!isDefined(authorization)) {
-    return false;
-  }
-
-  const token = authorization.replace(/^Bearer\s+/i, '');
-
-  return (
-    isUserSessionToken(token) ||
-    TWENTY_TOKEN_TYPES.includes(
-      decodeJwtPayload<{ type?: unknown }>(token)?.type,
-    )
-  );
-};
-
 export type ServerRouteTriggerResult = {
   response: RouteTriggerResponse;
   isResolvedThroughLegacyIdentifier: boolean;
@@ -82,6 +65,7 @@ export class ServerRouteTriggerService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
   async handle({
@@ -124,16 +108,21 @@ export class ServerRouteTriggerService {
       );
     }
 
+    const forwardedRequestHeaders =
+      resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [];
+
+    const isAuthorizationForwardable =
+      forwardedRequestHeaders.some(
+        (headerName) => headerName.toLowerCase() === 'authorization',
+      ) && !(await this.isTwentyIssuedToken(request.headers.authorization));
+
     const event = buildLogicFunctionEvent({
       request,
       pathParameters: {},
-      forwardedRequestHeaders:
-        resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [],
-      forwardableCredentialHeaderNames: isTwentyIssuedToken(
-        request.headers.authorization,
-      )
-        ? new Set()
-        : SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAMES,
+      forwardedRequestHeaders,
+      forwardableCredentialHeaderNames: isAuthorizationForwardable
+        ? SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAMES
+        : new Set(),
       userWorkspaceId: null,
     });
 
@@ -378,6 +367,30 @@ export class ServerRouteTriggerService {
         return ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED;
       default:
         return ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR;
+    }
+  }
+
+  private async isTwentyIssuedToken(
+    authorization: string | undefined,
+  ): Promise<boolean> {
+    if (!isDefined(authorization)) {
+      return false;
+    }
+
+    const token = authorization.replace(/^Bearer\s+/i, '');
+
+    if (isUserSessionToken(token)) {
+      return true;
+    }
+
+    try {
+      await this.jwtWrapperService.verifyJwtToken(token, {
+        ignoreExpiration: true,
+      });
+
+      return true;
+    } catch (error) {
+      return !(error instanceof AuthException);
     }
   }
 }
