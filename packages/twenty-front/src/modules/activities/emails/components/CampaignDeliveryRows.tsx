@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
-import { CampaignEnvelopeRow } from '@/activities/emails/components/CampaignEnvelopeBox';
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { campaignDeliveryFamilyState } from '@/activities/emails/states/campaignDeliveryFamilyState';
 import { type CampaignDeliveryTiming } from '@/activities/emails/types/CampaignDeliveryTiming';
 import { buildDefaultCampaignScheduledAt } from '@/activities/emails/utils/buildDefaultCampaignScheduledAt';
@@ -10,7 +10,6 @@ import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-typ
 import { Select } from '@/ui/input/components/Select';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
-import { IconClock, IconSend } from 'twenty-ui/icon';
 
 type CampaignDeliveryRowsProps = {
   campaignId: string;
@@ -49,9 +48,8 @@ export const CampaignDeliveryRows = ({
 
   return (
     <>
-      <CampaignEnvelopeRow
+      <ComposerFieldRow
         label={t`Delivery`}
-        Icon={IconSend}
         onClick={() =>
           openDropdown({
             dropdownComponentInstanceIdFromProps: deliveryTimingDropdownId,
@@ -66,11 +64,10 @@ export const CampaignDeliveryRows = ({
           options={deliveryTimingOptions}
           onChange={handleDeliveryTimingChange}
         />
-      </CampaignEnvelopeRow>
+      </ComposerFieldRow>
       {campaignDelivery.timing === 'LATER' && (
-        <CampaignEnvelopeRow
+        <ComposerFieldRow
           label={t`Send at`}
-          Icon={IconClock}
           onClick={(event) =>
             event.currentTarget.querySelector('input')?.focus()
           }
@@ -80,7 +77,7 @@ export const CampaignDeliveryRows = ({
             defaultValue={campaignDelivery.scheduledAt ?? undefined}
             onChange={handleScheduledAtChange}
           />
-        </CampaignEnvelopeRow>
+        </ComposerFieldRow>
       )}
     </>
   );

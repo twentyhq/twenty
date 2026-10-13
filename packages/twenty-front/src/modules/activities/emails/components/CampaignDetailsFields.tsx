@@ -7,24 +7,15 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import {
-  IconAlertTriangle,
-  IconAlignLeft,
-  IconAt,
-  IconCircleOff,
-  IconMailX,
-  IconUsers,
-} from 'twenty-ui/icon';
+import { IconAlertTriangle } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { CampaignDeliveryRows } from '@/activities/emails/components/CampaignDeliveryRows';
-import {
-  CampaignEnvelopeBox,
-  CampaignEnvelopeRow,
-} from '@/activities/emails/components/CampaignEnvelopeBox';
+import { CampaignEnvelopeBox } from '@/activities/emails/components/CampaignEnvelopeBox';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -154,9 +145,8 @@ export const CampaignDetailsFields = ({
         )
       }
     >
-      <CampaignEnvelopeRow
+      <ComposerFieldRow
         label={t`From`}
-        Icon={IconAt}
         onClick={
           isSenderSelectDisabled
             ? undefined
@@ -173,10 +163,9 @@ export const CampaignDetailsFields = ({
           emptyOption={{ label: t`Select a sender`, value: '' }}
           onChange={detailsState.setFromAddress}
         />
-      </CampaignEnvelopeRow>
-      <CampaignEnvelopeRow
+      </ComposerFieldRow>
+      <ComposerFieldRow
         label={t`To`}
-        Icon={IconUsers}
         onClick={() => openDropdownById(listDropdownId)}
       >
         <FormSingleRecordPicker
@@ -188,11 +177,10 @@ export const CampaignDetailsFields = ({
           onChange={detailsState.setListId}
           onCreate={handleCreateList}
         />
-      </CampaignEnvelopeRow>
+      </ComposerFieldRow>
       {hasTopicOptions && (
-        <CampaignEnvelopeRow
+        <ComposerFieldRow
           label={t`Topic`}
-          Icon={IconMailX}
           onClick={
             isTopicSelectDisabled
               ? undefined
@@ -210,17 +198,15 @@ export const CampaignDetailsFields = ({
             emptyOption={{
               label: t`No topic`,
               value: '',
-              Icon: IconCircleOff,
             }}
             onChange={(value) =>
               detailsState.setUnsubscribeTopicId(value === '' ? null : value)
             }
           />
-        </CampaignEnvelopeRow>
+        </ComposerFieldRow>
       )}
-      <CampaignEnvelopeRow
+      <ComposerFieldRow
         label={t`Subject`}
-        Icon={IconAlignLeft}
         onClick={() => subjectInputRef.current?.focus()}
       >
         <StyledComposerTextInput
@@ -234,7 +220,7 @@ export const CampaignDetailsFields = ({
           onFocus={handleSubjectFocus}
           onBlur={handleSubjectBlur}
         />
-      </CampaignEnvelopeRow>
+      </ComposerFieldRow>
       <CampaignDeliveryRows campaignId={campaign.id} />
     </CampaignEnvelopeBox>
   );

@@ -4,7 +4,6 @@ import { type useCalendarEventComposer } from '@/activities/calendar/hooks/useCa
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
-import { COMPOSER_LABEL_MIN_WIDTH } from '@/activities/constants/ComposerLabelMinWidth';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
 import { useEmailRecipientsDragAndDrop } from '@/activities/emails/recipients/hooks/useEmailRecipientsDragAndDrop';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
@@ -97,10 +96,7 @@ export const CalendarEventComposerFields = ({
           onDragEnd={handlers.onDragEnd}
         >
           <ComposerHeader>
-            <ComposerFieldRow
-              label={t`Calendar`}
-              labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-            >
+            <ComposerFieldRow label={t`Calendar`}>
               <Select
                 dropdownId="calendar-event-composer-account"
                 fullWidth
@@ -110,10 +106,7 @@ export const CalendarEventComposerFields = ({
                 onChange={composerState.setConnectedAccountId}
               />
             </ComposerFieldRow>
-            <ComposerFieldRow
-              label={t`Guests`}
-              labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-            >
+            <ComposerFieldRow label={t`Guests`}>
               <EmailRecipientsFieldInput
                 fieldId="to"
                 draggedSourceIndices={draggedSourceIndices}
@@ -126,20 +119,14 @@ export const CalendarEventComposerFields = ({
               />
             </ComposerFieldRow>
             {composerState.canPickTargets && (
-              <ComposerFieldRow
-                label={t`Relations`}
-                labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-              >
+              <ComposerFieldRow label={t`Relations`}>
                 <CalendarEventComposerTargetsInput
                   targets={composerState.targets}
                   onTargetChange={composerState.handleTargetChange}
                 />
               </ComposerFieldRow>
             )}
-            <ComposerFieldRow
-              label={t`Title`}
-              labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-            >
+            <ComposerFieldRow label={t`Title`}>
               <StyledComposerTextInput
                 type="text"
                 aria-label={t`Title`}
@@ -147,10 +134,7 @@ export const CalendarEventComposerFields = ({
                 onChange={(event) => composerState.setTitle(event.target.value)}
               />
             </ComposerFieldRow>
-            <ComposerFieldRow
-              label={t`Location`}
-              labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-            >
+            <ComposerFieldRow label={t`Location`}>
               <CalendarEventLocationInput
                 ariaLabel={t`Location`}
                 placeholder={t`Add a location`}
@@ -160,7 +144,6 @@ export const CalendarEventComposerFields = ({
             </ComposerFieldRow>
             <ComposerFieldRow
               label={t`All day`}
-              labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
               onClick={() =>
                 composerState.handleIsFullDayChange(!composerState.isFullDay)
               }
@@ -179,20 +162,14 @@ export const CalendarEventComposerFields = ({
             </ComposerFieldRow>
             {composerState.isFullDay ? (
               <>
-                <ComposerFieldRow
-                  label={t`Starts`}
-                  labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-                >
+                <ComposerFieldRow label={t`Starts`}>
                   <FormDateFieldInput
                     variant="transparent"
                     defaultValue={composerState.dates.startsAt}
                     onChange={composerState.handleStartsAtChange}
                   />
                 </ComposerFieldRow>
-                <ComposerFieldRow
-                  label={t`Ends`}
-                  labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-                >
+                <ComposerFieldRow label={t`Ends`}>
                   <FormDateFieldInput
                     key={composerState.dates.endsAt}
                     variant="transparent"
@@ -203,10 +180,7 @@ export const CalendarEventComposerFields = ({
               </>
             ) : (
               <>
-                <ComposerFieldRow
-                  label={t`Starts`}
-                  labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-                >
+                <ComposerFieldRow label={t`Starts`}>
                   <FormDateTimeFieldInput
                     key={`starts-at-${composerState.timeZone}`}
                     variant="transparent"
@@ -215,10 +189,7 @@ export const CalendarEventComposerFields = ({
                     timeZone={composerState.timeZone}
                   />
                 </ComposerFieldRow>
-                <ComposerFieldRow
-                  label={t`Ends`}
-                  labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-                >
+                <ComposerFieldRow label={t`Ends`}>
                   <FormDateTimeFieldInput
                     key={`ends-at-${composerState.dates.endsAt}-${composerState.timeZone}`}
                     variant="transparent"
@@ -229,10 +200,7 @@ export const CalendarEventComposerFields = ({
                 </ComposerFieldRow>
               </>
             )}
-            <ComposerFieldRow
-              label={t`Time zone`}
-              labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-            >
+            <ComposerFieldRow label={t`Time zone`}>
               <Select
                 dropdownId="calendar-event-composer-time-zone"
                 fullWidth
@@ -245,7 +213,6 @@ export const CalendarEventComposerFields = ({
             </ComposerFieldRow>
             <ComposerFieldRow
               label={t`Invitations`}
-              labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
               onClick={() =>
                 composerState.setSendInvitations(!composerState.sendInvitations)
               }
@@ -264,7 +231,6 @@ export const CalendarEventComposerFields = ({
             </ComposerFieldRow>
             <ComposerFieldRow
               label={t`Video call`}
-              labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
               onClick={() =>
                 composerState.setAddConferencing(!composerState.addConferencing)
               }
@@ -281,10 +247,7 @@ export const CalendarEventComposerFields = ({
                 {t`Add a meeting link`}
               </StyledRowDescription>
             </ComposerFieldRow>
-            <ComposerFieldRow
-              label={t`Description`}
-              labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-            >
+            <ComposerFieldRow label={t`Description`}>
               <TextArea
                 textAreaId="calendar-event-composer-description"
                 variant="transparent"

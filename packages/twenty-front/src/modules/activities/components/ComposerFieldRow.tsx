@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 import { type MouseEvent, type MouseEventHandler, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { COMPOSER_LABEL_MIN_WIDTH } from '@/activities/constants/ComposerLabelMinWidth';
 
 const ROW_MIN_HEIGHT = '40px';
 
@@ -49,19 +50,12 @@ const StyledRow = styled.div<{ $clickable: boolean }>`
   }
 `;
 
-const StyledLeading = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledLabel = styled.span<{ $minWidth: string | undefined }>`
+const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
-  min-width: ${({ $minWidth }) => $minWidth ?? 'auto'};
+  min-width: ${COMPOSER_LABEL_MIN_WIDTH};
 `;
 
 const StyledTrailing = styled.div`
@@ -71,25 +65,18 @@ const StyledTrailing = styled.div`
 
 type ComposerFieldRowProps = {
   label: string;
-  Icon?: IconComponent;
   children: ReactNode;
   trailing?: ReactNode;
   onClick?: MouseEventHandler<HTMLDivElement>;
-  // A floor, not a fixed width, so a long translation doesn't run under its control.
-  labelMinWidth?: string;
 };
 
 // The label is a plain span, so the row is named as a group to give assistive technology the field name.
 export const ComposerFieldRow = ({
   label,
-  Icon,
   children,
   trailing,
   onClick,
-  labelMinWidth,
 }: ComposerFieldRowProps) => {
-  const theme = useTheme();
-
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!(event.target instanceof Element)) {
       return;
@@ -115,12 +102,7 @@ export const ComposerFieldRow = ({
       $clickable={isDefined(onClick)}
       onClick={isDefined(onClick) ? handleClick : undefined}
     >
-      <StyledLeading aria-hidden="true">
-        {isDefined(Icon) && (
-          <Icon size={theme.icon.size.md} color={theme.font.color.light} />
-        )}
-        <StyledLabel $minWidth={labelMinWidth}>{label}</StyledLabel>
-      </StyledLeading>
+      <StyledLabel aria-hidden="true">{label}</StyledLabel>
       <StyledContent>{children}</StyledContent>
       {isDefined(trailing) && (
         <StyledTrailing onClick={(event) => event.stopPropagation()}>

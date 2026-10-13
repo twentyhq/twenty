@@ -212,6 +212,7 @@ export const EmailComposerFields = ({
                 <Select
                   dropdownId="email-composer-from-account"
                   fullWidth
+                  variant="transparent"
                   value={selectedSenderValue}
                   options={senderOptions}
                   onChange={handleSenderChange}
