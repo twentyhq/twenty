@@ -2,18 +2,24 @@ import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
-import { APPLICATION_REGISTRATION_ANALYTICS_BREAKDOWN_LIMIT } from 'src/engine/core-modules/application/application-registration-analytics/constants/application-registration-analytics-breakdown-limit.constant';
 import {
   type ApplicationRegistrationAnalyticsBreakdownItemDTO,
   type ApplicationRegistrationAnalyticsDTO,
 } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.dto';
 import { type ApplicationRegistrationMetricName } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-metric-name.type';
-import { type ApplicationRegistrationMetricSumRow } from 'src/engine/core-modules/application/application-registration-analytics/utils/add-metric-row-to-application-registration-analytics-counts.util';
+import {
+  type ApplicationRegistrationMetricDailyBreakdownRow,
+  buildApplicationRegistrationAnalyticsBreakdown,
+} from 'src/engine/core-modules/application/application-registration-analytics/utils/build-application-registration-analytics-breakdown.util';
 import {
   type ApplicationRegistrationMetricDailySumRow,
   buildApplicationRegistrationAnalyticsTimeSeries,
 } from 'src/engine/core-modules/application/application-registration-analytics/utils/build-application-registration-analytics-time-series.util';
 import { buildApplicationRegistrationAnalyticsTotals } from 'src/engine/core-modules/application/application-registration-analytics/utils/build-application-registration-analytics-totals.util';
+import {
+  type ApplicationRegistrationMetricRowWithWorkspaceCount,
+  filterApplicationRegistrationMetricRowsByWorkspaceCount,
+} from 'src/engine/core-modules/application/application-registration-analytics/utils/filter-application-registration-metric-rows-by-workspace-count.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 type AnalyticsPeriodParams = {
@@ -22,18 +28,16 @@ type AnalyticsPeriodParams = {
   periodEnd: Date;
 };
 
-type BreakdownRow = {
-  key: string;
-  value: string | number;
-};
-
-type BreakdownGroupByField = 'dimension' | 'context';
-
 type AnalyticsPeriodQueryParams = {
   applicationRegistrationId: string;
   periodStart: string;
   periodEnd: string;
 };
+
+type DailyMetricRow = ApplicationRegistrationMetricDailySumRow &
+  ApplicationRegistrationMetricRowWithWorkspaceCount;
+
+type BreakdownGroupByField = 'dimension' | 'context';
 
 const PERIOD_WHERE_CLAUSE = `
   applicationRegistrationId = {applicationRegistrationId:String}
@@ -41,6 +45,13 @@ const PERIOD_WHERE_CLAUSE = `
   AND timestamp < {periodEnd:DateTime64(3)}
 `;
 
+const DAY_EXPRESSION = `formatDateTime(timestamp, '%Y-%m-%d')`;
+
+// Rows without a workspace (version publishes) do not count toward the suppression threshold
+const WORKSPACE_COUNT_EXPRESSION = `uniqExactIf(workspaceHash, workspaceHash != '')`;
+
+// Every figure is derived from (day, metric) cells that already passed the workspace-count threshold,
+// so totals, series and breakdowns can never be differenced into one workspace's activity
 @Injectable()
 export class ApplicationRegistrationAnalyticsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
@@ -49,18 +60,16 @@ export class ApplicationRegistrationAnalyticsService {
     params: AnalyticsPeriodParams,
   ): Promise<ApplicationRegistrationAnalyticsDTO> {
     const [
-      totalRows,
-      activeWorkspaces,
       dailyRows,
+      activeWorkspaces,
       functionErrorsByType,
       functionErrorsByFunction,
       functionExecutionsByFunction,
       lifecycleFailuresByErrorCode,
-      creditsChargedByOperationMicro,
+      creditsChargedByOperation,
     ] = await Promise.all([
-      this.queryTotals(params),
-      this.queryActiveWorkspaces(params),
       this.queryDailySums(params),
+      this.queryActiveWorkspaces(params),
       this.queryBreakdown({
         ...params,
         metrics: ['function.error'],
@@ -85,18 +94,22 @@ export class ApplicationRegistrationAnalyticsService {
         ...params,
         metrics: ['charge.credits_micro'],
         groupBy: 'dimension',
+        convertValue: toDisplayCredits,
       }),
     ]);
+
+    const publishedDailyRows =
+      filterApplicationRegistrationMetricRowsByWorkspaceCount(dailyRows);
 
     return {
       periodStart: params.periodStart,
       periodEnd: params.periodEnd,
       totals: buildApplicationRegistrationAnalyticsTotals({
-        rows: totalRows,
+        rows: publishedDailyRows,
         activeWorkspaces,
       }),
       timeSeries: buildApplicationRegistrationAnalyticsTimeSeries({
-        rows: dailyRows,
+        rows: publishedDailyRows,
         periodStart: params.periodStart,
         periodEnd: params.periodEnd,
       }),
@@ -104,10 +117,7 @@ export class ApplicationRegistrationAnalyticsService {
       functionErrorsByFunction,
       functionExecutionsByFunction,
       lifecycleFailuresByErrorCode,
-      creditsChargedByOperation: creditsChargedByOperationMicro.map((item) => ({
-        key: item.key,
-        value: toDisplayCredits(item.value),
-      })),
+      creditsChargedByOperation,
     };
   }
 
@@ -123,14 +133,18 @@ export class ApplicationRegistrationAnalyticsService {
     };
   }
 
-  private async queryTotals(
+  private async queryDailySums(
     params: AnalyticsPeriodParams,
-  ): Promise<ApplicationRegistrationMetricSumRow[]> {
-    return this.clickHouseService.selectOrThrow<ApplicationRegistrationMetricSumRow>(
-      `SELECT metric, sum(value) AS value
+  ): Promise<DailyMetricRow[]> {
+    return this.clickHouseService.selectOrThrow<DailyMetricRow>(
+      `SELECT ${DAY_EXPRESSION} AS date,
+              metric,
+              sum(value) AS value,
+              ${WORKSPACE_COUNT_EXPRESSION} AS workspaceCount
        FROM applicationRegistrationMetric
        WHERE ${PERIOD_WHERE_CLAUSE}
-       GROUP BY metric`,
+       GROUP BY date, metric
+       ORDER BY date ASC`,
       this.buildPeriodParams(params),
     );
   }
@@ -141,51 +155,42 @@ export class ApplicationRegistrationAnalyticsService {
     const rows = await this.clickHouseService.selectOrThrow<{
       activeWorkspaces: string | number;
     }>(
-      `SELECT uniqExact(workspaceHash) AS activeWorkspaces
+      `SELECT ${WORKSPACE_COUNT_EXPRESSION} AS activeWorkspaces
        FROM applicationRegistrationMetric
-       WHERE ${PERIOD_WHERE_CLAUSE}
-         AND workspaceHash != ''`,
+       WHERE ${PERIOD_WHERE_CLAUSE}`,
       this.buildPeriodParams(params),
     );
 
     return Number(rows[0]?.activeWorkspaces ?? 0);
   }
 
-  private async queryDailySums(
-    params: AnalyticsPeriodParams,
-  ): Promise<ApplicationRegistrationMetricDailySumRow[]> {
-    return this.clickHouseService.selectOrThrow<ApplicationRegistrationMetricDailySumRow>(
-      `SELECT formatDateTime(timestamp, '%Y-%m-%d') AS date,
-              metric,
-              sum(value) AS value
-       FROM applicationRegistrationMetric
-       WHERE ${PERIOD_WHERE_CLAUSE}
-       GROUP BY date, metric
-       ORDER BY date ASC`,
-      this.buildPeriodParams(params),
-    );
-  }
-
   private async queryBreakdown({
     metrics,
     groupBy,
+    convertValue,
     ...params
   }: AnalyticsPeriodParams & {
     metrics: ApplicationRegistrationMetricName[];
     groupBy: BreakdownGroupByField;
+    convertValue?: (value: number) => number;
   }): Promise<ApplicationRegistrationAnalyticsBreakdownItemDTO[]> {
-    const rows = await this.clickHouseService.selectOrThrow<BreakdownRow>(
-      `SELECT ${groupBy} AS key, sum(value) AS value
-       FROM applicationRegistrationMetric
-       WHERE ${PERIOD_WHERE_CLAUSE}
-         AND metric IN ({metrics:Array(String)})
-         AND ${groupBy} != ''
-       GROUP BY key
-       ORDER BY value DESC
-       LIMIT ${APPLICATION_REGISTRATION_ANALYTICS_BREAKDOWN_LIMIT}`,
-      { ...this.buildPeriodParams(params), metrics },
-    );
+    const rows =
+      await this.clickHouseService.selectOrThrow<ApplicationRegistrationMetricDailyBreakdownRow>(
+        `SELECT ${groupBy} AS key,
+                ${DAY_EXPRESSION} AS date,
+                sum(value) AS value,
+                ${WORKSPACE_COUNT_EXPRESSION} AS workspaceCount
+         FROM applicationRegistrationMetric
+         WHERE ${PERIOD_WHERE_CLAUSE}
+           AND metric IN ({metrics:Array(String)})
+           AND ${groupBy} != ''
+         GROUP BY key, date`,
+        { ...this.buildPeriodParams(params), metrics },
+      );
 
-    return rows.map((row) => ({ key: row.key, value: Number(row.value) }));
+    return buildApplicationRegistrationAnalyticsBreakdown({
+      rows,
+      convertValue,
+    });
   }
 }

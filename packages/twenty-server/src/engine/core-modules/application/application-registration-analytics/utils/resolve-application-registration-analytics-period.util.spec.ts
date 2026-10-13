@@ -13,10 +13,22 @@ describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
     jest.useRealTimers();
   });
 
-  it('should default to the last 30 days ending now', () => {
+  it('should default to the last 30 days ending now, widened to whole UTC days', () => {
     expect(resolveApplicationRegistrationAnalyticsPeriod({})).toEqual({
-      periodStart: new Date('2026-09-12T12:00:00.000Z'),
-      periodEnd: new Date('2026-10-12T12:00:00.000Z'),
+      periodStart: new Date('2026-09-12T00:00:00.000Z'),
+      periodEnd: new Date('2026-10-13T00:00:00.000Z'),
+    });
+  });
+
+  it('should snap an explicit unaligned period to whole UTC days', () => {
+    expect(
+      resolveApplicationRegistrationAnalyticsPeriod({
+        periodStart: new Date('2026-10-01T13:45:12.345Z'),
+        periodEnd: new Date('2026-10-05T08:00:00.000Z'),
+      }),
+    ).toEqual({
+      periodStart: new Date('2026-10-01T00:00:00.000Z'),
+      periodEnd: new Date('2026-10-06T00:00:00.000Z'),
     });
   });
 

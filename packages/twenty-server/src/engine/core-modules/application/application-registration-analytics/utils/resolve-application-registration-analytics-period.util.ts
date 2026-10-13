@@ -1,5 +1,6 @@
 import { APPLICATION_REGISTRATION_ANALYTICS_DEFAULT_PERIOD_DAYS } from 'src/engine/core-modules/application/application-registration-analytics/constants/application-registration-analytics-default-period-days.constant';
 import { APPLICATION_REGISTRATION_ANALYTICS_MAX_PERIOD_DAYS } from 'src/engine/core-modules/application/application-registration-analytics/constants/application-registration-analytics-max-period-days.constant';
+import { snapApplicationRegistrationAnalyticsPeriodToUtcDays } from 'src/engine/core-modules/application/application-registration-analytics/utils/snap-application-registration-analytics-period-to-utc-days.util';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -43,5 +44,8 @@ export const resolveApplicationRegistrationAnalyticsPeriod = ({
     );
   }
 
-  return { periodStart: resolvedPeriodStart, periodEnd: resolvedPeriodEnd };
+  return snapApplicationRegistrationAnalyticsPeriodToUtcDays({
+    periodStart: resolvedPeriodStart,
+    periodEnd: resolvedPeriodEnd,
+  });
 };

@@ -39,6 +39,7 @@ import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
+import { toApplicationRegistrationMetricErrorCategory } from 'src/engine/core-modules/application/application-registration-analytics/utils/to-application-registration-metric-error-category.util';
 import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
@@ -221,7 +222,7 @@ export class LogicFunctionExecutorService {
       this.applicationRegistrationMetricService.recordForApplication({
         application: flatApplication,
         metric: 'function.error',
-        dimension: error instanceof Error ? error.name : 'UnhandledError',
+        dimension: 'EXECUTION_FAILED',
         context: flatLogicFunction.name,
         workspaceId,
       });
@@ -637,7 +638,9 @@ export class LogicFunctionExecutorService {
       this.applicationRegistrationMetricService.recordForApplication({
         application: flatApplication,
         metric: 'function.error',
-        dimension: result.error?.errorType ?? 'UNKNOWN',
+        dimension: toApplicationRegistrationMetricErrorCategory(
+          result.error?.errorType,
+        ),
         context: flatLogicFunction.name,
         workspaceId,
       });

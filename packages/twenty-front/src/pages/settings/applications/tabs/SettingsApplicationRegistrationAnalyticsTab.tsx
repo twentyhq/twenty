@@ -40,7 +40,7 @@ export const SettingsApplicationRegistrationAnalyticsTab = ({
   });
 
   const title = t`Overview`;
-  const description = t`Aggregated across every workspace this app is installed in. Workspaces are never identified.`;
+  const description = t`Aggregated by day across every workspace this app is installed in. Days with too few contributing workspaces are withheld, and workspaces are never identified.`;
 
   if (!isClickHouseConfigured) {
     return (

@@ -1,3 +1,4 @@
+import { APPLICATION_REGISTRATION_ANALYTICS_MIN_WORKSPACE_COUNT } from 'src/engine/core-modules/application/application-registration-analytics/constants/application-registration-analytics-min-workspace-count.constant';
 import { type ApplicationRegistrationAnalyticsTotalsDTO } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.dto';
 import {
   addMetricRowToApplicationRegistrationAnalyticsCounts,
@@ -17,5 +18,11 @@ export const buildApplicationRegistrationAnalyticsTotals = ({
     createEmptyApplicationRegistrationAnalyticsCounts(),
   );
 
-  return { ...counts, activeWorkspaces };
+  return {
+    ...counts,
+    activeWorkspaces:
+      activeWorkspaces >= APPLICATION_REGISTRATION_ANALYTICS_MIN_WORKSPACE_COUNT
+        ? activeWorkspaces
+        : 0,
+  };
 };
