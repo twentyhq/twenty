@@ -549,9 +549,11 @@ export const UpdatedActions: Story = {
     expect(body.getByRole('status')).toBe(toast);
     expect(toast).toHaveTextContent('Saved notification');
     expect(toast).toHaveTextContent('Synced with the workspace');
-    expect(
-      within(toast).getByLabelText('Saved notification icon'),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        within(toast).getByLabelText('Saved notification icon'),
+      ).toBeVisible(),
+    );
     expect(
       within(toast).getByRole('progressbar', { hidden: true }),
     ).toHaveAttribute('aria-valuenow', '100');
