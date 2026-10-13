@@ -7,6 +7,7 @@ import { COUNT_LIVE_RECORDS_QUERY } from 'src/engine/core-modules/usage-limit/co
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
 import { buildRecordStockTableNames } from 'src/engine/core-modules/usage-limit/utils/build-record-stock-table-names.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -15,6 +16,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 
 const RECORD_STOCK_SCOPE = {
   resourceType: UsageResourceType.RECORD,
+  operationType: UsageOperationType.RECORD_WRITE,
   spenders: {},
 };
 

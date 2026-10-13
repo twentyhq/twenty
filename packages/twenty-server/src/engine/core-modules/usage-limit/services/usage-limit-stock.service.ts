@@ -34,6 +34,7 @@ import { getStockExhaustedUserFriendlyMessage } from 'src/engine/core-modules/us
 import { isLimitExhausted } from 'src/engine/core-modules/usage-limit/utils/is-limit-exhausted.util';
 import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
 import { isStockResourceType } from 'src/engine/core-modules/usage-limit/utils/is-stock-resource-type.util';
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -43,6 +44,7 @@ const STOCK_COUNTER_TTL_MS = 60 * 60 * 1000;
 type StockArgs = {
   workspaceId: string;
   resourceType: UsageResourceType;
+  operationType: UsageOperationType;
   spenders: UsageSpenders;
 };
 
@@ -220,6 +222,7 @@ export class UsageLimitStockService {
   private async buildCounters({
     workspaceId,
     resourceType,
+    operationType,
     spenders,
   }: StockArgs): Promise<StockCounter[]> {
     if (!isStockResourceType(resourceType)) {
@@ -242,22 +245,34 @@ export class UsageLimitStockService {
     return buildStockCounters({
       workspaceId,
       resourceType,
-      usageSpenders: spenders,
+      operationType,
+      spenders,
       limits: enforceableLimits,
-      stockLimitDefaults: this.buildStockLimitDefaults(resourceType),
+      stockLimitDefaults: this.buildStockLimitDefaults({
+        resourceType,
+        operationType,
+      }),
     });
   }
 
-  private buildStockLimitDefaults(
-    resourceType: StockResourceType,
-  ): StockLimitDefault[] {
+  private buildStockLimitDefaults({
+    resourceType,
+    operationType,
+  }: {
+    resourceType: StockResourceType;
+    operationType: UsageOperationType;
+  }): StockLimitDefault[] {
     const definition = findUsageLimitDefinition({
       resourceType,
       limitKind: 'stock',
     });
 
-    return (definition?.defaults ?? []).flatMap(
-      (stockLimitDefaultDefinition) => {
+    return (definition?.defaults ?? [])
+      .filter(
+        (stockLimitDefaultDefinition) =>
+          stockLimitDefaultDefinition.operationType === operationType,
+      )
+      .flatMap((stockLimitDefaultDefinition) => {
         const limitValue = this.twentyConfigService.get(
           stockLimitDefaultDefinition.limitValueConfigVariable,
         );
@@ -265,7 +280,6 @@ export class UsageLimitStockService {
         return isDefined(limitValue)
           ? [
               {
-                operationType: stockLimitDefaultDefinition.operationType,
                 spenderType: stockLimitDefaultDefinition.spenderType,
                 unit: stockLimitDefaultDefinition.unit,
                 isOverridable: stockLimitDefaultDefinition.isOverridable,
@@ -273,8 +287,7 @@ export class UsageLimitStockService {
               },
             ]
           : [];
-      },
-    );
+      });
   }
 
   private async warmHeldValues({

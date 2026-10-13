@@ -5,33 +5,36 @@ import { type StockResourceType } from 'src/engine/core-modules/usage-limit/type
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
 import { buildStockCounter } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter.util';
 import { buildStockDefaultCounter } from 'src/engine/core-modules/usage-limit/utils/build-stock-default-counter.util';
-import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
-import { findStockOperationType } from 'src/engine/core-modules/usage-limit/utils/find-stock-operation-type.util';
+import { findStockLimitsForSpenders } from 'src/engine/core-modules/usage-limit/utils/find-stock-limits-for-spenders.util';
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 
 export const buildStockCounters = ({
   workspaceId,
   resourceType,
-  usageSpenders,
+  operationType,
+  spenders,
   limits,
   stockLimitDefaults,
 }: {
   workspaceId: string;
   resourceType: StockResourceType;
-  usageSpenders: UsageSpenders;
+  operationType: UsageOperationType;
+  spenders: UsageSpenders;
   limits: FlatStockLimit[];
   stockLimitDefaults: StockLimitDefault[];
 }): StockCounter[] => {
-  const operationType = findStockOperationType(resourceType);
-  const spenders = buildSpendersFromUsageSpenders(usageSpenders);
+  const limitCounters = findStockLimitsForSpenders({
+    limits,
+    usageSpenders: spenders,
+    operationType,
+  }).map((limit) => buildStockCounter({ workspaceId, limit }));
 
-  const limitCounters = spenders
-    .flatMap((spender) =>
-      findLimitsForSpender({ limits, spender, operationType }),
-    )
-    .map((limit) => buildStockCounter({ workspaceId, limit }));
-
-  const spenderTypes = new Set(spenders.map((spender) => spender.spenderType));
+  const spenderTypes = new Set(
+    buildSpendersFromUsageSpenders(spenders).map(
+      (spender) => spender.spenderType,
+    ),
+  );
 
   const defaultCounters = stockLimitDefaults
     .filter(
@@ -52,6 +55,7 @@ export const buildStockCounters = ({
       buildStockDefaultCounter({
         workspaceId,
         resourceType,
+        operationType,
         stockLimitDefault,
       }),
     );

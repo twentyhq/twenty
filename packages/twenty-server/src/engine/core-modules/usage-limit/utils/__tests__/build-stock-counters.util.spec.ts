@@ -28,7 +28,6 @@ const buildLimit = (
 const buildDefault = (
   overrides: Partial<StockLimitDefault> = {},
 ): StockLimitDefault => ({
-  operationType: UsageOperationType.STORAGE_FILE,
   spenderType: 'workspace',
   unit: UsageUnit.BYTE,
   limitValue: 1_000,
@@ -48,7 +47,8 @@ const build = ({
   buildStockCounters({
     workspaceId: WORKSPACE_ID,
     resourceType: UsageResourceType.STORAGE,
-    usageSpenders: spenders,
+    operationType: UsageOperationType.STORAGE_FILE,
+    spenders,
     limits,
     stockLimitDefaults,
   });
@@ -105,6 +105,15 @@ describe('buildStockCounters', () => {
       ]);
     },
   );
+
+  it('preserves the default for a different operation', () => {
+    expect(
+      build({
+        limits: [buildLimit({ operationType: UsageOperationType.API_REQUEST })],
+        stockLimitDefaults: [buildDefault()],
+      }),
+    ).toEqual([expect.objectContaining({ isDefault: true })]);
+  });
 
   it('skips a default whose spender type the call does not carry', () => {
     expect(
