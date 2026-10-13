@@ -88,9 +88,6 @@ type NarrowedTestCase =
 
 type NarrowedExpectedResult = {
   relationType: RelationType;
-  targetFieldLabel?: string;
-  targetFieldIcon?: string;
-  targetFieldName?: string;
   onDelete?: RelationOnDeleteAction | undefined;
   joinColumnName?: string | null | undefined;
   junctionTargetFieldUniversalIdentifier?:
@@ -107,9 +104,6 @@ type SettingsTestCase = UniversalFlatFieldMetadata<
 type SettingsExpectedResult =
   | {
       relationType: RelationType;
-      targetFieldLabel?: string;
-      targetFieldIcon?: string;
-      targetFieldName?: string;
       onDelete?: RelationOnDeleteAction | undefined;
       joinColumnName?: string | null | undefined;
       junctionTargetFieldUniversalIdentifier?:

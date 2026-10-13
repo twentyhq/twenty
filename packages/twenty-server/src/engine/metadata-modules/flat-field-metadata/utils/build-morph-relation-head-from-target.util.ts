@@ -9,16 +9,12 @@ import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/w
 export const buildMorphRelationHeadFromTarget = ({
   target,
   targetObject,
-  inverse,
 }: {
   target: UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
   targetObject: Pick<
     UniversalFlatObjectMetadata,
     'nameSingular' | 'namePlural'
   >;
-  inverse:
-    | Pick<UniversalFlatFieldMetadata, 'label' | 'name' | 'icon'>
-    | undefined;
 }): UniversalMorphRelationHeadFlatFieldMetadata => ({
   ...target,
   universalIdentifier: target.morphId,
@@ -28,12 +24,7 @@ export const buildMorphRelationHeadFromTarget = ({
     namePlural: targetObject.namePlural,
   }),
   isSystemSideEffect: true,
-  universalSettings: {
-    ...omit(target.universalSettings, 'joinColumnName'),
-    targetFieldLabel: inverse?.label,
-    targetFieldName: inverse?.name,
-    targetFieldIcon: inverse?.icon ?? undefined,
-  },
+  universalSettings: omit(target.universalSettings, 'joinColumnName'),
   relationTargetFieldMetadataUniversalIdentifier: null,
   relationTargetObjectMetadataUniversalIdentifier: null,
   viewFieldUniversalIdentifiers: [],

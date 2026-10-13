@@ -76,18 +76,9 @@ export class FieldMorphRelationHeadOnCreateSideEffectHandlerService extends Meta
       return { status: 'noop' };
     }
 
-    const inverseUniversalIdentifier =
-      target.relationTargetFieldMetadataUniversalIdentifier;
-
     const head = buildMorphRelationHeadFromTarget({
       target,
       targetObject,
-      inverse: isDefined(inverseUniversalIdentifier)
-        ? (fieldsToCreate[inverseUniversalIdentifier] ??
-          relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-            inverseUniversalIdentifier
-          ])
-        : undefined,
     });
 
     return {
