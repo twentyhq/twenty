@@ -15,11 +15,11 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageQuotaConsumptionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-consumption.service';
 import { UsageQuotaDefinitionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-definition.service';
 import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
-import { UsageRefusalService } from 'src/engine/core-modules/usage-limit/services/usage-refusal.service';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit/services/workspace-record-stock.service';
@@ -63,7 +63,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageQuotaConsumptionService,
     UsageQuotaDefinitionService,
     UsageLimitResolver,
-    UsageRefusalService,
+    UsageQuotaAdmissionService,
     BillingSubscriptionItemCapResolver,
     provideWorkspaceScopedRepository(UsageLimitEntity),
     provideWorkspaceScopedRepository(ApiKeyEntity),
@@ -76,7 +76,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitEntitlementService,
     UsageLimitService,
     UsageLimitQuotaService,
-    UsageRefusalService,
+    UsageQuotaAdmissionService,
     UsageLimitSpeedService,
     UsageLimitStockService,
     WorkspaceRecordStockService,

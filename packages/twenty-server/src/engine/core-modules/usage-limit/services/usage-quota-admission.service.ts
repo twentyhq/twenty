@@ -23,7 +23,7 @@ type UsageQuotaScope = {
 };
 
 @Injectable()
-export class UsageRefusalService {
+export class UsageQuotaAdmissionService {
   constructor(
     private readonly billingUsageService: BillingUsageService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,

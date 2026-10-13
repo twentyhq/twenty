@@ -14,7 +14,7 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { UsageRefusalService } from 'src/engine/core-modules/usage-limit/services/usage-refusal.service';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 
 @MetadataResolver(() => BillingSubscriptionItemDTO)
 @UsePipes(ResolverValidationPipe)
@@ -23,7 +23,7 @@ export class BillingSubscriptionItemCapResolver {
   private readonly logger = new Logger(BillingSubscriptionItemCapResolver.name);
 
   constructor(
-    private readonly usageRefusalService: UsageRefusalService,
+    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     // Field resolver: the workspace comes from the parent item's subscription row
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
@@ -54,7 +54,7 @@ export class BillingSubscriptionItemCapResolver {
       }
 
       const creditAvailability =
-        await this.usageRefusalService.getCreditAvailability(
+        await this.usageQuotaAdmissionService.getCreditAvailability(
           billingSubscription.workspaceId,
         );
 
