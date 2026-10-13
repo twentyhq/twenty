@@ -1,8 +1,15 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
-import { type DeletedAndCompletedCallRecordingIds } from 'src/features/transcripts/logic-functions/types/deleted-and-completed-call-recording-ids.type';
-import { type ExistingCallRecording } from 'src/features/transcripts/logic-functions/types/existing-call-recording.type';
-import { getDeletedAndCompletedCallRecordingIds } from 'src/features/transcripts/logic-functions/utils/get-deleted-and-completed-call-recording-ids';
+type ExistingCallRecording = {
+  id: string;
+  status: string | null;
+  createdAt: string;
+  deletedAt: string | null;
+};
+
+const getCallRecordingIds = (callRecordings: ExistingCallRecording[]) =>
+  new Set(callRecordings.map((callRecording) => callRecording.id));
 
 export const findDeletedAndCompletedCallRecordingIdsOrThrow = async ({
   coreApiClient,
@@ -12,9 +19,17 @@ export const findDeletedAndCompletedCallRecordingIdsOrThrow = async ({
   coreApiClient: Pick<CoreApiClient, 'query'>;
   callRecordingIds: string[];
   importedSince?: string;
-}): Promise<DeletedAndCompletedCallRecordingIds> => {
+}): Promise<{
+  deletedCallRecordingIds: Set<string>;
+  completedCallRecordingIds: Set<string>;
+  importedCallRecordingIds: Set<string>;
+}> => {
   if (callRecordingIds.length === 0) {
-    return getDeletedAndCompletedCallRecordingIds({ callRecordings: [] });
+    return {
+      deletedCallRecordingIds: new Set(),
+      completedCallRecordingIds: new Set(),
+      importedCallRecordingIds: new Set(),
+    };
   }
 
   const result: {
@@ -36,10 +51,31 @@ export const findDeletedAndCompletedCallRecordingIdsOrThrow = async ({
       },
     },
   });
+  const callRecordings =
+    result.callRecordings?.edges?.map((edge) => edge.node) ?? [];
+  const completedCallRecordings = callRecordings.filter(
+    (callRecording) =>
+      !isDefined(callRecording.deletedAt) &&
+      callRecording.status === 'COMPLETED',
+  );
+  // A recording this run created was written by a failed attempt of the page.
+  const isImportedByThisRun = (callRecording: ExistingCallRecording) =>
+    isDefined(importedSince) &&
+    Date.parse(callRecording.createdAt) >= Date.parse(importedSince);
 
-  return getDeletedAndCompletedCallRecordingIds({
-    callRecordings:
-      result.callRecordings?.edges?.map((edge) => edge.node) ?? [],
-    importedSince,
-  });
+  return {
+    deletedCallRecordingIds: getCallRecordingIds(
+      callRecordings.filter((callRecording) =>
+        isDefined(callRecording.deletedAt),
+      ),
+    ),
+    completedCallRecordingIds: getCallRecordingIds(
+      completedCallRecordings.filter(
+        (callRecording) => !isImportedByThisRun(callRecording),
+      ),
+    ),
+    importedCallRecordingIds: getCallRecordingIds(
+      completedCallRecordings.filter(isImportedByThisRun),
+    ),
+  };
 };

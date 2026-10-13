@@ -9,7 +9,7 @@ import { buildTeamsTranscriptHistoryInitialImportKvKey } from 'src/features/tran
 import { buildTeamsTranscriptHistoryKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-history-kv-key';
 import { deleteTeamsTranscriptHistoryKvKeys } from 'src/features/transcripts/logic-functions/utils/delete-teams-transcript-history-kv-keys';
 import { isTeamsConnectionListed } from 'src/features/transcripts/logic-functions/utils/is-teams-connection-listed';
-import { shouldStartTeamsTranscriptHistoryInitialImport } from 'src/features/transcripts/logic-functions/utils/should-start-teams-transcript-history-initial-import';
+import { isTeamsTranscriptHistoryStalled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-history-stalled';
 import { startTeamsTranscriptHistoryRunOrThrow } from 'src/features/transcripts/logic-functions/utils/start-teams-transcript-history-run-or-throw';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 
@@ -17,18 +17,18 @@ export const startTeamsTranscriptHistoryInitialImportOrThrow = async ({
   connectedAccountId,
 }: {
   connectedAccountId: string;
-}): Promise<{ transcriptHistoryRunId: string | null }> => {
-  const isTranscriptImportEnabled = isFeatureEnabled({
-    isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
-    settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
-  });
-  const initialImportKvKey =
-    buildTeamsTranscriptHistoryInitialImportKvKey(connectedAccountId);
-
-  if (!isTranscriptImportEnabled) {
-    return { transcriptHistoryRunId: null };
+}): Promise<void> => {
+  if (
+    !isFeatureEnabled({
+      isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
+      settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
+    })
+  ) {
+    return;
   }
 
+  const initialImportKvKey =
+    buildTeamsTranscriptHistoryInitialImportKvKey(connectedAccountId);
   const [hasStartedInitialImport, existingState] = await Promise.all([
     kv.get<boolean>(initialImportKvKey),
     kv.get<TeamsTranscriptHistoryState>(
@@ -37,28 +37,23 @@ export const startTeamsTranscriptHistoryInitialImportOrThrow = async ({
   ]);
 
   if (
-    !shouldStartTeamsTranscriptHistoryInitialImport({
-      hasStartedInitialImport: isDefined(hasStartedInitialImport),
-      state: existingState,
-      now: Date.now(),
-    })
+    isDefined(hasStartedInitialImport) &&
+    isDefined(existingState) &&
+    (existingState.phase !== 'failed' ||
+      existingState.errorCode === 'page-limit-reached') &&
+    !isTeamsTranscriptHistoryStalled({ state: existingState, now: Date.now() })
   ) {
-    return { transcriptHistoryRunId: null };
+    return;
   }
 
-  const state = await startTeamsTranscriptHistoryRunOrThrow({
+  await startTeamsTranscriptHistoryRunOrThrow({
     connectedAccountId,
     days: TEAMS_TRANSCRIPT_HISTORY_INITIAL_IMPORT_DAYS,
     phase: 'importing',
   });
-
   await kv.set(initialImportKvKey, true);
 
   if (!(await isTeamsConnectionListed(connectedAccountId))) {
     await deleteTeamsTranscriptHistoryKvKeys({ connectedAccountId });
-
-    return { transcriptHistoryRunId: null };
   }
-
-  return { transcriptHistoryRunId: state.runId };
 };

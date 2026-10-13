@@ -159,24 +159,4 @@ describe('getTeamsTranscriptHistoryPageTransition', () => {
       errorCode: 'page-limit-reached',
     });
   });
-
-  it('should only schedule the next page when a retried page was already counted', () => {
-    expect(
-      getTeamsTranscriptHistoryPageTransition({
-        state: { ...STATE, pageCount: 4 },
-        job: JOB,
-        phase: 'counting',
-        pageCounts: { ...EMPTY_PAGE_COUNTS, transcriptCount: 5 },
-        nextPageUrl: NEXT_PAGE_URL,
-        now: NOW,
-      }),
-    ).toEqual({
-      nextJob: {
-        ...JOB,
-        pageIndex: 4,
-        attempt: 0,
-        nextPageUrl: NEXT_PAGE_URL,
-      },
-    });
-  });
 });

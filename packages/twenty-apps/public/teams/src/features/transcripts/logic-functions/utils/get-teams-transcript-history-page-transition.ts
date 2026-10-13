@@ -78,40 +78,33 @@ export const getTeamsTranscriptHistoryPageTransition = ({
   nextPageUrl?: string;
   now: number;
 }): {
-  state?: TeamsTranscriptHistoryState;
+  state: TeamsTranscriptHistoryState;
   nextJob?: TeamsTranscriptHistoryJobPayload;
 } => {
   const nextJob = getNextJob({ state, job, nextPageUrl });
   const phaseAfterPage = getPhaseAfterPage({ phase, nextJob });
-  const hasRunContinued = phaseAfterPage.phase === phase;
-  const isPageAlreadyApplied = state.pageCount !== job.pageIndex;
 
   return {
-    ...(isPageAlreadyApplied
-      ? {}
-      : {
-          state: {
-            ...state,
-            ...phaseAfterPage,
-            transcriptCount: state.transcriptCount + pageCounts.transcriptCount,
-            alreadyImportedCount:
-              state.alreadyImportedCount + pageCounts.alreadyImportedCount,
-            deletedCount: state.deletedCount + pageCounts.deletedCount,
-            importedCount: state.importedCount + pageCounts.importedCount,
-            skippedCount: state.skippedCount + pageCounts.skippedCount,
-            unavailableCount:
-              state.unavailableCount + pageCounts.unavailableCount,
-            pageCount: job.pageIndex + 1,
-            checkedThrough: isNonEmptyString(nextPageUrl)
-              ? state.checkedThrough
-              : getTeamsTranscriptHistoryChunkWindow({
-                  windowStart: state.windowStart,
-                  windowEnd: state.windowEnd,
-                  chunkIndex: job.chunkIndex,
-                })?.startDateTime,
-            updatedAt: new Date(now).toISOString(),
-          },
-        }),
-    ...(hasRunContinued ? { nextJob } : {}),
+    state: {
+      ...state,
+      ...phaseAfterPage,
+      transcriptCount: state.transcriptCount + pageCounts.transcriptCount,
+      alreadyImportedCount:
+        state.alreadyImportedCount + pageCounts.alreadyImportedCount,
+      deletedCount: state.deletedCount + pageCounts.deletedCount,
+      importedCount: state.importedCount + pageCounts.importedCount,
+      skippedCount: state.skippedCount + pageCounts.skippedCount,
+      unavailableCount: state.unavailableCount + pageCounts.unavailableCount,
+      pageCount: job.pageIndex + 1,
+      checkedThrough: isNonEmptyString(nextPageUrl)
+        ? state.checkedThrough
+        : getTeamsTranscriptHistoryChunkWindow({
+            windowStart: state.windowStart,
+            windowEnd: state.windowEnd,
+            chunkIndex: job.chunkIndex,
+          })?.startDateTime,
+      updatedAt: new Date(now).toISOString(),
+    },
+    ...(phaseAfterPage.phase === phase ? { nextJob } : {}),
   };
 };
