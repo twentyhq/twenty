@@ -5,6 +5,7 @@ import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQuery
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
+import { createSerialTaskQueue } from '@/sse-db-event/utils/createSerialTaskQueue';
 import { isCurrentEventStream } from '@/sse-db-event/utils/isCurrentEventStream';
 import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -12,11 +13,8 @@ import { captureException } from '@sentry/react';
 import { useMutation } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { useCallback, useEffect } from 'react';
-import {
-  compareArraysOfObjectsByProperty,
-  isDefined,
-} from 'twenty-shared/utils';
+import { useCallback, useEffect, useMemo } from 'react';
+import { compareArraysOfObjectsByProperty } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   type AddQuerySubscriptionInput,
@@ -68,7 +66,12 @@ export const SSEQuerySubscribeEffect = () => {
   );
 
   const syncAdditions = useCallback(async () => {
-    if (!isDefined(sseEventStreamId)) {
+    const eventStreamId = store.get(sseEventStreamIdState.atom);
+
+    if (
+      !isNonEmptyString(eventStreamId) ||
+      !store.get(sseEventStreamReadyState.atom)
+    ) {
       return;
     }
 
@@ -91,14 +94,14 @@ export const SSEQuerySubscribeEffect = () => {
         const result = await addQueryToEventStream({
           variables: {
             input: {
-              eventStreamId: sseEventStreamId,
+              eventStreamId,
               queryId: queryListenerToAdd.queryId,
               operationSignature: queryListenerToAdd.operationSignature,
             },
           },
         });
 
-        if (!isCurrentEventStream({ store, eventStreamId: sseEventStreamId })) {
+        if (!isCurrentEventStream({ store, eventStreamId })) {
           return;
         }
 
@@ -109,7 +112,7 @@ export const SSEQuerySubscribeEffect = () => {
         }
       }
     } catch (error) {
-      if (isCurrentEventStream({ store, eventStreamId: sseEventStreamId })) {
+      if (isCurrentEventStream({ store, eventStreamId })) {
         handleError(error);
       }
 
@@ -122,10 +125,15 @@ export const SSEQuerySubscribeEffect = () => {
       ...currentActive,
       ...queryListenersToAdd,
     ]);
-  }, [addQueryToEventStream, handleError, sseEventStreamId, store]);
+  }, [addQueryToEventStream, handleError, store]);
 
   const syncRemovals = useCallback(async () => {
-    if (!isDefined(sseEventStreamId)) {
+    const eventStreamId = store.get(sseEventStreamIdState.atom);
+
+    if (
+      !isNonEmptyString(eventStreamId) ||
+      !store.get(sseEventStreamReadyState.atom)
+    ) {
       return;
     }
 
@@ -154,13 +162,13 @@ export const SSEQuerySubscribeEffect = () => {
         const result = await removeQueryFromEventStream({
           variables: {
             input: {
-              eventStreamId: sseEventStreamId,
+              eventStreamId,
               queryId: queryListenerToRemove.queryId,
             },
           },
         });
 
-        if (!isCurrentEventStream({ store, eventStreamId: sseEventStreamId })) {
+        if (!isCurrentEventStream({ store, eventStreamId })) {
           return;
         }
 
@@ -171,7 +179,7 @@ export const SSEQuerySubscribeEffect = () => {
         }
       }
     } catch (error) {
-      if (isCurrentEventStream({ store, eventStreamId: sseEventStreamId })) {
+      if (isCurrentEventStream({ store, eventStreamId })) {
         handleError(error);
       }
 
@@ -186,15 +194,21 @@ export const SSEQuerySubscribeEffect = () => {
         (listener) => !removedQueryIds.has(listener.queryId),
       ),
     );
-  }, [handleError, removeQueryFromEventStream, sseEventStreamId, store]);
+  }, [handleError, removeQueryFromEventStream, store]);
 
-  const debouncedSyncAdditions = useDebouncedCallback(syncAdditions, 1000, {
-    leading: true,
-  });
+  const queryListenersSyncQueue = useMemo(() => createSerialTaskQueue(), []);
 
-  const debouncedSyncRemovals = useDebouncedCallback(syncRemovals, 200, {
-    leading: false,
-  });
+  const enqueueSyncAdditions = useCallback(() => {
+    void queryListenersSyncQueue.enqueue(syncAdditions);
+  }, [queryListenersSyncQueue, syncAdditions]);
+
+  const debouncedEnqueueSyncRemovals = useDebouncedCallback(
+    () => {
+      void queryListenersSyncQueue.enqueue(syncRemovals);
+    },
+    200,
+    { leading: false },
+  );
 
   useEffect(() => {
     if (!isNonEmptyString(sseEventStreamId) || !sseEventStreamReady) {
@@ -226,19 +240,19 @@ export const SSEQuerySubscribeEffect = () => {
     );
 
     if (hasAdditions) {
-      debouncedSyncAdditions();
+      enqueueSyncAdditions();
     }
 
     if (hasRemovals) {
-      debouncedSyncRemovals();
+      debouncedEnqueueSyncRemovals();
     }
   }, [
     sseEventStreamId,
     sseEventStreamReady,
     requiredQueryListeners,
     activeQueryListeners,
-    debouncedSyncAdditions,
-    debouncedSyncRemovals,
+    enqueueSyncAdditions,
+    debouncedEnqueueSyncRemovals,
   ]);
 
   return null;
