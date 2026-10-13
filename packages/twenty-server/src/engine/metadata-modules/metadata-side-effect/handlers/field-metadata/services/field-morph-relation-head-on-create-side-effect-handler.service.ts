@@ -30,8 +30,7 @@ export class FieldMorphRelationHeadOnCreateSideEffectHandlerService extends Meta
     if (
       !isFlatFieldMetadataOfType(target, FieldMetadataType.MORPH_RELATION) ||
       isMorphRelationHead(target) ||
-      target.isSystemSideEffect ||
-      !isDefined(target.relationTargetObjectMetadataUniversalIdentifier)
+      target.isSystemSideEffect
     ) {
       return { status: 'noop' };
     }

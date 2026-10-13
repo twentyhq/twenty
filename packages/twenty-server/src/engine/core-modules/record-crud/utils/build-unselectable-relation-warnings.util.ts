@@ -3,11 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isRelationTargetExcludedFromSelection } from 'src/engine/api/common/common-select-fields/utils/is-relation-target-excluded-from-selection.util';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { MORPH_OR_RELATION_FIELD_TYPES } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
+import { isMorphOrRelationFlatFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata-with-target.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const buildUnselectableRelationWarningsByFieldName = ({
@@ -61,8 +60,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
     }
 
     if (
-      !isFlatFieldMetadataOfTypes(field, [...MORPH_OR_RELATION_FIELD_TYPES]) ||
-      !isDefined(field.relationTargetObjectMetadataId) ||
+      !isMorphOrRelationFlatFieldMetadataWithTarget(field) ||
       isDefined(selectableRelationFields[field.name])
     ) {
       continue;

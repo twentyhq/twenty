@@ -1,12 +1,17 @@
-import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 
 export const isMorphOrRelationFlatFieldMetadataWithTarget = <
-  TFieldMetadata extends OrmFlatFieldMetadata,
+  TFieldMetadata extends Pick<
+    OrmFlatFieldMetadata,
+    'type' | 'universalIdentifier'
+  > & {
+    morphId?: string | null;
+  },
 >(
   fieldMetadata: TFieldMetadata,
 ): fieldMetadata is TFieldMetadata &
@@ -14,6 +19,6 @@ export const isMorphOrRelationFlatFieldMetadataWithTarget = <
     relationTargetFieldMetadataId: string;
     relationTargetObjectMetadataId: string;
   } =>
-  isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
-  isDefined(fieldMetadata.relationTargetFieldMetadataId) &&
-  isDefined(fieldMetadata.relationTargetObjectMetadataId);
+  fieldMetadata.type === FieldMetadataType.RELATION ||
+  (fieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
+    !isMorphRelationHead(fieldMetadata));
