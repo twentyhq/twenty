@@ -16,7 +16,6 @@ type CountdownSnapshot = {
   remainingDuration: number;
   revision: number;
   isPaused: boolean;
-  isProgress: boolean;
 };
 
 const MAX_TIMEOUT_DURATION = 2 ** 31 - 1;
@@ -57,7 +56,6 @@ export const createToastCountdown = ({
       remainingDuration,
       revision,
       isPaused: configuration.isPaused || !configuration.isActive,
-      isProgress: configuration.isProgress,
     });
   };
 

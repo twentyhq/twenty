@@ -62,7 +62,6 @@ export const Toast = ({
   const isPaused = isHovered || isFocused;
   const { countdown, clock } = useToastCountdown({
     duration,
-    progress,
     isPaused,
   });
   const Icon = TOAST_ICONS[status];

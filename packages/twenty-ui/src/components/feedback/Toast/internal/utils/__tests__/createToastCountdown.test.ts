@@ -129,7 +129,7 @@ it('disables expiry throughout progress updates and starts the latest full durat
     onClose,
   });
   expect(onChange).toHaveBeenLastCalledWith(
-    expect.objectContaining({ remainingDuration: 600, isProgress: false }),
+    expect.objectContaining({ remainingDuration: 600 }),
   );
   vi.advanceTimersByTime(599);
   expect(onClose).not.toHaveBeenCalled();
