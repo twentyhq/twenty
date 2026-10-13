@@ -20,6 +20,7 @@ import {
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
   findCoreWorkflowVersion,
+  linkCoreWorkflowToLegacyWorkspaceIds,
   runCoreWorkflowVersion,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -146,9 +147,14 @@ const listCoreWorkflowIds = async (
   );
 };
 
-const createWorkflowWithMirrorIds = async (name: string) => {
-  const { coreWorkflowId, coreWorkflowVersionId, workspaceWorkflowId } =
-    await createCoreWorkflow({ name });
+const createWorkflowWithLegacyIds = async (name: string) => {
+  const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
+    name,
+  });
+
+  const { workspaceWorkflowId } = await linkCoreWorkflowToLegacyWorkspaceIds({
+    coreWorkflowId,
+  });
 
   const { workspaceWorkflowVersionId } = await findCoreWorkflowVersion({
     coreWorkflowVersionId,
@@ -157,15 +163,12 @@ const createWorkflowWithMirrorIds = async (name: string) => {
   return {
     coreWorkflowId,
     coreWorkflowVersionId,
-    workspaceWorkflowId: workspaceWorkflowId!,
+    workspaceWorkflowId,
     workspaceWorkflowVersionId: workspaceWorkflowVersionId!,
   };
 };
 
-const createActiveManualWorkflow = async (name: string) => {
-  const createdWorkflow = await createWorkflowWithMirrorIds(name);
-  const { coreWorkflowVersionId } = createdWorkflow;
-
+const activateManualTrigger = async (coreWorkflowVersionId: string) => {
   await updateCoreWorkflowVersionTrigger({
     coreWorkflowVersionId,
     trigger: {
@@ -183,6 +186,12 @@ const createActiveManualWorkflow = async (name: string) => {
   });
 
   await activateCoreWorkflowVersion({ coreWorkflowVersionId });
+};
+
+const createActiveManualWorkflow = async (name: string) => {
+  const createdWorkflow = await createCoreWorkflow({ name });
+
+  await activateManualTrigger(createdWorkflow.coreWorkflowVersionId);
 
   return createdWorkflow;
 };
@@ -271,7 +280,7 @@ describe('core workflow visibility (e2e)', () => {
       coreWorkflowVersionId,
       workspaceWorkflowId,
       workspaceWorkflowVersionId,
-    } = await createWorkflowWithMirrorIds('Private Workflow Access'));
+    } = await createWorkflowWithLegacyIds('Private Workflow Access'));
   });
 
   afterAll(async () => {
@@ -569,10 +578,15 @@ describe('core workflow visibility (e2e)', () => {
     };
 
     beforeAll(async () => {
-      ({
-        coreWorkflowId: manualCoreWorkflowId,
-        workspaceWorkflowVersionId: manualWorkspaceWorkflowVersionId,
-      } = await createActiveManualWorkflow('Manual Trigger Workflow'));
+      const createdWorkflow = await createWorkflowWithLegacyIds(
+        'Manual Trigger Workflow',
+      );
+
+      await activateManualTrigger(createdWorkflow.coreWorkflowVersionId);
+
+      manualCoreWorkflowId = createdWorkflow.coreWorkflowId;
+      manualWorkspaceWorkflowVersionId =
+        createdWorkflow.workspaceWorkflowVersionId;
     });
 
     afterAll(async () => {

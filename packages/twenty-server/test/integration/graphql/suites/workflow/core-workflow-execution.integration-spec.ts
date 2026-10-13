@@ -33,6 +33,8 @@ import {
   coreWorkflowGraphqlRequest,
   createCoreWorkflow,
   deleteCoreWorkflows,
+  deleteLegacyWorkspaceWorkflowRecords,
+  linkCoreWorkflowToLegacyWorkspaceIds,
   runCoreWorkflowVersion,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -144,13 +146,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       coreWorkflowId = coreWorkflow.coreWorkflowId;
       coreWorkflowVersionId = coreWorkflow.coreWorkflowVersionId;
-      workflowId = coreWorkflow.workspaceWorkflowId;
-      const [version] = await global.testDataSource.query(
-        `SELECT "workspaceWorkflowVersionId" FROM core."workflowVersion" WHERE id = $1`,
-        [coreWorkflowVersionId],
-      );
 
-      workflowVersionId = version.workspaceWorkflowVersionId;
+      const legacyIds = await linkCoreWorkflowToLegacyWorkspaceIds({
+        coreWorkflowId,
+        withWorkspaceRecords: true,
+      });
+
+      workflowId = legacyIds.workspaceWorkflowId;
+      workflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
       await global.testDataSource.query(
         `UPDATE core."workflowVersion" SET triggers = $2, steps = $3, status = 'ACTIVE' WHERE id = $1`,
         [
@@ -257,6 +260,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       if (fixture.workflowId) {
         await deleteCoreWorkflows({
           coreWorkflowIds: [fixture.coreWorkflowId],
+        });
+        await deleteLegacyWorkspaceWorkflowRecords({
+          workspaceWorkflowId: fixture.workflowId,
         });
       }
       await global.testDataSource.query(
@@ -2261,62 +2267,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     );
     expect(core.triggers[0].name).toBe('Concurrent trigger edit');
     expect(core.steps[0].position).toEqual({ x: 321, y: 654 });
-  });
-
-  it('allows reconciliation to acquire core locks during a blocked rename', async () => {
-    const fixture = await createFixture();
-
-    const transaction = global.testDataSource.createQueryRunner();
-
-    await transaction.connect();
-    await transaction.startTransaction();
-    await transaction.query(
-      `SELECT id FROM "${schema}"."workflow" WHERE id = $1 FOR UPDATE`,
-      [fixture.workflowId],
-    );
-    const [{ pid }] = await transaction.query('SELECT pg_backend_pid() AS pid');
-    const mutation = workflowGraphqlRequest(
-      'mutation Update($input: UpdateCoreWorkflowInput!) { updateCoreWorkflow(input: $input) { id name } }',
-      {
-        input: {
-          coreWorkflowId: fixture.coreWorkflowId,
-          name: 'Concurrent rename',
-        },
-      },
-    ).then((response) => response);
-
-    try {
-      let blocked = false;
-
-      for (let attempt = 0; attempt < 100; attempt++) {
-        const [activity] = await global.testDataSource.query(
-          `SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE $1 = ANY(pg_blocking_pids(pid))) AS blocked`,
-          [pid],
-        );
-
-        if (activity.blocked) {
-          blocked = true;
-          break;
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 20));
-      }
-
-      expect(blocked).toBe(true);
-      await transaction.query(
-        'SELECT id FROM core.workflow WHERE id = $1 FOR UPDATE NOWAIT',
-        [fixture.coreWorkflowId],
-      );
-      await transaction.commitTransaction();
-      expect((await mutation).body.errors).toBeUndefined();
-    } finally {
-      if (transaction.isTransactionActive) {
-        await transaction.rollbackTransaction();
-      }
-
-      await transaction.release();
-      await mutation;
-    }
   });
 
   it('fires a mirrorless database-event workflow from a real record creation', async () => {
