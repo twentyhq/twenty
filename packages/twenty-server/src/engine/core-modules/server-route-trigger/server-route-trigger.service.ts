@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
@@ -31,6 +32,7 @@ import {
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
+import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAMES } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-names.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -61,6 +63,7 @@ export class ServerRouteTriggerService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
   async handle({
@@ -108,8 +111,14 @@ export class ServerRouteTriggerService {
       pathParameters: {},
       forwardedRequestHeaders:
         resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [],
+      forwardableCredentialHeaderNames:
+        SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAMES,
       userWorkspaceId: null,
     });
+
+    if (await this.isTwentyIssuedToken(event.headers.authorization)) {
+      delete event.headers.authorization;
+    }
 
     const resolverResult = await this.runFunction({
       logicFunctionUniversalIdentifier: resolver.universalIdentifier,
@@ -352,6 +361,25 @@ export class ServerRouteTriggerService {
         return ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED;
       default:
         return ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR;
+    }
+  }
+
+  private async isTwentyIssuedToken(
+    authorization: string | undefined,
+  ): Promise<boolean> {
+    if (!isDefined(authorization)) {
+      return false;
+    }
+
+    try {
+      await this.jwtWrapperService.verifyJwtToken(
+        authorization.replace(/^Bearer\s+/i, '').trim(),
+        { ignoreExpiration: true },
+      );
+
+      return true;
+    } catch {
+      return false;
     }
   }
 }

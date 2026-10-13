@@ -15,10 +15,12 @@ export const filterRequestHeaders = ({
   requestHeaders,
   forwardedRequestHeaders,
   forwardAllHeaders = false,
+  forwardableCredentialHeaderNames = new Set(),
 }: {
   requestHeaders: Request['headers'];
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;
+  forwardableCredentialHeaderNames?: Set<string>;
 }): Record<string, string | undefined> => {
   if (forwardAllHeaders) {
     const allHeaders: Record<string, string | undefined> = {};
@@ -39,7 +41,11 @@ export const filterRequestHeaders = ({
 
   const lowercaseForwardedHeaders = forwardedRequestHeaders
     .map((headerName) => headerName.toLowerCase())
-    .filter((headerName) => !isCredentialRequestHeaderName(headerName));
+    .filter(
+      (headerName) =>
+        !isCredentialRequestHeaderName(headerName) ||
+        forwardableCredentialHeaderNames.has(headerName),
+    );
 
   const filteredHeaders: Record<string, string | undefined> = {};
 
@@ -143,12 +149,14 @@ export const buildLogicFunctionEvent = ({
   pathParameters,
   forwardedRequestHeaders,
   forwardAllHeaders = false,
+  forwardableCredentialHeaderNames,
   userWorkspaceId,
 }: {
   request: Request;
   pathParameters: Record<string, string | string[] | undefined>;
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;
+  forwardableCredentialHeaderNames?: Set<string>;
   userWorkspaceId: string | null;
 }): LogicFunctionEvent => {
   const rawBody = extractRawBody(request);
@@ -158,6 +166,7 @@ export const buildLogicFunctionEvent = ({
       requestHeaders: request.headers,
       forwardedRequestHeaders,
       forwardAllHeaders,
+      forwardableCredentialHeaderNames,
     }),
     queryStringParameters: normalizeQueryStringParameters(request.query),
     pathParameters: normalizePathParameters(pathParameters),
