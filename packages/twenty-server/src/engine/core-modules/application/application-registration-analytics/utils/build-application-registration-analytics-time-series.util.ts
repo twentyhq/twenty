@@ -48,7 +48,7 @@ export const buildApplicationRegistrationAnalyticsTimeSeries = ({
 
     countsByDate.set(
       row.date,
-      addMetricRowToApplicationRegistrationAnalyticsCounts(counts, row),
+      addMetricRowToApplicationRegistrationAnalyticsCounts({ counts, row }),
     );
   }
 

@@ -7,11 +7,9 @@ import { FindApplicationRegistrationAnalyticsDocument } from '~/generated-metada
 export const useApplicationRegistrationAnalytics = ({
   applicationRegistrationId,
   period,
-  skip,
 }: {
   applicationRegistrationId: string;
   period: PeriodPreset;
-  skip?: boolean;
 }) => {
   const { data, loading, previousData, error } = useQuery(
     FindApplicationRegistrationAnalyticsDocument,
@@ -19,7 +17,6 @@ export const useApplicationRegistrationAnalytics = ({
       variables: {
         input: { id: applicationRegistrationId, ...getPeriodDates(period) },
       },
-      skip,
     },
   );
 

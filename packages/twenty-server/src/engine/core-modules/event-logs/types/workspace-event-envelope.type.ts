@@ -64,8 +64,7 @@ export type ApplicationRegistrationMetricRow = {
   value: number;
 };
 
-// Every table but applicationRegistrationMetric is also queryable through the registry (EVENT_LOG_TYPES),
-// whose clickHouseTable values must match these literals.
+// These literals must match the clickHouseTable values in EVENT_LOG_TYPES, which exposes every table but applicationRegistrationMetric
 export type WorkspaceEventEnvelope =
   | { table: 'workspaceEvent'; row: AnalyticsEventRow }
   | { table: 'pageview'; row: PageviewRow }

@@ -18,11 +18,3 @@ export type ApplicationRegistrationCountMetric =
 
 export type ApplicationRegistrationCountField =
   (typeof APPLICATION_REGISTRATION_COUNT_METRIC_FIELDS)[ApplicationRegistrationCountMetric];
-
-export const isApplicationRegistrationCountMetric = (
-  metric: string,
-): metric is ApplicationRegistrationCountMetric =>
-  Object.prototype.hasOwnProperty.call(
-    APPLICATION_REGISTRATION_COUNT_METRIC_FIELDS,
-    metric,
-  );

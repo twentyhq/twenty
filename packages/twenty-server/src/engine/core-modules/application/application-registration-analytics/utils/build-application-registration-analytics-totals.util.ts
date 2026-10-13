@@ -14,7 +14,11 @@ export const buildApplicationRegistrationAnalyticsTotals = ({
   activeWorkspaces: number;
 }): ApplicationRegistrationAnalyticsTotalsDTO => {
   const counts = rows.reduce(
-    addMetricRowToApplicationRegistrationAnalyticsCounts,
+    (accumulatedCounts, row) =>
+      addMetricRowToApplicationRegistrationAnalyticsCounts({
+        counts: accumulatedCounts,
+        row,
+      }),
     createEmptyApplicationRegistrationAnalyticsCounts(),
   );
 
