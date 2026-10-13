@@ -48,7 +48,7 @@ export const SettingsPermissionGuard = (
           workspaceId,
           apiKeyId: ctx.getContext().req.apiKey?.id,
           applicationId: ctx.getContext().req.application?.id,
-          agentRoleRestriction: ctx.getContext().req.agentRoleRestriction,
+          agentId: ctx.getContext().req.agentId,
         });
 
       if (hasPermission === true) {

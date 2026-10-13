@@ -46,6 +46,7 @@ export class AgentInboxProposalService {
           authContext,
           userWorkspaceRoleMap,
           apiKeyRoleMap: {},
+          flatRoleTargetByAgentIdMaps: {},
         })
       : null;
 

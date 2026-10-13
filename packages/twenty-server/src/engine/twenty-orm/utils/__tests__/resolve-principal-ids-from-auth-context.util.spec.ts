@@ -98,7 +98,7 @@ describe('resolvePrincipalIdsFromAuthContext', () => {
         user: { id: 'user-1' },
         workspaceMemberId: WORKSPACE_MEMBER_ID,
         workspaceMember: { id: WORKSPACE_MEMBER_ID },
-        agentRoleRestriction: { agentId: 'agent-1', roleId: 'agent-role-1' },
+        agentId: 'agent-1',
       } as unknown as WorkspaceAuthContext),
     ).toEqual([EVERYONE_PRINCIPAL_ID, WORKSPACE_MEMBER_ID, USER_ROLE_ID]);
   });

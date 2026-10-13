@@ -1,10 +1,10 @@
 import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { findRequestAgentRoleRestriction } from 'src/engine/core-modules/auth/utils/find-request-agent-role-restriction.util';
+import { findRequestAgentId } from 'src/engine/core-modules/auth/utils/find-request-agent-id.util';
 
 const USER_WORKSPACE_ID = 'user-workspace-1';
 const APPLICATION_ID = 'application-1';
-const AGENT_ROLE_RESTRICTION = { agentId: 'agent-1', roleId: 'agent-role-1' };
+const AGENT_ID = 'agent-1';
 
 const USER_CONTEXT = {
   type: 'user',
@@ -14,28 +14,25 @@ const USER_CONTEXT = {
   workspaceMemberId: 'workspace-member-1',
   workspaceMember: { id: 'workspace-member-1' },
   application: { id: APPLICATION_ID },
-  agentRoleRestriction: AGENT_ROLE_RESTRICTION,
+  agentId: AGENT_ID,
 } as unknown as WorkspaceAuthContext;
 
 const APPLICATION_CONTEXT = {
   type: 'application',
   workspace: { id: 'workspace-1' },
   application: { id: APPLICATION_ID },
-  agentRoleRestriction: AGENT_ROLE_RESTRICTION,
+  agentId: AGENT_ID,
 } as unknown as WorkspaceAuthContext;
 
 const findWithin = (
   authContext: WorkspaceAuthContext,
-  principal: Parameters<typeof findRequestAgentRoleRestriction>[0],
-) =>
-  withWorkspaceAuthContext(authContext, () =>
-    findRequestAgentRoleRestriction(principal),
-  );
+  principal: Parameters<typeof findRequestAgentId>[0],
+) => withWorkspaceAuthContext(authContext, () => findRequestAgentId(principal));
 
-describe('findRequestAgentRoleRestriction', () => {
+describe('findRequestAgentId', () => {
   it('should find nothing outside a request', () => {
     expect(
-      findRequestAgentRoleRestriction({
+      findRequestAgentId({
         userWorkspaceId: USER_WORKSPACE_ID,
         applicationId: APPLICATION_ID,
       }),
@@ -62,7 +59,7 @@ describe('findRequestAgentRoleRestriction', () => {
       principal: { applicationId: APPLICATION_ID },
     },
   ])('should narrow a check about $title', ({ authContext, principal }) => {
-    expect(findWithin(authContext, principal)).toEqual(AGENT_ROLE_RESTRICTION);
+    expect(findWithin(authContext, principal)).toEqual(AGENT_ID);
   });
 
   it.each([

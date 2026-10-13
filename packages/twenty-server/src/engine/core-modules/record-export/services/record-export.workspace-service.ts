@@ -522,8 +522,8 @@ export class RecordExportWorkspaceService {
         applicationId: isUserAuthContext(authContext)
           ? authContext.application?.id
           : undefined,
-        agentRoleRestriction: isUserAuthContext(authContext)
-          ? authContext.agentRoleRestriction
+        agentId: isUserAuthContext(authContext)
+          ? authContext.agentId
           : undefined,
         setting: PermissionFlagType.EXPORT_CSV,
       }))

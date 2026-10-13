@@ -104,7 +104,7 @@ export class McpCoreController {
       userWorkspaceId,
       apiKey,
       application,
-      agentRoleRestriction: request.agentRoleRestriction,
+      agentId: request.agentId,
       isDirectMode: mode === 'direct',
     };
 

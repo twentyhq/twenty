@@ -1,5 +1,3 @@
-import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
-
 export type ViewChildEntityKind =
   | 'viewField'
   | 'viewFieldGroup'
@@ -13,5 +11,5 @@ export type ViewAccessContext = {
   userWorkspaceId?: string;
   apiKeyId?: string;
   applicationId?: string;
-  agentRoleRestriction?: AgentRoleRestriction;
+  agentId?: string;
 };

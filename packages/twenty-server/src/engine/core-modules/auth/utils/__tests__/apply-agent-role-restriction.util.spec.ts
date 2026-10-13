@@ -5,7 +5,7 @@ describe('applyAgentRoleRestriction', () => {
     expect(
       applyAgentRoleRestriction({
         roleIds: ['user-role'],
-        agentRoleRestriction: undefined,
+        agentRoleId: undefined,
       }),
     ).toEqual(['user-role']);
   });
@@ -14,7 +14,7 @@ describe('applyAgentRoleRestriction', () => {
     expect(
       applyAgentRoleRestriction({
         roleIds: ['user-role', 'application-role'],
-        agentRoleRestriction: { agentId: 'agent', roleId: 'agent-role' },
+        agentRoleId: 'agent-role',
       }),
     ).toEqual(['user-role', 'application-role', 'agent-role']);
   });
@@ -23,7 +23,7 @@ describe('applyAgentRoleRestriction', () => {
     expect(
       applyAgentRoleRestriction({
         roleIds: ['shared-role'],
-        agentRoleRestriction: { agentId: 'agent', roleId: 'shared-role' },
+        agentRoleId: 'shared-role',
       }),
     ).toEqual(['shared-role']);
   });
@@ -32,7 +32,7 @@ describe('applyAgentRoleRestriction', () => {
     expect(
       applyAgentRoleRestriction({
         roleIds: ['user-role'],
-        agentRoleRestriction: { agentId: 'agent', roleId: null },
+        agentRoleId: null,
       }),
     ).toEqual([]);
   });
@@ -41,7 +41,7 @@ describe('applyAgentRoleRestriction', () => {
     expect(
       applyAgentRoleRestriction({
         roleIds: [],
-        agentRoleRestriction: { agentId: 'agent', roleId: 'agent-role' },
+        agentRoleId: 'agent-role',
       }),
     ).toEqual([]);
   });

@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -148,14 +147,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
-    authAgentRoleRestriction,
+    authAgentId,
   }: {
     input: CreateNavigationMenuItemInput;
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
-    authAgentRoleRestriction?: AgentRoleRestriction;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO> {
     const createdItems = await this.createMany({
       inputs: [input],
@@ -163,7 +162,7 @@ export class NavigationMenuItemService {
       authUserWorkspaceId,
       authApiKeyId,
       authApplicationId,
-      authAgentRoleRestriction,
+      authAgentId,
     });
 
     const created = createdItems[0];
@@ -184,14 +183,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
-    authAgentRoleRestriction,
+    authAgentId,
   }: {
     inputs: CreateNavigationMenuItemInput[];
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
-    authAgentRoleRestriction?: AgentRoleRestriction;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO[]> {
     if (inputs.length === 0) {
       return [];
@@ -204,7 +203,7 @@ export class NavigationMenuItemService {
           workspaceId,
           apiKeyId: authApiKeyId,
           applicationId: authApplicationId,
-          agentRoleRestriction: authAgentRoleRestriction,
+          agentId: authAgentId,
           inputUserWorkspaceId: input.userWorkspaceId,
         },
       );
@@ -326,14 +325,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
-    authAgentRoleRestriction,
+    authAgentId,
   }: {
     input: UpdateNavigationMenuItemInput & { id: string };
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
-    authAgentRoleRestriction?: AgentRoleRestriction;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO> {
     const { id, ...update } = input;
 
@@ -343,7 +342,7 @@ export class NavigationMenuItemService {
       authUserWorkspaceId,
       authApiKeyId,
       authApplicationId,
-      authAgentRoleRestriction,
+      authAgentId,
     });
 
     const updated = updatedItems[0];
@@ -364,14 +363,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
-    authAgentRoleRestriction,
+    authAgentId,
   }: {
     inputs: UpdateOneNavigationMenuItemInput[];
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
-    authAgentRoleRestriction?: AgentRoleRestriction;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO[]> {
     if (inputs.length === 0) {
       return [];
@@ -413,7 +412,7 @@ export class NavigationMenuItemService {
             workspaceId,
             apiKeyId: authApiKeyId,
             applicationId: authApplicationId,
-            agentRoleRestriction: authAgentRoleRestriction,
+            agentId: authAgentId,
             existingUserWorkspaceId: existingNavigationMenuItem.userWorkspaceId,
           },
         );
@@ -478,14 +477,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
-    authAgentRoleRestriction,
+    authAgentId,
   }: {
     id: string;
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
-    authAgentRoleRestriction?: AgentRoleRestriction;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO> {
     const deletedItems = await this.deleteMany({
       ids: [id],
@@ -493,7 +492,7 @@ export class NavigationMenuItemService {
       authUserWorkspaceId,
       authApiKeyId,
       authApplicationId,
-      authAgentRoleRestriction,
+      authAgentId,
     });
 
     const deleted = deletedItems[0];
@@ -514,14 +513,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
-    authAgentRoleRestriction,
+    authAgentId,
   }: {
     ids: string[];
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
-    authAgentRoleRestriction?: AgentRoleRestriction;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO[]> {
     if (ids.length === 0) {
       return [];
@@ -570,7 +569,7 @@ export class NavigationMenuItemService {
           workspaceId,
           apiKeyId: authApiKeyId,
           applicationId: authApplicationId,
-          agentRoleRestriction: authAgentRoleRestriction,
+          agentId: authAgentId,
           existingUserWorkspaceId: flatNavigationMenuItemRoot.userWorkspaceId,
         },
       );

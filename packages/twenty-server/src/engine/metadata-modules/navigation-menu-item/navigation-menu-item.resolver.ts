@@ -16,11 +16,10 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
-import { AuthAgentRoleRestriction } from 'src/engine/decorators/auth/auth-agent-role-restriction.decorator';
+import { AuthAgentId } from 'src/engine/decorators/auth/auth-agent-id.decorator';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -127,8 +126,8 @@ export class NavigationMenuItemResolver {
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
-    @AuthAgentRoleRestriction()
-    agentRoleRestriction: AgentRoleRestriction | undefined,
+    @AuthAgentId()
+    agentId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
     return await this.navigationMenuItemService.createMany({
       inputs,
@@ -136,7 +135,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
-      authAgentRoleRestriction: agentRoleRestriction,
+      authAgentId: agentId,
     });
   }
 
@@ -149,8 +148,8 @@ export class NavigationMenuItemResolver {
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
-    @AuthAgentRoleRestriction()
-    agentRoleRestriction: AgentRoleRestriction | undefined,
+    @AuthAgentId()
+    agentId: string | undefined,
   ): Promise<NavigationMenuItemDTO> {
     return await this.navigationMenuItemService.create({
       input,
@@ -158,7 +157,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
-      authAgentRoleRestriction: agentRoleRestriction,
+      authAgentId: agentId,
     });
   }
 
@@ -172,8 +171,8 @@ export class NavigationMenuItemResolver {
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
-    @AuthAgentRoleRestriction()
-    agentRoleRestriction: AgentRoleRestriction | undefined,
+    @AuthAgentId()
+    agentId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
     return await this.navigationMenuItemService.updateMany({
       inputs,
@@ -181,7 +180,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
-      authAgentRoleRestriction: agentRoleRestriction,
+      authAgentId: agentId,
     });
   }
 
@@ -194,8 +193,8 @@ export class NavigationMenuItemResolver {
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
-    @AuthAgentRoleRestriction()
-    agentRoleRestriction: AgentRoleRestriction | undefined,
+    @AuthAgentId()
+    agentId: string | undefined,
   ): Promise<NavigationMenuItemDTO> {
     return await this.navigationMenuItemService.update({
       input: { ...input.update, id: input.id },
@@ -203,7 +202,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
-      authAgentRoleRestriction: agentRoleRestriction,
+      authAgentId: agentId,
     });
   }
 
@@ -216,8 +215,8 @@ export class NavigationMenuItemResolver {
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
-    @AuthAgentRoleRestriction()
-    agentRoleRestriction: AgentRoleRestriction | undefined,
+    @AuthAgentId()
+    agentId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
     return await this.navigationMenuItemService.deleteMany({
       ids,
@@ -225,7 +224,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
-      authAgentRoleRestriction: agentRoleRestriction,
+      authAgentId: agentId,
     });
   }
 
@@ -238,8 +237,8 @@ export class NavigationMenuItemResolver {
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
-    @AuthAgentRoleRestriction()
-    agentRoleRestriction: AgentRoleRestriction | undefined,
+    @AuthAgentId()
+    agentId: string | undefined,
   ): Promise<NavigationMenuItemDTO> {
     return await this.navigationMenuItemService.delete({
       id,
@@ -247,7 +246,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
-      authAgentRoleRestriction: agentRoleRestriction,
+      authAgentId: agentId,
     });
   }
 

@@ -1,4 +1,5 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 
 const USER_WORKSPACE_ID = 'user-workspace-1';
@@ -7,10 +8,14 @@ const APPLICATION_ROLE_ID = 'application-role-1';
 const API_KEY_ID = 'api-key-1';
 const API_KEY_ROLE_ID = 'api-key-role-1';
 const AGENT_ROLE_ID = 'agent-role-1';
-const AGENT_ROLE_RESTRICTION = { agentId: 'agent-1', roleId: AGENT_ROLE_ID };
+const AGENT_ID = 'agent-1';
+const AGENT_WITHOUT_ROLE_ID = 'agent-without-role';
 
 const userWorkspaceRoleMap = { [USER_WORKSPACE_ID]: USER_ROLE_ID };
 const apiKeyRoleMap = { [API_KEY_ID]: API_KEY_ROLE_ID };
+const flatRoleTargetByAgentIdMaps = {
+  [AGENT_ID]: { roleId: AGENT_ROLE_ID },
+} as unknown as FlatRoleTargetByAgentIdMaps;
 
 const buildUserContext = (application?: {
   defaultRoleId: string | null;
@@ -30,6 +35,7 @@ const resolve = (authContext: WorkspaceAuthContext) =>
     authContext,
     userWorkspaceRoleMap,
     apiKeyRoleMap,
+    flatRoleTargetByAgentIdMaps,
   });
 
 describe('resolveRoleIdsFromAuthContext', () => {
@@ -107,7 +113,7 @@ describe('resolveRoleIdsFromAuthContext', () => {
     expect(
       resolve({
         ...buildUserContext({ defaultRoleId: APPLICATION_ROLE_ID }),
-        agentRoleRestriction: AGENT_ROLE_RESTRICTION,
+        agentId: AGENT_ID,
       } as WorkspaceAuthContext),
     ).toEqual([USER_ROLE_ID, APPLICATION_ROLE_ID, AGENT_ROLE_ID]);
   });
@@ -118,7 +124,7 @@ describe('resolveRoleIdsFromAuthContext', () => {
         type: 'application',
         workspace: { id: 'workspace-1' },
         application: { defaultRoleId: APPLICATION_ROLE_ID },
-        agentRoleRestriction: AGENT_ROLE_RESTRICTION,
+        agentId: AGENT_ID,
       } as unknown as WorkspaceAuthContext),
     ).toEqual([APPLICATION_ROLE_ID, AGENT_ROLE_ID]);
   });
@@ -127,7 +133,7 @@ describe('resolveRoleIdsFromAuthContext', () => {
     expect(
       resolve({
         ...buildUserContext(),
-        agentRoleRestriction: { agentId: 'agent-1', roleId: null },
+        agentId: AGENT_WITHOUT_ROLE_ID,
       } as WorkspaceAuthContext),
     ).toEqual([]);
   });
@@ -138,7 +144,7 @@ describe('resolveRoleIdsFromAuthContext', () => {
         type: 'application',
         workspace: { id: 'workspace-1' },
         application: { defaultRoleId: null },
-        agentRoleRestriction: AGENT_ROLE_RESTRICTION,
+        agentId: AGENT_ID,
       } as unknown as WorkspaceAuthContext),
     ).toEqual([]);
   });

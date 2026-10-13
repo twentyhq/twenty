@@ -17,7 +17,6 @@ import {
 
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
-import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
@@ -227,7 +226,7 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId,
     workspaceId,
     applicationId,
-    agentRoleRestriction,
+    agentId,
   }: {
     connectedAccount: Pick<
       ConnectedAccountEntity,
@@ -236,7 +235,7 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
     applicationId?: string;
-    agentRoleRestriction?: AgentRoleRestriction;
+    agentId?: string;
   }): Promise<boolean> {
     if (connectedAccount.userWorkspaceId === userWorkspaceId) {
       return true;
@@ -248,7 +247,7 @@ export class ConnectedAccountMetadataService {
           userWorkspaceId,
           workspaceId,
           applicationId,
-          agentRoleRestriction,
+          agentId,
           setting: getConnectedAccountAdministrationPermissionFlag(
             connectedAccount.provider,
           ),
@@ -265,13 +264,13 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId,
     workspaceId,
     applicationId,
-    agentRoleRestriction,
+    agentId,
   }: {
     id: string;
     userWorkspaceId: string;
     workspaceId: string;
     applicationId?: string;
-    agentRoleRestriction?: AgentRoleRestriction;
+    agentId?: string;
   }): Promise<ConnectedAccountEntity> {
     const connectedAccount = await this.findByIdOrThrow({ id, workspaceId });
 
@@ -280,7 +279,7 @@ export class ConnectedAccountMetadataService {
       userWorkspaceId,
       workspaceId,
       applicationId,
-      agentRoleRestriction,
+      agentId,
     });
 
     if (!isAdministrableByCaller) {

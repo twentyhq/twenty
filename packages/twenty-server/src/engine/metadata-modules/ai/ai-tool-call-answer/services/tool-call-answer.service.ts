@@ -566,7 +566,7 @@ export class ToolCallAnswerService {
         workspaceId,
         setting,
         applicationId: requestUserAuthContext?.application?.id,
-        agentRoleRestriction: requestUserAuthContext?.agentRoleRestriction,
+        agentId: requestUserAuthContext?.agentId,
       });
 
     if (!hasPermission) {

@@ -1,5 +1,4 @@
 import { type ActingAgent } from 'src/engine/core-modules/auth/types/acting-agent.type';
-import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 
 export type WorkspaceAuthContextType =
@@ -27,7 +26,7 @@ export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
   application?: NonNullable<RawAuthContext['application']>;
   viaApplication?: NonNullable<RawAuthContext['application']>;
-  agentRoleRestriction?: AgentRoleRestriction;
+  agentId?: string;
 }
 
 export interface ApplicationWorkspaceAuthContext extends BaseWorkspaceAuthContext {
@@ -35,7 +34,8 @@ export interface ApplicationWorkspaceAuthContext extends BaseWorkspaceAuthContex
   application: NonNullable<RawAuthContext['application']>;
   // Set when one of the application's agents runs on its own, so its writes are attributed to it
   actingAgent?: ActingAgent;
-  agentRoleRestriction?: AgentRoleRestriction;
+  // The agent named in the token only narrows its roles; unlike actingAgent, writes are not attributed to it
+  agentId?: string;
 }
 
 export interface SystemWorkspaceAuthContext extends BaseWorkspaceAuthContext {

@@ -1,11 +1,8 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isUndefined } from '@sniptt/guards';
 
-import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 export const buildAgentRoleIdsBySource = (
-  agentRoleRestriction: AgentRoleRestriction | undefined,
+  agentRoleId: string | null | undefined,
 ): Pick<RoleIdsBySource, 'agentRoleId'> =>
-  isDefined(agentRoleRestriction)
-    ? { agentRoleId: agentRoleRestriction.roleId }
-    : {};
+  isUndefined(agentRoleId) ? {} : { agentRoleId };

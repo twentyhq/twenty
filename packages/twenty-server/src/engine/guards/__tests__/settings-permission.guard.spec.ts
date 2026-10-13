@@ -114,6 +114,9 @@ describe('SettingsPermissionGuard', () => {
     }) =>
       mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
         userWorkspaceRoleMap: {},
+        flatRoleTargetByAgentIdMaps: {
+          'agent-id': { roleId: 'agent-role-id' },
+        },
         flatApplicationMaps: {
           byId: {
             'application-id': {
@@ -207,6 +210,7 @@ describe('SettingsPermissionGuard', () => {
           'flatApplicationMaps',
           'flatRoleMaps',
           'flatRolePermissionFlagMaps',
+          'flatRoleTargetByAgentIdMaps',
         ],
       );
     });
@@ -231,13 +235,13 @@ describe('SettingsPermissionGuard', () => {
       });
     });
 
-    const canActivateForAgentRole = (agentRoleId: string | null) =>
+    const canActivateForAgent = (agentId: string) =>
       withWorkspaceAuthContext(
         {
           type: 'application',
           workspace: { id: 'workspace-id' },
           application: { id: 'application-id' },
-          agentRoleRestriction: { agentId: 'agent-id', roleId: agentRoleId },
+          agentId,
         } as unknown as WorkspaceAuthContext,
         () => guard.canActivate(mockExecutionContext),
       );
@@ -249,33 +253,26 @@ describe('SettingsPermissionGuard', () => {
         canAgentRoleUpdateAllSettings: true,
       });
 
-      await expect(canActivateForAgentRole('agent-role-id')).resolves.toBe(
-        true,
-      );
+      await expect(canActivateForAgent('agent-id')).resolves.toBe(true);
     });
 
     it.each([
-      { title: 'the agent role lacks it', agentRoleId: 'agent-role-id' },
-      { title: 'the agent has no role', agentRoleId: null },
+      { title: 'the agent role lacks it', agentId: 'agent-id' },
+      { title: 'the agent has no role', agentId: 'agent-without-role' },
     ])(
       'should deny with PERMISSION_DENIED a setting the application grants when $title',
-      async ({ agentRoleId }) => {
+      async ({ agentId }) => {
         mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
 
-        await expect(
-          canActivateForAgentRole(agentRoleId),
-        ).rejects.toMatchObject({
+        await expect(canActivateForAgent(agentId)).rejects.toMatchObject({
           code: PermissionsExceptionCode.PERMISSION_DENIED,
         });
       },
     );
 
-    it('should deny with PERMISSION_DENIED when the request restriction reaches the check without a request context', async () => {
+    it('should deny with PERMISSION_DENIED when the guard passes the request agent without a request context', async () => {
       mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
-      mockGqlContext.req.agentRoleRestriction = {
-        agentId: 'agent-id',
-        roleId: 'agent-role-id',
-      };
+      mockGqlContext.req.agentId = 'agent-id';
 
       await expect(
         guard.canActivate(mockExecutionContext),

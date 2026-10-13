@@ -11,9 +11,8 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { applyAgentRoleRestriction } from 'src/engine/core-modules/auth/utils/apply-agent-role-restriction.util';
-import { findRequestAgentRoleRestriction } from 'src/engine/core-modules/auth/utils/find-request-agent-role-restriction.util';
+import { findRequestAgentId } from 'src/engine/core-modules/auth/utils/find-request-agent-id.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
@@ -28,6 +27,7 @@ import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permi
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
+import { resolveAgentRoleId } from 'src/engine/twenty-orm/utils/resolve-agent-role-id.util';
 import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -96,25 +96,27 @@ export class PermissionsService {
     setting,
     apiKeyId,
     applicationId,
-    agentRoleRestriction,
+    agentId,
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
     setting: PermissionFlagType;
     apiKeyId?: string;
     applicationId: string | undefined;
-    agentRoleRestriction: AgentRoleRestriction | undefined;
+    agentId: string | undefined;
   }): Promise<boolean> {
     const {
       userWorkspaceRoleMap,
       flatApplicationMaps,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
+      flatRoleTargetByAgentIdMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
       'flatApplicationMaps',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
+      'flatRoleTargetByAgentIdMaps',
     ]);
 
     const flatRoles = await this.resolveCallerFlatRolesOrThrow({
@@ -127,16 +129,22 @@ export class PermissionsService {
       flatRoleMaps,
     });
 
-    // The request's own restriction still applies, so a caller passing none cannot widen the token
+    // The request's own agent still applies, so a caller passing none cannot widen the token
     const roleIds = applyAgentRoleRestriction({
       roleIds: applyAgentRoleRestriction({
         roleIds: flatRoles.map((flatRole) => flatRole.id),
-        agentRoleRestriction,
+        agentRoleId: resolveAgentRoleId({
+          agentId,
+          flatRoleTargetByAgentIdMaps,
+        }),
       }),
-      agentRoleRestriction: findRequestAgentRoleRestriction({
-        userWorkspaceId,
-        apiKeyId,
-        applicationId,
+      agentRoleId: resolveAgentRoleId({
+        agentId: findRequestAgentId({
+          userWorkspaceId,
+          apiKeyId,
+          applicationId,
+        }),
+        flatRoleTargetByAgentIdMaps,
       }),
     });
 

@@ -504,13 +504,23 @@ export class RecordSharingService {
     const workspaceId = authContext.workspace.id;
     const isOpenByDefault =
       sharingObject.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT;
-    const { userWorkspaceRoleMap, apiKeyRoleMap, roleIdsWithAllRecordsAccess } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
-        'apiKeyRoleMap',
-        'roleIdsWithAllRecordsAccess',
-      ]);
-    const roleMaps = { authContext, userWorkspaceRoleMap, apiKeyRoleMap };
+    const {
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+      flatRoleTargetByAgentIdMaps,
+      roleIdsWithAllRecordsAccess,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'userWorkspaceRoleMap',
+      'apiKeyRoleMap',
+      'flatRoleTargetByAgentIdMaps',
+      'roleIdsWithAllRecordsAccess',
+    ]);
+    const roleMaps = {
+      authContext,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+      flatRoleTargetByAgentIdMaps,
+    };
     const principalIds = resolvePrincipalIdsFromAuthContext(roleMaps) ?? [];
     const canAccessAllRecords = canRolesAccessAllRecords({
       roleIds: resolveRoleIdsFromAuthContext(roleMaps),

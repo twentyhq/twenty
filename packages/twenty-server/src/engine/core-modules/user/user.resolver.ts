@@ -20,7 +20,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
-import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -49,7 +48,7 @@ import { assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly } from 'src/engine/c
 import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthAgentRoleRestriction } from 'src/engine/decorators/auth/auth-agent-role-restriction.decorator';
+import { AuthAgentId } from 'src/engine/decorators/auth/auth-agent-id.decorator';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthAuthenticatedAt } from 'src/engine/decorators/auth/auth-authenticated-at.decorator';
@@ -438,8 +437,8 @@ export class UserResolver {
     @AuthIsUserSession() isUserSession: boolean,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
-    @AuthAgentRoleRestriction()
-    agentRoleRestriction: AgentRoleRestriction | undefined,
+    @AuthAgentId()
+    agentId: string | undefined,
   ) {
     if (!workspace) {
       throw new AuthException(
@@ -487,7 +486,7 @@ export class UserResolver {
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
-        agentRoleRestriction,
+        agentId,
       }));
 
     if (!canDeleteUserFromWorkspace) {
@@ -532,8 +531,8 @@ export class UserResolver {
     @AuthUser({ allowUndefined: true }) user?: AuthContextUser | null,
     @AuthApplication({ allowUndefined: true })
     application?: FlatApplication,
-    @AuthAgentRoleRestriction()
-    agentRoleRestriction?: AgentRoleRestriction,
+    @AuthAgentId()
+    agentId?: string,
   ): Promise<boolean> {
     let isUpdatingSelf =
       isDefined(authenticatedWorkspaceMemberId) &&
@@ -558,7 +557,7 @@ export class UserResolver {
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
-        agentRoleRestriction,
+        agentId,
       }));
 
     if (!canUpdateWorkspaceMember) {

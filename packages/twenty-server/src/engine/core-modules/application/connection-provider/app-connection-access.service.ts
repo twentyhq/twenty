@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
 import {
   PermissionsException,
@@ -22,14 +21,14 @@ export class AppConnectionAccessService {
     userWorkspaceId,
     apiKeyId,
     applicationId,
-    agentRoleRestriction,
+    agentId,
   }: {
     isWorkspaceShared: boolean;
     workspaceId: string;
     userWorkspaceId?: string;
     apiKeyId?: string;
     applicationId?: string;
-    agentRoleRestriction?: AgentRoleRestriction;
+    agentId?: string;
   }): Promise<void> {
     if (!isWorkspaceShared) {
       return;
@@ -44,7 +43,7 @@ export class AppConnectionAccessService {
         ),
         apiKeyId,
         applicationId,
-        agentRoleRestriction,
+        agentId,
       });
 
     if (!hasPermission) {

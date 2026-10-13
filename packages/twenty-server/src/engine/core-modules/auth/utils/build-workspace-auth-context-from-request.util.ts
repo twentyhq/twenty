@@ -34,7 +34,7 @@ export const buildWorkspaceAuthContextFromRequest = (
       workspaceMemberId: req.workspaceMemberId,
       workspaceMember: req.workspaceMember,
       application: req.application,
-      agentRoleRestriction: req.agentRoleRestriction,
+      agentId: req.agentId,
     });
   }
 
@@ -42,7 +42,7 @@ export const buildWorkspaceAuthContextFromRequest = (
     return buildApplicationAuthContext({
       workspace: req.workspace!,
       application: req.application,
-      agentRoleRestriction: req.agentRoleRestriction,
+      agentId: req.agentId,
     });
   }
 

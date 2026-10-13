@@ -37,7 +37,6 @@ import { getScopedCallingApplication } from 'src/engine/core-modules/application
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
-import { type AgentRoleRestriction } from 'src/engine/core-modules/auth/types/agent-role-restriction.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -329,13 +328,13 @@ export class WorkspaceService {
     userWorkspaceId,
     apiKey,
     application,
-    agentRoleRestriction,
+    agentId,
   }: {
     payload: UpdateWorkspaceInput & { id: string };
     userWorkspaceId?: string;
     apiKey: ApiKeyEntity | undefined;
     application?: FlatApplication;
-    agentRoleRestriction?: AgentRoleRestriction;
+    agentId?: string;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -349,7 +348,7 @@ export class WorkspaceService {
       workspaceId: workspace.id,
       apiKey,
       application,
-      agentRoleRestriction,
+      agentId,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -1051,7 +1050,7 @@ export class WorkspaceService {
     workspaceId,
     apiKey,
     application,
-    agentRoleRestriction,
+    agentId,
     workspaceActivationStatus,
   }: {
     payload: Partial<WorkspaceEntity>;
@@ -1059,7 +1058,7 @@ export class WorkspaceService {
     workspaceId: string;
     apiKey: ApiKeyEntity | undefined;
     application?: FlatApplication;
-    agentRoleRestriction?: AgentRoleRestriction;
+    agentId?: string;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
@@ -1145,7 +1144,7 @@ export class WorkspaceService {
           setting: permission,
           apiKeyId: apiKey?.id,
           applicationId: application?.id,
-          agentRoleRestriction,
+          agentId,
         });
 
       if (!hasPermission) {
