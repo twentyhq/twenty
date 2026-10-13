@@ -1,6 +1,5 @@
 import {
   isDefined,
-  isMorphRelationHead,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -65,7 +64,6 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
       }
 
       if (
-        !isMorphRelationHead(flatFieldMetadata) &&
         isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
         flatFieldMetadata.relationTargetObjectMetadataId !==
           objectMetadataToDeleteId
