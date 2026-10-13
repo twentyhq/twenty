@@ -6,6 +6,7 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -32,7 +33,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   roleIds,
   shouldBypassPermissionChecks,
 }: ValidateRLSPredicatesForRecordsArgs<T>): void => {
-  if (shouldBypassPermissionChecks) {
+  if (shouldBypassPermissionChecks || isSystemAuthContext(authContext)) {
     return;
   }
 
