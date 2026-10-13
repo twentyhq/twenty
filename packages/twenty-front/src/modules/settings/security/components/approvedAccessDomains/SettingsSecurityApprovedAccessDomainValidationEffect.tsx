@@ -38,14 +38,14 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
             })),
           );
           enqueueToast({
-            variant: 'success',
+            status: 'success',
             children: t`Approved access domain validated`,
             dedupeKey: 'approved-access-domain-validation-dedupe-key',
           });
         },
         onError: (error) => {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: error?.message
               ? error.message
               : t`Error validating approved access domain`,

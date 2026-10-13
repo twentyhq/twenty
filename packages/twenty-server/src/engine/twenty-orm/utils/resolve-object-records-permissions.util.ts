@@ -5,11 +5,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
-import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 
 export const resolveObjectRecordsPermissions = ({
   rolePermissionConfig,
@@ -36,22 +33,16 @@ export const resolveObjectRecordsPermissions = ({
     };
   }
 
-  if ('unionOf' in rolePermissionConfig) {
-    if (rolePermissionConfig.unionOf.length !== 1) {
-      throw new TwentyOrmException(
-        'Union permission logic for multiple roles not yet implemented',
-        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
-      );
-    }
+  const roleIds = getRoleIdsToIntersect(rolePermissionConfig.intersectionOf);
 
+  if (!isDefined(roleIds)) {
     return {
-      objectRecordsPermissions:
-        objectPermissionsByRoleId[rolePermissionConfig.unionOf[0]] ?? {},
+      objectRecordsPermissions: {},
       shouldBypassPermissionChecks: false,
     };
   }
 
-  const allRolePermissions = rolePermissionConfig.intersectionOf.map(
+  const allRolePermissions = roleIds.map(
     (roleId) => objectPermissionsByRoleId[roleId],
   );
 

@@ -70,7 +70,7 @@ export const SettingsAiOverviewTab = () => {
         enqueueToast(getToastOptionsFromError({ error }));
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to save workspace instructions`,
         });
       }

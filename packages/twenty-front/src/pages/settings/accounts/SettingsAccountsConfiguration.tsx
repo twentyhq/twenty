@@ -72,7 +72,7 @@ export const SettingsAccountsConfiguration = () => {
       },
       onCompleted: () => {
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Account added successfully. Sync started.`,
         });
         navigate(getSettingsPath(SettingsPath.Accounts));

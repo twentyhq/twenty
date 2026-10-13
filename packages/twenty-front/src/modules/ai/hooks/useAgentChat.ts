@@ -91,7 +91,7 @@ export const useAgentChat = () => {
 
     if (aiModels.length === 0) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`No AI provider is configured on this instance.`,
       });
 

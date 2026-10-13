@@ -36,7 +36,7 @@ import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components/feedback';
+import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconChevronUp, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -46,14 +46,6 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-`;
-
-const StyledValidationRuleError = styled.div`
-  background: ${themeCssVariables.background.danger};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.danger};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledValidationRuleErrors = styled.div`
@@ -351,9 +343,9 @@ const SidePanelRecordCreationForm = ({
       {recordViolations.length > 0 && (
         <StyledValidationRuleErrors>
           {recordViolations.map((violation) => (
-            <StyledValidationRuleError key={violation.ruleId} role="alert">
+            <InlineBanner key={violation.ruleId} status="error" role="alert">
               {violation.message}
-            </StyledValidationRuleError>
+            </InlineBanner>
           ))}
         </StyledValidationRuleErrors>
       )}

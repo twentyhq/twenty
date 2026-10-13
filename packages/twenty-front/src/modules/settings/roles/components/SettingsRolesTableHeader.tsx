@@ -7,11 +7,14 @@ export const SettingsRolesTableHeader = () => {
   return (
     <Table>
       <TableRow
-        mobileGridAutoColumns="5fr 2fr 35px"
-        gridAutoColumns="332px 5fr 1fr"
+        mobileGridAutoColumns="3fr 2fr 2fr 35px"
+        gridAutoColumns="332px 3fr 3fr 1fr"
       >
         <TableHeader>
           <Trans>Name</Trans>
+        </TableHeader>
+        <TableHeader>
+          <Trans>App</Trans>
         </TableHeader>
         <TableHeader align="right">
           <Trans>Assigned to</Trans>

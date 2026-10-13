@@ -40,6 +40,7 @@
       "getIconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "JsonTree": "components/data-display/JsonTree/JsonTree",
       "MetricRow": "components/data-display/MetricRow/MetricRow",
+      "StackIcon": "components/data-display/StackIcon/StackIcon",
       "TintedIconTile": "components/data-display/TintedIconTile/TintedIconTile"
     },
     "types": {
@@ -52,6 +53,7 @@
       "JsonTreeProps": "components/data-display/JsonTree/types/JsonTreeProps",
       "MetricRowProps": "components/data-display/MetricRow/types/MetricRowProps",
       "ShouldExpandNodeInitiallyProps": "components/data-display/JsonTree/types/ShouldExpandNodeInitiallyProps",
+      "StackIconProps": "components/data-display/StackIcon/types/StackIconProps",
       "TintedIconTileProps": "components/data-display/TintedIconTile/types/TintedIconTileProps"
     }
   },
@@ -79,7 +81,8 @@
       "ToastOptions": "components/feedback/Toast/types/ToastOptions",
       "ToastProps": "components/feedback/Toast/types/ToastProps",
       "ToastProviderProps": "components/feedback/Toast/types/ToastProviderProps",
-      "ToastVariant": "components/feedback/Toast/types/ToastVariant"
+      "ToastStatus": "components/feedback/Toast/types/ToastStatus",
+      "ToastUpdate": "components/feedback/Toast/types/ToastUpdate"
     }
   },
   "components/input": {
@@ -766,6 +769,7 @@
     "values": {
       "Banner": "primitives/feedback/Banner/Banner",
       "Loader": "primitives/feedback/Loader/Loader",
+      "Progress": "primitives/feedback/Progress/Progress",
       "ProgressBar": "primitives/feedback/ProgressBar/ProgressBar",
       "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing",
       "Skeleton": "primitives/feedback/Skeleton/Skeleton",
@@ -780,7 +784,18 @@
       "BannerVariant": "primitives/feedback/Banner/types/BannerVariant",
       "LoaderProps": "primitives/feedback/Loader/types/LoaderProps",
       "ProgressBarProps": "primitives/feedback/ProgressBar/types/ProgressBarProps",
+      "ProgressIndicatorProps": "primitives/feedback/Progress/types/ProgressIndicatorProps",
+      "ProgressIndicatorState": "primitives/feedback/Progress/types/ProgressIndicatorState",
+      "ProgressLabelProps": "primitives/feedback/Progress/types/ProgressLabelProps",
+      "ProgressLabelState": "primitives/feedback/Progress/types/ProgressLabelState",
       "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps",
+      "ProgressRootProps": "primitives/feedback/Progress/types/ProgressRootProps",
+      "ProgressRootState": "primitives/feedback/Progress/types/ProgressRootState",
+      "ProgressStatus": "primitives/feedback/Progress/types/ProgressStatus",
+      "ProgressTrackProps": "primitives/feedback/Progress/types/ProgressTrackProps",
+      "ProgressTrackState": "primitives/feedback/Progress/types/ProgressTrackState",
+      "ProgressValueProps": "primitives/feedback/Progress/types/ProgressValueProps",
+      "ProgressValueState": "primitives/feedback/Progress/types/ProgressValueState",
       "SkeletonProps": "primitives/feedback/Skeleton/types/SkeletonProps"
     }
   },

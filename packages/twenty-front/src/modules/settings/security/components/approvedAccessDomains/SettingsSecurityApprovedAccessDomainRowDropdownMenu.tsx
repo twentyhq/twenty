@@ -47,7 +47,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
     });
     if (isDefined(result.error)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Could not delete approved access domain`,
         duration: 2000,
       });
