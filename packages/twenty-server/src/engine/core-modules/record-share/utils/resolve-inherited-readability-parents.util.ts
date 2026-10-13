@@ -9,7 +9,10 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata-with-target.util';
+import {
+  isMorphOrRelationFlatFieldMetadataWithTarget,
+  type MorphOrRelationFlatFieldMetadataWithTarget,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata-with-target.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type InheritedReadabilityChildrenParent } from 'src/engine/core-modules/record-share/types/inherited-readability-children-parent.type';
 import { type InheritedReadabilityColumnParent } from 'src/engine/core-modules/record-share/types/inherited-readability-column-parent.type';
@@ -17,9 +20,7 @@ import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-
 import { getRelationFlatFieldMetadatasOfObject } from 'src/engine/twenty-orm/utils/get-relation-flat-field-metadatas-of-object.util';
 import { isManyToOneFlatFieldMetadata } from 'src/engine/twenty-orm/utils/is-many-to-one-flat-field-metadata.util';
 
-type RelationFlatFieldMetadata = ReturnType<
-  typeof getRelationFlatFieldMetadatasOfObject
->[number];
+type RelationFlatFieldMetadata = MorphOrRelationFlatFieldMetadataWithTarget;
 
 const isOneToMany = (flatFieldMetadata: RelationFlatFieldMetadata): boolean =>
   flatFieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY;
