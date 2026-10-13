@@ -19,7 +19,6 @@ import { focusOverflowingListFallback } from './internal/focusOverflowingListFal
 import { OverflowingListPopupTarget } from './internal/OverflowingListPopupTarget';
 import { OverflowingListItem } from './internal/OverflowingListItem';
 import { useOverflowingListLayout } from './internal/useOverflowingListLayout';
-import { useOverflowingListClientLayout } from './internal/useOverflowingListClientLayout';
 import { useFocusedElementUnmountRef } from './internal/useFocusedElementUnmountRef';
 import { type OverflowingListProps } from './types/OverflowingListProps';
 
@@ -31,7 +30,7 @@ export const OverflowingList = ({
   children,
   showOverflowCount,
   maxInlineCount,
-  overflowLabel = 'Show hidden items',
+  overflowLabel = 'Show all items',
   open,
   defaultOpen = false,
   onOpenChange,
@@ -45,7 +44,6 @@ export const OverflowingList = ({
   ref,
   ...props
 }: OverflowingListProps) => {
-  const hasClientLayout = useOverflowingListClientLayout();
   const [isHovered, setIsHovered] = useState(false);
   const [hasFocus, setHasFocus] = useState(false);
   const [popup, setPopup] = useState<HTMLDivElement | null>(null);
@@ -61,7 +59,8 @@ export const OverflowingList = ({
     useState<boolean>();
   const isCountVisible =
     showOverflowCount ??
-    (isOpen || (focusedItemCountVisibility ?? (isHovered || hasFocus)));
+    focusedItemCountVisibility ??
+    (isHovered || hasFocus || isOpen);
   const inlineItemCount =
     isDefined(maxInlineCount) && Number.isFinite(maxInlineCount)
       ? Math.min(children.length, Math.max(0, Math.floor(maxInlineCount)))
@@ -77,22 +76,29 @@ export const OverflowingList = ({
     itemCount: children.length,
     inlineItemCount,
     reserveCountSpace: isCountVisible,
-    popup,
+    isMeasurementEnabled: showOverflowCount !== false || isOpen,
   });
-  const canExpand = hasOverflow && showOverflowCount !== false;
+  const canExpand = hasOverflow && (isOpen || showOverflowCount !== false);
   const isPopupOpen = isOpen && canExpand;
-  const restoreItemFocus = useCallback(
-    ({ index, element }: { index: number; element: HTMLElement }) => {
+  const restoreItemFocus = useStableCallback(
+    ({
+      index,
+      element,
+      isInPopup,
+    }: {
+      index: number;
+      element: HTMLElement;
+      isInPopup: boolean;
+    }) => {
       focusOverflowingListFallback({
-        items: itemsRef.current,
-        popup: isPopupOpen ? popup : null,
+        items: isInPopup && canExpand ? null : itemsRef.current,
+        popup: isInPopup && isPopupOpen ? popup : null,
         trigger: triggerRef.current,
         root: containerRef.current,
         removedIndex: index,
         excludedItem: element,
       });
     },
-    [itemsRef, triggerRef, containerRef, popup, isPopupOpen],
   );
   const restoreTriggerFocus = useCallback(() => {
     const container = containerRef.current;
@@ -122,6 +128,17 @@ export const OverflowingList = ({
       return;
     }
 
+    if (!canExpand) {
+      focusOverflowingListFallback({
+        items: itemsRef.current,
+        popup: null,
+        trigger: null,
+        root: container,
+        removedIndex: children.length,
+      });
+      return;
+    }
+
     const trigger = triggerRef.current;
 
     if (isDefined(trigger) && !trigger.matches(':disabled')) {
@@ -144,8 +161,9 @@ export const OverflowingList = ({
     triggerProps?.ref,
   );
   const mergedPopupRef = useMergedRefs(setPopup, popupProps?.ref);
-  const displayedItemCount = Math.min(inlineItemCount, visibleItemCount);
-  const hiddenItemCount = children.length - displayedItemCount;
+  const displayedItemCount =
+    showOverflowCount === false ? inlineItemCount : visibleItemCount;
+  const hiddenItemCount = children.length - visibleItemCount;
 
   useLayoutEffect(() => {
     if (!isOpen || canExpand) {
@@ -211,16 +229,20 @@ export const OverflowingList = ({
         }}
       >
         <div ref={itemsRef} className={styles.items}>
-          {!hasClientLayout &&
-            children.slice(0, inlineItemCount).map((child, index) => (
-              <div
-                key={child.key ?? index}
-                className={styles.item}
-                data-item-index={index}
-              >
-                {child}
-              </div>
-            ))}
+          {children.slice(0, inlineItemCount).map((child, index) => (
+            <OverflowingListItem
+              key={child.key ?? index}
+              index={index}
+              isHidden={index >= displayedItemCount}
+              isLastVisible={
+                showOverflowCount !== false && index === displayedItemCount - 1
+              }
+              isInPopup={false}
+              onFocusLost={restoreItemFocus}
+            >
+              {child}
+            </OverflowingListItem>
+          ))}
         </div>
         {canExpand && (
           <Popover.Trigger
@@ -243,7 +265,7 @@ export const OverflowingList = ({
               : triggerProps.children}
           </Popover.Trigger>
         )}
-        <Popover.Portal keepMounted>
+        <Popover.Portal>
           <Popover.Positioner
             anchor={containerRef}
             align="start"
@@ -274,24 +296,18 @@ export const OverflowingList = ({
               }
               data-overflowing-list-popup=""
             >
-              {hasClientLayout &&
-                children.map((child, index) => (
-                  <OverflowingListItem
-                    key={child.key ?? index}
-                    index={index}
-                    isHidden={index >= displayedItemCount && !isPopupOpen}
-                    isLastVisible={
-                      showOverflowCount !== false &&
-                      index === displayedItemCount - 1
-                    }
-                    isInPopup={index >= displayedItemCount && isPopupOpen}
-                    itemsRef={itemsRef}
-                    popup={popup}
-                    onFocusLost={restoreItemFocus}
-                  >
-                    {child}
-                  </OverflowingListItem>
-                ))}
+              {children.map((child, index) => (
+                <OverflowingListItem
+                  key={child.key ?? index}
+                  index={index}
+                  isHidden={false}
+                  isLastVisible={false}
+                  isInPopup
+                  onFocusLost={restoreItemFocus}
+                >
+                  {child}
+                </OverflowingListItem>
+              ))}
             </Popover.Popup>
           </Popover.Positioner>
         </Popover.Portal>

@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { OverflowingList } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
@@ -6,13 +6,11 @@ import { ThemeProvider } from 'twenty-ui/theme';
 import 'twenty-ui/style.css';
 
 import { TwentyUiGalleryCard } from '../shared/front-components/twenty-ui-gallery-card';
-import { OverflowingListStatefulTarget } from './components/OverflowingListStatefulTarget';
 
 const INITIAL_TARGETS = ['Alpha', 'Bravo', 'Charlie', 'Delta'];
 const REVIEWERS = ['Morgan', 'Taylor'];
 
 const OverflowingListExample = () => {
-  const targetListId = useId();
   const [targets, setTargets] = useState(INITIAL_TARGETS);
   const [selectedTarget, setSelectedTarget] = useState('None');
   const [hostActivations, setHostActivations] = useState(0);
@@ -31,22 +29,19 @@ const OverflowingListExample = () => {
             triggerProps={{ onClick: (event) => event.stopPropagation() }}
             popupProps={{ onClick: (event) => event.stopPropagation() }}
             maxInlineCount={2}
-            overflowLabel="Show hidden targets"
+            overflowLabel="Show all targets"
           >
             {targets.map((target) => (
-              <OverflowingListStatefulTarget
-                key={target}
-                target={target}
-                idPrefix={targetListId}
-                onSelect={setSelectedTarget}
-              />
+              <Button key={target} onClick={() => setSelectedTarget(target)}>
+                {target}
+              </Button>
             ))}
           </OverflowingList>
         </div>
         <OverflowingList
           showOverflowCount
           maxInlineCount={1}
-          overflowLabel="Show hidden reviewers"
+          overflowLabel="Show all reviewers"
           style={{ width: 300 }}
         >
           {REVIEWERS.map((reviewer) => (
@@ -61,7 +56,7 @@ const OverflowingListExample = () => {
       {isMeasuredListMounted && (
         <OverflowingList
           showOverflowCount
-          overflowLabel="Show hidden measured items"
+          overflowLabel="Show all measured items"
           style={{ width: listWidth }}
         >
           {INITIAL_TARGETS.map((target) => (
@@ -84,7 +79,6 @@ const OverflowingListExample = () => {
 export default defineFrontComponent({
   universalIdentifier: 'c48a753e-24ce-4e43-8122-2c5d4568ae01',
   name: 'twenty-ui-overflowing-list',
-  description:
-    'Overflow counts, single item instances and controlled popup composition',
+  description: 'Overflow measurement and complete popup lists in the sandbox',
   component: OverflowingListExample,
 });

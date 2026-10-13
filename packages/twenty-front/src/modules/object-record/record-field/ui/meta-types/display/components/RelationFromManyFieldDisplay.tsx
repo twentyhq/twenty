@@ -98,7 +98,7 @@ export const RelationFromManyFieldDisplay = () => {
           onClick: (event) => event.stopPropagation(),
           onKeyDown: (event) => event.stopPropagation(),
         }}
-        overflowLabel={t`Show hidden items`}
+        overflowLabel={t`Show all items`}
         showOverflowCount={isFocused}
         maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
       >
@@ -125,7 +125,7 @@ export const RelationFromManyFieldDisplay = () => {
         onClick: (event) => event.stopPropagation(),
         onKeyDown: (event) => event.stopPropagation(),
       }}
-      overflowLabel={t`Show hidden items`}
+      overflowLabel={t`Show all items`}
       showOverflowCount={isFocused}
       maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
     >

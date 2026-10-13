@@ -1,7 +1,9 @@
 export const measureItemWidths = ({
+  items,
   itemElements,
   supportsSynchronousLayout,
 }: {
+  items: HTMLElement;
   itemElements: Element[];
   supportsSynchronousLayout: boolean;
 }) => {
@@ -9,15 +11,9 @@ export const measureItemWidths = ({
     return itemElements.map((item) => item.scrollWidth);
   }
 
-  for (const item of itemElements) {
-    item.setAttribute('data-measuring', '');
-  }
-
+  items.setAttribute('data-measuring', '');
   const naturalItemWidths = itemElements.map((item) => item.clientWidth);
-
-  for (const item of itemElements) {
-    item.removeAttribute('data-measuring');
-  }
+  items.removeAttribute('data-measuring');
 
   return naturalItemWidths;
 };

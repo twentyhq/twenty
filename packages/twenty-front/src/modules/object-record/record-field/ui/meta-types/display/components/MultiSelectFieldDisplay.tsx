@@ -14,7 +14,7 @@ export const MultiSelectFieldDisplay = () => {
   const { isFocused } = useFieldFocus();
 
   const options = fieldDefinition.metadata.options;
-  const overflowLabel = t`Show hidden items`;
+  const overflowLabel = t`Show all items`;
 
   return useMemo(() => {
     const selectedOptions = isDefined(fieldValue)

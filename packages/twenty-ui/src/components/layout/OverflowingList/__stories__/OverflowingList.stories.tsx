@@ -33,8 +33,8 @@ export const Documentation: Story = {
   render: (args) => (
     <Section.Root>
       <Section.Header title="Company tags" />
-      <Text>Open the count to see the hidden tags.</Text>
-      <OverflowingList {...args} overflowLabel="Show hidden company tags" />
+      <Text>Open the count to see all tags.</Text>
+      <OverflowingList {...args} overflowLabel="Show all company tags" />
     </Section.Root>
   ),
 };

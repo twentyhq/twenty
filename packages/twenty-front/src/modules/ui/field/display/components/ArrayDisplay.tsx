@@ -19,7 +19,7 @@ export const ArrayDisplay = ({ value }: ArrayDisplayProps) => {
         onClick: (event) => event.stopPropagation(),
         onKeyDown: (event) => event.stopPropagation(),
       }}
-      overflowLabel={t`Show hidden items`}
+      overflowLabel={t`Show all items`}
     >
       {value?.map((item, index) => (
         <Chip key={`${item}-${index}`} variant="soft">

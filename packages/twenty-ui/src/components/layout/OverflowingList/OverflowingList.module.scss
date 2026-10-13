@@ -16,6 +16,17 @@
   min-inline-size: 0;
   overflow: hidden;
   position: relative;
+
+  &[data-measuring] {
+    overflow: visible;
+
+    > .item {
+      flex: 0 0 auto;
+      inline-size: max-content;
+      max-inline-size: none;
+      position: static;
+    }
+  }
 }
 
 .item {
@@ -33,13 +44,10 @@
   &[data-last-visible] {
     flex-shrink: 1;
   }
+}
 
-  &[data-measuring] {
-    flex: 0 0 auto;
-    inline-size: max-content;
-    max-inline-size: none;
-    position: static;
-  }
+.popupItem {
+  display: contents;
 }
 
 .trigger {

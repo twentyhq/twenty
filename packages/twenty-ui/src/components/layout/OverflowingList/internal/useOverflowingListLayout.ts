@@ -11,12 +11,12 @@ export const useOverflowingListLayout = ({
   itemCount,
   inlineItemCount,
   reserveCountSpace,
-  popup,
+  isMeasurementEnabled,
 }: {
   itemCount: number;
   inlineItemCount: number;
   reserveCountSpace: boolean;
-  popup: HTMLDivElement | null;
+  isMeasurementEnabled: boolean;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<HTMLDivElement>(null);
@@ -42,23 +42,14 @@ export const useOverflowingListLayout = ({
     const container = containerRef.current;
     const items = itemsRef.current;
 
-    if (!isDefined(container) || !isDefined(items)) {
+    if (!isMeasurementEnabled || !isDefined(container) || !isDefined(items)) {
       return;
     }
 
     const supportsSynchronousLayout = isDefined(globalThis.ResizeObserver);
     const observedElements = new Set<Element>();
     const measure = () => {
-      const itemElements = [
-        ...Array.from(items.children),
-        ...Array.from(popup?.children ?? []),
-      ]
-        .filter((element) => element.hasAttribute('data-item-index'))
-        .sort(
-          (firstItem, secondItem) =>
-            Number(firstItem.getAttribute('data-item-index')) -
-            Number(secondItem.getAttribute('data-item-index')),
-        );
+      const itemElements = Array.from(items.children);
       const currentElements = new Set<Element>([container, ...itemElements]);
 
       if (isDefined(triggerRef.current)) {
@@ -81,11 +72,12 @@ export const useOverflowingListLayout = ({
 
       const latestLayoutInput = layoutInputRef.current;
 
-      if (itemElements.length !== latestLayoutInput.itemCount) {
+      if (itemElements.length !== latestLayoutInput.inlineItemCount) {
         return;
       }
 
       const itemWidths = measureItemWidths({
+        items,
         itemElements: itemElements.slice(0, latestLayoutInput.inlineItemCount),
         supportsSynchronousLayout,
       });
@@ -140,10 +132,6 @@ export const useOverflowingListLayout = ({
     contentObserver.observe(items, observationOptions);
     contentObserver.observe(container, { childList: true });
 
-    if (isDefined(popup)) {
-      contentObserver.observe(popup, observationOptions);
-    }
-
     if (!isDefined(observer)) {
       const interval = setInterval(measure, FALLBACK_MEASUREMENT_INTERVAL_MS);
       window.addEventListener('resize', measure);
@@ -161,7 +149,7 @@ export const useOverflowingListLayout = ({
       contentObserver.disconnect();
       observer.disconnect();
     };
-  }, [popup]);
+  }, [isMeasurementEnabled]);
 
   return { containerRef, itemsRef, triggerRef, ...layout };
 };

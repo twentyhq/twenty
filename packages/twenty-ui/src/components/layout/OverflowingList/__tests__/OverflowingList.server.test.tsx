@@ -5,7 +5,7 @@ import { expect, it, vi } from 'vitest';
 
 import { OverflowingList } from '../OverflowingList';
 
-it('renders capped inline content on the server and hydrates without duplicate items or warnings', async () => {
+it('renders capped inline content on the server and hydrates existing items without warnings', async () => {
   const content = (
     <OverflowingList maxInlineCount={1} showOverflowCount>
       {['First item', 'Second item', 'Third item'].map((label) => (
@@ -18,9 +18,10 @@ it('renders capped inline content on the server and hydrates without duplicate i
   const container = document.createElement('div');
   container.innerHTML = renderToString(content);
   document.body.append(container);
-  expect(
-    within(container).getByRole('button', { name: 'First item' }),
-  ).toBeVisible();
+  const serverItem = within(container).getByRole('button', {
+    name: 'First item',
+  });
+  expect(serverItem).toBeVisible();
   expect(within(container).queryByText('Second item')).not.toBeInTheDocument();
 
   const onRecoverableError = vi.fn();
@@ -33,9 +34,14 @@ it('renders capped inline content on the server and hydrates without duplicate i
     await act(async () => {
       root = hydrateRoot(container, content, { onRecoverableError });
     });
+    expect(within(container).getByRole('button', { name: 'First item' })).toBe(
+      serverItem,
+    );
     expect(within(container).getAllByText('First item')).toHaveLength(1);
-    expect(within(container).getAllByText('Second item')).toHaveLength(1);
-    expect(within(container).getAllByText('Third item')).toHaveLength(1);
+    expect(
+      within(container).queryByText('Second item'),
+    ).not.toBeInTheDocument();
+    expect(within(container).queryByText('Third item')).not.toBeInTheDocument();
     expect(onRecoverableError).not.toHaveBeenCalled();
     expect(consoleError).not.toHaveBeenCalled();
   } finally {

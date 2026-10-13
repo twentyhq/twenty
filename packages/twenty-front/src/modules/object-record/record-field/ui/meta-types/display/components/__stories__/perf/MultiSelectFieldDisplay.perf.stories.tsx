@@ -11,7 +11,7 @@ import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 import { MultiSelectFieldDisplayUpdatesExample } from './MultiSelectFieldDisplayUpdatesExample';
 
-const OVERFLOW_TRIGGER_NAME_PATTERN = /Show hidden items$/;
+const OVERFLOW_TRIGGER_NAME_PATTERN = /Show all items$/;
 
 const FieldFocusEffect = () => {
   const { setIsFocused } = useContext(FieldFocusContext);
@@ -118,22 +118,22 @@ export const Updates: Story = {
       canvas.getByRole('button', { name: 'Enable overflow' }),
     );
     const trigger = await canvas.findByRole('button', {
-      name: '+2 Show hidden items',
+      name: '+2 Show all items',
     });
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog', {
-      name: 'Show hidden items',
+      name: 'Show all items',
     });
     await expect(within(popup).getByText('Updated Hybrid')).toBeVisible();
     await expect(within(popup).getByText('Updated Remote Work')).toBeVisible();
-    await expect(within(popup).queryByText('Updated On-Site')).toBeNull();
+    await expect(within(popup).getByText('Updated On-Site')).toBeVisible();
 
     await userEvent.click(
       canvas.getByRole('button', { name: 'Disable overflow' }),
     );
     await waitFor(async () => {
       await expect(
-        body.queryByRole('dialog', { name: 'Show hidden items' }),
+        body.queryByRole('dialog', { name: 'Show all items' }),
       ).toBeNull();
       await expect(
         canvas.queryByRole('button', { name: OVERFLOW_TRIGGER_NAME_PATTERN }),

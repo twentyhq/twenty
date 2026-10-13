@@ -60,7 +60,7 @@ export const FilesDisplay = ({
         onClick: (event) => event.stopPropagation(),
         onKeyDown: (event) => event.stopPropagation(),
       }}
-      overflowLabel={t`Show hidden items`}
+      overflowLabel={t`Show all items`}
     >
       {value.map((file) => (
         <FileChip

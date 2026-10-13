@@ -62,7 +62,7 @@ export const PhonesDisplay = ({
         onClick: (event) => event.stopPropagation(),
         onKeyDown: (event) => event.stopPropagation(),
       }}
-      overflowLabel={t`Show hidden items`}
+      overflowLabel={t`Show all items`}
       showOverflowCount
     >
       {phones.map(({ number, callingCode }, index) => {

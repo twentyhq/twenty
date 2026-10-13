@@ -121,7 +121,7 @@ export const CalendarEventComposerTargetsInput = ({
                 onClick: (event) => event.stopPropagation(),
                 onKeyDown: (event) => event.stopPropagation(),
               }}
-              overflowLabel={t`Show hidden items`}
+              overflowLabel={t`Show all items`}
               showOverflowCount
             >
               {chips}

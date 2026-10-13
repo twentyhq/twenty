@@ -90,7 +90,7 @@ export const Keyboard: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
 
     await userEvent.tab();
@@ -100,7 +100,7 @@ export const Keyboard: Story = {
       await step(`Open with ${key === ' ' ? 'Space' : 'Enter'}`, async () => {
         await userEvent.keyboard(key);
         const dialog = await body.findByRole('dialog', {
-          name: 'Show hidden items',
+          name: 'Show all items',
         });
         await waitFor(() => expect(dialog).toHaveFocus());
         await expectOverflowingListPopupGeometry({ trigger, dialog });
@@ -135,7 +135,7 @@ export const Keyboard: Story = {
   },
 };
 
-export const HiddenItemsWithInlineCap: Story = {
+export const CompleteListWithInlineCap: Story = {
   args: { maxInlineCount: 1 },
   render: (args) => (
     <>
@@ -147,20 +147,24 @@ export const HiddenItemsWithInlineCap: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
+
+    const inlineCustomer = canvas.getByText('Customer');
 
     expect(trigger).toHaveTextContent('+3');
-    expect(trigger).toHaveAccessibleName('+3 Show hidden items');
-    expect(canvas.getByText('Renewal')).not.toBeVisible();
+    expect(trigger).toHaveAccessibleName('+3 Show all items');
+    expect(canvas.queryByText('Renewal')).not.toBeInTheDocument();
     await userEvent.click(trigger);
     const dialog = await body.findByRole('dialog', {
-      name: 'Show hidden items',
+      name: 'Show all items',
     });
 
-    expect(within(dialog).queryByText('Customer')).not.toBeInTheDocument();
-    expect(canvas.getByText('Customer')).toBeVisible();
-    for (const label of ['Partner', 'Priority', 'Renewal']) {
+    expect(canvas.getByText('Customer')).toBe(inlineCustomer);
+    expect(inlineCustomer).toBeVisible();
+    expect(canvas.queryByText('Renewal')).not.toBeInTheDocument();
+    expect(trigger).toHaveTextContent('+3');
+    for (const label of ['Customer', 'Partner', 'Priority', 'Renewal']) {
       await waitFor(() =>
         expect(within(dialog).getByText(label)).toBeVisible(),
       );
@@ -182,16 +186,16 @@ export const ResizeAndContentUpdates: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     expect(
-      canvas.queryByRole('button', { name: /Show hidden items$/ }),
+      canvas.queryByRole('button', { name: /Show all items$/ }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Narrow list' }));
     expect(
-      await canvas.findByRole('button', { name: /Show hidden items$/ }),
+      await canvas.findByRole('button', { name: /Show all items$/ }),
     ).toHaveTextContent('+3');
     await userEvent.click(
-      canvas.getByRole('button', { name: /Show hidden items$/ }),
+      canvas.getByRole('button', { name: /Show all items$/ }),
     );
-    await body.findByRole('dialog', { name: 'Show hidden items' });
+    await body.findByRole('dialog', { name: 'Show all items' });
     const list = canvas.getByLabelText('Resizable tags');
     list.style.width = '360px';
     await waitFor(() =>
@@ -199,12 +203,12 @@ export const ResizeAndContentUpdates: Story = {
     );
     await waitFor(() =>
       expect(
-        canvas.queryByRole('button', { name: /Show hidden items$/ }),
+        canvas.queryByRole('button', { name: /Show all items$/ }),
       ).not.toBeInTheDocument(),
     );
 
     list.style.width = '100px';
-    await canvas.findByRole('button', { name: /Show hidden items$/ });
+    await canvas.findByRole('button', { name: /Show all items$/ });
     expect(body.queryByRole('dialog')).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Widen list' }));
 
@@ -212,14 +216,14 @@ export const ResizeAndContentUpdates: Story = {
       canvas.getByRole('button', { name: 'Lengthen labels' }),
     );
     expect(
-      await canvas.findByRole('button', { name: /Show hidden items$/ }),
+      await canvas.findByRole('button', { name: /Show all items$/ }),
     ).toBeVisible();
     await userEvent.click(
       canvas.getByRole('button', { name: 'Shorten labels' }),
     );
     await waitFor(() =>
       expect(
-        canvas.queryByRole('button', { name: /Show hidden items$/ }),
+        canvas.queryByRole('button', { name: /Show all items$/ }),
       ).not.toBeInTheDocument(),
     );
   },
@@ -230,7 +234,7 @@ export const CountVisibility: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
 
     const firstItem = canvas.getByText('Customer');
@@ -261,10 +265,10 @@ export const CountDisabled: Story = {
 
     await userEvent.hover(canvas.getByRole('button', { name: 'First item' }));
     expect(
-      canvas.queryByRole('button', { name: /Show hidden items$/ }),
+      canvas.queryByRole('button', { name: /Show all items$/ }),
     ).not.toBeInTheDocument();
 
-    for (const label of ['First item', 'Second item']) {
+    for (const label of ['First item', 'Second item', 'Third item']) {
       await userEvent.tab();
       const item = canvas.getByRole('button', { name: label });
       expect(item).toHaveFocus();
@@ -272,7 +276,7 @@ export const CountDisabled: Story = {
         0,
       );
     }
-    expect(canvas.getByText('Third item').closest('[inert]')).not.toBeNull();
+    expect(canvas.getByText('Third item').closest('[inert]')).toBeNull();
   },
 };
 
@@ -291,7 +295,7 @@ export const InlineItemFocus: Story = {
     const firstItem = canvas.getByRole('button', { name: 'First item' });
     const secondItem = canvas.getByRole('button', { name: 'Second item' });
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
 
     await userEvent.unhover(firstItem);
@@ -320,23 +324,23 @@ export const ControlledCountWhileFocused: Story = {
     await userEvent.tab();
     expect(toggle).toHaveFocus();
     expect(
-      canvas.queryByRole('button', { name: /Show hidden items$/ }),
+      canvas.queryByRole('button', { name: /Show all items$/ }),
     ).not.toBeInTheDocument();
     await userEvent.keyboard('{Enter}');
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
     await waitFor(() => expect(trigger).toHaveStyle({ opacity: '1' }));
     expect(toggle).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     expect(
-      canvas.queryByRole('button', { name: /Show hidden items$/ }),
+      canvas.queryByRole('button', { name: /Show all items$/ }),
     ).not.toBeInTheDocument();
     expect(toggle).toHaveFocus();
   },
 };
 
-export const DisabledCountClosesPopup: Story = {
+export const CountDisabledWhilePopupOpen: Story = {
   render: () => <OverflowingListControlledFocusExample />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -344,17 +348,29 @@ export const DisabledCountClosesPopup: Story = {
     const toggle = canvas.getByRole('button', { name: 'Toggle count' });
 
     await userEvent.click(toggle);
+    const trigger = await canvas.findByRole('button', {
+      name: /Show all items$/,
+    });
+    await userEvent.click(trigger);
+    const dialog = await body.findByRole('dialog', {
+      name: 'Show all items',
+    });
     await userEvent.click(
-      await canvas.findByRole('button', { name: /Show hidden items$/ }),
+      within(dialog).getByRole('button', { name: 'Toggle count' }),
     );
-    await body.findByRole('dialog', { name: 'Show hidden items' });
-    toggle.click();
+    await waitFor(() => expect(dialog).toBeVisible());
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    expect(trigger).toBeInTheDocument();
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    for (const label of ['Toggle count', 'Second item', 'Third item']) {
+      expect(within(dialog).getByText(label)).toBeVisible();
+    }
+    await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
-    expect(toggle).toHaveAttribute('aria-pressed', 'false');
     expect(
-      canvas.queryByRole('button', { name: /Show hidden items$/ }),
+      canvas.queryByRole('button', { name: /Show all items$/ }),
     ).not.toBeInTheDocument();
   },
 };
@@ -364,7 +380,7 @@ export const FocusedTriggerRemoval: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
     const list = trigger.parentElement;
 
@@ -380,13 +396,13 @@ export const FocusedTriggerRemoval: Story = {
     list.style.width = '800px';
     await waitFor(() =>
       expect(
-        canvas.queryByRole('button', { name: /Show hidden items$/ }),
+        canvas.queryByRole('button', { name: /Show all items$/ }),
       ).not.toBeInTheDocument(),
     );
 
     list.style.width = '180px';
     const restoredTrigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
     await waitFor(() => expect(list).toHaveFocus());
     await waitFor(() => expect(restoredTrigger).toHaveStyle({ opacity: '1' }));
@@ -442,7 +458,7 @@ export const NativeCompositionAndPropagation: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
 
     expect(rootRef.current).toHaveAttribute('title', 'Native list root');
@@ -457,7 +473,7 @@ export const NativeCompositionAndPropagation: Story = {
     onItemClick.mockClear();
     await userEvent.click(trigger);
     const dialog = await body.findByRole('dialog', {
-      name: 'Show hidden items',
+      name: 'Show all items',
     });
     expect(popupRef.current).toBe(dialog);
     expect(popupRenderRef.current).toBe(dialog);
@@ -492,7 +508,7 @@ export const NativeCompositionAndPropagation: Story = {
     );
     await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.keyboard('{Enter}');
-    await body.findByRole('dialog', { name: 'Show hidden items' });
+    await body.findByRole('dialog', { name: 'Show all items' });
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -569,16 +585,16 @@ export const ScopedThemeAndDirection: Story = {
       name: 'Scoped company tags',
     });
     await userEvent.click(
-      await within(scope).findByRole('button', { name: /Show hidden items$/ }),
+      await within(scope).findByRole('button', { name: /Show all items$/ }),
     );
     const dialog = await within(scope).findByRole('dialog', {
-      name: 'Show hidden items',
+      name: 'Show all items',
     });
 
     await waitFor(() => expect(dialog).toBeVisible());
     await expectOverflowingListPopupGeometry({
       trigger: within(scope).getByRole('button', {
-        name: /Show hidden items$/,
+        name: /Show all items$/,
       }),
       dialog,
     });
@@ -608,7 +624,7 @@ export const OversizedSingleItem: Story = {
       ),
     ).toBeVisible();
     expect(
-      canvas.queryByRole('button', { name: /Show hidden items$/ }),
+      canvas.queryByRole('button', { name: /Show all items$/ }),
     ).not.toBeInTheDocument();
   },
 };
@@ -676,71 +692,86 @@ export const DescendantContentUpdates: Story = {
     await userEvent.tab();
     expect(tag).toHaveFocus();
     expect(
-      canvas.queryByRole('button', { name: /Show hidden items$/ }),
+      canvas.queryByRole('button', { name: /Show all items$/ }),
     ).not.toBeInTheDocument();
 
     await userEvent.click(tag);
     expect(
-      await canvas.findByRole('button', { name: /Show hidden items$/ }),
+      await canvas.findByRole('button', { name: /Show all items$/ }),
     ).toHaveTextContent('+1');
     await userEvent.click(tag);
     await waitFor(() =>
       expect(
-        canvas.queryByRole('button', { name: /Show hidden items$/ }),
+        canvas.queryByRole('button', { name: /Show all items$/ }),
       ).not.toBeInTheDocument(),
     );
   },
 };
 
-export const StatefulItemsAcrossResize: Story = {
+export const StatefulRowAndPopupAcrossResize: Story = {
   render: () => <OverflowingListStateExample />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const list = canvas.getByLabelText('Stateful values');
+    const firstInlineValue = canvas.getByRole('textbox', {
+      name: 'First value',
+    });
+
+    await userEvent.type(firstInlineValue, 'Inline value');
     await userEvent.click(
-      await canvas.findByRole('button', { name: '+2 Show hidden items' }),
+      await canvas.findByRole('button', { name: '+2 Show all items' }),
     );
     const dialog = await body.findByRole('dialog');
-    const secondValue = within(dialog).getByRole('textbox', {
+    const firstPopupValue = within(dialog).getByRole('textbox', {
+      name: 'First value',
+    });
+    const secondPopupValue = within(dialog).getByRole('textbox', {
       name: 'Second value',
     });
 
-    await userEvent.type(secondValue, 'Retained value');
+    expect(canvas.getByRole('textbox', { name: 'First value' })).toBe(
+      firstInlineValue,
+    );
+    expect(firstInlineValue).toHaveValue('Inline value');
+    expect(firstInlineValue).toBeVisible();
+    expect(firstPopupValue).not.toBe(firstInlineValue);
+    expect(firstPopupValue).toHaveValue('');
+    await userEvent.type(secondPopupValue, 'Popup value');
     const identifiers = [
       ...list.querySelectorAll('[id]'),
       ...dialog.querySelectorAll('[id]'),
     ].map((element) => element.id);
     expect(new Set(identifiers).size).toBe(identifiers.length);
-    expect(
-      body.getAllByRole('textbox', { name: 'Second value', hidden: true }),
-    ).toHaveLength(1);
     list.style.width = '320px';
-    await waitFor(() =>
-      expect(canvas.getByRole('textbox', { name: 'Second value' })).toBe(
-        secondValue,
-      ),
-    );
-    expect(secondValue).toHaveValue('Retained value');
-    expect(secondValue).toHaveFocus();
-    expect(
-      within(dialog).queryByRole('textbox', { name: 'Second value' }),
-    ).not.toBeInTheDocument();
+    const secondInlineValue = await canvas.findByRole('textbox', {
+      name: 'Second value',
+    });
+
+    expect(secondInlineValue).not.toBe(secondPopupValue);
+    expect(secondInlineValue).toHaveValue('');
+    expect(secondPopupValue).toHaveValue('Popup value');
+    expect(secondPopupValue).toHaveFocus();
+    expect(firstInlineValue).toHaveValue('Inline value');
     list.style.width = '180px';
     await waitFor(() =>
       expect(
-        within(dialog).getByRole('textbox', { name: 'Second value' }),
-      ).toBe(secondValue),
+        canvas.queryByRole('textbox', { name: 'Second value' }),
+      ).not.toBeInTheDocument(),
     );
-    expect(secondValue).toHaveFocus();
+    expect(secondPopupValue).toHaveFocus();
+    expect(secondPopupValue).toHaveValue('Popup value');
     list.style.width = '800px';
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
-    expect(secondValue).toHaveValue('Retained value');
-    expect(secondValue).toHaveFocus();
+    expect(firstInlineValue).toHaveValue('Inline value');
+    expect(canvas.getByRole('textbox', { name: 'Second value' })).toBe(
+      secondInlineValue,
+    );
+    expect(secondInlineValue).toHaveValue('');
     expect(
-      canvas.queryByRole('button', { name: /Show hidden items/ }),
+      canvas.queryByRole('button', { name: /Show all items/ }),
     ).not.toBeInTheDocument();
   },
 };
@@ -751,7 +782,7 @@ export const FocusedItemRemoval: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      await canvas.findByRole('button', { name: '+2 Show hidden items' }),
+      await canvas.findByRole('button', { name: '+2 Show all items' }),
     );
     const dialog = await body.findByRole('dialog');
     const secondItem = within(dialog).getByRole('button', {
@@ -768,7 +799,7 @@ export const FocusedItemRemoval: Story = {
       ).toHaveFocus(),
     );
     expect(
-      canvas.getByRole('button', { name: '+1 Show hidden items' }),
+      canvas.getByRole('button', { name: '+1 Show all items' }),
     ).toBeVisible();
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
@@ -784,14 +815,14 @@ export const ControlledKeyboardAndComposedTrigger: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden company tags$/,
+      name: /Show all company tags$/,
     });
 
     await userEvent.tab();
     expect(trigger).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     const dialog = await body.findByRole('dialog', {
-      name: 'Show hidden company tags',
+      name: 'Show all company tags',
     });
     await waitFor(() => expect(dialog).toHaveFocus());
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
@@ -828,7 +859,7 @@ export const FocusedInlineItemBecomesOverflow: Story = {
     await waitFor(() => expect(firstItem).toHaveFocus());
     expect(secondItem.closest('[inert]')).not.toBeNull();
     expect(
-      canvas.getByRole('button', { name: '+2 Show hidden items' }),
+      canvas.getByRole('button', { name: '+2 Show all items' }),
     ).toBeVisible();
   },
 };
@@ -839,7 +870,7 @@ export const ControlledRequests: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await canvas.findByRole('button', {
-      name: '+2 Show hidden items',
+      name: '+2 Show all items',
     });
     const apply = canvas.getByRole('button', { name: 'Apply requested state' });
 
@@ -877,7 +908,7 @@ export const CancelableDefaultOpen: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const dialog = await body.findByRole('dialog');
     const trigger = canvas.getByRole('button', {
-      name: '+3 Show hidden items',
+      name: '+3 Show all items',
     });
 
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
@@ -907,7 +938,7 @@ export const CanceledOpening: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
 
     await userEvent.click(trigger);
@@ -930,7 +961,7 @@ export const DisabledTrigger: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
 
     expect(trigger).toBeDisabled();
@@ -951,7 +982,7 @@ export const CallerPreventsOpening: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      await canvas.findByRole('button', { name: /Show hidden items$/ }),
+      await canvas.findByRole('button', { name: /Show all items$/ }),
     );
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(
@@ -971,7 +1002,7 @@ export const PopupTabNavigation: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await canvas.findByRole('button', {
-      name: '+2 Show hidden items',
+      name: '+2 Show all items',
     });
 
     await userEvent.tab();
@@ -982,9 +1013,13 @@ export const PopupTabNavigation: Story = {
     const dialog = await body.findByRole('dialog');
     await waitFor(() =>
       expect(
-        within(dialog).getByRole('button', { name: 'Second item' }),
+        within(dialog).getByRole('button', { name: 'First item' }),
       ).toHaveFocus(),
     );
+    await userEvent.tab();
+    expect(
+      within(dialog).getByRole('button', { name: 'Second item' }),
+    ).toHaveFocus();
     await userEvent.tab();
     expect(
       within(dialog).getByRole('button', { name: 'Third item' }),
@@ -999,7 +1034,7 @@ export const TriggerRefRerenderPreservesFocus: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = await canvas.findByRole('button', {
-      name: /Show hidden items$/,
+      name: /Show all items$/,
     });
 
     await userEvent.tab();
@@ -1007,7 +1042,7 @@ export const TriggerRefRerenderPreservesFocus: Story = {
     await userEvent.keyboard('r');
     expect(canvas.getByRole('status')).toHaveTextContent('Renders: 1');
     expect(trigger).toHaveFocus();
-    expect(canvas.getByRole('button', { name: /Show hidden items$/ })).toBe(
+    expect(canvas.getByRole('button', { name: /Show all items$/ })).toBe(
       trigger,
     );
   },
@@ -1062,7 +1097,7 @@ export const DisabledTriggerFocusFallback: Story = {
     );
     await waitFor(() => expect(list).toHaveFocus());
     expect(
-      canvas.getByRole('button', { name: '+1 Show hidden items' }),
+      canvas.getByRole('button', { name: '+1 Show all items' }),
     ).toBeDisabled();
     expect(canvas.getByText('Customer')).toBeVisible();
   },
@@ -1088,7 +1123,7 @@ export const DisabledTriggerDismissal: Story = {
     );
     await waitFor(() => expect(list).toHaveFocus());
     expect(
-      canvas.getByRole('button', { name: /Show hidden items$/ }),
+      canvas.getByRole('button', { name: /Show all items$/ }),
     ).toBeDisabled();
   },
 };
@@ -1099,7 +1134,7 @@ export const DefaultOpenMeasuredOverflow: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await canvas.findByRole('button', {
-      name: '+3 Show hidden items',
+      name: '+3 Show all items',
     });
     const dialog = await body.findByRole('dialog');
 
@@ -1108,6 +1143,7 @@ export const DefaultOpenMeasuredOverflow: Story = {
     await waitFor(() =>
       expect(within(dialog).getByText('Partner')).toBeVisible(),
     );
-    expect(within(dialog).queryByText('Customer')).not.toBeInTheDocument();
+    expect(within(dialog).getByText('Customer')).toBeVisible();
+    expect(canvas.getByText('Customer')).toBeVisible();
   },
 };

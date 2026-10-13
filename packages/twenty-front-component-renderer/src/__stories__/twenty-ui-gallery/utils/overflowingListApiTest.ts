@@ -42,7 +42,7 @@ export const overflowingListApiTest: TwentyUiGalleryPlayFunction = async ({
     canvas.getByLabelText('Overflow parent activations'),
   ).toHaveTextContent('1');
   await waitFor(() =>
-    expect(within(popup).getAllByRole('button')).toHaveLength(2),
+    expect(within(popup).getAllByRole('button')).toHaveLength(3),
   );
   await userEvent.click(
     within(popup).getByRole('button', { name: 'Controlled Charlie' }),
@@ -62,9 +62,13 @@ export const overflowingListApiTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(async () => {
     await expect(popup).toBeVisible();
     await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-    await expect(within(popup).getAllByRole('button')).toHaveLength(2);
+    await expect(within(popup).getAllByRole('button')).toHaveLength(3);
 
-    for (const targetName of ['Controlled Bravo', 'Controlled Charlie']) {
+    for (const targetName of [
+      'Controlled Alpha',
+      'Controlled Bravo',
+      'Controlled Charlie',
+    ]) {
       await expect(
         within(popup).getByRole('button', { name: targetName }),
       ).toBeVisible();

@@ -13,12 +13,12 @@ export const OverflowingListControlledExample = () => {
   return (
     <Section.Root>
       <Section.Header title="Company tags" />
-      <Text>Open the count to see the hidden tags.</Text>
+      <Text>Open the count to see all tags.</Text>
       <OverflowingList
         open={open}
         onOpenChange={setOpen}
         showOverflowCount
-        overflowLabel="Show hidden company tags"
+        overflowLabel="Show all company tags"
         style={{ width: 180 }}
         triggerProps={{ render: <Button variant="outline" size="sm" /> }}
       >

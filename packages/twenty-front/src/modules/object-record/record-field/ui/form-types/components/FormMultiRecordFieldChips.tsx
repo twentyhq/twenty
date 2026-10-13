@@ -90,7 +90,7 @@ export const FormMultiRecordFieldChips = ({
           onClick: (event) => event.stopPropagation(),
           onKeyDown: (event) => event.stopPropagation(),
         }}
-        overflowLabel={t`Show hidden items`}
+        overflowLabel={t`Show all items`}
         showOverflowCount={true}
       >
         {chips}

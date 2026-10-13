@@ -56,7 +56,7 @@ export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
         onClick: (event) => event.stopPropagation(),
         onKeyDown: (event) => event.stopPropagation(),
       }}
-      overflowLabel={t`Show hidden items`}
+      overflowLabel={t`Show all items`}
     >
       {links.map(({ url, label, displayLabel, type }, index) =>
         isSocialLinkType(type) ? (
