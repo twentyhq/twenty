@@ -86,11 +86,11 @@ const buildHeadFromManifestTarget = ({
   });
 };
 
-export const addMorphFieldsForLegacyManifest = ({
+export const addMissingMorphRelationHeadsToManifest = ({
   manifestMaps,
   existingMaps,
 }: MapsArgs): void => {
-  const legacyTargets = Object.values(
+  const targetsWithoutHead = Object.values(
     manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
@@ -106,7 +106,7 @@ export const addMorphFieldsForLegacyManifest = ({
         ),
     );
 
-  for (const target of legacyTargets) {
+  for (const target of targetsWithoutHead) {
     if (
       isDefined(
         manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier[
