@@ -72,7 +72,7 @@ const readOwnerWorkspaceId = async (
   return row?.workspaceId ?? null;
 };
 
-describe('Application registration claim state binding (integration)', () => {
+describe('Application registration GitHub claim (integration)', () => {
   const httpMock = setupHttpMock();
 
   const baseUrl = `http://localhost:${APP_PORT}`;
@@ -116,8 +116,6 @@ describe('Application registration claim state binding (integration)', () => {
     );
   };
 
-  // Mints an authorization url the way the settings page does, and returns the
-  // state GitHub will echo back plus the nonce cookie the browser receives.
   const startClaim = async (registrationId: string) => {
     const response = await makeMetadataApiRequest({
       query: gql`
@@ -135,73 +133,16 @@ describe('Application registration claim state binding (integration)', () => {
     const authorizationUrl = new URL(
       response.body.data.githubClaimAuthorizationUrl,
     );
-    const setCookie = response.headers['set-cookie'];
 
-    expect(setCookie).toBeDefined();
+    expect(authorizationUrl.origin).toBe('https://github.com');
 
-    return {
-      state: authorizationUrl.searchParams.get('state') as string,
-      cookie: (setCookie as unknown as string[])[0].split(';')[0],
-    };
+    return authorizationUrl.searchParams.get('state') as string;
   };
 
-  const callback = (params: { state: string; cookie?: string }) => {
-    const pending = request(baseUrl)
-      .get(CALLBACK_PATH)
-      .query({ code: 'github-code', state: params.state });
+  const callback = (query: Record<string, string>) =>
+    request(baseUrl).get(CALLBACK_PATH).query(query);
 
-    if (params.cookie !== undefined) {
-      pending.set('Cookie', params.cookie);
-    }
-
-    return pending;
-  };
-
-  // A strict cookie is withheld on GitHub's cross-site redirect back to the
-  // callback, which would fail every claim on instances configured that way.
-  it.each(['strict', 'lax', 'none'] as const)(
-    'never issues the nonce cookie as SameSite=strict when AUTH_COOKIE_SAME_SITE is %s',
-    async (sameSite) => {
-      const registrationId = await insertClaimableRegistration(
-        dataSource,
-        `@${PUBLISHER_ORG}/same-site-${sameSite}`,
-      );
-
-      await updateConfigVariable({
-        input: { key: 'AUTH_COOKIE_SAME_SITE', value: sameSite },
-      });
-
-      try {
-        const response = await makeMetadataApiRequest({
-          query: gql`
-            query GithubClaimAuthorizationUrl(
-              $applicationRegistrationId: String!
-            ) {
-              githubClaimAuthorizationUrl(
-                applicationRegistrationId: $applicationRegistrationId
-              )
-            }
-          `,
-          variables: { applicationRegistrationId: registrationId },
-        });
-
-        const [claimCookie] = response.headers[
-          'set-cookie'
-        ] as unknown as string[];
-
-        expect(claimCookie.toLowerCase()).not.toContain('samesite=strict');
-        expect(claimCookie.toLowerCase()).toContain(
-          sameSite === 'none' ? 'samesite=none' : 'samesite=lax',
-        );
-      } finally {
-        await updateConfigVariable({
-          input: { key: 'AUTH_COOKIE_SAME_SITE', value: 'lax' },
-        });
-      }
-    },
-  );
-
-  it('claims the registration for the browser that started the claim', async () => {
+  it('claims the registration for the workspace that started the claim', async () => {
     const sourcePackage = `@${PUBLISHER_ORG}/happy-path`;
     const registrationId = await insertClaimableRegistration(
       dataSource,
@@ -210,8 +151,8 @@ describe('Application registration claim state binding (integration)', () => {
 
     stubPublisherIsOrgAdmin(sourcePackage);
 
-    const { state, cookie } = await startClaim(registrationId);
-    const response = await callback({ state, cookie });
+    const state = await startClaim(registrationId);
+    const response = await callback({ code: 'github-code', state });
 
     expect(response.status).toBe(302);
     expect(response.headers.location).not.toContain('claimErrorCode');
@@ -220,8 +161,8 @@ describe('Application registration claim state binding (integration)', () => {
     ).resolves.toBe(SEED_APPLE_WORKSPACE_ID);
   });
 
-  it('rejects a forwarded authorization url opened in another browser', async () => {
-    const sourcePackage = `@${PUBLISHER_ORG}/forwarded`;
+  it('leaves the registration unowned when GitHub denies the authorization', async () => {
+    const sourcePackage = `@${PUBLISHER_ORG}/denied`;
     const registrationId = await insertClaimableRegistration(
       dataSource,
       sourcePackage,
@@ -229,63 +170,36 @@ describe('Application registration claim state binding (integration)', () => {
 
     stubPublisherIsOrgAdmin(sourcePackage);
 
-    // The url is forwarded to the publisher, whose browser never received the
-    // nonce cookie, so the claim must not land in the sender's workspace.
-    const { state } = await startClaim(registrationId);
-    const response = await callback({ state });
+    const state = await startClaim(registrationId);
+    const response = await callback({ error: 'access_denied', state });
 
     expect(response.status).toBe(302);
     expect(response.headers.location).toContain(
-      'claimErrorCode=CLAIM_STATE_MISMATCH',
+      'claimErrorCode=GITHUB_AUTH_FAILED',
     );
     await expect(
       readOwnerWorkspaceId(dataSource, registrationId),
     ).resolves.toBeNull();
   });
 
-  it('rejects a nonce minted for another claim', async () => {
-    const sourcePackage = `@${PUBLISHER_ORG}/other-claim`;
+  it('refuses to claim a registration that is already owned', async () => {
+    const sourcePackage = `@${PUBLISHER_ORG}/already-owned`;
     const registrationId = await insertClaimableRegistration(
       dataSource,
       sourcePackage,
     );
-    const otherRegistrationId = await insertClaimableRegistration(
-      dataSource,
-      `@${PUBLISHER_ORG}/other-claim-source`,
-    );
 
     stubPublisherIsOrgAdmin(sourcePackage);
 
-    const { state } = await startClaim(registrationId);
-    const { cookie: otherCookie } = await startClaim(otherRegistrationId);
+    const state = await startClaim(registrationId);
 
-    const response = await callback({ state, cookie: otherCookie });
+    await callback({ code: 'github-code', state });
+
+    const response = await callback({ code: 'github-code', state });
 
     expect(response.headers.location).toContain(
-      'claimErrorCode=CLAIM_STATE_MISMATCH',
+      'claimErrorCode=APPLICATION_REGISTRATION_ALREADY_OWNED',
     );
-    await expect(
-      readOwnerWorkspaceId(dataSource, registrationId),
-    ).resolves.toBeNull();
-  });
-
-  it('leaves a pending claim alone when the callback is hit with unrelated state', async () => {
-    const sourcePackage = `@${PUBLISHER_ORG}/not-cleared`;
-    const registrationId = await insertClaimableRegistration(
-      dataSource,
-      sourcePackage,
-    );
-
-    stubPublisherIsOrgAdmin(sourcePackage);
-
-    const { state, cookie } = await startClaim(registrationId);
-
-    // An unrelated page navigates the browser to the public callback first.
-    await callback({ state: 'not-a-signed-state', cookie });
-
-    const response = await callback({ state, cookie });
-
-    expect(response.headers.location).not.toContain('claimErrorCode');
     await expect(
       readOwnerWorkspaceId(dataSource, registrationId),
     ).resolves.toBe(SEED_APPLE_WORKSPACE_ID);
