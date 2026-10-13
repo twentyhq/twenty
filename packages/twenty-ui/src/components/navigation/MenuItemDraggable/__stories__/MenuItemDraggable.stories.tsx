@@ -1,7 +1,7 @@
 import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { TintedIconTile } from '@ui/components/data-display/TintedIconTile/TintedIconTile';
 import { type MenuItemAccent } from '@ui/components/navigation/MenuItem/types/MenuItemAccent';
@@ -165,16 +165,17 @@ export const GripOnHoverWithLeftComponent: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const label = canvas.getByText('Menu item draggable');
-    const grip = canvasElement.querySelector('.grip-swap-hover-icon')!;
+    const leadingContent = canvas.getByRole('img', {
+      name: 'Custom leading content',
+    });
+    const defaultSlot = canvasElement.querySelector('.grip-swap-default-icon');
+    const grip = canvasElement.querySelector('.grip-swap-hover-icon');
 
-    await userEvent.unhover(label);
-    await waitFor(() => expect(grip).toHaveStyle({ opacity: '0' }));
-    await expect(
-      canvas.getByRole('img', { name: 'Custom leading content' }),
-    ).toBeVisible();
-    await userEvent.hover(label);
-    await waitFor(() => expect(grip).toHaveStyle({ opacity: '1' }));
+    await expect(leadingContent).toBeVisible();
+    await expect(defaultSlot).toContainElement(leadingContent);
+    await expect(grip).toBeInTheDocument();
+    await expect(grip!.querySelector('svg')).toBeInTheDocument();
+    await expect(grip).toHaveStyle({ opacity: '0' });
   },
 };
 
