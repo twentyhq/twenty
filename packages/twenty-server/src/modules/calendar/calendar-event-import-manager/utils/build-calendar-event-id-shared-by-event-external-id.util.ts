@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type CalendarEventSharingProvider } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-sharing-provider.type';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 export const buildCalendarEventIdSharedByEventExternalId = ({
@@ -10,9 +11,7 @@ export const buildCalendarEventIdSharedByEventExternalId = ({
   otherChannelAssociations,
   otherChannelCalendarEvents,
 }: {
-  provider:
-    | ConnectedAccountProvider.GOOGLE
-    | ConnectedAccountProvider.MICROSOFT;
+  provider: CalendarEventSharingProvider;
   fetchedCalendarEvents: Pick<FetchedCalendarEvent, 'id' | 'iCalUid'>[];
   otherChannelAssociations: {
     eventExternalId: string | null;

@@ -12,6 +12,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type CalendarEventSharingProvider } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-sharing-provider.type';
 import { buildCalendarEventIdSharedByEventExternalId } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-id-shared-by-event-external-id.util';
 import { buildCalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-save-operations.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
@@ -244,9 +245,7 @@ export class CalendarSaveEventsService {
     workspaceId: string;
   }): Promise<
     | {
-        provider:
-          | ConnectedAccountProvider.GOOGLE
-          | ConnectedAccountProvider.MICROSOFT;
+        provider: CalendarEventSharingProvider;
         otherCalendarChannelIds: string[];
       }
     | undefined
@@ -295,9 +294,7 @@ export class CalendarSaveEventsService {
     calendarChannelEventAssociationRepository,
     calendarEventRepository,
   }: {
-    provider:
-      | ConnectedAccountProvider.GOOGLE
-      | ConnectedAccountProvider.MICROSOFT;
+    provider: CalendarEventSharingProvider;
     fetchedCalendarEvents: FetchedCalendarEvent[];
     otherCalendarChannelIds: string[];
     calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>;
