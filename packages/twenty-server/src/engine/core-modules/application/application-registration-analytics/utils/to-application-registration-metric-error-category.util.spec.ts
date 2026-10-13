@@ -1,4 +1,4 @@
-import { APPLICATION_REGISTRATION_METRIC_ERROR_CATEGORIES } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-metric-error-category.type';
+import { APPLICATION_REGISTRATION_METRIC_ERROR_CATEGORIES } from 'src/engine/core-modules/application/application-registration-analytics/constants/application-registration-metric-error-categories.constant';
 import { toApplicationRegistrationMetricErrorCategory } from 'src/engine/core-modules/application/application-registration-analytics/utils/to-application-registration-metric-error-category.util';
 
 describe('toApplicationRegistrationMetricErrorCategory', () => {

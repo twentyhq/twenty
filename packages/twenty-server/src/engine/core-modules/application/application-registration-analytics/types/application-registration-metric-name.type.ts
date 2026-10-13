@@ -1,17 +1,4 @@
-export const APPLICATION_REGISTRATION_METRIC_NAMES = [
-  'install.succeeded',
-  'install.failed',
-  'upgrade.succeeded',
-  'upgrade.failed',
-  'uninstall.succeeded',
-  'uninstall.failed',
-  'version.published',
-  'function.execution',
-  'function.error',
-  'api.rate_limited',
-  'job.rate_limited',
-  'charge.credits_micro',
-] as const;
+import { type APPLICATION_REGISTRATION_METRIC_NAMES } from 'src/engine/core-modules/application/application-registration-analytics/constants/application-registration-metric-names.constant';
 
 export type ApplicationRegistrationMetricName =
   (typeof APPLICATION_REGISTRATION_METRIC_NAMES)[number];
