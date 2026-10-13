@@ -175,6 +175,8 @@ const expectSyncToBeRejected = async (manifest: Manifest) => {
     [WIDGET_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
     [MENU_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
   });
+
+  return errors;
 };
 
 describe('Manifest sync - front component widgetAvailability', () => {
@@ -252,7 +254,7 @@ describe('Manifest sync - front component widgetAvailability', () => {
     ).toMatchObject({ isHeadless: false, widgetAvailability: [] });
   }, 60000);
 
-  it('keeps a front component opened by a command menu item out of the widget pickers by default', async () => {
+  it('still offers a front component opened by a command menu item in the widget pickers by default', async () => {
     await syncApplication({
       manifest: buildManifest({ commandMenuItems: [COMMAND_MENU_ITEM] }),
       expectToFail: false,
@@ -260,7 +262,7 @@ describe('Manifest sync - front component widgetAvailability', () => {
 
     expect(await findWidgetAvailabilityByUniversalIdentifier()).toEqual({
       [WIDGET_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
-      [MENU_FRONT_COMPONENT_ID]: [],
+      [MENU_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
     });
   }, 60000);
 
@@ -368,7 +370,7 @@ describe('Manifest sync - front component widgetAvailability', () => {
   }, 60000);
 
   it('rejects a page layout type without a widget picker', async () => {
-    await expectSyncToBeRejected(
+    const errors = await expectSyncToBeRejected(
       buildManifest({
         widgetWidgetAvailability: [
           {
@@ -377,6 +379,10 @@ describe('Manifest sync - front component widgetAvailability', () => {
           },
         ],
       }),
+    );
+
+    expect(JSON.stringify(errors)).toContain(
+      'supported values are RECORD_PAGE, DASHBOARD, received STANDALONE_PAGE',
     );
   }, 60000);
 

@@ -96,7 +96,7 @@ Beyond commands, you can embed a front component directly into a record page by 
 - **`RECORD_PAGE`** — when editing a record page layout. Add `objectUniversalIdentifiers` to offer it only on those objects' record pages; leave it out to offer it on every object.
 - **`DASHBOARD`** — when editing a dashboard.
 
-It defaults to every record page and every dashboard. A headless component, or one opened by a command or by a [settings menu item](#settings-menu-items), defaults to `[]` instead, since it is not built to run as a widget. Declare where it should be offered anyway:
+It defaults to every record page and every dashboard. A headless component, or one rendered by a [settings menu item](#settings-menu-items), defaults to `[]` instead, since it is not built to run as a widget. Declare entries to offer it anyway, or to narrow where any component is offered:
 
 ```tsx
 import {
@@ -121,7 +121,7 @@ export default defineFrontComponent({
 });
 ```
 
-`widgetAvailability: []` keeps a component out of every widget picker. It never limits where a component is displayed: commands, settings menu items and the page layouts your app declares render it whatever its value.
+`widgetAvailability: []` keeps a component out of every widget picker, for example a form only meant to open from a command. It never limits where a component is displayed: commands, settings menu items and the page layouts your app declares render it whatever its value.
 
 ## Settings menu items
 

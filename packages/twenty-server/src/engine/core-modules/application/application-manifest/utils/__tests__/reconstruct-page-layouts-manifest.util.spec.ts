@@ -170,7 +170,6 @@ const frontComponent: FlatFrontComponent = {
     },
     applicationUniversalIdentifier: APP_UID,
     isSettingsFrontComponent: false,
-    isReferencedByCommandMenuItem: false,
     now: NOW,
   }),
   id: `${FRONT_COMPONENT_UID}-id`,

@@ -29,17 +29,14 @@ const buildManifest = (
 const convert = ({
   frontComponentManifest = buildManifest(),
   isSettingsFrontComponent = false,
-  isReferencedByCommandMenuItem = false,
 }: {
   frontComponentManifest?: FrontComponentManifest;
   isSettingsFrontComponent?: boolean;
-  isReferencedByCommandMenuItem?: boolean;
 } = {}) =>
   fromFrontComponentManifestToUniversalFlatFrontComponent({
     frontComponentManifest,
     applicationUniversalIdentifier: APP_UID,
     isSettingsFrontComponent,
-    isReferencedByCommandMenuItem,
     now: NOW,
   });
 
@@ -51,13 +48,6 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
   it('should keep the settings front component out of the widget pickers by default', () => {
     expect(
       convert({ isSettingsFrontComponent: true }).universalWidgetAvailability,
-    ).toEqual([]);
-  });
-
-  it('should keep a front component opened from a command menu item out of the widget pickers by default', () => {
-    expect(
-      convert({ isReferencedByCommandMenuItem: true })
-        .universalWidgetAvailability,
     ).toEqual([]);
   });
 

@@ -47,21 +47,17 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
   frontComponentManifest,
   applicationUniversalIdentifier,
   isSettingsFrontComponent,
-  isReferencedByCommandMenuItem,
   now,
 }: {
   frontComponentManifest: FrontComponentManifest;
   applicationUniversalIdentifier: string;
   isSettingsFrontComponent: boolean;
-  isReferencedByCommandMenuItem: boolean;
   now: string;
 }): UniversalFlatFrontComponent => {
   const universalWidgetAvailability = getUniversalWidgetAvailability({
     widgetAvailabilityManifest: frontComponentManifest.widgetAvailability,
     isOfferedInWidgetPickersByDefault:
-      !frontComponentManifest.isHeadless &&
-      !isSettingsFrontComponent &&
-      !isReferencedByCommandMenuItem,
+      !frontComponentManifest.isHeadless && !isSettingsFrontComponent,
   });
 
   return {

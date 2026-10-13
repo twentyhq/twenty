@@ -1,5 +1,8 @@
 import { msg, t } from '@lingui/core/macro';
-import { isFrontComponentWidgetPageLayoutType } from 'twenty-shared/application';
+import {
+  FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES,
+  isFrontComponentWidgetPageLayoutType,
+} from 'twenty-shared/application';
 import { PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,11 +22,15 @@ export const validateFrontComponentUniversalWidgetAvailability = ({
   universalWidgetAvailability.flatMap<FlatEntityValidationError>(
     ({ pageLayoutType, objectMetadataUniversalIdentifier }) => {
       if (!isFrontComponentWidgetPageLayoutType(pageLayoutType)) {
+        const supportedPageLayoutTypes =
+          FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES.join(', ');
+        const receivedPageLayoutType = String(pageLayoutType);
+
         return [
           {
             code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-            message: t`Front component widget availability has an unsupported page layout type`,
-            userFriendlyMessage: msg`Front component widget availability has an unsupported page layout type`,
+            message: t`Front component widget availability has an unsupported page layout type: supported values are ${supportedPageLayoutTypes}, received ${receivedPageLayoutType}`,
+            userFriendlyMessage: msg`Front component widget availability has an unsupported page layout type: supported values are ${supportedPageLayoutTypes}, received ${receivedPageLayoutType}`,
             value: pageLayoutType,
           },
         ];

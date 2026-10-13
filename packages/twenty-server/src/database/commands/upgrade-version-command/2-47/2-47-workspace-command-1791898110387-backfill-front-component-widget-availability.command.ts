@@ -8,11 +8,13 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const DEFAULT_WIDGET_AVAILABILITY = [
+type WidgetAvailabilityEntry = { pageLayoutType: string };
+
+const DEFAULT_WIDGET_AVAILABILITY: WidgetAvailabilityEntry[] = [
   { pageLayoutType: 'RECORD_PAGE' },
   { pageLayoutType: 'DASHBOARD' },
 ];
-const NOT_OFFERED_WIDGET_AVAILABILITY: object[] = [];
+const NOT_OFFERED_WIDGET_AVAILABILITY: WidgetAvailabilityEntry[] = [];
 
 const IS_NOT_OFFERED_IN_WIDGET_PICKERS_BY_DEFAULT_PREDICATE = `(
   "frontComponent"."isHeadless" = true
@@ -29,20 +31,13 @@ const IS_NOT_OFFERED_IN_WIDGET_PICKERS_BY_DEFAULT_PREDICATE = `(
     WHERE "settingsMenuItem"."workspaceId" = $1
       AND "settingsMenuItem"."applicationId" = "frontComponent"."applicationId"
   )
-  OR "frontComponent".id IN (
-    SELECT "commandMenuItem"."frontComponentId"
-    FROM core."commandMenuItem" "commandMenuItem"
-    WHERE "commandMenuItem"."workspaceId" = $1
-      AND "commandMenuItem"."applicationId" = "frontComponent"."applicationId"
-      AND "commandMenuItem"."frontComponentId" IS NOT NULL
-  )
 )`;
 
 @RegisteredWorkspaceCommand('2.47.0', 1791898110387)
 @Command({
   name: 'upgrade:2-47:backfill-front-component-widget-availability',
   description:
-    'Keep headless front components and those opened from a settings or command menu item out of the widget pickers',
+    'Keep headless front components and those opened from a settings menu item out of the widget pickers',
 })
 export class BackfillFrontComponentWidgetAvailabilityCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -81,8 +76,8 @@ export class BackfillFrontComponentWidgetAvailabilityCommand extends Provisioned
     from,
     to,
   }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'options'> & {
-    from: object[];
-    to: object[];
+    from: WidgetAvailabilityEntry[];
+    to: WidgetAvailabilityEntry[];
   }): Promise<void> {
     if (options.dryRun) {
       const [{ count }] = await this.dataSource.query<{ count: number }[]>(
