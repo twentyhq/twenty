@@ -34,6 +34,7 @@ type SettingsMorphRelationMultiSelectProps = {
   onChange?: (value: string[]) => void;
   onBlur?: () => void;
   selectedObjectMetadataIds: string[];
+  lockedObjectMetadataIds?: string[];
   withSearchInput?: boolean;
   callToActionButton?: SelectCallToActionButton;
   hasRightElement?: boolean;
@@ -78,6 +79,7 @@ export const SettingsMorphRelationMultiSelect = ({
   onChange,
   onBlur,
   selectedObjectMetadataIds,
+  lockedObjectMetadataIds = [],
   withSearchInput,
   callToActionButton,
   hasRightElement,
@@ -129,6 +131,10 @@ export const SettingsMorphRelationMultiSelect = ({
     (options.length <= 1 && !isDefined(callToActionButton));
 
   const handleOptionToggle = (objectMetadataId: string) => {
+    if (lockedObjectMetadataIds.includes(objectMetadataId)) {
+      return;
+    }
+
     const newSelectedObjectMetadataIds =
       localSelectedObjectMetadataIds.includes(objectMetadataId)
         ? localSelectedObjectMetadataIds.filter(
@@ -152,6 +158,7 @@ export const SettingsMorphRelationMultiSelect = ({
     <Dropdown.OptionItem
       key={option.objectMetadataId}
       selected={selectedObjectMetadataIds.includes(option.objectMetadataId)}
+      disabled={lockedObjectMetadataIds.includes(option.objectMetadataId)}
       onSelect={() => handleOptionToggle(option.objectMetadataId)}
       startIcon={
         <SelectOptionIcon

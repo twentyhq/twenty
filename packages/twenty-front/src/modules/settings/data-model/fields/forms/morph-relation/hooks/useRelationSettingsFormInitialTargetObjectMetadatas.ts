@@ -3,7 +3,7 @@ import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMeta
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isAdvancedRelationTargetObjectMetadata } from '@/object-metadata/utils/isAdvancedRelationTargetObjectMetadata';
 import { isObjectMetadataEligibleAsRelationTarget } from '@/object-metadata/utils/isObjectMetadataEligibleAsRelationTarget';
-import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
@@ -20,10 +20,9 @@ export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
 
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
-  if (
-    isDefined(fieldMetadataItem) &&
-    fieldMetadataItemHasMorphRelations(fieldMetadataItem)
-  ) {
+  // A morph field can have no destinations left; a default candidate here
+  // would be shown as saved and then sent as a new destination.
+  if (fieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION) {
     return (
       fieldMetadataItem.morphRelations?.map((morphRelation) => {
         return {

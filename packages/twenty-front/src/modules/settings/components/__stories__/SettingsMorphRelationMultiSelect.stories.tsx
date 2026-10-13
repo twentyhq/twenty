@@ -4,6 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const meta: Meta<typeof SettingsMorphRelationMultiSelect> = {
   title: 'Modules/Settings/SettingsMorphRelationMultiSelect',
@@ -124,5 +125,48 @@ export const Disabled: Story = {
     expect(
       within(canvasElement.ownerDocument.body).queryByRole('dialog'),
     ).not.toBeInTheDocument();
+  },
+};
+
+const savedDestinationIds = [
+  getMockObjectMetadataItemOrThrow('company').id,
+  getMockObjectMetadataItemOrThrow('person').id,
+];
+
+export const LockedSavedDestinations: Story = {
+  args: {
+    ...Default.args,
+    selectedObjectMetadataIds: savedDestinationIds,
+    lockedObjectMetadataIds: savedDestinationIds,
+    description: 'New destinations can be added. Saved ones cannot be removed.',
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(
+      await canvas.findByText(
+        'New destinations can be added. Saved ones cannot be removed.',
+      ),
+    ).toBeVisible();
+
+    await userEvent.click(await canvas.findByRole('button'));
+    const popup = await body.findByRole('dialog', { name: 'Select objects' });
+
+    expect(
+      within(popup).getByRole('button', { name: 'Company' }),
+    ).toBeDisabled();
+    expect(
+      within(popup).getByRole('button', { name: 'Person' }),
+    ).toBeDisabled();
+
+    await userEvent.click(within(popup).getByRole('button', { name: 'Pet' }));
+    expect(args.onChange).toHaveBeenLastCalledWith([
+      ...savedDestinationIds,
+      getMockObjectMetadataItemOrThrow('pet').id,
+    ]);
+
+    await userEvent.keyboard('{Escape}');
   },
 };

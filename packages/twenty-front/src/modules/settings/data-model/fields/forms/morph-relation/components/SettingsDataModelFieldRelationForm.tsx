@@ -9,6 +9,7 @@ import { useRelationSettingsFormDefaultValuesTargetFieldMetadata } from '@/setti
 import { useRelationSettingsFormInitialTargetObjectMetadatas } from '@/settings/data-model/fields/forms/morph-relation/hooks/useRelationSettingsFormInitialTargetObjectMetadatas';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
@@ -18,7 +19,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { RelationType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
@@ -57,7 +58,7 @@ const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES).map(
 );
 
 export const settingsDataModelFieldMorphRelationFormSchema = z.object({
-  morphRelationObjectMetadataIds: z.array(z.uuid()).min(1),
+  morphRelationObjectMetadataIds: z.array(z.uuid()),
   relationType: z.enum(
     Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
   ),
@@ -101,10 +102,19 @@ export const SettingsDataModelFieldRelationForm = ({
   const { fieldMetadataItem: existingFieldMetadataItem } =
     useFieldMetadataItemById(existingFieldMetadataId);
 
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+
   const disableRelationEdition = isDefined(existingFieldMetadataItem);
   const disableFieldEdition = useFieldMetadataItemDisableFieldEdition(
     existingFieldMetadataItem,
   );
+
+  // Fields owned by the standard app or an installed app get their
+  // destinations from that app, so only workspace fields can gain new ones.
+  const canAddDestinations =
+    !disabled &&
+    existingFieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION &&
+    getIsMetadataItemCustom(existingFieldMetadataItem);
 
   const initialRelationObjectMetadataItems =
     useRelationSettingsFormInitialTargetObjectMetadatas({
@@ -113,7 +123,9 @@ export const SettingsDataModelFieldRelationForm = ({
     });
 
   const initialRelationType =
-    existingFieldMetadataItem?.relation?.type ?? RelationType.ONE_TO_MANY;
+    existingFieldMetadataItem?.relation?.type ??
+    existingFieldMetadataItem?.settings?.relationType ??
+    RelationType.ONE_TO_MANY;
 
   const { label: defaultLabelOnDestination, icon: defaultIconOnDestination } =
     useRelationSettingsFormDefaultValuesTargetFieldMetadata({
@@ -157,8 +169,18 @@ export const SettingsDataModelFieldRelationForm = ({
               label={t`Object destination`}
               dropdownId="object-destination-select"
               fullWidth
-              disabled={disableRelationEdition}
+              disabled={
+                disabled || (disableRelationEdition && !canAddDestinations)
+              }
               selectedObjectMetadataIds={value}
+              lockedObjectMetadataIds={
+                canAddDestinations ? initialMorphRelationsObjectMetadataIds : []
+              }
+              description={
+                canAddDestinations
+                  ? t`New destinations can be added. Saved ones cannot be removed.`
+                  : undefined
+              }
               withSearchInput={true}
               onChange={onChange}
               error={

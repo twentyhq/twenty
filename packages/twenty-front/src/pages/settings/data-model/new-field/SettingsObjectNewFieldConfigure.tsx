@@ -68,6 +68,7 @@ export const SettingsObjectNewFieldConfigure = () => {
           (value) => value.name,
         ),
         sourceObjectMetadataId: activeObjectMetadataItem?.id,
+        isRelationDestinationRequired: true,
       }),
     ),
     defaultValues: {

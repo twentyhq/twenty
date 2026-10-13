@@ -1,5 +1,73 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`updateOne FieldMetadataService morph relation fields v2 - Add one target Should fail adding one object metadata target through one of the morph relation targets 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Destinations can only be added to a morph relation field, "fieldNameOpportunityForMorphRelationSecond" is not one",
+              "userFriendlyMessage": "Destinations can only be added to a relation field that has several destinations",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Destinations can only be added to a relation field that has several destinations",
+  },
+  "message": "Validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`updateOne FieldMetadataService morph relation fields v2 - Add one target Should fail adding one object metadata target to a standard morph relation 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_MUTATION_NOT_ALLOWED",
+              "message": "Destinations of "target" can only be added by the application that owns it",
+              "userFriendlyMessage": "This field is managed by an application, so its destinations cannot be changed here",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This field is managed by an application, so its destinations cannot be changed here",
+  },
+  "message": "Validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`updateOne FieldMetadataService morph relation fields v2 - Add one target Should fail adding one object metadata target to pre-existing morph relation where object is already a target 1`] = `
 {
   "extensions": {
@@ -9,115 +77,27 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
         {
           "errors": [
             {
-              "code": "NOT_AVAILABLE",
-              "message": "Name "fieldNamePersonForMorphRelationSecond" is not available as it is already used by another field",
-              "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecond" is not available as it is already used by another field",
-              "value": "fieldNamePersonForMorphRelationSecond",
-            },
-            {
-              "code": "NOT_AVAILABLE",
-              "message": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another join column name",
-              "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by join column name",
-              "value": "fieldNamePersonForMorphRelationSecondId",
+              "code": "INVALID_FIELD_INPUT",
+              "message": ""personForMorphRelationSecond" is already a destination of "fieldName"",
+              "userFriendlyMessage": "This object is already a destination of the field",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "fieldNamePersonForMorphRelationSecond",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
+            "id": Any<String>,
           },
           "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "FIELD_METADATA_NOT_FOUND",
-              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
-              "userFriendlyMessage": "Relation field target metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "toto",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-      "index": [
-        {
-          "errors": [
-            {
-              "code": "INDEX_ALREADY_EXISTS",
-              "message": "Index with same name already exists",
-              "userFriendlyMessage": "Index with same name already exists",
-            },
-            {
-              "code": "INDEX_FIELD_NOT_FOUND",
-              "message": "Could not find index field related field metadata",
-              "userFriendlyMessage": "Field referenced in index does not exist",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "IDX_4ff93dd3375abd83d29ed3d01b4",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "index",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-      "viewField": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-            "viewUniversalIdentifier": Any<String>,
-          },
-          "metadataName": "viewField",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-            "viewUniversalIdentifier": Any<String>,
-          },
-          "metadataName": "viewField",
-          "status": "fail",
-          "type": "create",
+          "type": "update",
         },
       ],
     },
-    "message": "Validation failed for 2 fieldMetadata, 2 viewFields, 1 index",
+    "message": "Validation failed for 1 fieldMetadata",
     "summary": {
-      "fieldMetadata": 2,
-      "index": 1,
-      "totalErrors": 5,
-      "viewField": 2,
+      "fieldMetadata": 1,
+      "totalErrors": 1,
     },
-    "userFriendlyMessage": "Many validation errors",
+    "userFriendlyMessage": "This object is already a destination of the field",
   },
-  "message": "Multiple validation errors occurred while updating field",
+  "message": "Validation errors occurred while updating field",
   "name": "GraphQLError",
 }
 `;
@@ -132,102 +112,60 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Source object cannot be the target object",
-              "userFriendlyMessage": "Source object cannot be the target object",
+              "message": ""fieldName" cannot have its own object "companyForMorphRelationSecond" as a destination",
+              "userFriendlyMessage": "A relation with several destinations cannot include its own object",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "fieldNameCompanyForMorphRelationSecond",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
+            "id": Any<String>,
           },
           "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "FIELD_METADATA_NOT_FOUND",
-              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
-              "userFriendlyMessage": "Relation field target metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "toto",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-      "index": [
-        {
-          "errors": [
-            {
-              "code": "INDEX_FIELD_NOT_FOUND",
-              "message": "Could not find index field related field metadata",
-              "userFriendlyMessage": "Field referenced in index does not exist",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "IDX_59563a0476bb3b8760e33ae6d5b",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "index",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-      "viewField": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-            "viewUniversalIdentifier": Any<String>,
-          },
-          "metadataName": "viewField",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-            "viewUniversalIdentifier": Any<String>,
-          },
-          "metadataName": "viewField",
-          "status": "fail",
-          "type": "create",
+          "type": "update",
         },
       ],
     },
-    "message": "Validation failed for 2 fieldMetadata, 2 viewFields, 1 index",
+    "message": "Validation failed for 1 fieldMetadata",
     "summary": {
-      "fieldMetadata": 2,
-      "index": 1,
-      "totalErrors": 5,
-      "viewField": 2,
+      "fieldMetadata": 1,
+      "totalErrors": 1,
     },
-    "userFriendlyMessage": "Many validation errors",
+    "userFriendlyMessage": "A relation with several destinations cannot include its own object",
   },
-  "message": "Multiple validation errors occurred while updating field",
+  "message": "Validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`updateOne FieldMetadataService morph relation fields v2 - Add one target Should fail adding the same object metadata target twice in one payload 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": ""newTargetForMorphRelation" is listed more than once",
+              "userFriendlyMessage": "The same destination cannot be added twice",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "The same destination cannot be added twice",
+  },
+  "message": "Validation errors occurred while updating field",
   "name": "GraphQLError",
 }
 `;
