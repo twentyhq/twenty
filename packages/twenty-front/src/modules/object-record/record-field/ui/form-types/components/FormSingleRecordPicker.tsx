@@ -16,11 +16,12 @@ import { Field } from 'twenty-ui/primitives/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useId } from 'react';
+import { useCallback, useId, useRef } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -128,6 +129,14 @@ export const FormSingleRecordPicker = ({
   const variablesDropdownId = `form-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
+  const { openDropdown } = useOpenDropdown();
+
+  const triggerRef = useRef<HTMLDivElement>(null);
+
+  const closeDropdownAndFocusTrigger = () => {
+    closeDropdown(dropdownId);
+    triggerRef.current?.focus();
+  };
 
   const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
@@ -147,7 +156,7 @@ export const FormSingleRecordPicker = ({
       } else {
         onChange(null);
       }
-      closeDropdown(dropdownId);
+      closeDropdownAndFocusTrigger();
 
       return;
     }
@@ -159,7 +168,7 @@ export const FormSingleRecordPicker = ({
     } else {
       onChange(selectedMorphItem.recordId);
     }
-    closeDropdown(dropdownId);
+    closeDropdownAndFocusTrigger();
   };
 
   const handleCreateRecord = async (searchInput?: string) => {
@@ -180,6 +189,15 @@ export const FormSingleRecordPicker = ({
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
+
+  const handleTriggerKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
+  };
 
   const handleOpenDropdown = () => {
     if (defaultValue === null) {
@@ -226,7 +244,11 @@ export const FormSingleRecordPicker = ({
                 y: parseInt(theme.spacing[1], 10),
               }}
               clickableComponent={
-                <StyledFormSelectContainerWrapper>
+                <StyledFormSelectContainerWrapper
+                  ref={triggerRef}
+                  tabIndex={0}
+                  onKeyDown={handleTriggerKeyDown}
+                >
                   <FormFieldInputInnerContainer
                     formFieldInputInstanceId={componentId}
                     hasRightElement={isDefined(VariablePicker) && !disabled}

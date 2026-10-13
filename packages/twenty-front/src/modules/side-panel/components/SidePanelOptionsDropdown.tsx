@@ -14,11 +14,13 @@ import { IconDotsVertical } from 'twenty-ui/icon';
 type SidePanelOptionsDropdownProps = {
   dropdownId: string;
   children: ReactNode;
+  width?: number;
 };
 
 export const SidePanelOptionsDropdown = ({
   dropdownId,
   children,
+  width,
 }: SidePanelOptionsDropdownProps) => {
   const { t } = useLingui();
   const { toggleDropdown } = useToggleDropdown();
@@ -56,7 +58,12 @@ export const SidePanelOptionsDropdown = ({
           </IconButton>
         }
       />
-      <DropdownContent side="top" align="end" sideOffset={DROPDOWN_OFFSET_Y}>
+      <DropdownContent
+        side="top"
+        align="end"
+        sideOffset={DROPDOWN_OFFSET_Y}
+        width={width}
+      >
         <Dropdown.Section>{children}</Dropdown.Section>
       </DropdownContent>
     </DropdownRoot>

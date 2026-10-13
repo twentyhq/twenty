@@ -4,6 +4,7 @@ import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { SidePanelOptionsDropdown } from '@/side-panel/components/SidePanelOptionsDropdown';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -386,6 +387,7 @@ const SidePanelRecordCreationForm = ({
           <SidePanelOptionsDropdown
             key="options"
             dropdownId={optionsDropdownId}
+            width={GenericDropdownContentWidth.Large}
           >
             <Dropdown.ActionItem
               startIcon={<IconPlus />}
