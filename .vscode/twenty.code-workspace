@@ -33,10 +33,6 @@
       "path": "../packages/twenty-utils"
     },
     {
-      "name": "packages/twenty-zapier",
-      "path": "../packages/twenty-zapier"
-    },
-    {
       "name": "packages/twenty-oxlint-rules",
       "path": "../packages/twenty-oxlint-rules"
     },
@@ -141,7 +137,6 @@
     "jest.runMode": "on-demand",
     "jest.disabledWorkspaceFolders": [
       "ROOT",
-      "packages/twenty-zapier",
       "packages/twenty-docker",
       "packages/twenty-utils",
       "packages/twenty-postgres"
