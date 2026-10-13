@@ -16,7 +16,7 @@ export const wrapCssInTwentyUiCascadeLayer = (cssText: string): string => {
   }
 
   const layeredRules: string[] = [];
-  let rulesToWrap: string[] = [];
+  const rulesToWrap: string[] = [];
 
   const flushRulesToWrap = () => {
     if (!isNonEmptyArray(rulesToWrap)) {
@@ -24,9 +24,8 @@ export const wrapCssInTwentyUiCascadeLayer = (cssText: string): string => {
     }
 
     layeredRules.push(
-      `@layer ${TWENTY_UI_CASCADE_LAYER_NAME} {\n${rulesToWrap.join('\n')}\n}`,
+      `@layer ${TWENTY_UI_CASCADE_LAYER_NAME} {\n${rulesToWrap.splice(0).join('\n')}\n}`,
     );
-    rulesToWrap = [];
   };
 
   const { cssRules } = styleElement.sheet;
