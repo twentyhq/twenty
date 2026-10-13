@@ -34,13 +34,13 @@ describe('wrapCssInTwentyUiCascadeLayer', () => {
     );
   });
 
-  it('should keep the layer of an import that already declares one', () => {
+  it('should nest the layer of an import inside the twenty-ui layer', () => {
     expect(
       wrapCssInTwentyUiCascadeLayer(
-        '@import "theme.css" layer(theme);.title{color:red}',
+        '@import "reset.css" layer(base);@import url(fonts.css) layer;.title{color:red}',
       ),
     ).toBe(
-      '@import "theme.css" layer(theme);@layer twenty-ui {\n.title{color:red}\n}',
+      '@import "reset.css" layer(twenty-ui.base);@import url(fonts.css) layer(twenty-ui.anonymous);@layer twenty-ui {\n.title{color:red}\n}',
     );
   });
 });
