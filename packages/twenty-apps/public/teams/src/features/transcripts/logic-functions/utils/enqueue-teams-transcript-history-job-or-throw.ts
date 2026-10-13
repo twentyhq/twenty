@@ -21,7 +21,7 @@ export const enqueueTeamsTranscriptHistoryJobOrThrow = async ({
         TEAMS_IMPORT_TRANSCRIPT_HISTORY_UNIVERSAL_IDENTIFIER,
       jobs: [
         {
-          jobId: `teams-transcript-history-importing-${job.runId}-${job.chunkIndex}-${job.pageIndex}-${job.attempt}`,
+          jobId: `teams-transcript-history-importing-${job.runId}-${job.pageIndex}-${job.attempt}`,
           payload: job,
         },
       ],

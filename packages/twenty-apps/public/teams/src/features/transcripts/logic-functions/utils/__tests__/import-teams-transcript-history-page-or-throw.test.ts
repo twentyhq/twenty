@@ -22,8 +22,6 @@ vi.mock(
   }),
 );
 
-const RUN_STARTED_AT = '2026-09-15T00:00:00.000Z';
-
 const TRANSCRIPT_CONTENT = [
   'WEBVTT',
   '',
@@ -32,10 +30,8 @@ const TRANSCRIPT_CONTENT = [
   '',
 ].join('\n');
 
-const MEETING = { id: 'meeting-1', subject: 'Weekly sync' };
-
 const buildTranscript = (transcriptId: string) => ({
-  meeting: MEETING,
+  meeting: { id: 'meeting-1', subject: 'Weekly sync' },
   transcript: {
     id: transcriptId,
     createdDateTime: '2026-09-01T10:00:00Z',
@@ -43,55 +39,98 @@ const buildTranscript = (transcriptId: string) => ({
   },
 });
 
-type ExistingCallRecordingRow = {
-  transcriptId: string;
+type CallRecordingRow = {
+  id: string;
   status: string;
-  createdAt?: string;
-  deletedAt?: string;
+  deletedAt: string | null;
 };
 
-const buildCoreApiClient = ({
-  existingCallRecordings = [],
-  deletedBeforeWriteTranscriptIds = [],
-}: {
-  existingCallRecordings?: ExistingCallRecordingRow[];
-  deletedBeforeWriteTranscriptIds?: string[];
-}) => ({
-  query: vi
-    .fn()
-    .mockResolvedValueOnce({
-      callRecordings: {
-        edges: existingCallRecordings.map(
-          ({ transcriptId, status, createdAt, deletedAt }) => ({
-            node: {
-              id: computeCallRecordingIdForTeamsTranscript(transcriptId),
-              status,
-              createdAt: createdAt ?? '2026-08-01T00:00:00.000Z',
-              deletedAt: deletedAt ?? null,
-            },
-          }),
-        ),
-      },
-    })
-    .mockResolvedValue({
-      callRecordings: {
-        edges: deletedBeforeWriteTranscriptIds.map((transcriptId) => ({
-          node: { id: computeCallRecordingIdForTeamsTranscript(transcriptId) },
-        })),
-      },
-    }),
-  mutation: vi.fn().mockResolvedValue({}),
-});
+type CallRecordingsFilter = {
+  id: { in: string[] };
+  deletedAt?: { is: 'NULL' | 'NOT_NULL' };
+  or?: { deletedAt?: { is: 'NULL' | 'NOT_NULL' } }[];
+};
 
-const getWrittenCallRecordingIds = (
-  coreApiClient: ReturnType<typeof buildCoreApiClient>,
-): string[] =>
-  coreApiClient.mutation.mock.calls.flatMap(
-    ([request]) =>
-      request.createCallRecordings.__args.data.map(
-        ({ id }: { id: string }) => id,
-      ) as string[],
+// Like Twenty, soft-deleted rows only match a filter that asks for deletedAt.
+const isVisibleThroughFilter = (
+  { deletedAt }: CallRecordingRow,
+  filter: CallRecordingsFilter,
+): boolean => {
+  const deletedAtConditions = (filter.or ?? [filter]).map(
+    (condition) => condition.deletedAt?.is,
   );
+
+  if (deletedAtConditions.every((condition) => condition === undefined)) {
+    return deletedAt === null;
+  }
+
+  return deletedAtConditions.includes(deletedAt === null ? 'NULL' : 'NOT_NULL');
+};
+
+const buildCoreApiClient = (rows: CallRecordingRow[]) => {
+  const rowsById = new Map(rows.map((row) => [row.id, row]));
+
+  return {
+    rowsById,
+    query: vi.fn(
+      async (request: {
+        callRecordings: { __args: { filter: CallRecordingsFilter } };
+      }) => {
+        const { filter } = request.callRecordings.__args;
+
+        return {
+          callRecordings: {
+            edges: filter.id.in
+              .map((id) => rowsById.get(id))
+              .filter(
+                (row): row is CallRecordingRow =>
+                  row !== undefined && isVisibleThroughFilter(row, filter),
+              )
+              .map((node) => ({ node })),
+          },
+        };
+      },
+    ),
+    mutation: vi.fn(
+      async (request: {
+        createCallRecordings: {
+          __args: { data: { id: string; status: string }[] };
+        };
+      }) => {
+        for (const { id, status } of request.createCallRecordings.__args.data) {
+          rowsById.set(id, { id, status, deletedAt: null });
+        }
+
+        return {};
+      },
+    ),
+  };
+};
+
+const getWrittenTranscriptIds = (
+  coreApiClient: ReturnType<typeof buildCoreApiClient>,
+  transcriptIds: string[],
+): string[] => {
+  const writtenCallRecordingIds = coreApiClient.mutation.mock.calls.flatMap(
+    ([request]) => request.createCallRecordings.__args.data.map(({ id }) => id),
+  );
+
+  return transcriptIds.filter((transcriptId) =>
+    writtenCallRecordingIds.includes(
+      computeCallRecordingIdForTeamsTranscript(transcriptId),
+    ),
+  );
+};
+
+const buildRow = (
+  transcriptId: string,
+  status: string,
+  deletedAt: string | null = null,
+): CallRecordingRow => ({
+  id: computeCallRecordingIdForTeamsTranscript(transcriptId),
+  status,
+  deletedAt,
+});
 
 describe('importTeamsTranscriptHistoryPageOrThrow', () => {
   beforeEach(() => {
@@ -99,68 +138,63 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
     downloadMeetingTranscriptContentMock.mockResolvedValue(TRANSCRIPT_CONTENT);
   });
 
-  it('should write new transcripts and leave completed and deleted recordings untouched', async () => {
-    const coreApiClient = buildCoreApiClient({
-      existingCallRecordings: [
-        { transcriptId: 'completed', status: 'COMPLETED' },
-        {
-          transcriptId: 'deleted',
-          status: 'COMPLETED',
-          deletedAt: '2026-09-02T00:00:00.000Z',
-        },
-        { transcriptId: 'processing', status: 'PROCESSING' },
-      ],
-    });
+  it('should write new and unfinished transcripts and leave completed and deleted recordings alone', async () => {
+    const transcriptIds = ['completed', 'deleted', 'processing', 'new'];
+    const coreApiClient = buildCoreApiClient([
+      buildRow('completed', 'COMPLETED'),
+      buildRow('deleted', 'COMPLETED', '2026-09-02T00:00:00.000Z'),
+      buildRow('processing', 'PROCESSING'),
+    ]);
 
     await expect(
       importTeamsTranscriptHistoryPageOrThrow({
         accessToken: 'token',
         coreApiClient,
-        transcripts: ['completed', 'deleted', 'processing', 'new'].map(
-          buildTranscript,
+        transcripts: transcriptIds.map(buildTranscript),
+      }),
+    ).resolves.toBe(2);
+    expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
+      'processing',
+      'new',
+    ]);
+    expect(downloadMeetingTranscriptContentMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not bring back a recording deleted while the page downloaded it', async () => {
+    const transcriptIds = ['deleted-during-import', 'new'];
+    const coreApiClient = buildCoreApiClient([
+      buildRow('deleted-during-import', 'PROCESSING'),
+    ]);
+
+    downloadMeetingTranscriptContentMock.mockImplementation(async () => {
+      coreApiClient.rowsById.set(
+        computeCallRecordingIdForTeamsTranscript('deleted-during-import'),
+        buildRow(
+          'deleted-during-import',
+          'PROCESSING',
+          '2026-09-15T00:01:00.000Z',
         ),
-        importedSince: RUN_STARTED_AT,
-      }),
-    ).resolves.toEqual({
-      importedCount: 2,
-      skippedCount: 2,
-      unavailableCount: 0,
-    });
-    expect(getWrittenCallRecordingIds(coreApiClient)).toEqual([
-      computeCallRecordingIdForTeamsTranscript('processing'),
-      computeCallRecordingIdForTeamsTranscript('new'),
-    ]);
-  });
+      );
 
-  it('should count recordings a failed attempt of the page already wrote as imported', async () => {
-    const coreApiClient = buildCoreApiClient({
-      existingCallRecordings: [
-        {
-          transcriptId: 'written-by-failed-attempt',
-          status: 'COMPLETED',
-          createdAt: '2026-09-15T00:01:00.000Z',
-        },
-      ],
+      return TRANSCRIPT_CONTENT;
     });
 
     await expect(
       importTeamsTranscriptHistoryPageOrThrow({
         accessToken: 'token',
         coreApiClient,
-        transcripts: ['written-by-failed-attempt', 'new'].map(buildTranscript),
-        importedSince: RUN_STARTED_AT,
+        transcripts: transcriptIds.map(buildTranscript),
       }),
-    ).resolves.toEqual({
-      importedCount: 2,
-      skippedCount: 0,
-      unavailableCount: 0,
-    });
-    expect(getWrittenCallRecordingIds(coreApiClient)).toEqual([
-      computeCallRecordingIdForTeamsTranscript('new'),
+    ).resolves.toBe(1);
+    expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
+      'new',
     ]);
   });
 
-  it('should count transcripts with no content or gone from Microsoft as unavailable', async () => {
+  it('should skip transcripts with no content or gone from Microsoft', async () => {
+    const transcriptIds = ['empty', 'gone', 'new'];
+    const coreApiClient = buildCoreApiClient([]);
+
     downloadMeetingTranscriptContentMock
       .mockResolvedValueOnce('WEBVTT\n')
       .mockRejectedValueOnce(
@@ -170,64 +204,52 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
           innerErrorCode: undefined,
         }),
       );
-    const coreApiClient = buildCoreApiClient({});
 
     await expect(
       importTeamsTranscriptHistoryPageOrThrow({
         accessToken: 'token',
         coreApiClient,
-        transcripts: ['empty', 'gone', 'new'].map(buildTranscript),
-        importedSince: RUN_STARTED_AT,
+        transcripts: transcriptIds.map(buildTranscript),
       }),
-    ).resolves.toEqual({
-      importedCount: 1,
-      skippedCount: 0,
-      unavailableCount: 2,
-    });
-    expect(getWrittenCallRecordingIds(coreApiClient)).toEqual([
-      computeCallRecordingIdForTeamsTranscript('new'),
+    ).resolves.toBe(1);
+    expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
+      'new',
     ]);
   });
 
-  it('should write a transcript listed twice only once', async () => {
-    const coreApiClient = buildCoreApiClient({});
+  it('should fail the page when Microsoft Graph fails for another reason', async () => {
+    downloadMeetingTranscriptContentMock.mockRejectedValue(
+      new GraphRequestError({
+        message: 'Microsoft Graph request failed (503)',
+        status: 503,
+        innerErrorCode: undefined,
+      }),
+    );
 
     await expect(
       importTeamsTranscriptHistoryPageOrThrow({
         accessToken: 'token',
-        coreApiClient,
-        transcripts: ['new', 'new'].map(buildTranscript),
-        importedSince: RUN_STARTED_AT,
+        coreApiClient: buildCoreApiClient([]),
+        transcripts: [buildTranscript('new')],
       }),
-    ).resolves.toEqual({
-      importedCount: 1,
-      skippedCount: 0,
-      unavailableCount: 0,
-    });
-    expect(getWrittenCallRecordingIds(coreApiClient)).toEqual([
-      computeCallRecordingIdForTeamsTranscript('new'),
-    ]);
+    ).rejects.toThrow('503');
   });
 
-  it('should not bring back a recording deleted while the page downloaded it', async () => {
-    const coreApiClient = buildCoreApiClient({
-      deletedBeforeWriteTranscriptIds: ['deleted-during-import'],
-    });
+  it('should write every transcript of a long page once, in batches', async () => {
+    const transcriptIds = [
+      ...Array.from({ length: 11 }, (_, index) => `new-${index}`),
+      'new-0',
+    ];
+    const coreApiClient = buildCoreApiClient([]);
 
     await expect(
       importTeamsTranscriptHistoryPageOrThrow({
         accessToken: 'token',
         coreApiClient,
-        transcripts: ['deleted-during-import', 'new'].map(buildTranscript),
-        importedSince: RUN_STARTED_AT,
+        transcripts: transcriptIds.map(buildTranscript),
       }),
-    ).resolves.toEqual({
-      importedCount: 1,
-      skippedCount: 1,
-      unavailableCount: 0,
-    });
-    expect(getWrittenCallRecordingIds(coreApiClient)).toEqual([
-      computeCallRecordingIdForTeamsTranscript('new'),
-    ]);
+    ).resolves.toBe(11);
+    expect(coreApiClient.mutation).toHaveBeenCalledTimes(2);
+    expect(coreApiClient.rowsById.size).toBe(11);
   });
 });

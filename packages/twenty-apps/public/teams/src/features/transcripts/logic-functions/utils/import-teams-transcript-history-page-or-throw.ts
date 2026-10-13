@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_TRANSCRIPT_HISTORY_UPSERT_BATCH_SIZE } from 'src/features/transcripts/logic-functions/constants/teams-transcript-history-upsert-batch-size';
 import { type TeamsOccurrenceTranscript } from 'src/features/transcripts/logic-functions/types/teams-occurrence-transcript.type';
-import { type TeamsTranscriptHistoryPageCounts } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-page-counts.type';
 import { buildTeamsCallRecordingSyncFields } from 'src/features/transcripts/logic-functions/utils/build-teams-call-recording-sync-fields';
 import { chunkIntoBatches } from 'src/features/transcripts/logic-functions/utils/chunk-into-batches';
 import { computeCallRecordingIdForTeamsTranscript } from 'src/features/transcripts/logic-functions/utils/compute-call-recording-id-for-teams-transcript';
@@ -39,44 +38,15 @@ const downloadAvailableTranscriptContentOrThrow = async ({
   }
 };
 
-const findSoftDeletedCallRecordingIdsOrThrow = async ({
-  coreApiClient,
-  callRecordingIds,
-}: {
-  coreApiClient: Pick<CoreApiClient, 'query'>;
-  callRecordingIds: string[];
-}): Promise<Set<string>> => {
-  const result: {
-    callRecordings?: { edges?: { node: { id: string } }[] };
-  } = await coreApiClient.query({
-    callRecordings: {
-      __args: {
-        filter: {
-          id: { in: callRecordingIds },
-          deletedAt: { is: 'NOT_NULL' },
-        },
-        first: callRecordingIds.length,
-      },
-      edges: { node: { id: true } },
-    },
-  });
-
-  return new Set(
-    result.callRecordings?.edges?.map((edge) => edge.node.id) ?? [],
-  );
-};
-
 export const importTeamsTranscriptHistoryPageOrThrow = async ({
   accessToken,
   coreApiClient,
   transcripts,
-  importedSince,
 }: {
   accessToken: string;
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   transcripts: TeamsOccurrenceTranscript[];
-  importedSince: string;
-}): Promise<TeamsTranscriptHistoryPageCounts> => {
+}): Promise<number> => {
   const pageTranscripts = [
     ...new Map(
       transcripts.map((occurrenceTranscript) => {
@@ -88,22 +58,17 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
       }),
     ).values(),
   ];
-  const {
-    deletedCallRecordingIds,
-    completedCallRecordingIds,
-    importedCallRecordingIds,
-  } = await findDeletedAndCompletedCallRecordingIdsOrThrow({
-    coreApiClient,
-    callRecordingIds: pageTranscripts.map(
-      ({ callRecordingId }) => callRecordingId,
-    ),
-    importedSince,
-  });
+  const { deletedCallRecordingIds, completedCallRecordingIds } =
+    await findDeletedAndCompletedCallRecordingIdsOrThrow({
+      coreApiClient,
+      callRecordingIds: pageTranscripts.map(
+        ({ callRecordingId }) => callRecordingId,
+      ),
+    });
   const importableTranscripts = pageTranscripts.filter(
     ({ callRecordingId }) =>
       !deletedCallRecordingIds.has(callRecordingId) &&
-      !completedCallRecordingIds.has(callRecordingId) &&
-      !importedCallRecordingIds.has(callRecordingId),
+      !completedCallRecordingIds.has(callRecordingId),
   );
   const calendarEventIds = await findTeamsCalendarEventIdsOrThrow({
     accessToken,
@@ -112,8 +77,7 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
       .map(({ calendarReference }) => calendarReference)
       .filter(isDefined),
   });
-  const unavailableCallRecordingIds: string[] = [];
-  const deletedDuringImportCallRecordingIds: string[] = [];
+  let importedCount = 0;
 
   for (const transcriptBatch of chunkIntoBatches(
     importableTranscripts,
@@ -136,66 +100,53 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
           transcriptId: transcript.id,
         },
       );
-
       const transcriptEntries = isDefined(transcriptContent)
         ? mapTeamsTranscriptToEntries(transcriptContent)
         : [];
 
       if (!isNonEmptyArray(transcriptEntries)) {
-        unavailableCallRecordingIds.push(callRecordingId);
         continue;
       }
 
-      const fields = buildTeamsCallRecordingSyncFields({
-        meeting,
-        transcript,
-        transcriptEntries,
-        calendarEventId: isDefined(calendarReference)
-          ? calendarEventIds.get(calendarReference.eventExternalId)
-          : undefined,
-      });
-
       callRecordings.push({
         id: callRecordingId,
-        ...toCallRecordingData(fields),
+        ...toCallRecordingData(
+          buildTeamsCallRecordingSyncFields({
+            meeting,
+            transcript,
+            transcriptEntries,
+            calendarEventId: isDefined(calendarReference)
+              ? calendarEventIds.get(calendarReference.eventExternalId)
+              : undefined,
+          }),
+        ),
       });
     }
 
-    if (callRecordings.length === 0) {
-      continue;
-    }
-
-    const softDeletedCallRecordingIds =
-      await findSoftDeletedCallRecordingIdsOrThrow({
+    // The batch upsert would bring back a recording deleted while it downloaded.
+    const callRecordingIdsBeforeWrite =
+      await findDeletedAndCompletedCallRecordingIdsOrThrow({
         coreApiClient,
         callRecordingIds: callRecordings.map(({ id }) => id),
       });
     const upsertableCallRecordings = callRecordings.filter(
-      ({ id }) => !softDeletedCallRecordingIds.has(id),
+      ({ id }) =>
+        !callRecordingIdsBeforeWrite.deletedCallRecordingIds.has(id) &&
+        !callRecordingIdsBeforeWrite.completedCallRecordingIds.has(id),
     );
 
-    deletedDuringImportCallRecordingIds.push(...softDeletedCallRecordingIds);
-
-    if (upsertableCallRecordings.length > 0) {
-      await coreApiClient.mutation({
-        createCallRecordings: {
-          __args: { data: upsertableCallRecordings, upsert: true },
-          id: true,
-        },
-      });
+    if (upsertableCallRecordings.length === 0) {
+      continue;
     }
+
+    await coreApiClient.mutation({
+      createCallRecordings: {
+        __args: { data: upsertableCallRecordings, upsert: true },
+        id: true,
+      },
+    });
+    importedCount += upsertableCallRecordings.length;
   }
 
-  return {
-    importedCount:
-      importedCallRecordingIds.size +
-      importableTranscripts.length -
-      unavailableCallRecordingIds.length -
-      deletedDuringImportCallRecordingIds.length,
-    skippedCount:
-      deletedCallRecordingIds.size +
-      completedCallRecordingIds.size +
-      deletedDuringImportCallRecordingIds.length,
-    unavailableCount: unavailableCallRecordingIds.length,
-  };
+  return importedCount;
 };

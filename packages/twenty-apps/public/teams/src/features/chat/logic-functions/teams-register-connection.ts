@@ -30,11 +30,7 @@ export const teamsRegisterConnectionHandler = async (payload: {
     throw transcriptHistoryInitialImport.reason;
   }
 
-  return {
-    ...chatRegistration.value,
-    ...transcriptRegistration.value,
-    ...transcriptHistoryInitialImport.value,
-  };
+  return { ...chatRegistration.value, ...transcriptRegistration.value };
 };
 
 export default defineLogicFunction({
