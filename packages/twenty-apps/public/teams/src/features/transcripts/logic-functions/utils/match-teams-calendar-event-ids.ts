@@ -4,23 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { type CalendarChannelEventAssociation } from 'src/features/transcripts/logic-functions/types/calendar-channel-event-association.type';
 import { type CalendarEvent } from 'src/features/transcripts/logic-functions/types/calendar-event.type';
 import { type TeamsCalendarReference } from 'src/features/transcripts/logic-functions/types/teams-calendar-reference.type';
-
-const groupCalendarEventIdsByKey = (
-  entries: [string, string][],
-): Map<string, Set<string>> => {
-  const calendarEventIdsByKey = new Map<string, Set<string>>();
-
-  for (const [key, calendarEventId] of entries) {
-    calendarEventIdsByKey.set(
-      key,
-      (calendarEventIdsByKey.get(key) ?? new Set<string>()).add(
-        calendarEventId,
-      ),
-    );
-  }
-
-  return calendarEventIdsByKey;
-};
+import { groupCalendarEventIdsByKey } from 'src/features/transcripts/logic-functions/utils/group-calendar-event-ids-by-key';
 
 const findUniqueCalendarEventId = (
   calendarEventIds: Set<string> | undefined,
