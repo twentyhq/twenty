@@ -70,3 +70,39 @@ export const GlobalResetKeepsHostTwentyUiStyles: Story = {
     );
   },
 };
+
+export const LayeredUtilitiesOverrideHostReset: Story = {
+  render: () => (
+    <FrontComponentRenderer
+      componentUrl={getBuiltStoryComponentPathForRender(
+        'layered-utilities-example.front-component',
+      )}
+      applicationAccessToken={
+        FRONT_COMPONENT_STORY_DEFAULT_ARGS.applicationAccessToken
+      }
+      executionContext={FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT}
+      frontComponentHostCommunicationApi={hostApiMocks}
+      onError={errorHandler}
+      colorScheme="light"
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const utilityButton = await canvas.findByTestId(
+      'layered-utilities-button',
+      {},
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    await waitFor(
+      () => {
+        expect(getComputedStyle(utilityButton).backgroundColor).toBe(
+          'rgb(37, 99, 235)',
+        );
+      },
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    expect(getComputedStyle(utilityButton).paddingLeft).not.toBe('0px');
+  },
+};

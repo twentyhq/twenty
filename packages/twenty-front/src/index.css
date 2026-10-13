@@ -40,8 +40,8 @@ html.light {
   }
 }
 
-/* Element defaults rank with twenty-ui's reset, so component styles,
-   front-component CSS included, still override them. */
+/* Inside twenty-ui's layer so component styles, front-component CSS
+   included, still override these element defaults. */
 @layer twenty-ui {
   button {
     font-size: 13px;
