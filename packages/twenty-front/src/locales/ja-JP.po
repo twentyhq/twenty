@@ -248,7 +248,7 @@ msgstr "{0, plural, other {クレジット/期間}}"
 #. placeholder {0}: onboardingConfig.inviteTeamCreditsRewardPerUser
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{0, plural, one {Earn {formattedInviteTeamCreditsRewardPerUser} free credit per teammate who joins} other {Earn {formattedInviteTeamCreditsRewardPerUser} free credits per teammate who joins}}"
-msgstr ""
+msgstr "{0, plural, other {参加したチームメイトごとに{formattedInviteTeamCreditsRewardPerUser}の無料クレジットを獲得}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
