@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { Section } from 'twenty-ui/components/layout';
 
+import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLayoutEditModeContext';
 import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graph-widget-line-chart/components/GraphWidgetLineChart';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
@@ -38,15 +39,18 @@ export const LogConsoleAppAnalyticsLineChartSection = ({
           <WidgetComponentInstanceContext.Provider
             value={{ instanceId: `${chartId}-line-chart` }}
           >
-            <GraphWidgetLineChart
-              id={`${chartId}-line-chart`}
-              data={series}
-              colorMode="automaticPalette"
-              showLegend={series.length > 1}
-              enableArea
-              displayType="custom"
-              customFormatter={formatValue}
-            />
+            {/* The legend reads the page layout edit mode, and a console chart is never on an editable page layout */}
+            <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
+              <GraphWidgetLineChart
+                id={`${chartId}-line-chart`}
+                data={series}
+                colorMode="automaticPalette"
+                showLegend={series.length > 1}
+                enableArea
+                displayType="custom"
+                customFormatter={formatValue}
+              />
+            </PageLayoutEditModeProviderContext>
           </WidgetComponentInstanceContext.Provider>
         </StyledLineChartContainer>
       </SubscriptionInfoContainer>
