@@ -20,6 +20,7 @@ describe('startCli', () => {
         loadCli: async () => ({ runCli }),
       });
 
+      expect(runCli).toHaveBeenCalledTimes(1);
       expect(runCli).toHaveBeenCalledWith(['version']);
     },
   );
