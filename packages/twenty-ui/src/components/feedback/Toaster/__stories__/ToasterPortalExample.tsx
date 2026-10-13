@@ -19,8 +19,12 @@ export const ToasterPortalExample = ({
   const [target, setTarget] = useState<'default' | 'explicit' | 'null'>(
     'default',
   );
-  const container =
-    target === 'explicit' ? destination : target === 'null' ? null : undefined;
+  const portalContainers = {
+    default: undefined,
+    explicit: destination,
+    null: null,
+  };
+  const container = portalContainers[target];
 
   const example = (
     <div
