@@ -14,7 +14,7 @@ import {
   FindOneApplicationByUniversalIdentifierDocument,
   type FindOneApplicationByUniversalIdentifierQuery,
   JobState,
-  TriggerInstallApplicationJobDocument,
+  TriggerInstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 type UseInstallMarketplaceAppArgs = {
@@ -29,8 +29,8 @@ export const useInstallMarketplaceApp = ({
   onCompleted,
 }: UseInstallMarketplaceAppArgs = {}) => {
   const { enqueueToast } = useToast();
-  const [triggerInstallApplicationJob, { loading: isTriggeringInstall }] =
-    useMutation(TriggerInstallApplicationJobDocument);
+  const [triggerInstallApplication, { loading: isTriggeringInstall }] =
+    useMutation(TriggerInstallApplicationDocument);
   const [findInstalledApplication] = useLazyQuery(
     FindOneApplicationByUniversalIdentifierDocument,
     { fetchPolicy: 'network-only' },
@@ -62,7 +62,7 @@ export const useInstallMarketplaceApp = ({
     async (jobStatus: TrackedJobStatus, trackedUniversalIdentifier: string) => {
       if (jobStatus.state === JobState.FAILED) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: isNonEmptyString(jobStatus.failedReason)
             ? jobStatus.failedReason
             : t`Failed to install the application.`,
@@ -82,7 +82,7 @@ export const useInstallMarketplaceApp = ({
         installedApplication = result.data?.findOneApplication;
       } catch {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to load the application.`,
         });
         return;
@@ -90,7 +90,7 @@ export const useInstallMarketplaceApp = ({
 
       if (!isDefined(installedApplication)) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to load the application.`,
         });
         return;
@@ -111,7 +111,7 @@ export const useInstallMarketplaceApp = ({
       );
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Application installed successfully.`,
       });
       onCompleted?.(installedApplication);
@@ -130,11 +130,11 @@ export const useInstallMarketplaceApp = ({
     }
 
     try {
-      const { data } = await triggerInstallApplicationJob({
+      const { data } = await triggerInstallApplication({
         variables: { input: { universalIdentifier } },
       });
 
-      const jobId = data?.triggerInstallApplicationJob.jobId;
+      const jobId = data?.triggerInstallApplication.jobId;
 
       if (isDefined(jobId)) {
         trackJob({ jobId, context: universalIdentifier });
@@ -143,7 +143,7 @@ export const useInstallMarketplaceApp = ({
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: graphqlMessage ?? t`Failed to install the application.`,
       });
     }

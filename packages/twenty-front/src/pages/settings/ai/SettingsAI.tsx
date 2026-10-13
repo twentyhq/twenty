@@ -26,7 +26,7 @@ import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/S
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
 import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
 import { SettingsAiUsageTab } from '~/pages/settings/ai/components/SettingsAiUsageTab';
-import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
+import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import { useCreateTool } from '~/pages/settings/ai/hooks/useCreateTool';
 
 const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';

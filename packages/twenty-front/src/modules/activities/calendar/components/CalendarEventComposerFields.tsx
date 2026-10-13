@@ -12,7 +12,7 @@ import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEm
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
 import { FormDateFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateFieldInput';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
-import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
+import { AVAILABLE_TIMEZONE_OPTIONS } from '@/localization/constants/AvailableTimezoneOptions';
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
@@ -304,7 +304,7 @@ export const CalendarEventComposerFields = ({
         <StyledNoticesContainer>
           {composerState.accountOptions.length === 0 && (
             <Callout
-              variant="warning"
+              status="warning"
               title={t`Connect a calendar account`}
               description={
                 isDefined(onAddAccount)
@@ -312,15 +312,18 @@ export const CalendarEventComposerFields = ({
                   : t`Ask a workspace admin for the Sync Account permission to connect a calendar account.`
               }
               action={
-                isDefined(onAddAccount)
-                  ? { label: t`Add account`, onClick: onAddAccount }
-                  : undefined
+                isDefined(onAddAccount) ? (
+                  <Callout.Action
+                    type="button"
+                    onClick={onAddAccount}
+                  >{t`Add account`}</Callout.Action>
+                ) : undefined
               }
             />
           )}
           {composerState.missingScopes.length > 0 && (
             <Callout
-              variant="error"
+              status="error"
               title={t`Calendar access needs approval`}
               description={
                 isDefined(onReauthorize)
@@ -328,15 +331,18 @@ export const CalendarEventComposerFields = ({
                   : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
               }
               action={
-                isDefined(onReauthorize)
-                  ? { label: t`Reconnect`, onClick: onReauthorize }
-                  : undefined
+                isDefined(onReauthorize) ? (
+                  <Callout.Action
+                    type="button"
+                    onClick={onReauthorize}
+                  >{t`Reconnect`}</Callout.Action>
+                ) : undefined
               }
             />
           )}
           {!composerState.hasValidDateRange && (
             <Callout
-              variant="warning"
+              status="warning"
               title={t`Check the event dates`}
               description={
                 composerState.isFullDay
@@ -347,7 +353,7 @@ export const CalendarEventComposerFields = ({
           )}
           {composerState.hasTooManyAttendees && (
             <Callout
-              variant="warning"
+              status="warning"
               title={t`Too many guests`}
               description={t`Remove some guests before creating this event.`}
             />

@@ -169,7 +169,7 @@ describe('computeRecordFormFields', () => {
     ]);
   });
 
-  it('should merge the widgets of a field into one entry, placed at its first visible widget', () => {
+  it('should merge the widgets of a field into one entry at its first widget, visible only when all of them are', () => {
     const result = computeRecordFormFields({
       recordFormPageLayout: buildPageLayout([
         {
@@ -183,15 +183,10 @@ describe('computeRecordFormFields', () => {
             }),
             buildFormFieldWidget({ fieldMetadataId: 'field-code', index: 1 }),
             buildFormFieldWidget({ fieldMetadataId: 'field-name', index: 2 }),
-            buildFormFieldWidget({
-              fieldMetadataId: 'field-city',
-              index: 3,
-              isActive: false,
-            }),
+            buildFormFieldWidget({ fieldMetadataId: 'field-city', index: 3 }),
             buildFormFieldWidget({
               fieldMetadataId: 'field-city',
               index: 4,
-              isActive: false,
               id: 'second-city-widget',
             }),
           ],
@@ -202,30 +197,30 @@ describe('computeRecordFormFields', () => {
 
     expect(summarize(result)).toEqual([
       {
-        name: 'code',
-        widgets: [['widget-field-code', true]],
-        isVisible: true,
-      },
-      {
         name: 'name',
         widgets: [
           ['hidden-name-widget', false],
           ['widget-field-name', true],
         ],
+        isVisible: false,
+      },
+      {
+        name: 'code',
+        widgets: [['widget-field-code', true]],
         isVisible: true,
       },
       {
         name: 'city',
         widgets: [
-          ['widget-field-city', false],
-          ['second-city-widget', false],
+          ['widget-field-city', true],
+          ['second-city-widget', true],
         ],
-        isVisible: false,
+        isVisible: true,
       },
     ]);
   });
 
-  it('should merge the widgets of every morph target into the morph field', () => {
+  it('should keep a hidden morph field hidden when a widget is added for a new target', () => {
     const ownerField = buildFieldMetadataItem('field-owner-person', 'owner', {
       type: FieldMetadataType.MORPH_RELATION,
       settings: { relationType: RelationType.MANY_TO_ONE },
@@ -242,6 +237,12 @@ describe('computeRecordFormFields', () => {
             name: 'ownerCompany',
           },
         },
+        {
+          sourceFieldMetadata: {
+            id: 'field-owner-opportunity',
+            name: 'ownerOpportunity',
+          },
+        },
       ],
     });
 
@@ -250,16 +251,20 @@ describe('computeRecordFormFields', () => {
         {
           position: 10,
           widgets: [
-            buildFormFieldWidget({ fieldMetadataId: 'field-name', index: 0 }),
             buildFormFieldWidget({
               fieldMetadataId: 'field-owner-person',
-              index: 1,
+              index: 0,
               isActive: false,
             }),
             buildFormFieldWidget({
               fieldMetadataId: 'field-owner-company',
-              index: 2,
+              index: 1,
               isActive: false,
+            }),
+            buildFormFieldWidget({ fieldMetadataId: 'field-name', index: 2 }),
+            buildFormFieldWidget({
+              fieldMetadataId: 'field-owner-opportunity',
+              index: 3,
             }),
           ],
         },
@@ -269,17 +274,18 @@ describe('computeRecordFormFields', () => {
 
     expect(summarize(result)).toEqual([
       {
-        name: 'name',
-        widgets: [['widget-field-name', true]],
-        isVisible: true,
-      },
-      {
         name: 'owner',
         widgets: [
           ['widget-field-owner-person', false],
           ['widget-field-owner-company', false],
+          ['widget-field-owner-opportunity', true],
         ],
         isVisible: false,
+      },
+      {
+        name: 'name',
+        widgets: [['widget-field-name', true]],
+        isVisible: true,
       },
     ]);
   });

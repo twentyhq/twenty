@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
+msgstr "{actorName} autentifikator ilovangizsiz {workspaceDisplayName} tizimiga kirish imkonini beruvchi tiklash kodini yaratdi."
+
+#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
 msgstr "{actorName} {targetName} ({targetEmail}) uchun server administratori ruxsatini yangiladi."
@@ -37,6 +42,11 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Iltimos, ushbu domenni tasdiqlang, 
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
 msgstr "Sinov muddati tugashidan oldin ogohlantirish"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
+msgstr "{workspaceDisplayName} tizimiga kirish uchun tiklash kodi ishlatildi. Bu ish maydoni uchun autentifikatoringiz olib tashlandi va u yerdagi boshqa seanslaringizdan chiqildi."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -128,9 +138,19 @@ msgid "Hi {userName},"
 msgstr "Salom, {userName},"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "If this was not you, contact your workspace administrator and change your password."
+msgstr "Agar buni siz qilmagan bo‘lsangiz, ish maydoni administratoringiz bilan bog‘laning va parolingizni o‘zgartiring."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
 msgstr "Agar Twenty siz uchun mos boʻlsa, hammasi tayyor — siz hech narsa qilishingiz shart emas. Agar u sizga toʻgʻri kelmasa, shu muddatgacha bir marta bosish bilan bekor qilishingiz mumkin va sizdan toʻlov olinmaydi."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "If you did not ask for this, contact your workspace administrator and change your password."
+msgstr "Agar buni siz so‘ramagan bo‘lsangiz, ish maydoni administratoringiz bilan bog‘laning va parolingizni o‘zgartiring."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -234,6 +254,11 @@ msgid "Set"
 msgstr "Oʻrnatish"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "Set up two-factor authentication again under Settings, Profile."
+msgstr "Sozlamalar, Profil bo‘limida ikki faktorli autentifikatsiyani qayta sozlang."
+
+#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
 msgstr "Parolingizni oʻrnating 🗝"
@@ -247,6 +272,11 @@ msgstr "Yangi ish maydoni yaratish"
 #: src/emails/test.email.tsx
 msgid "Test email"
 msgstr "Sinov xati"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
+msgstr "Koddan bir marta foydalanish mumkin va uning muddati {formattedExpiresAt} da tugaydi. Undan foydalanish ushbu ish maydoni uchun joriy autentifikatoringizni olib tashlaydi va sizni u yerdagi boshqa seanslaringizdan chiqaradi."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -267,6 +297,16 @@ msgstr "Ish maydoningiz va unda yaratganlaringizni saqlab qolish uchun toʻlov u
 #: src/components/Footer.tsx
 msgid "Twenty.com, Public Benefit Corporation"
 msgstr "Twenty.com, Public Benefit Corporation"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "Two-factor authentication recovery code issued"
+msgstr "Ikki faktorli autentifikatsiya tiklash kodi berildi"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "Two-factor authentication reset"
+msgstr "Ikki faktorli autentifikatsiyani qayta o‘rnatish"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

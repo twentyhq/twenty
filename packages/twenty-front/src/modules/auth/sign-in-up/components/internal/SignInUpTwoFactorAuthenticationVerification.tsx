@@ -186,7 +186,7 @@ export const SignInUpTOTPVerification = () => {
     try {
       if (!isCaptchaReady) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Captcha (anti-bot check) is still loading, try again`,
         });
         setIsLoading(false);
@@ -216,6 +216,10 @@ export const SignInUpTOTPVerification = () => {
 
   const handleBack = () => {
     setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
+  };
+
+  const handleUseRecoveryCode = () => {
+    setSignInUpStep(SignInUpStep.TwoFactorAuthenticationRecovery);
   };
 
   return (
@@ -269,6 +273,11 @@ export const SignInUpTOTPVerification = () => {
         fullWidth
         disabled={isLoading}
       >{t`Submit`}</MainButton>
+      <StyledActionBackLinkContainer>
+        <Button variant="link" onClick={handleUseRecoveryCode}>
+          <Trans>Lost your authenticator? Use a recovery code</Trans>
+        </Button>
+      </StyledActionBackLinkContainer>
       <StyledActionBackLinkContainer>
         <Button variant="link" onClick={handleBack}>
           <Trans>Back</Trans>

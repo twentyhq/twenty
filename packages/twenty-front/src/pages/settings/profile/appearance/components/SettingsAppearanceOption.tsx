@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { IconCheck } from 'twenty-ui/icon';
 import { Radio } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { SettingsAppearancePreview } from '~/pages/settings/profile/appearance/components/SettingsAppearancePreview';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
 const StyledChoice = styled.label`
   display: flex;

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUploadWorkspaceMemberProfilePicture } from '@/settings/members/hooks/useUploadWorkspaceMemberProfilePicture';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
-import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
+import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { SettingsImageInput } from '@/settings/components/SettingsImageInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -93,7 +93,7 @@ export const WorkspaceMemberPictureUploader = ({
       const message =
         error instanceof Error ? error.message : t`Failed to upload picture`;
       setErrorMessage(t`An error occurred while uploading the picture.`);
-      enqueueToast({ variant: 'error', children: message });
+      enqueueToast({ status: 'error', children: message });
     } finally {
       setIsUploading(false);
     }
@@ -122,7 +122,7 @@ export const WorkspaceMemberPictureUploader = ({
       const message =
         error instanceof Error ? error.message : t`Failed to remove picture`;
       setErrorMessage(t`An error occurred while removing the picture.`);
-      enqueueToast({ variant: 'error', children: message });
+      enqueueToast({ status: 'error', children: message });
     } finally {
       setIsRemoving(false);
     }
@@ -146,7 +146,7 @@ export const WorkspaceMemberPictureUploader = ({
   return (
     <SettingsImageInput
       picture={displayAvatarUrl}
-      onUpload={handleUpload}
+      onFileSelect={handleUpload}
       onRemove={handleRemove}
       onAbort={isUploading ? handleAbort : undefined}
       isUploading={isUploading || isRemoving}

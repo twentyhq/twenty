@@ -1,4 +1,4 @@
-import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -178,7 +178,7 @@ export const SettingsObjectNewFieldConfigure = () => {
       }
       default: {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Please select at least one destination object for this relation.`,
         });
         return setIsSaving(false);

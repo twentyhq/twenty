@@ -13,7 +13,6 @@ import { Section } from 'twenty-ui/layout';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
-import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
 import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
@@ -204,12 +203,11 @@ const SlackUserLinksSettingsContent = () => {
           description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
         />
       )}
-      <SlackAccessModeSection canManage={canManage} />
       {canManage && (
         <Section>
           <H2Title
             title="Unlinked Slack users"
-            description="These Slack users talk to the assistant with its default role. Pick a workspace member on a row to link them in place, or auto-link everyone whose Slack email matches a workspace member."
+            description="Only Slack users linked to a workspace member can use the assistant. Pick a workspace member on a row to link them in place, or auto-link everyone whose Slack email matches a workspace member."
           />
           {isUnlinkedSlackUsersLoading && unlinkedSlackUsers.length === 0 ? (
             <StyledCenteredState>

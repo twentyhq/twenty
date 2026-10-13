@@ -88,7 +88,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         1
     ) {
       return enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`At least one authentication method must be enabled`,
       });
     }

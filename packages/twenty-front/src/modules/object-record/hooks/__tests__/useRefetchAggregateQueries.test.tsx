@@ -32,7 +32,22 @@ describe('useRefetchAggregateQueries', () => {
     expect(mockRefetchQueries).toHaveBeenCalledTimes(1);
     expect(mockRefetchQueries).toHaveBeenCalledWith({
       include: [expectedQueryName, expectedQueryNameGroupBy],
+      onQueryUpdated: expect.any(Function),
     });
+  });
+
+  it('should not refetch skipped queries', async () => {
+    const { result } = renderHook(() => useRefetchAggregateQueries());
+    await result.current.refetchAggregateQueries({
+      objectMetadataNamePlural: 'opportunities',
+    });
+
+    const { onQueryUpdated } = mockRefetchQueries.mock.calls[0][0];
+
+    expect(onQueryUpdated({ options: { fetchPolicy: 'standby' } })).toBe(false);
+    expect(onQueryUpdated({ options: { fetchPolicy: 'cache-first' } })).toBe(
+      true,
+    );
   });
 
   it('should handle errors during refetch', async () => {

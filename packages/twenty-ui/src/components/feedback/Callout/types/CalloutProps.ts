@@ -1,17 +1,23 @@
-import { type IconComponent } from '@ui/icon/types/IconComponent';
+import { type useRender } from '@base-ui/react/use-render';
+import { type ReactNode } from 'react';
+
+import { type CalloutColor } from './CalloutColor';
+import { type CalloutState } from './CalloutState';
+import { type CalloutStatus } from './CalloutStatus';
 import { type CalloutVariant } from './CalloutVariant';
 
-export type CalloutProps = {
-  variant: CalloutVariant;
-  title: string;
-  description?: string;
+export type CalloutProps = Omit<
+  useRender.ComponentProps<'div', CalloutState>,
+  'title' | 'color' | 'children'
+> & {
+  status?: CalloutStatus;
+  variant?: CalloutVariant;
+  color?: CalloutColor;
+  title: ReactNode;
+  description?: ReactNode;
   fullWidth?: boolean;
-  Icon?: IconComponent;
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
-  isClosable?: boolean;
+  icon?: ReactNode;
+  action?: ReactNode;
   closeLabel?: string;
-  onClose?: () => void;
+  onDismiss?: () => void;
 };

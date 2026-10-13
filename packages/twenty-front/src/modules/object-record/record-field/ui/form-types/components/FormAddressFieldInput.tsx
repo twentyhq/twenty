@@ -7,7 +7,7 @@ import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/typ
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { Field } from 'twenty-ui/primitives/input';
 import { t } from '@lingui/core/macro';
-import { normalizeAddressFieldValueForPersist } from '~/utils/normalize-address-field-value-for-persist';
+import { normalizeAddressFieldValueForPersist } from '@/object-record/record-field/ui/utils/normalizeAddressFieldValueForPersist';
 
 type FormAddressFieldInputProps = {
   label?: string;

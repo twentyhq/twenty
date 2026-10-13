@@ -45,6 +45,7 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =
   'release-enterprise-binding-confirmation-modal';
@@ -276,7 +277,7 @@ export const SettingsEnterprise = ({
 
       if (result.data?.setEnterpriseKey.isValid === true) {
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Organization license activated successfully`,
         });
         setEnterpriseKey('');
@@ -286,7 +287,7 @@ export const SettingsEnterprise = ({
         await loadCurrentUser();
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to activate Organization license. Please check your key or contact support.`,
         });
       }
@@ -312,7 +313,7 @@ export const SettingsEnterprise = ({
         enqueueToast(getToastOptionsFromError({ error, duration: 10000 }));
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Error activating Organization license`,
         });
       }
@@ -341,16 +342,16 @@ export const SettingsEnterprise = ({
       const portalUrl = data?.enterprisePortalSession;
 
       if (portalUrl !== null && portalUrl !== undefined) {
-        window.open(portalUrl, '_blank', 'noopener');
+        openUrlInNewTab(portalUrl);
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Could not open billing portal. Please check your Organization key is present, or contact support.`,
         });
       }
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error opening billing portal`,
       });
     }
@@ -369,13 +370,13 @@ export const SettingsEnterprise = ({
       if (data?.refreshEnterpriseValidityToken === true) {
         setIsBoundToAnotherServer(false);
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Validity token refreshed successfully`,
         });
         await loadCurrentUser();
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Could not refresh validity token. Please contact support.`,
         });
       }
@@ -398,7 +399,7 @@ export const SettingsEnterprise = ({
         enqueueToast(getToastOptionsFromError({ error, duration: 10000 }));
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Error refreshing validity token. Please contact support.`,
         });
       }
@@ -416,7 +417,7 @@ export const SettingsEnterprise = ({
       if (result.data?.releaseEnterpriseServerBinding.isValid === true) {
         setIsBoundToAnotherServer(false);
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Organization key transferred to this server`,
         });
         const { data: statusData } = await fetchSubscriptionStatus();
@@ -425,19 +426,19 @@ export const SettingsEnterprise = ({
         await loadCurrentUser();
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Could not transfer the Organization key. Please contact support.`,
         });
       }
     } catch (error) {
       if (isGraphqlErrorOfType(error, 'ENTERPRISE_RELEASE_RATE_LIMITED')) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later or contact support.`,
         });
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Error transferring the Organization key`,
         });
       }
@@ -471,7 +472,7 @@ export const SettingsEnterprise = ({
         await loadCurrentUser();
 
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children:
             nextInstanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
               ? t`Registered as a development instance. This instance will not be billed.`
@@ -483,7 +484,7 @@ export const SettingsEnterprise = ({
       } catch {
         if (!instanceUpdateSuccess) {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`Could not update the instance type`,
           });
         }
@@ -499,12 +500,12 @@ export const SettingsEnterprise = ({
             setIsInstanceTypeFromDb(previousIsInstanceTypeFromDb);
             await loadCurrentUser();
             enqueueToast({
-              variant: 'error',
+              status: 'error',
               children: t`Could not refresh validity token - reverted the instance type change.`,
             });
           } catch {
             enqueueToast({
-              variant: 'error',
+              status: 'error',
               children: t`Could not refresh validity token and could not revert the instance type change.`,
             });
           }

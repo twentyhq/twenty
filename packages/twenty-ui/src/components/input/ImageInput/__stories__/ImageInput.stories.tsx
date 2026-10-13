@@ -10,7 +10,7 @@ const meta: Meta<typeof ImageInput> = {
   id: 'ui-input-imageinput',
   title: 'UI/Components/Input/ImageInput',
   component: ImageInput,
-  args: { onUpload: fn(), onRemove: fn() },
+  args: { onFileSelect: fn(), onRemove: fn() },
   decorators: [ComponentDecorator],
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
 };

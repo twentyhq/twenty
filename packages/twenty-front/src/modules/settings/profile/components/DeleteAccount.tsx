@@ -54,7 +54,7 @@ export const DeleteAccount = () => {
   const leaveWorkspace = async () => {
     if (!isDefined(currentWorkspaceMemberId)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Current workspace member not found.`,
       });
       return;

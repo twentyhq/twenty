@@ -42,7 +42,6 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
-import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -108,7 +107,6 @@ export class StreamAgentChatJob {
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
-    private readonly sharingService: AgentChatSharingService,
     private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
@@ -656,9 +654,16 @@ export class StreamAgentChatJob {
       usageTotals.conversationSize = part.usage?.inputTokens ?? 0;
     }
 
+    if (part.type === 'start') {
+      return { startedAt: new Date().toISOString() };
+    }
+
     if (part.type === 'finish') {
+      const finishedAt = new Date().toISOString();
+
       return {
-        createdAt: new Date().toISOString(),
+        createdAt: finishedAt,
+        finishedAt,
         usage: {
           inputTokens: usageTotals.inputTokens,
           outputTokens: usageTotals.outputTokens,
@@ -781,9 +786,7 @@ export class StreamAgentChatJob {
       workspaceId,
       threadId,
       streamId,
-      recordedActivity: (await this.sharingService.hasInboxState(workspaceId))
-        ? { lastMessageText: replyText }
-        : null,
+      lastMessageText: replyText,
       usage: {
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: usageTotals.conversationSize,

@@ -9,10 +9,11 @@ import {
   type FieldCurrencyMetadata,
   type FieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { CURRENCY_CODE_LABELS } from 'twenty-shared/constants';
+import { CURRENCY_CODE_ICONS } from '@/ui/input/components/internal/currency/constants/CurrencyCodeIcons';
 import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
+import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
 
 const StyledCurrencyIconContainer = styled.span`
   align-items: center;
@@ -31,10 +32,12 @@ export const CurrencyDisplay = ({
   const theme = useTheme();
 
   const currencyCode = currencyValue?.currencyCode;
-  const currencyMetadata = isDefined(currencyCode)
-    ? SETTINGS_FIELD_CURRENCY_CODES[currencyCode]
+  const CurrencyIcon = isDefined(currencyCode)
+    ? CURRENCY_CODE_ICONS[currencyCode]
     : null;
-  const CurrencyIcon = currencyMetadata?.Icon ?? null;
+  const currencyLabel = isDefined(currencyCode)
+    ? CURRENCY_CODE_LABELS[currencyCode]?.label
+    : undefined;
 
   const amountToDisplay = !isDefined(currencyValue?.amountMicros)
     ? null
@@ -46,7 +49,7 @@ export const CurrencyDisplay = ({
 
   const { formatNumber } = useNumberFormat();
   const currencyTooltipContent = isDefined(currencyCode)
-    ? `${currencyCode}${currencyMetadata?.label ? ` - ${currencyMetadata.label}` : ''}`
+    ? `${currencyCode}${isDefined(currencyLabel) ? ` - ${currencyLabel}` : ''}`
     : undefined;
   const shouldShowCurrencyTooltip =
     isDefined(CurrencyIcon) &&

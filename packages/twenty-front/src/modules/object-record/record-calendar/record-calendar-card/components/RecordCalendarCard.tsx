@@ -100,13 +100,15 @@ export const RecordCalendarCard = ({
               isDragging={!isDragOverlay && isRecordIdSecondaryDragMultiple}
             >
               <RecordCalendarCardHeader recordId={recordId} />
-              <Collapsible isExpanded={!isCompactModeActive}>
-                <RecordCalendarCardBody
-                  recordId={recordId}
-                  calendarDay={calendarDay}
-                  isRecordReadOnly={false}
-                />
-              </Collapsible>
+              <Collapsible.Root open={!isCompactModeActive}>
+                <Collapsible.Panel>
+                  <RecordCalendarCardBody
+                    recordId={recordId}
+                    calendarDay={calendarDay}
+                    isRecordReadOnly={false}
+                  />
+                </Collapsible.Panel>
+              </Collapsible.Root>
             </RecordCard>
           </StyledCardContainer>
         </StyledRecordCardContainer>

@@ -122,7 +122,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       });
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Granted ${parsedAmount} credits to this workspace.`,
       });
       handleClose();
@@ -138,9 +138,9 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       onClose={handleClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           data-globally-prevent-click-outside
           style={{

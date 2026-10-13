@@ -4,6 +4,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
+import { sortWorkflowActionLogicFunctions } from '@/side-panel/pages/workflow/action/utils/sortWorkflowActionLogicFunctions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
@@ -18,6 +19,7 @@ import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/const
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { WORKFLOW_ACTION_FEATURE_FLAGS } from 'twenty-shared/workflow';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export type WorkflowActionSelection = {
   type: WorkflowActionType;
@@ -49,6 +51,11 @@ export const SidePanelWorkflowSelectAction = ({
   const featureFlagsMap = useWorkspaceFeatureFlagsMap();
 
   const isActionEnabled = ({ type }: { type: WorkflowActionType }) => {
+    // Hidden from the picker only, so the AI workflow tools can still add it
+    if (type === 'WAIT_FOR_EVENT') {
+      return featureFlagsMap[FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED] === true;
+    }
+
     const featureFlag = WORKFLOW_ACTION_FEATURE_FLAGS[type];
 
     return !isDefined(featureFlag) || featureFlagsMap[featureFlag] === true;
@@ -57,12 +64,18 @@ export const SidePanelWorkflowSelectAction = ({
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const toolFunctions = logicFunctions.filter(
-    (fn) =>
-      isDefined(fn.workflowActionTriggerSettings) &&
-      isDefined(fn.applicationId) &&
-      !isWorkspaceCustomApplication({ id: fn.applicationId }, currentWorkspace),
-  );
+  const toolFunctions = sortWorkflowActionLogicFunctions({
+    logicFunctions: logicFunctions.filter(
+      (fn) =>
+        isDefined(fn.workflowActionTriggerSettings) &&
+        isDefined(fn.applicationId) &&
+        !isWorkspaceCustomApplication(
+          { id: fn.applicationId },
+          currentWorkspace,
+        ),
+    ),
+    installedApplications: currentWorkspace?.installedApplications ?? [],
+  });
 
   const handleActionClick = (actionType: WorkflowActionType) => {
     onActionSelected({ type: actionType });

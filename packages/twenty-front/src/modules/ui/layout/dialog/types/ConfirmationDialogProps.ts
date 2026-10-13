@@ -5,6 +5,7 @@ export type ConfirmationDialogProps = {
   dialogId: string;
   title: string;
   loading?: boolean;
+  isConfirmButtonDisabled?: boolean;
   subtitle: ReactNode;
   onClose?: () => void;
   onConfirmClick: () => void;

@@ -24,7 +24,7 @@ jest.mock('@/settings/roles/components/SettingsRolesQueryEffect', () => ({
   SettingsRolesQueryEffect: () => null,
 }));
 
-jest.mock('@/app/routing/components/WorkspaceRouteUnavailable', () => ({
+jest.mock('@/ui/layout/page/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div>Role unavailable</div>,
 }));
 
@@ -212,7 +212,7 @@ describe('SettingsRole', () => {
 
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        variant: 'error',
+        status: 'error',
         children: 'Role name cannot be empty',
       }),
     );
@@ -265,7 +265,7 @@ describe('SettingsRole', () => {
       expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
     });
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'error' }),
+      expect.objectContaining({ status: 'error' }),
     );
     expect(mockLoadCurrentUser).not.toHaveBeenCalled();
     expect(saveButton).not.toHaveAttribute('aria-busy', 'true');

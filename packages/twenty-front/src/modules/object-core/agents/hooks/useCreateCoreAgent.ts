@@ -54,7 +54,7 @@ export const useCreateCoreAgent = () => {
     } catch (error) {
       logError(error);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to create agent`,
       });
 
@@ -65,7 +65,7 @@ export const useCreateCoreAgent = () => {
 
     if (!isDefined(coreAgentId)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to create agent`,
       });
 

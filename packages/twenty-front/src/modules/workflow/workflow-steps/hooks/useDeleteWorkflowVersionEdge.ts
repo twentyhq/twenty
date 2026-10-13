@@ -1,20 +1,13 @@
 import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
-import {
-  DeleteCoreWorkflowVersionEdgeDocument,
-  type CreateWorkflowVersionEdgeInput,
-  type DeleteWorkflowVersionEdgeMutation,
-  type DeleteWorkflowVersionEdgeMutationVariables,
-} from '~/generated/graphql';
+import { DeleteCoreWorkflowVersionEdgeDocument } from '~/generated/graphql';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useMutation } from '@apollo/client/react';
-import { DELETE_WORKFLOW_VERSION_EDGE } from '@/workflow/graphql/mutations/deleteWorkflowVersionEdge';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
+import { type WorkflowVersionEdgeInput } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionEdge';
 
 export const useDeleteWorkflowVersionEdge = () => {
   const apolloCoreClient = useApolloCoreClient();
-  const isCore = useIsWorkflowCoreEnabled();
   const handleCoreMutationError = useWorkflowEditorMutationErrorHandler();
   const [mutateCore] = useMutation(DeleteCoreWorkflowVersionEdgeDocument, {
     client: apolloCoreClient,
@@ -24,33 +17,22 @@ export const useDeleteWorkflowVersionEdge = () => {
   const { applyWorkflowVersionStepChanges } =
     useApplyWorkflowVersionStepChanges();
 
-  const [mutate] = useMutation<
-    DeleteWorkflowVersionEdgeMutation,
-    DeleteWorkflowVersionEdgeMutationVariables
-  >(DELETE_WORKFLOW_VERSION_EDGE, { client: apolloCoreClient });
-
-  const deleteWorkflowVersionEdge = async (
-    input: CreateWorkflowVersionEdgeInput,
-  ) => {
-    const { workflowVersionId, ...stepInput } = input;
-    const result = isCore
-      ? await mutateCore({
-          variables: {
-            input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
-          },
-        })
-      : await mutate({ variables: { input } });
+  const deleteWorkflowVersionEdge = async (input: WorkflowVersionEdgeInput) => {
+    const { workflowVersionId, ...edgeInput } = input;
+    const result = await mutateCore({
+      variables: {
+        input: { ...edgeInput, coreWorkflowVersionId: workflowVersionId },
+      },
+    });
 
     const workflowVersionStepChanges = result?.data?.deleteWorkflowVersionEdge;
 
     applyWorkflowVersionStepChanges({
       workflowVersionStepChanges,
-      workflowVersionId: input.workflowVersionId,
+      workflowVersionId,
     });
 
-    if (isCore) {
-      await invalidateCoreWorkflowVersions(apolloCoreClient);
-    }
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
 
     return result;
   };

@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useRef, useState } from 'react';
 
-import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
+import { useNavigationDrawerExpanded } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerExpanded';
+import { isResizablePanelDraggingState } from '@/ui/layout/resizable-panel/states/isResizablePanelDraggingState';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import { useLingui } from '@lingui/react/macro';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
@@ -22,11 +22,11 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
-import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
 export type NavigationDrawerProps = {
   children?: ReactNode;
   className?: string;
+  header?: ReactNode;
 };
 
 const StyledAnimatedContainer = styled.div<{
@@ -84,6 +84,7 @@ const StyledContent = styled.div`
 export const NavigationDrawer = ({
   children,
   className,
+  header,
 }: NavigationDrawerProps) => {
   const { t } = useLingui();
   const resizeHandleRef = useRef<HTMLDivElement>(null);
@@ -100,8 +101,8 @@ export const NavigationDrawer = ({
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
-  const setTableWidthResizeIsActive = useSetAtomState(
-    tableWidthResizeIsActiveState,
+  const setIsResizablePanelDragging = useSetAtomState(
+    isResizablePanelDraggingState,
   );
   const setShouldFocusNavigationDrawerExpandButton = useSetAtomState(
     shouldFocusNavigationDrawerExpandButtonState,
@@ -115,14 +116,14 @@ export const NavigationDrawer = ({
     setLiveWidth(null);
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setIsResizing(false);
-    setTableWidthResizeIsActive(true);
+    setIsResizablePanelDragging(false);
   };
 
   const handleWidthChange = (width: number) => {
     setNavigationDrawerWidth(width);
     setLiveWidth(null);
     setIsResizing(false);
-    setTableWidthResizeIsActive(true);
+    setIsResizablePanelDragging(false);
   };
 
   const handleWidthPreview = (width: number) => {
@@ -136,12 +137,12 @@ export const NavigationDrawer = ({
   const handleResizeEnd = () => {
     setLiveWidth(null);
     setIsResizing(false);
-    setTableWidthResizeIsActive(true);
+    setIsResizablePanelDragging(false);
   };
 
   const handleResizeStart = () => {
     setIsResizing(true);
-    setTableWidthResizeIsActive(false);
+    setIsResizablePanelDragging(true);
   };
 
   return (
@@ -154,7 +155,7 @@ export const NavigationDrawer = ({
         isResizing={isResizing}
       >
         <StyledContainer isExpanded={isExpanded}>
-          <NavigationDrawerHeader />
+          {header}
           <StyledContent>{children}</StyledContent>
         </StyledContainer>
 

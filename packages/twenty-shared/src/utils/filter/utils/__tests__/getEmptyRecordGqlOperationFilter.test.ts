@@ -115,6 +115,34 @@ describe('getEmptyRecordGqlOperationFilter', () => {
       expect(result).toHaveProperty('or');
     });
 
+    it('should check amountMicros for the CURRENCY amountMicros sub-field', () => {
+      const result = getEmptyRecordGqlOperationFilter(
+        makeParams(
+          FieldMetadataType.CURRENCY,
+          ViewFilterOperand.IS_EMPTY,
+          'amountMicros',
+        ),
+      );
+
+      expect(result).toEqual({
+        or: [{ testField: { amountMicros: { is: 'NULL' } } }],
+      });
+    });
+
+    it('should check currencyCode for the CURRENCY currencyCode sub-field', () => {
+      const result = getEmptyRecordGqlOperationFilter(
+        makeParams(
+          FieldMetadataType.CURRENCY,
+          ViewFilterOperand.IS_EMPTY,
+          'currencyCode',
+        ),
+      );
+
+      expect(result).toEqual({
+        or: [{ testField: { currencyCode: { is: 'NULL' } } }],
+      });
+    });
+
     it('should handle ACTOR type', () => {
       const result = getEmptyRecordGqlOperationFilter(
         makeParams(FieldMetadataType.ACTOR),
@@ -244,6 +272,20 @@ describe('getEmptyRecordGqlOperationFilter', () => {
       );
 
       expect(result).toHaveProperty('not');
+    });
+
+    it('should negate the currencyCode check for the CURRENCY currencyCode sub-field', () => {
+      const result = getEmptyRecordGqlOperationFilter(
+        makeParams(
+          FieldMetadataType.CURRENCY,
+          ViewFilterOperand.IS_NOT_EMPTY,
+          'currencyCode',
+        ),
+      );
+
+      expect(result).toEqual({
+        not: { or: [{ testField: { currencyCode: { is: 'NULL' } } }] },
+      });
     });
   });
 });

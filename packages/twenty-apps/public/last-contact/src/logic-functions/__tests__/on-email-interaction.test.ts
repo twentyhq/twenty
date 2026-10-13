@@ -41,12 +41,19 @@ const buildBatch = (
   })),
 });
 
-const setupQueryMock = (messageParticipants: Record<string, unknown>[]) => {
+const setupQueryMock = (
+  messageParticipants: Record<string, unknown>[],
+  messages: Record<string, unknown>[] = [],
+) => {
   queryMock.mockImplementation((query) => {
     if (query.messageParticipants) {
       return Promise.resolve({
         messageParticipants: buildPage(messageParticipants),
       });
+    }
+
+    if (query.messages) {
+      return Promise.resolve({ messages: buildPage(messages) });
     }
 
     if (query.people) {
@@ -151,7 +158,20 @@ describe('on-email-interaction handler', () => {
     expect(participantQueries).toHaveLength(1);
     expect(
       participantQueries[0][0].messageParticipants.__args.filter,
-    ).toEqual({ messageId: { in: [OLDER_MESSAGE_ID, MESSAGE_ID] } });
+    ).toEqual({
+      and: [
+        { messageId: { in: [OLDER_MESSAGE_ID, MESSAGE_ID] } },
+        {
+          or: [
+            { role: { eq: 'FROM' } },
+            { workspaceMemberId: { is: 'NOT_NULL' } },
+          ],
+        },
+      ],
+    });
+    expect(queryMock.mock.calls.some(([query]) => query.messages)).toBe(
+      false,
+    );
 
     const personUpserts = mutationMock.mock.calls.filter(
       ([mutation]) => mutation.createPeople,
@@ -198,5 +218,32 @@ describe('on-email-interaction handler', () => {
     );
 
     expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('counts a message without a sender or team member participant as an inbound email', async () => {
+    setupQueryMock([], [{ id: MESSAGE_ID, receivedAt: RECEIVED_AT }]);
+
+    await handler(
+      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
+    );
+
+    const messageQueries = queryMock.mock.calls.filter(
+      ([query]) => query.messages,
+    );
+    expect(messageQueries).toHaveLength(1);
+    expect(messageQueries[0][0].messages.__args.filter).toEqual({
+      id: { in: [MESSAGE_ID] },
+    });
+    expect(mutationMock.mock.calls[0][0].createPeople.__args.data).toEqual([
+      {
+        id: PERSON_ID,
+        lastContactAt: RECEIVED_AT,
+        lastContactById: null,
+        lastContactItemMessageId: MESSAGE_ID,
+        lastContactItemCalendarEventId: null,
+        lastInboundAt: RECEIVED_AT,
+        lastEmailId: MESSAGE_ID,
+      },
+    ]);
   });
 });

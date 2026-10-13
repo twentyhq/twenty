@@ -1,3 +1,4 @@
+import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -19,7 +20,7 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
 import { resolveWidgetTypeSelectTargetTabId } from '@/side-panel/pages/page-layout/utils/resolveWidgetTypeSelectTargetTabId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -47,8 +48,10 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
-  const { pageLayoutId, objectNameSingular: targetObjectNameSingular } =
-    usePageLayoutIdFromContextStore();
+  const {
+    pageLayoutId,
+    targetRecordIdentifier: { targetObjectNameSingular },
+  } = usePageLayoutSidePanelTarget();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { createRecordPageNoteWidget } =
@@ -390,7 +393,12 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
                 onEnter={() => handleCreateFrontComponentWidget(frontComponent)}
               >
                 <CommandMenuItem
-                  Icon={IconApps}
+                  LeftComponent={
+                    <AppMenuItemIcon
+                      Icon={IconApps}
+                      applicationId={frontComponent.applicationId}
+                    />
+                  }
                   label={frontComponent.name}
                   id={selectItemId}
                   onClick={() =>

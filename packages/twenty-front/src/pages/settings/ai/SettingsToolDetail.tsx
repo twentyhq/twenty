@@ -26,7 +26,7 @@ import {
   GetToolInputSchemaDocument,
 } from '~/generated-metadata/graphql';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
-import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
+import { SettingsToolParameterTable } from '@/settings/ai/components/SettingsToolParameterTable';
 
 const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
 
@@ -158,10 +158,10 @@ export const SettingsToolDetail = () => {
     });
 
     if (result.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Tool deleted` });
+      enqueueToast({ status: 'success', children: t`Tool deleted` });
       navigate(getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'));
     } else {
-      enqueueToast({ variant: 'error', children: t`Failed to delete tool` });
+      enqueueToast({ status: 'error', children: t`Failed to delete tool` });
     }
 
     setIsDeleting(false);

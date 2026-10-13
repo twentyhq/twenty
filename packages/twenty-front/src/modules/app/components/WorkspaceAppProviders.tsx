@@ -22,7 +22,9 @@ import { PromiseRejectionEffect } from '@/error-handler/components/PromiseReject
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
+import { WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS } from '@/object-core/workflows/constants/WorkflowRunCoreRecordReferenceFields';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
+import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
@@ -34,9 +36,9 @@ import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogMan
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
-import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
-import { UserUiScaleProviderEffect } from '@/ui/theme/components/UserUiScaleProviderEffect';
-import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
+import { UserThemeProviderEffect } from '@/workspace-member/effect-components/UserThemeProviderEffect';
+import { UserUiScaleProviderEffect } from '@/workspace-member/effect-components/UserUiScaleProviderEffect';
+import { PageFavicon } from '@/app/components/PageFavicon';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 
@@ -72,12 +74,16 @@ export const WorkspaceAppProviders = () => {
                             <GotoHotkeysEffectsProvider />
                             <WorkspaceAppPageTitle />
                             <PageFavicon />
-                            <RecordCreationFormProvider>
-                              <Outlet />
-                              <GlobalFilePreviewModal />
-                              <CommandMenuConfirmationModalManager />
-                              <CommandRunner />
-                            </RecordCreationFormProvider>
+                            <CoreRecordReferenceFieldsContext.Provider
+                              value={WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS}
+                            >
+                              <RecordCreationFormProvider>
+                                <Outlet />
+                                <GlobalFilePreviewModal />
+                                <CommandMenuConfirmationModalManager />
+                                <CommandRunner />
+                              </RecordCreationFormProvider>
+                            </CoreRecordReferenceFieldsContext.Provider>
                           </StrictMode>
                         </DialogManager>
                       </DialogComponentInstanceContext.Provider>

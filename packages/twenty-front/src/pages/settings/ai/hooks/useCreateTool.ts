@@ -32,7 +32,7 @@ export const useCreateTool = () => {
       }
 
       const newLogicFunction = result.response.data.createOneLogicFunction;
-      enqueueToast({ variant: 'success', children: t`Tool created` });
+      enqueueToast({ status: 'success', children: t`Tool created` });
 
       const applicationId = newLogicFunction.applicationId;
       if (isDefined(applicationId)) {

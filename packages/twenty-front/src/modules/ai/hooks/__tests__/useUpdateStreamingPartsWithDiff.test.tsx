@@ -4,7 +4,6 @@ import { type ReactNode } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { sleep } from '~/utils/sleep';
 
 import { useUpdateStreamingPartsWithDiff } from '@/ai/hooks/useUpdateStreamingPartsWithDiff';
@@ -45,13 +44,7 @@ const buildMessage = (
 
 const renderUpdateStreamingPartsWithDiff = () => {
   const Wrapper = ({ children }: { children: ReactNode }) => (
-    <JotaiProvider store={jotaiStore}>
-      <AgentChatComponentInstanceContext.Provider
-        value={{ instanceId: 'streaming-navigation-test' }}
-      >
-        {children}
-      </AgentChatComponentInstanceContext.Provider>
-    </JotaiProvider>
+    <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
   );
 
   return renderHook(() => useUpdateStreamingPartsWithDiff(), {

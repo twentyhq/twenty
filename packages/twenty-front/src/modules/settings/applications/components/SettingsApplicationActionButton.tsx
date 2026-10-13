@@ -28,6 +28,8 @@ export const SettingsApplicationActionButton = ({
         variant="solid"
         color="accent"
         size="sm"
+        nativeButton={false}
+        role="link"
         render={
           <Link
             to={getSettingsPath(SettingsPath.ApplicationDetail, {

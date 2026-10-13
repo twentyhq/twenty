@@ -29,7 +29,7 @@ export const SettingsApplicationAutoUpdateSection = ({
       });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update auto-upgrade setting.`,
       });
     }

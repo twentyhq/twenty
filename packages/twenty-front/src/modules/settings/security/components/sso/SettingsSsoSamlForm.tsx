@@ -1,4 +1,5 @@
 import { parseSamlMetadataFromXmlFile } from '@/settings/security/utils/parseSamlMetadataFromXmlFile';
+import { useBuildServerUrl } from '@/settings/security/hooks/useBuildServerUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -54,6 +55,7 @@ export const SettingsSsoSamlForm = () => {
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
+  const buildServerUrl = useBuildServerUrl();
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
@@ -62,7 +64,7 @@ export const SettingsSsoSamlForm = () => {
       e.target.value = '';
       if (!samlMetadataParsed.success) {
         return enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Invalid file: ${samlMetadataParsed.reason}`,
           duration: 5000,
         });
@@ -74,8 +76,8 @@ export const SettingsSsoSamlForm = () => {
     }
   };
 
-  const entityID = `${REACT_APP_SERVER_BASE_URL}/auth/saml/login/${getValues('id')}`;
-  const acsUrl = `${REACT_APP_SERVER_BASE_URL}/auth/saml/callback/${getValues('id')}`;
+  const entityID = buildServerUrl(`/auth/saml/login/${getValues('id')}`);
+  const acsUrl = buildServerUrl(`/auth/saml/callback/${getValues('id')}`);
 
   const inputFileRef = useRef<HTMLInputElement>(null);
 
@@ -99,7 +101,7 @@ export const SettingsSsoSamlForm = () => {
     );
     if (!response.ok) {
       return enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Metadata file generation failed`,
         duration: 2000,
       });

@@ -66,7 +66,7 @@ export const SettingsApplicationConnectionsSection = ({
             <Section.Header
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
-              adornment={
+              actions={
                 isNonEmptyString(provider.logoUrl) ? (
                   <Avatar
                     shape="square"
@@ -79,10 +79,9 @@ export const SettingsApplicationConnectionsSection = ({
             />
             {isOAuth && !isClientCredentialsConfigured && (
               <InlineBanner
-                variant="compact"
-                color="danger"
-                message={t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}
-              />
+                layout="compact"
+                status="error"
+              >{t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}</InlineBanner>
             )}
             {providerConnections.length > 0 && (
               <Table>

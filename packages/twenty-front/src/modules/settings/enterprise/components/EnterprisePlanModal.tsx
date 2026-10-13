@@ -16,6 +16,7 @@ import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledCheckoutButton = styled(MainButton)`
   width: 200px;
@@ -78,18 +79,18 @@ const StyledIntervalContainer = styled.div`
   width: 100%;
 `;
 
-const StyledIntervalCardContent = styled.div`
+const StyledIntervalCardContent = styled.span`
   display: flex;
   flex-direction: column;
 `;
 
-const StyledIntervalTitle = styled.div`
+const StyledIntervalTitle = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledIntervalSubtitle = styled.div`
+const StyledIntervalSubtitle = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
 `;
@@ -131,17 +132,17 @@ export const EnterprisePlanModal = () => {
       const checkoutUrl = data?.enterpriseCheckoutSession;
 
       if (checkoutUrl !== null && checkoutUrl !== undefined) {
-        window.open(checkoutUrl, '_blank', 'noopener');
+        openUrlInNewTab(checkoutUrl);
         closeDialog(ENTERPRISE_PLAN_MODAL_ID);
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Could not open Stripe. Please contact support.`,
         });
       }
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)
           : t`Error opening Stripe`,
@@ -153,10 +154,10 @@ export const EnterprisePlanModal = () => {
 
   return (
     <DialogInstance dialogId={ENTERPRISE_PLAN_MODAL_ID} dismissible>
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={t`Get Organization`}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           style={{ padding: 0 }}
         >

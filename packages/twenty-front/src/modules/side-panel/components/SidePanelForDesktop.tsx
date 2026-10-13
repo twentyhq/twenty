@@ -1,4 +1,4 @@
-import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
+import { isResizablePanelDraggingState } from '@/ui/layout/resizable-panel/states/isResizablePanelDraggingState';
 import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffect';
@@ -102,8 +102,8 @@ export const SidePanelForDesktop = () => {
     setIsShrinkingFromFullWidth(true);
   }, [shouldReduceMotion]);
 
-  const setTableWidthResizeIsActive = useSetAtomState(
-    tableWidthResizeIsActiveState,
+  const setIsResizablePanelDragging = useSetAtomState(
+    isResizablePanelDraggingState,
   );
 
   const shouldShowContent = isSidePanelOpened || shouldRenderContent;
@@ -145,9 +145,9 @@ export const SidePanelForDesktop = () => {
       setSidePanelWidth(width);
       setLiveWidth(null);
       setIsResizing(false);
-      setTableWidthResizeIsActive(true);
+      setIsResizablePanelDragging(false);
     },
-    [setSidePanelWidth, setTableWidthResizeIsActive],
+    [setSidePanelWidth, setIsResizablePanelDragging],
   );
 
   const handleWidthPreview = (width: number) => {
@@ -161,20 +161,20 @@ export const SidePanelForDesktop = () => {
   const handleResizeEnd = () => {
     setLiveWidth(null);
     setIsResizing(false);
-    setTableWidthResizeIsActive(true);
+    setIsResizablePanelDragging(false);
   };
 
   const handleResizeStart = useCallback(() => {
     setIsResizing(true);
-    setTableWidthResizeIsActive(false);
-  }, [setTableWidthResizeIsActive]);
+    setIsResizablePanelDragging(true);
+  }, [setIsResizablePanelDragging]);
 
   const handleCollapse = useCallback(() => {
     closeSidePanelMenu();
     setLiveWidth(null);
     setIsResizing(false);
-    setTableWidthResizeIsActive(true);
-  }, [closeSidePanelMenu, setTableWidthResizeIsActive]);
+    setIsResizablePanelDragging(false);
+  }, [closeSidePanelMenu, setIsResizablePanelDragging]);
 
   return (
     <>

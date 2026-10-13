@@ -1351,11 +1351,9 @@ describe('should work as expected for the different field types', () => {
           },
         },
         {
-          not: {
-            annualRecurringRevenue: {
-              amountMicros: {
-                eq: 1000 * 1000000,
-              },
+          annualRecurringRevenue: {
+            amountMicros: {
+              neq: 1000 * 1000000,
             },
           },
         },

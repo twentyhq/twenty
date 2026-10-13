@@ -29,6 +29,7 @@ import {
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsClaimApplicationSection } from '~/pages/settings/applications/components/SettingsClaimApplicationSection';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -99,18 +100,17 @@ export const SettingsApplicationsDeveloperTab = () => {
           title={t`Create an application`}
           description={t`You can either create a private app or share it to others`}
         />
-        <CommandBlock commands={createCommands} button={createCopyButton} />
+        <CommandBlock commands={createCommands} actions={createCopyButton} />
         <StyledButtonContainer>
           <Button
             startIcon={<IconArrowUpRight />}
             size="sm"
             onClick={() =>
-              window.open(
+              openUrlInNewTab(
                 getDocumentationUrl({
                   locale: currentWorkspaceMember?.locale,
                   path: '/developers/extend/apps/getting-started',
                 }),
-                '_blank',
               )
             }
             variant="outline"

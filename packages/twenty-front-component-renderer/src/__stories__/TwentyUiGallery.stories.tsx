@@ -1,3 +1,4 @@
+import { badgeTest } from '@/__stories__/twenty-ui-gallery/utils/badgeTest';
 import { currencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/currencyPickerTest';
 import { dropdownTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownTest';
 import { phoneCountryPickerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTest';
@@ -16,12 +17,14 @@ import { progressTest } from '@/__stories__/twenty-ui-gallery/utils/progressTest
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { numberStepperTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperTest';
 import { numberStepperSelectionTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSelectionTest';
+import { numberFieldTest } from '@/__stories__/twenty-ui-gallery/utils/numberFieldTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { layoutTest } from '@/__stories__/twenty-ui-gallery/utils/layoutTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
 import { resizeHandlePanelTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandlePanelTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
+import { buttonContractsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonContractsTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/responsiveHooksTest';
 import { RESPONSIVE_HOOKS_WIDGET_SIZING } from '@/__stories__/twenty-ui-gallery/constants/RESPONSIVE_HOOKS_WIDGET_SIZING';
@@ -34,12 +37,11 @@ import {
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
-import {
-  statusControlsTest,
-  tagControlsTest,
-  avatarControlsTest,
-  chipControlsTest,
-} from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
+import { statusControlsTest } from '@/__stories__/twenty-ui-gallery/utils/statusControlsTest';
+import { tagControlsTest } from '@/__stories__/twenty-ui-gallery/utils/tagControlsTest';
+import { PortalBoundsDecorator } from '@/__stories__/twenty-ui-gallery/components/PortalBoundsDecorator';
+import { portalBoundsTest } from '@/__stories__/twenty-ui-gallery/utils/portalBoundsTest';
+
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import { typographyTest } from '@/__stories__/twenty-ui-gallery/utils/typographyTest';
 import {
@@ -47,8 +49,6 @@ import {
   displayHelpersTest,
   galleryRenderTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
-import { alertDialogTest } from '@/__stories__/twenty-ui-gallery/utils/alertDialogTest';
-import { menuTest } from '@/__stories__/twenty-ui-gallery/utils/menuTest';
 import { popoverTest } from '@/__stories__/twenty-ui-gallery/utils/popoverTest';
 import { selectTest } from '@/__stories__/twenty-ui-gallery/utils/selectTest';
 import { switchTest } from '@/__stories__/twenty-ui-gallery/utils/switchTest';
@@ -59,12 +59,16 @@ import { radioCardTest } from '@/__stories__/twenty-ui-gallery/utils/radioCardTe
 import { checkboxTest } from '@/__stories__/twenty-ui-gallery/utils/checkboxTest';
 import { fieldControlsTest } from '@/__stories__/twenty-ui-gallery/utils/fieldControlsTest';
 import { radioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/radioGroupTest';
+import { segmentedControlTest } from '@/__stories__/twenty-ui-gallery/utils/segmentedControlTest';
 import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRangeTest';
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
-import { colorSampleTest } from '@/__stories__/twenty-ui-gallery/utils/colorSampleTest';
-import { loaderTest } from '@/__stories__/twenty-ui-gallery/utils/loaderTest';
+import { avatarControlsTest } from '@/__stories__/twenty-ui-gallery/utils/avatarControlsTest';
+import { commandBlockTest } from '@/__stories__/twenty-ui-gallery/utils/commandBlockTest';
+import { calloutTest } from '@/__stories__/twenty-ui-gallery/utils/calloutTest';
+import { chipControlsTest } from '@/__stories__/twenty-ui-gallery/utils/chipControlsTest';
+import { cardCompositionTest } from '@/__stories__/twenty-ui-gallery/utils/cardCompositionTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -81,23 +85,35 @@ export default meta;
 export const DataDisplayReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'react',
-  play: colorSampleTest,
+  play: commandBlockTest,
 });
 export const DataDisplayPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'preact',
-  play: colorSampleTest,
+  play: commandBlockTest,
+});
+
+export const BadgeReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-badge',
+  runtime: 'react',
+  play: badgeTest,
+});
+
+export const BadgePreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-badge',
+  runtime: 'preact',
+  play: badgeTest,
 });
 
 export const FeedbackReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'react',
-  play: loaderTest,
+  play: calloutTest,
 });
 export const FeedbackPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'preact',
-  play: loaderTest,
+  play: calloutTest,
 });
 
 export const ProgressReact: Story = createGalleryStory({
@@ -158,6 +174,18 @@ export const NumberStepperSelectionPreact: Story = createGalleryStory({
   play: numberStepperSelectionTest,
 });
 
+export const NumberFieldReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-field',
+  runtime: 'react',
+  play: numberFieldTest,
+});
+
+export const NumberFieldPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-field',
+  runtime: 'preact',
+  play: numberFieldTest,
+});
+
 export const JsonVisualizerReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-json-visualizer-gallery',
   runtime: 'react',
@@ -212,6 +240,17 @@ export const SurfacesPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-surfaces-gallery',
   runtime: 'preact',
   play: galleryRenderTest,
+});
+
+export const CardCompositionReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-card-composition',
+  runtime: 'react',
+  play: cardCompositionTest,
+});
+export const CardCompositionPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-card-composition',
+  runtime: 'preact',
+  play: cardCompositionTest,
 });
 
 export const DialogReact: Story = createGalleryStory({
@@ -361,15 +400,18 @@ export const TooltipPreact: Story = createGalleryStory({
   play: tooltipEscapeDismissalTest,
 });
 
-export const MenuReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-menu',
+export const PortalBoundsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-portals',
   runtime: 'react',
-  play: menuTest,
+  decorators: [PortalBoundsDecorator],
+  play: portalBoundsTest,
 });
-export const MenuPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-menu',
+
+export const PortalBoundsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-portals',
   runtime: 'preact',
-  play: menuTest,
+  decorators: [PortalBoundsDecorator],
+  play: portalBoundsTest,
 });
 
 export const DropdownReact: Story = createGalleryStory({
@@ -442,17 +484,6 @@ export const ToastCountdownPreact: Story = createGalleryStory({
   play: toastCountdownTest,
 });
 
-export const AlertDialogReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-alert-dialog',
-  runtime: 'react',
-  play: alertDialogTest,
-});
-export const AlertDialogPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-alert-dialog',
-  runtime: 'preact',
-  play: alertDialogTest,
-});
-
 export const SwitchReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-switch',
   runtime: 'react',
@@ -519,6 +550,17 @@ export const RadioCardPreact: Story = createGalleryStory({
   play: radioCardTest,
 });
 
+export const SegmentedControlReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'react',
+  play: segmentedControlTest,
+});
+export const SegmentedControlPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'preact',
+  play: segmentedControlTest,
+});
+
 export const StatusControlsReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-status-controls',
   runtime: 'react',
@@ -541,6 +583,18 @@ export const TagControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tag-controls',
   runtime: 'preact',
   play: tagControlsTest,
+});
+
+export const ButtonContractsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-button-contracts',
+  runtime: 'react',
+  play: buttonContractsTest,
+});
+
+export const ButtonContractsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-button-contracts',
+  runtime: 'preact',
+  play: buttonContractsTest,
 });
 
 export const ButtonControlsReact: Story = createGalleryStory({

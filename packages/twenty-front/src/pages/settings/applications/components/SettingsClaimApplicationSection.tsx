@@ -29,6 +29,7 @@ import {
   SyncMarketplaceCatalogDocument,
 } from '~/generated-metadata/graphql';
 import { getClaimErrorContent } from '~/pages/settings/applications/utils/getClaimErrorContent';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export const CLAIM_ERROR_CODE_SEARCH_PARAM = 'claimErrorCode';
 
@@ -149,7 +150,7 @@ export const SettingsClaimApplicationSection = () => {
       }
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error ? error.message : t`Could not run the lookup`,
       });
@@ -175,7 +176,7 @@ export const SettingsClaimApplicationSection = () => {
       window.location.href = authorizationUrl;
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message
@@ -188,12 +189,12 @@ export const SettingsClaimApplicationSection = () => {
     try {
       await syncCatalog();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Catalog sync started. Try your lookup again in a moment.`,
       });
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message
@@ -227,23 +228,24 @@ export const SettingsClaimApplicationSection = () => {
       {isDefined(claimError) && (
         <StyledCalloutContainer>
           <Callout
-            variant="error"
+            status="error"
             title={t`Could not claim this application`}
             description={i18n._(claimError.message)}
-            action={{
-              label: t`Read documentation`,
-              onClick: () =>
-                window.open(
-                  getDocumentationUrl({
-                    locale: currentWorkspaceMember?.locale,
-                    path: claimError.docPath,
-                  }),
-                  '_blank',
-                ),
-            }}
-            isClosable
+            action={
+              <Callout.Action
+                type="button"
+                onClick={() =>
+                  openUrlInNewTab(
+                    getDocumentationUrl({
+                      locale: currentWorkspaceMember?.locale,
+                      path: claimError.docPath,
+                    }),
+                  )
+                }
+              >{t`Read documentation`}</Callout.Action>
+            }
             closeLabel={t`Close`}
-            onClose={dismissClaimError}
+            onDismiss={dismissClaimError}
           />
         </StyledCalloutContainer>
       )}

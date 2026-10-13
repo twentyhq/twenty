@@ -35,6 +35,24 @@ type AgentChatEvent {
   threadId: String!
 }
 
+enum AgentChatInboxAction {
+  ARCHIVE
+  MOVE_TO_INBOX
+  READ
+  SNOOZE
+  SUBSCRIBE
+  UNREAD
+  UNSUBSCRIBE
+}
+
+type AgentChatOpenThreadsSummary {
+  hasUnreadAssignedThread: Boolean!
+  hasUnreadMentionThread: Boolean!
+  hasUnreadOpenThread: Boolean!
+  needsInputThreadCount: Int!
+  openThreadCount: Int!
+}
+
 type AgentChatThread {
   contextWindowTokens: Int
   conversationSize: Int!
@@ -74,6 +92,7 @@ type AgentMessage {
   processedAt: DateTime
   role: String!
   senderUserWorkspaceId: UUID
+  senderWorkspaceMemberId: UUID
   status: String!
   threadId: UUID!
   turnId: UUID
@@ -321,12 +340,14 @@ type Application {
   availablePackages: JSON!
   canBeUninstalled: Boolean!
   commandMenuItems: [CommandMenuItem!]!
+  createdAt: DateTime!
   defaultLogicFunctionRole: Role
   defaultRoleId: String
   description: String
   frontComponents: [FrontComponent!]!
   healthCheckLogicFunctionId: UUID
   id: UUID!
+  isUninstallBlockedByOtherWorkspaceInstallations: Boolean!
   logicFunctions: [LogicFunction!]!
   logoFileId: UUID
   logoUrl: String
@@ -749,6 +770,7 @@ enum BillingEntitlementKey {
   RLS
   SSO
   USAGE_LIMIT
+  VALIDATION_RULES
 }
 
 type BillingLicensedProduct implements BillingProductDTO {
@@ -852,12 +874,18 @@ type BillingSession {
 type BillingSubscription {
   billingSubscriptionItems: [BillingSubscriptionItem!]
   cancelAt: DateTime
+  collectionMethod: BillingSubscriptionCollectionMethod
   currentPeriodEnd: DateTime
   id: UUID!
   interval: SubscriptionInterval
   metadata: JSON!
   phases: [BillingSubscriptionSchedulePhase!]!
   status: SubscriptionStatus!
+}
+
+enum BillingSubscriptionCollectionMethod {
+  CHARGE_AUTOMATICALLY
+  SEND_INVOICE
 }
 
 type BillingSubscriptionItem {
@@ -1120,6 +1148,7 @@ type ClientConfig {
   publicFeatureFlags: [PublicFeatureFlag!]!
   publicFunctionDomain: String
   sentry: Sentry!
+  serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
 }
@@ -1833,7 +1862,10 @@ enum EngineComponentKey {
   ACTIVATE_WORKFLOW
   ADD_NODE_WORKFLOW
   ADD_TO_FAVORITES
+  ADD_TO_MESSAGE_LIST
+  ADD_VIEW_TO_MESSAGE_LIST
   ASK_AI
+  ASSIGN_AI_CHAT
   CANCEL_DASHBOARD_LAYOUT
   CANCEL_MESSAGE_CAMPAIGN
   COMPOSE_CAMPAIGN
@@ -2048,12 +2080,12 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
-  IS_AI_CHAT_SHARING_DROPDOWN_ENABLED
+  IS_AI_CHAT_INBOX_ENABLED
   IS_APPLICATION_WORKFLOWS_ENABLED
+  IS_APP_PREFERENCES_ENABLED
   IS_ASYNC_CSV_EXPORT_ENABLED
   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
-  IS_CONVERSATIONS_TAB_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -2064,8 +2096,6 @@ enum FeatureFlagKey {
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_VALIDATION_RULES_ENABLED
-  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
 }
 
 type Field {
@@ -2638,6 +2668,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billsCredits: Boolean!
   category: String
   defaultRoleUniversalIdentifier: String
   description: String
@@ -2930,9 +2961,8 @@ enum ModelFamily {
 type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
-  addAgentChatThreadParticipants(threadId: UUID!, workspaceMemberIds: [UUID!]!): [UUID!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
-  archiveAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
+  assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, scope: String, state: String): AuthorizeApp!
@@ -3061,9 +3091,11 @@ type Mutation {
   generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
   generatePlaygroundToken: AuthToken!
   generateTransientToken: TransientToken!
+  generateTwoFactorAuthenticationRecoveryCode(otp: String, userId: UUID!): TwoFactorAuthenticationRecoveryCode!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   getAuthTokensFromOTP(captchaToken: String, loginToken: String!, origin: String!, otp: String!): AuthTokens!
   getAuthTokensFromSSOExchangeToken(ssoExchangeToken: String!): AuthTokens!
+  getAuthTokensFromTwoFactorAuthenticationRecoveryCode(captchaToken: String, loginToken: String!, origin: String!, recoveryCode: String!): TwoFactorAuthenticationRecoveryCodeRedemption!
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
   getLoginTokenFromCredentials(captchaToken: String, email: String!, locale: String, origin: String!, password: String!, verifyEmailRedirectPath: String): LoginToken!
   goBackToPreviousOnboardingStep: OnboardingStepNavigation!
@@ -3074,9 +3106,6 @@ type Mutation {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   installApplication(universalIdentifier: String!, version: String): Application!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
-  markAgentChatThreadAsRead(threadId: UUID!): AgentChatThreadParticipant!
-  markAgentChatThreadAsUnread(threadId: UUID!): AgentChatThreadParticipant!
-  moveAgentChatThreadToInbox(threadId: UUID!): AgentChatThreadParticipant!
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
@@ -3096,6 +3125,7 @@ type Mutation {
   revokeAllOtherUserSessions: Int!
   revokeApiKey(input: RevokeApiKeyInput!): ApiKey
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
+  revokeTwoFactorAuthenticationRecoveryCode(userId: UUID!): Boolean!
   revokeUserSession(userSessionId: UUID!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
   runAgent(input: RunAgentInput!): RunAgentResult!
@@ -3118,22 +3148,24 @@ type Mutation {
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  snoozeAgentChatThread(snoozedUntil: DateTime!, threadId: UUID!): AgentChatThreadParticipant!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   stopImpersonation: StopImpersonation!
-  subscribeToAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   switchBillingPlan: BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
   syncMarketplaceCatalog: Boolean!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
-  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
-  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
+  triggerAddPeopleToMessageListJob(input: TriggerAddPeopleToMessageListJobInput!): TriggerAddPeopleToMessageListJobResult!
+  triggerInstallApplication(input: TriggerInstallApplicationInput!): TriggerInstallApplicationResult!
+  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult! @deprecated(reason: "Use triggerInstallApplication instead")
+  triggerUninstallApplication(input: TriggerUninstallApplicationInput!): TriggerUninstallApplicationResult!
+  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult! @deprecated(reason: "Use triggerUninstallApplication instead")
+  triggerUpgradeApplication(input: TriggerUpgradeApplicationInput!): TriggerUpgradeApplicationResult!
   uninstallApplication(universalIdentifier: String!): Boolean!
-  unsubscribeFromAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
+  updateAgentChatThreadInboxState(action: AgentChatInboxAction!, snoozedUntil: DateTime, threadIds: [UUID!]!): [AgentChatThreadParticipant!]!
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
   updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
@@ -3704,6 +3736,7 @@ type PublicWorkspaceDataSummary {
 }
 
 type Query {
+  agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
   apiKey(input: GetApiKeyInput!): ApiKey
@@ -3766,6 +3799,7 @@ type Query {
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findUpgradeApplicationJobStatus(universalIdentifier: String!): JobStatus
   findWorkspaceAiStats: WorkspaceAiStats!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
@@ -3849,6 +3883,7 @@ type Query {
   skill(id: UUID!): Skill
   skills: [Skill!]!
   timelineActivityTypes: [TimelineActivityType!]!
+  twoFactorAuthenticationRecoveryStatus(userId: UUID!): TwoFactorAuthenticationRecoveryStatus!
   unsubscribeTopics: [UnsubscribeTopic!]!
   usageLimits: [UsageLimit!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
@@ -4134,10 +4169,10 @@ enum RunAgentMessageRole {
 
 type RunAgentResult {
   error: String
-  isWaiting: Boolean!
   result: JSON
+  status: String!
   success: Boolean!
-  threadId: UUID
+  threadId: UUID!
 }
 
 input RunAgentThreadInput {
@@ -4222,7 +4257,7 @@ input SendInboxMessageInput {
   threadKey: String!
   title: String!
   toolCall: JSON
-  workspaceMemberId: UUID!
+  workspaceMemberIds: [UUID!]!
 }
 
 type SendInboxMessageResult {
@@ -4318,6 +4353,7 @@ type SignUp {
 
 input SignUpInNewWorkspaceInput {
   displayName: String
+  partner: String
   subdomain: String
 }
 
@@ -4444,12 +4480,33 @@ type TransientToken {
   transientToken: AuthToken!
 }
 
+input TriggerAddPeopleToMessageListJobInput {
+  messageListId: UUID!
+  personFilter: JSON!
+}
+
+type TriggerAddPeopleToMessageListJobResult {
+  jobId: String!
+}
+
+input TriggerInstallApplicationInput {
+  universalIdentifier: String!
+}
+
 input TriggerInstallApplicationJobInput {
   universalIdentifier: String!
 }
 
 type TriggerInstallApplicationJobResult {
   jobId: String!
+}
+
+type TriggerInstallApplicationResult {
+  jobId: String!
+}
+
+input TriggerUninstallApplicationInput {
+  universalIdentifier: String!
 }
 
 input TriggerUninstallApplicationJobInput {
@@ -4460,10 +4517,39 @@ type TriggerUninstallApplicationJobResult {
   jobId: String!
 }
 
+type TriggerUninstallApplicationResult {
+  jobId: String!
+}
+
+input TriggerUpgradeApplicationInput {
+  targetVersion: String!
+  universalIdentifier: String!
+}
+
+type TriggerUpgradeApplicationResult {
+  jobId: String!
+}
+
 type TwoFactorAuthenticationMethodSummary {
   status: String!
   strategy: String!
   twoFactorAuthenticationMethodId: UUID!
+}
+
+type TwoFactorAuthenticationRecoveryCode {
+  expiresAt: DateTime!
+  recoveryCode: String!
+}
+
+type TwoFactorAuthenticationRecoveryCodeRedemption {
+  provisioningUri: String
+  tokens: AuthTokenPair
+}
+
+type TwoFactorAuthenticationRecoveryStatus {
+  hasVerifiedTwoFactorAuthenticationMethod: Boolean!
+  isAwaitingRecoveryEnrollment: Boolean!
+  pendingRecoveryCodeExpiresAt: DateTime
 }
 
 """A UUID scalar type"""
@@ -5000,6 +5086,7 @@ input UpdateWorkspaceInput {
   inviteHash: String
   isAutoModelSelectionEnabled: Boolean
   isCampaignClickTrackingEnabled: Boolean
+  isCampaignOpenTrackingEnabled: Boolean
   isGoogleAuthBypassEnabled: Boolean
   isGoogleAuthEnabled: Boolean
   isInternalMessagesImportEnabled: Boolean

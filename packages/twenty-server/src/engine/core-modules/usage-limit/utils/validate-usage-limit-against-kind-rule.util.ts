@@ -47,6 +47,13 @@ export const validateUsageLimitAgainstKindRule = (
     );
   }
 
+  if (!rule.isZeroLimitValueAllowed && input.limitValue === 0) {
+    throw new UsageLimitException(
+      `A ${input.limitKind} limit needs a limit value above zero`,
+      UsageLimitExceptionCode.LIMIT_INVALID,
+    );
+  }
+
   if (!rule.isBurstValueAllowed && isDefined(input.burstValue)) {
     throw new UsageLimitException(
       `A ${input.limitKind} limit cannot hold a burst value`,

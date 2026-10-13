@@ -37,8 +37,14 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     name: 'HtmlA',
     properties: {
       href: { type: 'string', optional: true },
+      hrefLang: { type: 'string', optional: true },
+      media: { type: 'string', optional: true },
+      type: { type: 'string', optional: true },
       target: { type: 'string', optional: true },
       rel: { type: 'string', optional: true },
+      download: { type: 'string', optional: true },
+      ping: { type: 'string', optional: true },
+      referrerPolicy: { type: 'string', optional: true },
     },
   },
   {
@@ -81,6 +87,7 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       disabled: { type: 'boolean', optional: true },
       checked: { type: 'boolean', optional: true },
       readOnly: { type: 'boolean', optional: true },
+      required: { type: 'boolean', optional: true },
       accept: { type: 'string', optional: true },
       multiple: { type: 'boolean', optional: true },
       capture: { type: 'string', optional: true },

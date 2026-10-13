@@ -8,6 +8,8 @@ import {
 } from '@ui/testing';
 
 import { Field } from '@ui/primitives/input/Field/Field';
+import { Radio } from '@ui/primitives/input/Radio/Radio';
+import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
 
 const meta: Meta<typeof Field.Root> = {
   title: 'UI/Input/Field',
@@ -36,6 +38,35 @@ export const WithError: Story = {
     <Field.Root>
       <Field.Label>Label</Field.Label>
       <Field.Error match>This field is required</Field.Error>
+    </Field.Root>
+  ),
+};
+
+export const GroupedItems: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  render: () => (
+    <Field.Root name="notifications">
+      <Field.Label>Notifications</Field.Label>
+      <RadioGroup defaultValue="important">
+        <Field.Item>
+          <Field.Label>Important updates</Field.Label>
+          <Radio value="important" />
+          <Field.Description>
+            Only messages that need your attention
+          </Field.Description>
+        </Field.Item>
+        <Field.Item>
+          <Field.Label>All updates</Field.Label>
+          <Radio value="all" />
+          <Field.Description>Every change to your records</Field.Description>
+        </Field.Item>
+        <Field.Item disabled>
+          <Field.Label>Daily digest</Field.Label>
+          <Radio value="digest" />
+          <Field.Description>Coming soon</Field.Description>
+        </Field.Item>
+      </RadioGroup>
     </Field.Root>
   ),
 };

@@ -12,7 +12,7 @@ import ShortcutReference from '/snippets/ui/generated/typography/shortcut.mdx';
   height={200}
 />
 
-Import `Shortcut` and `formatShortcut` from `twenty-ui/primitives/typography`. Both share the same model, symbols, and separators. Register shortcuts in your application.
+Import `Shortcut` and `formatShortcut` from `twenty-ui/primitives/typography`. Both share the same model, symbols, and separators. Register shortcuts in your application. `Shortcut` only formats the hint; it does not register keyboard actions. Native attributes, event handlers, styles, class names, and refs target its outer span. `ShortcutProps` and `ShortcutFormatOptions` are public types.
 
 ```tsx
 import { Shortcut, formatShortcut } from 'twenty-ui/primitives/typography';
@@ -47,12 +47,12 @@ Key symbols have readable accessible names. Supply `aria-label` or `aria-labelle
 
 ## Migration
 
-| Previous prop                                         | Replacement                                                                |
-| ----------------------------------------------------- | -------------------------------------------------------------------------- |
-| Button `hotkeys={['⌘', 'K']}`                         | `shortcut={['Mod', 'K']}`                                                  |
-| ListItem or MenuItem sequential `hotkeys` / `hotKeys` | `shortcut={[['G'], ['P']]}`                                                |
-| `hotkeysJoinLabel` / `hotKeysJoinLabel`               | `shortcutJoinLabel` on Button, ListItem, MenuItem, Menu and Dropdown parts |
-| Manual tooltip key concatenation                      | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`                           |
+| Previous prop                                         | Replacement                                                          |
+| ----------------------------------------------------- | -------------------------------------------------------------------- |
+| Button `hotkeys={['⌘', 'K']}`                         | `shortcut={['Mod', 'K']}`                                            |
+| ListItem or MenuItem sequential `hotkeys` / `hotKeys` | `shortcut={[['G'], ['P']]}`                                          |
+| `hotkeysJoinLabel` / `hotKeysJoinLabel`               | `shortcutJoinLabel` on Button, ListItem, MenuItem and Dropdown parts |
+| Manual tooltip key concatenation                      | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`                     |
 
 Flat stored arrays that represent successive key presses need nesting before being passed to `shortcut`: `hotKeys.map((key) => [key])`. Arrays that represent simultaneous keys can be passed directly. Key strings remain literal tokens, so `['Mod', '+']` contains a plus key and `['Space']` contains the Space key; no shortcut-string parsing is required.
 

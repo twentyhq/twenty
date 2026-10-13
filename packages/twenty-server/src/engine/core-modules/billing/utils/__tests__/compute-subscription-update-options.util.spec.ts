@@ -116,4 +116,18 @@ describe('computeSubscriptionUpdateOptions', () => {
       proration: 'create_prorations',
     });
   });
+
+  it('returns create_prorations when increasing seats on an invoice-paying subscription', () => {
+    const result = computeSubscriptionUpdateOptions(
+      {
+        type: SubscriptionUpdateType.SEATS,
+        newSeats: 10,
+      },
+      { currentSeats: 5, isSendInvoice: true },
+    );
+
+    expect(result).toEqual({
+      proration: 'create_prorations',
+    });
+  });
 });
