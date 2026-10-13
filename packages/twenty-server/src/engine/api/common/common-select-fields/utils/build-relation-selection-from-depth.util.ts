@@ -34,7 +34,6 @@ type RelationsSelectFlatFieldMetadata = Pick<
   | 'applicationId'
   | 'workspaceId'
   | 'type'
-  | 'morphId'
   | 'name'
   | 'settings'
   | 'relationTargetObjectMetadataId'

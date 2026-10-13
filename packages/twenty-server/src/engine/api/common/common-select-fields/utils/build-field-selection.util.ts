@@ -45,8 +45,7 @@ export const buildFieldSelection = ({
       | 'type'
       | 'name'
       | 'settings'
-      | 'morphId'
-    >
+    > & { morphId?: string | null }
   >;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
 }): SelectableFieldsStructured => {
