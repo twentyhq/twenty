@@ -105,7 +105,7 @@ const mockModelCallingFindTool = (): ModelCall[] => {
   return calls;
 };
 
-describe('workflow AI step run without an application (integration)', () => {
+describe('workflow AI step when a member runs a workspace-owned workflow (integration)', () => {
   let objectMetadataId: string;
   let nameFieldMetadataId: string;
   let originalMemberRoleId: string;
