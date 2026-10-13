@@ -22,6 +22,7 @@ export const CoreWorkflowChip = ({ coreRecordId }: CoreWorkflowChipProps) => {
 
   const { data } = useQuery(GetCoreWorkflowDocument, {
     client: apolloCoreClient,
+    fetchPolicy: 'cache-first',
     variables: { coreWorkflowId: coreRecordId },
   });
 
