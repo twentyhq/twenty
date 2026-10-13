@@ -19,15 +19,17 @@ export const RecordTableCellLoading = ({
 }: {
   recordFieldIndex: number;
   isSelected?: boolean;
-}) => (
-  <RecordTableCellStyleWrapper
-    widthClassName={getRecordTableColumnFieldWidthClassName(recordFieldIndex)}
-    isSelected={isSelected}
-  >
-    <Skeleton
-      layout="block"
-      className={cellSkeletonClassName}
-      animated={false}
-    />
-  </RecordTableCellStyleWrapper>
-);
+}) => {
+  return (
+    <RecordTableCellStyleWrapper
+      widthClassName={getRecordTableColumnFieldWidthClassName(recordFieldIndex)}
+      isSelected={isSelected}
+    >
+      <Skeleton
+        layout="block"
+        className={cellSkeletonClassName}
+        animated={false}
+      />
+    </RecordTableCellStyleWrapper>
+  );
+};

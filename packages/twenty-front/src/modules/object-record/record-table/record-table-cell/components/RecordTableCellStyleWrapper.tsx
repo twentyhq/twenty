@@ -45,16 +45,18 @@ export const RecordTableCellStyleWrapper = ({
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
   widthClassName: string;
-} & React.ComponentProps<'div'>) => (
-  <StyledCell
-    data-selected={isSelected || undefined}
-    data-dragging={isDragging || undefined}
-    data-without-right-border={!hasRightBorder || undefined}
-    data-without-bottom-border={!hasBottomBorder || undefined}
-    // oxlint-disable-next-line react/jsx-props-no-spreading
-    {...divProps}
-    className={cx('table-cell', widthClassName)}
-  >
-    {children}
-  </StyledCell>
-);
+} & React.ComponentProps<'div'>) => {
+  return (
+    <StyledCell
+      data-selected={isSelected || undefined}
+      data-dragging={isDragging || undefined}
+      data-without-right-border={!hasRightBorder || undefined}
+      data-without-bottom-border={!hasBottomBorder || undefined}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...divProps}
+      className={cx('table-cell', widthClassName)}
+    >
+      {children}
+    </StyledCell>
+  );
+};
