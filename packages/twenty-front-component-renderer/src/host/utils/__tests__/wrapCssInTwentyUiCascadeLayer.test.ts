@@ -34,13 +34,33 @@ describe('wrapCssInTwentyUiCascadeLayer', () => {
     );
   });
 
+  it('should keep an import with nested parentheses outside the layer block', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '@import "focus.css" supports(selector(:focus-visible));.title{color:red}',
+      ),
+    ).toBe(
+      '@import "focus.css" layer(twenty-ui) supports(selector(:focus-visible));@layer twenty-ui {\n.title{color:red}\n}',
+    );
+  });
+
   it('should nest the layer of an import inside the twenty-ui layer', () => {
     expect(
       wrapCssInTwentyUiCascadeLayer(
-        '@import "reset.css" layer(base);@import url(fonts.css) layer;.title{color:red}',
+        '@import "reset.css" layer(base);.title{color:red}',
       ),
     ).toBe(
-      '@import "reset.css" layer(twenty-ui.base);@import url(fonts.css) layer(twenty-ui.anonymous);@layer twenty-ui {\n.title{color:red}\n}',
+      '@import "reset.css" layer(twenty-ui.base);@layer twenty-ui {\n.title{color:red}\n}',
+    );
+  });
+
+  it('should give each anonymous import layer its own layer inside the twenty-ui layer', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '@import url(fonts.css) layer;@import "theme.css" layer;.title{color:red}',
+      ),
+    ).toBe(
+      '@import url(fonts.css) layer(twenty-ui.anonymous-fonts-css);@import "theme.css" layer(twenty-ui.anonymous-theme-css);@layer twenty-ui {\n.title{color:red}\n}',
     );
   });
 });

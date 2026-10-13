@@ -5,18 +5,80 @@ import { TWENTY_UI_CASCADE_LAYER_NAME } from '@/host/constants/TwentyUiCascadeLa
 
 const TWENTY_UI_CASCADE_LAYER_DECLARATION = `@layer ${TWENTY_UI_CASCADE_LAYER_NAME}`;
 
-const ANONYMOUS_IMPORT_LAYER_NAME = 'anonymous';
+const ANONYMOUS_IMPORT_LAYER_PREFIX = 'anonymous-';
 
-const LEADING_STATEMENTS_PATTERN =
-  /^(?:\s*(?:\/\*[\s\S]*?\*\/|@(?:charset|import|namespace)\s(?:\([^)]*\)|"[^"]*"|'[^']*'|[^;'"()])*;))*/;
+const LEADING_COMMENT_PATTERN = /^\s*\/\*[\s\S]*?\*\//;
+
+const LEADING_TOP_LEVEL_AT_RULE_PATTERN = /^\s*@(?:charset|import|namespace)\b/;
+
+const STATEMENT_TOKEN_PATTERN = /"[^"]*"|'[^']*'|[();{]/g;
 
 const IMPORT_LAYER_PATTERN =
   /@import\s+(url\([^)]*\)|"[^"]*"|'[^']*')(\s*\blayer\b(?:\(([^)]*)\))?)?/g;
 
+const findStatementEndIndex = (
+  cssText: string,
+  startIndex: number,
+): number | undefined => {
+  let parenthesisDepth = 0;
+
+  for (const token of cssText
+    .slice(startIndex)
+    .matchAll(STATEMENT_TOKEN_PATTERN)) {
+    if (token[0] === '{') {
+      return undefined;
+    }
+
+    if (token[0] === ';' && parenthesisDepth === 0) {
+      return startIndex + (token.index ?? 0);
+    }
+
+    if (token[0] === '(') {
+      parenthesisDepth += 1;
+    }
+
+    if (token[0] === ')') {
+      parenthesisDepth -= 1;
+    }
+  }
+
+  return undefined;
+};
+
+const getLeadingStatementsEndIndex = (
+  cssText: string,
+  startIndex = 0,
+): number => {
+  const remainingCss = cssText.slice(startIndex);
+  const leadingComment = remainingCss.match(LEADING_COMMENT_PATTERN)?.[0];
+
+  if (isDefined(leadingComment)) {
+    return getLeadingStatementsEndIndex(
+      cssText,
+      startIndex + leadingComment.length,
+    );
+  }
+
+  if (!LEADING_TOP_LEVEL_AT_RULE_PATTERN.test(remainingCss)) {
+    return startIndex;
+  }
+
+  const statementEndIndex = findStatementEndIndex(cssText, startIndex);
+
+  return isDefined(statementEndIndex)
+    ? getLeadingStatementsEndIndex(cssText, statementEndIndex + 1)
+    : startIndex;
+};
+
+const getImportUrlLayerIdentifier = (importUrl: string): string =>
+  importUrl.replace(/^url\(|\)$|["']/g, '').replace(/[^a-zA-Z0-9_-]/g, '-');
+
 const getNestedImportLayerName = ({
+  importUrl,
   layerClause,
   layerName,
 }: {
+  importUrl: string;
   layerClause?: string;
   layerName?: string;
 }): string => {
@@ -25,7 +87,7 @@ const getNestedImportLayerName = ({
   }
 
   if (isDefined(layerClause)) {
-    return `${TWENTY_UI_CASCADE_LAYER_NAME}.${ANONYMOUS_IMPORT_LAYER_NAME}`;
+    return `${TWENTY_UI_CASCADE_LAYER_NAME}.${ANONYMOUS_IMPORT_LAYER_PREFIX}${getImportUrlLayerIdentifier(importUrl)}`;
   }
 
   return TWENTY_UI_CASCADE_LAYER_NAME;
@@ -36,21 +98,22 @@ export const wrapCssInTwentyUiCascadeLayer = (cssText: string): string => {
     return cssText;
   }
 
-  const leadingStatements =
-    cssText.match(LEADING_STATEMENTS_PATTERN)?.[0] ?? '';
+  const leadingStatementsEndIndex = getLeadingStatementsEndIndex(cssText);
 
-  const layeredLeadingStatements = leadingStatements.replace(
-    IMPORT_LAYER_PATTERN,
-    (
-      _importStatement: string,
-      importUrl: string,
-      layerClause?: string,
-      layerName?: string,
-    ) =>
-      `@import ${importUrl} layer(${getNestedImportLayerName({ layerClause, layerName })})`,
-  );
+  const layeredLeadingStatements = cssText
+    .slice(0, leadingStatementsEndIndex)
+    .replace(
+      IMPORT_LAYER_PATTERN,
+      (
+        _importStatement: string,
+        importUrl: string,
+        layerClause?: string,
+        layerName?: string,
+      ) =>
+        `@import ${importUrl} layer(${getNestedImportLayerName({ importUrl, layerClause, layerName })})`,
+    );
 
-  const remainingCss = cssText.slice(leadingStatements.length);
+  const remainingCss = cssText.slice(leadingStatementsEndIndex);
 
   return `${layeredLeadingStatements}${TWENTY_UI_CASCADE_LAYER_DECLARATION} {\n${remainingCss}\n}`;
 };
