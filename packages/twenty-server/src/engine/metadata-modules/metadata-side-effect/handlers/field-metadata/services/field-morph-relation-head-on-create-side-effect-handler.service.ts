@@ -47,6 +47,10 @@ export class FieldMorphRelationHeadOnCreateSideEffectHandlerService extends Meta
         ],
       );
 
+    if (headAlreadyExists) {
+      return { status: 'noop' };
+    }
+
     const firstTargetInBatch = Object.values(fieldsToCreate)
       .filter(isDefined)
       .filter(
@@ -57,10 +61,7 @@ export class FieldMorphRelationHeadOnCreateSideEffectHandlerService extends Meta
       .map((field) => field.universalIdentifier)
       .sort()[0];
 
-    if (
-      headAlreadyExists ||
-      firstTargetInBatch !== target.universalIdentifier
-    ) {
+    if (firstTargetInBatch !== target.universalIdentifier) {
       return { status: 'noop' };
     }
 

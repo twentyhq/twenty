@@ -1,6 +1,7 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 import {
   isMorphRelationHead,
+  isNonEmptyArray,
   pickMorphGroupSurvivorOrThrow,
 } from 'twenty-shared/utils';
 
@@ -24,7 +25,7 @@ export const pickMorphRelationRepresentative = <
     (morphFlatFieldMetadata) => !isMorphRelationHead(morphFlatFieldMetadata),
   );
 
-  return targets.length > 0
+  return isNonEmptyArray(targets)
     ? pickMorphGroupSurvivorOrThrow(targets)
     : undefined;
 };
