@@ -2,7 +2,6 @@ import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailable
 import { type SettingsLogicFunctionCodeEditorFile } from '@/settings/logic-functions/types/SettingsLogicFunctionCodeEditorFile';
 import { getSettingsLogicFunctionCodeEditorModelPath } from '@/settings/logic-functions/utils/getSettingsLogicFunctionCodeEditorModelPath';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { createElement } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -113,15 +112,17 @@ export const SettingsLogicFunctionCodeEditor = ({
 
   return (
     isDefined(currentFile) &&
-    isDefined(availablePackages) &&
-    createElement(CodeEditor, {
-      ...codeEditorProps,
-      height,
-      value: currentFile.content,
-      language: currentFile.language,
-      path: getSettingsLogicFunctionCodeEditorModelPath(currentFile.path),
-      onMount: handleEditorDidMount,
-      variant,
-    })
+    isDefined(availablePackages) && (
+      <CodeEditor
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...codeEditorProps}
+        height={height}
+        value={currentFile.content}
+        language={currentFile.language}
+        path={getSettingsLogicFunctionCodeEditorModelPath(currentFile.path)}
+        onMount={handleEditorDidMount}
+        variant={variant}
+      />
+    )
   );
 };
