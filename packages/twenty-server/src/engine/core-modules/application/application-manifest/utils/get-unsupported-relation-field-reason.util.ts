@@ -1,12 +1,12 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 export type ExportableRelationFlatFieldMetadata = UniversalFlatFieldMetadata & {
-  relationTargetFieldMetadataUniversalIdentifier: string | null;
-  relationTargetObjectMetadataUniversalIdentifier: string | null;
+  relationTargetFieldMetadataUniversalIdentifier: string;
+  relationTargetObjectMetadataUniversalIdentifier: string;
   universalSettings: NonNullable<
     UniversalFlatFieldMetadata['universalSettings']
   >;
@@ -16,13 +16,6 @@ export const getUnsupportedRelationFieldReason = (
   flatFieldMetadata: UniversalFlatFieldMetadata,
 ): string | undefined => {
   if (!isMorphOrRelationFieldMetadataType(flatFieldMetadata.type)) {
-    return undefined;
-  }
-
-  if (
-    isMorphRelationHead(flatFieldMetadata) &&
-    isDefined(flatFieldMetadata.universalSettings)
-  ) {
     return undefined;
   }
 

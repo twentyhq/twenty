@@ -43,4 +43,5 @@ export const createStandardMorphRelationHeadFlatMetadata = ({
     },
   }),
   morphId: STANDARD_OBJECTS[objectName].morphIds.targetMorphId.morphId,
+  isSystemSideEffect: true,
 });

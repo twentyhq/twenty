@@ -1,5 +1,3 @@
-import { isMorphRelationHead } from 'twenty-shared/utils';
-
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { orderFlatFieldMetadatasForSystemIndexView } from 'src/engine/metadata-modules/object-metadata/utils/order-flat-field-metadatas-for-system-index-view.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -24,7 +22,6 @@ export const computeCallerFlatFieldMetadatasForObject = ({
       (flatFieldMetadata) =>
         flatFieldMetadata.objectMetadataUniversalIdentifier ===
           objectMetadataUniversalIdentifier &&
-        !flatFieldMetadata.isSystemSideEffect &&
-        !isMorphRelationHead(flatFieldMetadata),
+        !flatFieldMetadata.isSystemSideEffect,
     ),
   });

@@ -117,7 +117,6 @@ export class ApplicationManifestMigrationService {
         manifest: preInstallOnlyManifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
-        existingAllFlatEntityMaps,
         now,
         workspaceId,
       });
@@ -208,7 +207,6 @@ export class ApplicationManifestMigrationService {
         manifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
-        existingAllFlatEntityMaps,
         now,
         workspaceId,
       });

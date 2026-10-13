@@ -13,7 +13,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
-import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { validateMorphRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -85,26 +84,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
 
   const morphRelationCreationPayload =
     morphRelationCreationPayloadValidation.result;
-  const morphId = createFieldInput.universalIdentifier ?? v4();
-  const { relationCreationPayload } = morphRelationCreationPayload[0];
-  const morphFieldMetadata: UniversalFlatFieldMetadata = {
-    ...getDefaultFlatFieldMetadata({
-      createFieldInput: { ...createFieldInput, universalIdentifier: morphId },
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
-      objectMetadataUniversalIdentifier:
-        sourceFlatObjectMetadata.universalIdentifier,
-    }),
-    morphId,
-    universalSettings: {
-      relationType: relationCreationPayload.type,
-      targetFieldLabel: relationCreationPayload.targetFieldLabel,
-      targetFieldIcon: relationCreationPayload.targetFieldIcon,
-      ...(junctionTargetFlatFieldMetadata && {
-        junctionTargetFieldUniversalIdentifier:
-          junctionTargetFlatFieldMetadata.universalIdentifier,
-      }),
-    },
-  };
+  const morphId = v4();
   const flatFieldsAndIndexes = morphRelationCreationPayload.reduce(
     (acc, { relationCreationPayload, targetFlatObjectMetadata }) => {
       const currentMorphRelationFieldName = computeMorphRelationFlatFieldName({
@@ -122,7 +102,6 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
         generateMorphOrRelationFlatFieldMetadataPair({
           createFieldInput: {
             ...createFieldInput,
-            universalIdentifier: undefined,
             relationCreationPayload,
             name: currentMorphRelationFieldName,
           },
@@ -148,12 +127,6 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
 
   return {
     status: 'success',
-    result: {
-      ...flatFieldsAndIndexes,
-      flatFieldMetadatas: [
-        ...flatFieldsAndIndexes.flatFieldMetadatas,
-        morphFieldMetadata,
-      ],
-    },
+    result: flatFieldsAndIndexes,
   };
 };
