@@ -76,7 +76,12 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
       teamsUserAadObjectId,
       workspaceMemberId,
       source: TEAMS_USER_LINK_SOURCE.AUTO,
-    }).catch(() => undefined);
+    }).catch((error: unknown) =>
+      console.warn(
+        `[teams] could not save the user link for ${teamsUserAadObjectId}`,
+        error,
+      ),
+    );
   }
 
   return workspaceMemberId;

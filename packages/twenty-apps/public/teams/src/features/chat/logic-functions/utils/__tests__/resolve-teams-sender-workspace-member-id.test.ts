@@ -71,6 +71,7 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
     );
 
     expect(await resolve()).toBe('linked-workspace-member-id');
+    expect(findTeamsUserLinkWorkspaceMemberIdMock).toHaveBeenCalledTimes(1);
     expect(findTeamsUserLinkWorkspaceMemberIdMock).toHaveBeenCalledWith({
       client: CLIENT,
       teamsTenantId: CLAIMED_TENANT_ID,
@@ -90,6 +91,7 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
     });
 
     expect(await resolve()).toBe('workspace-member-id');
+    expect(createTeamsUserLinkMock).toHaveBeenCalledTimes(1);
     expect(createTeamsUserLinkMock).toHaveBeenCalledWith({
       client: CLIENT,
       name: 'Jane Doe',
@@ -108,8 +110,14 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
       email: 'jane@acme.com',
     });
     createTeamsUserLinkMock.mockRejectedValue(new Error('duplicate link'));
+    const consoleWarnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
 
     expect(await resolve()).toBe('workspace-member-id');
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+
+    consoleWarnSpy.mockRestore();
   });
 
   it('should match the sender to a workspace member by email', async () => {
