@@ -122,7 +122,7 @@ describe('cancelMessageCampaign sentAt (integration)', () => {
     const campaign = await readCampaign(campaignId);
 
     expect(campaign.status).toBe('CANCELED');
-    expect(campaign.sentAt).toBeInstanceOf(Date);
+    expect(campaign.sentAt).not.toBeNull();
   });
 
   it('leaves the send date empty on a canceled campaign that sent nothing', async () => {

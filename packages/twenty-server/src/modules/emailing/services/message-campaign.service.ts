@@ -397,7 +397,8 @@ export class MessageCampaignService {
         });
 
     const isListInTrash =
-      isDefined(campaign.listId) && !isDefined(campaign.list);
+      isDefined(campaign.listId) &&
+      (!isDefined(campaign.list) || isDefined(campaign.list.deletedAt));
 
     if (isListInTrash) {
       sendBlockers.push(

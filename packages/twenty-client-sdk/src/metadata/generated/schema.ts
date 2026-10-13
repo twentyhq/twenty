@@ -9935,7 +9935,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignDetailsConfiguration"')
       return MessageCampaignDetailsConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const MessageCampaignSendBlockerDTO_possibleTypes: string[] = ['MessageCampaignSendBlockerDTO']
@@ -9943,7 +9943,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignSendBlockerDTO"')
       return MessageCampaignSendBlockerDTO_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const MessageChannel_possibleTypes: string[] = ['MessageChannel']
@@ -10263,7 +10263,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPlaceDetailsResult"')
       return PlaceDetailsResult_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PreviewMessageCampaignSendOutputDTO_possibleTypes: string[] = ['PreviewMessageCampaignSendOutputDTO']
@@ -10271,7 +10271,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPreviewMessageCampaignSendOutputDTO"')
       return PreviewMessageCampaignSendOutputDTO_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PublicApplicationRegistration_possibleTypes: string[] = ['PublicApplicationRegistration']
