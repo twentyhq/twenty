@@ -53,30 +53,23 @@ const findStateForJob = async ({
     : undefined;
 };
 
-const getFatalErrorCode = ({
-  error,
-  attempt,
-}: {
-  error: unknown;
-  attempt: number;
-}): TeamsTranscriptHistoryErrorCode | undefined => {
-  // A page can outlive its access token, so a first 401 retries with a fresh token.
+const isFatalError = (error: unknown): boolean =>
+  error instanceof AppConnectionAuthFailedError ||
+  (error instanceof GraphRequestError &&
+    error.status === 403 &&
+    error.innerErrorCode === GRAPH_ACCESS_TO_TRANSCRIPTS_DISABLED_ERROR_CODE);
+
+const getFailureErrorCode = (
+  error: unknown,
+): TeamsTranscriptHistoryErrorCode => {
   if (
     error instanceof AppConnectionAuthFailedError ||
-    (error instanceof GraphRequestError && error.status === 401 && attempt > 0)
+    (error instanceof GraphRequestError && error.status === 401)
   ) {
     return 'reconnect-required';
   }
 
-  if (
-    error instanceof GraphRequestError &&
-    error.status === 403 &&
-    error.innerErrorCode === GRAPH_ACCESS_TO_TRANSCRIPTS_DISABLED_ERROR_CODE
-  ) {
-    return 'transcripts-disabled-by-admin';
-  }
-
-  return undefined;
+  return isFatalError(error) ? 'transcripts-disabled-by-admin' : 'unknown';
 };
 
 const processPageOrThrow = async ({
@@ -215,15 +208,14 @@ const retryOrFailPageOrThrow = async ({
   }
 
   const stateKvKey = buildTeamsTranscriptHistoryKvKey(job.connectedAccountId);
-  const fatalErrorCode = getFatalErrorCode({ error, attempt: job.attempt });
   const retryDelayMilliseconds =
     TEAMS_TRANSCRIPT_HISTORY_RETRY_DELAYS_MILLISECONDS[job.attempt];
 
-  if (isDefined(fatalErrorCode) || !isDefined(retryDelayMilliseconds)) {
+  if (isFatalError(error) || !isDefined(retryDelayMilliseconds)) {
     await kv.set<TeamsTranscriptHistoryState>(stateKvKey, {
       ...state,
       phase: 'failed',
-      errorCode: fatalErrorCode ?? 'unknown',
+      errorCode: getFailureErrorCode(error),
       updatedAt: new Date().toISOString(),
     });
 
