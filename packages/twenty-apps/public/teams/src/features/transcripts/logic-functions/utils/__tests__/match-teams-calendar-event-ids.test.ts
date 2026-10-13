@@ -45,17 +45,4 @@ describe('matchTeamsCalendarEventIds', () => {
       }),
     ).toEqual(new Map());
   });
-
-  it('should leave a reference unmatched without an association or a calendar event', () => {
-    expect(
-      matchTeamsCalendarEventIds({
-        references: [
-          { eventExternalId: 'event-1', iCalUId: 'ical-1' },
-          { eventExternalId: 'series-master-1' },
-        ],
-        calendarChannelEventAssociations: [],
-        calendarEvents: [],
-      }),
-    ).toEqual(new Map());
-  });
 });

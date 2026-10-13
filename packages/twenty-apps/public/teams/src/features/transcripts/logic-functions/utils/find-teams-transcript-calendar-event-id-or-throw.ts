@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_OCCURRENCE_MARGIN_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/teams-occurrence-margin-milliseconds';
 import { TEAMS_TRANSCRIPT_OCCURRENCE_MAX_PAGES } from 'src/features/transcripts/logic-functions/constants/teams-transcript-occurrence-max-pages';
+import { TEAMS_TRANSCRIPT_OCCURRENCE_PAGE_SIZE } from 'src/features/transcripts/logic-functions/constants/teams-transcript-occurrence-page-size';
 import { type GraphCallTranscript } from 'src/features/transcripts/logic-functions/types/graph-call-transcript.type';
 import { type GraphOnlineMeeting } from 'src/features/transcripts/logic-functions/types/graph-online-meeting.type';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
@@ -63,6 +64,7 @@ const listOccurrencesAroundTranscriptStartOrThrow = async ({
         endDateTime: new Date(
           transcriptStartMilliseconds + TEAMS_OCCURRENCE_MARGIN_MILLISECONDS,
         ).toISOString(),
+        pageSize: TEAMS_TRANSCRIPT_OCCURRENCE_PAGE_SIZE,
       }),
       pageIndex: 0,
     });
