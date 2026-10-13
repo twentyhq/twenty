@@ -340,6 +340,7 @@ type Application {
   availablePackages: JSON!
   canBeUninstalled: Boolean!
   commandMenuItems: [CommandMenuItem!]!
+  createdAt: DateTime!
   defaultLogicFunctionRole: Role
   defaultRoleId: String
   description: String
@@ -769,6 +770,7 @@ enum BillingEntitlementKey {
   RLS
   SSO
   USAGE_LIMIT
+  VALIDATION_RULES
 }
 
 type BillingLicensedProduct implements BillingProductDTO {
@@ -872,12 +874,18 @@ type BillingSession {
 type BillingSubscription {
   billingSubscriptionItems: [BillingSubscriptionItem!]
   cancelAt: DateTime
+  collectionMethod: BillingSubscriptionCollectionMethod
   currentPeriodEnd: DateTime
   id: UUID!
   interval: SubscriptionInterval
   metadata: JSON!
   phases: [BillingSubscriptionSchedulePhase!]!
   status: SubscriptionStatus!
+}
+
+enum BillingSubscriptionCollectionMethod {
+  CHARGE_AUTOMATICALLY
+  SEND_INVOICE
 }
 
 type BillingSubscriptionItem {
@@ -1854,6 +1862,8 @@ enum EngineComponentKey {
   ACTIVATE_WORKFLOW
   ADD_NODE_WORKFLOW
   ADD_TO_FAVORITES
+  ADD_TO_MESSAGE_LIST
+  ADD_VIEW_TO_MESSAGE_LIST
   ASK_AI
   ASSIGN_AI_CHAT
   CANCEL_DASHBOARD_LAYOUT
@@ -2077,7 +2087,6 @@ enum FeatureFlagKey {
   IS_ASYNC_CSV_EXPORT_ENABLED
   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
-  IS_CONVERSATIONS_TAB_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -2088,8 +2097,6 @@ enum FeatureFlagKey {
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_VALIDATION_RULES_ENABLED
-  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
 }
 
 type Field {
@@ -2662,6 +2669,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billsCredits: Boolean!
   category: String
   defaultRoleUniversalIdentifier: String
   description: String
@@ -3151,6 +3159,7 @@ type Mutation {
   syncMarketplaceCatalog: Boolean!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
+  triggerAddPeopleToMessageListJob(input: TriggerAddPeopleToMessageListJobInput!): TriggerAddPeopleToMessageListJobResult!
   triggerInstallApplication(input: TriggerInstallApplicationInput!): TriggerInstallApplicationResult!
   triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult! @deprecated(reason: "Use triggerInstallApplication instead")
   triggerUninstallApplication(input: TriggerUninstallApplicationInput!): TriggerUninstallApplicationResult!
@@ -4471,6 +4480,15 @@ type TransientToken {
   transientToken: AuthToken!
 }
 
+input TriggerAddPeopleToMessageListJobInput {
+  messageListId: UUID!
+  personFilter: JSON!
+}
+
+type TriggerAddPeopleToMessageListJobResult {
+  jobId: String!
+}
+
 input TriggerInstallApplicationInput {
   universalIdentifier: String!
 }
@@ -5068,6 +5086,7 @@ input UpdateWorkspaceInput {
   inviteHash: String
   isAutoModelSelectionEnabled: Boolean
   isCampaignClickTrackingEnabled: Boolean
+  isCampaignOpenTrackingEnabled: Boolean
   isGoogleAuthBypassEnabled: Boolean
   isGoogleAuthEnabled: Boolean
   isInternalMessagesImportEnabled: Boolean

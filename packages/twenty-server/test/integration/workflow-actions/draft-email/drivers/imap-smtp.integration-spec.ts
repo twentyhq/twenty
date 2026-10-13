@@ -10,6 +10,7 @@ import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
@@ -136,7 +137,7 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
         connectedAccountId,
         recipients: { to: '{{trigger.to}}' },
         subject: '{{trigger.subject}}',
-        body: '<p>SMTP workflow draft body</p>',
+        body: JSON.stringify(buildEmailDocument('SMTP workflow draft body')),
       },
       payload: { to: HANDLE, subject },
     });
@@ -173,7 +174,9 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
         connectedAccountId,
         recipients: { to: '{{trigger.to}}' },
         subject: '{{trigger.subject}}',
-        body: '<p>First paragraph</p><p>Second paragraph</p>',
+        body: JSON.stringify(
+          buildEmailDocument('First paragraph\n\nSecond paragraph'),
+        ),
       },
       payload: { to: HANDLE, subject },
     });

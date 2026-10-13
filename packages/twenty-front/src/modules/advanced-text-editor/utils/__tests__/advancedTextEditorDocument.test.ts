@@ -1,6 +1,5 @@
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
 import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
-import { parseLegacyHtmlOrPlainTextDocument } from '@/advanced-text-editor/utils/parseLegacyHtmlOrPlainTextDocument';
 import { parseLegacyPlainTextDocument } from '@/advanced-text-editor/utils/parseLegacyPlainTextDocument';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -77,27 +76,6 @@ describe('advanced text editor document persistence', () => {
         serializedDocument: JSON.stringify({ type: 'doc', content }),
       }),
     ).toEqual(getInitialEditorContent(''));
-  });
-
-  it('recognizes structured and self-closing legacy HTML fragments', () => {
-    const documents = [
-      '<p>Hello</p>',
-      '<br/>Hello',
-      '<img src="https://example.com/image.png"/>',
-      '<!-- greeting --><div>Hello</div>',
-    ];
-
-    for (const document of documents) {
-      expect(parseLegacyHtmlOrPlainTextDocument(document)).toBe(document);
-    }
-  });
-
-  it('keeps a leading tag-like token as legacy plain text', () => {
-    const document = '<support> {{contact.name}}';
-
-    expect(parseLegacyHtmlOrPlainTextDocument(document)).toEqual(
-      getInitialEditorContent(document),
-    );
   });
 
   it('normalizes legacy plain-text line endings', () => {

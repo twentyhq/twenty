@@ -4,7 +4,7 @@ import { runComponentConformance } from '@test-utilities/conformance/runComponen
 import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
 import listItemStyles from '@ui/primitives/navigation/ListItem/ListItem.module.scss';
 
-import { Autocomplete } from '../Autocomplete';
+import { Autocomplete } from '@ui/primitives/input';
 import styles from '../Autocomplete.module.scss';
 
 const RootWrapper = ({ children }: { children: ReactNode }) => (
@@ -18,7 +18,11 @@ const OpenWrapper = ({ children }: { children: ReactNode }) => (
 );
 const PopupWrapper = ({ children }: { children: ReactNode }) => (
   <OpenWrapper>
-    <Autocomplete.Popup>{children}</Autocomplete.Popup>
+    <Autocomplete.Portal>
+      <Autocomplete.Positioner>
+        <Autocomplete.Popup>{children}</Autocomplete.Popup>
+      </Autocomplete.Positioner>
+    </Autocomplete.Portal>
   </OpenWrapper>
 );
 const ListWrapper = ({ children }: { children: ReactNode }) => (
@@ -46,7 +50,13 @@ runComponentConformance({
   name: 'Autocomplete.Popup',
   element: <Autocomplete.Popup />,
   refInstanceOf: HTMLDivElement,
-  wrapper: OpenWrapper,
+  wrapper: ({ children }) => (
+    <OpenWrapper>
+      <Autocomplete.Portal>
+        <Autocomplete.Positioner>{children}</Autocomplete.Positioner>
+      </Autocomplete.Portal>
+    </OpenWrapper>
+  ),
   ownClassName: styles.popup,
 });
 runComponentConformance({
@@ -69,4 +79,55 @@ runComponentConformance({
   refInstanceOf: HTMLDivElement,
   wrapper: PopupWrapper,
   ownClassName: styles.empty,
+});
+
+runComponentConformance({
+  name: 'Autocomplete.Arrow',
+  element: <Autocomplete.Arrow />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: PopupWrapper,
+  ownClassName: styles.arrow,
+});
+
+runComponentConformance({
+  name: 'Autocomplete.Separator',
+  element: <Autocomplete.Separator />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: PopupWrapper,
+  ownClassName: styles.separator,
+});
+
+runComponentConformance({
+  name: 'Autocomplete.Portal',
+  element: <Autocomplete.Portal />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: OpenWrapper,
+});
+
+runComponentConformance({
+  name: 'Autocomplete.Positioner',
+  element: <Autocomplete.Positioner />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: ({ children }) => (
+    <OpenWrapper>
+      <Autocomplete.Portal>{children}</Autocomplete.Portal>
+    </OpenWrapper>
+  ),
+  ownClassName: styles.positioner,
+});
+
+runComponentConformance({
+  name: 'Autocomplete.Trigger',
+  element: <Autocomplete.Trigger>Show options</Autocomplete.Trigger>,
+  refInstanceOf: HTMLButtonElement,
+  wrapper: RootWrapper,
+  renderPropTagName: 'button',
+});
+
+runComponentConformance({
+  name: 'Autocomplete.Clear',
+  element: <Autocomplete.Clear keepMounted>Clear</Autocomplete.Clear>,
+  refInstanceOf: HTMLButtonElement,
+  wrapper: RootWrapper,
+  renderPropTagName: 'button',
 });

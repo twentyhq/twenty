@@ -151,7 +151,7 @@ Notes:
 
 ## Telling people what it costs
 
-Declaring charges tells the platform how to *meter* your app; it does not tell a buyer what they will pay. Set `billing.description` for that — one short, friendly line rendered next to the install button on your marketplace listing, before anyone installs.
+Declaring charges tells the platform how to *meter* your app; it does not tell a buyer what they will pay. Set `billing.description` for that — one short, friendly line shown on your marketplace listing, before anyone installs.
 
 ```ts src/application-config.ts
 billing: {
@@ -159,7 +159,9 @@ billing: {
 },
 ```
 
-It is free text on purpose: real pricing has tiers, minimums and per-unit rates that a single number cannot express. Keep it to a line — it renders in a narrow column.
+It is free text on purpose: real pricing has tiers, minimums and per-unit rates that a single number cannot express. Keep it to a line.
+
+An app that declares `operations` or `recurring` also asks the installing admin for consent: the install screen lists "Bill credits to your workspace", and the app page shows "Bills credits", with your `description` on hover.
 
 ## Attribution
 

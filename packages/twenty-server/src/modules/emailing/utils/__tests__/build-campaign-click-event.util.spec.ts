@@ -6,7 +6,8 @@ const DELIVERY = {
   id: '7b1b78df-f57c-4367-88ba-31b41e38ab91',
   campaignId: '81110623-55f6-4dae-becd-1944d4d88078',
 };
-const OBSERVATION: CampaignEngagementObservation = {
+const OBSERVATION: Extract<CampaignEngagementObservation, { type: 'CLICK' }> = {
+  type: 'CLICK',
   eventId: 'b55db0be-cd10-4802-b332-0cb3e81a02c8',
   occurredAt: '2026-09-23T12:00:00.000Z',
   workspaceId: WORKSPACE_ID,
