@@ -1,3 +1,4 @@
+import { OVERFLOWING_LIST_EVENT_ISOLATION_PROPS } from '@/ui/layout/overflowing-list/constants/OverflowingListEventIsolationProps';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
@@ -82,14 +83,8 @@ export const FormMultiRecordFieldChips = ({
   return (
     <StyledChipsContainer>
       <OverflowingList
-        triggerProps={{
-          onClick: (event) => event.stopPropagation(),
-          onKeyDown: (event) => event.stopPropagation(),
-        }}
-        popupProps={{
-          onClick: (event) => event.stopPropagation(),
-          onKeyDown: (event) => event.stopPropagation(),
-        }}
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
         overflowLabel={t`Show all items`}
         showOverflowCount={true}
       >

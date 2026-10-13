@@ -1,3 +1,4 @@
+import { OVERFLOWING_LIST_EVENT_ISOLATION_PROPS } from '@/ui/layout/overflowing-list/constants/OverflowingListEventIsolationProps';
 import { useLingui } from '@lingui/react/macro';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -44,14 +45,8 @@ export const MorphRelationOneToManyFieldDisplay = () => {
 
   return (
     <OverflowingList
-      triggerProps={{
-        onClick: (event) => event.stopPropagation(),
-        onKeyDown: (event) => event.stopPropagation(),
-      }}
-      popupProps={{
-        onClick: (event) => event.stopPropagation(),
-        onKeyDown: (event) => event.stopPropagation(),
-      }}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
       overflowLabel={t`Show all items`}
       showOverflowCount={isFocused}
       maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}

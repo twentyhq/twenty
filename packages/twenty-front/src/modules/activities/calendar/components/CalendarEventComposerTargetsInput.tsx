@@ -1,3 +1,4 @@
+import { OVERFLOWING_LIST_EVENT_ISOLATION_PROPS } from '@/ui/layout/overflowing-list/constants/OverflowingListEventIsolationProps';
 import { useCalendarEventTargetObjectMetadataItems } from '@/activities/calendar/hooks/useCalendarEventTargetObjectMetadataItems';
 import { useOpenCalendarEventTargetsPicker } from '@/activities/calendar/hooks/useOpenCalendarEventTargetsPicker';
 import { type CalendarEventComposerTarget } from '@/activities/calendar/types/CalendarEventComposerTarget';
@@ -113,14 +114,8 @@ export const CalendarEventComposerTargetsInput = ({
         {hasChips ? (
           <>
             <OverflowingList
-              triggerProps={{
-                onClick: (event) => event.stopPropagation(),
-                onKeyDown: (event) => event.stopPropagation(),
-              }}
-              popupProps={{
-                onClick: (event) => event.stopPropagation(),
-                onKeyDown: (event) => event.stopPropagation(),
-              }}
+              // oxlint-disable-next-line react/jsx-props-no-spreading
+              {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
               overflowLabel={t`Show all items`}
               showOverflowCount
             >

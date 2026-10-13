@@ -1,3 +1,4 @@
+import { OVERFLOWING_LIST_EVENT_ISOLATION_PROPS } from '@/ui/layout/overflowing-list/constants/OverflowingListEventIsolationProps';
 import { useLingui } from '@lingui/react/macro';
 import React, { useMemo } from 'react';
 
@@ -48,14 +49,8 @@ export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
 
   return (
     <OverflowingList
-      triggerProps={{
-        onClick: (event) => event.stopPropagation(),
-        onKeyDown: (event) => event.stopPropagation(),
-      }}
-      popupProps={{
-        onClick: (event) => event.stopPropagation(),
-        onKeyDown: (event) => event.stopPropagation(),
-      }}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
       overflowLabel={t`Show all items`}
     >
       {links.map(({ url, label, displayLabel, type }, index) =>

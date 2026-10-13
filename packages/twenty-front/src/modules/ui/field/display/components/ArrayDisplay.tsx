@@ -1,3 +1,4 @@
+import { OVERFLOWING_LIST_EVENT_ISOLATION_PROPS } from '@/ui/layout/overflowing-list/constants/OverflowingListEventIsolationProps';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { OverflowingList } from 'twenty-ui/components/layout';
@@ -11,14 +12,8 @@ type ArrayDisplayProps = {
 export const ArrayDisplay = ({ value }: ArrayDisplayProps) => {
   return (
     <OverflowingList
-      triggerProps={{
-        onClick: (event) => event.stopPropagation(),
-        onKeyDown: (event) => event.stopPropagation(),
-      }}
-      popupProps={{
-        onClick: (event) => event.stopPropagation(),
-        onKeyDown: (event) => event.stopPropagation(),
-      }}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
       overflowLabel={t`Show all items`}
     >
       {value?.map((item, index) => (
