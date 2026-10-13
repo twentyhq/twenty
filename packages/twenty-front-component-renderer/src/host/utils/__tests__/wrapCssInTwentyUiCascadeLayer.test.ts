@@ -7,12 +7,33 @@ describe('wrapCssInTwentyUiCascadeLayer', () => {
     ).toBe('@layer twenty-ui {\nbutton{padding:0;background:none}\n}');
   });
 
-  it('should keep a stylesheet that already uses the twenty-ui layer as is', () => {
-    const twentyUiStylesheet =
-      '.monaco-editor{outline-width:0}@layer twenty-ui{._root_x1_1{display:flex}}';
+  it('should keep a twenty-ui layer block as is and wrap the rules around it', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '.monaco-editor{outline-width:0}@layer twenty-ui{._root_x1_1{display:flex}}button{padding:0}',
+      ),
+    ).toBe(
+      '@layer twenty-ui {\n.monaco-editor{outline-width:0}\n}@layer twenty-ui{._root_x1_1{display:flex}}@layer twenty-ui {\nbutton{padding:0}\n}',
+    );
+  });
 
-    expect(wrapCssInTwentyUiCascadeLayer(twentyUiStylesheet)).toBe(
-      twentyUiStylesheet,
+  it('should find the end of a twenty-ui layer block past braces in strings and comments', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '@layer twenty-ui{.icon::before{content:"}"}/* } */}.title{color:red}',
+      ),
+    ).toBe(
+      '@layer twenty-ui{.icon::before{content:"}"}/* } */}@layer twenty-ui {\n.title{color:red}\n}',
+    );
+  });
+
+  it('should wrap a twenty-ui layer block nested in another block', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '@media print{@layer twenty-ui{.title{color:red}}}',
+      ),
+    ).toBe(
+      '@layer twenty-ui {\n@media print{@layer twenty-ui{.title{color:red}}}\n}',
     );
   });
 

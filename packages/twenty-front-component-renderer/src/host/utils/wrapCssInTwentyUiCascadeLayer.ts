@@ -16,8 +16,16 @@ const LEADING_TOP_LEVEL_AT_RULE_PATTERN = /^\s*@(?:charset|import|namespace)\b/;
 const STATEMENT_TOKEN_PATTERN =
   /url\([^"'()]*\)|\/\*[\s\S]*?(?:\*\/|$)|"[^"]*"|'[^']*'|[();{]/g;
 
+const BLOCK_TOKEN_PATTERN =
+  /url\([^"'()]*\)|\/\*[\s\S]*?(?:\*\/|$)|"[^"]*"|'[^']*'|@layer\s+([\w.-]+)\s*\{|[{}]/g;
+
 const IMPORT_LAYER_PATTERN =
   /@import\s*(url\([^)]*\)|"[^"]*"|'[^']*')(\s*\blayer\b(?:\(([^)]*)\))?)?/g;
+
+type CssTextRange = {
+  startIndex: number;
+  endIndex: number;
+};
 
 const findStatementEndIndex = ({
   cssText,
@@ -108,11 +116,69 @@ const getNestedImportLayerName = ({
   return TWENTY_UI_CASCADE_LAYER_NAME;
 };
 
-export const wrapCssInTwentyUiCascadeLayer = (cssText: string): string => {
-  if (cssText.includes(TWENTY_UI_CASCADE_LAYER_DECLARATION)) {
-    return cssText;
+const findTopLevelTwentyUiLayerBlockRanges = (
+  cssText: string,
+): CssTextRange[] => {
+  const twentyUiLayerBlockRanges: CssTextRange[] = [];
+  let blockDepth = 0;
+  let twentyUiLayerBlockStartIndex: number | undefined;
+
+  for (const token of cssText.matchAll(BLOCK_TOKEN_PATTERN)) {
+    const [tokenText, layerName] = token;
+    const tokenIndex = token.index ?? 0;
+
+    if (blockDepth === 0 && layerName === TWENTY_UI_CASCADE_LAYER_NAME) {
+      twentyUiLayerBlockStartIndex = tokenIndex;
+    }
+
+    if (tokenText === '{' || isDefined(layerName)) {
+      blockDepth += 1;
+      continue;
+    }
+
+    if (tokenText !== '}') {
+      continue;
+    }
+
+    blockDepth -= 1;
+
+    if (blockDepth === 0 && isDefined(twentyUiLayerBlockStartIndex)) {
+      twentyUiLayerBlockRanges.push({
+        startIndex: twentyUiLayerBlockStartIndex,
+        endIndex: tokenIndex + 1,
+      });
+      twentyUiLayerBlockStartIndex = undefined;
+    }
   }
 
+  return twentyUiLayerBlockRanges;
+};
+
+const wrapInTwentyUiLayerBlock = (cssText: string): string =>
+  isNonEmptyString(cssText.trim())
+    ? `${TWENTY_UI_CASCADE_LAYER_DECLARATION} {\n${cssText}\n}`
+    : cssText;
+
+const wrapRulesOutsideTwentyUiLayerBlocks = (cssText: string): string => {
+  let layeredCss = '';
+  let unlayeredCssStartIndex = 0;
+
+  for (const { startIndex, endIndex } of findTopLevelTwentyUiLayerBlockRanges(
+    cssText,
+  )) {
+    layeredCss += wrapInTwentyUiLayerBlock(
+      cssText.slice(unlayeredCssStartIndex, startIndex),
+    );
+    layeredCss += cssText.slice(startIndex, endIndex);
+    unlayeredCssStartIndex = endIndex;
+  }
+
+  return (
+    layeredCss + wrapInTwentyUiLayerBlock(cssText.slice(unlayeredCssStartIndex))
+  );
+};
+
+export const wrapCssInTwentyUiCascadeLayer = (cssText: string): string => {
   const leadingStatementsEndIndex = getLeadingStatementsEndIndex({
     cssText,
     startIndex: 0,
@@ -134,5 +200,5 @@ export const wrapCssInTwentyUiCascadeLayer = (cssText: string): string => {
 
   const remainingCss = cssText.slice(leadingStatementsEndIndex);
 
-  return `${layeredLeadingStatements}${TWENTY_UI_CASCADE_LAYER_DECLARATION} {\n${remainingCss}\n}`;
+  return `${layeredLeadingStatements}${wrapRulesOutsideTwentyUiLayerBlocks(remainingCss)}`;
 };
