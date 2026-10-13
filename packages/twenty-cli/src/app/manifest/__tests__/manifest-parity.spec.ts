@@ -84,27 +84,7 @@ describe('CLI manifest parity with the repository SDK', () => {
     return appPath;
   };
 
-  const compareRawManifest = async (appPath: string) => {
-    const expected = await sdk
-      .buildManifest(appPath)
-      .catch((error: unknown) => ({
-        thrown: error instanceof Error ? error.message : String(error),
-      }));
-
-    const actual = await buildManifest(appPath).catch((error: unknown) => ({
-      thrown: error instanceof Error ? error.message : String(error),
-    }));
-
-    expect(json(actual)).toEqual(json(expected));
-  };
-
-  const compareManifest = async ({
-    appPath,
-    shouldCompareRawManifest = true,
-  }: {
-    appPath: string;
-    shouldCompareRawManifest?: boolean;
-  }) => {
+  const compareManifest = async (appPath: string) => {
     const expected = await sdk
       .buildAndValidateManifest(appPath)
       .catch((error: unknown) => ({
@@ -131,10 +111,9 @@ describe('CLI manifest parity with the repository SDK', () => {
     const actual = await buildAndValidateManifest(appPath);
 
     expect(json(actual)).toEqual(json(expected));
-
-    if (shouldCompareRawManifest) {
-      await compareRawManifest(appPath);
-    }
+    expect(json(await buildManifest(appPath))).toEqual(
+      json(await sdk.buildManifest(appPath)),
+    );
 
     const warnings: string[] = [];
     const translations = expected.success
@@ -287,20 +266,9 @@ export { compileApplicationTranslations } from './cli/utilities/translations/com
   it.each(FIXTURES)(
     'matches the manifest, file paths, errors and warnings for %s',
     async (name) => {
-      const result = await compareManifest({
-        appPath: await copyFixture(name),
-        shouldCompareRawManifest: false,
-      });
+      const result = await compareManifest(await copyFixture(name));
 
       expect(result.success).toBe(name !== 'invalid-app');
-    },
-    60000,
-  );
-
-  it.each(FIXTURES)(
-    'matches the raw manifest for %s',
-    async (name) => {
-      await compareRawManifest(await copyFixture(name));
     },
     60000,
   );
@@ -317,7 +285,7 @@ export { compileApplicationTranslations } from './cli/utilities/translations/com
     });
     await symlink(join(root, 'node_modules'), join(appPath, 'node_modules'));
     await rm(join(appPath, 'yarn.lock'));
-    const result = await compareManifest({ appPath });
+    const result = await compareManifest(appPath);
     const packageJson = JSON.parse(
       await readFile(join(appPath, 'package.json'), 'utf8'),
     );
@@ -347,7 +315,7 @@ export { compileApplicationTranslations } from './cli/utilities/translations/com
     );
     await writeFile(join(appPath, 'locales/de-DE.json'), '{');
     await writeFile(join(appPath, 'locales/klingon.json'), '{}');
-    await compareManifest({ appPath });
+    await compareManifest(appPath);
   }, 60000);
 
   it('matches duplicate identifier diagnostics and empty lockfile failures', async () => {
@@ -355,7 +323,7 @@ export { compileApplicationTranslations } from './cli/utilities/translations/com
     const duplicate = join(appPath, 'duplicate.role.ts');
 
     await cp(join(appPath, 'my.role.ts'), duplicate);
-    const duplicateResult = await compareManifest({ appPath });
+    const duplicateResult = await compareManifest(appPath);
 
     expect(duplicateResult.success).toBe(false);
     if (!duplicateResult.success)
@@ -365,7 +333,7 @@ export { compileApplicationTranslations } from './cli/utilities/translations/com
 
     await rm(duplicate);
     await writeFile(join(appPath, 'yarn.lock'), '');
-    const lockResult = await compareManifest({ appPath });
+    const lockResult = await compareManifest(appPath);
 
     expect(lockResult).toEqual({
       success: false,
