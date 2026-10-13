@@ -300,6 +300,15 @@ type AppConnection {
   workspaceMemberId: String
 }
 
+"""
+IDENTIFIED: the connection now carries the external account id; continue. MERGED: the credentials moved to the returned connection, which already held the account, and the connection the app was called for is deleted. REJECTED: the connection is flagged as needing reconnect with its tokens cleared.
+"""
+enum AppConnectionDeduplicationOutcome {
+  IDENTIFIED
+  MERGED
+  REJECTED
+}
+
 type AppKeyValue {
   key: String!
   scope: AppKeyValueScope!
@@ -1673,7 +1682,7 @@ input DeduplicateAppConnectionInput {
 
 type DeduplicateAppConnectionResult {
   connectedAccountId: ID!
-  wasMerged: Boolean!
+  outcome: AppConnectionDeduplicationOutcome!
 }
 
 input DeleteApprovedAccessDomainInput {

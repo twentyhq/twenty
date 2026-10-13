@@ -243,6 +243,10 @@ export interface AppConnection {
     __typename: 'AppConnection'
 }
 
+
+/** IDENTIFIED: the connection now carries the external account id; continue. MERGED: the credentials moved to the returned connection, which already held the account, and the connection the app was called for is deleted. REJECTED: the connection is flagged as needing reconnect with its tokens cleared. */
+export type AppConnectionDeduplicationOutcome = 'IDENTIFIED' | 'MERGED' | 'REJECTED'
+
 export interface AppKeyValue {
     key: Scalars['String']
     scope: AppKeyValueScope
@@ -1153,7 +1157,7 @@ export type DatabaseEventAction = 'CREATED' | 'DELETED' | 'DESTROYED' | 'RESTORE
 
 export interface DeduplicateAppConnectionResult {
     connectedAccountId: Scalars['ID']
-    wasMerged: Scalars['Boolean']
+    outcome: AppConnectionDeduplicationOutcome
     __typename: 'DeduplicateAppConnectionResult'
 }
 
@@ -5244,7 +5248,7 @@ export interface DeduplicateAppConnectionInput {connectedAccountId: Scalars['ID'
 
 export interface DeduplicateAppConnectionResultGenqlSelection{
     connectedAccountId?: boolean | number
-    wasMerged?: boolean | number
+    outcome?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -11241,6 +11245,12 @@ export const enumAllMetadataName = {
 export const enumAnalyticsType = {
    PAGEVIEW: 'PAGEVIEW' as const,
    TRACK: 'TRACK' as const
+}
+
+export const enumAppConnectionDeduplicationOutcome = {
+   IDENTIFIED: 'IDENTIFIED' as const,
+   MERGED: 'MERGED' as const,
+   REJECTED: 'REJECTED' as const
 }
 
 export const enumAppKeyValueScope = {

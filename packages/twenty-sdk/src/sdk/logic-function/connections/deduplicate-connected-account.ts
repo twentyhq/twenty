@@ -4,14 +4,19 @@ const DEDUPLICATE_CONNECTED_ACCOUNT_MUTATION = `
   mutation DeduplicateConnectedAccount($input: DeduplicateAppConnectionInput!) {
     deduplicateConnectedAccount(input: $input) {
       connectedAccountId
-      wasMerged
+      outcome
     }
   }
 `;
 
+export type DeduplicateConnectedAccountOutcome =
+  | 'IDENTIFIED'
+  | 'MERGED'
+  | 'REJECTED';
+
 export type DeduplicateConnectedAccountResult = {
   connectedAccountId: string;
-  wasMerged: boolean;
+  outcome: DeduplicateConnectedAccountOutcome;
 };
 
 export const deduplicateConnectedAccount = async ({

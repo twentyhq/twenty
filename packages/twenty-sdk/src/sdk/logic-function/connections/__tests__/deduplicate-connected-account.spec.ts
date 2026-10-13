@@ -25,14 +25,14 @@ describe('deduplicateConnectedAccount', () => {
     fetchSpy.mockRestore();
   });
 
-  it('sends the mutation with the connection, external account id and handle, and returns the surviving connection', async () => {
+  it('sends the mutation with the connection, external account id and handle, and returns the connection and outcome', async () => {
     fetchSpy.mockResolvedValue(
       new Response(
         JSON.stringify({
           data: {
             deduplicateConnectedAccount: {
               connectedAccountId: 'c-0',
-              wasMerged: true,
+              outcome: 'MERGED',
             },
           },
         }),
@@ -60,7 +60,7 @@ describe('deduplicateConnectedAccount', () => {
         handle: 'jane@example.com',
       },
     });
-    expect(result).toEqual({ connectedAccountId: 'c-0', wasMerged: true });
+    expect(result).toEqual({ connectedAccountId: 'c-0', outcome: 'MERGED' });
   });
 
   it('omits the handle when none is given', async () => {
@@ -70,7 +70,7 @@ describe('deduplicateConnectedAccount', () => {
           data: {
             deduplicateConnectedAccount: {
               connectedAccountId: 'c-2',
-              wasMerged: false,
+              outcome: 'IDENTIFIED',
             },
           },
         }),
@@ -88,7 +88,10 @@ describe('deduplicateConnectedAccount', () => {
     expect(body.variables).toEqual({
       input: { connectedAccountId: 'c-2', externalAccountId: 'T123:U456' },
     });
-    expect(result).toEqual({ connectedAccountId: 'c-2', wasMerged: false });
+    expect(result).toEqual({
+      connectedAccountId: 'c-2',
+      outcome: 'IDENTIFIED',
+    });
   });
 
   it('propagates a GraphQL error', async () => {

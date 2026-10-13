@@ -340,6 +340,13 @@ export type AppConnection = {
   workspaceMemberId?: Maybe<Scalars['String']['output']>;
 };
 
+/** IDENTIFIED: the connection now carries the external account id; continue. MERGED: the credentials moved to the returned connection, which already held the account, and the connection the app was called for is deleted. REJECTED: the connection is flagged as needing reconnect with its tokens cleared. */
+export enum AppConnectionDeduplicationOutcome {
+  IDENTIFIED = 'IDENTIFIED',
+  MERGED = 'MERGED',
+  REJECTED = 'REJECTED'
+}
+
 export type AppKeyValue = {
   __typename?: 'AppKeyValue';
   key: Scalars['String']['output'];
@@ -1772,7 +1779,7 @@ export type DeduplicateAppConnectionInput = {
 export type DeduplicateAppConnectionResult = {
   __typename?: 'DeduplicateAppConnectionResult';
   connectedAccountId: Scalars['ID']['output'];
-  wasMerged: Scalars['Boolean']['output'];
+  outcome: AppConnectionDeduplicationOutcome;
 };
 
 export type DeleteApprovedAccessDomainInput = {
