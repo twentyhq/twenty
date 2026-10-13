@@ -1,6 +1,6 @@
-import CustomLogo from '@/applications/assets/custom-logo.webp';
 import { AppChip } from '@/applications/components/AppChip';
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
+import { getCustomApplicationLogoUrl } from '@/applications/utils/getCustomApplicationLogoUrl';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -95,7 +95,7 @@ export const SettingsRolesTableRow = ({
             size="md"
             fallbackApplicationData={{
               name: t`Workspace app`,
-              logoUrl: new URL(CustomLogo, window.location.href).toString(),
+              logoUrl: getCustomApplicationLogoUrl(),
             }}
           />
         </TableCell>

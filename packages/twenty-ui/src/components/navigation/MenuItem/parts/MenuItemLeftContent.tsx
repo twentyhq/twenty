@@ -33,6 +33,25 @@ type MenuItemLeftContentProps = {
   contextualTextPosition?: 'left' | 'right';
 };
 
+const getLeadingContent = ({
+  LeftComponent,
+  LeftIcon,
+  iconThemeColor,
+}: Pick<
+  MenuItemLeftContentProps,
+  'LeftComponent' | 'LeftIcon' | 'iconThemeColor'
+>): ReactNode => {
+  if (isDefined(LeftComponent)) {
+    return LeftComponent;
+  }
+
+  if (isDefined(LeftIcon)) {
+    return <MenuItemIcon Icon={LeftIcon} iconThemeColor={iconThemeColor} />;
+  }
+
+  return undefined;
+};
+
 export const MenuItemLeftContent = ({
   className,
   LeftComponent,
@@ -54,11 +73,11 @@ export const MenuItemLeftContent = ({
       ? themeCssVariables.font.color.extraLight
       : themeCssVariables.font.color.light;
 
-  const leadingContent = isDefined(LeftComponent) ? (
-    LeftComponent
-  ) : isDefined(LeftIcon) ? (
-    <MenuItemIcon Icon={LeftIcon} iconThemeColor={iconThemeColor} />
-  ) : undefined;
+  const leadingContent = getLeadingContent({
+    LeftComponent,
+    LeftIcon,
+    iconThemeColor,
+  });
 
   const withLeadingContentContainer =
     withIconContainer && !isDefined(iconThemeColor);
