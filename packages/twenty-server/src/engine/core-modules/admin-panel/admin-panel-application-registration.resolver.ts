@@ -12,7 +12,6 @@ export class AdminPanelApplicationRegistrationResolver {
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
   ) {}
 
-  // The admin list already computed both values to order the page
   @ResolveField(() => Boolean)
   async isConfigured(
     @Parent()

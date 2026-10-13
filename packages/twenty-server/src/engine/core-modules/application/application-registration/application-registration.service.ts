@@ -338,8 +338,6 @@ export class ApplicationRegistrationService {
       (registration) => registration.id,
     );
 
-    // Configuration status and install counts are computed, not stored, and
-    // drive both the filter and the ordering, so pagination happens in memory
     const [isConfiguredByRegistrationId, installCountByRegistrationId] =
       await Promise.all([
         this.applicationRegistrationVariableService.isConfiguredBatch(

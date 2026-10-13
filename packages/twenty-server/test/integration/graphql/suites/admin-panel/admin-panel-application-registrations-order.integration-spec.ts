@@ -61,9 +61,6 @@ const SERVER_ROUTE_MANIFEST = {
   ],
 };
 
-// Listed in the order the admin panel is expected to return them: vetted
-// first, not configured first, listed last, Twenty packages first, most
-// installed first, then by name
 const REGISTRATION_SEEDS: RegistrationSeed[] = [
   {
     suffix: 'vetted-not-configured',

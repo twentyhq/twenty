@@ -215,7 +215,6 @@ export class ApplicationRegistrationVariableService {
     );
   }
 
-  // Checked in SQL so the manifests never leave the database
   private async findRegistrationIdsExposingServerRoute(
     applicationRegistrationIds: string[],
   ): Promise<Set<string>> {
@@ -240,7 +239,6 @@ export class ApplicationRegistrationVariableService {
     return new Set(rows.map((row) => row.id));
   }
 
-  // Server routes run in the owner workspace, so the app has to be installed there
   private async findRegistrationIdsInstalledOnOwnerWorkspace(
     applicationRegistrationIds: string[],
   ): Promise<Set<string>> {

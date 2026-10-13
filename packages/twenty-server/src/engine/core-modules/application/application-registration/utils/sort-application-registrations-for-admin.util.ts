@@ -11,10 +11,6 @@ type AdminSortableApplicationRegistration = Pick<
   | 'isListed'
 >;
 
-// Surfaces what still needs admin action: vetted apps first, apps missing
-// configuration before configured ones, listed apps last, Twenty's own packages
-// before community ones, then the most installed and a name order that is the
-// same on every instance
 export const sortApplicationRegistrationsForAdmin = <
   TRegistration extends AdminSortableApplicationRegistration,
 >({
