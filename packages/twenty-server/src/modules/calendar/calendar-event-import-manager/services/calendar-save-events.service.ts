@@ -45,8 +45,7 @@ export class CalendarSaveEventsService {
         workspaceId,
       );
 
-    const sharingContext = await this.findCalendarEventSharingContext({
-      calendarChannel,
+    const sharingProvider = await this.findCalendarEventSharingProvider({
       connectedAccount,
       workspaceId,
     });
@@ -83,10 +82,12 @@ export class CalendarSaveEventsService {
           );
 
           const calendarEventIdSharedByEventExternalId = isDefined(
-            sharingContext,
+            sharingProvider,
           )
             ? await this.findCalendarEventIdSharedByEventExternalId({
-                ...sharingContext,
+                provider: sharingProvider,
+                calendarChannel,
+                workspaceId,
                 fetchedCalendarEvents: fetchedCalendarEvents.filter(
                   (fetchedCalendarEvent) =>
                     !existingEventExternalIds.has(fetchedCalendarEvent.id),
@@ -110,16 +111,14 @@ export class CalendarSaveEventsService {
             : [];
 
           const calendarEventIdsSharedWithOtherChannels = isDefined(
-            sharingContext,
+            sharingProvider,
           )
             ? new Set(
                 (
                   await calendarChannelEventAssociationRepository.find({
                     where: {
                       calendarEventId: Any(storedCalendarEventIds),
-                      calendarChannelId: Any(
-                        sharingContext.otherCalendarChannelIds,
-                      ),
+                      calendarChannelId: Not(calendarChannel.id),
                     },
                   })
                 ).map((association) => association.calendarEventId),
@@ -235,21 +234,13 @@ export class CalendarSaveEventsService {
     return { calendarEventIds };
   }
 
-  private async findCalendarEventSharingContext({
-    calendarChannel,
+  private async findCalendarEventSharingProvider({
     connectedAccount,
     workspaceId,
   }: {
-    calendarChannel: Pick<CalendarChannelEntity, 'id'>;
     connectedAccount: Pick<ConnectedAccountEntity, 'provider'>;
     workspaceId: string;
-  }): Promise<
-    | {
-        provider: CalendarEventSharingProvider;
-        otherCalendarChannelIds: string[];
-      }
-    | undefined
-  > {
+  }): Promise<CalendarEventSharingProvider | undefined> {
     const { provider } = connectedAccount;
 
     if (
@@ -264,39 +255,21 @@ export class CalendarSaveEventsService {
       workspaceId,
     );
 
-    if (!isSharingEnabled) {
-      return undefined;
-    }
-
-    const otherCalendarChannels = await this.calendarChannelRepository.find({
-      select: { id: true },
-      where: {
-        workspaceId,
-        id: Not(calendarChannel.id),
-        connectedAccount: { provider },
-      },
-    });
-
-    if (otherCalendarChannels.length === 0) {
-      return undefined;
-    }
-
-    return {
-      provider,
-      otherCalendarChannelIds: otherCalendarChannels.map(({ id }) => id),
-    };
+    return isSharingEnabled ? provider : undefined;
   }
 
   private async findCalendarEventIdSharedByEventExternalId({
     provider,
+    calendarChannel,
+    workspaceId,
     fetchedCalendarEvents,
-    otherCalendarChannelIds,
     calendarChannelEventAssociationRepository,
     calendarEventRepository,
   }: {
     provider: CalendarEventSharingProvider;
+    calendarChannel: Pick<CalendarChannelEntity, 'id'>;
+    workspaceId: string;
     fetchedCalendarEvents: FetchedCalendarEvent[];
-    otherCalendarChannelIds: string[];
     calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>;
     calendarEventRepository: WorkspaceRepository<CalendarEventWorkspaceEntity>;
   }): Promise<Map<string, string>> {
@@ -309,7 +282,6 @@ export class CalendarSaveEventsService {
         await calendarChannelEventAssociationRepository.find({
           where: {
             eventExternalId: Any(fetchedCalendarEvents.map(({ id }) => id)),
-            calendarChannelId: Any(otherCalendarChannelIds),
           },
         });
 
@@ -329,6 +301,20 @@ export class CalendarSaveEventsService {
       return new Map();
     }
 
+    const otherMicrosoftCalendarChannels =
+      await this.calendarChannelRepository.find({
+        select: { id: true },
+        where: {
+          workspaceId,
+          id: Not(calendarChannel.id),
+          connectedAccount: { provider },
+        },
+      });
+
+    if (otherMicrosoftCalendarChannels.length === 0) {
+      return new Map();
+    }
+
     const otherChannelCalendarEvents = await calendarEventRepository.find({
       where: { iCalUid: Any(iCalUids) },
     });
@@ -340,7 +326,9 @@ export class CalendarSaveEventsService {
               calendarEventId: Any(
                 otherChannelCalendarEvents.map(({ id }) => id),
               ),
-              calendarChannelId: Any(otherCalendarChannelIds),
+              calendarChannelId: Any(
+                otherMicrosoftCalendarChannels.map(({ id }) => id),
+              ),
             },
           })
         : [];
