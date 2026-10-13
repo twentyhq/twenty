@@ -6,13 +6,14 @@ import {
   CoreObjectNameSingular,
   MessageCampaignStatus,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconClock, IconSend } from 'twenty-ui/icon';
 import { Button, type SelectOption } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
+import { useCampaignSendPreview } from '@/activities/emails/hooks/useCampaignSendPreview';
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { buildDefaultCampaignScheduledAt } from '@/activities/emails/utils/buildDefaultCampaignScheduledAt';
@@ -29,6 +30,7 @@ import { buildCampaignDeliveryHint } from '@/side-panel/pages/send-campaign/util
 import { buildCampaignSendButtonTitle } from '@/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle';
 import { Select } from '@/ui/input/components/Select';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
@@ -110,17 +112,27 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
     campaign.scheduledAt,
   );
 
-  const { record: list } = useFindOneRecord({
+  const hasList = isDefined(campaign.listId) && isValidUuid(campaign.listId);
+
+  const { record: list, loading: isListLoading } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.MessageList,
     objectRecordId: campaign.listId ?? '',
-    skip: !isDefined(campaign.listId),
+    withSoftDeleted: true,
+    skip: !hasList,
   });
 
-  const { audiencePreview, hasFailed: hasAudiencePreviewFailed } =
-    useCampaignAudiencePreview({
-      listId: campaign.listId,
-      unsubscribeTopicId: campaign.unsubscribeTopicId,
+  const isListUnresolved = hasList && !isDefined(list) && !isListLoading;
+
+  const isScheduling = deliveryTiming === 'LATER';
+
+  const { sendPreview, hasFailed: hasSendPreviewFailed } =
+    useCampaignSendPreview({
+      campaignId: campaign.id,
+      scheduledAt: isScheduling ? scheduledAt : null,
     });
+
+  const audiencePreview = sendPreview?.audience ?? null;
+  const sendBlockers = sendPreview?.blockers ?? [];
 
   const fromAddress = campaign.fromAddress?.primaryEmail;
   const subject = campaign.subject;
@@ -129,15 +141,9 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
     ? buildExcludedRecipientReasons({ counts: audiencePreview, formatNumber })
     : [];
 
-  const isScheduling = deliveryTiming === 'LATER';
+  const isMissingSendTime = isScheduling && !isNonEmptyString(scheduledAt);
 
-  const isScheduledInTheFuture =
-    isNonEmptyString(scheduledAt) &&
-    new Date(scheduledAt).getTime() > Date.now();
-
-  const hasInvalidSendTime = isScheduling && !isScheduledInTheFuture;
-
-  const formattedSendTime = isScheduledInTheFuture
+  const formattedSendTime = isNonEmptyString(scheduledAt)
     ? formatCampaignSendTime({
         value: scheduledAt,
         timeZone,
@@ -146,16 +152,6 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
         localeCatalog,
       })
     : null;
-
-  const isCampaignReady =
-    isDefined(list) &&
-    isNonEmptyString(fromAddress) &&
-    isNonEmptyString(subject) &&
-    isNonEmptyString(campaign.bodyTemplate) &&
-    isDefined(audiencePreview) &&
-    audiencePreview.sendable > 0;
-
-  const canSend = isCampaignReady && !hasInvalidSendTime;
 
   const deliveryTimingOptions: SelectOption<CampaignDeliveryTiming>[] = [
     { label: t`Send now`, value: 'NOW' },
@@ -167,6 +163,16 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
     isAlreadyScheduled,
     formattedSendTime,
   });
+
+  const sendPreviewStatusMessage = hasSendPreviewFailed
+    ? t`Recipient count unavailable.`
+    : t`Counting recipients...`;
+
+  const sendDisabledReason = isDefined(sendPreview)
+    ? (sendBlockers[0]?.message ?? (isMissingSendTime ? deliveryHint : null))
+    : sendPreviewStatusMessage;
+
+  const canSend = !isDefined(sendDisabledReason);
 
   const handleDeliveryTimingChange = (timing: CampaignDeliveryTiming) => {
     setDeliveryTiming(timing);
@@ -193,7 +199,10 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
       <StyledContent>
         <StyledSection>
           <StyledDisplayLabel>{t`Recipients`}</StyledDisplayLabel>
-          {isDefined(audiencePreview) ? (
+          {!isDefined(sendPreview) && (
+            <StyledHint>{sendPreviewStatusMessage}</StyledHint>
+          )}
+          {isDefined(audiencePreview) && (
             <>
               <StyledRecipientCount>
                 {plural(audiencePreview.sendable, {
@@ -208,7 +217,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
               )}
               {audiencePreview.trackingRefused > 0 && (
                 <StyledHint>
-                  {t`${formatNumber(audiencePreview.trackingRefused)} opted out of email tracking, their clicks are not recorded`}
+                  {t`${formatNumber(audiencePreview.trackingRefused)} opted out of email tracking, their opens and clicks are not recorded`}
                 </StyledHint>
               )}
               {isScheduling && (
@@ -217,13 +226,12 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
                 </StyledHint>
               )}
             </>
-          ) : (
-            <StyledHint>
-              {hasAudiencePreviewFailed
-                ? t`Recipient count unavailable`
-                : t`Counting recipients...`}
-            </StyledHint>
           )}
+          {sendBlockers.map((sendBlocker) => (
+            <StyledErrorHint key={sendBlocker.message}>
+              {sendBlocker.message}
+            </StyledErrorHint>
+          ))}
         </StyledSection>
         <StyledSection>
           <StyledDisplayLabel>{t`List`}</StyledDisplayLabel>
@@ -232,8 +240,12 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
               record={list}
               objectNameSingular={CoreObjectNameSingular.MessageList}
             />
-          ) : (
+          ) : !hasList ? (
             <StyledValue $isEmpty>{t`No list`}</StyledValue>
+          ) : (
+            isListUnresolved && (
+              <StyledValue $isEmpty>{t`Unavailable`}</StyledValue>
+            )
           )}
         </StyledSection>
         <StyledSection>
@@ -258,7 +270,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
               options={deliveryTimingOptions}
               onChange={handleDeliveryTimingChange}
             />
-            {hasInvalidSendTime ? (
+            {isMissingSendTime ? (
               <StyledErrorHint>{deliveryHint}</StyledErrorHint>
             ) : (
               <StyledHint>{deliveryHint}</StyledHint>
@@ -275,20 +287,30 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
       </StyledContent>
       <SidePanelFooter
         actions={[
-          <Button
+          <Tooltip
             key="send"
-            startIcon={isScheduling ? <IconClock /> : <IconSend />}
-            size="sm"
-            disabled={!canSend || isSending}
-            onClick={handleSend}
-            variant="solid"
-            color="accent"
+            content={sendDisabledReason}
+            side="top"
+            positionMethod="fixed"
+            delay={TooltipDelay.shortDelay}
+            disabled={canSend}
           >
-            {buildCampaignSendButtonTitle({
-              deliveryTiming,
-              isAlreadyScheduled,
-            })}
-          </Button>,
+            <span tabIndex={canSend ? undefined : 0}>
+              <Button
+                startIcon={isScheduling ? <IconClock /> : <IconSend />}
+                size="sm"
+                disabled={!canSend || isSending}
+                onClick={handleSend}
+                variant="solid"
+                color="accent"
+              >
+                {buildCampaignSendButtonTitle({
+                  deliveryTiming,
+                  isAlreadyScheduled,
+                })}
+              </Button>
+            </span>
+          </Tooltip>,
         ]}
       />
     </StyledContainer>
