@@ -4,15 +4,20 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import {
   type CommandMenuItemManifest,
   type FrontComponentManifest,
-  type FrontComponentSurface,
+  type FrontComponentWidgetAvailabilityManifest,
   type Manifest,
   type SettingsMenuItemManifest,
 } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
+
+import { type FrontComponentWidgetAvailabilityDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component-widget-availability.dto';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -24,16 +29,21 @@ const COMMAND_MENU_ITEM_ID = uuidv4();
 const WIDGET_COMPONENT_NAME = 'WidgetComponent';
 const MENU_COMPONENT_NAME = 'MenuComponent';
 
+const ALL_WIDGET_PICKERS = [
+  { pageLayoutType: PageLayoutType.RECORD_PAGE, objectMetadataId: null },
+  { pageLayoutType: PageLayoutType.DASHBOARD, objectMetadataId: null },
+];
+
 const buildFrontComponent = ({
   universalIdentifier,
   componentName,
   isHeadless = false,
-  availableOn,
+  widgetAvailability,
 }: {
   universalIdentifier: string;
   componentName: string;
   isHeadless?: boolean;
-  availableOn?: FrontComponentSurface[];
+  widgetAvailability?: FrontComponentWidgetAvailabilityManifest[];
 }): FrontComponentManifest => ({
   universalIdentifier,
   name: componentName,
@@ -42,7 +52,7 @@ const buildFrontComponent = ({
   builtComponentChecksum: `${componentName}-checksum`,
   componentName,
   isHeadless,
-  ...(isDefined(availableOn) ? { availableOn } : {}),
+  ...(isDefined(widgetAvailability) ? { widgetAvailability } : {}),
 });
 
 const SETTINGS_MENU_ITEM: SettingsMenuItemManifest = {
@@ -62,15 +72,15 @@ const buildManifest = ({
   commandMenuItems = [],
   isWidgetHeadless,
   isMenuHeadless,
-  widgetAvailableOn,
-  menuAvailableOn,
+  widgetWidgetAvailability,
+  menuWidgetAvailability,
 }: {
   settingsMenuItems?: SettingsMenuItemManifest[];
   commandMenuItems?: CommandMenuItemManifest[];
   isWidgetHeadless?: boolean;
   isMenuHeadless?: boolean;
-  widgetAvailableOn?: FrontComponentSurface[];
-  menuAvailableOn?: FrontComponentSurface[];
+  widgetWidgetAvailability?: FrontComponentWidgetAvailabilityManifest[];
+  menuWidgetAvailability?: FrontComponentWidgetAvailabilityManifest[];
 } = {}): Manifest =>
   buildBaseManifest({
     appId: TEST_APP_ID,
@@ -81,13 +91,13 @@ const buildManifest = ({
           universalIdentifier: WIDGET_FRONT_COMPONENT_ID,
           componentName: WIDGET_COMPONENT_NAME,
           isHeadless: isWidgetHeadless,
-          availableOn: widgetAvailableOn,
+          widgetAvailability: widgetWidgetAvailability,
         }),
         buildFrontComponent({
           universalIdentifier: MENU_FRONT_COMPONENT_ID,
           componentName: MENU_COMPONENT_NAME,
           isHeadless: isMenuHeadless,
-          availableOn: menuAvailableOn,
+          widgetAvailability: menuWidgetAvailability,
         }),
       ],
       settingsMenuItems,
@@ -95,13 +105,16 @@ const buildManifest = ({
     },
   });
 
-const findAvailableOnByUniversalIdentifier = async (): Promise<
-  Record<string, FrontComponentSurface[]>
+const findWidgetAvailabilityByUniversalIdentifier = async (): Promise<
+  Record<string, FrontComponentWidgetAvailabilityDTO[]>
 > => {
   const { data } = await findFrontComponents({
     gqlFields: `
       universalIdentifier
-      availableOn
+      widgetAvailability {
+        pageLayoutType
+        objectMetadataId
+      }
     `,
     expectToFail: false,
   });
@@ -115,9 +128,27 @@ const findAvailableOnByUniversalIdentifier = async (): Promise<
       )
       .map((frontComponent) => [
         frontComponent.universalIdentifier,
-        frontComponent.availableOn,
+        frontComponent.widgetAvailability,
       ]),
   );
+};
+
+const findCompanyObjectMetadataId = async () => {
+  const objects = await findManyObjectMetadataWithIndexes({
+    expectToFail: false,
+  });
+
+  const company = objects.find(
+    (object) =>
+      object.universalIdentifier ===
+      STANDARD_OBJECTS.company.universalIdentifier,
+  );
+
+  if (!isDefined(company)) {
+    throw new Error('Standard Company object not found in workspace');
+  }
+
+  return company.id;
 };
 
 const uploadBuiltComponentFile = async (componentName: string) => {
@@ -132,13 +163,27 @@ const uploadBuiltComponentFile = async (componentName: string) => {
   });
 };
 
-describe('Manifest sync - front component availableOn', () => {
+const expectSyncToBeRejected = async (manifest: Manifest) => {
+  const { errors } = await syncApplication({
+    manifest,
+    expectToFail: true,
+  });
+
+  expect(errors).toBeDefined();
+  expect(errors?.[0]?.extensions?.code).not.toBe('INTERNAL_SERVER_ERROR');
+  expect(await findWidgetAvailabilityByUniversalIdentifier()).toEqual({
+    [WIDGET_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
+    [MENU_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
+  });
+};
+
+describe('Manifest sync - front component widgetAvailability', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
-      name: 'Front Component Available On Test Application',
-      description: 'App for testing front component availableOn sync',
-      sourcePath: 'front-component-available-on-manifest-sync',
+      name: 'Front Component Widget Availability Test Application',
+      description: 'App for testing front component widgetAvailability sync',
+      sourcePath: 'front-component-widget-availability-manifest-sync',
     });
 
     jest.useRealTimers();
@@ -160,10 +205,10 @@ describe('Manifest sync - front component availableOn', () => {
     });
   });
 
-  it('offers front components in both widget pickers by default', async () => {
-    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
-      [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
-      [MENU_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+  it('offers front components in both widget pickers for every object by default', async () => {
+    expect(await findWidgetAvailabilityByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
+      [MENU_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
     });
   }, 60000);
 
@@ -173,8 +218,8 @@ describe('Manifest sync - front component availableOn', () => {
       expectToFail: false,
     });
 
-    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
-      [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+    expect(await findWidgetAvailabilityByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
       [MENU_FRONT_COMPONENT_ID]: [],
     });
   }, 60000);
@@ -192,7 +237,9 @@ describe('Manifest sync - front component availableOn', () => {
       gqlFields: `
         universalIdentifier
         isHeadless
-        availableOn
+        widgetAvailability {
+          pageLayoutType
+        }
       `,
       expectToFail: false,
     });
@@ -202,7 +249,7 @@ describe('Manifest sync - front component availableOn', () => {
         (frontComponent) =>
           frontComponent.universalIdentifier === MENU_FRONT_COMPONENT_ID,
       ),
-    ).toMatchObject({ isHeadless: false, availableOn: [] });
+    ).toMatchObject({ isHeadless: false, widgetAvailability: [] });
   }, 60000);
 
   it('keeps a front component opened by a command menu item out of the widget pickers by default', async () => {
@@ -211,8 +258,8 @@ describe('Manifest sync - front component availableOn', () => {
       expectToFail: false,
     });
 
-    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
-      [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+    expect(await findWidgetAvailabilityByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
       [MENU_FRONT_COMPONENT_ID]: [],
     });
   }, 60000);
@@ -223,9 +270,9 @@ describe('Manifest sync - front component availableOn', () => {
       expectToFail: false,
     });
 
-    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
+    expect(await findWidgetAvailabilityByUniversalIdentifier()).toEqual({
       [WIDGET_FRONT_COMPONENT_ID]: [],
-      [MENU_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+      [MENU_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
     });
   }, 60000);
 
@@ -245,27 +292,58 @@ describe('Manifest sync - front component availableOn', () => {
       expectToFail: false,
     });
 
-    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
-      [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
+    expect(await findWidgetAvailabilityByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: ALL_WIDGET_PICKERS,
       [MENU_FRONT_COMPONENT_ID]: [],
     });
   }, 60000);
 
-  it('honors an explicit availableOn over the default', async () => {
+  it('honors an explicit widgetAvailability over the default', async () => {
     await syncApplication({
       manifest: buildManifest({
         settingsMenuItems: [SETTINGS_MENU_ITEM],
         commandMenuItems: [COMMAND_MENU_ITEM],
-        widgetAvailableOn: [],
-        menuAvailableOn: ['OBJECTS'],
+        widgetWidgetAvailability: [],
+        menuWidgetAvailability: [{ pageLayoutType: PageLayoutType.DASHBOARD }],
       }),
       expectToFail: false,
     });
 
-    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
+    expect(await findWidgetAvailabilityByUniversalIdentifier()).toEqual({
       [WIDGET_FRONT_COMPONENT_ID]: [],
-      [MENU_FRONT_COMPONENT_ID]: ['OBJECTS'],
+      [MENU_FRONT_COMPONENT_ID]: [
+        { pageLayoutType: PageLayoutType.DASHBOARD, objectMetadataId: null },
+      ],
     });
+  }, 60000);
+
+  it('restricts the record page widget picker to the declared objects', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        widgetWidgetAvailability: [
+          {
+            pageLayoutType: PageLayoutType.RECORD_PAGE,
+            objectUniversalIdentifiers: [
+              STANDARD_OBJECTS.company.universalIdentifier,
+            ],
+          },
+          { pageLayoutType: PageLayoutType.DASHBOARD },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    expect(
+      (await findWidgetAvailabilityByUniversalIdentifier())[
+        WIDGET_FRONT_COMPONENT_ID
+      ],
+    ).toEqual([
+      {
+        pageLayoutType: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: await findCompanyObjectMetadataId(),
+      },
+      { pageLayoutType: PageLayoutType.DASHBOARD, objectMetadataId: null },
+    ]);
   }, 60000);
 
   it('restores the default once no menu item opens the front component', async () => {
@@ -283,23 +361,50 @@ describe('Manifest sync - front component availableOn', () => {
     });
 
     expect(
-      (await findAvailableOnByUniversalIdentifier())[MENU_FRONT_COMPONENT_ID],
-    ).toEqual(['OBJECTS', 'DASHBOARDS']);
+      (await findWidgetAvailabilityByUniversalIdentifier())[
+        MENU_FRONT_COMPONENT_ID
+      ],
+    ).toEqual(ALL_WIDGET_PICKERS);
   }, 60000);
 
-  it('rejects a surface that is not a layout editor', async () => {
-    const { errors } = await syncApplication({
-      manifest: buildManifest({
-        widgetAvailableOn: ['SETTINGS' as FrontComponentSurface],
+  it('rejects a page layout type without a widget picker', async () => {
+    await expectSyncToBeRejected(
+      buildManifest({
+        widgetWidgetAvailability: [
+          {
+            pageLayoutType:
+              PageLayoutType.STANDALONE_PAGE as FrontComponentWidgetAvailabilityManifest['pageLayoutType'],
+          },
+        ],
       }),
-      expectToFail: true,
-    });
+    );
+  }, 60000);
 
-    expect(errors).toBeDefined();
-    expect(errors?.[0]?.extensions?.code).not.toBe('INTERNAL_SERVER_ERROR');
-    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
-      [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
-      [MENU_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
-    });
+  it('rejects an object restriction on dashboards', async () => {
+    await expectSyncToBeRejected(
+      buildManifest({
+        widgetWidgetAvailability: [
+          {
+            pageLayoutType: PageLayoutType.DASHBOARD,
+            objectUniversalIdentifiers: [
+              STANDARD_OBJECTS.company.universalIdentifier,
+            ],
+          },
+        ],
+      }),
+    );
+  }, 60000);
+
+  it('rejects an object restriction on an unknown object', async () => {
+    await expectSyncToBeRejected(
+      buildManifest({
+        widgetWidgetAvailability: [
+          {
+            pageLayoutType: PageLayoutType.RECORD_PAGE,
+            objectUniversalIdentifiers: [uuidv4()],
+          },
+        ],
+      }),
+    );
   }, 60000);
 });

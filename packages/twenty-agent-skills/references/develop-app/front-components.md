@@ -25,7 +25,7 @@ export default defineFrontComponent({
 });
 ```
 
-Set `availableOn` to list the layout editors whose widget picker offers a non-headless component: `OBJECTS` (record page layouts) and `DASHBOARDS` (dashboards). It defaults to `['OBJECTS', 'DASHBOARDS']`, or to `[]` for a headless component or one opened by a command menu item or a settings menu item (see `layout.md`); list editors, for example `['OBJECTS']`, to offer such a component as a widget too. `availableOn` never limits where a component is displayed: commands, settings menu items and the app's own page layouts render it whatever its value.
+Set `widgetAvailability` to list the widget pickers that offer a non-headless component while a page layout is edited. Each entry has a `pageLayoutType`: `RECORD_PAGE` (record page layouts) or `DASHBOARD` (dashboards). A `RECORD_PAGE` entry can add `objectUniversalIdentifiers` to offer the component only on those objects' record pages; without it, every object qualifies. It defaults to every record page and every dashboard, or to `[]` for a headless component or one opened by a command menu item or a settings menu item (see `layout.md`); declare entries, for example `[{ pageLayoutType: PageLayoutType.RECORD_PAGE, objectUniversalIdentifiers: [STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier] }]`, to offer such a component as a widget too. `widgetAvailability` never limits where a component is displayed: commands, settings menu items and the app's own page layouts render it whatever its value.
 
 Do not import or call `react-dom/client` in the component source. The SDK renderer mounts front components.
 

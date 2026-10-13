@@ -45,7 +45,6 @@ export default {
         245,
         248,
         255,
-        264,
         270,
         272,
         282,
@@ -4734,9 +4733,6 @@ export default {
             "applicationVariables": [
                 289
             ],
-            "availableOn": [
-                264
-            ],
             "builtComponentChecksum": [
                 1
             ],
@@ -4776,6 +4772,9 @@ export default {
             "usesSdkClient": [
                 4
             ],
+            "widgetAvailability": [
+                264
+            ],
             "__typename": [
                 1
             ]
@@ -4794,7 +4793,17 @@ export default {
                 1
             ]
         },
-        "FrontComponentSurface": {},
+        "FrontComponentWidgetAvailability": {
+            "objectMetadataId": [
+                492
+            ],
+            "pageLayoutType": [
+                372
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "FullName": {
             "firstName": [
                 1

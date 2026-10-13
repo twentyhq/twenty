@@ -1,5 +1,6 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type CommandMenuItemAvailabilityType } from '@/types';
+import { PageLayoutType } from '@/types/page-layout/PageLayoutType';
 
 export type CommandMenuItemManifest = SyncableEntityOptions & {
   label: string;
@@ -14,19 +15,25 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   conditionalPinnedExpression?: string;
 };
 
-export const FRONT_COMPONENT_SURFACES = ['OBJECTS', 'DASHBOARDS'] as const;
+export const FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES = [
+  PageLayoutType.RECORD_PAGE,
+  PageLayoutType.DASHBOARD,
+] as const;
 
-export type FrontComponentSurface = (typeof FRONT_COMPONENT_SURFACES)[number];
+export type FrontComponentWidgetPageLayoutType =
+  (typeof FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES)[number];
 
-export const isFrontComponentSurface = (
-  surface: string,
-): surface is FrontComponentSurface =>
-  (FRONT_COMPONENT_SURFACES as readonly string[]).includes(surface);
+export const isFrontComponentWidgetPageLayoutType = (
+  pageLayoutType: string,
+): pageLayoutType is FrontComponentWidgetPageLayoutType =>
+  (FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES as readonly string[]).includes(
+    pageLayoutType,
+  );
 
-export const DEFAULT_FRONT_COMPONENT_AVAILABLE_ON: FrontComponentSurface[] = [
-  'OBJECTS',
-  'DASHBOARDS',
-];
+export type FrontComponentWidgetAvailabilityManifest = {
+  pageLayoutType: FrontComponentWidgetPageLayoutType;
+  objectUniversalIdentifiers?: string[];
+};
 
 export type FrontComponentManifest = {
   universalIdentifier: string;
@@ -37,6 +44,6 @@ export type FrontComponentManifest = {
   builtComponentChecksum: string;
   componentName: string;
   isHeadless?: boolean;
-  availableOn?: FrontComponentSurface[];
+  widgetAvailability?: FrontComponentWidgetAvailabilityManifest[];
   usesSdkClient?: boolean;
 };

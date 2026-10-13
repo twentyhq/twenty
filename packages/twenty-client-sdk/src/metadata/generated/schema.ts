@@ -1483,7 +1483,6 @@ export interface FrontComponent {
     /** @deprecated Use generateFrontComponentApplicationTokenPair */
     applicationTokenPair?: ApplicationTokenPair
     applicationVariables?: Scalars['JSON']
-    availableOn: FrontComponentSurface[]
     builtComponentChecksum: Scalars['String']
     builtComponentPath: Scalars['String']
     componentName: Scalars['String']
@@ -1497,6 +1496,7 @@ export interface FrontComponent {
     universalIdentifier?: Scalars['UUID']
     updatedAt: Scalars['DateTime']
     usesSdkClient: Scalars['Boolean']
+    widgetAvailability: FrontComponentWidgetAvailability[]
     __typename: 'FrontComponent'
 }
 
@@ -1507,7 +1507,11 @@ export interface FrontComponentConfiguration {
     __typename: 'FrontComponentConfiguration'
 }
 
-export type FrontComponentSurface = 'DASHBOARDS' | 'OBJECTS'
+export interface FrontComponentWidgetAvailability {
+    objectMetadataId?: Scalars['UUID']
+    pageLayoutType: PageLayoutType
+    __typename: 'FrontComponentWidgetAvailability'
+}
 
 export interface FullName {
     firstName: Scalars['String']
@@ -5667,7 +5671,6 @@ export interface FrontComponentGenqlSelection{
     /** @deprecated Use generateFrontComponentApplicationTokenPair */
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
     applicationVariables?: boolean | number
-    availableOn?: boolean | number
     builtComponentChecksum?: boolean | number
     builtComponentPath?: boolean | number
     componentName?: boolean | number
@@ -5681,6 +5684,7 @@ export interface FrontComponentGenqlSelection{
     universalIdentifier?: boolean | number
     updatedAt?: boolean | number
     usesSdkClient?: boolean | number
+    widgetAvailability?: FrontComponentWidgetAvailabilityGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5689,6 +5693,13 @@ export interface FrontComponentConfigurationGenqlSelection{
     configurationType?: boolean | number
     frontComponentId?: boolean | number
     headerCommandMenuItemUniversalIdentifiers?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface FrontComponentWidgetAvailabilityGenqlSelection{
+    objectMetadataId?: boolean | number
+    pageLayoutType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9650,6 +9661,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const FrontComponentWidgetAvailability_possibleTypes: string[] = ['FrontComponentWidgetAvailability']
+    export const isFrontComponentWidgetAvailability = (obj?: { __typename?: any } | null): obj is FrontComponentWidgetAvailability => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponentWidgetAvailability"')
+      return FrontComponentWidgetAvailability_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const FullName_possibleTypes: string[] = ['FullName']
     export const isFullName = (obj?: { __typename?: any } | null): obj is FullName => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFullName"')
@@ -11555,11 +11574,6 @@ export const enumFileFolder = {
    RecordExport: 'RecordExport' as const,
    Source: 'Source' as const,
    Workflow: 'Workflow' as const
-}
-
-export const enumFrontComponentSurface = {
-   DASHBOARDS: 'DASHBOARDS' as const,
-   OBJECTS: 'OBJECTS' as const
 }
 
 export const enumGraphOrderBy = {

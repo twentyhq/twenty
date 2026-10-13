@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
+import { fromUniversalWidgetAvailabilityToFrontComponentWidgetAvailability } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/utils/from-universal-widget-availability-to-front-component-widget-availability.util';
 import {
   FlatUpdateFrontComponentAction,
   UniversalUpdateFrontComponentAction,
@@ -29,11 +32,23 @@ export class UpdateFrontComponentActionHandlerService extends WorkspaceMigration
       universalIdentifier: action.universalIdentifier,
     });
 
-    const update = resolveUniversalUpdateRelationIdentifiersToIds({
-      metadataName: 'frontComponent',
-      universalUpdate: action.update,
-      allFlatEntityMaps,
-    });
+    const { universalWidgetAvailability, ...updateWithResolvedForeignKeys } =
+      resolveUniversalUpdateRelationIdentifiersToIds({
+        metadataName: 'frontComponent',
+        universalUpdate: action.update,
+        allFlatEntityMaps,
+      });
+
+    const update = isDefined(universalWidgetAvailability)
+      ? {
+          ...updateWithResolvedForeignKeys,
+          widgetAvailability:
+            fromUniversalWidgetAvailabilityToFrontComponentWidgetAvailability({
+              universalWidgetAvailability,
+              flatObjectMetadataMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+            }),
+        }
+      : updateWithResolvedForeignKeys;
 
     return {
       type: 'update',

@@ -8,8 +8,11 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const DEFAULT_AVAILABLE_ON = ['OBJECTS', 'DASHBOARDS'];
-const NOT_OFFERED_AVAILABLE_ON: string[] = [];
+const DEFAULT_WIDGET_AVAILABILITY = [
+  { pageLayoutType: 'RECORD_PAGE' },
+  { pageLayoutType: 'DASHBOARD' },
+];
+const NOT_OFFERED_WIDGET_AVAILABILITY: object[] = [];
 
 const IS_NOT_OFFERED_IN_WIDGET_PICKERS_BY_DEFAULT_PREDICATE = `(
   "frontComponent"."isHeadless" = true
@@ -35,13 +38,13 @@ const IS_NOT_OFFERED_IN_WIDGET_PICKERS_BY_DEFAULT_PREDICATE = `(
   )
 )`;
 
-@RegisteredWorkspaceCommand('2.47.0', 1791824791258)
+@RegisteredWorkspaceCommand('2.47.0', 1791898110387)
 @Command({
-  name: 'upgrade:2-47:backfill-front-component-available-on',
+  name: 'upgrade:2-47:backfill-front-component-widget-availability',
   description:
     'Keep headless front components and those opened from a settings or command menu item out of the widget pickers',
 })
-export class BackfillFrontComponentAvailableOnCommand extends ProvisionedWorkspaceCommandRunner {
+export class BackfillFrontComponentWidgetAvailabilityCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -55,35 +58,35 @@ export class BackfillFrontComponentAvailableOnCommand extends ProvisionedWorkspa
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.replaceNotOfferedFrontComponentsAvailableOn(args, {
-      from: DEFAULT_AVAILABLE_ON,
-      to: NOT_OFFERED_AVAILABLE_ON,
+    await this.replaceNotOfferedFrontComponentsWidgetAvailability(args, {
+      from: DEFAULT_WIDGET_AVAILABILITY,
+      to: NOT_OFFERED_WIDGET_AVAILABILITY,
     });
   }
 
   async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.replaceNotOfferedFrontComponentsAvailableOn(args, {
-      from: NOT_OFFERED_AVAILABLE_ON,
-      to: DEFAULT_AVAILABLE_ON,
+    await this.replaceNotOfferedFrontComponentsWidgetAvailability(args, {
+      from: NOT_OFFERED_WIDGET_AVAILABILITY,
+      to: DEFAULT_WIDGET_AVAILABILITY,
     });
   }
 
-  private async replaceNotOfferedFrontComponentsAvailableOn(
+  private async replaceNotOfferedFrontComponentsWidgetAvailability(
     { workspaceId, options }: RunOnWorkspaceArgs,
-    { from, to }: { from: string[]; to: string[] },
+    { from, to }: { from: object[]; to: object[] },
   ): Promise<void> {
     if (options.dryRun) {
       const [{ count }] = await this.dataSource.query<{ count: number }[]>(
         `SELECT COUNT(*)::int AS count
          FROM core."frontComponent" "frontComponent"
          WHERE "frontComponent"."workspaceId" = $1
-           AND "frontComponent"."availableOn" = $2::text[]
+           AND "frontComponent"."widgetAvailability" = $2::jsonb
            AND ${IS_NOT_OFFERED_IN_WIDGET_PICKERS_BY_DEFAULT_PREDICATE}`,
-        [workspaceId, from],
+        [workspaceId, JSON.stringify(from)],
       );
 
       this.logger.log(
-        `[DRY RUN] Would set availableOn to {${to.join(',')}} on ${count} front component(s) in workspace ${workspaceId}`,
+        `[DRY RUN] Would set widgetAvailability to ${JSON.stringify(to)} on ${count} front component(s) in workspace ${workspaceId}`,
       );
 
       return;
@@ -91,11 +94,11 @@ export class BackfillFrontComponentAvailableOnCommand extends ProvisionedWorkspa
 
     const [, updatedCount]: [unknown[], number] = await this.dataSource.query(
       `UPDATE core."frontComponent" "frontComponent"
-       SET "availableOn" = $3::text[]
+       SET "widgetAvailability" = $3::jsonb
        WHERE "frontComponent"."workspaceId" = $1
-         AND "frontComponent"."availableOn" = $2::text[]
+         AND "frontComponent"."widgetAvailability" = $2::jsonb
          AND ${IS_NOT_OFFERED_IN_WIDGET_PICKERS_BY_DEFAULT_PREDICATE}`,
-      [workspaceId, from, to],
+      [workspaceId, JSON.stringify(from), JSON.stringify(to)],
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
@@ -103,7 +106,7 @@ export class BackfillFrontComponentAvailableOnCommand extends ProvisionedWorkspa
     ]);
 
     this.logger.log(
-      `Set availableOn to {${to.join(',')}} on ${updatedCount} front component(s) in workspace ${workspaceId}`,
+      `Set widgetAvailability to ${JSON.stringify(to)} on ${updatedCount} front component(s) in workspace ${workspaceId}`,
     );
   }
 }

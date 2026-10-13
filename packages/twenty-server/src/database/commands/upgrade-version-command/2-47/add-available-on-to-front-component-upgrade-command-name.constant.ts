@@ -1,2 +1,0 @@
-export const ADD_AVAILABLE_ON_TO_FRONT_COMPONENT_UPGRADE_COMMAND_NAME =
-  '2.47.0_AddAvailableOnToFrontComponentFastInstanceCommand_1791824779321';

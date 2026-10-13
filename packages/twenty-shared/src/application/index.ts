@@ -172,13 +172,13 @@ export type {
 } from './fieldManifestType';
 export type {
   CommandMenuItemManifest,
-  FrontComponentSurface,
+  FrontComponentWidgetPageLayoutType,
+  FrontComponentWidgetAvailabilityManifest,
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export {
-  FRONT_COMPONENT_SURFACES,
-  isFrontComponentSurface,
-  DEFAULT_FRONT_COMPONENT_AVAILABLE_ON,
+  FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES,
+  isFrontComponentWidgetPageLayoutType,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
 export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';

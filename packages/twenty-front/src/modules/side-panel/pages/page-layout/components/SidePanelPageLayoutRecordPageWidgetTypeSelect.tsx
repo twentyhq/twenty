@@ -21,7 +21,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
-import { isFrontComponentAvailableOn } from '@/side-panel/pages/page-layout/utils/isFrontComponentAvailableOn';
+import { isFrontComponentAvailableInWidgetPicker } from '@/side-panel/pages/page-layout/utils/isFrontComponentAvailableInWidgetPicker';
 import { resolveWidgetTypeSelectTargetTabId } from '@/side-panel/pages/page-layout/utils/resolveWidgetTypeSelectTargetTabId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -42,8 +42,8 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import {
   type FrontComponent,
-  FrontComponentSurface,
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -149,9 +149,10 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
 
   const frontComponents = (frontComponentsData?.frontComponents ?? []).filter(
     (frontComponent) =>
-      isFrontComponentAvailableOn({
+      isFrontComponentAvailableInWidgetPicker({
         frontComponent,
-        surface: FrontComponentSurface.OBJECTS,
+        pageLayoutType: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: objectMetadataItem.id,
       }),
   );
 

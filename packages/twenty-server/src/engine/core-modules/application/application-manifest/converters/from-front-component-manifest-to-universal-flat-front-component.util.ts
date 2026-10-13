@@ -1,9 +1,27 @@
 import {
-  DEFAULT_FRONT_COMPONENT_AVAILABLE_ON,
   type FrontComponentManifest,
+  type FrontComponentWidgetAvailabilityManifest,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
+import { type UniversalFrontComponentWidgetAvailability } from 'src/engine/metadata-modules/flat-front-component/utils/from-front-component-widget-availability-to-universal-widget-availability.util';
+import { DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY } from 'src/engine/metadata-modules/front-component/constants/default-front-component-widget-availability.constant';
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
+
+const fromWidgetAvailabilityManifestToUniversalWidgetAvailability = (
+  widgetAvailabilityManifest: FrontComponentWidgetAvailabilityManifest[],
+): UniversalFrontComponentWidgetAvailability[] =>
+  widgetAvailabilityManifest.flatMap(
+    ({ pageLayoutType, objectUniversalIdentifiers }) =>
+      isDefined(objectUniversalIdentifiers)
+        ? objectUniversalIdentifiers.map(
+            (objectMetadataUniversalIdentifier) => ({
+              pageLayoutType,
+              objectMetadataUniversalIdentifier,
+            }),
+          )
+        : [{ pageLayoutType }],
+  );
 
 export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
   frontComponentManifest,
@@ -36,12 +54,15 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
     isHeadless: isSettingsFrontComponent
       ? false
       : (frontComponentManifest.isHeadless ?? false),
-    availableOn: [
-      ...(frontComponentManifest.availableOn ??
-        (isOfferedInWidgetPickersByDefault
-          ? DEFAULT_FRONT_COMPONENT_AVAILABLE_ON
-          : [])),
-    ],
+    universalWidgetAvailability: isDefined(
+      frontComponentManifest.widgetAvailability,
+    )
+      ? fromWidgetAvailabilityManifestToUniversalWidgetAvailability(
+          frontComponentManifest.widgetAvailability,
+        )
+      : isOfferedInWidgetPickersByDefault
+        ? DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY
+        : [],
     usesSdkClient: frontComponentManifest.usesSdkClient ?? false,
     createdAt: now,
     updatedAt: now,

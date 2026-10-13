@@ -2308,7 +2308,6 @@ type FrontComponent {
   applicationName: String
   applicationTokenPair: ApplicationTokenPair @deprecated(reason: "Use generateFrontComponentApplicationTokenPair")
   applicationVariables: JSON
-  availableOn: [FrontComponentSurface!]!
   builtComponentChecksum: String!
   builtComponentPath: String!
   componentName: String!
@@ -2322,6 +2321,7 @@ type FrontComponent {
   universalIdentifier: UUID
   updatedAt: DateTime!
   usesSdkClient: Boolean!
+  widgetAvailability: [FrontComponentWidgetAvailability!]!
 }
 
 type FrontComponentConfiguration {
@@ -2330,9 +2330,9 @@ type FrontComponentConfiguration {
   headerCommandMenuItemUniversalIdentifiers: [UUID!]
 }
 
-enum FrontComponentSurface {
-  DASHBOARDS
-  OBJECTS
+type FrontComponentWidgetAvailability {
+  objectMetadataId: UUID
+  pageLayoutType: PageLayoutType!
 }
 
 type FullName {

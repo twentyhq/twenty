@@ -6,14 +6,19 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import {
-  DEFAULT_FRONT_COMPONENT_AVAILABLE_ON,
-  type FrontComponentSurface,
-} from 'twenty-shared/application';
+import { type FrontComponentWidgetPageLayoutType } from 'twenty-shared/application';
+import { type SerializedRelation } from 'twenty-shared/types';
 
-import { ADD_AVAILABLE_ON_TO_FRONT_COMPONENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/add-available-on-to-front-component-upgrade-command-name.constant';
+import { ADD_WIDGET_AVAILABILITY_TO_FRONT_COMPONENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/add-widget-availability-to-front-component-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY } from 'src/engine/metadata-modules/front-component/constants/default-front-component-widget-availability.constant';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+
+export type FrontComponentWidgetAvailability = {
+  pageLayoutType: FrontComponentWidgetPageLayoutType;
+  objectMetadataId?: SerializedRelation;
+};
 
 @Entity('frontComponent')
 export class FrontComponentEntity
@@ -46,15 +51,14 @@ export class FrontComponentEntity
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      ADD_AVAILABLE_ON_TO_FRONT_COMPONENT_UPGRADE_COMMAND_NAME,
+      ADD_WIDGET_AVAILABILITY_TO_FRONT_COMPONENT_UPGRADE_COMMAND_NAME,
   })
   @Column({
-    type: 'text',
-    array: true,
+    type: 'jsonb',
     nullable: false,
-    default: DEFAULT_FRONT_COMPONENT_AVAILABLE_ON,
+    default: DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY,
   })
-  availableOn: FrontComponentSurface[];
+  widgetAvailability: JsonbProperty<FrontComponentWidgetAvailability[]>;
 
   @Column({ default: false })
   usesSdkClient: boolean;

@@ -1,9 +1,9 @@
-import { DEFAULT_FRONT_COMPONENT_AVAILABLE_ON } from 'twenty-shared/application';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
+import { DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY } from 'src/engine/metadata-modules/front-component/constants/default-front-component-widget-availability.constant';
 import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
 
 export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
@@ -26,6 +26,10 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
   const universalIdentifier =
     createFrontComponentInput.universalIdentifier ?? v4();
 
+  const widgetAvailability = createFrontComponentInput.isHeadless
+    ? []
+    : DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY;
+
   return {
     id,
     name: name ?? createFrontComponentInput.componentName,
@@ -35,9 +39,8 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
     componentName: createFrontComponentInput.componentName,
     builtComponentChecksum: createFrontComponentInput.builtComponentChecksum,
     isHeadless: createFrontComponentInput.isHeadless ?? false,
-    availableOn: createFrontComponentInput.isHeadless
-      ? []
-      : [...DEFAULT_FRONT_COMPONENT_AVAILABLE_ON],
+    widgetAvailability,
+    universalWidgetAvailability: widgetAvailability,
     usesSdkClient: false,
     workspaceId,
     createdAt: now,

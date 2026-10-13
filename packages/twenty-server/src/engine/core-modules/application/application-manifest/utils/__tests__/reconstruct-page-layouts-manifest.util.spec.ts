@@ -32,6 +32,7 @@ import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY } from 'src/engine/metadata-modules/front-component/constants/default-front-component-widget-availability.constant';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { normalizePageLayoutTabManifestOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/normalize-page-layout-tab-manifest-or-throw.test-util';
 
@@ -175,6 +176,7 @@ const frontComponent: FlatFrontComponent = {
   id: `${FRONT_COMPONENT_UID}-id`,
   workspaceId: WORKSPACE_ID,
   applicationId: APP_ID,
+  widgetAvailability: DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY,
 };
 
 const buildFlatPageLayout = ({

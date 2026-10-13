@@ -21,7 +21,7 @@ export const fromFlatFrontComponentToFrontComponentDto = (
   workspaceId: flatFrontComponent.workspaceId,
   applicationId: flatFrontComponent.applicationId,
   isHeadless: flatFrontComponent.isHeadless,
-  availableOn: flatFrontComponent.availableOn,
+  widgetAvailability: flatFrontComponent.widgetAvailability,
   usesSdkClient: flatFrontComponent.usesSdkClient,
   createdAt: new Date(flatFrontComponent.createdAt),
   updatedAt: new Date(flatFrontComponent.updatedAt),
