@@ -4,6 +4,7 @@ import {
 } from '@/settings/developers/utils/formatExpiration';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getTableRowActivationKeyDownHandler } from '@/ui/layout/table/utils/getTableRowActivationKeyDownHandler';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconChevronRight } from 'twenty-ui/icon';
@@ -36,7 +37,13 @@ export const SettingsApiKeysFieldItemTableRow = ({
   const gridColumns = '5fr 2fr 3fr 1fr';
 
   return (
-    <TableRow gridAutoColumns={gridColumns} onClick={onClick}>
+    <TableRow
+      gridAutoColumns={gridColumns}
+      onClick={onClick}
+      onKeyDown={getTableRowActivationKeyDownHandler(onClick)}
+      role="button"
+      tabIndex={0}
+    >
       <TableCell
         color={theme.font.color.primary}
         whiteSpace="nowrap"

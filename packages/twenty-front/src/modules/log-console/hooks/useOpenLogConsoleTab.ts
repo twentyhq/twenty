@@ -24,10 +24,13 @@ export const useOpenLogConsoleTab = () => {
     logConsoleWebhooksViewState,
   );
 
-  const openLogConsoleTab = (
-    tabId: LogConsoleTabId,
-    view?: LogConsoleResourceView,
-  ) => {
+  const openLogConsoleTab = ({
+    tabId,
+    view,
+  }: {
+    tabId: LogConsoleTabId;
+    view?: LogConsoleResourceView;
+  }) => {
     if (isDefined(view) && tabId === 'apis') {
       setLogConsoleApiKeysView(view);
     }

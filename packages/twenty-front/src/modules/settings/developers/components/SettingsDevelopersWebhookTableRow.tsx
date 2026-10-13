@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/developers/constants/WebhookTableRowGridTemplateColumns';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getTableRowActivationKeyDownHandler } from '@/ui/layout/table/utils/getTableRowActivationKeyDownHandler';
 import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight } from 'twenty-ui/icon';
@@ -30,6 +31,9 @@ export const SettingsDevelopersWebhookTableRow = ({
     <TableRow
       gridTemplateColumns={WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
       onClick={onClick}
+      onKeyDown={getTableRowActivationKeyDownHandler(onClick)}
+      role="button"
+      tabIndex={0}
     >
       <TableCell color={themeCssVariables.font.color.primary} overflow="hidden">
         <OverflowingTextWithTooltip

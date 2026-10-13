@@ -19,7 +19,10 @@ export const LogConsoleOpenWebhookButton = ({
       size="sm"
       startIcon={<IconArrowUpRight />}
       onClick={() =>
-        openLogConsoleTab('webhooks', { type: 'detail', id: webhookId })
+        openLogConsoleTab({
+          tabId: 'webhooks',
+          view: { type: 'detail', id: webhookId },
+        })
       }
       style={{ alignSelf: 'flex-start' }}
     >

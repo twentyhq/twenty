@@ -5,6 +5,7 @@ import { LogConsolePageContainer } from '@/log-console/components/LogConsolePage
 import { LogConsoleSubPageHeader } from '@/log-console/components/LogConsoleSubPageHeader';
 import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebhooksViewState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { type WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
@@ -80,7 +81,12 @@ export const LogConsoleWebhookForm = ({
           error={error}
           message={t`Failed to load webhook`}
         />
-        <SettingsSkeletonLoader />
+        <LogConsoleSubPageHeader title={getTitle()} onBack={goBackToList} />
+        {isDefined(error) ? (
+          <SettingsEmptyPlaceholder>{t`Failed to load webhook`}</SettingsEmptyPlaceholder>
+        ) : (
+          <SettingsSkeletonLoader />
+        )}
       </>
     );
   }

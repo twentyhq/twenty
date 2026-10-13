@@ -31,12 +31,13 @@ export const SettingsApiWebhooksRedirectEffect = ({
       location.pathname.includes('/webhooks/');
     const resourceId = isWebhook ? webhookId : apiKeyId;
 
-    openLogConsoleTab(
-      isWebhook ? 'webhooks' : 'apis',
-      view === 'detail' && isDefined(resourceId)
-        ? { type: 'detail', id: resourceId }
-        : { type: view === 'new' ? 'new' : 'list' },
-    );
+    openLogConsoleTab({
+      tabId: isWebhook ? 'webhooks' : 'apis',
+      view:
+        view === 'detail' && isDefined(resourceId)
+          ? { type: 'detail', id: resourceId }
+          : { type: view === 'new' ? 'new' : 'list' },
+    });
     navigate(AppPath.Index, { replace: true });
   }, [
     apiKeyId,

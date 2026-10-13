@@ -1,14 +1,13 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { CommandBlock } from 'twenty-ui/components/data-display';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArrowUpRight, IconCopy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
+import { StyledLogConsoleButtonContainer } from '@/log-console/components/StyledLogConsoleButtonContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
@@ -23,12 +22,6 @@ const BUILD_APP_COMMANDS = [
   'npx twenty app apply --create',
   'npx twenty app dev',
 ];
-
-const StyledButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
 
 export const LogConsoleCli = () => {
   const { t } = useLingui();
@@ -80,14 +73,14 @@ export const LogConsoleCli = () => {
           description={t`Scaffold an app, register it in this workspace and sync your changes as you code.`}
         />
         {renderCommandBlock(BUILD_APP_COMMANDS)}
-        <StyledButtonContainer>
+        <StyledLogConsoleButtonContainer>
           <Button
             startIcon={<IconArrowUpRight />}
             size="sm"
             variant="outline"
             onClick={() => openUrlInNewTab(TWENTY_CLI_DOCUMENTATION_URL)}
           >{t`Read documentation`}</Button>
-        </StyledButtonContainer>
+        </StyledLogConsoleButtonContainer>
       </Section.Root>
     </LogConsolePageContainer>
   );

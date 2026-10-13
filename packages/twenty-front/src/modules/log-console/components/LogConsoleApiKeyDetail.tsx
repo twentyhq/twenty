@@ -1,6 +1,7 @@
 import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
 import { LogConsoleSubPageHeader } from '@/log-console/components/LogConsoleSubPageHeader';
 import { logConsoleApiKeysViewState } from '@/log-console/states/logConsoleApiKeysViewState';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
@@ -64,6 +65,7 @@ export const LogConsoleApiKeyDetail = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const setLogConsoleApiKeysView = useSetAtomState(logConsoleApiKeysViewState);
+  const goBackToList = () => setLogConsoleApiKeysView({ type: 'list' });
 
   const jotaiStore = useStore();
 
@@ -148,7 +150,7 @@ export const LogConsoleApiKeyDetail = ({
         },
       });
       if (redirect) {
-        setLogConsoleApiKeysView({ type: 'list' });
+        goBackToList();
       }
     } catch {
       enqueueToast({ status: 'error', children: t`Error deleting api key.` });
@@ -238,99 +240,104 @@ export const LogConsoleApiKeyDetail = ({
 
   const confirmationValue = t`yes`;
 
-  if (apiKeyLoading || rolesLoading) {
-    return <SettingsSkeletonLoader />;
+  if (apiKeyLoading || rolesLoading || !isDefined(apiKey)) {
+    return (
+      <>
+        <LogConsoleSubPageHeader title={t`API Key`} onBack={goBackToList} />
+        {apiKeyLoading || rolesLoading ? (
+          <SettingsSkeletonLoader />
+        ) : (
+          <SettingsEmptyPlaceholder>{t`This API key no longer exists.`}</SettingsEmptyPlaceholder>
+        )}
+      </>
+    );
   }
 
   return (
     <>
-      {isDefined(apiKey) && (
-        <>
-          <LogConsoleSubPageHeader
-            title={apiKey.name || t`Unnamed API Key`}
-            onBack={() => setLogConsoleApiKeysView({ type: 'list' })}
+      <LogConsoleSubPageHeader
+        title={apiKey.name || t`Unnamed API Key`}
+        onBack={goBackToList}
+      />
+      <LogConsolePageContainer
+        scrollWrapperInstanceId={`log-console-api-key-${apiKey.id}`}
+      >
+        <Section.Root>
+          {apiKeyToken ? (
+            <>
+              <Section.Header
+                title={t`API Key`}
+                description={t`Copy this key as it will not be visible again`}
+              />
+              <ApiKeyInput apiKey={apiKeyToken} />
+            </>
+          ) : (
+            <>
+              <Section.Header
+                title={t`API Key`}
+                description={t`Regenerate an API key`}
+              />
+              <StyledInputContainer>
+                <Button
+                  startIcon={<IconRepeat />}
+                  onClick={() => openDialog(REGENERATE_API_KEY_MODAL_ID)}
+                >{t`Regenerate Key`}</Button>
+                <StyledInfo>
+                  {formatExpiration(apiKey?.expiresAt || '', true, false)}
+                </StyledInfo>
+              </StyledInputContainer>
+            </>
+          )}
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Name`}
+            description={t`Name of your API key`}
           />
-          <LogConsolePageContainer
-            scrollWrapperInstanceId={`log-console-api-key-${apiKey.id}`}
-          >
-            <Section.Root>
-              {apiKeyToken ? (
-                <>
-                  <Section.Header
-                    title={t`API Key`}
-                    description={t`Copy this key as it will not be visible again`}
-                  />
-                  <ApiKeyInput apiKey={apiKeyToken} />
-                </>
-              ) : (
-                <>
-                  <Section.Header
-                    title={t`API Key`}
-                    description={t`Regenerate an API key`}
-                  />
-                  <StyledInputContainer>
-                    <Button
-                      startIcon={<IconRepeat />}
-                      onClick={() => openDialog(REGENERATE_API_KEY_MODAL_ID)}
-                    >{t`Regenerate Key`}</Button>
-                    <StyledInfo>
-                      {formatExpiration(apiKey?.expiresAt || '', true, false)}
-                    </StyledInfo>
-                  </StyledInputContainer>
-                </>
-              )}
-            </Section.Root>
-            <Section.Root>
-              <Section.Header
-                title={t`Name`}
-                description={t`Name of your API key`}
-              />
-              <ApiKeyNameInput
-                apiKeyName={apiKeyName}
-                apiKeyId={apiKey?.id}
-                disabled={isLoading}
-                onNameUpdate={setApiKeyName}
-              />
-            </Section.Root>
-            <Section.Root>
-              <Section.Header
-                title={t`Role`}
-                description={t`What this API can do: Select a user role to define its permissions.`}
-              />
-              <SettingsDevelopersRoleSelector
-                value={selectedRoleId}
-                onChange={handleRoleChange}
-                roles={roles}
-              />
-            </Section.Root>
-            <Section.Root>
-              <Section.Header
-                title={t`Expiration`}
-                description={t`When the key will be disabled`}
-              />
-              <SettingsTextInput
-                instanceId={`api-key-expiration-${apiKey?.id}`}
-                placeholder={t`E.g. backoffice integration`}
-                value={formatExpiration(apiKey?.expiresAt || '', true, false)}
-                disabled
-                fullWidth
-              />
-            </Section.Root>
-            <Section.Root>
-              <Section.Header
-                title={t`Danger zone`}
-                description={t`Delete this integration`}
-              />
-              <Button
-                startIcon={<IconTrash />}
-                onClick={() => openDialog(DELETE_API_KEY_MODAL_ID)}
-                variant="outline"
-                color="danger"
-              >{t`Delete`}</Button>
-            </Section.Root>
-          </LogConsolePageContainer>
-        </>
-      )}
+          <ApiKeyNameInput
+            apiKeyName={apiKeyName}
+            apiKeyId={apiKey?.id}
+            disabled={isLoading}
+            onNameUpdate={setApiKeyName}
+          />
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Role`}
+            description={t`What this API can do: Select a user role to define its permissions.`}
+          />
+          <SettingsDevelopersRoleSelector
+            value={selectedRoleId}
+            onChange={handleRoleChange}
+            roles={roles}
+          />
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Expiration`}
+            description={t`When the key will be disabled`}
+          />
+          <SettingsTextInput
+            instanceId={`api-key-expiration-${apiKey?.id}`}
+            placeholder={t`E.g. backoffice integration`}
+            value={formatExpiration(apiKey?.expiresAt || '', true, false)}
+            disabled
+            fullWidth
+          />
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Danger zone`}
+            description={t`Delete this integration`}
+          />
+          <Button
+            startIcon={<IconTrash />}
+            onClick={() => openDialog(DELETE_API_KEY_MODAL_ID)}
+            variant="outline"
+            color="danger"
+          >{t`Delete`}</Button>
+        </Section.Root>
+      </LogConsolePageContainer>
       <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
