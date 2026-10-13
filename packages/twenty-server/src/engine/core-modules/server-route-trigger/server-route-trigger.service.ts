@@ -46,15 +46,13 @@ const QUEUED_TARGET_RETRY_LIMIT = 3;
 
 const TWENTY_TOKEN_TYPES: unknown[] = Object.values(JwtTokenTypeEnum);
 
-// Matches on the claim every Twenty token carries rather than verifying it,
-// so a Twenty token whose check would fail is still never forwarded.
 const isTwentyIssuedToken = (authorization: string | undefined): boolean => {
   if (!isDefined(authorization)) {
     return false;
   }
 
   const payload = decodeJwtPayload<{ type?: unknown }>(
-    authorization.replace(/^Bearer\s+/i, '').trim(),
+    authorization.replace(/^Bearer\s+/i, ''),
   );
 
   return TWENTY_TOKEN_TYPES.includes(payload?.type);

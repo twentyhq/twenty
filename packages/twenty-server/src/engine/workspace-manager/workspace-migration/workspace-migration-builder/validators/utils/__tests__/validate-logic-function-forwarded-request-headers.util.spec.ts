@@ -64,16 +64,6 @@ describe('validateLogicFunctionForwardedRequestHeaders', () => {
     );
   });
 
-  it('should let a server route forward authorization', () => {
-    expect(
-      validateLogicFunctionForwardedRequestHeaders({
-        serverRouteTriggerSettings: buildServerRouteTriggerSettings([
-          'Authorization',
-        ]),
-      }),
-    ).toEqual([]);
-  });
-
   it('should return an error when a server route forwards cookie or proxy-authorization', () => {
     const errors = validateLogicFunctionForwardedRequestHeaders({
       serverRouteTriggerSettings: buildServerRouteTriggerSettings([

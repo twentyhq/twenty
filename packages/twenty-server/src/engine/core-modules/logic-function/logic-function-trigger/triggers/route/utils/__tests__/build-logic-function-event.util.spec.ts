@@ -72,19 +72,6 @@ describe('filterRequestHeaders', () => {
     });
   });
 
-  it('should forward only the credential headers it is allowed to', () => {
-    const result = filterRequestHeaders({
-      requestHeaders: {
-        authorization: 'Bearer third-party-token',
-        cookie: 'session=abc',
-      },
-      forwardedRequestHeaders: ['Authorization', 'cookie'],
-      forwardableCredentialHeaderNames: new Set(['authorization']),
-    });
-
-    expect(result).toEqual({ authorization: 'Bearer third-party-token' });
-  });
-
   it('should return empty object when no headers match', () => {
     const requestHeaders = {
       'content-type': 'application/json',

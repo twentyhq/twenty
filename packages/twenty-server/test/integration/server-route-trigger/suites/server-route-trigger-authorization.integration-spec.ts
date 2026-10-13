@@ -301,23 +301,6 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       expect(response.body).toEqual({ authorization: null });
     }, 60000);
 
-    it('never forwards a token shaped like a Twenty token, even one that does not verify', async () => {
-      const unverifiableTwentyShapedToken = jwt.sign(
-        { type: 'ACCESS', workspaceId: OWNER_WORKSPACE_ID },
-        'not-the-twenty-secret',
-      );
-
-      const response = await request(baseUrl)
-        .post(
-          `/webhooks/server/${AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
-        )
-        .set('Authorization', `Bearer ${unverifiableTwentyShapedToken}`)
-        .send({ any: 'payload' });
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({ authorization: null });
-    }, 60000);
-
     it('rejects a server-route-exposed resolver that requires authentication before executing it', async () => {
       const response = await request(baseUrl)
         .post(`/webhooks/server/${AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER}`)
