@@ -173,15 +173,16 @@ export const CountVisibility: Story = {
   args: { showOverflowCount: undefined },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const firstItem = canvas.getByText('Customer');
+
+    expect(
+      canvas.queryByRole('button', { name: /Show all items$/ }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.hover(firstItem);
     const trigger = await canvas.findByRole('button', {
       name: /Show all items$/,
     });
-
-    const firstItem = canvas.getByText('Customer');
-
-    await userEvent.unhover(firstItem);
-    await waitFor(() => expect(trigger).toHaveStyle({ opacity: '0' }));
-    await userEvent.hover(firstItem);
     await waitFor(() => expect(trigger).toHaveStyle({ opacity: '1' }));
     await userEvent.unhover(firstItem);
     await waitFor(() => expect(trigger).toHaveStyle({ opacity: '0' }));
@@ -233,14 +234,17 @@ export const InlineItemFocus: Story = {
     const canvas = within(canvasElement);
     const firstItem = canvas.getByRole('button', { name: 'First item' });
     const secondItem = canvas.getByRole('button', { name: 'Second item' });
+
+    expect(
+      canvas.queryByRole('button', { name: /Show all items$/ }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.tab();
+    expect(firstItem).toHaveFocus();
     const trigger = await canvas.findByRole('button', {
       name: /Show all items$/,
     });
-
-    await userEvent.unhover(firstItem);
     await waitFor(() => expect(trigger).toHaveStyle({ opacity: '0' }));
-    await userEvent.tab();
-    expect(firstItem).toHaveFocus();
     await userEvent.tab();
     expect(secondItem).toHaveFocus();
     expect(secondItem.closest('[inert]')).toBeNull();
@@ -316,6 +320,8 @@ export const FocusedTriggerRemoval: Story = {
   args: { showOverflowCount: undefined },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
+    await userEvent.hover(canvas.getByText('Customer'));
     const trigger = await canvas.findByRole('button', {
       name: /Show all items$/,
     });
@@ -338,10 +344,11 @@ export const FocusedTriggerRemoval: Story = {
     );
 
     list.style.width = '180px';
+    await userEvent.hover(list);
     const restoredTrigger = await canvas.findByRole('button', {
       name: /Show all items$/,
     });
-    await waitFor(() => expect(restoredTrigger).toHaveStyle({ opacity: '0' }));
+    await waitFor(() => expect(restoredTrigger).toHaveStyle({ opacity: '1' }));
   },
 };
 
