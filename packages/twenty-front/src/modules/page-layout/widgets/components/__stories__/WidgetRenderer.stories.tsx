@@ -308,7 +308,17 @@ const renderLoadingFrontComponent = ({
     );
 
     return (
-      <div style={{ width: 400, height: 240 }}>
+      <div
+        style={
+          {
+            width: 400,
+            height: 240,
+            containerName: 'tab-viewport',
+            containerType: 'size',
+            '--widget-height': 'auto',
+          } as React.CSSProperties
+        }
+      >
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper store={jotaiStore}>
@@ -372,6 +382,25 @@ export const StandaloneFrontComponentLoading: Story = {
       outerFrame: false,
       innerFrame: false,
     });
+
+    const loader = within(canvasElement).getByRole('status', {
+      name: 'Loading app',
+    });
+    const card = within(canvasElement).getByTestId(WIDGET_ID_FRONT_COMPONENT);
+    const loaderBounds = loader.getBoundingClientRect();
+    const cardBounds = card.getBoundingClientRect();
+
+    expect(loaderBounds.width).toBeLessThan(32);
+    expect(loaderBounds.height).toBeLessThan(32);
+    expect(loaderBounds.x + loaderBounds.width / 2).toBeCloseTo(
+      cardBounds.x + cardBounds.width / 2,
+      0,
+    );
+    expect(loaderBounds.y + loaderBounds.height / 2).toBeCloseTo(
+      cardBounds.y + cardBounds.height / 2,
+      0,
+    );
+    expect(cardBounds.height).toBe(240);
   },
 };
 
