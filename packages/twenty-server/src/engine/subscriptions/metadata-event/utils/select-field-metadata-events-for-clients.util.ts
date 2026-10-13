@@ -58,14 +58,16 @@ export const selectFieldMetadataEventsForClients = ({
       continue;
     }
 
-    const head = flatFieldMetadataMaps.byUniversalIdentifier[morphId];
-
-    if (!isMorphRelationHeadEnabled || !isDefined(head)) {
+    if (!isMorphRelationHeadEnabled) {
       selectedEvents.push(event);
       continue;
     }
 
-    headsToRefresh.set(head.id, head);
+    const head = flatFieldMetadataMaps.byUniversalIdentifier[morphId];
+
+    if (isDefined(head)) {
+      headsToRefresh.set(head.id, head);
+    }
   }
 
   const selectedRecordIds = new Set(

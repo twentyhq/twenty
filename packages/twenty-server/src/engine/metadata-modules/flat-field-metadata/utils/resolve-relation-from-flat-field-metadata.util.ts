@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isMorphRelationHead } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -67,11 +67,14 @@ export const resolveRelationFromFlatFieldMetadata = ({
       }),
     ];
 
-    const representativeMorphField =
-      pickMorphRelationRepresentative({
-        morphFlatFieldMetadatas: allMorphFlatFieldMetadatas,
-        isMorphRelationHeadEnabled,
-      }) ?? targetFlatFieldMetadata;
+    const representativeMorphField = pickMorphRelationRepresentative({
+      morphFlatFieldMetadatas: allMorphFlatFieldMetadatas,
+      isMorphRelationHeadEnabled,
+    });
+
+    if (!isDefined(representativeMorphField)) {
+      return null;
+    }
 
     return fromMorphOrRelationFlatFieldMetadataToRelationDto({
       sourceFlatFieldMetadata,

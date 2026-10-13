@@ -62,14 +62,14 @@ describe('selectFieldMetadataEventsForClients', () => {
     ).toEqual(expected);
   });
 
-  it('should keep target events while the head is not backfilled', () => {
+  it('should drop target events without a head while enabled', () => {
     expect(
       selectFieldMetadataEventsForClients({
         events: [createdEvent(target)],
         isMorphRelationHeadEnabled: true,
         flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       }),
-    ).toEqual([createdEvent(target)]);
+    ).toEqual([]);
   });
 
   it('should replace target events with one update of their head while enabled', () => {

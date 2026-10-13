@@ -130,7 +130,7 @@ describe('filterMorphRelationDuplicateFields', () => {
     it.each([
       ['the survivor while disabled', [head, target], false, [target]],
       ['the head while enabled', [target, head], true, [head]],
-      ['the survivor before the backfill', [target], true, [target]],
+      ['nothing for targets without a head while enabled', [target], true, []],
       ['nothing for an empty head while disabled', [head], false, []],
     ])(
       'should return %s',
