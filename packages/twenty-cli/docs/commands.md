@@ -10,7 +10,7 @@ failure recovery. See the [README](../README.md) to build and start the CLI.
 - [Doctor](#diagnose-your-setup)
 - [Open](#open-the-workspace)
 - [Metadata](#inspect-the-data-model)
-- [Records](#read-records)
+- [Records](#read-records) and [export](#export-records)
 - [App init](#create-an-app) and [add](#add-definitions-to-an-app)
 - [Build and typecheck](#build-and-check-an-app)
 - [Plan](#preview-app-changes), [apply](#apply-an-app) and [dev](#develop-an-app)
@@ -178,6 +178,24 @@ These commands resolve the same exact singular/plural API names as metadata insp
 `--all` reads every remaining page, including when starting from `--cursor`. Human/JSON results are limited to 10,000 records and 16 MiB of serialized payload; human tables are also bounded. Exceeding a limit returns `RESULT_LIMIT_EXCEEDED` (exit 2), with no partial success. Every HTTP response is separately limited to 16 MiB, including in NDJSON mode.
 
 Use explicit `--format ndjson` for larger traversals. It emits numbered `start`, `record`, page `progress`, and terminal `result`/`error` events, reading one page at a time and waiting for stdout when the reader is slow. `resumeCursor` advances only after a complete page has been written. After a partial page or a failure, resume with the last reported cursor and the same filter/order; records from the partial page may repeat. With no completed page, use the original cursor or restart without one. A stream without a terminal event is incomplete. Without `--all`, NDJSON still reads only one page.
+
+## Export records
+
+```bash
+twenty data export companies --output companies.csv
+twenty data export companies --fields name,domainName,employees --filter 'employees[gte]:5000' --output large-companies.csv
+twenty data export people --order-by 'name.lastName[AscNullsLast]' --output people.csv --format ndjson
+```
+
+`data export` runs a server-side CSV export, follows progress and immediately downloads the result. It requires `EXPORT_CSV`, access to the object's metadata and records, and a workspace with asynchronous CSV export enabled. API-key connections require a server that supports API keys for record export; browser-authenticated connections use the same user permissions as other commands.
+
+`--fields` selects active field API names in CSV order. By default, all active non-system fields are selected. The server always includes `Id` first, expands composite fields into columns and exports many-to-one relations as IDs. Filters and ordering use the REST expression syntax from `data list`, converted to the export subscription's input. Row and field permissions still apply on the server.
+
+`--output` is required and names a file, not stdout. Existing files are preserved unless `--force` is passed. CSV bytes stream to a private temporary file in the destination directory, with a 1 GiB limit and a 15-minute download timeout. The destination appears, or is replaced with `--force`, only after the download finishes. On failure or cancellation, the temporary file is removed and an existing destination is preserved.
+
+Human output shows percentage progress and the saved file's size. JSON returns one result containing the export ID, object, output path, byte count and elapsed time. NDJSON emits `start`, percentage `progress`, and terminal `result` or `error` events. CSV contents are written only to the output file.
+
+Keep the command connected until it finishes. Downloads use the same credential that started the export and the server's short-lived, single-use link. If generation or download is interrupted, run the export again; there is no resume or redownload command.
 
 ## Create an app
 

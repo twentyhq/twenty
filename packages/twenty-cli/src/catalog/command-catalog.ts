@@ -1,3 +1,4 @@
+import { DATA_EXPORT_COMMAND_DEFINITION } from '@/commands/data/export/data-export.command-definition';
 import { APP_DEV_COMMAND_DEFINITION } from '@/commands/app/dev/app-dev.command-definition';
 import { APP_ADD_COMMAND_DEFINITION } from '@/commands/app/add/app-add.command-definition';
 import { APP_EXEC_COMMAND_DEFINITION } from '@/commands/app/exec/app-exec.command-definition';
@@ -54,6 +55,7 @@ export const COMMAND_CATALOG: CommandDefinition[] = [
   API_GRAPHQL_COMMAND_DEFINITION,
   API_REST_COMMAND_DEFINITION,
   COMMANDS_COMMAND_DEFINITION,
+  DATA_EXPORT_COMMAND_DEFINITION,
   DATA_LIST_COMMAND_DEFINITION,
   DATA_GET_COMMAND_DEFINITION,
   DOCTOR_COMMAND_DEFINITION,
