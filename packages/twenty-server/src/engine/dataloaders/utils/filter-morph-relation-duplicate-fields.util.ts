@@ -7,10 +7,10 @@ import { pickMorphRelationRepresentative } from 'src/engine/metadata-modules/fla
 
 export const filterMorphRelationDuplicateFields = ({
   flatFieldMetadatas,
-  isMorphFieldGroupEnabled,
+  isMorphRelationHeadEnabled,
 }: {
   flatFieldMetadatas: FlatFieldMetadata[];
-  isMorphFieldGroupEnabled: boolean;
+  isMorphRelationHeadEnabled: boolean;
 }): FlatFieldMetadata[] => {
   const otherFlatFieldMetadatas: FlatFieldMetadata[] = [];
   const morphGroupsByMorphId = new Map<
@@ -41,7 +41,7 @@ export const filterMorphRelationDuplicateFields = ({
     .map((morphFlatFieldMetadatas) =>
       pickMorphRelationRepresentative({
         morphFlatFieldMetadatas,
-        isMorphFieldGroupEnabled,
+        isMorphRelationHeadEnabled,
       }),
     )
     .filter(isDefined);

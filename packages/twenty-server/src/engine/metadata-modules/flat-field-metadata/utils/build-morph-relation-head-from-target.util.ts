@@ -13,7 +13,7 @@ const omitJoinColumnName = <TSettings extends { joinColumnName?: unknown }>(
   return rest;
 };
 
-export const buildMorphRelationGroupFromTarget = ({
+export const buildMorphRelationHeadFromTarget = ({
   target,
   targetObject,
   inverse,

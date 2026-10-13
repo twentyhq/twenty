@@ -1,7 +1,7 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
-  isMorphRelationGroup,
+  isMorphRelationHead,
   pickMorphGroupSurvivorOrThrow,
 } from 'twenty-shared/utils';
 
@@ -12,19 +12,19 @@ export const pickMorphRelationRepresentative = <
     FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
 >({
   morphFlatFieldMetadatas,
-  isMorphFieldGroupEnabled,
+  isMorphRelationHeadEnabled,
 }: {
   morphFlatFieldMetadatas: TFlatFieldMetadata[];
-  isMorphFieldGroupEnabled: boolean;
+  isMorphRelationHeadEnabled: boolean;
 }): TFlatFieldMetadata | undefined => {
-  const group = morphFlatFieldMetadatas.find(isMorphRelationGroup);
+  const head = morphFlatFieldMetadatas.find(isMorphRelationHead);
 
-  if (isMorphFieldGroupEnabled && isDefined(group)) {
-    return group;
+  if (isMorphRelationHeadEnabled && isDefined(head)) {
+    return head;
   }
 
   const targets = morphFlatFieldMetadatas.filter(
-    (morphFlatFieldMetadata) => !isMorphRelationGroup(morphFlatFieldMetadata),
+    (morphFlatFieldMetadata) => !isMorphRelationHead(morphFlatFieldMetadata),
   );
 
   return targets.length > 0

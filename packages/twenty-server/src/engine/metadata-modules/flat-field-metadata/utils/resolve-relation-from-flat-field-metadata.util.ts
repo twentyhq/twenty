@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isMorphRelationGroup } from 'twenty-shared/utils';
+import { isMorphRelationHead } from 'twenty-shared/utils';
 
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -17,14 +17,14 @@ type ResolveRelationFromFlatFieldMetadataArgs = {
   sourceFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  isMorphFieldGroupEnabled: boolean;
+  isMorphRelationHeadEnabled: boolean;
 };
 
 export const resolveRelationFromFlatFieldMetadata = ({
   sourceFlatFieldMetadata,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
-  isMorphFieldGroupEnabled,
+  isMorphRelationHeadEnabled,
 }: ResolveRelationFromFlatFieldMetadataArgs): RelationDTO | null => {
   const sourceFlatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityId: sourceFlatFieldMetadata.objectMetadataId,
@@ -70,13 +70,13 @@ export const resolveRelationFromFlatFieldMetadata = ({
     const representativeMorphField =
       pickMorphRelationRepresentative({
         morphFlatFieldMetadatas: allMorphFlatFieldMetadatas,
-        isMorphFieldGroupEnabled,
+        isMorphRelationHeadEnabled,
       }) ?? targetFlatFieldMetadata;
 
     return fromMorphOrRelationFlatFieldMetadataToRelationDto({
       sourceFlatFieldMetadata,
       sourceFlatObjectMetadata,
-      targetFlatFieldMetadata: isMorphRelationGroup(representativeMorphField)
+      targetFlatFieldMetadata: isMorphRelationHead(representativeMorphField)
         ? representativeMorphField
         : {
             ...representativeMorphField,

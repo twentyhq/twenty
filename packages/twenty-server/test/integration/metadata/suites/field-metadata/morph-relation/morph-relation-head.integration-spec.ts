@@ -18,9 +18,9 @@ type ListedMorphField = {
   morphRelations: { targetObjectMetadata: { id: string } }[];
 };
 
-const setMorphFieldGroupEnabled = (value: boolean) =>
+const setMorphRelationHeadEnabled = (value: boolean) =>
   updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED,
+    featureFlag: FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
     value,
     expectToFail: false,
   });
@@ -83,7 +83,7 @@ const deleteObject = async (objectMetadataId: string) => {
   });
 };
 
-describe('morph field group', () => {
+describe('morph relation head', () => {
   let sourceObjectMetadataId = '';
   let firstTargetObjectMetadataId = '';
   let secondTargetObjectMetadataId = '';
@@ -91,18 +91,18 @@ describe('morph field group', () => {
   let targetFieldIds: string[] = [];
 
   beforeEach(async () => {
-    sourceObjectMetadataId = await createObject('groupSource', 'groupSources');
+    sourceObjectMetadataId = await createObject('headSource', 'headSources');
     firstTargetObjectMetadataId = await createObject(
-      'groupTargetOne',
-      'groupTargetOnes',
+      'headTargetOne',
+      'headTargetOnes',
     );
     secondTargetObjectMetadataId = await createObject(
-      'groupTargetTwo',
-      'groupTargetTwos',
+      'headTargetTwo',
+      'headTargetTwos',
     );
     thirdTargetObjectMetadataId = await createObject(
-      'groupTargetThree',
-      'groupTargetThrees',
+      'headTargetThree',
+      'headTargetThrees',
     );
 
     const createdField = await createMorphRelationBetweenObjects({
@@ -119,7 +119,7 @@ describe('morph field group', () => {
   });
 
   afterEach(async () => {
-    await setMorphFieldGroupEnabled(false);
+    await setMorphRelationHeadEnabled(false);
 
     for (const objectMetadataId of [
       sourceObjectMetadataId,
@@ -131,7 +131,7 @@ describe('morph field group', () => {
     }
   });
 
-  it('should keep exposing a target until morph field groups are enabled', async () => {
+  it('should keep exposing a target until morph relation heads are enabled', async () => {
     const [survivor] = await findMorphFieldsOfObject({
       id: { eq: sourceObjectMetadataId },
     });
@@ -139,7 +139,7 @@ describe('morph field group', () => {
     expect(survivor.name).toBe('owner');
     expect(targetFieldIds).toContain(survivor.id);
 
-    await setMorphFieldGroupEnabled(true);
+    await setMorphRelationHeadEnabled(true);
 
     const morphFields = await findMorphFieldsOfObject({
       id: { eq: sourceObjectMetadataId },
@@ -157,17 +157,17 @@ describe('morph field group', () => {
     );
   });
 
-  it('should add destinations through the group', async () => {
-    await setMorphFieldGroupEnabled(true);
+  it('should add destinations through the head', async () => {
+    await setMorphRelationHeadEnabled(true);
 
-    const [group] = await findMorphFieldsOfObject({
+    const [head] = await findMorphFieldsOfObject({
       id: { eq: sourceObjectMetadataId },
     });
 
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
-        idToUpdate: group.id,
+        idToUpdate: head.id,
         updatePayload: {
           morphRelationsUpdatePayload: [
             { targetObjectMetadataId: thirdTargetObjectMetadataId },
@@ -176,37 +176,37 @@ describe('morph field group', () => {
       },
     });
 
-    const [updatedGroup] = await findMorphFieldsOfObject({
+    const [updatedHead] = await findMorphFieldsOfObject({
       id: { eq: sourceObjectMetadataId },
     });
 
-    expect(updatedGroup.id).toBe(group.id);
-    expect(updatedGroup.morphRelations).toHaveLength(3);
+    expect(updatedHead.id).toBe(head.id);
+    expect(updatedHead.morphRelations).toHaveLength(3);
   });
 
-  it('should keep the group when a destination object is deleted', async () => {
-    await setMorphFieldGroupEnabled(true);
+  it('should keep the head when a destination object is deleted', async () => {
+    await setMorphRelationHeadEnabled(true);
 
-    const [group] = await findMorphFieldsOfObject({
+    const [head] = await findMorphFieldsOfObject({
       id: { eq: sourceObjectMetadataId },
     });
 
     await deleteObject(secondTargetObjectMetadataId);
     secondTargetObjectMetadataId = '';
 
-    const [groupAfterDeletion] = await findMorphFieldsOfObject({
+    const [headAfterDeletion] = await findMorphFieldsOfObject({
       id: { eq: sourceObjectMetadataId },
     });
 
-    expect(groupAfterDeletion.id).toBe(group.id);
+    expect(headAfterDeletion.id).toBe(head.id);
     expect(
-      groupAfterDeletion.morphRelations.map(
+      headAfterDeletion.morphRelations.map(
         (morphRelation) => morphRelation.targetObjectMetadata.id,
       ),
     ).toEqual([firstTargetObjectMetadataId]);
   });
 
-  it('should delete the group with its morph field', async () => {
+  it('should delete the head with its morph field', async () => {
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -219,29 +219,29 @@ describe('morph field group', () => {
       expectToFail: false,
     });
 
-    await setMorphFieldGroupEnabled(true);
+    await setMorphRelationHeadEnabled(true);
 
     expect(
       await findMorphFieldsOfObject({ id: { eq: sourceObjectMetadataId } }),
     ).toEqual([]);
   });
 
-  it('should delete the morph field through its group', async () => {
-    await setMorphFieldGroupEnabled(true);
+  it('should delete the morph field through its head', async () => {
+    await setMorphRelationHeadEnabled(true);
 
-    const [group] = await findMorphFieldsOfObject({
+    const [head] = await findMorphFieldsOfObject({
       id: { eq: sourceObjectMetadataId },
     });
 
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
-        idToUpdate: group.id,
+        idToUpdate: head.id,
         updatePayload: { isActive: false },
       },
     });
     await deleteOneFieldMetadata({
-      input: { idToDelete: group.id },
+      input: { idToDelete: head.id },
       expectToFail: false,
     });
 
@@ -249,7 +249,7 @@ describe('morph field group', () => {
       await findMorphFieldsOfObject({ id: { eq: sourceObjectMetadataId } }),
     ).toEqual([]);
 
-    await setMorphFieldGroupEnabled(false);
+    await setMorphRelationHeadEnabled(false);
 
     expect(
       await findMorphFieldsOfObject({ id: { eq: sourceObjectMetadataId } }),

@@ -11,7 +11,7 @@ import {
 import {
   capitalize,
   isDefined,
-  isMorphRelationGroup,
+  isMorphRelationHead,
 } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -269,7 +269,7 @@ export const computeSchemaComponents = (
         findManyFlatEntityByIdInFlatEntityMapsOrThrow<FlatFieldMetadata>({
           flatEntityMaps: flatFieldMetadataMaps,
           flatEntityIds: item.fieldIds,
-        }).filter((fieldMetadata) => !isMorphRelationGroup(fieldMetadata));
+        }).filter((fieldMetadata) => !isMorphRelationHead(fieldMetadata));
 
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({
         item,

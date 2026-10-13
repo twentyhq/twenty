@@ -5,7 +5,7 @@ import {
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
-import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
@@ -39,7 +39,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
-    if (isMorphRelationGroup(sourceFlatFieldMetadata)) {
+    if (isMorphRelationHead(sourceFlatFieldMetadata)) {
       return { status: 'noop' };
     }
 

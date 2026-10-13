@@ -1,6 +1,6 @@
 import { FieldMetadataType } from '../types/FieldMetadataType';
 
-export const isMorphRelationGroup = <
+export const isMorphRelationHead = <
   TFieldMetadata extends {
     type: FieldMetadataType;
     universalIdentifier: string;

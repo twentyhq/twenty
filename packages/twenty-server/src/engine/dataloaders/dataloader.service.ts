@@ -263,9 +263,9 @@ export class DataloaderService {
               flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
-        const isMorphFieldGroupEnabled =
+        const isMorphRelationHeadEnabled =
           await this.featureFlagService.isFeatureEnabled(
-            FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED,
+            FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
             workspaceId,
           );
 
@@ -289,7 +289,7 @@ export class DataloaderService {
             sourceFlatFieldMetadata,
             flatFieldMetadataMaps,
             flatObjectMetadataMaps,
-            isMorphFieldGroupEnabled,
+            isMorphRelationHeadEnabled,
           });
         });
       },
@@ -438,9 +438,9 @@ export class DataloaderService {
               flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
-        const isMorphFieldGroupEnabled =
+        const isMorphRelationHeadEnabled =
           await this.featureFlagService.isFeatureEnabled(
-            FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED,
+            FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
             workspaceId,
           );
 
@@ -484,7 +484,7 @@ export class DataloaderService {
             const filteredFieldMetadataEntities =
               filterMorphRelationDuplicateFields({
                 flatFieldMetadatas: overriddenFieldMetadataEntities,
-                isMorphFieldGroupEnabled,
+                isMorphRelationHeadEnabled,
               });
 
             const filteredFieldMetadataEntitiesWithMorphRenamed =

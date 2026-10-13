@@ -1,4 +1,4 @@
-import { isMorphRelationGroup } from 'twenty-shared/utils';
+import { isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { orderFlatFieldMetadatasForSystemIndexView } from 'src/engine/metadata-modules/object-metadata/utils/order-flat-field-metadatas-for-system-index-view.util';
@@ -25,6 +25,6 @@ export const computeCallerFlatFieldMetadatasForObject = ({
         flatFieldMetadata.objectMetadataUniversalIdentifier ===
           objectMetadataUniversalIdentifier &&
         !flatFieldMetadata.isSystemSideEffect &&
-        !isMorphRelationGroup(flatFieldMetadata),
+        !isMorphRelationHead(flatFieldMetadata),
     ),
   });

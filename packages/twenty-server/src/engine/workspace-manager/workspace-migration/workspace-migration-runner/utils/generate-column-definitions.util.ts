@@ -3,7 +3,7 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { isMorphRelationGroup } from 'twenty-shared/utils';
+import { isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type ColumnType } from 'typeorm';
 
@@ -186,7 +186,7 @@ export const generateColumnDefinitions = ({
   workspaceId: string;
   searchVectorAsExpression?: string;
 }): WorkspaceSchemaColumnDefinition[] => {
-  if (isMorphRelationGroup(flatFieldMetadata)) {
+  if (isMorphRelationHead(flatFieldMetadata)) {
     return [];
   }
 

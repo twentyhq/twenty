@@ -1,4 +1,4 @@
-import { isMorphRelationGroup } from 'twenty-shared/utils';
+import { isMorphRelationHead } from 'twenty-shared/utils';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -33,7 +33,7 @@ export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
     morphRelationFlatFieldMetadata,
     ...morphRelationFlatFieldMetadatas,
   ]
-    .filter((fieldMetadata) => !isMorphRelationGroup(fieldMetadata))
+    .filter((fieldMetadata) => !isMorphRelationHead(fieldMetadata))
     .map((flatFieldMetadata) =>
       findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
         flatFieldMetadata,

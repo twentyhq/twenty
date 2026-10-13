@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -10,47 +10,44 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { validateMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util';
 import { validateMorphOrRelationFlatFieldOnDelete } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util';
 
-const validateMorphRelationGroup = ({
-  flatEntityToValidate: group,
+const validateMorphRelationHead = ({
+  flatEntityToValidate: head,
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatFieldMetadataMaps },
   update,
 }: FlatFieldMetadataTypeValidationArgs<FieldMetadataType.MORPH_RELATION>): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
   if (
-    isDefined(group.relationTargetFieldMetadataUniversalIdentifier) ||
-    isDefined(group.relationTargetObjectMetadataUniversalIdentifier) ||
-    isDefined(group.universalSettings?.joinColumnName) ||
+    isDefined(head.relationTargetFieldMetadataUniversalIdentifier) ||
+    isDefined(head.relationTargetObjectMetadataUniversalIdentifier) ||
+    isDefined(head.universalSettings?.joinColumnName) ||
     ![RelationType.MANY_TO_ONE, RelationType.ONE_TO_MANY].includes(
-      group.universalSettings?.relationType,
+      head.universalSettings?.relationType,
     )
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message:
-        'A morph group must define a relation type without a physical target or join column',
+        'A morph relation head must define a relation type without a physical target or join column',
       userFriendlyMessage: msg`Invalid morph relation field`,
     });
   }
 
   errors.push(
     ...validateMorphOrRelationFlatFieldOnDelete({
-      universalFlatFieldMetadata: group,
+      universalFlatFieldMetadata: head,
     }),
   );
 
-  const existingGroup =
-    flatFieldMetadataMaps.byUniversalIdentifier[group.universalIdentifier];
+  const existingHead =
+    flatFieldMetadataMaps.byUniversalIdentifier[head.universalIdentifier];
 
   if (
     isDefined(update) &&
-    isDefined(existingGroup) &&
-    isFlatFieldMetadataOfType(
-      existingGroup,
-      FieldMetadataType.MORPH_RELATION,
-    ) &&
-    existingGroup.universalSettings.relationType !==
-      group.universalSettings.relationType
+    isDefined(existingHead) &&
+    isFlatFieldMetadataOfType(existingHead, FieldMetadataType.MORPH_RELATION) &&
+    existingHead.universalSettings.relationType !==
+      head.universalSettings.relationType
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -75,8 +72,8 @@ export const validateMorphRelationFlatFieldMetadata = (
 
   const errors: FlatFieldMetadataValidationError[] = [];
 
-  if (isMorphRelationGroup(universalFlatFieldMetadataToValidate)) {
-    return validateMorphRelationGroup(args);
+  if (isMorphRelationHead(universalFlatFieldMetadataToValidate)) {
+    return validateMorphRelationHead(args);
   }
 
   errors.push(...validateMorphOrRelationFlatFieldMetadata(args));

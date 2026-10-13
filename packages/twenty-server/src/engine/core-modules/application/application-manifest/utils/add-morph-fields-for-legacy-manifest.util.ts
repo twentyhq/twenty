@@ -2,12 +2,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
   isDefined,
-  isMorphRelationGroup,
+  isMorphRelationHead,
 } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { buildMorphRelationGroupFromTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-morph-relation-group-from-target.util';
+import { buildMorphRelationHeadFromTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-morph-relation-head-from-target.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -42,20 +42,20 @@ export const addMorphFieldsForLegacyManifest = ({
       continue;
     }
 
-    const existingGroup =
+    const existingHead =
       existingMaps.flatFieldMetadataMaps.byUniversalIdentifier[field.morphId];
-    let group: UniversalFlatFieldMetadata;
-    if (isDefined(existingGroup)) {
+    let head: UniversalFlatFieldMetadata;
+    if (isDefined(existingHead)) {
       if (
-        !isMorphRelationGroup(existingGroup) ||
-        existingGroup.objectMetadataUniversalIdentifier !==
+        !isMorphRelationHead(existingHead) ||
+        existingHead.objectMetadataUniversalIdentifier !==
           field.objectMetadataUniversalIdentifier ||
-        existingGroup.applicationUniversalIdentifier !==
+        existingHead.applicationUniversalIdentifier !==
           field.applicationUniversalIdentifier
       ) {
         throw new Error(`Invalid morph field identity ${field.morphId}`);
       }
-      group = existingGroup;
+      head = existingHead;
     } else {
       assertIsDefinedOrThrow(
         field.relationTargetObjectMetadataUniversalIdentifier,
@@ -68,7 +68,7 @@ export const addMorphFieldsForLegacyManifest = ({
           field.relationTargetObjectMetadataUniversalIdentifier
         ];
       assertIsDefinedOrThrow(targetObject);
-      group = buildMorphRelationGroupFromTarget({
+      head = buildMorphRelationHeadFromTarget({
         target: field,
         targetObject,
         inverse: isDefined(field.relationTargetFieldMetadataUniversalIdentifier)
@@ -82,7 +82,7 @@ export const addMorphFieldsForLegacyManifest = ({
       });
     }
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-      universalFlatEntity: group,
+      universalFlatEntity: head,
       universalFlatEntityMapsToMutate: manifestMaps.flatFieldMetadataMaps,
     });
   }

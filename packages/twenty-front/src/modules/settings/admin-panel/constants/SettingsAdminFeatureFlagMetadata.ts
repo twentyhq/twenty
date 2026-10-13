@@ -24,8 +24,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Email campaigns`,
     description: msg`Enable email campaigns, lists, and unsubscribe management.`,
   },
-  [FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED]: {
-    label: msg`Morph field groups`,
+  [FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED]: {
+    label: msg`Morph relation heads`,
     description: msg`Expose each relation to several objects as one field with a stable id.`,
   },
   [FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT]: {

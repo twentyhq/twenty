@@ -13,14 +13,14 @@ type EnrichFieldMetadataEventArgs = {
   record: Record<string, unknown>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  isMorphFieldGroupEnabled: boolean;
+  isMorphRelationHeadEnabled: boolean;
 };
 
 export const enrichFieldMetadataEventWithRelations = ({
   record,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
-  isMorphFieldGroupEnabled,
+  isMorphRelationHeadEnabled,
 }: EnrichFieldMetadataEventArgs): Record<string, unknown> => {
   const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: record.id as string,
@@ -39,7 +39,7 @@ export const enrichFieldMetadataEventWithRelations = ({
         sourceFlatFieldMetadata: flatFieldMetadata,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
-        isMorphFieldGroupEnabled,
+        isMorphRelationHeadEnabled,
       });
 
       return isDefined(relation) ? { ...record, relation } : record;

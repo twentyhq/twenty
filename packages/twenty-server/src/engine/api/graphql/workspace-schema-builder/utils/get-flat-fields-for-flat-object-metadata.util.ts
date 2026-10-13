@@ -1,4 +1,4 @@
-import { isMorphRelationGroup } from 'twenty-shared/utils';
+import { isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -23,5 +23,5 @@ export const getFlatFieldsFromFlatObjectMetadata = <
   return findManyFlatEntityByIdInFlatEntityMaps({
     flatEntityIds: flatObjectMetadata.fieldIds,
     flatEntityMaps: flatFieldMetadataMaps,
-  }).filter((fieldMetadata) => !isMorphRelationGroup(fieldMetadata));
+  }).filter((fieldMetadata) => !isMorphRelationHead(fieldMetadata));
 };

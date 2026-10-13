@@ -1,7 +1,7 @@
 import {
   isDefined,
   isFieldMetadataEligibleForRecordForm,
-  isMorphRelationGroup,
+  isMorphRelationHead,
 } from 'twenty-shared/utils';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -27,7 +27,7 @@ export const isFlatFieldMetadataEligibleForRecordForm = (
 ): boolean => {
   if (
     flatFieldMetadata.isSystemSideEffect ||
-    isMorphRelationGroup(flatFieldMetadata)
+    isMorphRelationHead(flatFieldMetadata)
   ) {
     return false;
   }

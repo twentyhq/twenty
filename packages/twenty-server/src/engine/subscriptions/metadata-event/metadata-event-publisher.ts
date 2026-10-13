@@ -185,9 +185,9 @@ export class MetadataEventPublisher {
           flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
         },
       );
-    const isMorphFieldGroupEnabled =
+    const isMorphRelationHeadEnabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED,
+        FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
         metadataEventBatch.workspaceId,
       );
 
@@ -196,7 +196,7 @@ export class MetadataEventPublisher {
         record: getBroadcastEventRecord(event) as
           | FieldMetadataEventRecord
           | undefined,
-        isMorphFieldGroupEnabled,
+        isMorphRelationHeadEnabled,
         flatFieldMetadataMaps,
       }),
     );
@@ -212,7 +212,7 @@ export class MetadataEventPublisher {
           record: enrichedProperties.after as Record<string, unknown>,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
-          isMorphFieldGroupEnabled,
+          isMorphRelationHeadEnabled,
         }) as typeof enrichedProperties.after;
       }
 

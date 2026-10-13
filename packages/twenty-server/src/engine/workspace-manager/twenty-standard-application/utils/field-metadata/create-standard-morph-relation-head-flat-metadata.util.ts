@@ -16,7 +16,7 @@ type StandardObjectNameWithTargetMorphField =
   | 'taskTarget'
   | 'timelineActivity';
 
-export const createStandardMorphRelationGroupFlatMetadata = ({
+export const createStandardMorphRelationHeadFlatMetadata = ({
   objectName,
   ...args
 }: StandardBuilderArgs<'fieldMetadata'> & {

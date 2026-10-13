@@ -16,7 +16,7 @@ import {
   type PageLayoutWidgetUniversalConfiguration,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 import {
   getDuplicateValues,
   type ManifestField,
@@ -105,7 +105,7 @@ const validateRelationFields = (fields: ManifestField[]): string[] => {
     }
 
     if (
-      !isMorphRelationGroup(field) &&
+      !isMorphRelationHead(field) &&
       settings.relationType === RelationType.MANY_TO_ONE &&
       !settings.joinColumnName
     ) {

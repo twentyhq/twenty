@@ -59,9 +59,9 @@ export class FieldMetadataConnectionLoaderFactory {
             flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
           },
         );
-      const isMorphFieldGroupEnabled =
+      const isMorphRelationHeadEnabled =
         await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED,
+          FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
           workspaceId,
         );
 
@@ -79,7 +79,7 @@ export class FieldMetadataConnectionLoaderFactory {
           const filteredFlatFieldMetadatas = applyMetadataFilterToItems({
             items: filterMorphRelationDuplicateFields({
               flatFieldMetadatas,
-              isMorphFieldGroupEnabled,
+              isMorphRelationHeadEnabled,
             }),
             filter,
             columnByFilterField: FIELD_FILTER_COLUMN_BY_FILTER_FIELD,

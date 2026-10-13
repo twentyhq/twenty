@@ -29,7 +29,7 @@ describe('filterMorphRelationDuplicateFields', () => {
     expect(
       filterMorphRelationDuplicateFields({
         flatFieldMetadatas: fields,
-        isMorphFieldGroupEnabled: false,
+        isMorphRelationHeadEnabled: false,
       }),
     ).toEqual(fields);
   });
@@ -41,7 +41,7 @@ describe('filterMorphRelationDuplicateFields', () => {
 
     const result = filterMorphRelationDuplicateFields({
       flatFieldMetadatas: [morph1, text, morph2],
-      isMorphFieldGroupEnabled: false,
+      isMorphRelationHeadEnabled: false,
     });
 
     expect(result).toHaveLength(3);
@@ -65,7 +65,7 @@ describe('filterMorphRelationDuplicateFields', () => {
 
     const result = filterMorphRelationDuplicateFields({
       flatFieldMetadatas: [system, text, standard],
-      isMorphFieldGroupEnabled: false,
+      isMorphRelationHeadEnabled: false,
     });
 
     expect(result).toHaveLength(2);
@@ -75,49 +75,49 @@ describe('filterMorphRelationDuplicateFields', () => {
   });
 
   it('should handle multiple morph groups independently', () => {
-    const group1Best = makeMorphField({
+    const head1Best = makeMorphField({
       id: 'a',
       morphId: 'morph-1',
       isSystem: false,
     });
-    const group1Dup = makeMorphField({
+    const head1Dup = makeMorphField({
       id: 'b',
       morphId: 'morph-1',
       isSystem: true,
     });
-    const group2Best = makeMorphField({
+    const head2Best = makeMorphField({
       id: 'c',
       morphId: 'morph-2',
       isSystem: false,
     });
-    const group2Dup = makeMorphField({
+    const head2Dup = makeMorphField({
       id: 'd',
       morphId: 'morph-2',
       isSystem: true,
     });
 
     const result = filterMorphRelationDuplicateFields({
-      flatFieldMetadatas: [group1Dup, group2Dup, group1Best, group2Best],
-      isMorphFieldGroupEnabled: false,
+      flatFieldMetadatas: [head1Dup, head2Dup, head1Best, head2Best],
+      isMorphRelationHeadEnabled: false,
     });
 
     expect(result).toHaveLength(2);
-    expect(result).toContain(group1Best);
-    expect(result).toContain(group2Best);
+    expect(result).toContain(head1Best);
+    expect(result).toContain(head2Best);
   });
 
   it('should return empty array for empty input', () => {
     expect(
       filterMorphRelationDuplicateFields({
         flatFieldMetadatas: [],
-        isMorphFieldGroupEnabled: false,
+        isMorphRelationHeadEnabled: false,
       }),
     ).toEqual([]);
   });
 
-  describe('with a persisted morph group', () => {
-    const group = makeMorphField({
-      id: 'group',
+  describe('with a persisted morph relation head', () => {
+    const head = makeMorphField({
+      id: 'head',
       morphId: 'morph-1',
       universalIdentifier: 'morph-1',
     });
@@ -128,17 +128,17 @@ describe('filterMorphRelationDuplicateFields', () => {
     });
 
     it.each([
-      ['the survivor while disabled', [group, target], false, [target]],
-      ['the group while enabled', [target, group], true, [group]],
+      ['the survivor while disabled', [head, target], false, [target]],
+      ['the head while enabled', [target, head], true, [head]],
       ['the survivor before the backfill', [target], true, [target]],
-      ['nothing for an empty group while disabled', [group], false, []],
+      ['nothing for an empty head while disabled', [head], false, []],
     ])(
       'should return %s',
-      (_, flatFieldMetadatas, isMorphFieldGroupEnabled, expected) => {
+      (_, flatFieldMetadatas, isMorphRelationHeadEnabled, expected) => {
         expect(
           filterMorphRelationDuplicateFields({
             flatFieldMetadatas,
-            isMorphFieldGroupEnabled,
+            isMorphRelationHeadEnabled,
           }),
         ).toEqual(expected);
       },

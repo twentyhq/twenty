@@ -2,7 +2,7 @@ import {
   type CompositeType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isMorphRelationGroup } from 'twenty-shared/utils';
+import { isMorphRelationHead } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -62,7 +62,7 @@ export function processFieldMetadataForColumnNameMapping(
       flatEntityId: fieldMetadataId,
     });
 
-    if (isMorphRelationGroup(fieldMetadata)) continue;
+    if (isMorphRelationHead(fieldMetadata)) continue;
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
       const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);

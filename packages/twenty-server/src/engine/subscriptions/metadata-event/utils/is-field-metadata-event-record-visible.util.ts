@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -12,23 +12,23 @@ export type FieldMetadataEventRecord = {
 
 export const isFieldMetadataEventRecordVisible = ({
   record,
-  isMorphFieldGroupEnabled,
+  isMorphRelationHeadEnabled,
   flatFieldMetadataMaps,
 }: {
   record: FieldMetadataEventRecord | undefined;
-  isMorphFieldGroupEnabled: boolean;
+  isMorphRelationHeadEnabled: boolean;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): boolean => {
   if (!isDefined(record) || record.type !== FieldMetadataType.MORPH_RELATION) {
     return true;
   }
 
-  if (isMorphRelationGroup(record)) {
-    return isMorphFieldGroupEnabled;
+  if (isMorphRelationHead(record)) {
+    return isMorphRelationHeadEnabled;
   }
 
   return (
-    !isMorphFieldGroupEnabled ||
+    !isMorphRelationHeadEnabled ||
     !isDefined(record.morphId) ||
     !isDefined(flatFieldMetadataMaps.byUniversalIdentifier[record.morphId])
   );

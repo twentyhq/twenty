@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { RelationType, compositeTypeDefinitions } from 'twenty-shared/types';
-import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -146,7 +146,7 @@ export class FlatIndexValidatorService {
               });
             }
 
-            if (isMorphRelationGroup(relatedFlatField)) {
+            if (isMorphRelationHead(relatedFlatField)) {
               validationResult.errors.push({
                 code: IndexExceptionCode.INDEX_FIELD_INVALID_REFERENCE,
                 message:

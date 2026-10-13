@@ -1,7 +1,7 @@
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from 'twenty-shared/constants';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isMorphRelationGroup } from 'twenty-shared/utils';
+import { isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -13,7 +13,7 @@ export const buildRecordExportColumns = (
 ): RecordExportColumn[] => [
   { fieldName: 'id', label: 'Id', type: FieldMetadataType.UUID },
   ...fields
-    .filter((field) => field.name !== 'id' && !isMorphRelationGroup(field))
+    .filter((field) => field.name !== 'id' && !isMorphRelationHead(field))
     .flatMap((field): RecordExportColumn[] => {
       if (
         isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||

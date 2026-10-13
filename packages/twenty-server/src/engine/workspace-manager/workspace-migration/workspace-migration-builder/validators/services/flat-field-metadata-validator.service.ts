@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isFieldMetadataTypeWithDefaultValue } from 'twenty-shared/types';
-import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -319,7 +319,7 @@ export class FlatFieldMetadataValidatorService {
 
     if (
       !buildOptions.isSystemBuild &&
-      isMorphRelationGroup(flatFieldMetadataToDelete)
+      isMorphRelationHead(flatFieldMetadataToDelete)
     ) {
       const hasRemainingTargets = Object.values(
         optimisticFlatFieldMetadataMaps.byUniversalIdentifier,

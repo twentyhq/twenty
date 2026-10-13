@@ -2,7 +2,7 @@ import { type FieldManifest } from 'twenty-shared/application';
 import {
   isDefined,
   isFieldMetadataSelectKind,
-  isMorphRelationGroup,
+  isMorphRelationHead,
 } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
@@ -36,7 +36,7 @@ const getRelationTargetUniversalIdentifiers = (
 } => {
   if (
     !isRelationFieldManifest(fieldManifest) ||
-    isMorphRelationGroup(fieldManifest)
+    isMorphRelationHead(fieldManifest)
   ) {
     return {
       relationTargetFieldMetadataUniversalIdentifier: null,
