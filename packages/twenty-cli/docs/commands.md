@@ -539,7 +539,7 @@ Commands print readable text by default. With `--json`, a command prints exactly
   "ok": true,
   "command": "version",
   "data": {
-    "version": "0.4.0",
+    "version": "2.46.0",
     "node": "24.9.0",
     "platform": "darwin",
     "arch": "arm64"
