@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
+import { getNextUserFavoritePosition } from '@/navigation-menu-item/common/utils/getNextUserFavoritePosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
 export const useAgentChatChannelFavorite = (channelId: string) => {
@@ -19,20 +20,13 @@ export const useAgentChatChannelFavorite = (channelId: string) => {
   );
 
   const addToFavorites = () => {
-    const maxPosition = Math.max(
-      ...navigationMenuItems
-        .filter((item) => !isDefined(item.folderId))
-        .map((item) => item.position),
-      0,
-    );
-
     void createManyNavigationMenuItems([
       {
         id: v4(),
         type: NavigationMenuItemType.AGENT_CHAT_CHANNEL,
         agentChatChannelId: channelId,
         userWorkspaceId: currentUserWorkspaceId,
-        position: maxPosition + 1,
+        position: getNextUserFavoritePosition(navigationMenuItems),
       },
     ]);
   };

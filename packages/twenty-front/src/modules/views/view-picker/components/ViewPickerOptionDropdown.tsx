@@ -2,6 +2,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
+import { getNextUserFavoritePosition } from '@/navigation-menu-item/common/utils/getNextUserFavoritePosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
@@ -89,22 +90,13 @@ export const ViewPickerOptionDropdown = ({
       return;
     }
 
-    const relevantItems = navigationMenuItems.filter(
-      (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
-    );
-
-    const maxPosition = Math.max(
-      ...relevantItems.map((item) => item.position),
-      0,
-    );
-
     createManyNavigationMenuItems([
       {
         id: uuidv4(),
         type: NavigationMenuItemType.VIEW,
         viewId: view.id,
         userWorkspaceId: currentUserWorkspaceId,
-        position: maxPosition + 1,
+        position: getNextUserFavoritePosition(navigationMenuItems),
       },
     ]);
   };

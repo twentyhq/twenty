@@ -9,6 +9,7 @@ import { useAgentChatChannelActions } from '@/ai/hooks/useAgentChatChannelAction
 import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
 import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
+import { agentChatAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
@@ -22,6 +23,9 @@ const AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 export const NavigationDrawerAiChatChannelsSection = () => {
   const { t } = useLingui();
   const agentChatChannels = useAtomStateValue(agentChatChannelsState);
+  const agentChatAccessibleChannels = useAtomStateValue(
+    agentChatAccessibleChannelsSelector,
+  );
   const agentChatChannelSummaries = useAtomStateValue(
     agentChatChannelSummariesState,
   );
@@ -39,9 +43,6 @@ export const NavigationDrawerAiChatChannelsSection = () => {
     return null;
   }
 
-  const accessibleChannels = agentChatChannels.filter(
-    ({ isAccessible }) => isAccessible,
-  );
   // Listed only for who manages channels, so they keep a way to set them up
   const otherChannels = agentChatChannels.filter(
     ({ isAccessible }) => !isAccessible,
@@ -72,7 +73,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
     <CollapsibleNavigationDrawerSection
       sectionId={AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID}
       label={t`Channels`}
-      alwaysShowRightIcon={accessibleChannels.length === 0}
+      alwaysShowRightIcon={agentChatAccessibleChannels.length === 0}
       rightIcon={
         canManageChannels ? (
           <LightIconButton
@@ -85,12 +86,12 @@ export const NavigationDrawerAiChatChannelsSection = () => {
         ) : undefined
       }
     >
-      {accessibleChannels.map((channel) => (
+      {agentChatAccessibleChannels.map((channel) => (
         <NavigationDrawerAiChatChannelItem
           key={channel.id}
           channel={channel}
           summary={agentChatChannelSummaries[channel.id]}
-          destinationChannels={accessibleChannels.filter(
+          destinationChannels={agentChatAccessibleChannels.filter(
             ({ id }) => id !== channel.id,
           )}
           canManage={canManageChannels}
@@ -101,7 +102,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
           key={channel.id}
           channel={channel}
           summary={undefined}
-          destinationChannels={accessibleChannels}
+          destinationChannels={agentChatAccessibleChannels}
           canManage={canManageChannels}
         />
       ))}
@@ -116,7 +117,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
           placeholder={t`Channel name`}
         />
       ) : (
-        accessibleChannels.length === 0 &&
+        agentChatAccessibleChannels.length === 0 &&
         canManageChannels && (
           <NavigationDrawerItem
             label={t`New channel`}

@@ -195,6 +195,33 @@ describe('NavigationDrawerAiChatContent', () => {
     ).toEqual(['Support', 'Quarterly plan']);
   });
 
+  it('leaves favorite channels out while the inbox feature flag is off', () => {
+    mockIsAiChatInboxEnabled = false;
+    jotaiStore.set(mockFavoriteChannelsAtom, [
+      {
+        __typename: 'AgentChatChannel',
+        id: 'channel-1',
+        name: 'Support',
+        icon: null,
+        color: null,
+        position: 1,
+        roleIds: [],
+        isCustom: true,
+        isAccessible: true,
+      },
+    ]);
+    jotaiStore.set(mockFavoriteThreadsAtom, [
+      { id: 'chat-2', title: 'Quarterly plan', deletedAt: null },
+    ]);
+
+    const { getByRole, queryByText } = renderContent();
+
+    const favorites = getByRole('region', { name: 'Favorites' });
+
+    expect(within(favorites).getByText('Quarterly plan')).toBeInTheDocument();
+    expect(queryByText('Support')).toBeNull();
+  });
+
   it('shows the triage section with the inbox feature flag on', () => {
     const { getByRole } = renderContent();
 
