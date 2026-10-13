@@ -9,8 +9,8 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
+import { isBaseProductSubscriptionItem } from 'src/engine/core-modules/billing/utils/is-base-product-subscription-item.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -62,9 +62,7 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
         this.billingUsageService.findResourceUsageCap(subscription),
       planKey:
         subscription.billingSubscriptionItems.find(
-          ({ billingProduct }) =>
-            billingProduct?.metadata?.productKey ===
-            BillingProductKey.BASE_PRODUCT,
+          isBaseProductSubscriptionItem,
         )?.billingProduct?.metadata.planKey ?? null,
       creditGrants: unexpiredGrants.map(
         ({ amountMicro, effectiveAt, expiresAt }) => ({
