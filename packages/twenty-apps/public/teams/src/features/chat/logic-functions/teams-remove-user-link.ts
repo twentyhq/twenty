@@ -51,7 +51,7 @@ export default defineLogicFunction({
   universalIdentifier: TEAMS_REMOVE_USER_LINK_UNIVERSAL_IDENTIFIER,
   name: 'teams-remove-user-link',
   description:
-    'Removes a Teams user link so the assistant stops acting with that member permissions for the account. Restricted to members with the roles permission.',
+    'Removes a Teams user link. The account then falls back to email matching on its next message, so this undoes a manual link or clears a stale one. Restricted to members with the roles permission.',
   timeoutSeconds: 30,
   httpRouteTriggerSettings: {
     path: TEAMS_USER_LINKS_REMOVE_ROUTE_PATH,
