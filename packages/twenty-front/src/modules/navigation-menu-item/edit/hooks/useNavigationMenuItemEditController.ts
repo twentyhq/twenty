@@ -117,13 +117,13 @@ export const useNavigationMenuItemEditController = (
         },
       ]).catch(() =>
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Couldn't add to favorites`,
         }),
       );
     } else {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Couldn't add to favorites`,
       });
     }
@@ -149,7 +149,7 @@ export const useNavigationMenuItemEditController = (
     try {
       await updateManyNavigationMenuItems([{ id, update }]);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Couldn't update favorite` });
+      enqueueToast({ status: 'error', children: t`Couldn't update favorite` });
     }
   };
 
@@ -166,7 +166,7 @@ export const useNavigationMenuItemEditController = (
     try {
       await deleteManyNavigationMenuItems(ids);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Couldn't remove favorite` });
+      enqueueToast({ status: 'error', children: t`Couldn't remove favorite` });
     }
   };
 

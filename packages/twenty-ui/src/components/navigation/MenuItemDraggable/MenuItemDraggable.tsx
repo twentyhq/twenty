@@ -7,6 +7,7 @@ import { type MenuItemDraggableProps } from './types/MenuItemDraggableProps';
 
 export const MenuItemDraggable = ({
   LeftIcon,
+  LeftComponent,
   withIconContainer = false,
   accent = 'default',
   iconButtons,
@@ -31,6 +32,7 @@ export const MenuItemDraggable = ({
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
+        LeftComponent={LeftComponent}
         text={text}
         contextualText={contextualText}
         withIconContainer={withIconContainer}

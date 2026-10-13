@@ -14,6 +14,7 @@ import {
 
 const VERSION = '2.45.0';
 const FIRST_PARTY_PACKAGES = ['twenty-client-sdk', 'twenty-sdk', 'twenty-ui'];
+const PINS = FIRST_PARTY_PACKAGES.map((name) => ({ name, version: VERSION }));
 const TEMPLATE_MANIFEST = {
   name: 'TO-BE-GENERATED',
   packageManager: 'yarn@4.13.0',
@@ -23,6 +24,12 @@ const TEMPLATE_MANIFEST = {
       FIRST_PARTY_PACKAGES.map((name) => [name, 'TO-BE-GENERATED']),
     ),
   },
+};
+const PINNED_DEV_DEPENDENCIES = {
+  typescript: '^5.9.3',
+  'twenty-client-sdk': VERSION,
+  'twenty-sdk': VERSION,
+  'twenty-ui': VERSION,
 };
 
 const lockfileEntry = (name, { checksum = true } = {}) =>
@@ -35,6 +42,8 @@ const lockfileEntry = (name, { checksum = true } = {}) =>
     '  linkType: hard',
   ].join('\n');
 
+const LOCKFILE = `${FIRST_PARTY_PACKAGES.map((name) => lockfileEntry(name)).join('\n\n')}\n`;
+
 const createRepository = async ({
   yarnVersion = '4.13.0',
   hasBuild = true,
@@ -42,25 +51,20 @@ const createRepository = async ({
   const root = await mkdtemp(join(tmpdir(), 'twenty-template-lock-test-'));
   const packageDirectory = join(root, 'packages/twenty-cli');
 
-  await mkdir(join(packageDirectory, 'app-template'), { recursive: true });
-  await mkdir(join(root, 'packages/twenty-sdk'), { recursive: true });
+  await mkdir(packageDirectory, { recursive: true });
   await writeFile(
     join(root, '.yarnrc.yml'),
     `yarnPath: .yarn/releases/yarn-${yarnVersion}.cjs\n`,
-  );
-  await writeFile(
-    join(packageDirectory, 'app-template/package.json'),
-    JSON.stringify(TEMPLATE_MANIFEST),
-  );
-  await writeFile(
-    join(root, 'packages/twenty-sdk/package.json'),
-    JSON.stringify({ name: 'twenty-sdk', version: VERSION }),
   );
 
   if (hasBuild) {
     await mkdir(join(packageDirectory, 'dist/app-template'), {
       recursive: true,
     });
+    await writeFile(
+      join(packageDirectory, 'dist/app-template/package.json'),
+      JSON.stringify(TEMPLATE_MANIFEST),
+    );
   }
 
   return { root, packageDirectory };
@@ -82,47 +86,46 @@ const testWithRepository = (name, options, run) =>
     }
   });
 
+const isTemplateLockError = (pattern) => (error) => {
+  assert.ok(error instanceof TemplateLockError, error);
+  assert.match(error.message, pattern);
+
+  return true;
+};
+
 const assertFailure = (promise, pattern) =>
-  assert.rejects(promise, (error) => {
-    assert.ok(error instanceof TemplateLockError, error);
-    assert.match(error.message, pattern);
+  assert.rejects(promise, isTemplateLockError(pattern));
 
-    return true;
-  });
-
-await test('pins only the first-party placeholders of the app template', () => {
-  const { manifest, firstPartyPackages } = buildTemplateManifest({
+await test('applies the pins app init reported to the app template', () => {
+  const manifest = buildTemplateManifest({
     templateManifest: TEMPLATE_MANIFEST,
-    version: VERSION,
+    pins: PINS,
   });
 
-  assert.deepEqual(firstPartyPackages, FIRST_PARTY_PACKAGES);
   assert.equal(manifest.name, 'TO-BE-GENERATED');
-  assert.deepEqual(manifest.devDependencies, {
-    typescript: '^5.9.3',
-    'twenty-client-sdk': VERSION,
-    'twenty-sdk': VERSION,
-    'twenty-ui': VERSION,
-  });
+  assert.deepEqual(manifest.devDependencies, PINNED_DEV_DEPENDENCIES);
+});
+
+await test('refuses a template placeholder that app init did not pin', () => {
+  assert.throws(
+    () =>
+      buildTemplateManifest({
+        templateManifest: TEMPLATE_MANIFEST,
+        pins: PINS.filter(({ name }) => name !== 'twenty-ui'),
+      }),
+    isTemplateLockError(/^app init did not pin twenty-ui\.$/),
+  );
 });
 
 await test('resolves under an age gate that preapproves only the pinned packages', () => {
-  const yarnrc = buildYarnrc({
-    registry: PUBLIC_REGISTRY,
-    version: VERSION,
-    firstPartyPackages: FIRST_PARTY_PACKAGES,
-  });
+  const yarnrc = buildYarnrc({ registry: PUBLIC_REGISTRY, pins: PINS });
 
   assert.match(yarnrc, /^npmMinimalAgeGate: 3d$/m);
   assert.match(yarnrc, /^enableScripts: false$/m);
   assert.match(yarnrc, /^ {2}- "twenty-sdk@2\.45\.0"$/m);
   assert.doesNotMatch(yarnrc, /unsafeHttpWhitelist/);
   assert.match(
-    buildYarnrc({
-      registry: 'http://127.0.0.1:4873',
-      version: VERSION,
-      firstPartyPackages: FIRST_PARTY_PACKAGES,
-    }),
+    buildYarnrc({ registry: 'http://127.0.0.1:4873', pins: PINS }),
     /^unsafeHttpWhitelist:\n {2}- 127\.0\.0\.1$/m,
   );
 });
@@ -131,26 +134,63 @@ await testWithRepository(
   'writes the generated lockfile into the built template',
   {},
   async ({ packageDirectory }) => {
-    const lockfile = `${FIRST_PARTY_PACKAGES.map((name) => lockfileEntry(name)).join('\n\n')}\n`;
-
     assert.deepEqual(
       await generateTemplateLock({
         packageDirectory,
-        install: writeLockfile(lockfile),
+        pins: PINS,
+        install: writeLockfile(LOCKFILE),
       }),
-      {
-        version: VERSION,
-        firstPartyPackages: FIRST_PARTY_PACKAGES,
-        resolutionCount: 3,
-      },
+      { resolutionCount: 3 },
     );
     assert.equal(
       await readFile(
         join(packageDirectory, 'dist/app-template/yarn.lock'),
         'utf8',
       ),
-      lockfile,
+      LOCKFILE,
     );
+  },
+);
+
+await testWithRepository(
+  'locks the built template with the reported pins, not the source versions',
+  {},
+  async ({ root, packageDirectory }) => {
+    await mkdir(join(root, 'packages/twenty-sdk'), { recursive: true });
+    await writeFile(
+      join(root, 'packages/twenty-sdk/package.json'),
+      JSON.stringify({ name: 'twenty-sdk', version: '2.46.0' }),
+    );
+    await mkdir(join(packageDirectory, 'app-template'), { recursive: true });
+    await writeFile(
+      join(packageDirectory, 'app-template/package.json'),
+      JSON.stringify({
+        ...TEMPLATE_MANIFEST,
+        devDependencies: {
+          ...TEMPLATE_MANIFEST.devDependencies,
+          typescript: '^6.0.0',
+        },
+      }),
+    );
+
+    let resolvedManifest;
+    let yarnrc;
+
+    await generateTemplateLock({
+      packageDirectory,
+      pins: PINS,
+      install: async ({ workingDirectory }) => {
+        resolvedManifest = JSON.parse(
+          await readFile(join(workingDirectory, 'package.json'), 'utf8'),
+        );
+        yarnrc = await readFile(join(workingDirectory, '.yarnrc.yml'), 'utf8');
+        await writeLockfile(LOCKFILE)({ workingDirectory });
+      },
+    });
+
+    assert.deepEqual(resolvedManifest.devDependencies, PINNED_DEV_DEPENDENCIES);
+    assert.match(yarnrc, /^ {2}- "twenty-sdk@2\.45\.0"$/m);
+    assert.doesNotMatch(yarnrc, /2\.46\.0/);
   },
 );
 
@@ -161,6 +201,7 @@ await testWithRepository(
     await assertFailure(
       generateTemplateLock({
         packageDirectory,
+        pins: PINS,
         install: writeLockfile(lockfileEntry('twenty-sdk')),
       }),
       /^twenty-client-sdk@2\.45\.0 is missing from the generated lockfile/,
@@ -168,6 +209,7 @@ await testWithRepository(
     await assertFailure(
       generateTemplateLock({
         packageDirectory,
+        pins: PINS,
         install: writeLockfile(
           FIRST_PARTY_PACKAGES.map((name) =>
             lockfileEntry(name, { checksum: name !== 'twenty-ui' }),
@@ -186,8 +228,9 @@ await testWithRepository(
     await assertFailure(
       generateTemplateLock({
         packageDirectory,
+        pins: PINS,
         install: writeLockfile(
-          `${FIRST_PARTY_PACKAGES.map((name) => lockfileEntry(name)).join('\n\n')}\n  __archiveUrl: https://mirror.example.com\n`,
+          `${LOCKFILE}  __archiveUrl: https://mirror.example.com\n`,
         ),
       }),
       /pins entries to a registry host/,
@@ -202,11 +245,12 @@ await testWithRepository(
     await assertFailure(
       generateTemplateLock({
         packageDirectory,
+        pins: PINS,
         install: () => {
           throw new Error('YN0082: No candidates found');
         },
       }),
-      /^Yarn could not resolve the app template with twenty-client-sdk, twenty-sdk, twenty-ui at 2\.45\.0/,
+      /^Yarn could not resolve the app template with twenty-client-sdk@2\.45\.0, twenty-sdk@2\.45\.0, twenty-ui@2\.45\.0\./,
     );
   },
 );
@@ -218,6 +262,7 @@ await testWithRepository(
     await assertFailure(
       generateTemplateLock({
         packageDirectory,
+        pins: PINS,
         install: writeLockfile(''),
       }),
       /pins yarn@4\.13\.0, but the repository runs yarn 4\.12\.0/,
@@ -232,6 +277,7 @@ await testWithRepository(
     await assertFailure(
       generateTemplateLock({
         packageDirectory,
+        pins: PINS,
         install: writeLockfile(''),
       }),
       /^dist\/app-template is missing/,

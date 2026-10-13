@@ -40,7 +40,7 @@ export const SettingsDpaAgreementsTable = ({
       );
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Could not download the document.`,
       });
     }

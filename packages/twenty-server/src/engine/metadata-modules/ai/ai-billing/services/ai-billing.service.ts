@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -31,7 +31,7 @@ export class AiBillingService {
   constructor(
     private readonly usageRecorderService: UsageRecorderService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
@@ -44,7 +44,7 @@ export class AiBillingService {
     operationType: UsageOperationType;
     spenders: UsageSpenders;
   }): Promise<void> {
-    await this.billingUsageService.assertUsageAllowed({
+    await this.usageQuotaAdmissionService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,

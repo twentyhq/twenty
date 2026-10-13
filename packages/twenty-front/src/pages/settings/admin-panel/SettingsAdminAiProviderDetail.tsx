@@ -103,13 +103,13 @@ export const SettingsAdminAiProviderDetail = () => {
         ],
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Provider "${provider?.label ?? providerName}" removed`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to remove provider`,
       });
     }
@@ -133,12 +133,12 @@ export const SettingsAdminAiProviderDetail = () => {
       });
       await refetchClientConfig();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Model "${modelToRemove.label}" removed`,
       });
       setModelToRemove(null);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Failed to remove model` });
+      enqueueToast({ status: 'error', children: t`Failed to remove model` });
     }
   };
 
@@ -187,7 +187,7 @@ export const SettingsAdminAiProviderDetail = () => {
       await refetchClientConfig();
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update model availability`,
       });
     }
@@ -382,7 +382,7 @@ export const SettingsAdminAiProviderDetail = () => {
                   });
                 } catch {
                   enqueueToast({
-                    variant: 'error',
+                    status: 'error',
                     children: t`Failed to update model availability`,
                   });
                 } finally {

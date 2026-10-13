@@ -1,6 +1,8 @@
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
+import { getFieldValueSourceDefinition } from '@/object-record/record-field/ui/utils/getFieldValueSourceDefinition';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
@@ -22,7 +24,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type MouseEvent, type Ref } from 'react';
+import { type MouseEvent, type Ref, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -88,6 +90,10 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
+  const coreRecordReferenceFields = useContext(
+    CoreRecordReferenceFieldsContext,
+  );
+
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
@@ -120,11 +126,20 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
       const fieldDefinition =
         fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
+      if (!isDefined(fieldDefinition)) {
+        return [];
+      }
+
+      const fieldValueSourceDefinition = getFieldValueSourceDefinition({
+        fieldDefinition,
+        coreRecordReferenceFields,
+      });
+
       if (
-        !isDefined(fieldDefinition) ||
         isFieldValueEmpty({
-          fieldDefinition,
-          fieldValue: recordStore[fieldDefinition.metadata.fieldName],
+          fieldDefinition: fieldValueSourceDefinition,
+          fieldValue:
+            recordStore[fieldValueSourceDefinition.metadata.fieldName],
         })
       ) {
         return [];
