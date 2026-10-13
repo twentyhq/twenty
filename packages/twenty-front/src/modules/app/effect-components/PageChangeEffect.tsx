@@ -27,7 +27,6 @@ import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
-import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -267,18 +266,8 @@ export const PageChangeEffect = () => {
           break;
         }
 
-        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
-        const focusStackItemsKeptAbovePage = isSidePanelOpen
-          ? store
-              .get(focusStackState.atom)
-              .filter(
-                ({ componentInstance }) =>
-                  componentInstance.componentType !== FocusComponentType.PAGE,
-              )
-          : [];
-
-        store.set(focusStackState.atom, [
-          {
+        resetFocusStackToFocusItem({
+          focusStackItem: {
             focusId: PageFocusId.AiChatInbox,
             componentInstance: {
               componentType: FocusComponentType.PAGE,
@@ -289,8 +278,8 @@ export const PageChangeEffect = () => {
               enableGlobalHotkeysConflictingWithKeyboard: true,
             },
           },
-          ...focusStackItemsKeptAbovePage,
-        ]);
+          shouldKeepItemsAbovePage: store.get(isSidePanelOpenedState.atom),
+        });
         break;
       }
       case isMatchingLocation(location, AppPath.PageLayoutPage): {
