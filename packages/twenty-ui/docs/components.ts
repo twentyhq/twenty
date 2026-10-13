@@ -13,6 +13,7 @@ import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions'
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
 import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
 import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
+import { STACK_ICON_PROP_DESCRIPTIONS } from './stackIconPropDescriptions';
 import { TINTED_ICON_TILE_PROP_DESCRIPTIONS } from './tintedIconTilePropDescriptions';
 import { CALLOUT_PROP_DESCRIPTIONS } from './calloutPropDescriptions';
 import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
@@ -873,6 +874,13 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/data-display',
     slug: 'components/data-display/tinted-icon-tile',
     propDescriptions: TINTED_ICON_TILE_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'StackIcon',
+    source: 'components/data-display/StackIcon/StackIcon.tsx',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/stack-icon',
+    propDescriptions: STACK_ICON_PROP_DESCRIPTIONS,
   },
   {
     name: 'Callout',

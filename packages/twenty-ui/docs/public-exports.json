@@ -40,6 +40,7 @@
       "getIconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "JsonTree": "components/data-display/JsonTree/JsonTree",
       "MetricRow": "components/data-display/MetricRow/MetricRow",
+      "StackIcon": "components/data-display/StackIcon/StackIcon",
       "TintedIconTile": "components/data-display/TintedIconTile/TintedIconTile"
     },
     "types": {
@@ -52,6 +53,7 @@
       "JsonTreeProps": "components/data-display/JsonTree/types/JsonTreeProps",
       "MetricRowProps": "components/data-display/MetricRow/types/MetricRowProps",
       "ShouldExpandNodeInitiallyProps": "components/data-display/JsonTree/types/ShouldExpandNodeInitiallyProps",
+      "StackIconProps": "components/data-display/StackIcon/types/StackIconProps",
       "TintedIconTileProps": "components/data-display/TintedIconTile/types/TintedIconTileProps"
     }
   },

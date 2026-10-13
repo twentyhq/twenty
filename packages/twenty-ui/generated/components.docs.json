@@ -12586,6 +12586,48 @@
     ]
   },
   {
+    "name": "StackIcon",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/stack-icon",
+    "props": [
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the container root."
+      },
+      {
+        "name": "icon",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Main icon content. The caller controls its dimensions and stroke."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the div root while preserving the icon content and native props."
+      },
+      {
+        "name": "stackedIcon",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Smaller content stacked on the bottom-right corner of the main icon, such as a 12px avatar."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the container root."
+      }
+    ]
+  },
+  {
     "name": "Callout",
     "entryPoint": "twenty-ui/components/feedback",
     "slug": "components/feedback/callout",
@@ -13757,7 +13799,7 @@
         "type": "\"always\" | \"never\" | \"onHover\"",
         "required": false,
         "defaultValue": "never",
-        "description": "Grip visibility: never, always, or onHover. onHover swaps LeftIcon for the grip on hover and shows no grip without LeftIcon. Does not implement dragging."
+        "description": "Grip visibility: never, always, or onHover. always and onHover render a single leading content (LeftComponent when set, otherwise LeftIcon); onHover swaps it for the grip on hover and shows no grip without leading content. Does not implement dragging."
       },
       {
         "name": "iconButtons",
@@ -13793,6 +13835,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Accepted for compatibility; currently has no effect."
+      },
+      {
+        "name": "LeftComponent",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Custom leading content."
       },
       {
         "name": "LeftIcon",
