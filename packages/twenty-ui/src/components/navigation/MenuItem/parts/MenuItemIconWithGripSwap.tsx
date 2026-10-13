@@ -5,10 +5,12 @@ import { type ThemeColor, useTheme } from '@ui/theme';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { clsx } from 'clsx';
+import { type ReactNode } from 'react';
 
 import styles from './MenuItemIconWithGripSwap.module.scss';
 
 export type MenuItemIconWithGripSwapProps = {
+  LeftComponent?: ReactNode;
   LeftIcon: IconComponent | null | undefined;
   iconThemeColor?: ThemeColor | null;
   withIconContainer?: boolean;
@@ -16,6 +18,7 @@ export type MenuItemIconWithGripSwapProps = {
 };
 
 export const MenuItemIconWithGripSwap = ({
+  LeftComponent,
   LeftIcon,
   iconThemeColor,
   withIconContainer = false,
@@ -23,27 +26,36 @@ export const MenuItemIconWithGripSwap = ({
 }: MenuItemIconWithGripSwapProps) => {
   const theme = useTheme();
 
-  if (!LeftIcon) {
+  if (!isDefined(LeftIcon) && !isDefined(LeftComponent)) {
     return null;
   }
 
   const iconContent = (
     <div className={styles.iconSwapContainer}>
       <div className={clsx(styles.defaultIcon, 'grip-swap-default-icon')}>
-        {isDefined(iconThemeColor) ? (
-          <TintedIconTile
-            icon={
+        {isDefined(LeftComponent)
+          ? LeftComponent
+          : isDefined(LeftIcon) &&
+            (isDefined(iconThemeColor) ? (
+              <TintedIconTile
+                icon={
+                  <LeftIcon
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                }
+                color={iconThemeColor}
+                style={{
+                  width: theme.icon.size.md,
+                  height: theme.icon.size.md,
+                }}
+              />
+            ) : (
               <LeftIcon
                 size={theme.icon.size.md}
                 stroke={theme.icon.stroke.sm}
               />
-            }
-            color={iconThemeColor}
-            style={{ width: theme.icon.size.md, height: theme.icon.size.md }}
-          />
-        ) : (
-          <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        )}
+            ))}
       </div>
       <div className={clsx(styles.hoverIcon, 'grip-swap-hover-icon')}>
         <IconGripVertical

@@ -77,20 +77,23 @@ export const MenuItemLeftContent = ({
         ))}
       {gripMode === 'onHover' ? (
         <MenuItemIconWithGripSwap
+          LeftComponent={LeftComponent}
           LeftIcon={LeftIcon}
           iconThemeColor={iconThemeColor}
           withIconContainer={withIconContainer}
           gripIconColor={gripIconColor}
         />
       ) : (
-        <MenuItemIcon
-          Icon={LeftIcon}
-          iconThemeColor={iconThemeColor}
-          withContainer={withIconContainer}
-          withContainerBackground={withIconContainerBackground}
-        />
+        <>
+          <MenuItemIcon
+            Icon={LeftIcon}
+            iconThemeColor={iconThemeColor}
+            withContainer={withIconContainer}
+            withContainerBackground={withIconContainerBackground}
+          />
+          {LeftComponent}
+        </>
       )}
-      {LeftComponent}
       <StyledMenuItemLabel>
         {isString(text) ? (
           <div className={styles.mainText}>
