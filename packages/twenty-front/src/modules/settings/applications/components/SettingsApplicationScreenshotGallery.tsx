@@ -72,18 +72,37 @@ const StyledThumbnailImage = styled.img`
 `;
 
 export const SettingsApplicationScreenshotGallery = ({
-  screenshots,
+  screenshots: allScreenshots,
   displayName,
 }: SettingsApplicationScreenshotGalleryProps) => {
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
+  const [failedScreenshots, setFailedScreenshots] = useState<string[]>([]);
   const { openDialog, closeDialog } = useDialog();
   const lightboxModalId = useId();
+
+  // A screenshot the browser cannot load is dropped rather than shown as a broken image
+  const screenshots = allScreenshots.filter(
+    (screenshot) => !failedScreenshots.includes(screenshot),
+  );
+
+  const markScreenshotAsFailed = (screenshot: string) =>
+    setFailedScreenshots((previousFailedScreenshots) =>
+      previousFailedScreenshots.includes(screenshot)
+        ? previousFailedScreenshots
+        : [...previousFailedScreenshots, screenshot],
+    );
 
   if (screenshots.length === 0) {
     return null;
   }
 
   const safeIndex = Math.min(selectedScreenshotIndex, screenshots.length - 1);
+
+  const getScreenshotAltText = (index: number) => {
+    const screenshotNumber = index + 1;
+
+    return t`${displayName} screenshot ${screenshotNumber}`;
+  };
 
   return (
     <StyledGalleryContainer>
@@ -94,7 +113,8 @@ export const SettingsApplicationScreenshotGallery = ({
       >
         <StyledHeroImage
           src={screenshots[safeIndex]}
-          alt={`${displayName} screenshot ${safeIndex + 1}`}
+          alt={getScreenshotAltText(safeIndex)}
+          onError={() => markScreenshotAsFailed(screenshots[safeIndex])}
         />
       </StyledHeroButton>
       {screenshots.length > 1 && (
@@ -104,11 +124,14 @@ export const SettingsApplicationScreenshotGallery = ({
               key={index}
               type="button"
               isSelected={index === safeIndex}
+              aria-pressed={index === safeIndex}
+              aria-label={getScreenshotAltText(index)}
               onClick={() => setSelectedScreenshotIndex(index)}
             >
               <StyledThumbnailImage
                 src={screenshot}
-                alt={`${displayName} thumbnail ${index + 1}`}
+                alt=""
+                onError={() => markScreenshotAsFailed(screenshot)}
               />
             </StyledThumbnail>
           ))}

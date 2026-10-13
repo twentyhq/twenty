@@ -5,6 +5,7 @@ import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActio
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
 import {
+  type BuildPermissionSummaryOptions,
   buildPermissionSummaryFromRoleManifest,
   type PermissionSummaryItem,
 } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
@@ -13,8 +14,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
-import { IconChevronLeft } from 'twenty-ui/icon';
+import { IconAlertTriangle, IconChevronLeft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationInstallPermissionValidationModalProps = {
@@ -22,32 +24,41 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   appDisplayName: string;
   appLogoUrl?: string;
   defaultRole?: RoleManifest;
+  objectLabelsByUniversalIdentifier?: BuildPermissionSummaryOptions['objectLabelsByUniversalIdentifier'];
   requestedCapabilities?: string[];
   billsCredits?: boolean;
+  isVetted?: boolean;
   onAuthorize: () => void;
   isInstalling?: boolean;
 };
 
+// Vertical centering comes from the content's auto margins rather than
+// justify-content so a long permission list scrolls instead of being clipped
+// at the top.
 const StyledFullscreenContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
-  justify-content: center;
+  overflow-y: auto;
+  padding: ${themeCssVariables.spacing[16]} ${themeCssVariables.spacing[4]};
   position: relative;
   width: 100%;
 `;
 
 const StyledLightButton = styled(LightButton)`
   left: ${themeCssVariables.spacing[4]};
-  position: absolute;
+  position: fixed;
   top: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  margin: auto 0;
   max-width: 400px;
   width: 100%;
 `;
@@ -62,6 +73,10 @@ const StyledTitle = styled.div`
   font-weight: ${themeCssVariables.font.weight.semiBold};
   margin-bottom: ${themeCssVariables.spacing[6]};
   text-align: center;
+`;
+
+const StyledNotVettedBannerContainer = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledPermissionsCard = styled.div`
@@ -93,13 +108,20 @@ const StyledPermissionIcon = styled.div`
   display: flex;
 `;
 
+const StyledNoPermissionText = styled.div`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+`;
+
 export const SettingsApplicationInstallPermissionValidationModal = ({
   modalInstanceId,
   appDisplayName,
   appLogoUrl,
   defaultRole,
+  objectLabelsByUniversalIdentifier,
   requestedCapabilities = [],
   billsCredits = false,
+  isVetted = true,
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
@@ -107,7 +129,9 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
 
   const permissionItems: PermissionSummaryItem[] = useMemo(() => {
     const rolePermissionItems = defaultRole
-      ? buildPermissionSummaryFromRoleManifest(defaultRole)
+      ? buildPermissionSummaryFromRoleManifest(defaultRole, {
+          objectLabelsByUniversalIdentifier,
+        })
       : [];
 
     return [
@@ -115,7 +139,12 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       ...buildApplicationCapabilitySummary(requestedCapabilities),
       ...buildApplicationBillingSummary(billsCredits),
     ];
-  }, [requestedCapabilities, defaultRole, billsCredits]);
+  }, [
+    requestedCapabilities,
+    defaultRole,
+    objectLabelsByUniversalIdentifier,
+    billsCredits,
+  ]);
 
   const handleAuthorize = () => {
     closeDialog(modalInstanceId);
@@ -131,6 +160,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       dialogId={modalInstanceId}
       dismissible
       onClose={handleClose}
+      renderInDocumentBody
     >
       {({ onKeyDown }) => (
         <Dialog.Popup
@@ -157,21 +187,37 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                 {t`Install ${appDisplayName} on your workspace`}
               </StyledTitle>
 
-              {permissionItems.length > 0 && (
-                <StyledPermissionsCard>
-                  <StyledPermissionsTitle>
-                    {t`${appDisplayName} would like to:`}
-                  </StyledPermissionsTitle>
-                  {permissionItems.map((item) => (
-                    <StyledPermissionRow key={item.label}>
-                      <StyledPermissionIcon>
-                        <item.Icon size={16} />
-                      </StyledPermissionIcon>
-                      {item.label}
-                    </StyledPermissionRow>
-                  ))}
-                </StyledPermissionsCard>
+              {!isVetted && (
+                <StyledNotVettedBannerContainer>
+                  <InlineBanner
+                    status="warning"
+                    layout="compact"
+                    icon={<IconAlertTriangle aria-hidden="true" />}
+                  >{t`This application is not vetted by Twenty. Use at your own risk.`}</InlineBanner>
+                </StyledNotVettedBannerContainer>
               )}
+
+              <StyledPermissionsCard>
+                {permissionItems.length > 0 ? (
+                  <>
+                    <StyledPermissionsTitle>
+                      {t`${appDisplayName} would like to:`}
+                    </StyledPermissionsTitle>
+                    {permissionItems.map((item) => (
+                      <StyledPermissionRow key={item.label}>
+                        <StyledPermissionIcon>
+                          <item.Icon size={16} aria-hidden />
+                        </StyledPermissionIcon>
+                        {item.label}
+                      </StyledPermissionRow>
+                    ))}
+                  </>
+                ) : (
+                  <StyledNoPermissionText>
+                    {t`${appDisplayName} does not request any permission on your workspace.`}
+                  </StyledNoPermissionText>
+                )}
+              </StyledPermissionsCard>
 
               <AuthorizeActionButtons
                 onCancel={handleClose}

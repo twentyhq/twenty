@@ -167,6 +167,12 @@ export class MarketplaceQueryService {
             }),
           )
         : undefined,
+      objects: manifest?.objects?.map(
+        ({ universalIdentifier, labelPlural }) => ({
+          universalIdentifier,
+          labelPlural,
+        }),
+      ),
       requestedCapabilities: toApplicationCapabilities(
         manifest?.application?.requestedCapabilities,
       ),

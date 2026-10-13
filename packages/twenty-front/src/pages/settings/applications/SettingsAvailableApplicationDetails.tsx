@@ -4,6 +4,7 @@ import { SettingsApplicationInstallPermissionValidationModal } from '@/marketpla
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -11,12 +12,13 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useCallback, useMemo } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import { IconEyeOff } from 'twenty-ui/icon';
+import { IconAlertTriangle, IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
@@ -25,6 +27,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationDetailAbout } from '~/pages/settings/applications/components/SettingsApplicationDetailAbout';
+import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
 
 export const SettingsAvailableApplicationDetails = () => {
   const { availableApplicationId = '' } = useParams<{
@@ -64,7 +67,11 @@ export const SettingsAvailableApplicationDetails = () => {
     },
   );
 
-  const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
+  const {
+    data: detailData,
+    error: detailError,
+    loading: isDetailLoading,
+  } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: availableApplicationId },
     skip: !availableApplicationId,
   });
@@ -72,6 +79,33 @@ export const SettingsAvailableApplicationDetails = () => {
   const application = applicationData?.findOneApplication;
 
   const detail = detailData?.findMarketplaceAppDetail;
+
+  // Unknown identifiers come back as an error or as an empty result, and
+  // both mean there is nothing to show for this link.
+  const isNotFound =
+    !availableApplicationId ||
+    isDefined(detailError) ||
+    (!isDetailLoading && !isDefined(detail));
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  // Workspace labels win over manifest ones so renamed objects read as the user knows them
+  const objectLabelsByUniversalIdentifier = useMemo(
+    () =>
+      Object.fromEntries([
+        ...(detail?.objects ?? []).map(
+          ({ universalIdentifier, labelPlural }) => [
+            universalIdentifier,
+            labelPlural,
+          ],
+        ),
+        ...objectMetadataItems.map(({ universalIdentifier, labelPlural }) => [
+          universalIdentifier,
+          labelPlural,
+        ]),
+      ]),
+    [detail?.objects, objectMetadataItems],
+  );
 
   const displayName = detail?.name ?? t`Application details`;
 
@@ -85,6 +119,7 @@ export const SettingsAvailableApplicationDetails = () => {
       : undefined;
 
   const isUnlisted = isDefined(detail) && !detail.isListed;
+  const isNotVetted = isDefined(detail) && !detail.isVetted;
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
@@ -134,7 +169,29 @@ export const SettingsAvailableApplicationDetails = () => {
               icon={<IconEyeOff aria-hidden="true" />}
             >{t`Application not listed on the marketplace. It was shared via a direct link`}</InlineBanner>
           )}
-          {isDefined(detail) ? (
+          {isNotVetted && (
+            <InlineBanner
+              status="warning"
+              icon={<IconAlertTriangle aria-hidden="true" />}
+            >{t`This application is not vetted by Twenty. Use at your own risk.`}</InlineBanner>
+          )}
+          {isNotFound ? (
+            <SettingsApplicationNotFound
+              message={t`This application is not available on the marketplace. It may have been removed or the link is incorrect.`}
+              action={
+                <Button
+                  startIcon={<IconShoppingBag />}
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  role="link"
+                  render={
+                    <Link to={getSettingsPath(SettingsPath.Applications)} />
+                  }
+                >{t`Browse the marketplace`}</Button>
+              }
+            />
+          ) : isDefined(detail) ? (
             <SettingsApplicationDetailAbout
               applicationId={application?.id}
               logoUrl={detail.logoUrl}
@@ -167,8 +224,10 @@ export const SettingsAvailableApplicationDetails = () => {
         appDisplayName={displayName}
         appLogoUrl={detail?.logoUrl ?? undefined}
         defaultRole={defaultRole}
+        objectLabelsByUniversalIdentifier={objectLabelsByUniversalIdentifier}
         requestedCapabilities={detail?.requestedCapabilities}
         billsCredits={detail?.billsCredits}
+        isVetted={detail?.isVetted}
         onAuthorize={install}
         isInstalling={isInstalling}
       />

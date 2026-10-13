@@ -88,7 +88,7 @@ export const SettingsApplicationDetailGeneralTab = ({
                 availableApplicationId: marketplaceUniversalIdentifier,
               })
             }
-          >{t`See`}</Button>,
+          >{t`View in marketplace`}</Button>,
         ]
       : []),
     ...(canManageApplications && hasUpdate

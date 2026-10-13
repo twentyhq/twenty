@@ -11,14 +11,13 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -28,6 +27,7 @@ import {
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   IconAlertTriangle,
+  IconApps,
   IconDeviceFloppy,
   IconSettings,
   IconVariable,
@@ -35,6 +35,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import {
+  ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
   IsApplicationStoppedDocument,
@@ -42,6 +43,7 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
 import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
+import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useApplicationHealthCheck } from '~/pages/settings/applications/hooks/useApplicationHealthCheck';
@@ -66,12 +68,12 @@ export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
   const { getIcon } = useIcons();
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    APPLICATION_DETAIL_ID,
-  );
-
-  const { data, refetch } = useQuery(FindOneApplicationDocument, {
+  const {
+    data,
+    error: applicationError,
+    loading: isApplicationLoading,
+    refetch,
+  } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
     skip: !applicationId,
   });
@@ -79,6 +81,13 @@ export const SettingsApplicationDetails = () => {
   useRefetchOnApplicationOperation({ applicationId, refetch });
 
   const application = data?.findOneApplication;
+
+  // Unknown ids come back as an error or as an empty result depending on
+  // whether they parse as a uuid; both mean nothing is installed behind this link.
+  const isNotFound =
+    !applicationId ||
+    isDefined(applicationError) ||
+    (!isApplicationLoading && !isDefined(application));
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
@@ -101,6 +110,14 @@ export const SettingsApplicationDetails = () => {
     isApplicationStoppedData?.isApplicationStopped === true;
 
   const detail = detailData?.findMarketplaceAppDetail;
+
+  // Local and tarball registrations have a detail page too, but only
+  // registry apps are actually browsable on the marketplace
+  const marketplaceUniversalIdentifier =
+    detail?.sourceType === ApplicationRegistrationSourceType.NPM
+      ? detail.universalIdentifier
+      : undefined;
+
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isStandardApplication = isTwentyStandardApplication(application);
   const isCustomApplication = isWorkspaceCustomApplication(
@@ -209,6 +226,13 @@ export const SettingsApplicationDetails = () => {
     })),
   ];
 
+  // Resolved against this application's own tabs so a tab selected on another
+  // application never leaves this page blank
+  const activeTabId = useSettingsActiveTabId(
+    APPLICATION_DETAIL_ID,
+    tabs.map((tab) => tab.id),
+  );
+
   const configurationTabId = hasVariablesTab
     ? VARIABLES_TAB_ID
     : workspaceSettingsMenuItems.at(0)?.universalIdentifier;
@@ -242,6 +266,33 @@ export const SettingsApplicationDetails = () => {
     : undefined;
 
   const renderActiveTabContent = () => {
+    if (isNotFound) {
+      return (
+        <SettingsApplicationNotFound
+          message={t`This application is not installed on this workspace. It may have been uninstalled or the link is incorrect.`}
+          action={
+            <Button
+              startIcon={<IconApps />}
+              variant="outline"
+              size="sm"
+              nativeButton={false}
+              role="link"
+              render={
+                <Link
+                  to={getSettingsPath(
+                    SettingsPath.Applications,
+                    undefined,
+                    undefined,
+                    'installed',
+                  )}
+                />
+              }
+            >{t`See installed applications`}</Button>
+          }
+        />
+      );
+    }
+
     if (!isDefined(application)) {
       return <SettingsSectionSkeletonLoader />;
     }
@@ -254,7 +305,7 @@ export const SettingsApplicationDetails = () => {
             displayName={displayName}
             description={getApplicationDescriptionSummary(description)}
             coverImageUrl={getCoverImageUrl()}
-            marketplaceUniversalIdentifier={detail?.universalIdentifier}
+            marketplaceUniversalIdentifier={marketplaceUniversalIdentifier}
             hasUpdate={hasUpdate}
             latestAvailableVersion={latestAvailableVersion ?? undefined}
             onUpgrade={handleUpgrade}
@@ -334,11 +385,13 @@ export const SettingsApplicationDetails = () => {
           ) : undefined
         }
         secondaryBar={
-          <SettingsTabBar
-            aria-label={t`Application details`}
-            tabs={tabs}
-            componentInstanceId={APPLICATION_DETAIL_ID}
-          />
+          isNotFound ? undefined : (
+            <SettingsTabBar
+              aria-label={t`Application details`}
+              tabs={tabs}
+              componentInstanceId={APPLICATION_DETAIL_ID}
+            />
+          )
         }
       >
         <SettingsPageContainer overflow="visible">
