@@ -11,7 +11,7 @@ export type ToolContext = {
   resolveExecutionContext?: () => Promise<ToolContext>;
   workspaceId: string;
   roleId: string;
-  rolePermissionConfig?: RolePermissionConfig;
+  rolePermissionConfig: RolePermissionConfig;
   authContext?: WorkspaceAuthContext;
   application?: FlatApplication;
   actorContext?: ActorMetadata;

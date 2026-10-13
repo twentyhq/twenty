@@ -8,6 +8,7 @@ import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescription
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
+import { PROGRESS_PART_PROP_DESCRIPTIONS } from './progressPartPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
 import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
@@ -183,6 +184,14 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/skeleton',
     propDescriptions: SKELETON_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Progress',
+    source: 'primitives/feedback/Progress/Progress.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/progress',
+    parts: ['Root', 'Track', 'Indicator', 'Label', 'Value'],
+    partPropDescriptions: PROGRESS_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'ProgressBar',

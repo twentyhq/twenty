@@ -66,6 +66,9 @@ connection added while transcripts were off has no subscription: reconnect it
 after turning transcripts on. Disconnecting the account or uninstalling the app
 deletes the subscription.
 
+Transcripts link to the meeting's calendar event when that calendar is synced in
+Twenty. An occurrence of a recurring meeting links to the series' event.
+
 ## Test the transcript actions
 
 1. For a development build, set `IS_TRANSCRIPT_IMPORT_ENABLED` to `true`, rebuild

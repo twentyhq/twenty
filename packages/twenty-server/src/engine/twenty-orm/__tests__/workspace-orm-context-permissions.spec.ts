@@ -35,7 +35,12 @@ describe('Domain repository permissions', () => {
     );
     expect(getRepository).toHaveBeenCalledWith(
       'note',
-      { intersectionOf: ['member-role', 'application-role'] },
+      {
+        intersectionOf: {
+          userWorkspaceRoleId: 'member-role',
+          applicationRoleId: 'application-role',
+        },
+      },
       { shouldSkipEventEmission: false },
     );
   });
@@ -47,7 +52,10 @@ describe('Domain repository permissions', () => {
       getRepository: transactionalRepository,
     } as never);
     expect(transactionalRepository).toHaveBeenCalledWith('note', {
-      intersectionOf: ['member-role', 'application-role'],
+      intersectionOf: {
+        userWorkspaceRoleId: 'member-role',
+        applicationRoleId: 'application-role',
+      },
     });
     expect(getRepository).not.toHaveBeenCalled();
   });

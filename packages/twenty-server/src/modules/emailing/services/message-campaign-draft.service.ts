@@ -54,7 +54,7 @@ export class MessageCampaignDraftService {
     roleId: string,
   ) {
     return this.workspaceOrmManager.getRepository(entity, {
-      unionOf: [roleId],
+      intersectionOf: { userWorkspaceRoleId: roleId },
     });
   }
 

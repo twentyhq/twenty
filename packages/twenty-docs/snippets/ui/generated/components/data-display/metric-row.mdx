@@ -28,7 +28,7 @@
 </ParamField>
 
 <ParamField body="progressValueText" type="string">
-  Accessible value text for the progress ring. Overrides the string value fallback; supply it when formatted content needs more context than a percentage.
+  Accessible value text for the progress ring. Nonempty text overrides the string value fallback; an empty string uses the ring percentage. Supply it when formatted content needs more context than a percentage.
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
@@ -44,5 +44,5 @@
 </ParamField>
 
 <ParamField body="value" type="ReactNode" required>
-  Preformatted value displayed at the end of the row. String values also supply the progress ring accessible value text.
+  Preformatted value displayed at the end of the row. Nonempty string values also supply the progress ring accessible value text.
 </ParamField>
