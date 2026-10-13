@@ -68,9 +68,17 @@ export const SettingsRolesList = () => {
       .map((application) => [application.defaultRoleId, application]),
   );
 
-  const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) =>
-    sortByAscString(a.label, b.label),
-  );
+  const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) => {
+    const applicationNameA =
+      installedApplicationByDefaultRoleId.get(a.id)?.name ?? '';
+    const applicationNameB =
+      installedApplicationByDefaultRoleId.get(b.id)?.name ?? '';
+
+    return (
+      sortByAscString(applicationNameA, applicationNameB) ||
+      sortByAscString(a.label, b.label)
+    );
+  });
 
   const filteredRoles = sortedSettingsAllRoles.filter((role) => {
     const matchesType =
