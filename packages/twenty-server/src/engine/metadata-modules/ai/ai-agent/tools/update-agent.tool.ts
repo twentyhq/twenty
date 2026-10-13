@@ -7,7 +7,6 @@ import { type AgentToolDependencies } from 'src/engine/metadata-modules/ai/ai-ag
 import { findManageableAgentOrThrow } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/find-manageable-agent-or-throw.util';
 import { toAgentSummary } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-summary.util';
 import { toAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-triggers.util';
-import { toAgentToolFailureOrThrow } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-tool-failure-or-throw.util';
 
 const updateAgentSchema = z.object({
   id: z.uuid().describe('Id of the agent to update'),
@@ -40,34 +39,28 @@ export const createUpdateAgentTool = (
 To pause an agent without deleting it, set isActive to false on its triggers. Confirm changes to the role or triggers with the user first.`,
   inputSchema: updateAgentSchema,
   execute: async ({ triggers, ...parameters }: UpdateAgentParams) => {
-    try {
-      await findManageableAgentOrThrow({
-        agentId: parameters.id,
-        deps,
-        context,
-      });
+    await findManageableAgentOrThrow({
+      agentId: parameters.id,
+      deps,
+      context,
+    });
 
-      if (isDefined(parameters.modelId)) {
-        deps.aiModelRegistryService.validateModelAvailability(
-          parameters.modelId,
-        );
-      }
-
-      const agent = await deps.agentService.updateOneAgent({
-        input: {
-          ...parameters,
-          ...(isDefined(triggers) && { triggers: toAgentTriggers(triggers) }),
-        },
-        workspaceId: context.workspaceId,
-      });
-
-      return {
-        success: true,
-        message: `Agent "${agent.label}" updated`,
-        result: toAgentSummary(agent),
-      };
-    } catch (error) {
-      return toAgentToolFailureOrThrow({ error, action: 'update agent' });
+    if (isDefined(parameters.modelId)) {
+      deps.aiModelRegistryService.validateModelAvailability(parameters.modelId);
     }
+
+    const agent = await deps.agentService.updateOneAgent({
+      input: {
+        ...parameters,
+        ...(isDefined(triggers) && { triggers: toAgentTriggers(triggers) }),
+      },
+      workspaceId: context.workspaceId,
+    });
+
+    return {
+      success: true,
+      message: `Agent "${agent.label}" updated`,
+      result: toAgentSummary(agent),
+    };
   },
 });

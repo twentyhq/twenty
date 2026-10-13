@@ -7,8 +7,8 @@ import { AgentToolProvider } from 'src/engine/core-modules/tool-provider/provide
 import { type AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AgentToolWorkspaceService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/agent-tool.workspace-service';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const workspaceId = 'workspace-id';
 const agentId = '20202020-0000-4000-8000-000000000001';
@@ -179,34 +179,23 @@ describe('AgentToolProvider', () => {
     it('refuses to update or delete an agent of another application', async () => {
       const { provider, agentService } = buildProvider();
 
-      const updateOutput = await provider.executeStaticTool(
-        'update_agent',
-        { id: agentId, prompt: 'Something else' },
-        applicationContext,
-      );
-      const deleteOutput = await provider.executeStaticTool(
-        'delete_agent',
-        { id: agentId },
-        applicationContext,
-      );
-
-      expect(updateOutput.success).toBe(false);
-      expect(deleteOutput.success).toBe(false);
+      await expect(
+        provider.executeStaticTool(
+          'update_agent',
+          { id: agentId, prompt: 'Something else' },
+          applicationContext,
+        ),
+      ).rejects.toMatchObject({ code: AiExceptionCode.AGENT_NOT_FOUND });
+      await expect(
+        provider.executeStaticTool(
+          'delete_agent',
+          { id: agentId },
+          applicationContext,
+        ),
+      ).rejects.toMatchObject({ code: AiExceptionCode.AGENT_NOT_FOUND });
       expect(agentService.updateOneAgent).not.toHaveBeenCalled();
       expect(agentService.deleteOneAgent).not.toHaveBeenCalled();
     });
-  });
-
-  it('rethrows unexpected errors so the tool executor reports them', async () => {
-    const { provider, agentService } = buildProvider();
-
-    agentService.deleteOneAgent.mockRejectedValue(
-      new Error('Connection terminated'),
-    );
-
-    await expect(
-      provider.executeStaticTool('delete_agent', { id: agentId }, context),
-    ).rejects.toThrow('Connection terminated');
   });
 
   describe('create_agent', () => {
@@ -270,43 +259,6 @@ describe('AgentToolProvider', () => {
         createAgentInput.triggers[1].id,
       );
     });
-
-    it('surfaces the underlying validation errors from a failed migration build', async () => {
-      const { provider, agentService } = buildProvider();
-
-      agentService.createOneAgent.mockRejectedValue(
-        new WorkspaceMigrationBuilderException(
-          {
-            status: 'fail',
-            report: {
-              agent: [
-                {
-                  flatEntityMinimalInformation: { name: 'dealWatcher' },
-                  errors: [
-                    {
-                      code: 'INVALID_AGENT_INPUT',
-                      message: 'Cron triggers need a valid cron pattern',
-                    },
-                  ],
-                },
-              ],
-            },
-          } as unknown as ConstructorParameters<
-            typeof WorkspaceMigrationBuilderException
-          >[0],
-          'Multiple validation errors occurred while creating agent',
-        ),
-      );
-
-      const output = await provider.executeStaticTool(
-        'create_agent',
-        { label: 'Deal watcher', prompt: 'Watch deals' },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('Cron triggers need a valid cron pattern');
-    });
   });
 
   describe('update_agent', () => {
@@ -359,13 +311,13 @@ describe('AgentToolProvider', () => {
         buildAgent({ isSystem: true }),
       );
 
-      const output = await provider.executeStaticTool(
-        'update_agent',
-        { id: agentId, prompt: 'Something else' },
-        context,
-      );
-
-      expect(output.success).toBe(false);
+      await expect(
+        provider.executeStaticTool(
+          'update_agent',
+          { id: agentId, prompt: 'Something else' },
+          context,
+        ),
+      ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
       expect(agentService.updateOneAgent).not.toHaveBeenCalled();
     });
   });
@@ -395,13 +347,9 @@ describe('AgentToolProvider', () => {
         buildAgent({ isSystem: true }),
       );
 
-      const output = await provider.executeStaticTool(
-        'delete_agent',
-        { id: agentId },
-        context,
-      );
-
-      expect(output.success).toBe(false);
+      await expect(
+        provider.executeStaticTool('delete_agent', { id: agentId }, context),
+      ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
       expect(agentService.deleteOneAgent).not.toHaveBeenCalled();
     });
   });

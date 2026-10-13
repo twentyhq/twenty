@@ -101,7 +101,7 @@ const resyncAiAgentStepOutputSchemas = async (
   }
 };
 
-export const createUpdateAgentTool = (
+export const createUpdateWorkflowAgentTool = (
   deps: Pick<
     WorkflowToolDependencies,
     | 'agentService'
