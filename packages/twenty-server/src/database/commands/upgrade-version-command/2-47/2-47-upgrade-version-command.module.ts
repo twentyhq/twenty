@@ -10,6 +10,7 @@ import { UnpinChatShareCommand } from 'src/database/commands/upgrade-version-com
 import { SyncCampaignEngagementFieldsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791811197174-sync-campaign-engagement-fields.command';
 import { ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791811310066-convert-workflow-email-bodies-to-email-documents.command';
 import { RemoveWorkflowCoreIndexFlagFromCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791823009575-remove-workflow-core-index-flag-from-command-menu-items.command';
+import { RemoveCampaignListStatColumnsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791902574822-remove-campaign-list-stat-columns.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -31,6 +32,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SyncCampaignEngagementFieldsCommand,
     ConvertWorkflowEmailBodiesToEmailDocumentsCommand,
     RemoveWorkflowCoreIndexFlagFromCommandMenuItemsCommand,
+    RemoveCampaignListStatColumnsCommand,
   ],
 })
 export class V2_47_UpgradeVersionCommandModule {}
