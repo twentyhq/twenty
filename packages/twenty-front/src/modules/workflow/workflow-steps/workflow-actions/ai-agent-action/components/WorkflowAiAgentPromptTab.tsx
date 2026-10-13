@@ -67,8 +67,13 @@ export const WorkflowAiAgentPromptTab = ({
   const [outputSchemaFields, setOutputSchemaFields] = useState<
     OutputSchemaField[]
   >(() => {
-    const schema: AgentResponseSchema = workflowAiAgentActionAgent
-      ?.responseFormat?.schema || {
+    // steps saved before the format moved to them still carry it on their agent
+    const responseFormat =
+      action.settings.input.responseFormat ??
+      workflowAiAgentActionAgent?.responseFormat;
+    const schema: AgentResponseSchema = (responseFormat?.type === 'json'
+      ? responseFormat.schema
+      : undefined) || {
       type: 'object' as const,
       properties: {},
       required: [],
@@ -107,15 +112,15 @@ export const WorkflowAiAgentPromptTab = ({
     );
   };
 
-  const updateResponseSchema = async (schema: AgentResponseSchema) => {
-    await updateAgentField({
-      responseFormat: { type: 'json' as const, schema },
-    });
-
+  const updateResponseSchema = (schema: AgentResponseSchema) => {
     onActionUpdate?.({
       ...action,
       settings: {
         ...action.settings,
+        input: {
+          ...action.settings.input,
+          responseFormat: { type: 'json', schema },
+        },
         outputSchema: agentResponseSchemaToOutputSchema(schema),
       },
     });

@@ -206,6 +206,49 @@ describe('AgentRunnerService', () => {
     );
   });
 
+  it("asks for the caller's output format over the agent's own", async () => {
+    const { service, agentAsyncExecutorService } = buildService();
+    const callerResponseFormat = {
+      type: 'json' as const,
+      schema: {
+        type: 'object' as const,
+        properties: { summary: { type: 'string' as const } },
+      },
+    };
+
+    await service.run({
+      ...RUN_INPUT,
+      agent: { id: 'agent-id', responseFormat: { type: 'text' } } as never,
+      spec: { ...RUN_INPUT.spec, responseFormat: callerResponseFormat },
+    });
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledTimes(1);
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({ responseFormat: callerResponseFormat }),
+    );
+  });
+
+  it("falls back to the agent's output format when the caller gives none", async () => {
+    const { service, agentAsyncExecutorService } = buildService();
+    const agentResponseFormat = {
+      type: 'json' as const,
+      schema: {
+        type: 'object' as const,
+        properties: { summary: { type: 'string' as const } },
+      },
+    };
+
+    await service.run({
+      ...RUN_INPUT,
+      agent: { id: 'agent-id', responseFormat: agentResponseFormat } as never,
+    });
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledTimes(1);
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({ responseFormat: agentResponseFormat }),
+    );
+  });
+
   it.each([true, false])(
     'offers every human-input tool only to a run that can ask humans (%s)',
     async (canAskHumans) => {

@@ -36,6 +36,7 @@ export { PROPOSE_TOOL_CALL_TOOL_STATUSES } from './constants/propose-tool-call-t
 export { PROPOSED_TOOL_CALL_TEMPLATES } from './constants/proposed-tool-call-templates.const';
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
+export { agentResponseFormatSchema } from './schemas/agent-response-format-schema';
 export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';

@@ -1,6 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
+import GraphQLJSON from 'graphql-type-json';
+import { type AgentResponseFormat } from 'twenty-shared/ai';
 import {
   ArrayMaxSize,
   ArrayNotEmpty,
@@ -61,6 +63,11 @@ export class RunAgentInputDTO {
   @IsNotEmpty()
   @Field({ nullable: true })
   additionalInstructions?: string;
+
+  // what this call wants back, over the agent's own default
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  responseFormat?: AgentResponseFormat;
 
   @IsOptional()
   @ValidateNested()

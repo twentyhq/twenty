@@ -1,32 +1,15 @@
+import { agentResponseFormatSchema } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
-
-const agentResponseFormatSchema = z.union([
-  z.object({ type: z.literal('text') }),
-  z.object({
-    type: z.literal('json'),
-    schema: z.object({
-      type: z.literal('object'),
-      properties: z.record(
-        z.string(),
-        z.object({
-          type: z.enum(['string', 'number', 'boolean']),
-          description: z.string().optional(),
-        }),
-      ),
-      required: z.array(z.string()).optional(),
-      additionalProperties: z.literal(false).optional(),
-    }),
-  }),
-]);
 
 const updateAgentSchema = z.object({
   agentId: z
@@ -54,28 +37,24 @@ const updateAgentSchema = z.object({
     ),
 });
 
-const resyncAiAgentStepOutputSchemas = async (
+// the output format belongs to the steps calling the agent, so it is written to each draft step that uses it
+const setAiAgentStepsResponseFormat = async (
   deps: Pick<
     WorkflowToolDependencies,
-    | 'coreWorkflowVersionListService'
-    | 'coreWorkflowVersionMutationService'
-    | 'flatEntityMapsCacheService'
+    'coreWorkflowVersionListService' | 'coreWorkflowVersionMutationService'
   >,
   {
     workspaceId,
     userWorkspaceId,
     agentId,
+    responseFormat,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     agentId: string;
+    responseFormat: AgentResponseFormat;
   },
 ): Promise<void> => {
-  await deps.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-    workspaceId,
-    flatMapsKeys: ['flatAgentMaps'],
-  });
-
   const draftCoreVersions =
     await deps.coreWorkflowVersionListService.findDraftCoreWorkflowVersions({
       workspaceId,
@@ -83,7 +62,7 @@ const resyncAiAgentStepOutputSchemas = async (
 
   for (const draftCoreVersion of draftCoreVersions) {
     const matchingStep = draftCoreVersion.steps?.find(
-      (step) =>
+      (step): step is WorkflowAiAgentAction =>
         step.type === WorkflowActionType.AI_AGENT &&
         step.settings?.input?.agentId === agentId,
     );
@@ -96,7 +75,13 @@ const resyncAiAgentStepOutputSchemas = async (
       workspaceId,
       userWorkspaceId,
       coreWorkflowVersionId: draftCoreVersion.id,
-      step: matchingStep,
+      step: {
+        ...matchingStep,
+        settings: {
+          ...matchingStep.settings,
+          input: { ...matchingStep.settings.input, responseFormat },
+        },
+      },
     });
   }
 };
@@ -107,18 +92,17 @@ export const createUpdateWorkflowAgentTool = (
     | 'agentService'
     | 'coreWorkflowVersionListService'
     | 'coreWorkflowVersionMutationService'
-    | 'flatEntityMapsCacheService'
   >,
   context: WorkflowToolContext,
 ) => ({
   name: 'update_workflow_agent' as const,
   description: `Update the agent used by a workflow AI_AGENT step.
 
-Use this tool to configure the agent created when an AI_AGENT step is added: set its system prompt, the model it should use, and the format of its output.
+Use this tool to configure the agent created when an AI_AGENT step is added: set its system prompt, the model it should use, and the format of the step's output.
 
 - prompt: the agent's system prompt (its role, behavior and task).
 - modelId: optional model id; omit to keep the auto-selected model.
-- responseFormat: { type: "text" } for free-form text (referenced as {{stepId.response}}), or { type: "json", schema: { ... } } for structured output whose fields can be referenced as {{stepId.fieldName}}.
+- responseFormat: set on the draft AI_AGENT steps using this agent. { type: "text" } for free-form text (referenced as {{stepId.response}}), or { type: "json", schema: { ... } } for structured output whose fields can be referenced as {{stepId.fieldName}}.
 
 To find the agentId, look at the AI_AGENT step's settings.input.agentId field.`,
   inputSchema: updateAgentSchema,
@@ -132,36 +116,30 @@ To find the agentId, look at the AI_AGENT step's settings.input.agentId field.`,
       const { agentId, prompt, modelId, responseFormat } = parameters;
       const { workspaceId } = context;
 
-      const updatedAgent = await deps.agentService.updateOneAgent({
-        input: {
-          id: agentId,
-          ...(isDefined(prompt) ? { prompt } : {}),
-          ...(isDefined(modelId) ? { modelId: modelId as ModelId } : {}),
-          ...(isDefined(responseFormat) ? { responseFormat } : {}),
-        },
-        workspaceId,
-      });
+      if (isDefined(prompt) || isDefined(modelId)) {
+        await deps.agentService.updateOneAgent({
+          input: {
+            id: agentId,
+            ...(isDefined(prompt) ? { prompt } : {}),
+            ...(isDefined(modelId) ? { modelId: modelId as ModelId } : {}),
+          },
+          workspaceId,
+        });
+      }
 
       if (isDefined(responseFormat)) {
-        try {
-          await resyncAiAgentStepOutputSchemas(deps, {
-            workspaceId,
-            userWorkspaceId: context.userWorkspaceId,
-            agentId,
-          });
-        } catch (resyncError) {
-          return {
-            success: true,
-            message: `Successfully updated agent ${agentId}, but failed to resync workflow step output schema: ${resyncError.message}`,
-            agentId: updatedAgent.id,
-          };
-        }
+        await setAiAgentStepsResponseFormat(deps, {
+          workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          agentId,
+          responseFormat,
+        });
       }
 
       return {
         success: true,
         message: `Successfully updated agent ${agentId}`,
-        agentId: updatedAgent.id,
+        agentId,
       };
     } catch (error) {
       return {

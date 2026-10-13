@@ -15,6 +15,7 @@ import { type RunAgentMessage } from 'twenty-shared/application';
 import {
   ASK_QUESTION_TOOL_NAME,
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  type AgentResponseFormat,
   type ExtendedUIMessage,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
@@ -328,8 +329,10 @@ export class AgentAsyncExecutorService {
     priorMessages = [],
     pausingTools = {},
     canAskHumans = false,
+    responseFormat,
   }: {
     agent: AgentEntity | null;
+    responseFormat?: AgentResponseFormat;
     messages: RunAgentMessage[];
     // a continued conversation, with the tool calls and results plain run messages cannot carry
     priorMessages?: ExtendedUIMessage[];
@@ -348,7 +351,7 @@ export class AgentAsyncExecutorService {
       );
     }
 
-    assertAgentResponseFormatHasOutputFieldsOrThrow(agent?.responseFormat);
+    assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
@@ -607,9 +610,7 @@ export class AgentAsyncExecutorService {
       executionSteps = textResponse.steps;
 
       const agentSchema =
-        agent?.responseFormat?.type === 'json'
-          ? agent.responseFormat.schema
-          : undefined;
+        responseFormat?.type === 'json' ? responseFormat.schema : undefined;
 
       let result: object = { response: textResponse.text };
 
