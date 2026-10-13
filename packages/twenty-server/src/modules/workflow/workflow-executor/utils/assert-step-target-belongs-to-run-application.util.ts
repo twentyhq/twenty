@@ -7,17 +7,17 @@ import {
 export const assertStepTargetBelongsToRunApplication = ({
   application,
   targetApplicationId,
-  workspaceOwnedApplicationIds,
+  workspaceCustomApplicationId,
   targetLabel,
 }: {
   application: Pick<FlatApplication, 'id' | 'name'>;
   targetApplicationId: string;
-  workspaceOwnedApplicationIds: string[];
+  workspaceCustomApplicationId: string;
   targetLabel: string;
 }): void => {
   if (
     targetApplicationId === application.id ||
-    workspaceOwnedApplicationIds.includes(targetApplicationId)
+    targetApplicationId === workspaceCustomApplicationId
   ) {
     return;
   }

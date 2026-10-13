@@ -4,19 +4,18 @@ import { isDefined } from 'twenty-shared/utils';
 export const buildWorkflowRunCreatedBy = ({
   source,
   workflowApplicationId,
-  workspaceOwnedApplicationIds,
+  workspaceCustomApplicationId,
 }: {
   source: ActorMetadata;
   workflowApplicationId: string;
-  workspaceOwnedApplicationIds: string[];
+  workspaceCustomApplicationId: string;
 }): ActorMetadata => {
   const startingApplicationId = source.context?.applicationId;
 
   const isInstalledApplicationId = (
     applicationId: string | undefined,
   ): applicationId is string =>
-    isDefined(applicationId) &&
-    !workspaceOwnedApplicationIds.includes(applicationId);
+    isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
 
   if (isInstalledApplicationId(workflowApplicationId)) {
     return {

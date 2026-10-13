@@ -6,10 +6,7 @@ const assertTarget = (targetApplicationId: string) =>
   assertStepTargetBelongsToRunApplication({
     application: RUN_APPLICATION,
     targetApplicationId,
-    workspaceOwnedApplicationIds: [
-      'workspace-custom-app-id',
-      'twenty-standard-app-id',
-    ],
+    workspaceCustomApplicationId: 'workspace-custom-app-id',
     targetLabel: 'Logic function "greet"',
   });
 
@@ -20,7 +17,12 @@ describe('assertStepTargetBelongsToRunApplication', () => {
 
   it('lets a run use the functions and agents of the workspace', () => {
     expect(() => assertTarget('workspace-custom-app-id')).not.toThrow();
-    expect(() => assertTarget('twenty-standard-app-id')).not.toThrow();
+  });
+
+  it('refuses a run using the agents of the standard application', () => {
+    expect(() => assertTarget('twenty-standard-app-id')).toThrow(
+      'Logic function "greet" belongs to another application than "Installed app"',
+    );
   });
 
   it('refuses a run crossing into another installed application', () => {
