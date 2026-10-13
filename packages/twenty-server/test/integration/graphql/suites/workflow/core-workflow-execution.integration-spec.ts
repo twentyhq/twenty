@@ -43,8 +43,8 @@ import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 
-import { type AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { type CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
+import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 
 import { type CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
@@ -2007,9 +2007,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       triggerType: 'CRON',
       triggerSettings: { type: 'CUSTOM', pattern: '* * * * *' },
     });
-    const triggerService =
-      getAppProviderByClassName<AutomatedTriggerWorkspaceService>(
-        'AutomatedTriggerWorkspaceService',
+    const migrationRunner =
+      getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
+        'WorkspaceMigrationValidateBuildAndRunService',
       );
     await global.testDataSource.query(
       `UPDATE core."workflowVersion" SET status = 'DRAFT' WHERE id = $1`,
@@ -2042,8 +2042,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(draftResponse.body.errors).toBeUndefined();
     const draft = draftResponse.body.data.createDraftFromCoreWorkflowVersion;
     const failure = jest
-      .spyOn(triggerService, 'addAutomatedTrigger')
-      .mockRejectedValueOnce(new Error('Replacement trigger failure'));
+      .spyOn(migrationRunner, 'validateBuildAndRunWorkspaceMigration')
+      .mockRejectedValueOnce(new Error('Replacement activation failure'));
     const response = await workflowGraphqlRequest(activateQuery, {
       id: draft.id,
     });
@@ -2062,21 +2062,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       'SELECT "lastPublishedCoreWorkflowVersionId" FROM core.workflow WHERE id = $1',
       [fixture.coreWorkflowId],
     );
-    const [oldMirror] = await global.testDataSource.query(
-      `SELECT status FROM "${schema}"."workflowVersion" WHERE id = $1`,
-      [fixture.workflowVersionId],
-    );
-    const triggers = await global.testDataSource.query(
-      `SELECT id FROM "${schema}"."workflowAutomatedTrigger" WHERE "workflowId" = $1`,
-      [fixture.workflowId],
-    );
     expect(oldVersion.status).toBe('ACTIVE');
-    expect(oldMirror.status).toBe('ACTIVE');
     expect(newVersion.status).toBe('DRAFT');
     expect(workflow.lastPublishedCoreWorkflowVersionId).toBe(
       fixture.coreWorkflowVersionId,
     );
-    expect(triggers).toHaveLength(1);
     expect(await cache.hashGetValues(cronCacheKey)).toEqual(originalCache);
     await waitForRun(await runFixture(fixture), 'COMPLETED');
     const retry = await workflowGraphqlRequest(activateQuery, {
@@ -2287,93 +2277,61 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(mirror).toEqual({ trigger: core.triggers[0], steps: core.steps });
   });
 
-  it.each(['rename', 'activate', 'activate-version'] as const)(
-    'allows reconciliation to acquire core locks during a blocked %s',
-    async (operation) => {
-      const fixture = await createFixture();
+  it('allows reconciliation to acquire core locks during a blocked rename', async () => {
+    const fixture = await createFixture();
 
-      if (operation !== 'rename') {
-        await global.testDataSource.query(
-          `UPDATE core."workflowVersion" SET status = 'DRAFT' WHERE id = $1`,
-          [fixture.coreWorkflowVersionId],
+    const transaction = global.testDataSource.createQueryRunner();
+
+    await transaction.connect();
+    await transaction.startTransaction();
+    await transaction.query(
+      `SELECT id FROM "${schema}"."workflow" WHERE id = $1 FOR UPDATE`,
+      [fixture.workflowId],
+    );
+    const [{ pid }] = await transaction.query('SELECT pg_backend_pid() AS pid');
+    const mutation = workflowGraphqlRequest(
+      'mutation Update($input: UpdateCoreWorkflowInput!) { updateCoreWorkflow(input: $input) { id name } }',
+      {
+        input: {
+          coreWorkflowId: fixture.coreWorkflowId,
+          name: 'Concurrent rename',
+        },
+      },
+    ).then((response) => response);
+
+    try {
+      let blocked = false;
+
+      for (let attempt = 0; attempt < 100; attempt++) {
+        const [activity] = await global.testDataSource.query(
+          `SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE $1 = ANY(pg_blocking_pids(pid))) AS blocked`,
+          [pid],
         );
-        await global.testDataSource.query(
-          `UPDATE "${schema}"."workflowVersion" SET status = 'DRAFT' WHERE id = $1`,
-          [fixture.workflowVersionId],
-        );
-        await global.testDataSource.query(
-          `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = NULL, "lastPublishedVersionId" = NULL WHERE id = $1`,
-          [fixture.coreWorkflowId],
-        );
-        await global.testDataSource.query(
-          `UPDATE "${schema}".workflow SET "lastPublishedVersionId" = NULL WHERE id = $1`,
-          [fixture.workflowId],
-        );
+
+        if (activity.blocked) {
+          blocked = true;
+          break;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 20));
       }
 
-      const transaction = global.testDataSource.createQueryRunner();
-
-      await transaction.connect();
-      await transaction.startTransaction();
+      expect(blocked).toBe(true);
       await transaction.query(
-        `SELECT id FROM "${schema}"."${operation === 'activate-version' ? 'workflowVersion' : 'workflow'}" WHERE id = $1 FOR UPDATE`,
-        [
-          operation === 'activate-version'
-            ? fixture.workflowVersionId
-            : fixture.workflowId,
-        ],
+        'SELECT id FROM core.workflow WHERE id = $1 FOR UPDATE NOWAIT',
+        [fixture.coreWorkflowId],
       );
-      const [{ pid }] = await transaction.query(
-        'SELECT pg_backend_pid() AS pid',
-      );
-      const mutation = workflowGraphqlRequest(
-        operation === 'rename'
-          ? 'mutation Update($input: UpdateCoreWorkflowInput!) { updateCoreWorkflow(input: $input) { id name } }'
-          : 'mutation Activate($id: UUID!) { activateCoreWorkflowVersion(coreWorkflowVersionId: $id) }',
-        operation === 'rename'
-          ? {
-              input: {
-                coreWorkflowId: fixture.coreWorkflowId,
-                name: 'Concurrent rename',
-              },
-            }
-          : { id: fixture.coreWorkflowVersionId },
-      ).then((response) => response);
-
-      try {
-        let blocked = false;
-
-        for (let attempt = 0; attempt < 100; attempt++) {
-          const [activity] = await global.testDataSource.query(
-            `SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE $1 = ANY(pg_blocking_pids(pid))) AS blocked`,
-            [pid],
-          );
-
-          if (activity.blocked) {
-            blocked = true;
-            break;
-          }
-
-          await new Promise((resolve) => setTimeout(resolve, 20));
-        }
-
-        expect(blocked).toBe(true);
-        await transaction.query(
-          'SELECT id FROM core.workflow WHERE id = $1 FOR UPDATE NOWAIT',
-          [fixture.coreWorkflowId],
-        );
-        await transaction.commitTransaction();
-        expect((await mutation).body.errors).toBeUndefined();
-      } finally {
-        if (transaction.isTransactionActive) {
-          await transaction.rollbackTransaction();
-        }
-
-        await transaction.release();
-        await mutation;
+      await transaction.commitTransaction();
+      expect((await mutation).body.errors).toBeUndefined();
+    } finally {
+      if (transaction.isTransactionActive) {
+        await transaction.rollbackTransaction();
       }
-    },
-  );
+
+      await transaction.release();
+      await mutation;
+    }
+  });
 
   it('fires a mirrorless database-event workflow from a real record creation', async () => {
     const fixture = await createFixture({

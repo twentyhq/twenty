@@ -14,6 +14,7 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
@@ -25,6 +26,7 @@ import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
+import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
@@ -68,6 +70,7 @@ export class CoreWorkflowVersionWriteService {
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
+    private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -288,41 +291,22 @@ export class CoreWorkflowVersionWriteService {
     coreWorkflowVersionId: string,
     run: () => Promise<T>,
   ): Promise<T> {
-    const lockKey = `core-workflow-version-edit-${coreWorkflowVersionId}`;
-    const queryRunner = this.coreDataSource.createQueryRunner();
+    const lockResult = await this.postgresAdvisoryLockService.tryWithLock(
+      getCoreWorkflowVersionEditLockKey(coreWorkflowVersionId),
+      run,
+    );
 
-    try {
-      await queryRunner.connect();
-      // xact-scoped lock so commit, rollback or a dropped connection all release it
-      await queryRunner.startTransaction();
-
-      const [lockResult] = (await queryRunner.query(
-        'SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS acquired',
-        [lockKey],
-      )) as { acquired: boolean }[];
-
-      if (!lockResult?.acquired) {
-        throw new WorkflowQueryValidationException(
-          `Core workflow version '${coreWorkflowVersionId}' is being edited concurrently`,
-          WorkflowQueryValidationExceptionCode.FORBIDDEN,
-          {
-            userFriendlyMessage: msg`Workflow version changed, please reload and retry`,
-          },
-        );
-      }
-
-      const result = await run();
-
-      await queryRunner.commitTransaction();
-
-      return result;
-    } finally {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
-
-      await queryRunner.release();
+    if (!lockResult.acquired) {
+      throw new WorkflowQueryValidationException(
+        `Core workflow version '${coreWorkflowVersionId}' is being edited concurrently`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Workflow version changed, please reload and retry`,
+        },
+      );
     }
+
+    return lockResult.value;
   }
 
   async createDraftCoreWorkflowVersionAndMirror({
