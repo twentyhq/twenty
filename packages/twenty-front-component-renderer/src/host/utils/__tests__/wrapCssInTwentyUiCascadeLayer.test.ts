@@ -64,6 +64,16 @@ describe('wrapCssInTwentyUiCascadeLayer', () => {
     );
   });
 
+  it('should keep comment markers inside an unquoted import URL', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '@import url(https://cdn.example.com/css/*/theme.css);@import url(https://cdn.example.com/*fonts*/inter.css);.title{color:red}',
+      ),
+    ).toBe(
+      '@import url(https://cdn.example.com/css/*/theme.css) layer(twenty-ui);@import url(https://cdn.example.com/*fonts*/inter.css) layer(twenty-ui);@layer twenty-ui {\n.title{color:red}\n}',
+    );
+  });
+
   it('should handle an unterminated comment without backtracking', () => {
     const unterminatedComment = `@import "theme.css" ${'/*a'.repeat(100000)}`;
 

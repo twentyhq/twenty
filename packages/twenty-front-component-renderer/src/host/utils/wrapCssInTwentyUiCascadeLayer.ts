@@ -14,7 +14,7 @@ const LEADING_COMMENT_PATTERN = /^\s*\/\*[\s\S]*?\*\//;
 const LEADING_TOP_LEVEL_AT_RULE_PATTERN = /^\s*@(?:charset|import|namespace)\b/;
 
 const STATEMENT_TOKEN_PATTERN =
-  /\/\*[\s\S]*?(?:\*\/|$)|"[^"]*"|'[^']*'|[();{]/g;
+  /url\([^"'()]*\)|\/\*[\s\S]*?(?:\*\/|$)|"[^"]*"|'[^']*'|[();{]/g;
 
 const IMPORT_LAYER_PATTERN =
   /@import\s*(url\([^)]*\)|"[^"]*"|'[^']*')(\s*\blayer\b(?:\(([^)]*)\))?)?/g;
