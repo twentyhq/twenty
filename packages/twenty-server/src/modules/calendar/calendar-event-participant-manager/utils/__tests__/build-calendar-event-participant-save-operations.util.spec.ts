@@ -112,4 +112,20 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
       'existing-participant-id',
     ]);
   });
+
+  it('keeps participants missing from this copy when another channel shares the event', () => {
+    const operations = buildCalendarEventParticipantSaveOperations({
+      fetchedParticipants: [
+        buildFetchedParticipant({ handle: 'jane@example.com' }),
+      ],
+      existingParticipants: [buildExistingParticipant()],
+      shouldSkipUnchangedParticipants: true,
+      calendarEventIdsSharedWithOtherChannels: new Set([CALENDAR_EVENT_ID]),
+    });
+
+    expect(operations.participantsToInsert).toEqual([
+      expect.objectContaining({ handle: 'jane@example.com' }),
+    ]);
+    expect(operations.participantIdsToDelete).toEqual([]);
+  });
 });

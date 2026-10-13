@@ -7,6 +7,7 @@ import {
   type ComparableCalendarEvent,
   hasCalendarEventChanged,
 } from 'src/modules/calendar/calendar-event-import-manager/utils/has-calendar-event-changed.util';
+import { isFetchedCalendarEventOlderThanStored } from 'src/modules/calendar/calendar-event-import-manager/utils/is-fetched-calendar-event-older-than-stored.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 import { type FetchedParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/fetched-participant-with-calendar-event-id.type';
@@ -16,11 +17,13 @@ export const buildCalendarEventSaveOperations = ({
   existingAssociations,
   existingCalendarEvents,
   calendarChannelId,
+  calendarEventIdSharedByEventExternalId = new Map(),
 }: {
   fetchedCalendarEvents: FetchedCalendarEvent[];
   existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
   existingCalendarEvents: ComparableCalendarEvent[];
   calendarChannelId: string;
+  calendarEventIdSharedByEventExternalId?: Map<string, string>;
 }): CalendarEventSavePlan => {
   const existingAssociationByEventExternalId = new Map(
     existingAssociations.map((association) => [
@@ -74,23 +77,48 @@ export const buildCalendarEventSaveOperations = ({
 
     const existingAssociation =
       existingAssociationByEventExternalId.get(eventExternalId);
+    const storedCalendarEventId =
+      existingAssociation?.calendarEventId ??
+      calendarEventIdSharedByEventExternalId.get(eventExternalId);
 
-    if (isDefined(existingAssociation)) {
-      const { calendarEventId } = existingAssociation;
-      const existingCalendarEvent =
-        existingCalendarEventById.get(calendarEventId);
-
-      existingCalendarEventIds.push(calendarEventId);
+    if (isDefined(storedCalendarEventId)) {
+      const existingCalendarEvent = existingCalendarEventById.get(
+        storedCalendarEventId,
+      );
 
       if (
         !isDefined(existingCalendarEvent) ||
-        hasCalendarEventChanged({ existingCalendarEvent, calendarEvent })
+        (hasCalendarEventChanged({ existingCalendarEvent, calendarEvent }) &&
+          !isFetchedCalendarEventOlderThanStored({
+            fetchedExternalUpdatedAt: calendarEvent.externalUpdatedAt,
+            storedExternalUpdatedAt: existingCalendarEvent.externalUpdatedAt,
+          }))
       ) {
         saveOperations.calendarEventsToUpdate.push({
-          criteria: calendarEventId,
+          criteria: storedCalendarEventId,
           partialEntity: calendarEvent,
         });
       }
+
+      participantsOfExistingEvents.push(
+        ...participants.map((participant) => ({
+          ...participant,
+          calendarEventId: storedCalendarEventId,
+        })),
+      );
+
+      if (!isDefined(existingAssociation)) {
+        saveOperations.associationsToInsert.push({
+          calendarEventId: storedCalendarEventId,
+          eventExternalId,
+          calendarChannelId,
+          recurringEventExternalId,
+        });
+
+        continue;
+      }
+
+      existingCalendarEventIds.push(storedCalendarEventId);
 
       if (
         !isDefined(existingCalendarEvent) ||
@@ -102,13 +130,6 @@ export const buildCalendarEventSaveOperations = ({
           partialEntity: { recurringEventExternalId },
         });
       }
-
-      participantsOfExistingEvents.push(
-        ...participants.map((participant) => ({
-          ...participant,
-          calendarEventId,
-        })),
-      );
 
       continue;
     }

@@ -30,10 +30,12 @@ export const buildCalendarEventParticipantSaveOperations = ({
   fetchedParticipants,
   existingParticipants,
   shouldSkipUnchangedParticipants,
+  calendarEventIdsSharedWithOtherChannels = new Set(),
 }: {
   fetchedParticipants: FetchedParticipantWithCalendarEventId[];
   existingParticipants: CalendarEventParticipantWorkspaceEntity[];
   shouldSkipUnchangedParticipants: boolean;
+  calendarEventIdsSharedWithOtherChannels?: Set<string>;
 }): CalendarEventParticipantSaveOperations => {
   const existingParticipantByKey = new Map<
     string,
@@ -88,7 +90,12 @@ export const buildCalendarEventParticipantSaveOperations = ({
   );
 
   for (const existingParticipant of existingParticipants) {
-    if (fetchedParticipantKeys.has(buildParticipantKey(existingParticipant))) {
+    if (
+      fetchedParticipantKeys.has(buildParticipantKey(existingParticipant)) ||
+      calendarEventIdsSharedWithOtherChannels.has(
+        existingParticipant.calendarEventId,
+      )
+    ) {
       continue;
     }
 

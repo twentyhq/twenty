@@ -1,0 +1,103 @@
+import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const CALENDAR_EVENT_SHARING_INDEX_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.calendarChannelEventAssociation.indexes.eventExternalIdIndex
+    .universalIdentifier,
+  STANDARD_OBJECTS.calendarEvent.indexes.iCalUidIndex.universalIdentifier,
+];
+
+@RegisteredWorkspaceCommand('2.47.0', 1791929591997)
+@Command({
+  name: 'upgrade:2-47:add-calendar-event-sharing-indexes',
+  description:
+    'Index calendarChannelEventAssociation.eventExternalId and calendarEvent.iCalUid so calendar import can find another channel copy of an event',
+})
+export class AddCalendarEventSharingIndexesCommand extends ProvisionedWorkspaceCommandRunner {
+  constructor(
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+  ) {
+    super(workspaceIteratorService);
+  }
+
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    const { flatIndexMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatIndexMaps'],
+    );
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+      computeTwentyStandardApplicationAllFlatEntityMaps({
+        now: new Date().toISOString(),
+        workspaceId,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      });
+
+    const indexesToCreate =
+      getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
+        existingFlatEntityMaps: flatIndexMaps,
+        universalIdentifiers: CALENDAR_EVENT_SHARING_INDEX_UNIVERSAL_IDENTIFIERS,
+      });
+
+    if (indexesToCreate.length === 0) {
+      return;
+    }
+
+    if (options.dryRun) {
+      this.logger.log(
+        `[DRY RUN] Would create ${indexesToCreate.length} calendar event sharing index(es) for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+          workspaceId,
+          allFlatEntityOperationByMetadataName: {
+            index: {
+              flatEntityToCreate: indexesToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+        },
+      );
+
+    if (result.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(result);
+    }
+
+    this.logger.log(
+      `Created ${indexesToCreate.length} calendar event sharing index(es) for workspace ${workspaceId}`,
+    );
+  }
+}
