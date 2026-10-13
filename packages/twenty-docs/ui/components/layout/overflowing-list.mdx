@@ -99,7 +99,7 @@ Native `div` attributes, handlers, styles, class names and refs on `OverflowingL
 
 Customize the trigger with `triggerProps.render`, as in the controlled example, or supply `triggerProps.children` to replace `+N`. Custom components must [forward the supplied props and ref](/ui/primitives/overview#custom-components). Custom popup components must also render the supplied children; OverflowingList owns the item content. `overflowLabel` defaults to "Show all items". The default button's accessible name combines its count and that label, for example "+3 Show all teams". Override `triggerProps['aria-label']` or `popupProps['aria-label']` when their content needs a different name.
 
-Caller handlers remain available, and trigger/popup events can reach the surrounding React tree. Forwarded popup handlers run for events inside the physical popup. A custom popup component owns its internal handlers, which follow React portal ancestry. A clickable field host can stop the specific interactions it needs through its own handlers or the trigger/popup props.
+Caller handlers remain available, and trigger/popup events can reach the surrounding React tree. Popup handlers follow React event propagation, including portal ancestry. A custom popup component owns its internal handlers. A clickable field host can stop the specific interactions it needs through its own handlers or the trigger/popup props.
 
 With the installed Base UI portal, a popup click can reach a surrounding React ancestor twice with the same native event. This also occurs with a plain `Popover`. OverflowingList preserves that upstream propagation behavior; it does not guarantee one ancestor callback per native popup event.
 

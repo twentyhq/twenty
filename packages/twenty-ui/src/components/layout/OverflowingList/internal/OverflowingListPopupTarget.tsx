@@ -1,13 +1,11 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { isFunction } from '@sniptt/guards';
-import { cloneElement, type ReactElement } from 'react';
+import { cloneElement, isValidElement, type ReactElement } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type OverflowingListProps } from '../types/OverflowingListProps';
-
-import { getContainedPopupProps } from './getContainedPopupProps';
 
 type PopupRender = Exclude<
   NonNullable<NonNullable<OverflowingListProps['popupProps']>['render']>,
@@ -25,20 +23,20 @@ export const OverflowingListPopupTarget = ({
   state,
   render,
 }: OverflowingListPopupTargetProps) => {
-  const renderElement = isFunction(render)
-    ? undefined
-    : (render as ReactElement<Parameters<PopupRender>[0]> | undefined);
+  const renderElement = isValidElement<Parameters<PopupRender>[0]>(render)
+    ? render
+    : undefined;
   const mergedRef = useMergedRefs(props.ref, renderElement?.props.ref);
 
   if (isFunction(render)) {
-    return render(getContainedPopupProps(props), state);
+    return render(props, state);
   }
 
-  const mergedProps = getContainedPopupProps({
+  const mergedProps = {
     ...mergeProps<'div'>(props, renderElement?.props),
     children: props.children,
     ref: mergedRef,
-  });
+  };
 
   return isDefined(renderElement) ? (
     cloneElement(renderElement, mergedProps)
