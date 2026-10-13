@@ -1,3 +1,4 @@
+import { AppConnectionAuthFailedError } from 'twenty-sdk/logic-function';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
@@ -193,7 +194,11 @@ describe('processTeamsTranscriptHistoryPageOrThrow', () => {
       0,
       buildGraphRequestError(403, 'GraphAccessToTranscriptsDisabled'),
     ],
-    ['its token was rejected after a refresh', 1, buildGraphRequestError(401)],
+    [
+      'its connection needs reconnecting',
+      0,
+      new AppConnectionAuthFailedError('connected-account-1'),
+    ],
   ])('should fail the run when %s', async (_, attempt, error) => {
     kvStore.set(STATE_KV_KEY, STATE);
     listTeamsCalendarPageMock.mockRejectedValue(error);
@@ -205,14 +210,15 @@ describe('processTeamsTranscriptHistoryPageOrThrow', () => {
     expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
-  it('should retry a first rejected token, which a refresh can fix', async () => {
+  it('should retry a rejected token, since a page can outlive its token', async () => {
     kvStore.set(STATE_KV_KEY, STATE);
     listTeamsCalendarPageMock.mockRejectedValue(buildGraphRequestError(401));
 
-    await processTeamsTranscriptHistoryPageOrThrow(JOB);
+    await processTeamsTranscriptHistoryPageOrThrow({ ...JOB, attempt: 1 });
 
+    expect(kvStore.get(STATE_KV_KEY)).toMatchObject({ phase: 'importing' });
     expect(getEnqueuedJobs()).toEqual([
-      { payload: { ...JOB, attempt: 1 }, delayMs: 60_000 },
+      { payload: { ...JOB, attempt: 2 }, delayMs: 5 * 60_000 },
     ]);
   });
 

@@ -39,20 +39,11 @@ const findStateForJob = async (
     : undefined;
 };
 
-// A page can outlive its access token, so a first 401 retries with a fresh token.
-const isFatalError = ({
-  error,
-  attempt,
-}: {
-  error: unknown;
-  attempt: number;
-}): boolean =>
+const isFatalError = (error: unknown): boolean =>
   error instanceof AppConnectionAuthFailedError ||
   (error instanceof GraphRequestError &&
-    ((error.status === 401 && attempt > 0) ||
-      (error.status === 403 &&
-        error.innerErrorCode ===
-          GRAPH_ACCESS_TO_TRANSCRIPTS_DISABLED_ERROR_CODE)));
+    error.status === 403 &&
+    error.innerErrorCode === GRAPH_ACCESS_TO_TRANSCRIPTS_DISABLED_ERROR_CODE);
 
 const importPageOrThrow = async (
   job: TeamsTranscriptHistoryJobPayload,
@@ -168,10 +159,7 @@ const retryOrFailPageOrThrow = async ({
   const retryDelayMilliseconds =
     TEAMS_TRANSCRIPT_HISTORY_RETRY_DELAYS_MILLISECONDS[job.attempt];
 
-  if (
-    isFatalError({ error, attempt: job.attempt }) ||
-    !isDefined(retryDelayMilliseconds)
-  ) {
+  if (isFatalError(error) || !isDefined(retryDelayMilliseconds)) {
     await kv.set<TeamsTranscriptHistoryState>(stateKvKey, {
       ...state,
       phase: 'failed',
