@@ -25,7 +25,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata-with-target.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 // TODO: Refacto-common - Rename CommonRecordsToGraphqlConnectionHelper
@@ -210,7 +210,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         continue;
       }
 
-      if (isMorphOrRelationFlatFieldMetadataWithTarget(fieldMetadata)) {
+      if (isMorphOrRelationFlatFieldMetadata(fieldMetadata)) {
         const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
           flatEntityMaps: this.flatObjectMetadataMaps,
