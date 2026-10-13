@@ -46,6 +46,7 @@ export const createWorkerScrollStore = ({
     (acknowledgement: ScrollCommandAcknowledgement) => void
   >();
   const trackedElements = new Set<object>();
+  const pendingRevealTargets = new Set<object>();
 
   let rootElement: object | null = null;
   let hasScheduledDetachedElementSweep = false;
@@ -123,6 +124,29 @@ export const createWorkerScrollStore = ({
     trackedElements.add(scrolledElement);
   };
 
+  const forgetSettledRevealTarget = (element: object): void => {
+    const hasPendingReveal = commandQueue
+      .readPendingCommands(element)
+      .some(({ request }) => request.method === 'scrollIntoView');
+
+    if (!hasPendingReveal) {
+      pendingRevealTargets.delete(element);
+    }
+  };
+
+  const hasPendingRevealInside = (element: object): boolean => {
+    for (const revealTarget of pendingRevealTargets) {
+      if (
+        revealTarget !== element &&
+        isElementUnderRemoteRoot(revealTarget, element)
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const renewHostScrollSubscription = (element: object): void => {
     const handleScrollUpdate = (
       acknowledgement: ScrollCommandAcknowledgement,
@@ -141,6 +165,7 @@ export const createWorkerScrollStore = ({
         element,
         acknowledgedCommandSequence: acknowledgement.scrollCommandSequence,
       });
+      forgetSettledRevealTarget(element);
 
       for (const scrolledElementPosition of acknowledgement.scrollPositions) {
         recordAcknowledgedScrollPosition({ element, scrolledElementPosition });
@@ -165,6 +190,7 @@ export const createWorkerScrollStore = ({
 
   const forgetDetachedElement = (element: object): void => {
     trackedElements.delete(element);
+    pendingRevealTargets.delete(element);
     acknowledgedScrollPositions.delete(element);
     lastReadScrollOffsets.delete(element);
     commandQueue.discardPendingCommands(element);
@@ -198,7 +224,10 @@ export const createWorkerScrollStore = ({
     element: object;
     request: ScrollRequest;
   }): ScrollRequest | null => {
-    if (request.method === 'scrollIntoView') {
+    if (
+      request.method === 'scrollIntoView' ||
+      hasPendingRevealInside(element)
+    ) {
       return request;
     }
 
@@ -249,6 +278,10 @@ export const createWorkerScrollStore = ({
 
       subscribeToHostScroll(element);
       commandQueue.enqueueCommand({ element, request: requestToEnqueue });
+
+      if (requestToEnqueue.method === 'scrollIntoView') {
+        pendingRevealTargets.add(element);
+      }
     },
     observeEventTarget: ({ element, eventData }) => {
       const eventScrollState = readSerializedEventScrollState(eventData);
