@@ -1,7 +1,7 @@
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 
-export const WARM_AND_CONSUME_QUOTA_COUNTERS_SCRIPT: CacheScript = {
-  name: 'usage-limit:warm-and-consume-quota-counters',
+export const WARM_AND_CONSUME_COUNTERS_SCRIPT: CacheScript = {
+  name: 'usage-limit:warm-and-consume-counters',
   source: `
 local amounts = cjson.decode(ARGV[1])
 local warmValues = cjson.decode(ARGV[2])
@@ -15,6 +15,11 @@ for i = 1, #KEYS do
 
   if redis.call('EXISTS', KEYS[i]) == 1 then
     result[i] = redis.call('INCRBY', KEYS[i], amounts[i])
+
+    if result[i] < 0 then
+      redis.call('SET', KEYS[i], 0, 'KEEPTTL')
+      result[i] = 0
+    end
   else
     result[i] = false
   end

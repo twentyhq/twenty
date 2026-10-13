@@ -172,7 +172,6 @@ export class UsageLimitService {
     );
 
     if (
-      isStockLimit(usageLimit) ||
       usageLimit.isInstanceOverride !== isOperator ||
       !isEqual(authorizedScope, scope)
     ) {
@@ -300,14 +299,9 @@ export class UsageLimitService {
 
   private async dropCounter(usageLimit: UsageLimitEntity): Promise<void> {
     if (isStockLimit(usageLimit)) {
-      return this.usageLimitStockService.dropStockCounters({
+      return this.usageLimitStockService.dropLimitCounter({
         workspaceId: usageLimit.workspaceId,
-        resourceType: usageLimit.resourceType,
-        operationType: usageLimit.operationType,
-        spenderType: usageLimit.spenderType,
-        spenderId: usageLimit.spenderId,
-        unit: usageLimit.unit,
-        limitValue: usageLimit.limitValue,
+        usageLimit,
       });
     }
 
