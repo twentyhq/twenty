@@ -1,6 +1,7 @@
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
+import { LogConsoleSubPageHeader } from '@/log-console/components/LogConsoleSubPageHeader';
+import { logConsoleApiKeysViewState } from '@/log-console/states/logConsoleApiKeysViewState';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
@@ -11,15 +12,14 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconRepeat, IconTrash } from 'twenty-ui/icon';
@@ -33,8 +33,6 @@ import {
   GetApiKeyRolesDocument,
   RevokeApiKeyDocument,
 } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '@/settings/developers/constants/SettingsApiWebhooksTabs';
 
 const StyledInfo = styled.span`
   color: ${themeCssVariables.font.color.light};
@@ -53,14 +51,19 @@ const StyledInputContainer = styled.div`
 const DELETE_API_KEY_MODAL_ID = 'delete-api-key-modal';
 const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 
-export const SettingsDevelopersApiKeyDetail = () => {
+type LogConsoleApiKeyDetailProps = {
+  apiKeyId: string;
+};
+
+export const LogConsoleApiKeyDetail = ({
+  apiKeyId,
+}: LogConsoleApiKeyDetailProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const { openDialog } = useDialog();
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigateSettings();
-  const { apiKeyId = '' } = useParams();
+  const setLogConsoleApiKeysView = useSetAtomState(logConsoleApiKeysViewState);
 
   const jotaiStore = useStore();
 
@@ -145,13 +148,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         },
       });
       if (redirect) {
-        navigate(
-          SettingsPath.ApiWebhooks,
-          undefined,
-          undefined,
-          undefined,
-          SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
-        );
+        setLogConsoleApiKeysView({ type: 'list' });
       }
     } catch {
       enqueueToast({ status: 'error', children: t`Error deleting api key.` });
@@ -226,9 +223,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
         if (isNonEmptyString(newApiKey?.token)) {
           setApiKeyTokenCallback(newApiKey.id, newApiKey.token);
-          navigate(SettingsPath.ApiKeyDetail, {
-            apiKeyId: newApiKey.id,
-          });
+          setLogConsoleApiKeysView({ type: 'detail', id: newApiKey.id });
         }
       }
     } catch {
@@ -250,26 +245,14 @@ export const SettingsDevelopersApiKeyDetail = () => {
   return (
     <>
       {isDefined(apiKey) && (
-        <SettingsPageLayout
-          title={apiKey.name || t`Unnamed API Key`}
-          links={[
-            {
-              children: t`Workspace`,
-              href: getSettingsPath(SettingsPath.General),
-            },
-            {
-              children: t`MCP & APIs`,
-              href: getSettingsPath(
-                SettingsPath.ApiWebhooks,
-                undefined,
-                undefined,
-                SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
-              ),
-            },
-            { children: apiKey.name || t`Unnamed API Key` },
-          ]}
-        >
-          <SettingsPageContainer>
+        <>
+          <LogConsoleSubPageHeader
+            title={apiKey.name || t`Unnamed API Key`}
+            onBack={() => setLogConsoleApiKeysView({ type: 'list' })}
+          />
+          <LogConsolePageContainer
+            scrollWrapperInstanceId={`log-console-api-key-${apiKey.id}`}
+          >
             <Section.Root>
               {apiKeyToken ? (
                 <>
@@ -345,8 +328,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 color="danger"
               >{t`Delete`}</Button>
             </Section.Root>
-          </SettingsPageContainer>
-        </SettingsPageLayout>
+          </LogConsolePageContainer>
+        </>
       )}
       <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}

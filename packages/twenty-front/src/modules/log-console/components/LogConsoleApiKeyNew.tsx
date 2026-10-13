@@ -1,35 +1,34 @@
 import { addDays } from 'date-fns';
 import { useCallback, useEffect, useState } from 'react';
 
+import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
+import { LogConsoleSubPageHeader } from '@/log-console/components/LogConsoleSubPageHeader';
+import { logConsoleApiKeysViewState } from '@/log-console/states/logConsoleApiKeysViewState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { Key } from 'ts-key-enum';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   CreateApiKeyDocument,
   GenerateApiKeyTokenDocument,
   GetApiKeyRolesDocument,
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '@/settings/developers/constants/SettingsApiWebhooksTabs';
 import { Section } from 'twenty-ui/components/layout';
 
-export const SettingsDevelopersApiKeysNew = () => {
+export const LogConsoleApiKeyNew = () => {
   const { t } = useLingui();
   const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
-  const navigateSettings = useNavigateSettings();
+  const setLogConsoleApiKeysView = useSetAtomState(logConsoleApiKeysViewState);
   const { data: rolesData, loading: rolesLoading } = useQuery(
     GetApiKeyRolesDocument,
   );
@@ -117,9 +116,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         newApiKey.id,
         tokenData.data.generateApiKeyToken.token,
       );
-      navigateSettings(SettingsPath.ApiKeyDetail, {
-        apiKeyId: newApiKey.id,
-      });
+      setLogConsoleApiKeysView({ type: 'detail', id: newApiKey.id });
     }
   };
 
@@ -130,41 +127,19 @@ export const SettingsDevelopersApiKeysNew = () => {
   }
 
   return (
-    <SettingsPageLayout
-      title={t`New key`}
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.General),
-        },
-        {
-          children: t`MCP & APIs`,
-          href: getSettingsPath(
-            SettingsPath.ApiWebhooks,
-            undefined,
-            undefined,
-            SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
-          ),
-        },
-        { children: t`New Key` },
-      ]}
-      actionButton={
-        <SaveAndCancelButtons
-          isSaveDisabled={!canSave}
-          onCancel={() => {
-            navigateSettings(
-              SettingsPath.ApiWebhooks,
-              undefined,
-              undefined,
-              undefined,
-              SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
-            );
-          }}
-          onSave={handleSave}
-        />
-      }
-    >
-      <SettingsPageContainer>
+    <>
+      <LogConsoleSubPageHeader
+        title={t`New key`}
+        onBack={() => setLogConsoleApiKeysView({ type: 'list' })}
+        actions={
+          <SaveAndCancelButtons
+            isSaveDisabled={!canSave}
+            onCancel={() => setLogConsoleApiKeysView({ type: 'list' })}
+            onSave={handleSave}
+          />
+        }
+      />
+      <LogConsolePageContainer scrollWrapperInstanceId="log-console-api-key-new">
         <Section.Root>
           <Section.Header
             title={t`Name`}
@@ -224,7 +199,7 @@ export const SettingsDevelopersApiKeysNew = () => {
             }}
           />
         </Section.Root>
-      </SettingsPageContainer>
-    </SettingsPageLayout>
+      </LogConsolePageContainer>
+    </>
   );
 };

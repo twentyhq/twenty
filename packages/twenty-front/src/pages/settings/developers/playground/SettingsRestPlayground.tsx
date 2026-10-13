@@ -7,7 +7,6 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '@/settings/developers/constants/SettingsApiWebhooksTabs';
 
 export const SettingsRestPlayground = () => {
   const navigateSettings = useNavigateSettings();
@@ -16,23 +15,11 @@ export const SettingsRestPlayground = () => {
   }>();
 
   const handleExitFullScreen = () => {
-    navigateSettings(
-      SettingsPath.ApiWebhooks,
-      undefined,
-      undefined,
-      undefined,
-      SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
-    );
+    navigateSettings(SettingsPath.ApiWebhooks);
   };
 
   const handleError = useCallback(() => {
-    navigateSettings(
-      SettingsPath.ApiWebhooks,
-      undefined,
-      undefined,
-      undefined,
-      SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
-    );
+    navigateSettings(SettingsPath.ApiWebhooks);
   }, [navigateSettings]);
 
   return (
@@ -44,13 +31,8 @@ export const SettingsRestPlayground = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: <Trans>MCP & APIs</Trans>,
-          href: getSettingsPath(
-            SettingsPath.ApiWebhooks,
-            undefined,
-            undefined,
-            SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
-          ),
+          children: <Trans>APIs</Trans>,
+          href: getSettingsPath(SettingsPath.ApiWebhooks),
         },
         { children: <Trans>REST</Trans> },
       ]}

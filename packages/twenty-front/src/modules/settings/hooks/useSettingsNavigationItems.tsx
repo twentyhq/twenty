@@ -27,7 +27,6 @@ import {
   IconMail,
   IconMessage,
   IconMessageCircle,
-  IconPlug,
   IconServer,
   IconSettings2,
   IconSparkles,
@@ -155,13 +154,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden:
             !isBillingEnabled ||
             !permissionFlagMap[PermissionFlagType.WORKSPACE],
-        },
-        {
-          label: t`MCP & APIs`,
-          path: SettingsPath.ApiWebhooks,
-          Icon: IconPlug,
-          isHidden:
-            !permissionFlagMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         // TODO: Re-enable when integrations page is ready
         // {

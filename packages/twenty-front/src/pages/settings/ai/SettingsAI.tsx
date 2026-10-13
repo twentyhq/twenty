@@ -14,9 +14,9 @@ import {
   IconBook,
   IconChartBar,
   IconCpu,
-  IconLayoutDashboard,
   IconPlus,
   IconSparkle2,
+  IconSparkles,
   IconTool,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -24,8 +24,11 @@ import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsA
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
 import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
-import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
 import { SettingsAiUsageTab } from '~/pages/settings/ai/components/SettingsAiUsageTab';
+import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
+import { SettingsMcpSetup } from '@/settings/mcp-and-apis/components/SettingsMcpSetup';
+import McpCoverDark from '@/settings/mcp-and-apis/assets/mcp-cover-dark.png';
+import McpCoverLight from '@/settings/mcp-and-apis/assets/mcp-cover-light.png';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import { useCreateTool } from '~/pages/settings/ai/hooks/useCreateTool';
 
@@ -39,9 +42,9 @@ export const SettingsAI = () => {
 
   const tabs = [
     {
-      id: SETTINGS_AI_TABS.TABS_IDS.OVERVIEW,
-      title: t`Overview`,
-      Icon: IconLayoutDashboard,
+      id: SETTINGS_AI_TABS.TABS_IDS.MCP,
+      title: t`MCP`,
+      Icon: IconSparkles,
     },
     {
       id: SETTINGS_AI_TABS.TABS_IDS.MODELS,
@@ -69,8 +72,8 @@ export const SettingsAI = () => {
     useSettingsActiveTabId(
       SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
       tabs.map((tab) => tab.id),
-    ) ?? SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
-  const isOverviewTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
+    ) ?? SETTINGS_AI_TABS.TABS_IDS.MCP;
+  const isMcpTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.MCP;
   const isModelsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.MODELS;
   const isSkillsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.SKILLS;
   const isToolsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.TOOLS;
@@ -118,8 +121,8 @@ export const SettingsAI = () => {
         {!isModelsTab && (
           <Section.Root>
             <SettingsDiscoveryHeroCard
-              lightSrc={AI_HERO_LIGHT}
-              darkSrc={AI_HERO_DARK}
+              lightSrc={isMcpTab ? McpCoverLight : AI_HERO_LIGHT}
+              darkSrc={isMcpTab ? McpCoverDark : AI_HERO_DARK}
               instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
               tabs={[
                 {
@@ -134,13 +137,14 @@ export const SettingsAI = () => {
             />
           </Section.Root>
         )}
-        {isOverviewTab && (
+        {isMcpTab && <SettingsMcpSetup />}
+        {isModelsTab && (
           <>
-            <SettingsAiOverviewTab />
+            <SettingsAiModelsTab />
+            <SettingsAiWorkspaceInstructionsSection />
             <SettingsAiSystemPromptsSection />
           </>
         )}
-        {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkillsTab />}
         {isToolsTab && <SettingsAgentToolsTab />}
         {isUsageTab && <SettingsAiUsageTab />}

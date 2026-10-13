@@ -13,10 +13,12 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { LogConsole } from '@/log-console/components/LogConsole';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
+import { logConsoleApiKeysViewState } from '@/log-console/states/logConsoleApiKeysViewState';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
+import { logConsoleSourceIdState } from '@/log-console/states/logConsoleSourceIdState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -38,7 +40,6 @@ import {
   type EventLogsQuery,
   type EventLogsQueryVariables,
   EventLogTable,
-  FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
@@ -63,11 +64,8 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 import { getOperationName } from '~/utils/getOperationName';
 import { sleep } from '~/utils/sleep';
 
-const WORKSPACE_WITH_LOGS_CONSOLE = {
+const WORKSPACE_WITH_AUDIT_LOGS = {
   ...mockCurrentWorkspace,
-  featureFlags: [
-    { key: FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED, value: true },
-  ],
   billingEntitlements: [{ key: BillingEntitlementKey.AUDIT_LOGS, value: true }],
 };
 
@@ -96,6 +94,18 @@ const emitEventLogsLive = (records: EventLogRecord[]) =>
   eventLogsLiveSubscriptions.forEach((_variables, sink) =>
     sink.next({ data: { eventLogsLive: records } }),
   );
+
+const selectLogSource = async (
+  canvas: ReturnType<typeof within>,
+  sourceLabel: string,
+) => {
+  await userEvent.click(
+    await canvas.findByText('Record changes', {}, { timeout: 5000 }),
+  );
+  await userEvent.click(
+    await screen.findByRole('button', { name: sourceLabel }),
+  );
+};
 
 const StyledPageWithSidePanel = styled.div`
   display: flex;
@@ -151,7 +161,7 @@ const meta: Meta<PageDecoratorArgs> = {
   ],
   args: { routePath: '/settings/objects' },
   beforeEach: () => {
-    jotaiStore.set(currentWorkspaceState.atom, WORKSPACE_WITH_LOGS_CONSOLE);
+    jotaiStore.set(currentWorkspaceState.atom, WORKSPACE_WITH_AUDIT_LOGS);
     jotaiStore.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags: Object.values(PermissionFlagType),
@@ -280,9 +290,7 @@ export const SecurityOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('tab', { name: 'Security' }, { timeout: 5000 }),
-    );
+    await selectLogSource(canvas, 'Security');
 
     expect(await canvas.findAllByText('Support team')).toHaveLength(3);
   },
@@ -295,7 +303,7 @@ export const AppLogsOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(await canvas.findByRole('tab', { name: 'App logs' }));
+    await selectLogSource(canvas, 'App logs');
 
     expect(
       await canvas.findAllByText(
@@ -312,7 +320,7 @@ export const AppLogDetail: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(await canvas.findByRole('tab', { name: 'App logs' }));
+    await selectLogSource(canvas, 'App logs');
 
     const [typeErrorMessage] = await canvas.findAllByText(
       "TypeError: Cannot read properties of undefined (reading 'amount_due')",
@@ -345,12 +353,7 @@ export const AppLogDetail: Story = {
 export const AppLogsLive: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(
-      activeTabIdComponentState.atomFamily({
-        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
-      }),
-      'app-logs',
-    );
+    jotaiStore.set(logConsoleSourceIdState.atom, 'app-logs');
     jotaiStore.set(sseClientState.atom, fakeSseClient as never);
   },
   play: async ({ canvasElement }) => {
@@ -395,12 +398,7 @@ export const AppLogsLive: Story = {
 export const Clear: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(
-      activeTabIdComponentState.atomFamily({
-        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
-      }),
-      'app-logs',
-    );
+    jotaiStore.set(logConsoleSourceIdState.atom, 'app-logs');
     jotaiStore.set(sseClientState.atom, fakeSseClient as never);
   },
   play: async ({ canvasElement }) => {
@@ -443,12 +441,7 @@ const APPLICATION_LOGS_PER_PAGE = 3;
 export const LoadNextPage: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(
-      activeTabIdComponentState.atomFamily({
-        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
-      }),
-      'app-logs',
-    );
+    jotaiStore.set(logConsoleSourceIdState.atom, 'app-logs');
   },
   parameters: {
     msw: {
@@ -500,14 +493,15 @@ export const WebhookFailureDetail: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('tab', { name: 'Webhooks' }, { timeout: 5000 }),
-    );
+    await selectLogSource(canvas, 'Webhooks');
     await userEvent.click(await canvas.findByText('503'));
 
     await canvas.findByRole('button', { name: 'Close details' });
     await canvas.findByText('person.created → ingest.northwind-data.io');
-    await canvas.findByRole('link', { name: 'Open webhook settings' });
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Open webhook settings' }),
+    );
+    await canvas.findByText('Endpoint URL');
   },
 };
 
@@ -518,9 +512,7 @@ export const PageViewsOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('tab', { name: 'Page views' }),
-    );
+    await selectLogSource(canvas, 'Page views');
     await canvas.findByText('Priya Nair');
   },
 };
@@ -532,9 +524,7 @@ export const PageViewDetail: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('tab', { name: 'Page views' }),
-    );
+    await selectLogSource(canvas, 'Page views');
     await userEvent.click(await canvas.findByText('Priya Nair'));
 
     await canvas.findByRole('button', { name: 'Close details' });
@@ -549,7 +539,7 @@ export const UsageOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(await canvas.findByRole('tab', { name: 'Usage' }));
+    await selectLogSource(canvas, 'Usage');
     await canvas.findByText('Jonas Weber');
     await canvas.findByText('Chats');
     await canvas.findByText('0.0055 credits');
@@ -559,7 +549,7 @@ export const UsageOpen: Story = {
 export const TimeRangeMenu: Story = {
   beforeEach: () => {
     jotaiStore.set(currentWorkspaceState.atom, {
-      ...WORKSPACE_WITH_LOGS_CONSOLE,
+      ...WORKSPACE_WITH_AUDIT_LOGS,
       eventLogRetentionDays: 30,
     });
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
@@ -594,12 +584,7 @@ export const LastSevenDaysInUtc: Story = {
 export const LevelFilter: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(
-      activeTabIdComponentState.atomFamily({
-        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
-      }),
-      'app-logs',
-    );
+    jotaiStore.set(logConsoleSourceIdState.atom, 'app-logs');
     jotaiStore.set(logConsoleFiltersState.atom, [
       {
         filterFieldId: 'level',
@@ -630,9 +615,7 @@ export const FilterMenu: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('tab', { name: 'App logs' }, { timeout: 5000 }),
-    );
+    await selectLogSource(canvas, 'App logs');
     await userEvent.click(await canvas.findByLabelText('More options'));
     await userEvent.click(await screen.findByText('Filter'));
     await userEvent.click(await screen.findByRole('option', { name: 'Level' }));
@@ -762,10 +745,10 @@ export const FullScreen: Story = {
   },
 };
 
-export const LockedTab: Story = {
+export const LockedSource: Story = {
   beforeEach: () => {
     jotaiStore.set(currentWorkspaceState.atom, {
-      ...WORKSPACE_WITH_LOGS_CONSOLE,
+      ...WORKSPACE_WITH_AUDIT_LOGS,
       billingEntitlements: [],
     });
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
@@ -773,7 +756,7 @@ export const LockedTab: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(await canvas.findByRole('tab', { name: 'Security' }));
+    await selectLogSource(canvas, 'Security');
     await canvas.findByText('Upgrade to access audit logs');
   },
 };
@@ -784,5 +767,45 @@ export const ClickHouseMissing: Story = {
   },
   parameters: {
     msw: graphqlMocks,
+  },
+};
+
+export const ApiKeysTab: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(logConsoleApiKeysViewState.atom, { type: 'list' });
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'apis',
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Create API key' }),
+    );
+    await canvas.findByText('New key');
+    await userEvent.click(canvas.getByRole('button', { name: 'Back' }));
+    await canvas.findByText('API Keys');
+  },
+};
+
+export const CliTab: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'cli',
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('npx twenty metadata object list');
   },
 };

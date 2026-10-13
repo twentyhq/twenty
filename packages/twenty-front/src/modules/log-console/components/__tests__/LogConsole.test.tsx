@@ -24,10 +24,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import {
   mockCurrentWorkspace,
   mockedUserData,
@@ -65,20 +62,14 @@ const DeveloperModeSwitch = () => {
   );
 };
 
-const renderWithLogsFeatureFlag = (isLogsFeatureFlagEnabled: boolean) => {
+const renderLogConsole = (
+  permissionFlags: PermissionFlagType[] = [PermissionFlagType.SECURITY],
+) => {
   resetJotaiStore();
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED,
-        value: isLogsFeatureFlagEnabled,
-      },
-    ],
-  });
+  jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
   jotaiStore.set(currentUserWorkspaceState.atom, {
     ...mockedUserData.currentUserWorkspace,
-    permissionFlags: [PermissionFlagType.SECURITY],
+    permissionFlags,
   });
   jotaiStore.set(isClickHouseConfiguredState.atom, true);
   jotaiStore.set(isAdvancedModeEnabledState.atom, false);
@@ -108,7 +99,7 @@ describe('LogConsole', () => {
   });
 
   it('restores the collapsed console when its opening drag is cancelled', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
@@ -128,7 +119,7 @@ describe('LogConsole', () => {
   });
 
   it('keeps an explicitly closed console closed when its drag is cancelled', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
@@ -145,7 +136,7 @@ describe('LogConsole', () => {
   });
 
   it('keeps the console open in full screen when its drag is cancelled', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
@@ -163,7 +154,7 @@ describe('LogConsole', () => {
   });
 
   it('restores the collapsed console when the cancel arrives before the drag start renders', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
@@ -180,7 +171,7 @@ describe('LogConsole', () => {
   });
 
   it('opens a collapsed console at its saved height on a small keyboard step', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleHeightState.atom, 450);
@@ -194,7 +185,7 @@ describe('LogConsole', () => {
   });
 
   it('reflects live resizing without saving the console height until commit', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleHeightState.atom, 450);
@@ -213,7 +204,7 @@ describe('LogConsole', () => {
   });
 
   it('starts the resize range of an open console at its minimum height until a drag begins', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
@@ -229,7 +220,7 @@ describe('LogConsole', () => {
   });
 
   it('opens when developer mode is turned on', async () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
 
     expect(screen.queryByText('Log results')).not.toBeInTheDocument();
 
@@ -241,7 +232,7 @@ describe('LogConsole', () => {
   });
 
   it('stays open when developer mode is turned off', async () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
 
     await userEvent.click(
       await screen.findByRole('button', { name: 'Developer mode' }),
@@ -256,13 +247,24 @@ describe('LogConsole', () => {
     expect(screen.getByText('Log results')).toBeInTheDocument();
   });
 
-  it('stays hidden when the logs feature flag is off', async () => {
-    renderWithLogsFeatureFlag(false);
+  it('only shows the CLI tab without security or API permissions', async () => {
+    renderLogConsole([]);
+    act(() => jotaiStore.set(logConsoleDisplayModeState.atom, 'open'));
 
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Developer mode' }),
-    );
-
+    expect(await screen.findByRole('tab', { name: 'CLI' })).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Logs' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'APIs' })).not.toBeInTheDocument();
     expect(screen.queryByText('Log results')).not.toBeInTheDocument();
+  });
+
+  it('shows the APIs and Webhooks tabs with the API keys permission', async () => {
+    renderLogConsole([PermissionFlagType.API_KEYS_AND_WEBHOOKS]);
+    act(() => jotaiStore.set(logConsoleDisplayModeState.atom, 'open'));
+
+    expect(
+      await screen.findByRole('tab', { name: 'APIs' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Webhooks' })).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Logs' })).not.toBeInTheDocument();
   });
 });

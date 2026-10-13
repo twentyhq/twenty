@@ -5,8 +5,6 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useQuery } from '@apollo/client/react';
 import { GetApiKeysDocument } from '~/generated-metadata/graphql';
@@ -15,7 +13,13 @@ const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
-export const SettingsApiKeysTable = () => {
+type SettingsApiKeysTableProps = {
+  onApiKeyClick: (apiKeyId: string) => void;
+};
+
+export const SettingsApiKeysTable = ({
+  onApiKeyClick,
+}: SettingsApiKeysTableProps) => {
   const { data: apiKeysData } = useQuery(GetApiKeysDocument);
 
   const apiKeys = apiKeysData?.apiKeys;
@@ -43,9 +47,7 @@ export const SettingsApiKeysTable = () => {
               <SettingsApiKeysFieldItemTableRow
                 key={apiKey.id}
                 apiKey={apiKey}
-                to={getSettingsPath(SettingsPath.ApiKeyDetail, {
-                  apiKeyId: apiKey.id,
-                })}
+                onClick={() => onApiKeyClick(apiKey.id)}
               />
             ))}
           </TableBody>

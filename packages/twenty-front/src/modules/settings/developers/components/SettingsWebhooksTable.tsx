@@ -6,8 +6,6 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useQuery } from '@apollo/client/react';
 import { GetWebhooksDocument } from '~/generated-metadata/graphql';
@@ -18,7 +16,13 @@ const StyledTableBodyContainer = styled.div`
   overflow-y: auto;
 `;
 
-export const SettingsWebhooksTable = () => {
+type SettingsWebhooksTableProps = {
+  onWebhookClick: (webhookId: string) => void;
+};
+
+export const SettingsWebhooksTable = ({
+  onWebhookClick,
+}: SettingsWebhooksTableProps) => {
   const { data: webhooksData } = useQuery(GetWebhooksDocument);
 
   const webhooks = webhooksData?.webhooks;
@@ -36,9 +40,7 @@ export const SettingsWebhooksTable = () => {
               <SettingsDevelopersWebhookTableRow
                 key={webhookFieldItem.id}
                 webhook={webhookFieldItem}
-                to={getSettingsPath(SettingsPath.WebhookDetail, {
-                  webhookId: webhookFieldItem.id,
-                })}
+                onClick={() => onWebhookClick(webhookFieldItem.id)}
               />
             ))}
           </TableBody>

@@ -1,8 +1,6 @@
 import { msg, plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { SettingsPath } from 'twenty-shared/types';
 import {
-  getSettingsPath,
   getUrlHostnameOrThrow,
   isDefined,
   isValidUrl,
@@ -10,7 +8,6 @@ import {
 import {
   IconAddressBook,
   IconAlertTriangle,
-  IconArrowUpRight,
   IconBox,
   IconBrandTypescript,
   IconClock,
@@ -30,6 +27,7 @@ import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
 import { LogConsoleCredits } from '@/log-console/components/LogConsoleCredits';
 import { LogConsoleMemberChip } from '@/log-console/components/LogConsoleMemberChip';
+import { LogConsoleOpenWebhookButton } from '@/log-console/components/LogConsoleOpenWebhookButton';
 import { LogConsoleRecordChangeDetail } from '@/log-console/components/LogConsoleRecordChangeDetail';
 import { LogConsoleWebhookEndpointLink } from '@/log-console/components/LogConsoleWebhookEndpointLink';
 import { LOG_CONSOLE_ACTOR_FILTER_FIELD } from '@/log-console/constants/LogConsoleActorFilterField';
@@ -50,7 +48,6 @@ import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { getLogConsoleRecordLabel } from '@/log-console/utils/getLogConsoleRecordLabel';
 import { getLogConsoleSecurityEvent } from '@/log-console/utils/getLogConsoleSecurityEvent';
 import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import {
   EventLogFilterOperand,
   EventLogTable,
@@ -249,18 +246,10 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
 
       return `${entry.properties?.eventName} → ${isValidUrl(url) ? getUrlHostnameOrThrow(url) : url}`;
     },
-    renderDetailContent: (entry) => (
-      <NavigationButton
-        size="sm"
-        startIcon={<IconArrowUpRight />}
-        to={getSettingsPath(SettingsPath.WebhookDetail, {
-          webhookId: entry.properties?.webhookId,
-        })}
-        style={{ alignSelf: 'flex-start' }}
-      >
-        {t`Open webhook settings`}
-      </NavigationButton>
-    ),
+    renderDetailContent: (entry) =>
+      isNonEmptyString(entry.properties?.webhookId) ? (
+        <LogConsoleOpenWebhookButton webhookId={entry.properties.webhookId} />
+      ) : null,
   },
   {
     id: 'page-views',

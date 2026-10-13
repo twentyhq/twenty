@@ -17,19 +17,19 @@ const StyledIconChevronRightContainer = styled.span`
 
 export const SettingsDevelopersWebhookTableRow = ({
   webhook,
-  to,
+  onClick,
 }: {
   webhook: Pick<
     Webhook,
     'id' | 'targetUrl' | 'operations' | 'description' | 'secret'
   >;
-  to: string;
+  onClick: () => void;
 }) => {
   const theme = useTheme();
   return (
     <TableRow
       gridTemplateColumns={WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-      to={to}
+      onClick={onClick}
     >
       <TableCell color={themeCssVariables.font.color.primary} overflow="hidden">
         <OverflowingTextWithTooltip

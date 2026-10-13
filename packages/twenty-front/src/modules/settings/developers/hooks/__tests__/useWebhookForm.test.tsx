@@ -12,11 +12,8 @@ import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { WEBHOOK_EMPTY_OPERATION } from '@/settings/developers/constants/WebhookEmptyOperation';
 
-const mockNavigateSettings = jest.fn();
-
-jest.mock('~/hooks/useNavigateSettings', () => ({
-  useNavigateSettings: () => mockNavigateSettings,
-}));
+const mockOnCreated = jest.fn();
+const mockOnDeleted = jest.fn();
 
 const mockEnqueueToast = jest.fn();
 
@@ -135,7 +132,12 @@ describe('useWebhookForm', () => {
   describe('Create Mode', () => {
     it('should initialize with default values in create mode', () => {
       const { result } = renderHook(
-        () => useWebhookForm({ mode: WebhookFormMode.Create }),
+        () =>
+          useWebhookForm({
+            mode: WebhookFormMode.Create,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
+          }),
         { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
@@ -152,7 +154,12 @@ describe('useWebhookForm', () => {
       const mocks = [createSuccessfulCreateMock()];
 
       const { result } = renderHook(
-        () => useWebhookForm({ mode: WebhookFormMode.Create }),
+        () =>
+          useWebhookForm({
+            mode: WebhookFormMode.Create,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
+          }),
         {
           wrapper: ({ children }) => (
             <Wrapper mocks={mocks}>{children}</Wrapper>
@@ -175,6 +182,7 @@ describe('useWebhookForm', () => {
         status: 'success',
         children: 'Webhook https://test.com/webhook created successfully',
       });
+      expect(mockOnCreated).toHaveBeenCalledWith('test-webhook-id');
     });
 
     it('should handle creation errors', async () => {
@@ -198,7 +206,12 @@ describe('useWebhookForm', () => {
       const mocks = [errorMock];
 
       const { result } = renderHook(
-        () => useWebhookForm({ mode: WebhookFormMode.Create }),
+        () =>
+          useWebhookForm({
+            mode: WebhookFormMode.Create,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
+          }),
         {
           wrapper: ({ children }) => (
             <Wrapper mocks={mocks}>{children}</Wrapper>
@@ -231,7 +244,12 @@ describe('useWebhookForm', () => {
       ];
 
       const { result } = renderHook(
-        () => useWebhookForm({ mode: WebhookFormMode.Create }),
+        () =>
+          useWebhookForm({
+            mode: WebhookFormMode.Create,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
+          }),
         {
           wrapper: ({ children }) => (
             <Wrapper mocks={mocks}>{children}</Wrapper>
@@ -273,6 +291,8 @@ describe('useWebhookForm', () => {
           useWebhookForm({
             mode: WebhookFormMode.Edit,
             webhookId,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
           }),
         {
           wrapper: ({ children }) => (
@@ -295,6 +315,8 @@ describe('useWebhookForm', () => {
           useWebhookForm({
             mode: WebhookFormMode.Edit,
             webhookId,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
           }),
         {
           wrapper: ({ children }) => (
@@ -349,6 +371,8 @@ describe('useWebhookForm', () => {
           useWebhookForm({
             mode: WebhookFormMode.Edit,
             webhookId,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
           }),
         {
           wrapper: ({ children }) => (
@@ -378,7 +402,12 @@ describe('useWebhookForm', () => {
   describe('Operation Management', () => {
     it('should update operations correctly', () => {
       const { result } = renderHook(
-        () => useWebhookForm({ mode: WebhookFormMode.Create }),
+        () =>
+          useWebhookForm({
+            mode: WebhookFormMode.Create,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
+          }),
         { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
@@ -392,7 +421,12 @@ describe('useWebhookForm', () => {
 
     it('should remove operations correctly', () => {
       const { result } = renderHook(
-        () => useWebhookForm({ mode: WebhookFormMode.Create }),
+        () =>
+          useWebhookForm({
+            mode: WebhookFormMode.Create,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
+          }),
         { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
@@ -431,6 +465,8 @@ describe('useWebhookForm', () => {
           useWebhookForm({
             mode: WebhookFormMode.Edit,
             webhookId,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
           }),
         {
           wrapper: ({ children }) => (
@@ -447,11 +483,17 @@ describe('useWebhookForm', () => {
         status: 'success',
         children: 'Webhook deleted successfully',
       });
+      expect(mockOnDeleted).toHaveBeenCalled();
     });
 
     it('should handle deletion without webhookId', async () => {
       const { result } = renderHook(
-        () => useWebhookForm({ mode: WebhookFormMode.Create }),
+        () =>
+          useWebhookForm({
+            mode: WebhookFormMode.Create,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
+          }),
         { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
@@ -485,6 +527,8 @@ describe('useWebhookForm', () => {
           useWebhookForm({
             mode: WebhookFormMode.Edit,
             webhookId,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
           }),
         {
           wrapper: ({ children }) => (
@@ -507,7 +551,12 @@ describe('useWebhookForm', () => {
   describe('Form Validation', () => {
     it('should validate canSave property', () => {
       const { result } = renderHook(
-        () => useWebhookForm({ mode: WebhookFormMode.Create }),
+        () =>
+          useWebhookForm({
+            mode: WebhookFormMode.Create,
+            onCreated: mockOnCreated,
+            onDeleted: mockOnDeleted,
+          }),
         { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 

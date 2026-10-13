@@ -22,12 +22,12 @@ type ApiKeyType = Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'> & {
 
 type SettingsApiKeysFieldItemTableRowProps = {
   apiKey: ApiKeyType;
-  to: string;
+  onClick: () => void;
 };
 
 export const SettingsApiKeysFieldItemTableRow = ({
   apiKey,
-  to,
+  onClick,
 }: SettingsApiKeysFieldItemTableRowProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -36,7 +36,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
   const gridColumns = '5fr 2fr 3fr 1fr';
 
   return (
-    <TableRow gridAutoColumns={gridColumns} to={to}>
+    <TableRow gridAutoColumns={gridColumns} onClick={onClick}>
       <TableCell
         color={theme.font.color.primary}
         whiteSpace="nowrap"

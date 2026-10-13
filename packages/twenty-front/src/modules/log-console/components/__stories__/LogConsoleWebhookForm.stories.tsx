@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
+import { LogConsoleWebhookForm } from '@/log-console/components/LogConsoleWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { Toaster } from 'twenty-ui/components/feedback';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -12,9 +12,9 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
-const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
-  title: 'Modules/Settings/Developers/Components/SettingsDevelopersWebhookForm',
-  component: SettingsDevelopersWebhookForm,
+const meta: Meta<typeof LogConsoleWebhookForm> = {
+  title: 'Modules/LogConsole/LogConsoleWebhookForm',
+  component: LogConsoleWebhookForm,
   decorators: [
     ComponentDecorator,
     MemoryRouterDecorator,
@@ -28,7 +28,7 @@ const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
 
 export default meta;
 
-type Story = StoryObj<typeof SettingsDevelopersWebhookForm>;
+type Story = StoryObj<typeof LogConsoleWebhookForm>;
 
 export const CreateMode: Story = {
   args: {

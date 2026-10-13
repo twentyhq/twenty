@@ -3,11 +3,8 @@ import {
   createRoutesFromElements,
   Navigate,
   Outlet,
-  type Params,
   parsePath,
   Route,
-  useLocation,
-  useParams,
 } from 'react-router-dom';
 
 import {
@@ -36,54 +33,6 @@ const SettingsRestPlayground = lazy(() =>
     }),
   ),
 );
-
-// TODO: remove these legacy /api-webhooks redirects after 2026-08-04.
-const LEGACY_API_WEBHOOKS_SETTINGS_PATHS = {
-  ApiWebhooks: 'api-webhooks',
-  NewApiKey: 'api-webhooks/apis/new',
-  ApiKeyDetail: 'api-webhooks/apis/:apiKeyId',
-  NewWebhook: 'api-webhooks/webhooks/new',
-  WebhookDetail: 'api-webhooks/webhooks/:webhookId',
-} as const;
-
-type LegacySettingsPathRedirectProps = {
-  to:
-    | SettingsPath.ApiWebhooks
-    | SettingsPath.NewApiKey
-    | SettingsPath.ApiKeyDetail
-    | SettingsPath.NewWebhook
-    | SettingsPath.WebhookDetail;
-};
-
-const getLegacySettingsPathRedirectPathname = (
-  to: LegacySettingsPathRedirectProps['to'],
-  params: Readonly<Params<string>>,
-) => {
-  switch (to) {
-    case SettingsPath.ApiKeyDetail:
-      return getSettingsPath(SettingsPath.ApiKeyDetail, {
-        apiKeyId: params.apiKeyId ?? null,
-      });
-    case SettingsPath.WebhookDetail:
-      return getSettingsPath(SettingsPath.WebhookDetail, {
-        webhookId: params.webhookId ?? null,
-      });
-    case SettingsPath.ApiWebhooks:
-    case SettingsPath.NewApiKey:
-    case SettingsPath.NewWebhook:
-      return getSettingsPath(to);
-  }
-};
-
-function LegacySettingsPathRedirect({ to }: LegacySettingsPathRedirectProps) {
-  const location = useLocation();
-  const params = useParams();
-  const pathname = getLegacySettingsPathRedirectPathname(to, params);
-
-  return (
-    <Navigate to={`${pathname}${location.search}${location.hash}`} replace />
-  );
-}
 
 const SettingsAccountsConfiguration = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsConfiguration').then(
@@ -141,22 +90,6 @@ const SettingsObjectOverview = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectOverview').then(
     (module) => ({
       default: module.SettingsObjectOverview,
-    }),
-  ),
-);
-
-const SettingsDevelopersApiKeyDetail = lazy(() =>
-  import('~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail').then(
-    (module) => ({
-      default: module.SettingsDevelopersApiKeyDetail,
-    }),
-  ),
-);
-
-const SettingsDevelopersApiKeysNew = lazy(() =>
-  import('~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew').then(
-    (module) => ({
-      default: module.SettingsDevelopersApiKeysNew,
     }),
   ),
 );
@@ -241,10 +174,10 @@ const SettingsCustomDomainPage = lazy(() =>
   ),
 );
 
-const SettingsApiWebhooks = lazy(() =>
-  import('~/pages/settings/api-webhooks/SettingsApiWebhooks').then(
+const SettingsApiWebhooksRedirectEffect = lazy(() =>
+  import('~/pages/settings/api-webhooks/SettingsApiWebhooksRedirectEffect').then(
     (module) => ({
-      default: module.SettingsApiWebhooks,
+      default: module.SettingsApiWebhooksRedirectEffect,
     }),
   ),
 );
@@ -489,22 +422,6 @@ const SettingsObjects = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjects').then((module) => ({
     default: module.SettingsObjects,
   })),
-);
-
-const SettingsDevelopersWebhookNew = lazy(() =>
-  import('~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookNew').then(
-    (module) => ({
-      default: module.SettingsDevelopersWebhookNew,
-    }),
-  ),
-);
-
-const SettingsDevelopersWebhookDetail = lazy(() =>
-  import('~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail').then(
-    (module) => ({
-      default: module.SettingsDevelopersWebhookDetail,
-    }),
-  ),
 );
 
 const SettingsObjectNewFieldSelect = lazy(() =>
@@ -1031,28 +948,8 @@ const createSettingsRouteElements = ({
       }
     >
       <Route
-        path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.ApiWebhooks}
-        element={<LegacySettingsPathRedirect to={SettingsPath.ApiWebhooks} />}
-      />
-      <Route
-        path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.NewApiKey}
-        element={<LegacySettingsPathRedirect to={SettingsPath.NewApiKey} />}
-      />
-      <Route
-        path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.ApiKeyDetail}
-        element={<LegacySettingsPathRedirect to={SettingsPath.ApiKeyDetail} />}
-      />
-      <Route
-        path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.NewWebhook}
-        element={<LegacySettingsPathRedirect to={SettingsPath.NewWebhook} />}
-      />
-      <Route
-        path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.WebhookDetail}
-        element={<LegacySettingsPathRedirect to={SettingsPath.WebhookDetail} />}
-      />
-      <Route
         path={SettingsPath.ApiWebhooks}
-        element={<SettingsApiWebhooks />}
+        element={<SettingsApiWebhooksRedirectEffect />}
       />
       <Route
         path={`${SettingsPath.GraphQLPlayground}`}
@@ -1064,19 +961,19 @@ const createSettingsRouteElements = ({
       />
       <Route
         path={SettingsPath.NewApiKey}
-        element={<SettingsDevelopersApiKeysNew />}
+        element={<SettingsApiWebhooksRedirectEffect view="new" />}
       />
       <Route
         path={SettingsPath.ApiKeyDetail}
-        element={<SettingsDevelopersApiKeyDetail />}
+        element={<SettingsApiWebhooksRedirectEffect view="detail" />}
       />
       <Route
         path={SettingsPath.NewWebhook}
-        element={<SettingsDevelopersWebhookNew />}
+        element={<SettingsApiWebhooksRedirectEffect view="new" />}
       />
       <Route
         path={SettingsPath.WebhookDetail}
-        element={<SettingsDevelopersWebhookDetail />}
+        element={<SettingsApiWebhooksRedirectEffect view="detail" />}
       />
     </Route>
 

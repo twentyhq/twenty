@@ -11,33 +11,29 @@ import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import {
   IconChevronDown,
   IconChevronUp,
-  IconLock,
   IconMaximize,
   IconMinimize,
   IconX,
 } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
+import { LogConsoleApiKeys } from '@/log-console/components/LogConsoleApiKeys';
+import { LogConsoleCli } from '@/log-console/components/LogConsoleCli';
 import { LogConsoleDetailPanel } from '@/log-console/components/LogConsoleDetailPanel';
+import { LogConsoleLogs } from '@/log-console/components/LogConsoleLogs';
 import { LogConsoleToggleHotkeyEffect } from '@/log-console/components/LogConsoleToggleHotkeyEffect';
-import { LogConsoleResults } from '@/log-console/components/LogConsoleResults';
+import { LogConsoleWebhooks } from '@/log-console/components/LogConsoleWebhooks';
 import { LOG_CONSOLE_ANIMATION_EASING } from '@/log-console/constants/LogConsoleAnimationEasing';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
 import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
-import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
+import { useLogConsoleTabs } from '@/log-console/hooks/useLogConsoleTabs';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
-import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
-import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
-import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
-import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/constants/SettingsContentMaxWidth';
+import { type LogConsoleTabId } from '@/log-console/types/LogConsoleTabId';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -48,10 +44,6 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
-import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 
 const LOG_CONSOLE_HEIGHT_CSS_VARIABLE = '--log-console-height';
 
@@ -205,7 +197,7 @@ const StyledBody = styled.div`
   position: relative;
 `;
 
-const StyledActiveSource = styled.div<{ isDetailPanelOpen: boolean }>`
+const StyledActiveTab = styled.div<{ isDetailPanelOpen: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -224,14 +216,6 @@ const subscribeToWindowResize = (onWindowResize: () => void) => {
 };
 
 const getWindowHeight = () => window.innerHeight;
-
-const StyledUpgradeCardContainer = styled.div`
-  box-sizing: border-box;
-  margin: auto;
-  max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
-  padding: 0 ${themeCssVariables.spacing[8]};
-  width: 100%;
-`;
 
 const StyledDetailPanelWrapper = styled.div<{
   detailPanelWidth: number;
@@ -257,13 +241,11 @@ const StyledDetailPanelWrapper = styled.div<{
 export const LogConsole = () => {
   const { t } = useLingui();
   const store = useStore();
-  const theme = useTheme();
   const { enqueueToast } = useToast();
   const shouldReduceMotion = useReducedMotion();
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
+  const tabs = useLogConsoleTabs();
 
   const [logConsoleDisplayMode, setLogConsoleDisplayMode] = useAtomState(
     logConsoleDisplayModeState,
@@ -278,7 +260,6 @@ export const LogConsole = () => {
   const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
     logConsoleHeightState,
   );
-  const setLogConsoleFilters = useSetAtomState(logConsoleFiltersState);
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
     logConsoleSelectedLogState,
   );
@@ -385,34 +366,10 @@ export const LogConsole = () => {
   const panelHeight =
     !isExiting && displayedLayout.isFullScreen ? '100%' : spacerHeight;
 
-  const hasAuditLogsEntitlement = checkIfBillingEntitlementIsEnabledOnWorkspace(
-    BillingEntitlementKey.AUDIT_LOGS,
-    currentWorkspace,
-  );
-
-  const isSourceLocked = (source: LogConsoleSource) =>
-    source.requiresAuditLogs && !hasAuditLogsEntitlement;
-
-  const sources = [
-    ...LOG_CONSOLE_SOURCES.filter((source) => !isSourceLocked(source)),
-    ...LOG_CONSOLE_SOURCES.filter(isSourceLocked),
-  ];
-
-  const activeSource =
-    sources.find((source) => source.id === activeTabId) ?? sources[0];
-
-  const tabs = sources.map((source) => ({
-    id: source.id,
-    title: t(source.label),
-    Icon: source.Icon,
-    pill: isSourceLocked(source) ? (
-      <IconLock
-        size={theme.icon.size.sm}
-        stroke={theme.icon.stroke.sm}
-        color={theme.font.color.tertiary}
-      />
-    ) : undefined,
-  }));
+  const currentTabId: LogConsoleTabId =
+    tabs.find((tab) => tab.id === activeTabId)?.id ?? tabs[0].id;
+  const isLogsTab = currentTabId === 'logs';
+  const isDetailPanelOpen = isLogsTab && isDefined(logConsoleSelectedLog);
 
   const openLogConsole = () => {
     if (!isOpen) {
@@ -518,27 +475,13 @@ export const LogConsole = () => {
     setLogConsoleSelectedLog(null);
   };
 
-  const changeSource = (sourceId: string) => {
-    const filterFields =
-      sources.find((source) => source.id === sourceId)?.filterFields ?? [];
-
-    closeSelectedLog();
-    setLogConsoleFilters((filters) =>
-      filters.filter((filter) =>
-        filterFields.some(
-          (filterField) => filterField.id === filter.filterFieldId,
-        ),
-      ),
-    );
-  };
-
   const closeLogConsole = () => {
     closeSelectedLog();
     setLogConsoleDisplayMode('closed');
     setIsLogConsoleFullScreen(false);
     enqueueToast({
       status: 'info',
-      children: t`Logs console hidden. Press ${toggleHotkeyLabel} to open it again.`,
+      children: t`Developer console hidden. Press ${toggleHotkeyLabel} to open it again.`,
     });
   };
 
@@ -567,28 +510,17 @@ export const LogConsole = () => {
     : t`Full screen`;
   const closeLabel = t`Close`;
 
-  const renderActiveSource = () => {
-    if (!isClickHouseConfigured) {
-      return (
-        <SettingsEmptyPlaceholder>
-          {t`Logs require ClickHouse to be configured. Please contact your administrator.`}
-        </SettingsEmptyPlaceholder>
-      );
+  const renderActiveTab = () => {
+    switch (currentTabId) {
+      case 'logs':
+        return <LogConsoleLogs />;
+      case 'apis':
+        return <LogConsoleApiKeys />;
+      case 'webhooks':
+        return <LogConsoleWebhooks />;
+      case 'cli':
+        return <LogConsoleCli />;
     }
-
-    if (isSourceLocked(activeSource)) {
-      return (
-        <StyledUpgradeCardContainer>
-          <SettingsEnterpriseFeatureGateCard
-            title={t`Upgrade to access audit logs`}
-            description={t`Record changes and app logs are available on your current plan. Other log types require an Organization subscription.`}
-            buttonTitle={t`Upgrade`}
-          />
-        </StyledUpgradeCardContainer>
-      );
-    }
-
-    return <LogConsoleResults key={activeSource.id} source={activeSource} />;
   };
 
   return (
@@ -609,12 +541,11 @@ export const LogConsole = () => {
       >
         <TabListRoot componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}>
           <StyledTabList
-            aria-label={t`Log sources`}
+            aria-label={t`Developer console`}
             tabs={tabs}
             behaveAsLinks={false}
             componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}
             onClickTab={openLogConsole}
-            onChangeTab={changeSource}
             rightComponent={
               <StyledBarActions>
                 <LightIconButton
@@ -655,17 +586,15 @@ export const LogConsole = () => {
           />
           {isBodyRendered && (
             <StyledBody>
-              <StyledActiveSource
-                isDetailPanelOpen={isDefined(logConsoleSelectedLog)}
-              >
-                {renderActiveSource()}
-              </StyledActiveSource>
+              <StyledActiveTab isDetailPanelOpen={isDetailPanelOpen}>
+                {renderActiveTab()}
+              </StyledActiveTab>
               <StyledDetailPanelWrapper
                 detailPanelWidth={detailPanelWidth}
-                isOpen={isDefined(logConsoleSelectedLog)}
+                isOpen={isDetailPanelOpen}
                 isResizing={isDetailPanelResizing}
               >
-                {isDefined(logConsoleSelectedLog) && (
+                {isDetailPanelOpen && (
                   <ResizeHandle
                     edge="left"
                     min={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min}
@@ -680,7 +609,7 @@ export const LogConsole = () => {
                     onResizeStart={() => setIsDetailPanelResizing(true)}
                   />
                 )}
-                <LogConsoleDetailPanel />
+                {isLogsTab && <LogConsoleDetailPanel />}
               </StyledDetailPanelWrapper>
             </StyledBody>
           )}

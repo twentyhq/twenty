@@ -16,7 +16,7 @@ import {
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
   CreateWebhookDocument,
@@ -24,12 +24,12 @@ import {
   GetWebhookDocument,
   UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '@/settings/developers/constants/SettingsApiWebhooksTabs';
 
 type UseWebhookFormProps = {
   webhookId?: string;
   mode: WebhookFormMode;
+  onCreated: (webhookId: string) => void;
+  onDeleted: () => void;
 };
 
 const DEFAULT_FORM_VALUES: WebhookFormValues = {
@@ -39,8 +39,12 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
   secret: '',
 };
 
-export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
-  const navigate = useNavigateSettings();
+export const useWebhookForm = ({
+  webhookId,
+  mode,
+  onCreated,
+  onDeleted,
+}: UseWebhookFormProps) => {
   const { enqueueToast } = useToast();
 
   const isCreationMode = mode === WebhookFormMode.Create;
@@ -105,15 +109,9 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         children: t`Webhook ${targetUrl} created successfully`,
       });
 
-      navigate(
-        createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.ApiWebhooks,
-        createdWebhook ? { webhookId: createdWebhook.id } : undefined,
-        undefined,
-        undefined,
-        createdWebhook
-          ? undefined
-          : SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
-      );
+      if (isDefined(createdWebhook)) {
+        onCreated(createdWebhook.id);
+      }
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }
@@ -201,13 +199,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         children: t`Webhook deleted successfully`,
       });
 
-      navigate(
-        SettingsPath.ApiWebhooks,
-        undefined,
-        undefined,
-        undefined,
-        SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
-      );
+      onDeleted();
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }
