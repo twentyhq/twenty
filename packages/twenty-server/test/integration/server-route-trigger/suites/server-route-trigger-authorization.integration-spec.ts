@@ -305,6 +305,26 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       expect(response.body).toEqual({ authorization: null });
     }, 60000);
 
+    it.each([
+      ['with trailing content', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN} x`],
+      ['without a scheme', APPLE_JANE_ADMIN_ACCESS_TOKEN],
+      ['as a session token', 'Bearer sess_abc123'],
+    ])(
+      'never forwards a Twenty credential %s',
+      async (_, authorization) => {
+        const response = await request(baseUrl)
+          .post(
+            `/webhooks/server/${AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+          )
+          .set('Authorization', authorization)
+          .send({ any: 'payload' });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ authorization: null });
+      },
+      60000,
+    );
+
     it('rejects a server-route-exposed resolver that requires authentication before executing it', async () => {
       const response = await request(baseUrl)
         .post(`/webhooks/server/${AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER}`)

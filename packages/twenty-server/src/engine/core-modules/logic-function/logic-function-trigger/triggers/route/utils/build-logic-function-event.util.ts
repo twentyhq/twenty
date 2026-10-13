@@ -15,12 +15,12 @@ export const filterRequestHeaders = ({
   requestHeaders,
   forwardedRequestHeaders,
   forwardAllHeaders = false,
-  forwardableCredentialHeaderNames = new Set(),
+  forwardableCredentialHeaderNames = [],
 }: {
   requestHeaders: Request['headers'];
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;
-  forwardableCredentialHeaderNames?: Set<string>;
+  forwardableCredentialHeaderNames?: string[];
 }): Record<string, string | undefined> => {
   if (forwardAllHeaders) {
     const allHeaders: Record<string, string | undefined> = {};
@@ -44,7 +44,7 @@ export const filterRequestHeaders = ({
     .filter(
       (headerName) =>
         !isCredentialRequestHeaderName(headerName) ||
-        forwardableCredentialHeaderNames.has(headerName),
+        forwardableCredentialHeaderNames.includes(headerName),
     );
 
   const filteredHeaders: Record<string, string | undefined> = {};
@@ -156,7 +156,7 @@ export const buildLogicFunctionEvent = ({
   pathParameters: Record<string, string | string[] | undefined>;
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;
-  forwardableCredentialHeaderNames?: Set<string>;
+  forwardableCredentialHeaderNames?: string[];
   userWorkspaceId: string | null;
 }): LogicFunctionEvent => {
   const rawBody = extractRawBody(request);

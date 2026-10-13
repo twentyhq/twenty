@@ -2,7 +2,7 @@ import { msg, t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAMES } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-names.constant';
+import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { isCredentialRequestHeaderName } from 'src/engine/metadata-modules/logic-function/utils/is-credential-request-header-name.util';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
@@ -45,9 +45,8 @@ export const validateLogicFunctionForwardedRequestHeaders = ({
     ...serverRouteForwardedRequestHeaders.filter(
       (headerName) =>
         isCredentialRequestHeaderName(headerName) &&
-        !SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAMES.has(
-          headerName.toLowerCase(),
-        ),
+        headerName.toLowerCase() !==
+          SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME,
     ),
   ];
 

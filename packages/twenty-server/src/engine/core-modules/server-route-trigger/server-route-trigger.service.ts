@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,7 +35,7 @@ import {
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
-import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAMES } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-names.constant';
+import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -111,18 +112,23 @@ export class ServerRouteTriggerService {
     const forwardedRequestHeaders =
       resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [];
 
-    const isAuthorizationForwardable =
+    const isCredentialHeaderForwardable =
       forwardedRequestHeaders.some(
-        (headerName) => headerName.toLowerCase() === 'authorization',
-      ) && !(await this.isTwentyIssuedToken(request.headers.authorization));
+        (headerName) =>
+          headerName.toLowerCase() ===
+          SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME,
+      ) &&
+      !(await this.containsTwentyCredential(
+        request.headers[SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME],
+      ));
 
     const event = buildLogicFunctionEvent({
       request,
       pathParameters: {},
       forwardedRequestHeaders,
-      forwardableCredentialHeaderNames: isAuthorizationForwardable
-        ? SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAMES
-        : new Set(),
+      forwardableCredentialHeaderNames: isCredentialHeaderForwardable
+        ? [SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME]
+        : [],
       userWorkspaceId: null,
     });
 
@@ -370,15 +376,27 @@ export class ServerRouteTriggerService {
     }
   }
 
-  private async isTwentyIssuedToken(
-    authorization: string | undefined,
+  private async containsTwentyCredential(
+    headerValue: string | undefined,
   ): Promise<boolean> {
-    if (!isDefined(authorization)) {
+    if (!isNonEmptyString(headerValue)) {
       return false;
     }
 
-    const token = authorization.replace(/^Bearer\s+/i, '');
+    const tokenCandidates = headerValue
+      .split(/[\s,]+/)
+      .filter(isNonEmptyString);
 
+    const twentyCredentialChecks = await Promise.all(
+      tokenCandidates.map((tokenCandidate) =>
+        this.isTwentyCredential(tokenCandidate),
+      ),
+    );
+
+    return twentyCredentialChecks.some(Boolean);
+  }
+
+  private async isTwentyCredential(token: string): Promise<boolean> {
     if (isUserSessionToken(token)) {
       return true;
     }
