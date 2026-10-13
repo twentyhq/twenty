@@ -1,31 +1,36 @@
 import { APPLICATION_REGISTRATION_ANALYTICS_BREAKDOWN_LIMIT } from 'src/engine/core-modules/application/application-registration-analytics/constants/application-registration-analytics-breakdown-limit.constant';
 import { type ApplicationRegistrationAnalyticsBreakdownItemDTO } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.dto';
-import {
-  type ApplicationRegistrationMetricRowWithWorkspaceCount,
-  filterApplicationRegistrationMetricRowsByWorkspaceCount,
-} from 'src/engine/core-modules/application/application-registration-analytics/utils/filter-application-registration-metric-rows-by-workspace-count.util';
+import { type ApplicationRegistrationMetricCellRow } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-metric-cell-row.type';
+import { type ApplicationRegistrationMetricName } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-metric-name.type';
 
-export type ApplicationRegistrationMetricDailyBreakdownRow =
-  ApplicationRegistrationMetricRowWithWorkspaceCount & {
-    key: string;
-    date: string;
-    value: string | number;
-  };
+export type ApplicationRegistrationAnalyticsBreakdownGroupBy =
+  | 'dimension'
+  | 'context';
 
-// Sparse (key, day) cells are dropped before summing so a key seen in one workspace never surfaces
 export const buildApplicationRegistrationAnalyticsBreakdown = ({
   rows,
+  metrics,
+  groupBy,
   convertValue = (value) => value,
 }: {
-  rows: ApplicationRegistrationMetricDailyBreakdownRow[];
+  rows: Pick<
+    ApplicationRegistrationMetricCellRow,
+    'metric' | 'dimension' | 'context' | 'value'
+  >[];
+  metrics: ApplicationRegistrationMetricName[];
+  groupBy: ApplicationRegistrationAnalyticsBreakdownGroupBy;
   convertValue?: (value: number) => number;
 }): ApplicationRegistrationAnalyticsBreakdownItemDTO[] => {
   const valueByKey = new Map<string, number>();
 
-  for (const row of filterApplicationRegistrationMetricRowsByWorkspaceCount({
-    rows,
-  })) {
-    valueByKey.set(row.key, (valueByKey.get(row.key) ?? 0) + Number(row.value));
+  for (const row of rows) {
+    const key = row[groupBy];
+
+    if (!metrics.some((metric) => metric === row.metric) || key === '') {
+      continue;
+    }
+
+    valueByKey.set(key, (valueByKey.get(key) ?? 0) + Number(row.value));
   }
 
   return [...valueByKey.entries()]

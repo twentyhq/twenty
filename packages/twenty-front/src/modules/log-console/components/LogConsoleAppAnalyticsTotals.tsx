@@ -26,7 +26,13 @@ export const LogConsoleAppAnalyticsTotals = ({
   const { formatNumber } = useNumberFormat();
   const { formatUsageValue } = useUsageValueFormatter();
 
-  const formatWithFailures = (succeeded: number, failed: number) =>
+  const formatWithFailures = ({
+    succeeded,
+    failed,
+  }: {
+    succeeded: number;
+    failed: number;
+  }) =>
     failed > 0
       ? t`${formatNumber(succeeded)} (${formatNumber(failed)} failed)`
       : formatNumber(succeeded);
@@ -40,20 +46,26 @@ export const LogConsoleAppAnalyticsTotals = ({
     {
       Icon: IconBrandDocker,
       label: t`Installs`,
-      value: formatWithFailures(totals.installSucceeded, totals.installFailed),
+      value: formatWithFailures({
+        succeeded: totals.installSucceeded,
+        failed: totals.installFailed,
+      }),
     },
     {
       Icon: IconVersions,
       label: t`Upgrades`,
-      value: formatWithFailures(totals.upgradeSucceeded, totals.upgradeFailed),
+      value: formatWithFailures({
+        succeeded: totals.upgradeSucceeded,
+        failed: totals.upgradeFailed,
+      }),
     },
     {
       Icon: IconTrash,
       label: t`Uninstalls`,
-      value: formatWithFailures(
-        totals.uninstallSucceeded,
-        totals.uninstallFailed,
-      ),
+      value: formatWithFailures({
+        succeeded: totals.uninstallSucceeded,
+        failed: totals.uninstallFailed,
+      }),
     },
     {
       Icon: IconBrandTypescript,
