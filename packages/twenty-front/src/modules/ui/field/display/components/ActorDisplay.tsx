@@ -1,8 +1,10 @@
-import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
+import { AppChip } from '@/applications/components/AppChip';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { getActorSourceIcon } from '@/ui/field/display/utils/getActorSourceIcon';
+import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -23,13 +25,22 @@ export const ActorDisplay = ({
     <Chip
       variant="ghost"
       startElement={
-        <AvatarOrIcon
-          colorSeed={workspaceMemberId ?? undefined}
-          shape={workspaceMemberId ? 'circle' : 'square'}
-          name={name}
-          Icon={LeftIcon}
-          src={getAbsoluteImageUrl(avatarUrl ?? undefined)}
-        />
+        source === 'APPLICATION' && isDefined(context?.applicationId) ? (
+          <AppChip
+            applicationId={context.applicationId}
+            fallbackApplicationData={{ name }}
+            size="sm"
+            chipOnly
+          />
+        ) : (
+          <AvatarOrIcon
+            colorSeed={workspaceMemberId ?? undefined}
+            shape={workspaceMemberId ? 'circle' : 'square'}
+            name={name}
+            Icon={LeftIcon}
+            src={getAbsoluteImageUrl(avatarUrl ?? undefined)}
+          />
+        )
       }
       style={{ paddingInlineStart: 0 }}
     >

@@ -1,7 +1,9 @@
 import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
+import { expect, within } from 'storybook/test';
 
+import { TintedIconTile } from '@ui/components/data-display/TintedIconTile/TintedIconTile';
 import { type MenuItemAccent } from '@ui/components/navigation/MenuItem/types/MenuItemAccent';
 import { MenuItemDraggable } from '@ui/components/navigation/MenuItemDraggable/MenuItemDraggable';
 import { IconBell, IconMinus } from '@ui/icon';
@@ -141,6 +143,39 @@ export const GripOnHoverWithIconContainer: Story = {
     gripMode: 'onHover',
     withIconContainer: true,
     isDragDisabled: false,
+  },
+};
+
+export const GripOnHoverWithLeftComponent: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    ...Default.args,
+    LeftIcon: undefined,
+    LeftComponent: (
+      <TintedIconTile
+        icon={<IconBell size={16} />}
+        color="blue"
+        role="img"
+        aria-label="Custom leading content"
+      />
+    ),
+    gripMode: 'onHover',
+    withIconContainer: true,
+    isDragDisabled: false,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const leadingContent = canvas.getByRole('img', {
+      name: 'Custom leading content',
+    });
+    const defaultSlot = canvasElement.querySelector('.grip-swap-default-icon');
+    const grip = canvasElement.querySelector('.grip-swap-hover-icon');
+
+    await expect(leadingContent).toBeVisible();
+    await expect(defaultSlot).toContainElement(leadingContent);
+    await expect(grip).toBeInTheDocument();
+    await expect(grip!.querySelector('svg')).toBeInTheDocument();
+    await expect(grip).toHaveStyle({ opacity: '0' });
   },
 };
 

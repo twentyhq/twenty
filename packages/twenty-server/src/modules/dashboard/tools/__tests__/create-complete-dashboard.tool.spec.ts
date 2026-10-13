@@ -38,7 +38,9 @@ describe('createCreateCompleteDashboardTool', () => {
 
     const tool = createCreateCompleteDashboardTool(deps, {
       workspaceId: WORKSPACE_ID,
-      rolePermissionConfig: { intersectionOf: [ROLE_ID] },
+      rolePermissionConfig: {
+        intersectionOf: { userWorkspaceRoleId: ROLE_ID },
+      },
     });
 
     const result = await tool.execute({ title: 'Revenue' });
@@ -58,7 +60,9 @@ describe('createCreateCompleteDashboardTool', () => {
 
     const tool = createCreateCompleteDashboardTool(deps, {
       workspaceId: WORKSPACE_ID,
-      rolePermissionConfig: { intersectionOf: [ROLE_ID] },
+      rolePermissionConfig: {
+        intersectionOf: { userWorkspaceRoleId: ROLE_ID },
+      },
     });
 
     const result = await tool.execute({ title: 'Revenue' });

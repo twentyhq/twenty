@@ -11855,6 +11855,9 @@ export default {
             "displayName": [
                 1
             ],
+            "partner": [
+                1
+            ],
             "subdomain": [
                 1
             ],

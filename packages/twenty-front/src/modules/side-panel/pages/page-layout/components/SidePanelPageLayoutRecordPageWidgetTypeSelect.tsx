@@ -1,3 +1,4 @@
+import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -392,7 +393,12 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
                 onEnter={() => handleCreateFrontComponentWidget(frontComponent)}
               >
                 <CommandMenuItem
-                  Icon={IconApps}
+                  LeftComponent={
+                    <AppMenuItemIcon
+                      Icon={IconApps}
+                      applicationId={frontComponent.applicationId}
+                    />
+                  }
                   label={frontComponent.name}
                   id={selectItemId}
                   onClick={() =>

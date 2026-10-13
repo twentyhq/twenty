@@ -304,12 +304,12 @@ export const SettingsAdminNewAiModel = () => {
       });
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Model "${values.label.trim()}" added`,
       });
       navigate(providerDetailPath);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Failed to add model` });
+      enqueueToast({ status: 'error', children: t`Failed to add model` });
     } finally {
       setIsSubmitting(false);
     }

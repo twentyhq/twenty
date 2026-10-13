@@ -130,7 +130,7 @@ export const ObjectSettings = ({
     const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
 
     if (result.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Object deleted` });
+      enqueueToast({ status: 'success', children: t`Object deleted` });
       closeDialog(DELETE_OBJECT_MODAL_ID);
       navigate(SettingsPath.Objects);
       return;

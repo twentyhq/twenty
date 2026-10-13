@@ -4417,6 +4417,7 @@ type SignUp {
 
 input SignUpInNewWorkspaceInput {
   displayName: String
+  partner: String
   subdomain: String
 }
 

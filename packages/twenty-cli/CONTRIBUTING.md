@@ -110,16 +110,26 @@ published. CI runs the same target for CLI and dependency changes.
 
 ## Releases
 
-The CLI has its own release line. A `cli/vX.Y.Z` tag publishes the `twenty`
-package at that version, which must match `package.json`.
+Publish the CLI when its changes warrant a release. A server release does not
+require a CLI release; skip versions when the CLI has no changes worth shipping.
+When publishing, aim to align the CLI version with the corresponding Twenty
+server, SDK and UI version.
+
+Publishing is independent through the `cli/` tag family: `cli/v2.46.0` publishes
+only `twenty@2.46.0`. The tag version must match
+`packages/twenty-cli/package.json`. Bumping the package version alone does not
+publish the CLI.
 
 `app init` pins `twenty-client-sdk`, `twenty-sdk` and `twenty-ui` to the
 `twenty-sdk` version of the commit the CLI was built from. `main` moves
-to the next, unpublished SDK version right after each SDK release, so a CLI
-release must be built from the commit of an SDK release:
+to the next, unpublished SDK version right after each SDK release:
 
-1. Merge the CLI version bump before that SDK release is tagged.
-2. Once the `sdk/vA.B.C` packages are on npm, tag the same commit `cli/vX.Y.Z`.
+1. Start from the matching `sdk/vA.B.C` release commit. If a CLI version bump
+   is still needed, make it on a branch from that commit.
+2. Once the SDK, client SDK and UI packages at `A.B.C` are on npm, tag the
+   prepared commit `cli/vA.B.C`.
+3. Run the `Publish npm packages` workflow in `twenty-infra` with that tag as
+   its `ref`. Creating the tag alone does not publish the package.
 
 `yarn npm publish` first runs `scripts/check-publish.mjs`, which needs a fresh
 build and npm registry access. It fails when the executable, worker, lazy chunks
@@ -127,7 +137,7 @@ or templates are missing, when `dist` was built for another version, when one of
 its CLI runs fails or times out, or when `app init` would pin versions that are
 not on npm. An unreachable registry is reported separately from a missing
 version. The check does not read tags: it confirms that the pinned versions are
-published, and tagging the SDK release commit remains a release step.
+published. Selecting the matching SDK release remains a release step.
 
 `prepublish` then runs `scripts/generate-template-lock.mjs`. It resolves the app
 template's dependencies with the repository's Yarn against the public registry,
