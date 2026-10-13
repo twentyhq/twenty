@@ -5,26 +5,15 @@ import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modul
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
-type RelationTargetIds = {
-  relationTargetFieldMetadataId: string;
-  relationTargetObjectMetadataId: string;
-};
-
-export type MorphOrRelationFlatFieldMetadataWithTarget =
-  OrmFlatFieldMetadata<MorphOrRelationFieldMetadataType> & RelationTargetIds;
-
 export const isMorphOrRelationFlatFieldMetadataWithTarget = <
   TFieldMetadata extends Pick<
     OrmFlatFieldMetadata,
     'type' | 'universalIdentifier'
-  > & {
-    morphId?: string | null;
-  },
+  > & { morphId?: string | null },
 >(
   fieldMetadata: TFieldMetadata,
 ): fieldMetadata is TFieldMetadata &
-  FlatFieldMetadata<MorphOrRelationFieldMetadataType> &
-  RelationTargetIds =>
+  FlatFieldMetadata<MorphOrRelationFieldMetadataType> =>
   fieldMetadata.type === FieldMetadataType.RELATION ||
   (fieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
     !isMorphRelationHead(fieldMetadata));

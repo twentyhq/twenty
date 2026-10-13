@@ -58,11 +58,7 @@ type RelationUniversalIdentifierAssertions = [
   Expect<
     HasAllProperties<
       UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
-      {
-        [TKey in keyof DefinedRelationUniversalIdentifierRecord]:
-          | DefinedRelationUniversalIdentifierRecord[TKey]
-          | null;
-      }
+      DefinedRelationUniversalIdentifierRecord
     >
   >,
 

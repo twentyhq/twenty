@@ -23,7 +23,7 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { isMorphOrRelationFlatFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata-with-target.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { resolveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/resolve-search-vector-as-expression-for-ts-vector-field.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
@@ -279,11 +279,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     if (isDefined(update.settings)) {
       // Handle onDelete change (for morph/relation fields) order matters
-      if (
-        isMorphOrRelationFlatFieldMetadataWithTarget(
-          optimisticFlatFieldMetadata,
-        )
-      ) {
+      if (isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata)) {
         const fromSettings = optimisticFlatFieldMetadata.settings;
         const toSettings = update.settings as
           | FieldMetadataSettingsMapping['MORPH_RELATION']
@@ -453,9 +449,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           newColumnName: toCompositeColumnName,
         });
       }
-    } else if (
-      isMorphOrRelationFlatFieldMetadataWithTarget(flatFieldMetadata)
-    ) {
+    } else if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
       if (
         flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
       ) {
@@ -581,7 +575,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     toIsNullable,
   }: NullableUpdateHandlerArgs) {
     if (
-      isMorphOrRelationFlatFieldMetadataWithTarget(flatFieldMetadata) ||
+      isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ||
       isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.TS_VECTOR)
     ) {
       return;

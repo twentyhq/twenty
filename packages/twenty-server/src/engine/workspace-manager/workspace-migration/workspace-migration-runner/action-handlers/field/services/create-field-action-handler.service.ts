@@ -15,7 +15,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { isMorphOrRelationFlatFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata-with-target.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { resolveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/resolve-search-vector-as-expression-for-ts-vector-field.util';
@@ -272,7 +272,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     });
 
     if (
-      isMorphOrRelationFlatFieldMetadataWithTarget(flatFieldMetadata) &&
+      isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
       flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
     ) {
       await this.workspaceSchemaManagerService.foreignKeyManager.createForeignKey(

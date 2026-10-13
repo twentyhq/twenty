@@ -48,11 +48,7 @@ type RelationIdAssertions = [
   Expect<
     HasAllProperties<
       FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
-      {
-        [TKey in keyof DefinedRelationIdRecord]:
-          | DefinedRelationIdRecord[TKey]
-          | null;
-      }
+      DefinedRelationIdRecord
     >
   >,
 

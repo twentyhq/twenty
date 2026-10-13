@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
@@ -27,7 +27,6 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { isMorphOrRelationFlatFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata-with-target.util';
 import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-morph-relations-from-flat-field-metadata.util';
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
@@ -494,9 +493,7 @@ export class DataloaderService {
                     flatFieldMetadata,
                     FieldMetadataType.MORPH_RELATION,
                   ) &&
-                  isMorphOrRelationFlatFieldMetadataWithTarget(
-                    flatFieldMetadata,
-                  )
+                  !isMorphRelationHead(flatFieldMetadata)
                 ) {
                   const relationTargetObjectMetadata =
                     findFlatEntityByIdInFlatEntityMapsOrThrow({
