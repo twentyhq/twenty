@@ -42,7 +42,7 @@ export const CampaignSentEnvelope = ({
 }: CampaignSentEnvelopeProps) => {
   const { unsubscribeTopics, loading: areTopicsLoading } =
     useUnsubscribeTopics();
-  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { timeFormat, timeZone } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const hasList = isDefined(campaign.listId) && isValidUuid(campaign.listId);
@@ -79,7 +79,6 @@ export const CampaignSentEnvelope = ({
       ? formatCampaignSendTime({
           value: campaign.scheduledAt,
           timeZone,
-          dateFormat,
           timeFormat,
           localeCatalog,
         })

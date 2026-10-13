@@ -6,7 +6,7 @@ describe('buildCampaignDeliveryHint', () => {
       buildCampaignDeliveryHint({
         deliveryTiming: 'NOW',
         isAlreadyScheduled: false,
-        formattedSendTime: null,
+        hasValidSendTime: false,
       }),
     ).toBe('Sending starts right away and cannot be undone.');
   });
@@ -16,7 +16,7 @@ describe('buildCampaignDeliveryHint', () => {
       buildCampaignDeliveryHint({
         deliveryTiming: 'NOW',
         isAlreadyScheduled: true,
-        formattedSendTime: 'Sep 7, 2026 6:00 PM GMT+2',
+        hasValidSendTime: true,
       }),
     ).toBe(
       'Sending starts right away, ahead of the time this campaign is holding.',
@@ -28,20 +28,18 @@ describe('buildCampaignDeliveryHint', () => {
       buildCampaignDeliveryHint({
         deliveryTiming: 'LATER',
         isAlreadyScheduled: false,
-        formattedSendTime: null,
+        hasValidSendTime: false,
       }),
     ).toBe('Pick a send time in the future.');
   });
 
-  it('names the send time it will start at', () => {
+  it('explains what happens before a scheduled send', () => {
     expect(
       buildCampaignDeliveryHint({
         deliveryTiming: 'LATER',
         isAlreadyScheduled: false,
-        formattedSendTime: 'Sep 7, 2026 6:00 PM GMT+2',
+        hasValidSendTime: true,
       }),
-    ).toBe(
-      'Sending starts Sep 7, 2026 6:00 PM GMT+2. You can cancel before then.',
-    );
+    ).toBe('Recipients are recounted at send time. You can cancel until then.');
   });
 });

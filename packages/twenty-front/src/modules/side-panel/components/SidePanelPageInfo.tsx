@@ -4,6 +4,7 @@ import { SidePanelAskAiInfo } from '@/side-panel/components/SidePanelAskAiInfo';
 import { SidePanelMultipleRecordsInfo } from '@/side-panel/components/SidePanelMultipleRecordsInfo';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
+import { SidePanelSendCampaignInfo } from '@/side-panel/components/SidePanelSendCampaignInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
 import { SidePanelPages } from 'twenty-shared/types';
 import { useTheme } from 'twenty-ui/theme';
@@ -54,6 +55,17 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
   if (isMultipleRecordsPage && isDefined(pageChip.page?.pageId)) {
     return (
       <SidePanelMultipleRecordsInfo
+        sidePanelPageInstanceId={pageChip.page.pageId}
+      />
+    );
+  }
+
+  const isSendCampaignPage =
+    pageChip.page?.page === SidePanelPages.SendCampaign;
+
+  if (isSendCampaignPage && isDefined(pageChip.page?.pageId)) {
+    return (
+      <SidePanelSendCampaignInfo
         sidePanelPageInstanceId={pageChip.page.pageId}
       />
     );
