@@ -1,0 +1,139 @@
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
+type CountdownConfiguration = {
+  duration: number;
+  durationRevision: number;
+  isPaused: boolean;
+  isProgress: boolean;
+  isActive: boolean;
+  onClose?: () => void;
+};
+
+type CountdownSnapshot = {
+  duration: number;
+  remainingDuration: number;
+  revision: number;
+  isPaused: boolean;
+  isProgress: boolean;
+};
+
+const MAX_TIMEOUT_DURATION = 2 ** 31 - 1;
+
+export const createToastCountdown = ({
+  onChange,
+}: {
+  onChange: (snapshot: CountdownSnapshot) => void;
+}) => {
+  let configuration: CountdownConfiguration | undefined;
+  let remainingDuration = 0;
+  let startedAt: number | undefined;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  let revision = 0;
+  let isClosed = false;
+
+  const stop = () => {
+    if (isDefined(startedAt)) {
+      remainingDuration = Math.max(
+        0,
+        remainingDuration - (performance.now() - startedAt),
+      );
+      startedAt = undefined;
+    }
+
+    clearTimeout(timeout);
+    timeout = undefined;
+  };
+
+  const publish = () => {
+    if (!isDefined(configuration)) {
+      return;
+    }
+
+    revision += 1;
+    onChange({
+      duration: configuration.duration,
+      remainingDuration,
+      revision,
+      isPaused: configuration.isPaused || !configuration.isActive,
+      isProgress: configuration.isProgress,
+    });
+  };
+
+  const close = () => {
+    if (isClosed) {
+      return;
+    }
+
+    stop();
+    isClosed = true;
+    remainingDuration = 0;
+    publish();
+    configuration?.onClose?.();
+  };
+
+  const start = () => {
+    if (!isDefined(configuration)) {
+      return;
+    }
+
+    const isCountdownEnabled =
+      configuration.isActive &&
+      !configuration.isPaused &&
+      !configuration.isProgress &&
+      configuration.duration > 0 &&
+      Number.isFinite(configuration.duration);
+
+    if (!isCountdownEnabled || isClosed) {
+      return;
+    }
+
+    startedAt = performance.now();
+    timeout = setTimeout(
+      () => {
+        stop();
+
+        if (remainingDuration > 0) {
+          start();
+          return;
+        }
+
+        close();
+      },
+      Math.min(remainingDuration, MAX_TIMEOUT_DURATION),
+    );
+  };
+
+  const update = (nextConfiguration: CountdownConfiguration) => {
+    const shouldRestart =
+      !isDefined(configuration) ||
+      nextConfiguration.duration !== configuration.duration ||
+      nextConfiguration.durationRevision !== configuration.durationRevision ||
+      (configuration.isProgress && !nextConfiguration.isProgress);
+    const hasTimingChanged =
+      shouldRestart ||
+      nextConfiguration.isProgress !== configuration?.isProgress ||
+      nextConfiguration.isPaused !== configuration?.isPaused ||
+      nextConfiguration.isActive !== configuration?.isActive;
+
+    if (!hasTimingChanged && isDefined(startedAt)) {
+      configuration = nextConfiguration;
+      return;
+    }
+
+    stop();
+    configuration = nextConfiguration;
+
+    if (isClosed) {
+      return;
+    }
+
+    if (shouldRestart) {
+      remainingDuration = Math.max(0, nextConfiguration.duration);
+    }
+
+    publish();
+    start();
+  };
+
+  return { update, close, stop };
+};

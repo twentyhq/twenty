@@ -1,7 +1,13 @@
 import { useRender } from '@base-ui/react/use-render';
 import { isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
-import { type FocusEvent, type MouseEvent, useState } from 'react';
+import {
+  type FocusEvent,
+  type MouseEvent,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import {
   IconAlertTriangle,
@@ -17,6 +23,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Toast.module.scss';
 import { ToastProgress } from './internal/components/ToastProgress';
+import { useToastCountdown } from './internal/hooks/useToastCountdown';
 import { type ToastProps } from './types/ToastProps';
 import { type ToastStatus } from './types/ToastStatus';
 
@@ -54,6 +61,35 @@ export const Toast = ({
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const element = elementRef.current;
+
+    if (
+      isFocused &&
+      isDefined(element) &&
+      !element.contains(element.ownerDocument.activeElement)
+    ) {
+      setIsFocused(false);
+    }
+  }, [
+    isFocused,
+    children,
+    description,
+    action,
+    icon,
+    onCancel,
+    cancelLabel,
+    onClose,
+    render,
+  ]);
+  const { countdown, close } = useToastCountdown({
+    duration,
+    progress,
+    isPaused: isHovered || isFocused,
+    onClose,
+  });
   const Icon = TOAST_ICONS[status];
   const toastColors = theme.snackBar[status === 'neutral' ? 'default' : status];
   const toastIcon = isUndefined(icon) ? (
@@ -69,7 +105,7 @@ export const Toast = ({
 
   return useRender({
     render,
-    ref,
+    ref: [ref ?? null, elementRef],
     props: {
       role,
       'aria-live': role === 'alert' ? 'assertive' : 'polite',
@@ -104,9 +140,10 @@ export const Toast = ({
             <ToastProgress
               barColor={toastColors.backgroundColor}
               progress={progress}
-              duration={duration}
-              isPaused={isHovered || isFocused}
-              onClose={onClose}
+              duration={countdown.duration}
+              remainingDuration={countdown.remainingDuration}
+              revision={countdown.revision}
+              isPaused={countdown.isPaused}
             />
           </div>
           <div className={styles.header}>
@@ -133,7 +170,7 @@ export const Toast = ({
                   className={styles.closeButton}
                   variant="ghost"
                   size="sm"
-                  onClick={onClose}
+                  onClick={close}
                 />
               )}
             </div>
