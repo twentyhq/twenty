@@ -165,14 +165,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         )
       : () => <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />;
 
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-  );
-
   const isCoreWorkflowsIndexItem = isCoreWorkflowsObjectNavigationMenuItem({
     navigationMenuItemType: navigationMenuItem?.type,
     objectNameSingular: objectMetadataItem.nameSingular,
-    isWorkflowCoreIndexPageEnabled,
   });
 
   const objectSecondaryLabel = isViewWithResolvedView

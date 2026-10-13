@@ -4,7 +4,7 @@ export const logConsoleDisplayModeState = createAtomState<
   'collapsed' | 'open' | 'closed'
 >({
   key: 'logConsoleDisplayModeState',
-  defaultValue: 'open',
+  defaultValue: 'closed',
   useLocalStorage: true,
   localStorageOptions: { getOnInit: true },
 });

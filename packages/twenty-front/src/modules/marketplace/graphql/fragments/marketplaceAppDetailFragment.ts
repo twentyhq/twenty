@@ -24,6 +24,7 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     installCount
     defaultRoleUniversalIdentifier
     requestedCapabilities
+    billsCredits
     roles {
       universalIdentifier
       label

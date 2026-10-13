@@ -11,7 +11,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 
 type RecordTableCalendarFieldDropdownContentProps = {
   pageLayoutId: string;
@@ -72,7 +72,7 @@ export const RecordTableCalendarFieldDropdownContent = ({
               closeDropdown();
             }}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === fieldMetadataItem.id}
               onClick={() => {
                 handleCalendarFieldChange(fieldMetadataItem);
@@ -89,7 +89,7 @@ export const RecordTableCalendarFieldDropdownContent = ({
               }
             >
               {fieldMetadataItem.label}
-            </ListItem>
+            </ListItemButton>
           </SelectableListItem>
         ))}
       </SelectableList>

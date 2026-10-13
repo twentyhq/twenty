@@ -1,9 +1,13 @@
+/* @license Enterprise */
+
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { ValidationRuleToolsFactory } from 'src/engine/metadata-modules/validation-rule/tools/validation-rule-tools.factory';
 import { ValidationRuleResolver } from 'src/engine/metadata-modules/validation-rule/validation-rule.resolver';
 import { ValidationRuleService } from 'src/engine/metadata-modules/validation-rule/validation-rule.service';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -12,10 +16,16 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   imports: [
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationModule,
+    BillingModule,
     FeatureFlagModule,
     PermissionsModule,
     WorkspaceMigrationModule,
   ],
-  providers: [ValidationRuleService, ValidationRuleResolver],
+  providers: [
+    ValidationRuleService,
+    ValidationRuleResolver,
+    ValidationRuleToolsFactory,
+  ],
+  exports: [ValidationRuleToolsFactory],
 })
 export class ValidationRuleModule {}

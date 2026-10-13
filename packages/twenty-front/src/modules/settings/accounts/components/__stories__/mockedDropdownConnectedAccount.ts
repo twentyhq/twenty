@@ -18,6 +18,7 @@ export const mockedDropdownConnectedAccount: ConnectedAccount = {
   lastSignedInAt: null,
   userWorkspaceId: 'user-workspace',
   connectionProviderId: null,
+  applicationId: null,
   name: null,
   visibility: 'user',
   lastCredentialsRefreshedAt: null,

@@ -4,6 +4,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
+import { sortWorkflowActionLogicFunctions } from '@/side-panel/pages/workflow/action/utils/sortWorkflowActionLogicFunctions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
@@ -63,12 +64,18 @@ export const SidePanelWorkflowSelectAction = ({
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const toolFunctions = logicFunctions.filter(
-    (fn) =>
-      isDefined(fn.workflowActionTriggerSettings) &&
-      isDefined(fn.applicationId) &&
-      !isWorkspaceCustomApplication({ id: fn.applicationId }, currentWorkspace),
-  );
+  const toolFunctions = sortWorkflowActionLogicFunctions({
+    logicFunctions: logicFunctions.filter(
+      (fn) =>
+        isDefined(fn.workflowActionTriggerSettings) &&
+        isDefined(fn.applicationId) &&
+        !isWorkspaceCustomApplication(
+          { id: fn.applicationId },
+          currentWorkspace,
+        ),
+    ),
+    installedApplications: currentWorkspace?.installedApplications ?? [],
+  });
 
   const handleActionClick = (actionType: WorkflowActionType) => {
     onActionSelected({ type: actionType });

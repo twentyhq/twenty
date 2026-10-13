@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
@@ -20,7 +21,7 @@ type UseRecordsUsefulGqlFields = {
 export const useRelevantRecordsGqlFields = ({
   objectMetadataItem,
   additionalFieldMetadataIds = [],
-}: UseRecordsUsefulGqlFields) => {
+}: UseRecordsUsefulGqlFields): RecordGqlFields => {
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );

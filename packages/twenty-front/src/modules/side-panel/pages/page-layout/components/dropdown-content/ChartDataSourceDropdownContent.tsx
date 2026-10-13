@@ -23,7 +23,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartDataSourceDropdownContent = () => {
@@ -130,7 +130,7 @@ export const ChartDataSourceDropdownContent = () => {
                 handleSelectSource(objectMetadataItem.id);
               }}
             >
-              <ListItem
+              <ListItemButton
                 focused={selectedItemId === objectMetadataItem.id}
                 onClick={() => {
                   handleSelectSource(objectMetadataItem.id);
@@ -152,7 +152,7 @@ export const ChartDataSourceDropdownContent = () => {
                 }
               >
                 {objectMetadataItem.labelPlural}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           ))}
         </SelectableList>

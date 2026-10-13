@@ -1,12 +1,7 @@
 import { AvatarGroup, Callout, JsonTree } from '@ui/components';
-import { Avatar, Pill } from '@ui/primitives/data-display';
-import {
-  Button,
-  ButtonGroup,
-  Radio,
-  RadioGroup,
-  SegmentedControl,
-} from '@ui/primitives/input';
+import { SegmentedControl } from '@ui/components/input/SegmentedControl/SegmentedControl';
+import { Avatar, Badge } from '@ui/primitives/data-display';
+import { Button, ButtonGroup, Radio, RadioGroup } from '@ui/primitives/input';
 import { ListItem } from '@ui/primitives/navigation';
 import { Text } from '@ui/primitives/typography';
 
@@ -63,7 +58,7 @@ export const DirectionalLayoutExample = ({
             }}
           >
             Upcoming action
-            <Pill label="Soon" />
+            <Badge>Soon</Badge>
           </Text>
         </Button>
         <SegmentedControl

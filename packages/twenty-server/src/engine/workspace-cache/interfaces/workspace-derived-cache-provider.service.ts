@@ -10,7 +10,9 @@ import {
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 type WorkspaceDerivedCacheSourceKeyName = {
-  [TCacheKeyName in WorkspaceCacheKeyName]: WorkspaceCacheDataMap[TCacheKeyName] extends object
+  [
+    TCacheKeyName in WorkspaceCacheKeyName
+  ]: WorkspaceCacheDataMap[TCacheKeyName] extends object
     ? TCacheKeyName
     : never;
 }[WorkspaceCacheKeyName];

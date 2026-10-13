@@ -30,6 +30,7 @@ const buildLimitCounter = (
 const allowanceCounter: AllowanceQuotaCounter = {
   kind: 'allowance',
   key: 'allowance-key',
+  limitValue: 2_000_000,
   unit: UsageUnit.CREDIT,
   periodStart: PERIOD_START,
   periodEnd: PERIOD_END,
@@ -49,7 +50,6 @@ describe('buildQuotaExhaustedScope', () => {
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
         counter: buildLimitCounter(),
-        allowance: null,
       }),
     ).toEqual({
       resourceType: UsageResourceType.AI,
@@ -73,7 +73,6 @@ describe('buildQuotaExhaustedScope', () => {
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
         counter: buildLimitCounter({ isDefault: true }),
-        allowance: null,
       }),
     ).toMatchObject({ exhaustedKind: 'limit', isDefault: true });
   });
@@ -83,12 +82,6 @@ describe('buildQuotaExhaustedScope', () => {
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
         counter: allowanceCounter,
-        allowance: {
-          periodStart: PERIOD_START,
-          periodEnd: PERIOD_END,
-          allowanceMicro: 2_000_000,
-          validUntil: PERIOD_END,
-        },
       }),
     ).toEqual({
       resourceType: UsageResourceType.AI,
@@ -106,16 +99,6 @@ describe('buildQuotaExhaustedScope', () => {
     });
   });
 
-  it('reports a zero allowance when it is gone since the counter was read', () => {
-    expect(
-      buildQuotaExhaustedScope({
-        resourceType: UsageResourceType.AI,
-        counter: allowanceCounter,
-        allowance: null,
-      }),
-    ).toMatchObject({ exhaustedKind: 'allowance', limitValue: 0 });
-  });
-
   it('clamps the retry delay to zero once the period has ended', () => {
     expect(
       buildQuotaExhaustedScope({
@@ -123,7 +106,6 @@ describe('buildQuotaExhaustedScope', () => {
         counter: buildLimitCounter({
           periodEnd: new Date('2026-08-10T00:00:00.000Z'),
         }),
-        allowance: null,
       }),
     ).toMatchObject({ retryAfterMs: 0 });
   });

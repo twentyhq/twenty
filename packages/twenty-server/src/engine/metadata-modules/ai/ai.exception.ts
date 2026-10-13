@@ -15,7 +15,6 @@ export enum AiExceptionCode {
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
   CONTEXT_WINDOW_EXCEEDED = 'CONTEXT_WINDOW_EXCEEDED',
   INVALID_CHAT_THREAD_SNOOZE_TIME = 'INVALID_CHAT_THREAD_SNOOZE_TIME',
-  CHAT_THREAD_INBOX_STATE_UNAVAILABLE = 'CHAT_THREAD_INBOX_STATE_UNAVAILABLE',
   CHAT_THREAD_ASSIGNEE_CANNOT_REPLY = 'CHAT_THREAD_ASSIGNEE_CANNOT_REPLY',
   CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE = 'CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
@@ -59,8 +58,6 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This conversation is too long for the model. Start a new thread to continue.`;
     case AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME:
       return msg`Snooze time must be in the future.`;
-    case AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE:
-      return msg`Read, archive and snooze are not available yet. Try again in a few minutes.`;
     case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_REPLY:
       return msg`This member can't reply in this chat, so it can't be assigned to them.`;
     case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:

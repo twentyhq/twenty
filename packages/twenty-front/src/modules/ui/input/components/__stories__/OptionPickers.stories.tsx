@@ -88,7 +88,7 @@ export const InnerSelectSkipsDisabled: Story = {
     expect(await body.findByRole('dialog', { name: 'Position' })).toBeVisible();
     expect(
       await body.findByRole('button', { name: 'Disabled' }),
-    ).toHaveAttribute('aria-disabled', 'true');
+    ).toBeDisabled();
     await userEvent.keyboard('{ArrowDown}{Enter}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),

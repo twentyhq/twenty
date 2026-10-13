@@ -1,3 +1,4 @@
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
@@ -73,7 +74,7 @@ export const ToolRecordsWidget = ({
               })}
               startElement={isDefined(Icon) ? <Icon size={14} /> : undefined}
             >
-              {recordReference.displayName}
+              {getChipLabel(recordReference.displayName).content}
             </LinkChip>
           );
         })}

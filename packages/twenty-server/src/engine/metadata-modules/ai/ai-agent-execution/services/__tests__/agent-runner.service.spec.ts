@@ -119,10 +119,11 @@ const buildService = (execution = buildExecution()) => {
   };
 
   const pendingWakeUpService = {
-    claim: jest.fn().mockResolvedValue({
+    find: jest.fn().mockResolvedValue({
       condition: { type: 'ANSWER', threadId: 'thread-id' },
       payload: SUSPENSION,
     }),
+    claim: jest.fn().mockResolvedValue(null),
     cancel: jest.fn().mockResolvedValue([]),
   };
 
@@ -326,7 +327,7 @@ describe('AgentRunnerService', () => {
     agentRunConversationService.closeTurn.mockResolvedValue({
       isAwaitingAnswer: true,
     });
-    pendingWakeUpService.claim.mockResolvedValue({
+    pendingWakeUpService.find.mockResolvedValue({
       condition: { type: 'ANSWER', threadId: 'thread-id' },
       payload: { ...SUSPENSION, continuationCount: 49 },
     });
@@ -367,15 +368,56 @@ describe('AgentRunnerService', () => {
     expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
   });
 
-  it('continues a pause once, as a second continuation finds its wake-up claimed', async () => {
+  it('continues a pause once, as a second continuation finds its wake-up removed', async () => {
     const { service, pendingWakeUpService, agentAsyncExecutorService } =
       buildService();
 
-    pendingWakeUpService.claim.mockResolvedValue(null);
+    pendingWakeUpService.find.mockResolvedValue(null);
 
     await service.continue(CONTINUATION);
 
     expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('continues a run again when the worker running it died, as its wake-up is still there', async () => {
+    const {
+      service,
+      pendingWakeUpService,
+      agentAsyncExecutorService,
+      agentRunSuspensionService,
+    } = buildService();
+
+    agentAsyncExecutorService.executeAgent.mockReturnValueOnce(
+      new Promise(() => {}),
+    );
+
+    void service.continue(CONTINUATION);
+
+    while (agentAsyncExecutorService.executeAgent.mock.calls.length === 0) {
+      await Promise.resolve();
+    }
+
+    expect(pendingWakeUpService.claim).not.toHaveBeenCalled();
+
+    await service.continue(CONTINUATION);
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledTimes(2);
+    expect(agentRunSuspensionService.settle).toHaveBeenCalledTimes(1);
+    expect(pendingWakeUpService.claim).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      wakeUpId: 'wake-up-id',
+    });
+  });
+
+  it('keeps the wake-up of a run whose caller could not be handed the outcome', async () => {
+    const { service, pendingWakeUpService, agentRunSuspensionService } =
+      buildService();
+
+    agentRunSuspensionService.settle.mockRejectedValue(new Error('db down'));
+
+    await expect(service.continue(CONTINUATION)).rejects.toThrow('db down');
+
+    expect(pendingWakeUpService.claim).not.toHaveBeenCalled();
   });
 
   it('fails the run when its answer could not be delivered', async () => {
