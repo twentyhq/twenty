@@ -15,11 +15,9 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { CampaignEnvelopeBox } from '@/activities/emails/components/CampaignEnvelopeBox';
-import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
@@ -33,14 +31,6 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 
 const StyledWarningContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-`;
-
-const StyledRecipientCount = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.md};
-  padding: 0 ${themeCssVariables.spacing[1]};
-  white-space: nowrap;
 `;
 
 const FROM_DROPDOWN_ID = 'campaign-composer-from-account';
@@ -87,15 +77,6 @@ export const CampaignDetailsFields = ({
 
   const { channels } = useMyMessageChannels();
   const { unsubscribeTopics } = useUnsubscribeTopics();
-  const { formatNumber } = useNumberFormat();
-  const { audiencePreview } = useCampaignAudiencePreview({
-    listId: detailsState.listId,
-    unsubscribeTopicId: detailsState.unsubscribeTopicId,
-  });
-
-  const recipientCount = isDefined(audiencePreview)
-    ? t`${formatNumber(audiencePreview.sendable)} of ${formatNumber(audiencePreview.totalMembers)}`
-    : null;
   const { createOneRecord: createMessageList } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.MessageList,
   });
@@ -185,11 +166,6 @@ export const CampaignDetailsFields = ({
       <ComposerFieldRow
         label={t`To`}
         onClick={() => openDropdownById(listDropdownId)}
-        trailing={
-          isDefined(recipientCount) ? (
-            <StyledRecipientCount>{recipientCount}</StyledRecipientCount>
-          ) : undefined
-        }
       >
         <FormSingleRecordPicker
           key={`list-${detailsState.draftResyncKey}`}
