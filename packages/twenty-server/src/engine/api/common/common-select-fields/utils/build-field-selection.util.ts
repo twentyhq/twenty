@@ -16,6 +16,18 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
+export type FieldSelectionFlatFieldMetadata = Pick<
+  OrmFlatFieldMetadata,
+  | 'id'
+  | 'universalIdentifier'
+  | 'applicationId'
+  | 'workspaceId'
+  | 'type'
+  | 'name'
+  | 'settings'
+  | 'morphId'
+>;
+
 type SelectableFieldsStructured = Record<
   string,
   boolean | Record<string, boolean>
@@ -35,18 +47,7 @@ export const buildFieldSelection = ({
     | 'labelIdentifierFieldMetadataId'
     | 'imageIdentifierFieldMetadataId'
   >;
-  flatFields: ReadonlyArray<
-    Pick<
-      OrmFlatFieldMetadata,
-      | 'id'
-      | 'universalIdentifier'
-      | 'applicationId'
-      | 'workspaceId'
-      | 'type'
-      | 'name'
-      | 'settings'
-    > & { morphId?: string | null }
-  >;
+  flatFields: ReadonlyArray<FieldSelectionFlatFieldMetadata>;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
 }): SelectableFieldsStructured => {
   const result: SelectableFieldsStructured = {};
