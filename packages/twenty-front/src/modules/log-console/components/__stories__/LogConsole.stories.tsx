@@ -798,11 +798,15 @@ const APP_ANALYTICS_REGISTRATION = {
   logoUrl: null,
 };
 
-const buildAppAnalyticsPoint = (
-  date: string,
-  functionExecutions: number,
-  functionErrors: number,
-) => ({
+const buildAppAnalyticsPoint = ({
+  date,
+  functionExecutions,
+  functionErrors,
+}: {
+  date: string;
+  functionExecutions: number;
+  functionErrors: number;
+}) => ({
   __typename: 'ApplicationRegistrationAnalyticsTimeSeriesPoint',
   date,
   installSucceeded: 1,
@@ -838,9 +842,21 @@ const APP_ANALYTICS = {
     activeWorkspaces: 9,
   },
   timeSeries: [
-    buildAppAnalyticsPoint('2026-09-21', 610, 8),
-    buildAppAnalyticsPoint('2026-09-22', 590, 6),
-    buildAppAnalyticsPoint('2026-09-23', 640, 9),
+    buildAppAnalyticsPoint({
+      date: '2026-09-21',
+      functionExecutions: 610,
+      functionErrors: 8,
+    }),
+    buildAppAnalyticsPoint({
+      date: '2026-09-22',
+      functionExecutions: 590,
+      functionErrors: 6,
+    }),
+    buildAppAnalyticsPoint({
+      date: '2026-09-23',
+      functionExecutions: 640,
+      functionErrors: 9,
+    }),
   ],
   functionErrorsByType: [
     {
