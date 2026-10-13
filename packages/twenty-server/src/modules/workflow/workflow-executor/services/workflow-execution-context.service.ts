@@ -82,18 +82,13 @@ export class WorkflowExecutionContextService {
       return;
     }
 
-    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
     assertStepTargetBelongsToRunApplication({
       application,
       targetApplicationId,
-      workspaceOwnedApplicationIds: [
-        workspaceCustomFlatApplication.id,
-        twentyStandardFlatApplication.id,
-      ],
+      workspaceOwnedApplicationIds:
+        await this.applicationService.findWorkspaceOwnedApplicationIdsOrThrow({
+          workspaceId,
+        }),
       targetLabel,
     });
   }

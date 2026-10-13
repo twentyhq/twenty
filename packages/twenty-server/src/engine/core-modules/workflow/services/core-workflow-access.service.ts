@@ -100,27 +100,21 @@ export class CoreWorkflowAccessService {
       return;
     }
 
-    const [
-      workflows,
-      { workspaceCustomFlatApplication, twentyStandardFlatApplication },
-    ] = await Promise.all([
+    const [workflows, workspaceOwnedApplicationIds] = await Promise.all([
       this.coreWorkflowRepository.find(workspaceId, {
         where: { id: In(coreWorkflowIds) },
         select: { id: true, applicationId: true },
       }),
-      this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      ),
+      this.applicationService.findWorkspaceOwnedApplicationIdsOrThrow({
+        workspaceId,
+      }),
     ]);
 
     const isStartable = workflows.every((workflow) =>
       canApplicationStartCoreWorkflow({
         callerApplicationId,
         workflowApplicationId: workflow.applicationId,
-        workspaceOwnedApplicationIds: [
-          workspaceCustomFlatApplication.id,
-          twentyStandardFlatApplication.id,
-        ],
+        workspaceOwnedApplicationIds,
       }),
     );
 
