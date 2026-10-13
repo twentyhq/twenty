@@ -76,7 +76,9 @@ const otherApplication = {
 const context: ToolProviderContext = {
   workspaceId,
   roleId: 'caller-role-id',
-  rolePermissionConfig: { unionOf: ['caller-role-id'] },
+  rolePermissionConfig: {
+    intersectionOf: { userWorkspaceRoleId: 'caller-role-id' },
+  },
   userWorkspaceId: 'caller-user-workspace-id',
   actorContext: {
     source: FieldActorSource.MANUAL,
