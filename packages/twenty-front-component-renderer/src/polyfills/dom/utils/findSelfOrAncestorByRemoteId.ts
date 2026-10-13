@@ -1,5 +1,6 @@
 import { remoteId } from '@remote-dom/core/elements';
-import { isObject } from '@sniptt/guards';
+
+import { isElementNode } from '@/polyfills/dom/utils/isElementNode';
 
 export const findSelfOrAncestorByRemoteId = ({
   element,
@@ -9,15 +10,15 @@ export const findSelfOrAncestorByRemoteId = ({
   element: object;
   remoteElementId: string;
   rootElement: object | null;
-}): object | null => {
+}): Element | null => {
   let currentNode: unknown = element;
 
-  while (isObject(currentNode) && currentNode !== rootElement) {
-    if (remoteId(currentNode as Node) === remoteElementId) {
+  while (isElementNode(currentNode) && currentNode !== rootElement) {
+    if (remoteId(currentNode) === remoteElementId) {
       return currentNode;
     }
 
-    currentNode = Reflect.get(currentNode, 'parentNode');
+    currentNode = currentNode.parentNode;
   }
 
   return null;
