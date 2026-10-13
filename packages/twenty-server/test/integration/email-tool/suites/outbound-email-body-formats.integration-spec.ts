@@ -89,12 +89,12 @@ const storeBodyAsBeforeTheUpgrade = async (
     FROM jsonb_array_elements(steps) step)`;
 
   await global.testDataSource.query(
-    `UPDATE "${WORKSPACE_SCHEMA}"."workflowVersion" SET ${replaceEmailStepBody} WHERE "coreWorkflowVersionId" = $2`,
+    `UPDATE core."workflowVersion" SET ${replaceEmailStepBody} WHERE "id" = $2`,
     [legacyBody, coreWorkflowVersionId],
   );
   await global.testDataSource.query(
-    `UPDATE core."workflowVersion" SET ${replaceEmailStepBody} WHERE "id" = $2`,
-    [legacyBody, coreWorkflowVersionId],
+    `UPDATE "${WORKSPACE_SCHEMA}"."workflowVersion" SET steps = (SELECT steps FROM core."workflowVersion" WHERE id = $1) WHERE "coreWorkflowVersionId" = $1`,
+    [coreWorkflowVersionId],
   );
 };
 

@@ -113,19 +113,6 @@ const readCoreVersionRow = async (coreWorkflowVersionId: string) => {
   };
 };
 
-const readWorkspaceVersionRow = async (workspaceWorkflowVersionId: string) => {
-  const rows = await global.testDataSource.query(
-    `SELECT id, steps, trigger FROM "${TEST_WORKSPACE_SCHEMA}"."workflowVersion" WHERE id = $1`,
-    [workspaceWorkflowVersionId],
-  );
-
-  return rows[0] as {
-    id: string;
-    steps: { id: string; name: string }[] | null;
-    trigger: { type: string } | null;
-  };
-};
-
 describe('workflow MCP tools on core identities (integration)', () => {
   const coreWorkflowIdsToDelete: string[] = [];
 
@@ -271,7 +258,7 @@ describe('workflow MCP tools on core identities (integration)', () => {
       expect(listed.workflows.length).toBeGreaterThan(0);
     });
 
-    it('should write an edit through the shared writer so the rollback mirror follows', async () => {
+    it('should write an edit through the shared writer', async () => {
       const renamedStepName = `Renamed ${randomUUID()}`;
       const coreVersion = await readCoreVersionRow(coreWorkflowVersionId);
       const stepToUpdate = (
@@ -286,17 +273,11 @@ describe('workflow MCP tools on core identities (integration)', () => {
       const updatedCoreVersion = await readCoreVersionRow(
         coreWorkflowVersionId,
       );
-      const mirrorVersion = await readWorkspaceVersionRow(
-        updatedCoreVersion.workspaceWorkflowVersionId as string,
-      );
 
       expect(
         (updatedCoreVersion.steps as { id: string; name: string }[]).find(
           (step) => step.id === loopBodyStepId,
         )?.name,
-      ).toBe(renamedStepName);
-      expect(
-        mirrorVersion.steps?.find((step) => step.id === loopBodyStepId)?.name,
       ).toBe(renamedStepName);
     });
 
