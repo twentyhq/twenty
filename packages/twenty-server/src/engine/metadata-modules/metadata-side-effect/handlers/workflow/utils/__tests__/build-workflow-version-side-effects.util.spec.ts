@@ -314,7 +314,9 @@ describe('managed workflow version validation', () => {
     expect(
       validate({
         ...version,
-        triggers: [{ ...trigger, type: WorkflowTriggerType.WEBHOOK }],
+        triggers: [
+          { ...trigger, type: 'UNKNOWN' as unknown as WorkflowTriggerType },
+        ],
       } as typeof version).errors[0]?.message,
     ).toContain('Application workflows require one trigger of type MANUAL');
   });

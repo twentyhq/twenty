@@ -284,6 +284,7 @@ describe('application workflow definitions', () => {
         httpMethod: 'POST',
         authentication: null,
         expectedBody: { email: 'jane@example.com' },
+        expectedOutputSchema: { email: 'jane@example.com' },
         outputSchema: { email: { isLeaf: true, type: 'string' } },
       },
     });
