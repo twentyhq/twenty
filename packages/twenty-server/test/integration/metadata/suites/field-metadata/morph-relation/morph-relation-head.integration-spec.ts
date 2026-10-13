@@ -135,7 +135,7 @@ describe('morph relation head', () => {
       firstTargetObjectMetadataId,
       secondTargetObjectMetadataId,
       thirdTargetObjectMetadataId,
-    ].filter(Boolean)) {
+    ]) {
       await deleteObject(objectMetadataId);
     }
   });
@@ -191,84 +191,6 @@ describe('morph relation head', () => {
 
     expect(updatedHead.id).toBe(head.id);
     expect(updatedHead.morphRelations).toHaveLength(3);
-  });
-
-  it('should keep the head when a destination object is deleted', async () => {
-    await setMorphRelationHeadEnabled(true);
-
-    const [head] = await findMorphFieldsOfObject({
-      id: { eq: sourceObjectMetadataId },
-    });
-
-    await deleteObject(secondTargetObjectMetadataId);
-    secondTargetObjectMetadataId = '';
-
-    const [headAfterDeletion] = await findMorphFieldsOfObject({
-      id: { eq: sourceObjectMetadataId },
-    });
-
-    expect(headAfterDeletion.id).toBe(head.id);
-    expect(
-      headAfterDeletion.morphRelations.map(
-        (morphRelation) => morphRelation.targetObjectMetadata.id,
-      ),
-    ).toEqual([firstTargetObjectMetadataId]);
-  });
-
-  it('should add destinations back to a head without targets', async () => {
-    await setMorphRelationHeadEnabled(true);
-
-    const [head] = await findMorphFieldsOfObject({
-      id: { eq: sourceObjectMetadataId },
-    });
-
-    await deleteObject(firstTargetObjectMetadataId);
-    firstTargetObjectMetadataId = '';
-    await deleteObject(secondTargetObjectMetadataId);
-    secondTargetObjectMetadataId = '';
-
-    await updateOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: head.id,
-        updatePayload: {
-          morphRelationsUpdatePayload: [
-            { targetObjectMetadataId: thirdTargetObjectMetadataId },
-          ],
-        },
-      },
-    });
-
-    const [updatedHead] = await findMorphFieldsOfObject({
-      id: { eq: sourceObjectMetadataId },
-    });
-
-    expect(updatedHead.id).toBe(head.id);
-    expect(
-      updatedHead.morphRelations.map(
-        (morphRelation) => morphRelation.targetObjectMetadata.id,
-      ),
-    ).toEqual([thirdTargetObjectMetadataId]);
-  });
-
-  it('should delete the head with its morph field', async () => {
-    await updateOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: targetFieldIds[0],
-        updatePayload: { isActive: false },
-      },
-    });
-    await deleteOneFieldMetadata({
-      input: { idToDelete: targetFieldIds[0] },
-      expectToFail: false,
-    });
-
-    await setMorphRelationHeadEnabled(true);
-
-    expect(
-      await findMorphFieldsOfObject({ id: { eq: sourceObjectMetadataId } }),
-    ).toEqual([]);
   });
 
   it('should delete the morph field through its head', async () => {

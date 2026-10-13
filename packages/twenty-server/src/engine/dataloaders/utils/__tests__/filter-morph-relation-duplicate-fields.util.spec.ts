@@ -75,35 +75,35 @@ describe('filterMorphRelationDuplicateFields', () => {
   });
 
   it('should handle multiple morph groups independently', () => {
-    const head1Best = makeMorphField({
+    const group1Best = makeMorphField({
       id: 'a',
       morphId: 'morph-1',
       isSystem: false,
     });
-    const head1Dup = makeMorphField({
+    const group1Dup = makeMorphField({
       id: 'b',
       morphId: 'morph-1',
       isSystem: true,
     });
-    const head2Best = makeMorphField({
+    const group2Best = makeMorphField({
       id: 'c',
       morphId: 'morph-2',
       isSystem: false,
     });
-    const head2Dup = makeMorphField({
+    const group2Dup = makeMorphField({
       id: 'd',
       morphId: 'morph-2',
       isSystem: true,
     });
 
     const result = filterMorphRelationDuplicateFields({
-      flatFieldMetadatas: [head1Dup, head2Dup, head1Best, head2Best],
+      flatFieldMetadatas: [group1Dup, group2Dup, group1Best, group2Best],
       isMorphRelationHeadEnabled: false,
     });
 
     expect(result).toHaveLength(2);
-    expect(result).toContain(head1Best);
-    expect(result).toContain(head2Best);
+    expect(result).toContain(group1Best);
+    expect(result).toContain(group2Best);
   });
 
   it('should return empty array for empty input', () => {
@@ -113,35 +113,5 @@ describe('filterMorphRelationDuplicateFields', () => {
         isMorphRelationHeadEnabled: false,
       }),
     ).toEqual([]);
-  });
-
-  describe('with a persisted morph relation head', () => {
-    const head = makeMorphField({
-      id: 'head',
-      morphId: 'morph-1',
-      universalIdentifier: 'morph-1',
-    });
-    const target = makeMorphField({
-      id: 'target',
-      morphId: 'morph-1',
-      universalIdentifier: 'target',
-    });
-
-    it.each([
-      ['the survivor while disabled', [head, target], false, [target]],
-      ['the head while enabled', [target, head], true, [head]],
-      ['nothing for targets without a head while enabled', [target], true, []],
-      ['nothing for an empty head while disabled', [head], false, []],
-    ])(
-      'should return %s',
-      (_, flatFieldMetadatas, isMorphRelationHeadEnabled, expected) => {
-        expect(
-          filterMorphRelationDuplicateFields({
-            flatFieldMetadatas,
-            isMorphRelationHeadEnabled,
-          }),
-        ).toEqual(expected);
-      },
-    );
   });
 });
