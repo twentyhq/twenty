@@ -44,6 +44,34 @@ describe('wrapCssInTwentyUiCascadeLayer', () => {
     );
   });
 
+  it('should ignore braces and semicolons inside the comments of an import', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '@import "theme.css" /* { */;@import url(fonts.css) /* ; */;.title{color:red}',
+      ),
+    ).toBe(
+      '@import "theme.css" layer(twenty-ui)  ;@import url(fonts.css) layer(twenty-ui)  ;@layer twenty-ui {\n.title{color:red}\n}',
+    );
+  });
+
+  it('should nest the layer of an import with comments inside the twenty-ui layer', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '@import /* theme */ "theme.css" /* tokens */ layer(base);.title{color:red}',
+      ),
+    ).toBe(
+      '@import "theme.css" layer(twenty-ui.base);@layer twenty-ui {\n.title{color:red}\n}',
+    );
+  });
+
+  it('should handle an unterminated comment without backtracking', () => {
+    const unterminatedComment = `@import "theme.css" ${'/*a'.repeat(100000)}`;
+
+    expect(wrapCssInTwentyUiCascadeLayer(unterminatedComment)).toBe(
+      `@layer twenty-ui {\n${unterminatedComment}\n}`,
+    );
+  });
+
   it('should nest the layer of an import inside the twenty-ui layer', () => {
     expect(
       wrapCssInTwentyUiCascadeLayer(

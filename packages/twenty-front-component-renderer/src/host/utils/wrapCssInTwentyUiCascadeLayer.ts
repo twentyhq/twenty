@@ -7,11 +7,14 @@ const TWENTY_UI_CASCADE_LAYER_DECLARATION = `@layer ${TWENTY_UI_CASCADE_LAYER_NA
 
 const ANONYMOUS_IMPORT_LAYER_PREFIX = 'anonymous-';
 
+const COMMENT_START = '/*';
+
 const LEADING_COMMENT_PATTERN = /^\s*\/\*[\s\S]*?\*\//;
 
 const LEADING_TOP_LEVEL_AT_RULE_PATTERN = /^\s*@(?:charset|import|namespace)\b/;
 
-const STATEMENT_TOKEN_PATTERN = /"[^"]*"|'[^']*'|[();{]/g;
+const STATEMENT_TOKEN_PATTERN =
+  /\/\*[\s\S]*?(?:\*\/|$)|"[^"]*"|'[^']*'|[();{]/g;
 
 const IMPORT_LAYER_PATTERN =
   /@import\s+(url\([^)]*\)|"[^"]*"|'[^']*')(\s*\blayer\b(?:\(([^)]*)\))?)?/g;
@@ -70,6 +73,9 @@ const getLeadingStatementsEndIndex = (
     : startIndex;
 };
 
+const replaceCommentTokenWithSpace = (token: string): string =>
+  token.startsWith(COMMENT_START) ? ' ' : token;
+
 const getImportUrlLayerIdentifier = (importUrl: string): string =>
   importUrl.replace(/^url\(|\)$|["']/g, '').replace(/[^a-zA-Z0-9_-]/g, '-');
 
@@ -102,6 +108,7 @@ export const wrapCssInTwentyUiCascadeLayer = (cssText: string): string => {
 
   const layeredLeadingStatements = cssText
     .slice(0, leadingStatementsEndIndex)
+    .replace(STATEMENT_TOKEN_PATTERN, replaceCommentTokenWithSpace)
     .replace(
       IMPORT_LAYER_PATTERN,
       (
