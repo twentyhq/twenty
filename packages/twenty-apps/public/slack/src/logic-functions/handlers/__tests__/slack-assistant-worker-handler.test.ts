@@ -54,9 +54,9 @@ vi.mock('src/logic-functions/data/claim-slack-assistant-request', () => ({
 }));
 
 vi.mock(
-  'src/logic-functions/data/find-slack-assistant-request-outcomes-by-slack-messages',
+  'src/logic-functions/utils/resolve-slack-conversation-messages',
   () => ({
-    findSlackAssistantRequestOutcomesBySlackMessages: async () => new Map(),
+    resolveSlackConversationMessages: async () => [],
   }),
 );
 

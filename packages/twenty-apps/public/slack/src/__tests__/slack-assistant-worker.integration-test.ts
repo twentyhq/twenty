@@ -59,6 +59,8 @@ describe('Slack assistant worker', () => {
     requestText: string;
     slackChannelType?: string;
     slackThreadTimestamp?: string;
+    status?: SlackAssistantRequestStatus;
+    responseText?: string;
   }): Promise<{ id: string }> => {
     const mutationResult = await coreClient.mutation({
       createSlackAssistantRequest: {
@@ -325,6 +327,91 @@ describe('Slack assistant worker', () => {
         'WORKSPACE',
       ),
     ).toEqual({ expiresAt: expect.any(Number) });
+  });
+
+  it('should continue the thread conversation with only the Slack messages the agent has not seen', async () => {
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    addConfirmedRequester();
+    const rootMessageTimestamp = nextMessageTimestamp();
+    const followUpMessageTimestamp = nextMessageTimestamp();
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: rootMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('who owns Acme?'),
+    });
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      threadTimestamp: rootMessageTimestamp,
+      userId: slack.botUserId,
+      text: 'Sarah owns Acme.',
+    });
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      threadTimestamp: rootMessageTimestamp,
+      userId: 'U0COLLEAGUE',
+      text: 'they moved to London',
+    });
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: followUpMessageTimestamp,
+      threadTimestamp: rootMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('update their address'),
+    });
+
+    await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp: rootMessageTimestamp,
+      requestText: 'who owns Acme?',
+      status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+      responseText: 'Sarah owns Acme.',
+    });
+    const followUpRequest = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp: followUpMessageTimestamp,
+      slackThreadTimestamp: rootMessageTimestamp,
+      requestText: 'update their address',
+    });
+
+    appRuntime.setAgentResult({
+      success: true,
+      result: { response: 'Address updated.' },
+      error: null,
+    });
+
+    const result = await slackAssistantWorkerHandler(
+      buildPendingRequest({
+        ...followUpRequest,
+        slackChannelId: CHANNEL_ID,
+        slackMessageTimestamp: followUpMessageTimestamp,
+        slackThreadTimestamp: rootMessageTimestamp,
+        requestText: 'update their address',
+      }),
+    );
+
+    expect(result).toEqual({ done: true });
+    expect(appRuntime.lastAgentMessages).toEqual([
+      {
+        role: 'user',
+        content: '@unknown Slack user U0COLLEAGUE: they moved to London',
+      },
+      {
+        role: 'user',
+        content: expect.stringContaining(
+          'Ada asks from Slack:\nupdate their address',
+        ),
+      },
+    ]);
+    expect(appRuntime.agentRuns[appRuntime.agentRuns.length - 1]).toEqual(
+      expect.objectContaining({
+        thread: {
+          key: `${CHANNEL_ID}:${rootMessageTimestamp}`,
+          title: 'update their address',
+        },
+      }),
+    );
   });
 
   it('should title the assistant thread of a first direct message instead of subscribing it', async () => {

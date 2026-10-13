@@ -13,6 +13,7 @@ import { isSlackDirectMessageChannel } from 'src/logic-functions/utils/is-slack-
 import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
 import { runWithTimeout } from 'src/logic-functions/utils/run-with-timeout';
 import { selectSlackConversationMessages } from 'src/logic-functions/utils/select-slack-conversation-messages';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 type SlackAssistantContext = {
   conversationThreadMessages: SlackThreadMessage[];
@@ -58,7 +59,7 @@ const readSlackThreadContext = async ({
   const assistantBotUserId = await resolveSlackBotUserIdOrThrow().catch(
     (error) => {
       console.warn(
-        `[slack] failed to resolve the bot user id, answering from the thread's stored turns only: ${error instanceof Error ? error.message : String(error)}`,
+        `[slack] failed to resolve the bot user id, answering from the thread's stored turns only: ${toErrorMessage(error)}`,
       );
 
       return undefined;

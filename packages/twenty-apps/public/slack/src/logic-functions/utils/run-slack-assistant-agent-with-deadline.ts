@@ -14,6 +14,7 @@ type RunSlackAssistantAgentInput = Pick<
 > & {
   runAsWorkspaceMemberId: string;
   messages: SlackAssistantAgentMessage[];
+  // TODO: use RunAgentInput['thread'] once the app depends on twenty-sdk >=2.46.0
   thread: { key: string; title?: string };
   deadlineAtMs: number;
 };

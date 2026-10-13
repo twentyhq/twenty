@@ -7,10 +7,8 @@ import { SLACK_ACCESS_DENIED_TEXT_BY_REASON } from 'src/logic-functions/constant
 import { SLACK_ACCESS_UNVERIFIABLE_ERROR } from 'src/logic-functions/constants/slack-access-unverifiable-error';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
-import { SLACK_ASSISTANT_REQUEST_OUTCOME_LOOKUP_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-request-outcome-lookup-timeout-ms';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { claimSlackAssistantRequest } from 'src/logic-functions/data/claim-slack-assistant-request';
-import { findSlackAssistantRequestOutcomesBySlackMessages } from 'src/logic-functions/data/find-slack-assistant-request-outcomes-by-slack-messages';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
@@ -18,7 +16,6 @@ import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
 import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/utils/build-slack-answer-delivery-failure-message';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
-import { buildSlackConversationMessages } from 'src/logic-functions/utils/build-slack-conversation-messages';
 import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
@@ -29,14 +26,13 @@ import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/uti
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
+import { resolveSlackConversationMessages } from 'src/logic-functions/utils/resolve-slack-conversation-messages';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
-import { runWithTimeout } from 'src/logic-functions/utils/run-with-timeout';
 import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
-import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const slackAssistantWorkerHandler = async (
   record: SlackAssistantRequestRecord,
@@ -189,36 +185,13 @@ export const slackAssistantWorkerHandler = async (
         agentDeadlineAtMs,
       });
 
-    const requestOutcomeByMessageTimestamp = await runWithTimeout({
-      operation: findSlackAssistantRequestOutcomesBySlackMessages(client, {
-        slackChannelId,
-        slackMessageTimestamps: conversationThreadMessages
-          .map((message) => message.ts)
-          .filter(isNonEmptyString),
-      }).catch((error) => {
-        console.warn(
-          `[slack] failed to read the request outcomes of thread ${parentMessageTimestamp} in ${slackChannelId}, answering without Slack context: ${toErrorMessage(error)}`,
-        );
-
-        return undefined;
-      }),
-      timeoutMs: SLACK_ASSISTANT_REQUEST_OUTCOME_LOOKUP_TIMEOUT_MS,
-      buildTimeoutValue: () => {
-        console.warn(
-          `[slack] reading the request outcomes of thread ${parentMessageTimestamp} in ${slackChannelId} timed out, answering without Slack context`,
-        );
-
-        return undefined;
-      },
+    const conversationMessages = await resolveSlackConversationMessages({
+      client,
+      slackChannelId,
+      parentMessageTimestamp,
+      conversationThreadMessages,
+      assistantBotUserId,
     });
-
-    const conversationMessages = isDefined(requestOutcomeByMessageTimestamp)
-      ? buildSlackConversationMessages({
-          messages: conversationThreadMessages,
-          assistantBotUserId,
-          requestOutcomeByMessageTimestamp,
-        })
-      : [];
 
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,
