@@ -6,8 +6,6 @@ const getAuthorNameFromObject = (author: Record<string, unknown>) =>
     ? author.name.trim()
     : null;
 
-// Some manifests carry an npm-style author object ({ name, url, ... }) instead
-// of a string, which ends up serialized as JSON in the registration text column
 export const getApplicationAuthorDisplayName = (
   author: unknown,
 ): string | null => {
