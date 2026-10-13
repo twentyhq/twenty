@@ -17,7 +17,7 @@ const buildDeps = (findResult: unknown[]) => ({
 
 const buildContext = () => ({
   workspaceId: WORKSPACE_ID,
-  rolePermissionConfig: { intersectionOf: [ROLE_ID] },
+  rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: ROLE_ID } },
 });
 
 describe('list_workflow_runs tool', () => {

@@ -2,10 +2,11 @@ import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
+import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
   rolesPermissions,
@@ -18,27 +19,17 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
     return {};
   }
 
-  if ('intersectionOf' in rolePermissionConfig) {
-    const permissionsPerRole = rolePermissionConfig.intersectionOf
-      .map((roleId) => rolesPermissions[roleId])
-      .filter(isDefined);
+  const roleIds = getRoleIdsToIntersect(rolePermissionConfig.intersectionOf);
 
-    if (
-      !isNonEmptyArray(permissionsPerRole) ||
-      permissionsPerRole.length !== rolePermissionConfig.intersectionOf.length
-    ) {
-      return {};
-    }
-
-    return computePermissionIntersection(permissionsPerRole);
+  if (!isDefined(roleIds)) {
+    return {};
   }
 
-  // Multi-role union is unimplemented and every producer emits one role, so taking the first is exact
-  if ('unionOf' in rolePermissionConfig) {
-    const roleId = rolePermissionConfig.unionOf[0];
+  const permissionsPerRole = roleIds.map((roleId) => rolesPermissions[roleId]);
 
-    return isDefined(roleId) ? (rolesPermissions[roleId] ?? {}) : {};
+  if (!permissionsPerRole.every(isDefined)) {
+    return {};
   }
 
-  return {};
+  return computePermissionIntersection(permissionsPerRole);
 };

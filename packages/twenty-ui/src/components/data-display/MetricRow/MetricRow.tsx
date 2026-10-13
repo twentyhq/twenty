@@ -1,5 +1,5 @@
 import { useRender } from '@base-ui/react/use-render';
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useId } from 'react';
 
@@ -22,6 +22,7 @@ export const MetricRow = ({
   ...props
 }: MetricRowProps) => {
   const labelId = useId();
+  const accessibleValueText = progressValueText ?? value;
 
   return useRender({
     render,
@@ -45,9 +46,9 @@ export const MetricRow = ({
               size="sm"
               barColor={progressColor}
               aria-labelledby={labelId}
-              aria-valuetext={
-                progressValueText ?? (isString(value) ? value : undefined)
-              }
+              {...(isNonEmptyString(accessibleValueText)
+                ? { 'aria-valuetext': accessibleValueText }
+                : {})}
             >
               {value}
             </ProgressRing>
