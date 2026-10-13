@@ -6,31 +6,26 @@ import { Chip } from 'twenty-ui/primitives/data-display';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { GetCoreWorkflowDocument } from '~/generated/graphql';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export const CoreWorkflowRunWorkflowFieldDisplay = () => {
-  const { recordId, disableChipClick, triggerEvent } = useContext(FieldContext);
+type CoreWorkflowChipProps = {
+  coreRecordId: string;
+};
+
+export const CoreWorkflowChip = ({ coreRecordId }: CoreWorkflowChipProps) => {
+  const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const coreWorkflowId = useRecordFieldValue<string | null>(
-    recordId,
-    'coreWorkflowId',
-    { type: FieldMetadataType.UUID, metadata: { fieldName: 'coreWorkflowId' } },
-  );
-
   const { data } = useQuery(GetCoreWorkflowDocument, {
     client: apolloCoreClient,
-    variables: { coreWorkflowId: coreWorkflowId ?? '' },
-    skip: !isDefined(coreWorkflowId),
+    variables: { coreWorkflowId: coreRecordId },
   });
 
-  if (!isDefined(coreWorkflowId) || !isDefined(data?.coreWorkflow)) {
+  if (!isDefined(data?.coreWorkflow)) {
     return null;
   }
 
@@ -41,7 +36,7 @@ export const CoreWorkflowRunWorkflowFieldDisplay = () => {
   const avatar = (
     <AvatarOrIcon
       name={coreWorkflowName ?? undefined}
-      colorSeed={coreWorkflowId}
+      colorSeed={coreRecordId}
       shape="circle"
     />
   );
@@ -60,7 +55,9 @@ export const CoreWorkflowRunWorkflowFieldDisplay = () => {
 
   return (
     <LinkChip
-      to={getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId })}
+      to={getAppPath(AppPath.WorkflowCoreShowPage, {
+        coreWorkflowId: coreRecordId,
+      })}
       variant="soft"
       startElement={avatar}
       triggerEvent={triggerEvent}

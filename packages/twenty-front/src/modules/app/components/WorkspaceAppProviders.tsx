@@ -22,9 +22,9 @@ import { PromiseRejectionEffect } from '@/error-handler/components/PromiseReject
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
-import { CORE_WORKFLOW_RUN_FIELD_DISPLAY_OVERRIDES } from '@/object-core/workflows/constants/CoreWorkflowRunFieldDisplayOverrides';
+import { WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS } from '@/object-core/workflows/constants/WorkflowRunCoreRecordReferenceFields';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
-import { RecordFieldDisplayOverridesContext } from '@/object-record/record-field/ui/contexts/RecordFieldDisplayOverridesContext';
+import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
@@ -74,8 +74,8 @@ export const WorkspaceAppProviders = () => {
                             <GotoHotkeysEffectsProvider />
                             <WorkspaceAppPageTitle />
                             <PageFavicon />
-                            <RecordFieldDisplayOverridesContext.Provider
-                              value={CORE_WORKFLOW_RUN_FIELD_DISPLAY_OVERRIDES}
+                            <CoreRecordReferenceFieldsContext.Provider
+                              value={WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS}
                             >
                               <RecordCreationFormProvider>
                                 <Outlet />
@@ -83,7 +83,7 @@ export const WorkspaceAppProviders = () => {
                                 <CommandMenuConfirmationModalManager />
                                 <CommandRunner />
                               </RecordCreationFormProvider>
-                            </RecordFieldDisplayOverridesContext.Provider>
+                            </CoreRecordReferenceFieldsContext.Provider>
                           </StrictMode>
                         </DialogManager>
                       </DialogComponentInstanceContext.Provider>

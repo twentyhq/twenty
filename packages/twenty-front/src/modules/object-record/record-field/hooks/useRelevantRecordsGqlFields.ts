@@ -6,8 +6,8 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { RecordFieldDisplayOverridesContext } from '@/object-record/record-field/ui/contexts/RecordFieldDisplayOverridesContext';
-import { getRecordFieldDisplayOverridesRecordGqlFields } from '@/object-record/record-field/ui/utils/getRecordFieldDisplayOverridesRecordGqlFields';
+import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
+import { getCoreRecordReferenceFieldsRecordGqlFields } from '@/object-record/record-field/ui/utils/getCoreRecordReferenceFieldsRecordGqlFields';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 
@@ -38,8 +38,8 @@ export const useRelevantRecordsGqlFields = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const recordFieldDisplayOverrides = useContext(
-    RecordFieldDisplayOverridesContext,
+  const coreRecordReferenceFields = useContext(
+    CoreRecordReferenceFieldsContext,
   );
 
   const visibleRecordFieldMetadataItems = visibleRecordFields
@@ -78,9 +78,9 @@ export const useRelevantRecordsGqlFields = ({
     depth: 1,
   });
 
-  const recordFieldDisplayOverrideGqlFields =
-    getRecordFieldDisplayOverridesRecordGqlFields({
-      recordFieldDisplayOverrides,
+  const coreRecordReferenceFieldsRecordGqlFields =
+    getCoreRecordReferenceFieldsRecordGqlFields({
+      coreRecordReferenceFields,
       objectNameSingular: objectMetadataItem.nameSingular,
       fieldNames: fieldMetadataItemsToUse.map((field) => field.name),
     });
@@ -102,7 +102,7 @@ export const useRelevantRecordsGqlFields = ({
       : {}),
     ...(hasPosition ? { position: true } : {}),
     ...allDepthOneGqlFields,
-    ...recordFieldDisplayOverrideGqlFields,
+    ...coreRecordReferenceFieldsRecordGqlFields,
     createdAt: true,
     updatedAt: true,
     deletedAt: true,
